@@ -48,6 +48,7 @@ public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, F
 
     public func contentsOfURL(_ url: URL) throws -> Data {
         precondition(url.isFileURL, "Unexpected non-file url '\(url)'.")
-        return try Data(contentsOf: url)
+        let fileHandle = try FileHandle(forReadingFrom: url)
+        return fileHandle.readDataToEndOfFile()
     }
 }

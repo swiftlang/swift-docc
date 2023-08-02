@@ -47,7 +47,8 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
                 // we need to process JSON files only
                 if file.url.pathExtension.lowercased() == "json" {
                     do {
-                        let data = try Data(contentsOf: file.url)
+                        let fileHandle = try FileHandle(forReadingFrom: file.url)
+                        let data = fileHandle.readDataToEndOfFile()
                         renderNode = try RenderNode.decode(fromJSON: data)
                     } catch {
                         let diagnostic = Diagnostic(source: file.url,

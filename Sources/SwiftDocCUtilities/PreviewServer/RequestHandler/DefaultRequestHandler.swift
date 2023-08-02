@@ -28,7 +28,8 @@ struct DefaultRequestHandler: RequestHandlerFactory {
         where ChannelHandler.OutboundOut == HTTPServerResponsePart {
         
         return { context, head in
-            let response = try Data(contentsOf: self.rootURL.appendingPathComponent("index.html"))
+            let fileHandle = try FileHandle(forReadingFrom: self.rootURL.appendingPathComponent("index.html"))
+            let response = fileHandle.readDataToEndOfFile()
             
             var content = context.channel.allocator.buffer(capacity: response.count)
             content.writeBytes(response)

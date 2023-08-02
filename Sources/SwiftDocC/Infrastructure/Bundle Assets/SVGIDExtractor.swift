@@ -40,11 +40,11 @@ enum SVGIDExtractor {
     /// Returns nil if any errors are encountered or if an `id` attribute is
     /// not found in the given SVG.
     static func extractID(from svg: URL) -> String? {
-        guard let data = try? Data(contentsOf: svg) else {
+        guard let fileHandle = try? FileHandle(forReadingFrom: svg) else {
             return nil
         }
         
-        return _extractID(from: data)
+        return _extractID(from: fileHandle.readDataToEndOfFile())
     }
 }
 

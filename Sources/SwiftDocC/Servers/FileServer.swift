@@ -10,9 +10,6 @@
 
 import Foundation
 import SymbolKit
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 
 fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
 
@@ -175,7 +172,8 @@ public class FileSystemServerProvider: FileServerProvider {
     
     public func data(for path: String) -> Data? {
         let finalURL = directoryURL.appendingPathComponent(path)
-        return try? Data(contentsOf: finalURL)
+        let fileHandle = try? FileHandle(forReadingFrom: finalURL)
+        return fileHandle?.readDataToEndOfFile()
     }
     
 }
@@ -230,7 +228,9 @@ public class MemoryFileServerProvider: FileServerProvider {
         
         for file in enumerator {
             guard let file = file as? String else { fatalError("Enumerator returned an unexpected type.") }
-            guard let data = try? Data(contentsOf: URL(fileURLWithPath: path).appendingPathComponent(file)) else { continue }
+            guard let fileHandle = try? FileHandle(forReadingFrom: URL(fileURLWithPath: path).appendingPathComponent(file))
+            else { continue }
+            let data = fileHandle.readDataToEndOfFile()
             if recursive == false && file.contains("/") { continue } // skip if subfolder and recursive is disabled
             addFile(path: "/\(trimmedSubPath)/\(file)", data: data)
         }

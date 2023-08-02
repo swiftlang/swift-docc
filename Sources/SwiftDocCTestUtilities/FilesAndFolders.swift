@@ -200,7 +200,8 @@ public struct CopyOfFile: File, DataRepresentable {
         // to use `FileManager.default` directly here instead of `FileManagerProtocol`.
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: original.path, isDirectory: &isDirectory), !isDirectory.boolValue else { throw Error.notAFile(original) }
-        return try Data(contentsOf: original)
+        let fileHandle = try FileHandle(forReadingFrom: original)
+        return fileHandle.readDataToEndOfFile()
     }
     
     public func write(to url: URL) throws {

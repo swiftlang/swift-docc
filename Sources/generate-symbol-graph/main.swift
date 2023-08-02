@@ -206,7 +206,8 @@ func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
         isDirectory: false
     )
     
-    let symbolGraphData = try Data(contentsOf: symbolGraphURL)
+    let symbolGraphFileHandle = try FileHandle(forReadingFrom: symbolGraphURL)
+    let symbolGraphData = symbolGraphFileHandle.readDataToEndOfFile()
     return try JSONDecoder().decode(SymbolGraph.self, from: symbolGraphData)
 }
 

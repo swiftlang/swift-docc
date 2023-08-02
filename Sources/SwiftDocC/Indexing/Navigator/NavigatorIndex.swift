@@ -169,7 +169,10 @@ public class NavigatorIndex {
         
         let information = try environment.openDatabase(named: "information", flags: [])
         
-        let data = try Data(contentsOf: url.appendingPathComponent("availability.index", isDirectory: false))
+        let availabilityIndexFileHandle = try FileHandle(
+            forReadingFrom: url.appendingPathComponent("availability.index", isDirectory: false)
+        )
+        let data = availabilityIndexFileHandle.readDataToEndOfFile()
         let plistDecoder = PropertyListDecoder()
         let availabilityIndex = try plistDecoder.decode(AvailabilityIndex.self, from: data)
         let bundleIdentifier = bundleIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.bundleKey) ?? NavigatorIndex.UnknownBundleIdentifier

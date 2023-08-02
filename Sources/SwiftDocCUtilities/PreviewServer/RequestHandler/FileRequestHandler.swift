@@ -157,7 +157,8 @@ struct FileRequestHandler: RequestHandlerFactory {
                 
                 // Read the file contents
                 do {
-                    data = try Data(contentsOf: fileURL, options: .mappedIfSafe)
+                    let fileHandle = try FileHandle(forReadingFrom: fileURL)
+                    data = fileHandle.readDataToEndOfFile()
                     totalLength = data.count
                 } catch {
                     throw RequestError(status: .notFound)
