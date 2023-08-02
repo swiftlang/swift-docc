@@ -9,7 +9,6 @@
 */
 
 import Foundation
-import SwiftDocC
 import XCTest
 
 /*
