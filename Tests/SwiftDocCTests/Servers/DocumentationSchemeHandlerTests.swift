@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import HTTPTypes
 
 import XCTest
 @testable import SwiftDocC
@@ -21,33 +22,29 @@ class DocumentationSchemeHandlerTests: XCTestCase {
         forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
     
     func testDocumentationSchemeHandler() {
-        #if !os(Linux) && !os(Android) && !os(Windows)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         
-        let request = URLRequest(url:  baseURL.appendingPathComponent("/images/figure1.jpg"))
-        
+        let request = HTTPRequest(path: "/images/figure1.jpg")
+
         var (response, data) = topicSchemeHandler.response(to: request)
         XCTAssertNotNil(data)
         XCTAssertEqual(response.mimeType, "image/jpeg")
         
-        let failingRequest = URLRequest(url:  baseURL.appendingPathComponent("/not/found.jpg"))
+        let failingRequest = HTTPRequest(path: "/not/found.jpg")
         (response, data) = topicSchemeHandler.response(to: failingRequest)
         XCTAssertNil(data)
         
-        topicSchemeHandler.fallbackHandler = { (request: URLRequest) -> (URLResponse, Data)? in
-            guard let url = request.url else { return nil }
-            let response = URLResponse(url: url, mimeType: "text/html", expectedContentLength: helloWorldHTML.count, textEncodingName: nil)
+        topicSchemeHandler.fallbackHandler = { (request: HTTPRequest) -> (HTTPTypes.HTTPResponse, Data)? in
+            let response = HTTPResponse(mimeType: "text/html", expectedContentLength: helloWorldHTML.count)
             return (response, helloWorldHTML)
         }
         
         (response, data) = topicSchemeHandler.response(to: failingRequest)
         XCTAssertEqual(data, helloWorldHTML)
         XCTAssertEqual(response.mimeType, "text/html")
-        #endif
     }
     
     func testSetData() {
-        #if !os(Linux) && !os(Android) && !os(Windows)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         
         let data = "hello!".data(using: .utf8)!
@@ -55,7 +52,7 @@ class DocumentationSchemeHandlerTests: XCTestCase {
         
         XCTAssertEqual(
             topicSchemeHandler.response(
-                to: URLRequest(url: baseURL.appendingPathComponent("/data/a.txt"))
+                to: HTTPRequest(path: "/data/a.txt")
             ).1,
             data
         )
@@ -64,20 +61,16 @@ class DocumentationSchemeHandlerTests: XCTestCase {
         
         XCTAssertEqual(
             topicSchemeHandler.response(
-                to: URLRequest(url: baseURL.appendingPathComponent("/data/b.txt"))
+                to: HTTPRequest(path: "/data/b.txt")
             ).1,
             data
         )
         
         XCTAssertNil(
             topicSchemeHandler.response(
-                to: URLRequest(url: baseURL.appendingPathComponent("/data/a.txt"))
+                to: HTTPRequest(path: "/data/a.txt")
             ).1,
-            "a.txt should have been deleted because we set the daata to b.txt."
+            "a.txt should have been deleted because we set the data to b.txt."
         )
-        #endif
     }
 }
-
-
-

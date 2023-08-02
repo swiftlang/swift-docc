@@ -9,16 +9,17 @@
 */
 
 import Foundation
-
-#if canImport(WebKit)
-import WebKit
+import HTTPTypes
 
 @available(*, deprecated, renamed: "DocumentationSchemeHandler")
 public typealias TopicReferenceSchemeHandler = DocumentationSchemeHandler
 public class DocumentationSchemeHandler: NSObject {
-    
-    public typealias FallbackResponseHandler = (URLRequest) -> (URLResponse, Data)?
-    
+    enum Error: Swift.Error {
+        case noURLProvided
+    }
+
+    public typealias FallbackResponseHandler = (HTTPRequest) -> (HTTPTypes.HTTPResponse, Data)?
+
     // The schema to support the documentation.
     public static let scheme = "doc"
     public static var fullScheme: String {
@@ -71,7 +72,7 @@ public class DocumentationSchemeHandler: NSObject {
     }
     
     /// Returns a response to a given request.
-    public func response(to request: URLRequest) -> (URLResponse, Data?) {
+    public func response(to request: HTTPRequest) -> (HTTPTypes.HTTPResponse, Data?) {
         var (response, data) = fileServer.response(to: request)
         if data == nil, let fallbackHandler = fallbackHandler,
             let (fallbackResponse, fallbackData) = fallbackHandler(request) {
@@ -82,11 +83,47 @@ public class DocumentationSchemeHandler: NSObject {
     }
 }
 
+#if canImport(WebKit)
+import WebKit
+
 // MARK: WKURLSchemeHandler protocol
 extension DocumentationSchemeHandler: WKURLSchemeHandler {
 
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
-        let (response, data) = self.response(to: urlSchemeTask.request)
+        let request = urlSchemeTask.request
+
+        // Render authority pseudo-header in accordance with https://www.rfc-editor.org/rfc/rfc3986.html#section-3.2
+        let authority: String
+        guard let url = request.url else {
+            urlSchemeTask.didFailWithError(Error.noURLProvided)
+            return
+        }
+
+        let userAuthority: String
+        if let user = url.user {
+            userAuthority = "\(user)@"
+        } else {
+            userAuthority = ""
+        }
+
+        let portAuthority: String
+        if let port = url.port {
+            portAuthority = ":\(port)"
+        } else {
+            portAuthority = ""
+        }
+
+        authority = "\(userAuthority)\(url.host ?? "")\(portAuthority)"
+        let httpRequest = HTTPRequest(method: .get, scheme: request.url?.scheme, authority: authority, path: request.url?.path)
+
+        let (httpResponse, data) = self.response(to: httpRequest)
+
+        let response = URLResponse(
+            url: url,
+            mimeType: httpResponse.headerFields[.contentType], 
+            expectedContentLength: httpResponse.headerFields[.contentLength].flatMap(Int.init) ?? -1,
+            textEncodingName: httpResponse.headerFields[.contentEncoding]
+        )
         urlSchemeTask.didReceive(response)
         if let data = data {
             urlSchemeTask.didReceive(data)
