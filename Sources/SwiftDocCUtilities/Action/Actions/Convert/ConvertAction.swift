@@ -464,7 +464,7 @@ public struct ConvertAction: Action, RecreatingContext {
                         severity: .warning,
                         identifier: "org.swift.docc.MissingTechnologyRoot",
                          summary: "No TechnologyRoot to organize article-only documentation.",
-                         explanation: "Article-only documentation need a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
+                         explanation: "Article-only documentation needs a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
                      )
                 )
             )
