@@ -245,6 +245,35 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         """)
     }
 
+    func testDisplaysSource_WithEmojis_ProperlyHighlightsSource() {
+        let identifier = "org.swift.docc.test-identifier"
+        let summary = "Test diagnostic summary"
+        let explanation = "Test diagnostic explanation."
+        let baseURL =  Bundle.module.url(
+            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let source = baseURL.appendingPathComponent("article4.md")
+        let range = SourceLocation(line: 3, column: 1, source: source)..<SourceLocation(line: 3, column: 50, source: source)
+
+        let logger = Logger()
+        let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
+
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
+        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
+        consumer.receive([problem])
+        try? consumer.finalize()
+        print(logger.output)
+        XCTAssertEqual(logger.output, """
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+        \(explanation)
+         --> article4.md:3:1-3:50
+        1 | # Article 4
+        2 | 
+        3 + \u{001B}[1;32m# ⚠️ Warning: document is out of date. ⚠️\u{001B}[0;0m
+        4 | 
+        5 | This is article 4 and is here to show proper UTF-8 handling in the default diagnostic formatter.
+        """)
+    }
+
     func testDisplaysPossibleSolutionsSummary() {
         let identifier = "org.swift.docc.test-identifier"
         let summary = "Test diagnostic summary"
