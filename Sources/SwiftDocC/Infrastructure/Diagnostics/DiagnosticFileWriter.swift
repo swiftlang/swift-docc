@@ -29,14 +29,6 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
         receivedProblems.append(contentsOf: problems)
     }
     
-    public func flush() throws {
-        let fileContent = DiagnosticFile(problems: receivedProblems)
-        receivedProblems = []
-        let encoder = RenderJSONEncoder.makeEncoder(emitVariantOverrides: false)
-        try encoder.encode(fileContent).write(to: outputPath, options: .atomic)
-    }
-    
-    @available(*, deprecated, message: "Please use flush() instead.")
     public func finalize() throws {
         let fileContent = DiagnosticFile(problems: receivedProblems)
         receivedProblems = []

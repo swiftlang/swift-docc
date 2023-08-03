@@ -17,10 +17,10 @@ public protocol DiagnosticConsumer: AnyObject {
     func receive(_ problems: [Problem])
     
     /// Inform the consumer that the engine has sent all diagnostics for this build.
-    @available(*, deprecated, message: "Please use flush() instead.")
+    @available(*, deprecated, renamed: "flush()")
     func finalize() throws
     
-    /// Inform the consumer that the engine has sent all diagnostics.
+    /// Inform the consumer that the engine has sent all diagnostics in a given context.
     func flush() throws
 }
 
@@ -28,4 +28,12 @@ public protocol DiagnosticConsumer: AnyObject {
 public protocol DiagnosticFormattingConsumer: DiagnosticConsumer {
     /// Options for how problems should be formatted if written to output.
     var formattingOptions: DiagnosticFormattingOptions { get set }
+}
+
+public extension DiagnosticConsumer {
+    // Deprecated for supressing the warning emitted when calling `finalize()`
+    @available(*, deprecated)
+    func flush() throws {
+        try finalize()
+    }
 }
