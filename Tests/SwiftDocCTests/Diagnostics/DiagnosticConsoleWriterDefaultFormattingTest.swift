@@ -251,8 +251,8 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let explanation = "Test diagnostic explanation."
         let baseURL =  Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let source = baseURL.appendingPathComponent("article4.md")
-        let range = SourceLocation(line: 3, column: 1, source: source)..<SourceLocation(line: 3, column: 50, source: source)
+        let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
+        let range = SourceLocation(line: 39, column: 4, source: source)..<SourceLocation(line: 39, column: 53, source: source)
 
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
@@ -265,12 +265,12 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         XCTAssertEqual(logger.output, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
-         --> article4.md:3:1-3:50
-        1 | # Article 4
-        2 | 
-        3 + \u{001B}[1;32m# ⚠️ Warning: document is out of date. ⚠️\u{001B}[0;0m
-        4 | 
-        5 | This is article 4 and is here to show proper UTF-8 handling in the default diagnostic formatter.
+          --> TestTutorial.tutorial:39:4-39:53
+        37 |    }
+        38 |    
+        39 +    \u{001B}[1;32m@Section(title: "Create a New AR Project 💻") {\u{001B}[0;0m
+        40 |       @ContentAndMedia {
+        41 |          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
         """)
     }
 
