@@ -243,7 +243,7 @@ public class NavigatorIndex {
      
      - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
      */
-    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead")
+    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead") // remove after 5.8 is released
     public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
         let navigator = try NavigatorIndex.readNavigatorIndex(
             url: url,

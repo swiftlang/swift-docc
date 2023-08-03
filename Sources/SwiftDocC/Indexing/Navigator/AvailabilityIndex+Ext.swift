@@ -132,7 +132,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         - name: The name of the platform used also for display. Note: case sensitive.
         - id: The ID of the platform.
      */
-    @available(*, deprecated, renamed: "init(_:id:mask:)")
+    @available(*, deprecated, renamed: "init(_:id:mask:)") // remove after 5.7 is released
     public init(_ name: String, id: Int) {
         self.init(name, id: name, mask: id)
     }

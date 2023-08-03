@@ -17,22 +17,19 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental language support for Objective-C is enabled.
     ///
     /// > Note: Objective-C support is now enabled by default. Setting this property has no effect.
-    @available(
-        *, deprecated,
-        message: "Objective-C support is enabled by default. Setting this property has no effect."
-    )
+    @available(*, deprecated, message: "Objective-C support is enabled by default. Setting this property has no effect.")  // remove after 5.8 is released
     public var isExperimentalObjectiveCSupportEnabled = false
     
     /// Whether or not experimental support for emitting a JSON representation of the converted
     /// documentation's navigator index is enabled.
-    @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
+    @available(*, deprecated, message: "Render Index JSON is now emitted by default.") // remove after 5.8 is released
     public var isExperimentalJSONIndexEnabled = true
     
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
     /// Whether or not experimental support for parsing Doxygen commands is enabled.
-    @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+    @available(*, deprecated, message: "Doxygen support is now enabled by default.") // remove after 5.10 is released
     public var isExperimentalDoxygenSupportEnabled = false
     
     /// Creates a set of feature flags with the given values.

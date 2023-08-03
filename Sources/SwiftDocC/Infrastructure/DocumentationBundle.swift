@@ -91,12 +91,12 @@ public struct DocumentationBundle {
     public let themeSettings: URL?
 
     /// Default syntax highlighting to use for code samples in this bundle.
-    @available(*, deprecated, message: "Use 'info.defaultCodeListingLanguage' instead.")
+    @available(*, deprecated, message: "Use 'info.defaultCodeListingLanguage' instead.") // remove after 5.7 is released
     public var defaultCodeListingLanguage: String? {
         return info.defaultCodeListingLanguage
     }
     
-    @available(*, deprecated, message: "Use 'info.defaultAvailability' instead.")
+    @available(*, deprecated, message: "Use 'info.defaultAvailability' instead.") // remove after 5.7 is released
     public var defaultAvailability: DefaultAvailability? {
         return info.defaultAvailability
     }
@@ -122,7 +122,7 @@ public struct DocumentationBundle {
        - defaultCodeListingLanguage: The default language for code blocks.
        - defaultAvailability: Default availability information for modules in this bundle.
      */
-    @available(*, deprecated, message: "Use 'init(info:baseURL:...)' instead.")
+    @available(*, deprecated, message: "Use 'init(info:baseURL:...)' instead.") // remove after 5.7 is released
     public init(displayName: String, identifier: String, version: Version, baseURL: URL = URL(string: "/")!, attributedCodeListings: [String: AttributedCodeListing] = [:], symbolGraphURLs: [URL], markupURLs: [URL], miscResourceURLs: [URL], customHeader: URL? = nil, customFooter: URL? = nil, defaultCodeListingLanguage: String? = nil, defaultAvailability: DefaultAvailability? = nil) {
         self.init(
             info: Info(

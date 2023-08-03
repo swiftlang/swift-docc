@@ -223,7 +223,7 @@ public struct NodeURLGenerator {
         return components.url!
     }
     
-    @available(*, deprecated, message: "Use the static version of 'NodeURLGenerator.fileSafeURL(_:)' instead")
+    @available(*, deprecated, message: "Use the static version of 'NodeURLGenerator.fileSafeURL(_:)' instead") // remove after 5.8 is released
     public func fileSafeURL(_ url: URL) -> URL {
         return Self.fileSafeURL(url)
     }

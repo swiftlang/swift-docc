@@ -61,7 +61,7 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/displayName``
-    @available(*, deprecated, message: "Use 'bundleInfo.displayName' instead.")
+    @available(*, deprecated, message: "Use 'bundleInfo.displayName' instead.") // remove after 5.7 is released
     public var displayName: String {
         get {
             return bundleInfo.displayName
@@ -75,7 +75,7 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/identifier``
-    @available(*, deprecated, message: "Use 'bundleInfo.identifier' instead.")
+    @available(*, deprecated, message: "Use 'bundleInfo.identifier' instead.") // remove after 5.7 is released
     public var identifier: String {
         get {
             return bundleInfo.identifier
@@ -89,7 +89,7 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/version``
-    @available(*, deprecated, message: "Use 'bundleInfo.version' instead.")
+    @available(*, deprecated, message: "Use 'bundleInfo.version' instead.") // remove after 5.7 is released
     public var version: String {
         get {
             return bundleInfo.version ?? "0.0.1"
@@ -141,7 +141,7 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/defaultCodeListingLanguage``
-    @available(*, deprecated, message: "Use 'bundleInfo.defaultCodeListingLanguage' instead.")
+    @available(*, deprecated, message: "Use 'bundleInfo.defaultCodeListingLanguage' instead.") // remove after 5.7 is released
     public var defaultCodeListingLanguage: String? {
         get {
             return bundleInfo.defaultCodeListingLanguage
@@ -151,7 +151,7 @@ public struct ConvertRequest: Codable {
         }
     }
     
-    @available(*, deprecated, message: "Use 'init(bundleInfo:externalIDsToConvert:...)' instead.")
+    @available(*, deprecated, message: "Use 'init(bundleInfo:externalIDsToConvert:...)' instead.") // remove after 5.7 is released
     public init(
         externalIDsToConvert: [String]?,
         documentPathsToConvert: [String]? = nil,
