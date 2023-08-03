@@ -21,14 +21,6 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     private var diagnosticFormatter: DiagnosticConsoleFormatter
     private var problems: [Problem] = []
 
-    /// Creates a new instance of this class with the provided output stream and filter level.
-    /// - Parameter stream: The output stream to which this instance will write.
-    /// - Parameter filterLevel: Determines what diagnostics should be printed. This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified, diagnostics with a severity up to and including `.information` will be printed.
-    @available(*, deprecated, message: "Use init(_:formattingOptions:) instead")
-    public convenience init(_ stream: TextOutputStream = LogHandle.standardError, filterLevel: DiagnosticSeverity = .warning) {
-        self.init(stream, formattingOptions: [], baseURL: nil, highlight: nil)
-    }
-
     /// Creates a new instance of this class with the provided output stream.
     /// - Parameters:
     ///   - stream: The output stream to which this instance will write.

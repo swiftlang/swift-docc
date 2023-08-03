@@ -317,29 +317,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             try register(bundle)
         }
     }
-
-    /// Initializes a documentation context with a given `dataProvider` and `diagnosticConsumers`
-    /// and registers all the documentation bundles that `dataProvider` provides.
-    ///
-    /// - Parameters:
-    ///     - dataProvider: The data provider to register bundles from.
-    ///     - diagnosticEngine: The engine that will collect problems encountered during compilation.
-    ///     - diagnosticConsumers: A collection of types that can consume diagnostics. These will be registered with `diagnosticEngine`.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
-    @available(*, deprecated, message: "Use init(dataProvider:diagnosticEngine:) instead")
-    public init(dataProvider: DocumentationContextDataProvider, diagnosticEngine: DiagnosticEngine = .init(), diagnosticConsumers: [DiagnosticConsumer]) throws {
-        self.dataProvider = dataProvider
-        self.diagnosticEngine = diagnosticEngine
-        self.dataProvider.delegate = self
-
-        for consumer in diagnosticConsumers {
-            self.diagnosticEngine.add(consumer)
-        }
-
-        for bundle in dataProvider.bundles.values {
-            try register(bundle)
-        }
-    }
     
     /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
     ///

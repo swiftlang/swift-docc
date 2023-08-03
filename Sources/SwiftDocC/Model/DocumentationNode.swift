@@ -159,22 +159,6 @@ public struct DocumentationNode {
         updateAnchorSections()
     }
 
-    /// Initializes a documentation node to represent a symbol from a symbol graph.
-    ///
-    /// - Parameters:
-    ///   - reference: The unique reference to the node.
-    ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformNames: The names of the platforms for which the node is available.
-    ///   - moduleName: The name of the module that the symbol belongs to.
-    ///   - article: The documentation extension content for this symbol.
-    ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the node.
-    /// > Warning: Using this initializer will not report any diagnostics raised during the initialization of `DocumentationNode`.
-    @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleName:article:engine:) instead")
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, problems: inout [Problem]) {
-        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
-        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: DiagnosticEngine())
-    }
-
     /// Initializes a node without parsing its documentation source.
     ///
     /// - Parameters:

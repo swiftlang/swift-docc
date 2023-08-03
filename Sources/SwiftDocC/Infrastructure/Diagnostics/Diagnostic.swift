@@ -12,10 +12,6 @@ import Foundation
 import Markdown
 import SymbolKit
 
-// Keeping this around for backwards compatibility with older clients (rdar://73049176)
-@available(*, deprecated, message: "This typealias will be removed in the future. Use Diagnostic instead.")
-public typealias BasicDiagnostic = Diagnostic
-
 /// A diagnostic explains a problem or issue that needs the end-user's attention.
 public struct Diagnostic {
     /// The origin of the diagnostic, such as a file or process.
