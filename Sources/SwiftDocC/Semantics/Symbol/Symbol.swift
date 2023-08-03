@@ -118,12 +118,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// The name of the module extension in which the symbol is defined, if applicable.
     internal(set) public var extendedModule: String?
-
-    /// The names of any "bystander" modules required for this symbol, if it came from a cross-import overlay.
-    @available(*, deprecated, message: "Use crossImportOverlayModule instead") // remove after 5.8 is released
-    public var bystanderModuleNames: [String]? {
-        self.crossImportOverlayModule?.bystanderModules
-    }
     
     /// Optional cross-import module names of the symbol.
     internal(set) public var crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])?

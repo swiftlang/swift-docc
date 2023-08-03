@@ -230,41 +230,6 @@ public class NavigatorIndex {
         self.pathHasher = pathHasher
         self.navigatorTree = navigatorTree
     }
-    /**
-     Initialize an `NavigatorIndex` from a given path.
-     
-     - Parameters:
-        - url: The URL pointing to the path from which the index should be read.
-        - bundleIdentifier: The name of the bundle the index is referring to.
-        - readNavigatorTree: Indicates if the init needs to read the navigator tree from the disk, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
-        - presentationIdentifier: Indicates if the index has an indentifier useful for presentation contexts.
-     
-     - Throws: A `NavigatorIndex.Error` describing the nature of the problem.
-     
-     - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
-     */
-    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead") // remove after 5.8 is released
-    public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
-        let navigator = try NavigatorIndex.readNavigatorIndex(
-            url: url,
-            bundleIdentifier: bundleIdentifier,
-            readNavigatorTree: readNavigatorTree,
-            presentationIdentifier: presentationIdentifier
-        )
-        
-        self.init(
-            url: navigator.url,
-            presentationIdentifier: navigator.presentationIdentifier,
-            bundleIdentifier: navigator.bundleIdentifier,
-            environment: navigator.environment!,
-            database: navigator.database!,
-            availability: navigator.availability!,
-            information: navigator.information!,
-            availabilityIndex: navigator.availabilityIndex,
-            pathHasher: navigator.pathHasher,
-            navigatorTree: navigator.navigatorTree
-        )
-    }
     
     /**
      Initialize an `NavigatorIndex` from a given path with an empty tree.

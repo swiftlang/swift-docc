@@ -14,17 +14,6 @@ public struct FeatureFlags: Codable {
     /// (usually experimental) behavior in Swift-DocC.
     public static var current = FeatureFlags()
     
-    /// Whether or not experimental language support for Objective-C is enabled.
-    ///
-    /// > Note: Objective-C support is now enabled by default. Setting this property has no effect.
-    @available(*, deprecated, message: "Objective-C support is enabled by default. Setting this property has no effect.")  // remove after 5.8 is released
-    public var isExperimentalObjectiveCSupportEnabled = false
-    
-    /// Whether or not experimental support for emitting a JSON representation of the converted
-    /// documentation's navigator index is enabled.
-    @available(*, deprecated, message: "Render Index JSON is now emitted by default.") // remove after 5.8 is released
-    public var isExperimentalJSONIndexEnabled = true
-    
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
