@@ -157,12 +157,14 @@ class ConvertSubcommandTests: XCTestCase {
     func testInvalidTargetPathOptions() throws {
         let fakeRootPath = "/nonexistentrootfolder/subfolder"
         // Test throws on non-existing parent folder.
-        for path in ["/tmp/output", "/tmp", "/"] {
-            SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-            XCTAssertThrowsError(try Docc.Convert.parse([
-                "--output-path", fakeRootPath + path,
-                testBundleURL.path,
-            ]), "Did not refuse target folder path '\(path)'")
+        for outputOption in ["-o", "--output-path"] {
+            for path in ["/tmp/output", "/tmp", "/"] {
+                SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
+                XCTAssertThrowsError(try Docc.Convert.parse([
+                    outputOption, fakeRootPath + path,
+                    testBundleURL.path,
+                ]), "Did not refuse target folder path '\(path)'")
+            }
         }
     }
 
