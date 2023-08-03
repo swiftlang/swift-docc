@@ -124,19 +124,6 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         self.mask = try values.decode(ID.self, forKey: .mask)
     }
     
-    /**
-     Initialize a platform with the given display name and id.
-     Id is an integer used to shift bits and generate a mask for fast processing.
-     
-     - Parameters:
-        - name: The name of the platform used also for display. Note: case sensitive.
-        - id: The ID of the platform.
-     */
-    @available(*, deprecated, renamed: "init(_:id:mask:)") // remove after 5.7 is released
-    public init(_ name: String, id: Int) {
-        self.init(name, id: name, mask: id)
-    }
-    
     /// Create an interface language with the given display name, id, and integer mask.
     ///
     /// - Parameters:

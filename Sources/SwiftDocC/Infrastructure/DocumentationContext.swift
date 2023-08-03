@@ -2553,15 +2553,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter reference: The identifier for the topic whose file URL to locate.
     /// - Returns: If the reference is a reference to a known Markdown document, this function returns the article's URL, otherwise `nil`.
-    @available(*, deprecated, renamed: "documentURL(for:)") // remove after 5.7 is released
-    public func fileURL(for reference: ResolvedTopicReference) -> URL? {
-        documentURL(for: reference)
-    }
-    
-    /// Returns the document URL for the given article or tutorial reference.
-    ///
-    /// - Parameter reference: The identifier for the topic whose file URL to locate.
-    /// - Returns: If the reference is a reference to a known Markdown document, this function returns the article's URL, otherwise `nil`.
     public func documentURL(for reference: ResolvedTopicReference) -> URL? {
         if let node = topicGraph.nodes[reference], case .file(let url) = node.source {
             return url

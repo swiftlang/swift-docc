@@ -57,48 +57,6 @@ public struct ConvertRequest: Codable {
     /// The file location of the bundle to convert, if any.
     public var bundleLocation: URL?
     
-    /// The display name of the documentation bundle to convert.
-    ///
-    /// ## See Also
-    /// - ``DocumentationBundle/displayName``
-    @available(*, deprecated, message: "Use 'bundleInfo.displayName' instead.") // remove after 5.7 is released
-    public var displayName: String {
-        get {
-            return bundleInfo.displayName
-        }
-        set {
-            bundleInfo.displayName = newValue
-        }
-    }
-    
-    /// The identifier of the documentation bundle to convert.
-    ///
-    /// ## See Also
-    /// - ``DocumentationBundle/identifier``
-    @available(*, deprecated, message: "Use 'bundleInfo.identifier' instead.") // remove after 5.7 is released
-    public var identifier: String {
-        get {
-            return bundleInfo.identifier
-        }
-        set {
-            bundleInfo.identifier = newValue
-        }
-    }
-    
-    /// The version of the documentation bundle to convert.
-    ///
-    /// ## See Also
-    /// - ``DocumentationBundle/version``
-    @available(*, deprecated, message: "Use 'bundleInfo.version' instead.") // remove after 5.7 is released
-    public var version: String {
-        get {
-            return bundleInfo.version ?? "0.0.1"
-        }
-        set {
-            bundleInfo.version = newValue
-        }
-    }
-    
     /// The symbols graph data included in the documentation bundle to convert.
     ///
     /// ## See Also
@@ -136,57 +94,6 @@ public struct ConvertRequest: Codable {
     /// if the symbol fails to meet its provided requirements. This information in the page's ``RenderMetadata`` can be used to display
     /// a "View More" link that navigates the user to the full version of the documentation page.
     public var symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]?
-    
-    /// The default code listing language for the documentation bundle to convert.
-    ///
-    /// ## See Also
-    /// - ``DocumentationBundle/defaultCodeListingLanguage``
-    @available(*, deprecated, message: "Use 'bundleInfo.defaultCodeListingLanguage' instead.") // remove after 5.7 is released
-    public var defaultCodeListingLanguage: String? {
-        get {
-            return bundleInfo.defaultCodeListingLanguage
-        }
-        set {
-            bundleInfo.defaultCodeListingLanguage = newValue
-        }
-    }
-    
-    @available(*, deprecated, message: "Use 'init(bundleInfo:externalIDsToConvert:...)' instead.") // remove after 5.7 is released
-    public init(
-        externalIDsToConvert: [String]?,
-        documentPathsToConvert: [String]? = nil,
-        includeRenderReferenceStore: Bool? = nil,
-        bundleLocation: URL? = nil,
-        displayName: String,
-        identifier: String,
-        version: String,
-        symbolGraphs: [Data],
-        knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
-        markupFiles: [Data],
-        miscResourceURLs: [URL],
-        defaultCodeListingLanguage: String?
-    ) {
-        self.externalIDsToConvert = externalIDsToConvert
-        self.documentPathsToConvert = documentPathsToConvert
-        self.includeRenderReferenceStore = includeRenderReferenceStore
-        self.bundleLocation = bundleLocation
-        self.symbolGraphs = symbolGraphs
-        self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
-        self.markupFiles = markupFiles
-        self.tutorialFiles = []
-        self.miscResourceURLs = miscResourceURLs
-        self.featureFlags = FeatureFlags()
-        self.emitSymbolSourceFileURIs = true
-        
-        self.bundleInfo = DocumentationBundle.Info(
-            displayName: displayName,
-            identifier: identifier,
-            version: version,
-            defaultCodeListingLanguage: defaultCodeListingLanguage
-        )
-        
-        self.symbolIdentifiersWithExpandedDocumentation = nil
-    }
     
     /// Creates a request to convert in-memory documentation.
     /// - Parameters:
