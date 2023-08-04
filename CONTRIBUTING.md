@@ -175,11 +175,15 @@ We try to avoid source breaking changes, for example:
 
 That said, sometimes there are good reasons to make these changes. In those cases we make an effort to offer
 a backwards compatible transition by deprecating the old API, alongside the new API, and keeping the deprecated
-API for one full minor release. For example, if we deprecate an API sometime after the 5.5 release we keep the
-deprecated API for the remainder of the upcoming release (5.6) and the entirety of the next release (5.7).   
+API for at least one full minor release. For example, if we deprecate an API sometime after the 5.5 release we
+keep the deprecated API for the remainder of the upcoming release (5.6) and the entirety of the next release (5.7).   
 
-To indicate in-source when an was deprecated and when it we be removed, we add comments that say when we will
-remove that API. For example, `@available(*, deprecated) // remove after 5.7 is released`
+To indicate to API consumers how long the deprecated API will be available, include the version when we'll remove
+that API in the deprecation message. For example:
+
+```swift
+@available(*, deprecated, message: "Use 'UpdatedSymbolName' instead. This deprecated API will be removed after 5.7 is released")
+```
 
 ## Testing Swift-DocC
 
@@ -452,4 +456,4 @@ page.
 Once you've found an issue to work on,
 follow the above instructions for [Building Swift-DocC](#building-swift-docc).
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
