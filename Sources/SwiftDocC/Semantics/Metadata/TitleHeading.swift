@@ -15,8 +15,8 @@ import Markdown
 /// 
 /// The ``heading`` property will override the page's default title heading.
 ///
-/// @TitleHeading accepts an unnamed parameter containing containing the page's title heading.
-/// 
+/// The `@TitleHeading` directive accepts an unnamed parameter containing containing the page's title heading.
+///
 /// This directive is only valid within a top-level ``Metadata`` directive:
 /// ```markdown
 /// @Metadata {

@@ -15,7 +15,7 @@ import Markdown
 ///
 /// You can use this directive to set the image used when rendering a user-interface element representing the page.
 /// For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,
-/// or the card image used to represent this page when using the ``Links`` directive and the ``Links/detailedGrid``
+/// or the card image used to represent this page when using the ``Links`` directive and the ``Links/VisualStyle/detailedGrid``
 /// visual style.
 public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective

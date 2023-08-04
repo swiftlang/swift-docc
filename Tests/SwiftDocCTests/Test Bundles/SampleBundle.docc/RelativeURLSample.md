@@ -2,6 +2,7 @@
 
 @Metadata {
     @CallToAction(url: "files/ExternalSample.zip", purpose: download)
+    @PageKind(sampleCode)
 }
 
 This sample references a file on the web server.
