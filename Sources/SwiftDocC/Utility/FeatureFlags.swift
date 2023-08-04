@@ -18,7 +18,7 @@ public struct FeatureFlags: Codable {
     public var isExperimentalDeviceFrameSupportEnabled = false
 
     /// Whether or not experimental support for parsing Doxygen commands is enabled.
-    @available(*, deprecated, message: "Doxygen support is now enabled by default.") // remove after 5.10 is released
+    @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
     public var isExperimentalDoxygenSupportEnabled = false
     
     /// Creates a set of feature flags with the given values.

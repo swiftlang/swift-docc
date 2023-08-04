@@ -81,7 +81,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 
     /// The computed label for this Call to Action, whether provided directly via ``label`` or
     /// indirectly via ``purpose``.
-    @available(*, deprecated, renamed: "buttonLabel(for:)") // remove after 5.10 is released
+    @available(*, deprecated, renamed: "buttonLabel(for:)", message: "Use 'buttonLabel(for:)' instead. This deprecated API will be removed after 5.10 is released")
     public var buttonLabel: String {
         return buttonLabel(for: nil)
     }
@@ -189,7 +189,7 @@ extension CallToAction {
 extension CallToAction.Purpose {
     /// The label that will be applied to a Call to Action with this purpose if it doesn't provide
     /// a separate label.
-    @available(*, deprecated, message: "Replaced with 'CallToAction.buttonLabel(for:)'.") // remove after 5.10 is released
+    @available(*, deprecated, message: "Use 'CallToAction.buttonLabel(for:)' instead. This deprecated API will be removed after 5.10 is released")
     public var defaultLabel: String {
         return defaultLabel(for: nil)
     }

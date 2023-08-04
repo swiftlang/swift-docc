@@ -33,7 +33,7 @@ public struct Diagnostic {
     /// A brief summary that describe the problem or issue.
     public var summary: String
     
-    @available(*, deprecated, renamed: "summary") // remove after 5.10 is released
+    @available(*, deprecated, renamed: "summary", message: "Use 'summary' instead. This deprecated API will be removed after 5.10 is released")
     public var localizedSummary: String {
         return summary
     }
@@ -41,7 +41,7 @@ public struct Diagnostic {
     /// Additional details that explain the the problem or issue to the end-user in plain language.
     public var explanation: String?
     
-    @available(*, deprecated, renamed: "explanation") // remove after 5.10 is released
+    @available(*, deprecated, renamed: "explanation", message: "Use 'explanation' instead. This deprecated API will be removed after 5.10 is released")
     public var localizedExplanation: String? {
         return explanation
     }
@@ -85,14 +85,14 @@ public extension Diagnostic {
 
 // MARK: Deprecated
 
-@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.") // remove after 5.10 is released
+@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released")
 extension Diagnostic: DescribedError {
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.") // remove after 5.10 is released
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released")
     var localizedDescription: String {
         return DiagnosticConsoleWriter.formattedDescription(for: self)
     }
 
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.") // remove after 5.10 is released
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released")
     public var errorDescription: String {
         return DiagnosticConsoleWriter.formattedDescription(for: self)
     }

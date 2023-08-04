@@ -99,7 +99,7 @@ extension Docc {
         @Flag(help: .hidden)
         public var index = false
         
-        @available(*, deprecated, renamed: "formatConsoleOutputForTools") // remove after 5.10 is released
+        @available(*, deprecated, renamed: "formatConsoleOutputForTools", message: "Use 'formatConsoleOutputForTools' instead. This deprecated API will be removed after 5.10 is released")
         public var emitFixits: Bool {
             return formatConsoleOutputForTools
         }
@@ -171,7 +171,7 @@ extension Docc {
         ///
         /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
         @Flag(help: .hidden)
-        @available(*, deprecated, message: "Doxygen support is now enabled by default.") // remove after 5.10 is released
+        @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
         public var experimentalParseDoxygenCommands = false
 
         @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
