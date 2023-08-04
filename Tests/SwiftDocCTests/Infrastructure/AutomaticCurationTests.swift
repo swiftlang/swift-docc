@@ -539,4 +539,35 @@ class AutomaticCurationTests: XCTestCase {
             ]
         )
     }
+    
+    // Ensures that manually curated sample code articles are not also
+    // automatically curated.
+    func testSampleCodeArticlesRespectManualCuration() throws {
+        let renderNode = try renderNode(atPath: "/documentation/SomeSample", fromTestBundleNamed: "SampleBundle")
+        
+        guard renderNode.topicSections.count == 2 else {
+            XCTFail("Expected to find '2' topic sections. Found: \(renderNode.topicSections.count.description.singleQuoted).")
+            return
+        }
+        
+        XCTAssertEqual(renderNode.topicSections[0].title, "Examples")
+        XCTAssertEqual(
+            renderNode.topicSections[0].identifiers,
+            [
+                "doc://org.swift.docc.sample/documentation/SampleBundle/MySample",
+                "doc://org.swift.docc.sample/documentation/SampleBundle/MyLocalSample",
+                "doc://org.swift.docc.sample/documentation/SampleBundle/RelativeURLSample",
+                "doc://org.swift.docc.sample/documentation/SampleBundle/MyArticle",
+                "doc://org.swift.docc.sample/documentation/SampleBundle/MyExternalSample",
+            ]
+        )
+        
+        XCTAssertEqual(renderNode.topicSections[1].title, "Articles")
+        XCTAssertEqual(
+            renderNode.topicSections[1].identifiers,
+            [
+                "doc://org.swift.docc.sample/documentation/SampleBundle/MyUncuratedSample",
+            ]
+        )
+    }
 }
