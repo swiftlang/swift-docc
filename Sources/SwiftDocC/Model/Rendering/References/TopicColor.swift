@@ -27,14 +27,12 @@ public struct TopicColor: Codable, Hashable {
     ///
     ///  - term `yellow`: A context-dependent yellow color.
     ///
-    ///  @Comment {
-    ///     This value is optional to allow for a future where topic colors
-    ///     can be defined by something besides the standard color identifiers.
-    ///
-    ///     For example, we may allow fully custom colors in the future and allow
-    ///     for providing some kind of `ColorReference` here.
-    ///  }
     public let standardColorIdentifier: String?
+    // The color identifier is optional to allow for a future where topic colors
+    // can be defined by something besides the standard color identifiers.
+    //
+    // For example, we may allow fully custom colors in the future and allow
+    // for providing some kind of `ColorReference` here.
     
     /// Create a topic color with the given standard color identifier.
     public init(standardColorIdentifier: String) {

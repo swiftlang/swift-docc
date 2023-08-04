@@ -281,7 +281,7 @@ class SampleDownloadTests: XCTestCase {
     func testExplicitNullChecksum() throws {
         let identifier = RenderReferenceIdentifier("/test/sample.zip")
         let originalURL = try XCTUnwrap(URL(string: "/test/sample.zip"))
-        var reference = DownloadReference(identifier: identifier, verbatimURL: originalURL, checksum: nil)
+        let reference = DownloadReference(identifier: identifier, verbatimURL: originalURL, checksum: nil)
         let encodedReference = try JSONEncoder().encode(reference)
         let encodedJson = try XCTUnwrap(String(data: encodedReference, encoding: .utf8))
         XCTAssert(encodedJson.contains(#""checksum":null"#))
