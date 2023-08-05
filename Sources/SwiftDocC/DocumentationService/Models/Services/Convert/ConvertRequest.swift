@@ -132,9 +132,9 @@ public struct ConvertRequest: Codable {
     
     /// The symbol identifiers that have an expanded documentation page available if they meet the associated access level requirement.
     ///
-    /// DocC sets the ``RenderMetadata/hasExpandedDocumentationForSymbols`` property to `true`
-    /// for these symbols if they meet the provided  requirements, so that renderers can display a "View More" link
-    /// that navigates the user to the full version of the documentation page.
+    /// For each of these symbols DocC sets the ``RenderMetadata/hasNoExpandedDocumentation`` property to `true`
+    /// if the symbol fails to meet its provided requirements. This information in the page's ``RenderMetadata`` can be used to display
+    /// a "View More" link that navigates the user to the full version of the documentation page.
     public var symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]?
     
     /// The default code listing language for the documentation bundle to convert.
