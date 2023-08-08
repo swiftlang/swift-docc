@@ -19,7 +19,7 @@ final class DirectiveArgumentWrappedTests: XCTestCase {
     
     // MARK: - Declarations
     
-    // A custom type that
+    // A custom type that is directive-argument-convertible
     enum Something: String, CaseIterable, DirectiveArgumentValueConvertible {
         case something
     }
@@ -151,6 +151,7 @@ final class DirectiveArgumentWrappedTests: XCTestCase {
     
     // MARK: Non-convertible values
     
+    // A custom type that _isn't_ directive-argument-convertible
     enum SomethingNonConvertible: String {
         case someValue
     }
