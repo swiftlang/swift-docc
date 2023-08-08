@@ -243,11 +243,11 @@ extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertibl
 }
 
 protocol _OptionalDirectiveArgument {
-    associatedtype WrappedArgument: DirectiveArgumentValueConvertible
+    associatedtype WrappedArgument
     var wrapped: WrappedArgument? { get }
     init(wrapping: WrappedArgument?)
 }
-extension Optional: _OptionalDirectiveArgument where Wrapped: DirectiveArgumentValueConvertible {
+extension Optional: _OptionalDirectiveArgument  {
     typealias WrappedArgument = Wrapped
     var wrapped: WrappedArgument? {
         switch self {
@@ -266,8 +266,9 @@ extension Optional: _OptionalDirectiveArgument where Wrapped: DirectiveArgumentV
     }
 }
 
-extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
-    // Expected argument configurations
+extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument, Value.WrappedArgument: DirectiveArgumentValueConvertible {
+    
+    // When the wrapped value is DirectiveArgumentValueConvertible, additional arguments may be omitted
     
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
@@ -284,6 +285,29 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
     ) {
         self = .init(value: wrappedValue, name: name, hiddenFromDocumentation: hiddenFromDocumentation)
     }
+    
+    private init(
+        value: Value?,
+        name: _DirectiveArgumentName,
+        hiddenFromDocumentation: Bool
+    ) {
+        let argumentValueType = Value.WrappedArgument.self
+        
+        self = .init(
+            value: value,
+            name: name,
+            parseArgument: { _, argument in
+                Value(wrapping: argumentValueType.init(rawDirectiveArgumentValue: argument))
+            },
+            allowedValues: argumentValueType.allowedValues(),
+            hiddenFromDocumentation: hiddenFromDocumentation
+        )
+    }
+}
+
+extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
+    
+    // Expected argument configurations
     
     @_disfavoredOverload
     init(
@@ -304,24 +328,6 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
         hiddenFromDocumentation: Bool = false
     ) {
         self = .init(value: wrappedValue, name: name, parseArgument: parseArgument, allowedValues: allowedValues, hiddenFromDocumentation: hiddenFromDocumentation)
-    }
-    
-    private init(
-        value: Value?,
-        name: _DirectiveArgumentName,
-        hiddenFromDocumentation: Bool
-    ) {
-        let argumentValueType = Value.WrappedArgument.self
-        
-        self = .init(
-            value: value,
-            name: name,
-            parseArgument: { _, argument in
-                Value(wrapping: argumentValueType.init(rawDirectiveArgumentValue: argument))
-            },
-            allowedValues: argumentValueType.allowedValues(),
-            hiddenFromDocumentation: hiddenFromDocumentation
-        )
     }
     
     private init(

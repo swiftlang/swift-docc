@@ -149,6 +149,38 @@ final class DirectiveArgumentWrappedTests: XCTestCase {
         allowedValues: ["one", "two", "three"])
     var optionalCustomValueWithAllowedValuesAndDefaultValue: Something? = .something
     
+    // MARK: Non-convertible values
+    
+    enum SomethingNonConvertible: String {
+        case someValue
+    }
+    
+    @DirectiveArgumentWrapped(
+        parseArgument: { _, _ in .someValue }
+    )
+    var nonConvertibleValueWithCustomParsing: SomethingNonConvertible
+    
+    @DirectiveArgumentWrapped(
+        parseArgument: { _, _ in .someValue }
+    )
+    var nonConvertibleValueWithCustomParsingAndDefaultValue: SomethingNonConvertible = .someValue
+    
+    @DirectiveArgumentWrapped(
+        parseArgument: { _, _ in .someValue }
+    )
+    var optionalNonConvertibleValueWithCustomParsing: SomethingNonConvertible?
+    
+    @DirectiveArgumentWrapped(
+        parseArgument: { _, _ in .someValue }
+    )
+    var optionalNonConvertibleValueWithCustomParsingAndNilDefault: SomethingNonConvertible? = nil
+    
+    @DirectiveArgumentWrapped(
+        parseArgument: { _, _ in .someValue }
+    )
+    var optionalNonConvertibleValueWithCustomParsingAndDefaultValue: SomethingNonConvertible? = .someValue
+    
+    
     // MARK: - Test assertions
     
     func testTypeDisplayName() throws {
@@ -279,5 +311,27 @@ final class DirectiveArgumentWrappedTests: XCTestCase {
         XCTAssertEqual(_optionalCustomValueWithAllowedValuesAndDefaultValue.typeDisplayName, "Something = something")
         XCTAssertEqual(_optionalCustomValueWithAllowedValuesAndDefaultValue.allowedValues, ["one", "two", "three"], "Argument has explicitly specified allowed values")
         XCTAssertEqual(_optionalCustomValueWithAllowedValuesAndDefaultValue.required, false, "Argument with optional type is not required")
+        
+        // MARK: Non-convertible values
+
+        XCTAssertEqual(_nonConvertibleValueWithCustomParsing.typeDisplayName, "SomethingNonConvertible")
+        XCTAssertEqual(_nonConvertibleValueWithCustomParsing.allowedValues, nil)
+        XCTAssertEqual(_nonConvertibleValueWithCustomParsing.required, true, "Argument without default value is required")
+        
+        XCTAssertEqual(_nonConvertibleValueWithCustomParsingAndDefaultValue.typeDisplayName, "SomethingNonConvertible = someValue")
+        XCTAssertEqual(_nonConvertibleValueWithCustomParsingAndDefaultValue.allowedValues, nil)
+        XCTAssertEqual(_nonConvertibleValueWithCustomParsingAndDefaultValue.required, false, "Argument with default value is not required")
+        
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsing.typeDisplayName, "SomethingNonConvertible?")
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsing.allowedValues, nil)
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsing.required, false, "Argument with optional type is not required")
+        
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsingAndNilDefault.typeDisplayName, "SomethingNonConvertible?")
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsingAndNilDefault.allowedValues, nil)
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsingAndNilDefault.required, false, "Argument with optional type is not required")
+        
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsingAndDefaultValue.typeDisplayName, "SomethingNonConvertible = someValue")
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsingAndDefaultValue.allowedValues, nil)
+        XCTAssertEqual(_optionalNonConvertibleValueWithCustomParsingAndDefaultValue.required, false, "Argument with optional type is not required")
     }
 }
