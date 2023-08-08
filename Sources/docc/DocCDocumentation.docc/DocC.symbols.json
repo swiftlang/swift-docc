@@ -3478,7 +3478,7 @@
             "text" : "For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,"
           },
           {
-            "text" : "or the card image used to represent this page when using the ``Links`` directive and the ``Links\/detailedGrid``"
+            "text" : "or the card image used to represent this page when using the ``Links`` directive and the ``Links\/VisualStyle\/detailedGrid``"
           },
           {
             "text" : "visual style."
@@ -5112,7 +5112,7 @@
             "text" : ""
           },
           {
-            "text" : "@TitleHeading accepts an unnamed parameter containing containing the page's title heading."
+            "text" : "The `@TitleHeading` directive accepts an unnamed parameter containing containing the page's title heading."
           },
           {
             "text" : ""
