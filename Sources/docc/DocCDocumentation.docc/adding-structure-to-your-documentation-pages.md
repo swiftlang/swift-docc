@@ -150,7 +150,7 @@ with the symbol path of the symbol you're organizing and rename the file accordi
 # ``SlothCreator/Sloth``
 ```
 
-> Important: The symbol path for the page title of an extension file need to start
+> Important: The symbol path for the page title of an extension file needs to start
 with the name of a top-level symbol or the name of the framework.
 
 The Extension File template includes a `Topics` section with a single named 
@@ -204,9 +204,9 @@ Include a summary and an Overview section. If the Overview becomes long,
 consider turning it into an article and linking to it from one of the 
 collection's topic groups.
 
-To link to a collection, use the less-than symbol (<), the `doc` keyword, a 
-colon (:), the name of the collection, and the greater-than symbol 
-(>). Don’t include the collection's file extension in the name. 
+To link to a collection, use the less-than symbol (`<`), the `doc` keyword, a 
+colon (`:`), the name of the collection, and the greater-than symbol 
+(`>`). Don’t include the collection's file extension in the name. 
 
 ```markdown
 ### Creating Sloths
