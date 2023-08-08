@@ -74,6 +74,15 @@ final class DirectiveArgumentWrappedTests: XCTestCase {
     @DirectiveArgumentWrapped
     var optionalCustomValueWithDefault: Something? = .something
     
+    @DirectiveArgumentWrapped
+    var optionalBooleanWithNilDefault: Bool? = nil
+
+    @DirectiveArgumentWrapped
+    var optionalNumberWithNilDefault: Int? = nil
+
+    @DirectiveArgumentWrapped
+    var optionalCustomValueWithNilDefault: Something? = nil
+    
     // MARK: Explicit allowed values
     
     // Non-optional
@@ -188,6 +197,20 @@ final class DirectiveArgumentWrappedTests: XCTestCase {
         XCTAssertEqual(_optionalCustomValue.allowedValues, ["something"])
         XCTAssertEqual(_optionalCustomValue.required, false, "Argument with optional type is not required")
 
+        // With nil default values
+        
+        XCTAssertEqual(_optionalBooleanWithNilDefault.typeDisplayName, "Bool?")
+        XCTAssertEqual(_optionalBooleanWithNilDefault.allowedValues, ["true", "false"])
+        XCTAssertEqual(_optionalBooleanWithNilDefault.required, false, "Argument with optional type is not required")
+
+        XCTAssertEqual(_optionalNumberWithNilDefault.typeDisplayName, "Int?")
+        XCTAssertEqual(_optionalNumberWithNilDefault.allowedValues, nil)
+        XCTAssertEqual(_optionalNumberWithNilDefault.required, false, "Argument with optional type is not required")
+
+        XCTAssertEqual(_optionalCustomValueWithNilDefault.typeDisplayName, "Something?")
+        XCTAssertEqual(_optionalCustomValueWithNilDefault.allowedValues, ["something"])
+        XCTAssertEqual(_optionalCustomValueWithNilDefault.required, false, "Argument with optional type is not required")
+        
         // With default values
 
         XCTAssertEqual(_optionalBooleanWithDefault.typeDisplayName, "Bool = true")
