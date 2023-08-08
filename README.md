@@ -144,7 +144,21 @@ The next time you invoke a documentation build with the "Build Documentation"
 button in Xcode's Product menu, your custom `docc` will be used for the build.
 You can confirm that your custom `docc` is being used by opening the latest build
 log in Xcode's report navigator and expanding the "Compile documentation" step.
-  
+
+### Invoking `docc` from Swift Package Manager
+
+You can also test a locally built version of Swift-DocC using the Swift Package
+Manager from the command line. The Swift-DocC SwiftPM plugin will try to read
+`DOCC_EXEC` environment variable value, and use the path you provded if it's set.
+
+  1. In your project's `Package.swift`, add a dependency on the [`Swift-DocC Plugin`](https://github.com/apple/swift-docc-plugin).
+  2. Set the `DOCC_EXEC` environment variable and run the documentation generation
+     command:
+
+        ```bash
+        DOCC_EXEC=/path/to/docc swift package generate-documentation
+        ```
+
 ## Using `docc` to build and preview documentation
 
 The preferred way of building documentation for your Swift package is by using

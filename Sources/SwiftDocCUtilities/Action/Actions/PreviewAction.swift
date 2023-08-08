@@ -163,9 +163,11 @@ public final class PreviewAction: Action, RecreatingContext {
         // Preview the output and monitor the source bundle for changes.
         do {
             print(String(repeating: "=", count: 40), to: &logHandle)
-            print("Starting Local Preview Server", to: &logHandle)
-            printPreviewAddresses(base: URL(string: "http://localhost:\(port)")!)
-            print(String(repeating: "=", count: 40), to: &logHandle)
+            if let previewURL = URL(string: "http://localhost:\(port)") {
+                print("Starting Local Preview Server", to: &logHandle)
+                printPreviewAddresses(base: previewURL)
+                print(String(repeating: "=", count: 40), to: &logHandle)
+            }
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
@@ -262,11 +264,19 @@ extension PreviewAction {
 #endif
 
 extension DocumentationContext {
+    
+    /// A collection of non-implicit root modules
+    var renderRootModules: [ResolvedTopicReference] {
+        get throws {
+            try rootModules.filter({ try !entity(with: $0).isVirtual })
+        }
+    }
+    
     /// Finds the module and technology pages in the context and returns their paths.
     func previewPaths() throws -> [String] {
         let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
         
-        let rootModules = try rootModules.filter { try !entity(with: $0).isVirtual }
+        let rootModules = try renderRootModules
         
         return (rootModules + rootTechnologies).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString

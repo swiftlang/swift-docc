@@ -78,7 +78,7 @@ extension SourceRepository {
                 """
             )
         case let (sourceService?, sourceServiceBaseURL?, checkoutPath?):
-            guard let sourceServiceBaseURL = URL(string: sourceServiceBaseURL) else {
+            guard let sourceServiceBaseURL = URL(string: sourceServiceBaseURL), sourceServiceBaseURL.scheme != nil, sourceServiceBaseURL.host != nil else {
                 throw ValidationError("Invalid URL '\(sourceServiceBaseURL)' for '--source-service-base-url' argument.")
             }
             

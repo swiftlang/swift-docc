@@ -275,7 +275,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitLineBreak(_ lineBreak: LineBreak) -> [RenderContent] {
-        return [RenderInlineContent.text(" ")]
+        return [RenderInlineContent.text("\n")]
     }
     
     mutating func visitEmphasis(_ emphasis: Emphasis) -> [RenderContent] {
@@ -346,40 +346,12 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [RenderContent] {
-        switch blockDirective.name {
-        case Snippet.directiveName:
-            guard let snippet = Snippet(from: blockDirective, for: bundle, in: context) else {
-                return []
-            }
-            
-            guard let snippetReference = resolveSymbolReference(destination: snippet.path),
-                  let snippetEntity = try? context.entity(with: snippetReference),
-                  let snippetSymbol = snippetEntity.symbol,
-                  let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
-                return []
-            }
-            
-            if let requestedSlice = snippet.slice,
-               let requestedLineRange = snippetMixin.slices[requestedSlice] {
-                // Render only the slice.
-                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
-                let lines = snippetMixin.lines[lineRange]
-                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
-                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
-            } else {
-                // Render the whole snippet with its explanation content.
-                let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
-                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
-                return docCommentContent + [code]
-            }
-        default:
-            guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
-                return []
-            }
-            
-            return renderableDirective.render(blockDirective, with: &self)
+
+        guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
+            return []
         }
+            
+        return renderableDirective.render(blockDirective, with: &self)
     }
 
     func defaultVisit(_ markup: Markup) -> [RenderContent] {

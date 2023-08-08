@@ -96,12 +96,15 @@ public final class DiagnosticEngine {
         }
     }
     
+    @available(*, deprecated, renamed: "flush()")
     public func finalize() {
-        workQueue.async { [weak self] in
-            // If the engine isn't around then return early
-            guard let self = self else { return }
+        flush()
+    }
+    
+    public func flush() {
+        workQueue.sync {
             for consumer in self.consumers.sync({ $0.values }) {
-                try? consumer.finalize()
+                try? consumer.flush()
             }
         }
     }
