@@ -23,6 +23,7 @@ import Markdown
 /// - ``TechnologyRoot``
 /// - ``DisplayName``
 /// - ``PageImage``
+/// - ``PageColor``
 /// - ``CallToAction``
 /// - ``Availability``
 /// - ``PageKind``

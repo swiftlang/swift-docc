@@ -79,7 +79,26 @@ of a green hue.
 
 As a general rule, the default color properties provided by DocC assumes a
 naming convention where "fill" colors are used for backgrounds and "figure"
-colors are used for foreground colors, like text.
+colors are used for foreground colors, like text. Note that colors defined in 
+`theme-settings.json` will be used across all pages of your documentation bundle.
+
+**Changing a color on for a specific article page**
+
+You can also use a ``PageColor`` metadata directive to set the fill color for an
+intro section of a specific article:
+
+```
+# What's New in SlothCreator
+
+@Metadata {
+    @PageColor(blue)
+}
+
+...
+```
+
+`@PageColor` only supports a subset of predefined color values: `blue`,
+`gray`, `green`, `orange`, `purple`, `red`, `yellow`.  
 
 > Tip:
 > For a more complete example of a fully customized documentation website, you
