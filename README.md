@@ -35,12 +35,14 @@ There are multiple ways you can make use of DocC depending on your use case:
 **1. For standalone documentation:**
 
 If you have Xcode installed, it's recommended to generate documentation using the `xcrun` command.
-You can get DocC working by invoking:
-```
-xcrun docc
-```
-in your terminal.
+You can get DocC working by invoking `xcrun docc` in your terminal.
+
 Swift-DocC is also included in the toolchain for both macOS and Linux.
+
+To see instructions on how to use DocC from the CLI run
+```
+docc --help
+```
 
 **2. For documenting frameworks via SPM:**
 
