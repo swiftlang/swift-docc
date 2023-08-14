@@ -8,7 +8,12 @@ For an example of Swift-DocC in action, check out
 Much of Apple's developer documentation,
 from [Reference documentation](https://developer.apple.com/documentation/GroupActivities)
 to [Tutorials](https://developer.apple.com/tutorials/swiftui),
+and [long-form content](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
 is built using Swift-DocC.
+
+To learn more about the essentials of this tool 
+refer to the
+[user documentation](https://www.swift.org/documentation/docc).
 
 Swift-DocC is being actively developed. For more information about the
 Swift-DocC project, see the introductory blog post
@@ -20,11 +25,44 @@ on [Swift.org](https://swift.org/documentation/docc).
 The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
 the best place to get help with Swift-DocC and discuss future plans.
 
+## Getting Started with DocC
+
+`docc` is the command line interface (CLI) for Swift-DocC and provides
+support for converting and previewing DocC documentation.
+
+There are multiple ways you can make use of DocC depending on your use case:
+
+**1. For standalone documentation:**
+
+If you have Xcode installed, it's recommended to generate documentation using the `xcrun` command.
+You can get DocC working by invoking:
+```
+xcrun docc
+```
+in your terminal.
+Swift-DocC is also included in the toolchain for both macOS and Linux.
+
+**2. For documenting frameworks via SPM:**
+
+If you want to generate documentation for your Swift package we recommend using the Swift-DocC Plugin. Please
+refer to the Plugin's [documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/) to get started with 
+[building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
+and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
+
+**3. For documenting apps, frameworks, and packages using Xcode:**
+
+If you want to generate an API reference for your project you can use DocC via the Xcode GUI.
+Please refer to the Xcode [documentation](https://developer.apple.com/documentation/xcode/documenting-apps-frameworks-and-packages)
+to learn the essentials of how to get started.
+
 ## Writing and Publishing Documentation with Swift-DocC
 
-If you're looking to write and publish documentation with Swift-DocC, 
-the best way to get started is with Swift-DocC's
-[user documentation](https://www.swift.org/documentation/docc).
+The Starter Template provides the quickest, and easiest way to create a new article-only documentation website making use of DocC. 
+To get started just click "[use the template](https://github.com/sofiaromorales/DocC-Starter-Template)"!
+
+If you want to learn how to write and format your documentation please refer to
+[Formatting Your Documentation Content](https://www.swift.org/documentation/docc/formatting-your-documentation-content).
+For publishing go to [Distributing Documentation to Other Developers](https://www.swift.org/documentation/docc/distributing-documentation-to-other-developers).
 
 ## Technical Overview and Related Projects
 
@@ -34,24 +72,24 @@ to create a final archive containing the compiled documentation.
 
 More concretely, Swift-DocC understands the following kinds of inputs:
 
-  1. _Symbol Graph_ files with the `.symbols.json` extension.
-     _Symbol Graph_ files are a machine-readable representation of a module's APIs, 
-     including their documentation comments and relationship with one another.
+ 1. _Symbol Graph_ files with the `.symbols.json` extension.
+   _Symbol Graph_ files are a machine-readable representation of a module's APIs, 
+   including their documentation comments and relationship with one another.
 
-  2. A Documentation Catalog with the `.docc` extension. 
-     Documentation Catalogs can include additional documentation content like the following:
-   
-     - Documentation markup files with the `.md` extension. Documentation markup files can
-       be used to extend documentation for symbols and to write free-form articles.
+ 2. A Documentation Catalog with the `.docc` extension. 
+   Documentation Catalogs can include additional documentation content like the following:
+  
+   - Documentation markup files with the `.md` extension. Documentation markup files can
+    be used to extend documentation for symbols and to write free-form articles.
  
-     - Tutorial files with the `.tutorial` extension. Tutorial files are used to author
-       step-by-step instructions on how to use a framework.
+   - Tutorial files with the `.tutorial` extension. Tutorial files are used to author
+    step-by-step instructions on how to use a framework.
  
-     - Additional documentation assets with known extensions like `.png`, `.jpg`, `.mov`,
-       and `.zip`.
+   - Additional documentation assets with known extensions like `.png`, `.jpg`, `.mov`,
+    and `.zip`.
  
-     - An `Info.plist` file containing metadata such as the name of the documented module. 
-       This file is optional and the information it contains can be passed via the command line.
+   - An `Info.plist` file containing metadata such as the name of the documented module. 
+    This file is optional and the information it contains can be passed via the command line.
 
 Swift-DocC outputs a machine-readable archive of the compiled documentation.
 This archive contains _render JSON_ files, which fully describe the contents
@@ -66,112 +104,27 @@ project's technical documentation:
 
 ### Related Projects
 
-  - As of Swift 5.5, the [Swift Compiler](https://github.com/apple/swift) is able to 
-    emit _Symbol Graph_ files as part of the compilation process.
-    
-  - [SymbolKit](https://github.com/apple/swift-docc-symbolkit) is a Swift package containing
-    the specification and reference model for the _Symbol Graph_ File Format.
+ - As of Swift 5.5, the [Swift Compiler](https://github.com/apple/swift) is able to 
+  emit _Symbol Graph_ files as part of the compilation process.
+   
+ - [SymbolKit](https://github.com/apple/swift-docc-symbolkit) is a Swift package containing
+  the specification and reference model for the _Symbol Graph_ File Format.
   
-  - [Swift Markdown](https://github.com/apple/swift-markdown) is a 
-    Swift package for parsing, building, editing, and analyzing 
-    Markdown documents. It includes support for the Block Directive elements
-    that Swift-DocC's tutorial files rely on.
-    
-  - [Swift-DocC-Render](https://github.com/apple/swift-docc-render) 
-    is a web application that understands and renders
-    Swift-DocC's _render JSON_ format.
-    
-  - [Xcode](https://developer.apple.com/xcode/) consists of a suite of
-    tools that developers use to build apps for Apple platforms.
-    Beginning with Xcode 13, Swift-DocC is integrated into Xcode
-    with support for building and viewing documentation for your framework and
-    its dependencies.
-  
-## Getting started with developing `docc`
+ - [Swift Markdown](https://github.com/apple/swift-markdown) is a 
+  Swift package for parsing, building, editing, and analyzing 
+  Markdown documents. It includes support for the Block Directive elements
+  that Swift-DocC's tutorial files rely on.
+   
+ - [Swift-DocC-Render](https://github.com/apple/swift-docc-render) 
+  is a web application that understands and renders
+  Swift-DocC's _render JSON_ format.
+   
+ - [Xcode](https://developer.apple.com/xcode/) consists of a suite of
+  tools that developers use to build apps for Apple platforms.
+  Beginning with Xcode 13, Swift-DocC is integrated into Xcode
+  with support for building and viewing documentation for your framework and
+  its dependencies.
 
-`docc` is the command line interface (CLI) for Swift-DocC and provides
-support for converting and previewing DocC documentation.
-
-### Prerequisites
-
-DocC is a Swift package. If you're new to Swift package manager,
-the [documentation here](https://swift.org/getting-started/#using-the-package-manager)
-provides an explanation of how to get started and the software you'll need
-installed.
-
-DocC requires Swift 5.5 which is included in Xcode 13.
-
-### Build
-
-1. Checkout this repository using:
-
-    ```bash
-    git clone https://github.com/apple/swift-docc.git
-    ```
-
-2. Navigate to the root of the repository with:
-
-    ```bash
-    cd swift-docc
-    ```
-
-3. Finally, build DocC by running:
-
-    ```bash
-    swift build
-    ```
-
-### Run
-
-To run `docc`, run the following command:
-
-  ```bash
-  swift run docc
-  ```
-  
-### Installing into Xcode
-
-You can test a locally built version of Swift-DocC in Xcode 13 or later by setting
-the `DOCC_EXEC` build setting to the path of your local `docc`:
-
-  1. Select the project in the Project Navigator.
-  
-  2. In the Build Settings tab, click '+' and then 'Add User-Defined Setting'. 
-  
-  3. Create a build setting `DOCC_EXEC` with the value set to `/path/to/docc`. 
-
-The next time you invoke a documentation build with the "Build Documentation"
-button in Xcode's Product menu, your custom `docc` will be used for the build.
-You can confirm that your custom `docc` is being used by opening the latest build
-log in Xcode's report navigator and expanding the "Compile documentation" step.
-
-### Invoking `docc` from Swift Package Manager
-
-You can also test a locally built version of Swift-DocC using the Swift Package
-Manager from the command line. The Swift-DocC SwiftPM plugin will try to read
-`DOCC_EXEC` environment variable value, and use the path you provded if it's set.
-
-  1. In your project's `Package.swift`, add a dependency on the [`Swift-DocC Plugin`](https://github.com/apple/swift-docc-plugin).
-  2. Set the `DOCC_EXEC` environment variable and run the documentation generation
-     command:
-
-        ```bash
-        DOCC_EXEC=/path/to/docc swift package generate-documentation
-        ```
-
-## Using `docc` to build and preview documentation
-
-The preferred way of building documentation for your Swift package is by using
-the Swift-DocC Plugin, or if you're using Xcode, using the "Build Documentation" command. 
-
-Refer to instructions in the plugin's 
-[documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
-to get started with [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
-and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
-
-Alternatively, you can manually generate symbol graph files and invoke `docc` directly. 
-Refer to instructions in [CONTRIBUTING.md](/CONTRIBUTING.md#assembling-symbol-graphs-and-building-with-docc-directly).
-  
 ## Versioning
 
 Swift-DocC's CLI tool (`docc`) will be integrated into the Swift toolchain 
@@ -217,6 +170,11 @@ before being enabled by default.
 
 ## Contributing to Swift-DocC
 
-Please see the [contributing guide](/CONTRIBUTING.md) for more information.
+As an open-source project, we value any contribution made to this tool.
+Please see the [contributing guide](/CONTRIBUTING.md) for more information on how to 
+contribute and build DocC from source.
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
+the best place to get help with Swift-DocC and discuss future plans.
+
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

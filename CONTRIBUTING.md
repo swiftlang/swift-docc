@@ -49,6 +49,9 @@ more details.
 
 ## Building Swift-DocC
 
+`docc` is the command line interface (CLI) for Swift-DocC and provides
+support for converting and previewing DocC documentation.
+
 ### Prerequisites
 
 Swift-DocC is a Swift package. If you're new to Swift package manager,
@@ -99,7 +102,7 @@ You can run your newly built version of `docc` with:
   ```
 
 Or, in Xcode, run the `docc`
-[scheme](https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/ManagingSchemes.html).
+[scheme](https://developer.apple.com/documentation/xcode/customizing-the-build-schemes-for-a-project).
 
 ### Miscellaneous
 
