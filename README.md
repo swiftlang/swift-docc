@@ -60,76 +60,15 @@ to learn the essentials of how to get started.
 ## Writing and Publishing Documentation with Swift-DocC
 
 The Starter Template provides the quickest, and easiest way to create a new article-only documentation website making use of DocC. 
-To get started just click "[use the template](https://github.com/sofiaromorales/DocC-Starter-Template)"!
+To get started just click "[use the template](https://github.com/sofiaromorales/docc-template)"!
 
 If you want to learn how to write and format your documentation please refer to
 [Formatting Your Documentation Content](https://www.swift.org/documentation/docc/formatting-your-documentation-content).
 For publishing go to [Distributing Documentation to Other Developers](https://www.swift.org/documentation/docc/distributing-documentation-to-other-developers).
 
-## Technical Overview and Related Projects
-
-Swift-DocC builds documentation by combining _Symbol Graph_ files containing API information 
-with a `.docc` Documentation Catalog containing articles and tutorials
-to create a final archive containing the compiled documentation.
-
-More concretely, Swift-DocC understands the following kinds of inputs:
-
- 1. _Symbol Graph_ files with the `.symbols.json` extension.
-   _Symbol Graph_ files are a machine-readable representation of a module's APIs, 
-   including their documentation comments and relationship with one another.
-
- 2. A Documentation Catalog with the `.docc` extension. 
-   Documentation Catalogs can include additional documentation content like the following:
-  
-   - Documentation markup files with the `.md` extension. Documentation markup files can
-    be used to extend documentation for symbols and to write free-form articles.
- 
-   - Tutorial files with the `.tutorial` extension. Tutorial files are used to author
-    step-by-step instructions on how to use a framework.
- 
-   - Additional documentation assets with known extensions like `.png`, `.jpg`, `.mov`,
-    and `.zip`.
- 
-   - An `Info.plist` file containing metadata such as the name of the documented module. 
-    This file is optional and the information it contains can be passed via the command line.
-
-Swift-DocC outputs a machine-readable archive of the compiled documentation.
-This archive contains _render JSON_ files, which fully describe the contents
-of a documentation page and can be processed by a renderer such as
-[Swift-DocC-Render](https://github.com/apple/swift-docc-render).
-
-For more in-depth technical information about Swift-DocC, please refer to the
-project's technical documentation:
-
-- [`SwiftDocC` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdocc/)
-- [`SwiftDocCUtilities` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdoccutilities/)
-
-### Related Projects
-
- - As of Swift 5.5, the [Swift Compiler](https://github.com/apple/swift) is able to 
-  emit _Symbol Graph_ files as part of the compilation process.
-   
- - [SymbolKit](https://github.com/apple/swift-docc-symbolkit) is a Swift package containing
-  the specification and reference model for the _Symbol Graph_ File Format.
-  
- - [Swift Markdown](https://github.com/apple/swift-markdown) is a 
-  Swift package for parsing, building, editing, and analyzing 
-  Markdown documents. It includes support for the Block Directive elements
-  that Swift-DocC's tutorial files rely on.
-   
- - [Swift-DocC-Render](https://github.com/apple/swift-docc-render) 
-  is a web application that understands and renders
-  Swift-DocC's _render JSON_ format.
-   
- - [Xcode](https://developer.apple.com/xcode/) consists of a suite of
-  tools that developers use to build apps for Apple platforms.
-  Beginning with Xcode 13, Swift-DocC is integrated into Xcode
-  with support for building and viewing documentation for your framework and
-  its dependencies.
-
 ## Versioning
 
-Swift-DocC's CLI tool (`docc`) will be integrated into the Swift toolchain 
+Swift-DocC's CLI tool (`docc`) is integrated into the Swift toolchain 
 and follows the Swift compiler's versioning scheme.
 
 The `SwiftDocC` library is versioned separately from `docc`. `SwiftDocC` is under
