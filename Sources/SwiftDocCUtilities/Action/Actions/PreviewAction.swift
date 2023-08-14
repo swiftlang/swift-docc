@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(NIOHTTP1)
 import Foundation
 import SwiftDocC
 
+#if canImport(NIOHTTP1)
 /// A preview server instance.
 var servers: [String: PreviewServer] = [:]
 
@@ -262,17 +262,25 @@ extension PreviewAction {
     }
 }
 #endif
+#endif
 
 extension DocumentationContext {
+    
+    /// A collection of non-implicit root modules
+    var renderRootModules: [ResolvedTopicReference] {
+        get throws {
+            try rootModules.filter({ try !entity(with: $0).isVirtual })
+        }
+    }
+    
     /// Finds the module and technology pages in the context and returns their paths.
     func previewPaths() throws -> [String] {
         let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
         
-        let rootModules = try rootModules.filter { try !entity(with: $0).isVirtual }
+        let rootModules = try renderRootModules
         
         return (rootModules + rootTechnologies).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString
         }
     }
 }
-#endif

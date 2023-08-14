@@ -178,7 +178,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         outputConsumer: OutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
         defer {
-            diagnosticEngine.finalize()
+            diagnosticEngine.flush()
         }
         
         // Unregister the current file data provider and all its bundles

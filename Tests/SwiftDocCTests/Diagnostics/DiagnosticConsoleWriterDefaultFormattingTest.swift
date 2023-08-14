@@ -245,6 +245,35 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         """)
     }
 
+    func testDisplaysSource_WithEmojis_ProperlyHighlightsSource() {
+        let identifier = "org.swift.docc.test-identifier"
+        let summary = "Test diagnostic summary"
+        let explanation = "Test diagnostic explanation."
+        let baseURL =  Bundle.module.url(
+            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
+        let range = SourceLocation(line: 39, column: 4, source: source)..<SourceLocation(line: 39, column: 53, source: source)
+
+        let logger = Logger()
+        let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
+
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
+        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
+        consumer.receive([problem])
+        try? consumer.finalize()
+        print(logger.output)
+        XCTAssertEqual(logger.output, """
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+        \(explanation)
+          --> TestTutorial.tutorial:39:4-39:53
+        37 |    }
+        38 |    
+        39 +    \u{001B}[1;32m@Section(title: "Create a New AR Project 💻") {\u{001B}[0;0m
+        40 |       @ContentAndMedia {
+        41 |          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+        """)
+    }
+
     func testDisplaysPossibleSolutionsSummary() {
         let identifier = "org.swift.docc.test-identifier"
         let summary = "Test diagnostic summary"
