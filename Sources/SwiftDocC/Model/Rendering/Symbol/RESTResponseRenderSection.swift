@@ -28,6 +28,26 @@ struct RESTResponseRenderSection: RenderSection, Equatable {
     }
 }
 
+// Diffable conformance
+extension RESTResponseRenderSection: RenderJSONDiffable {
+    
+    /// Returns the differences between this RESTResponseRenderSection and the given one.
+    func difference(from other: RESTResponseRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.items, forKey: CodingKeys.items)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this RESTResponseRenderSection is similar enough to the given one.
+    func isSimilar(to other: RESTResponseRenderSection) -> Bool {
+        return self.title == other.title || self.items == other.items
+    }
+}
+
 /// A REST response that includes the HTTP status, reason,
 /// and the MIME type encoding of the response body.
 ///
@@ -74,5 +94,26 @@ struct RESTResponse: Codable, TextIndexing, Equatable {
         mimeType = try container.decodeIfPresent(String.self, forKey: .mimeType)
         type = try container.decode([DeclarationRenderSection.Token].self, forKey: .type)
         content = try container.decodeIfPresent([RenderBlockContent].self, forKey: .content)
+    }
+}
+
+// Diffable conformance
+extension RESTResponse: RenderJSONDiffable {
+    /// Returns the differences between this RESTResponse and the given one.
+    func difference(from other: RESTResponse, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.status, forKey: CodingKeys.status)
+        diffBuilder.addDifferences(atKeyPath: \.reason, forKey: CodingKeys.reason)
+        diffBuilder.addDifferences(atKeyPath: \.mimeType, forKey: CodingKeys.mimeType)
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this RESTResponse is similar enough to the given one.
+    func isSimilar(to other: RESTResponse) -> Bool {
+        return self.content == other.content
     }
 }

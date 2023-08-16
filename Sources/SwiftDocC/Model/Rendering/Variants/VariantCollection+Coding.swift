@@ -112,33 +112,9 @@ extension KeyedEncodingContainer {
                 encoder,
                 
                 // Add the index to the encoder's coding path, since the coding path refers to the array.
-                pointer: JSONPointer(from: encoder.codingPath + [key, IntegerKey(index)])
+                pointer: JSONPointer(from: encoder.codingPath + [key, JSON.IntegerKey(index)])
             )
         }
-    }
-}
-
-/// An integer coding key.
-private struct IntegerKey: CodingKey {
-    var stringValue: String
-    var intValue: Int?
-    
-    init(_ value: Int) {
-        self.intValue = value
-        self.stringValue = value.description
-    }
-    
-    init?(stringValue: String) {
-        guard let intValue = Int(stringValue) else {
-            return nil
-        }
-        
-        self.intValue = intValue
-        self.stringValue = stringValue
-    }
-    
-    init?(intValue: Int) {
-        self.init(intValue)
     }
 }
 

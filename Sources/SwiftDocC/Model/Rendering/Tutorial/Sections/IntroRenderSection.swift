@@ -65,3 +65,29 @@ public struct IntroRenderSection: RenderSection, Equatable {
         content = try container.decodeIfPresent([RenderBlockContent].self, forKey: .content) ?? []
     }
 }
+
+// Diffable conformance
+extension IntroRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this IntroRenderSection and the given one.
+    func difference(from other: IntroRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.chapter, forKey: CodingKeys.chapter)
+        diffBuilder.addDifferences(atKeyPath: \.estimatedTimeInMinutes, forKey: CodingKeys.estimatedTimeInMinutes)
+        diffBuilder.addDifferences(atKeyPath: \.xcodeRequirement, forKey: CodingKeys.xcodeRequirement)
+        diffBuilder.addDifferences(atKeyPath: \.backgroundImage, forKey: CodingKeys.backgroundImage)
+        diffBuilder.addDifferences(atKeyPath: \.action, forKey: CodingKeys.action)
+        diffBuilder.addDifferences(atKeyPath: \.image, forKey: CodingKeys.image)
+        diffBuilder.addDifferences(atKeyPath: \.video, forKey: CodingKeys.video)
+        diffBuilder.addDifferences(atKeyPath: \.projectFiles, forKey: CodingKeys.projectFiles)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this IntroRenderSection is similar enough to the given one.
+    func isSimilar(to other: IntroRenderSection) -> Bool {
+        return self.title == other.title || self.content == other.content
+    }
+}

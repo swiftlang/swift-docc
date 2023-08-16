@@ -19,7 +19,7 @@ import Foundation
 /// ### Hierarchy Types
 /// - ``RenderReferenceHierarchy``
 /// - ``RenderTutorialsHierarchy``
-public enum RenderHierarchy: Codable {
+public enum RenderHierarchy: Codable, Equatable {
     /// The hierarchy for an API reference render node.
     case reference(RenderReferenceHierarchy)
     /// The hierarchy for tutorials-related render node.
@@ -44,6 +44,31 @@ public enum RenderHierarchy: Codable {
             try container.encode(hierarchy)
         case .tutorials(let hierarchy):
             try container.encode(hierarchy)
+        }
+    }
+}
+
+// Diffable conformance
+extension RenderHierarchy: RenderJSONDiffable {
+    /// Returns the difference between this RenderHierarchy and the given one.
+    func difference(from other: RenderHierarchy, at path: CodablePath) -> JSONPatchDifferences {
+        var differences = JSONPatchDifferences()
+
+        switch (self, other) {
+        case (let .reference(selfReferenceHierarchy), let .reference(otherReferenceHierarchy)):
+            differences.append(contentsOf: selfReferenceHierarchy.difference(from: otherReferenceHierarchy, at: path))
+        case (.tutorials(_), _), (_, .tutorials(_)):
+            return differences // Diffing tutorials is not currently supported
+        }
+        return differences
+    }
+
+    func isSimilar(to other: RenderHierarchy) -> Bool {
+        switch (self, other) {
+        case (let .reference(selfReferenceHierarchy), let .reference(otherReferenceHierarchy)):
+            return selfReferenceHierarchy.isSimilar(to: otherReferenceHierarchy)
+        case (.tutorials(_), _), (_, .tutorials(_)):
+            return false // Diffing tutorials is not currently supported
         }
     }
 }

@@ -171,3 +171,17 @@ private extension String {
     /// Returns the string surrounded by spaces.
     var spaceDelimited: String { return " \(self) "}
 }
+
+// Diffable conformance
+extension ConformanceSection: RenderJSONDiffable {
+    /// Returns the differences between this ConformanceSection and the given one.
+    func difference(from other: ConformanceSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.availabilityPrefix, forKey: CodingKeys.availabilityPrefix)
+        diffBuilder.addDifferences(atKeyPath: \.conformancePrefix, forKey: CodingKeys.conformancePrefix)
+        diffBuilder.addDifferences(atKeyPath: \.constraints, forKey: CodingKeys.constraints)
+
+        return diffBuilder.differences
+    }
+}

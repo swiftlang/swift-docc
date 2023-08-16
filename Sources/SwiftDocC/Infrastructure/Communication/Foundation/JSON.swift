@@ -138,3 +138,34 @@ extension JSON {
     }
     
 }
+
+extension JSON {
+    /// An integer coding key.
+    struct IntegerKey: CodingKey {
+        var intValue: Int?
+        var stringValue: String
+        
+        init(_ value: Int) {
+            self.intValue = value
+            self.stringValue = value.description
+        }
+        
+        init(_ value: String) {
+            self.intValue = nil
+            self.stringValue = value
+        }
+        
+        init?(intValue: Int) {
+            self.init(intValue)
+        }
+        
+        init?(stringValue: String) {
+            guard let intValue = Int(stringValue) else {
+                return nil
+            }
+            
+            self.intValue = intValue
+            self.stringValue = stringValue
+        }
+    }
+}

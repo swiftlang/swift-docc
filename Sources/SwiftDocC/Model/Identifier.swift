@@ -514,6 +514,21 @@ extension ResolvedTopicReference {
     }
 }
 
+extension ResolvedTopicReference: RenderJSONDiffable {
+    /// Returns the differences between this ResolvedTopicReference and the given one.
+    func difference(from other: ResolvedTopicReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        // The only part of the URL that is encoded to RenderJSON is the absolute string.
+        diffBuilder.addDifferences(atKeyPath: \.url.absoluteString, forKey: CodingKeys.url)
+        
+        // The only part of the source language that is encoded to RenderJSON is the id.
+        diffBuilder.addDifferences(atKeyPath: \.sourceLanguage.id, forKey: CodingKeys.interfaceLanguage)
+        
+        return diffBuilder.differences
+    }
+}
+
 /// An unresolved reference to a documentation node.
 ///
 /// You can create unresolved references from partial information if that information can be derived from the enclosing context when the
