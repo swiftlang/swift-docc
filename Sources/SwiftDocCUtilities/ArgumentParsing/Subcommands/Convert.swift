@@ -13,253 +13,105 @@ import SwiftDocC
 import Foundation
 
 extension Docc {
-    /// Converts a documentation bundle.
+    /// Converts documentation markup, assets, and symbol information into a documentation archive.
     public struct Convert: ParsableCommand {
-
         public init() {}
-
-        // MARK: - Constants
-
+        
         /// The name of the directory docc will write its build artifacts to.
         private static let buildDirectory = ".docc-build"
-
-        // MARK: - Configuration
-
+        
+        /// The file handle that should be used for emitting warnings during argument validation.
+        ///
+        /// Provided as a static variable to allow for redirecting output in unit tests.
+        static var _errorLogHandle: LogHandle = .standardError
+        
         public static var configuration = CommandConfiguration(
-            abstract: "Converts documentation from a source bundle.")
-
-        // MARK: - Command Line Options & Arguments
-
-        /// The user-provided path to a `.docc` documentation bundle.
-        @OptionGroup()
-        public var documentationBundle: DocumentationBundleOption
-
-        /// User-provided platform name/version pairs.
-        ///
-        /// Used to set the current release version of a platform. Contains an array of strings in the following format:
-        /// ```
-        /// name={platform name},version={semantic version}
-        /// ```
-        ///
-        /// # Example
-        /// ```
-        /// "name=macOS,version=10.1.2"
-        /// ```
-        @Option(
-            name: .customLong("platform"),
-            parsing: ArrayParsingStrategy.singleValue,
-            help: ArgumentHelp(
-                """
-                Set the current release version of a platform.
-                """,
-                discussion: """
-                    Use the following format: "name={platform name},version={semantic version}".
-                    """))
-        public var platforms: [String] = []
-
-        /// The user-provided path to an HTML documentation template.
-        @OptionGroup()
-        public var templateOption: TemplateOption
-
-        /// The user-provided path to an executable that can be used to resolve links.
-        ///
-        /// This is an optional value and an internal link resolver is used by default.
-        @OptionGroup()
-        public var outOfProcessLinkResolverOption: OutOfProcessLinkResolverOption
-
-        /// A user-provided value that is true if additional analyzer style warnings should be outputted to the terminal.
-        ///
-        /// Defaults to false.
-        @Flag(
-            help: """
-                Outputs additional analyzer style warnings in addition to standard warnings/errors.
-                """)
-        public var analyze = false
-
-        /// A user-provided value that is true if additional metadata files should be produced.
-        ///
-        /// Defaults to false.
-        @Flag(help: "Writes additional metadata files to the output directory.")
-        public var emitDigest = false
-
-        /// A user-provided value that is true if the LMDB representation of the
-        /// navigator index should be produced.
-        ///
-        /// Defaults to false.
-        @Flag(
-            help: ArgumentHelp(
-                "Writes an LMDB representation of the navigator index to the output directory.",
-                discussion: "A JSON representation of the navigator index is emitted by default."
-            )
+            abstract: "Convert documentation markup, assets, and symbol information into a documentation archive.",
+            usage: """
+            docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>]
+            docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>]
+            docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<availability-options>] [<diagnostic-options>] [<source-repository-options>] [<hosting-options>] [<info-plist-fallbacks>] [<feature-flags>] [<other-options>]
+            """,
+            discussion: """
+            When building documentation for source code, the 'convert' command is commonly invoked by other tools as part of a build workflow. Such build workflows can perform tasks to extract symbol graph information and may infer values for 'docc' flags and options from other build configuration.
+            
+            When building documentation for a catalog that only contain articles or tutorial content, interacting with the 'docc convert' command directly can be a good alternative to using DocC via a build workflow.
+            """
         )
-        public var emitLMDBIndex = false
         
-        /// This value is provided for backwards compatibility with existing clients but
-        /// will be removed soon. Renamed to '--emit-lmdb-index'.
-        @Flag(help: .hidden)
-        public var index = false
+        // Note:
+        // The order of the option groups in this file is reflected in the 'docc convert --help' output.
+        //
+        // The flags and options in this file is defined as internal with public accessors. This allows us to reorganize flags and options
+        // in the `docc` command line interface without source breaking changes.
         
-        @available(*, deprecated, renamed: "formatConsoleOutputForTools")
-        public var emitFixits: Bool {
-            return formatConsoleOutputForTools
+        // MARK: - Inputs & outputs
+        
+        @OptionGroup(title: "Inputs & outputs")
+        var inputsAndOutputs: InputAndOutputOptions
+        struct InputAndOutputOptions: ParsableArguments {
+            @OptionGroup()
+            var documentationCatalog: DocumentationCatalogOption
+            
+            @Option(
+                name: [.customLong("additional-symbol-graph-dir")],
+                help: "A path to a directory of additional symbol graph files.",
+                transform: URL.init(fileURLWithPath:)
+            )
+            var additionalSymbolGraphDirectory: URL?
+            
+            @Option(
+                name: [.customLong("additional-symbol-graph-files")],
+                parsing: ArrayParsingStrategy.upToNextOption,
+                help: .hidden,
+                transform: URL.init(fileURLWithPath:)
+            )
+            var additionalSymbolGraphFiles: [URL] = [] // Remove when other tools no longer use it. (rdar://72449411)
+            
+            @Option(
+                name: [.customLong("output-path"), .customLong("output-dir"), .customShort("o")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)
+                help: "The location where the documentation compiler writes the built documentation.",
+                transform: URL.init(fileURLWithPath:)
+            )
+            var providedOutputURL: URL?
+            
+            func validate() throws {
+                warnAboutDeprecatedOptionIfNeeded("additional-symbol-graph-files", message: "Use '--additional-symbol-graph-dir' instead.")
+                
+                if let outputParent = providedOutputURL?.deletingLastPathComponent() {
+                    // Verify that the intermediate directories exist for the output location.
+                    var isDirectory: ObjCBool = false
+                    guard FileManager.default.fileExists(atPath: outputParent.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+                        throw ValidationError("No directory exists at '\(outputParent.path)'.")
+                    }
+                }
+            }
         }
         
-        /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
-        @Flag(
-            name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
-            help: "Format output to the console intended for an IDE or other tool to parse.")
-        public var formatConsoleOutputForTools = false
-        
-        /// A user-provided location where the convert action writes the diagnostics file.
-        @Option(
-            name: [.customLong("diagnostics-file"), .customLong("diagnostics-output-path")],
-            help: ArgumentHelp(
-                "The location where the documentation compiler writes the diagnostics file.",
-                discussion: "Specifying a diagnostic file path implies '--ide-console-output'."
-            ),
-            transform: URL.init(fileURLWithPath:)
-        )
-        var diagnosticsOutputPath: URL?
-        
-        /// A user-provided value that is true if the user wants to opt in to Experimental documentation coverage generation.
-        ///
-        /// Defaults to none.
-        @OptionGroup()
-        public var experimentalDocumentationCoverageOptions: DocumentationCoverageOptionsArgument
-
-        /// A user-provided value that is true if the user wants to provide a custom template for rendered output.
-        ///
-        /// Defaults to false
-        @Flag(help: "Allows for custom templates, like `header.html`.")
-        public var experimentalEnableCustomTemplates = false
-        
-        /// A user-provided value that is true if the user enables experimental Objective-C language support.
-        ///
-        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @Flag(help: .hidden)
-        public var enableExperimentalObjectiveCSupport = false
-        
-        /// A user-provided value that is true if the user enables experimental support for emitting
-        /// a JSON index.
-        ///
-        /// This property exists for backwards compatibility with existing clients but is
-        /// deprecated and will be removed soon.
-        @Flag(help: .hidden)
-        @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
-        public var enableExperimentalJSONIndex = false
-        
-        /// A user-provided value that is true if the user enables experimental support for
-        /// device frames.
-        @Flag(help: .hidden)
-        public var enableExperimentalDeviceFrameSupport = false
-
-        /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
-        ///
-        /// Defaults to false.
-        @Flag(help: "Inherit documentation for inherited symbols")
-        public var enableInheritedDocs = false
-        
-        
-        @Flag(help: "Treat warnings as errors")
-        public var warningsAsErrors = false
-        
-        /// Arguments for specifying information about the source code repository that hosts the documented project's code.
-        @OptionGroup()
-        public var sourceRepositoryArguments: SourceRepositoryArguments
-
-        /// A user-provided value that is true if experimental Doxygen support should be enabled.
-        ///
-        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @Flag(help: .hidden)
-        @available(*, deprecated, message: "Doxygen support is now enabled by default.")
-        public var experimentalParseDoxygenCommands = false
-
-        @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
-        var allowArbitraryCatalogDirectories = false
-
-        // MARK: - Info.plist fallbacks
-        
-        /// A user-provided fallback display name for the documentation bundle.
-        ///
-        /// If the documentation bundle's Info.plist file contains a bundle display name, the documentation bundle ignores this fallback name.
-        @Option(
-            name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-            help: "A fallback display name if no value is provided in the documentation bundle's Info.plist file."
-        )
-        public var fallbackBundleDisplayName: String?
-        
-        /// A user-provided fallback display name for the documentation bundle.
-        ///
-        /// If the documentation bundle's Info.plist file contains a bundle identifier, the documentation bundle ignores this fallback identifier.
-        @Option(
-            name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-            help: "A fallback bundle identifier if no value is provided in the documentation bundle's Info.plist file."
-        )
-        public var fallbackBundleIdentifier: String?
-        
-        /// A user-provided fallback version for the documentation bundle.
-        ///
-        /// If the documentation bundle's Info.plist file contains a bundle version, the documentation bundle ignores this fallback version.
-        @Option(
-            name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-            help: "A fallback bundle version if no value is provided in the documentation bundle's Info.plist file."
-        )
-        public var fallbackBundleVersion: String?
-        
-        /// A user-provided default language for code listings.
-        ///
-        /// If the documentation bundle's Info.plist file contains a default code listing language, the documentation bundle ignores this fallback language.
-        @Option(
-            name: [.customLong("default-code-listing-language")],
-            help: "A fallback default language for code listings if no value is provided in the documentation bundle's Info.plist file."
-        )
-        public var defaultCodeListingLanguage: String?
-
-        @Option(
-            help: """
-                A fallback default module kind if no value is provided \
-                in the documentation bundle's Info.plist file.
-                """
-        )
-        public var fallbackDefaultModuleKind: String?
-        
-        /// A user-provided location where the convert action writes the built documentation.
-        @Option(
-            name: [.customLong("output-path"), .customLong("output-dir"), .customShort("o")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)
-            help: "The location where the documentation compiler writes the built documentation.",
-            transform: URL.init(fileURLWithPath:)
-        )
-        var providedOutputURL: URL?
-        
-        // MARK: - Symbol graph files
+        /// The user-provided path to a `.docc` documentation catalog.
+        public var documentationCatalog: DocumentationCatalogOption {
+            inputsAndOutputs.documentationCatalog
+        }
+        @available(*, deprecated, renamed: "documentationCatalog")
+        public var documentationBundle: DocumentationCatalogOption {
+            inputsAndOutputs.documentationCatalog
+        }
         
         /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
-        @Option(
-            name: [.customLong("additional-symbol-graph-dir")],
-            help: "A path to a directory of additional symbol graph files.",
-            transform: URL.init(fileURLWithPath:)
-        )
-        public var additionalSymbolGraphDirectory: URL?
+        public var additionalSymbolGraphDirectory: URL? {
+            inputsAndOutputs.additionalSymbolGraphDirectory
+        }
         
         /// A user-provided list o path to additional symbol graph files that the convert action will process.
-        @Option(
-            name: [.customLong("additional-symbol-graph-files")],
-            parsing: ArrayParsingStrategy.upToNextOption,
-            help: .hidden,
-            transform: URL.init(fileURLWithPath:)
-        )
-        public var additionalSymbolGraphFiles: [URL] = [] // Remove when other tools no longer use it. (rdar://72449411)
-
-        @Option(help: ArgumentHelp("Filters diagnostics above this level from output", discussion:
-        """
-        This filter level is inclusive. If a level of `information` is specified, diagnostics with a severity up to and including `information` will be printed.
-        This option is ignored if `--analyze` is passed.
-        Must be one of "error", "warning", "information", or "hint"
-        """))
-        public var diagnosticLevel: String?
+        public var additionalSymbolGraphFiles: [URL] { // Remove when other tools no longer use it. (rdar://72449411)
+            inputsAndOutputs.additionalSymbolGraphFiles
+        }
         
-        // MARK: - Computed Properties
-
+        /// A user-provided location where the convert action writes the built documentation.
+        public var providedOutputURL: URL? {
+            inputsAndOutputs.providedOutputURL
+        }
+        
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
             // If an output location was passed as an argument, use it as-is.
@@ -267,69 +119,442 @@ extension Docc {
                 return providedOutputURL
             }
             
-            var outputURL = documentationBundle.urlOrFallback
-
+            var outputURL = documentationCatalog.urlOrFallback
+            
             // Check that the output is written in a build directory sub-folder
             if outputURL.lastPathComponent != Convert.buildDirectory {
                 outputURL.appendPathComponent(Convert.buildDirectory)
             }
-
+            
             return outputURL
         }
         
-        /// A Boolean value that is true if the DocC archive produced by this conversion
-        /// will support static hosting environments.
-        ///
-        /// This value defaults to true but can be explicitly disabled with the
-        /// `--no-transform-for-static-hosting` flag.
-        @Flag(
-            inversion: .prefixedNo,
-            exclusivity: .exclusive,
-            help: "Produce a DocC archive that supports static hosting environments."
-        )
-        public var transformForStaticHosting = true
-
-        /// A user-provided relative path to be used in the archived output
-        @Option(
-            name: [.customLong("hosting-base-path")],
-            help: ArgumentHelp(
-                "The base path your documentation website will be hosted at.",
-                discussion: "For example, to deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.")
-        )
-        var hostingBasePath: String?
+        // MARK: - Availability options
         
-        /// The file handle that should be used for emitting warnings during argument validation.
-        ///
-        /// Provided as a static variable to allow for redirecting output in unit tests.
-        static var _errorLogHandle: LogHandle = .standardError
-
-        // MARK: - Property Validation
-
-        public mutating func validate() throws {
-            if let level = diagnosticLevel, DiagnosticSeverity(level) == nil {
-                print("""
-                note: "\(level)" is not a valid diagnostic level.
-                      Use one of "error", "warning", "information", or "hint"
+        @OptionGroup(title: "Availability options")
+        var availabilityOptions: AvailabilityOptions
+        struct AvailabilityOptions: ParsableArguments {
+            @Option(
+                name: .customLong("platform"),
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp("Specify information about the current release of a platform.", discussion: """
+                Each platform's information is specified via separate "--platform" values using the following format: "name={platform name},version={semantic version}".
+                Optionally, the platform information can include a 'beta={true|false}' component. If no beta information is provided, the platform is considered not in beta.
                 """)
-            }
+            )
+            var platforms: [String] = []
+        }
+        
+        /// User-provided platform name/version pairs.
+        ///
+        /// Used to set the current release version of a platform. Contains an array of strings in the following format:
+        /// ```
+        /// name={platform name},version={semantic version}
+        /// ```
+        ///
+        /// Optionally, the platform name/version pair can include a `beta={true|false}` component. If no beta information is provided the platform is considered not in beta.
+        ///
+        /// # Example
+        /// ```
+        /// "name=macOS,version=10.1.2"
+        /// "name=macOS,version=10.1.2,beta=true"
+        /// ```
+        public var platforms: [String] {
+            availabilityOptions.platforms
+        }
+        
+        /// The user-provided path to an executable that can be used to resolve links.
+        ///
+        /// This is an optional value and an internal link resolver is used by default.
+        @OptionGroup() // This is only configured via environmental variables, so it doesn't display in the help text.
+        public var outOfProcessLinkResolverOption: OutOfProcessLinkResolverOption
+        
+        // MARK: Diagnostic options
+        
+        @OptionGroup(title: "Diagnostic options")
+        var diagnosticOptions: DiagnosticOptions
+        struct DiagnosticOptions: ParsableArguments {
+            @Flag(help: "Treat warnings as errors")
+            var warningsAsErrors = false
             
-            if let outputParent = providedOutputURL?.deletingLastPathComponent() {
-                var isDirectory: ObjCBool = false
-                guard FileManager.default.fileExists(atPath: outputParent.path, isDirectory: &isDirectory), isDirectory.boolValue else {
-                    throw ValidationError("No directory exists at '\(outputParent.path)'.")
+            @Flag(
+                name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
+                help: "Format output to the console intended for an IDE or other tool to parse.")
+            var formatConsoleOutputForTools = false
+            
+            @Option(
+                name: [.customLong("diagnostics-file"), .customLong("diagnostics-output-path")],
+                help: ArgumentHelp(
+                    "The location where the documentation compiler writes the diagnostics file.",
+                    discussion: "Specifying a diagnostic file path implies '--ide-console-output'."
+                ),
+                transform: URL.init(fileURLWithPath:)
+            )
+            var diagnosticsOutputPath: URL?
+            
+            @Option(
+                name: [.customLong("diagnostic-filter"), .long],
+                help: ArgumentHelp("Filter diagnostics with a lower severity than this level.", discussion:
+                """
+                This option is ignored if `--analyze` is passed.
+                
+                This filter level is inclusive. If a level of 'note' is specified, diagnostics with a severity up to and including 'note' will be printed.
+                \(supportedDiagnosticLevelsMessage)
+                """)
+            )
+            var diagnosticLevel: String?
+            
+            @Flag(help: "Include 'note'/'information' level diagnostics in addition to warnings and errors.")
+            var analyze = false
+            
+            func validate() throws {
+                if analyze && diagnosticLevel != nil {
+                    warnAboutDiagnostic(.init(
+                        severity: .information,
+                        identifier: "org.swift.docc.IgnoredDiagnosticsFilter",
+                        summary: "'--diagnostic-filter' is ignored when '--analyze' is set."
+                    ))
+                }
+                
+                if let level = diagnosticLevel, DiagnosticSeverity(level) == nil {
+                    warnAboutDiagnostic(.init(
+                        severity: .information,
+                        identifier: "org.swift.docc.UnknownDiagnosticLevel",
+                        summary: """
+                            "\(level)" is not a valid diagnostic severity.
+                            \(Self.supportedDiagnosticLevelsMessage)
+                            """
+                    ))
                 }
             }
-
+            
+            private static let supportedDiagnosticLevelsMessage = """
+                The supported diagnostic filter levels are:
+                 - error
+                 - warning
+                 - note, info, information
+                 - hint, notice
+                """
+        }
+        
+        /// Treat warning as errors.
+        public var warningsAsErrors: Bool {
+            diagnosticOptions.warningsAsErrors
+        }
+        
+        /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
+        public var formatConsoleOutputForTools: Bool {
+            diagnosticOptions.formatConsoleOutputForTools
+        }
+        
+        @available(*, deprecated, renamed: "formatConsoleOutputForTools")
+        public var emitFixits: Bool {
+            formatConsoleOutputForTools
+        }
+        
+        /// A user-provided location where the convert action writes the diagnostics file.
+        public var diagnosticsOutputPath: URL? {
+            diagnosticOptions.diagnosticsOutputPath
+        }
+        
+        /// The diagnostic severity level to filter
+        public var diagnosticLevel: String? {
+            diagnosticOptions.diagnosticLevel
+        }
+        
+        /// A user-provided value that is true if additional analyzer style warnings should be outputted to the terminal.
+        ///
+        /// Defaults to false.
+        public var analyze: Bool {
+            diagnosticOptions.analyze
+        }
+        
+        // MARK: - Source repository options
+        
+        /// Arguments for specifying information about the source code repository that hosts the documented project's code.
+        @OptionGroup(title: "Source repository options")
+        public var sourceRepositoryArguments: SourceRepositoryArguments
+        
+        // MARK: - Hosting options
+        
+        @OptionGroup(title: "Hosting options")
+        var hostingOptions: HostingOptions
+        struct HostingOptions: ParsableArguments {
+            @Flag(
+                inversion: .prefixedNo,
+                exclusivity: .exclusive,
+                help: "Produce a DocC archive that supports static hosting environments."
+            )
+            var transformForStaticHosting = true
+            
+            @Option(
+                name: [.customLong("hosting-base-path")],
+                help: ArgumentHelp("The base path your documentation website will be hosted at.", discussion: """
+                For example, if you deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.
+                """)
+            )
+            var hostingBasePath: String?
+        }
+        
+        /// A Boolean value that is true if the DocC archive produced by this conversion will support static hosting environments.
+        ///
+        /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
+        public var transformForStaticHosting: Bool {
+            get {
+                hostingOptions.transformForStaticHosting
+            }
+            set {
+                hostingOptions.transformForStaticHosting = newValue
+            }
+        }
+        
+        /// A user-provided relative path to be used in the archived output
+        var hostingBasePath: String? {
+            hostingOptions.hostingBasePath
+        }
+        
+        /// The user-provided path to an HTML documentation template.
+        @OptionGroup()
+        public var templateOption: TemplateOption
+        
+        // MARK: - Info.plist fallback options
+        
+        @OptionGroup(title: "Info.plist fallbacks")
+        var infoPlistFallbacks: InfoPlistFallbackOptions
+        struct InfoPlistFallbackOptions: ParsableArguments {
+            @Option(
+                name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
+                help: ArgumentHelp("A fallback display name if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
+                If no display name is provided in the catalogs's Info.plist file or via the '--fallback-display-name' option, \
+                DocC will infer a display name from the documentation catalog base name or from the module name from the symbol graph files provided \
+                via the '--additional-symbol-graph-dir' option.
+                """)
+            )
+            var fallbackBundleDisplayName: String?
+            
+            @Option(
+                name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
+                help: ArgumentHelp("A fallback bundle identifier if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
+                If no bundle identifier is provided in the catalogs's Info.plist file or via the '--fallback-bundle-identifier' option, \
+                DocC will infer a bundle identifier from the display name.
+                """)
+            )
+            var fallbackBundleIdentifier: String?
+            
+            @Option(
+                name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
+                help: .hidden
+            )
+            @available(*, deprecated, message: "The bundle version isn't used for anything.")
+            var fallbackBundleVersion: String?
+            
+            @Option(
+                name: [.customLong("default-code-listing-language")],
+                help: "A fallback default language for code listings if no value is provided in the documentation catalogs's Info.plist file."
+            )
+            var defaultCodeListingLanguage: String?
+            
+            @Option(
+                help: ArgumentHelp("A fallback default module kind if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
+                If no module kind is provided in the catalogs's Info.plist file or via the '--fallback-default-module-kind' option, \
+                DocC will display the module kind as a "Framework".
+                """)
+            )
+            var fallbackDefaultModuleKind: String?
+            
+            func validate() throws {
+                for deprecatedOptionName in ["display-name", "bundle-identifier", "bundle-version"] {
+                    warnAboutDeprecatedOptionIfNeeded(deprecatedOptionName, message: "Use '--fallback-\(deprecatedOptionName)' instead.")
+                }
+            }
+        }
+        
+        /// A user-provided fallback display name for the documentation bundle.
+        ///
+        /// If the documentation catalogs's Info.plist file contains a bundle display name, the documentation catalog ignores this fallback name.
+        public var fallbackBundleDisplayName: String? {
+            infoPlistFallbacks.fallbackBundleDisplayName
+        }
+        
+        /// A user-provided fallback identifier for the documentation bundle.
+        ///
+        /// If the documentation catalogs's Info.plist file contains a bundle identifier, the documentation catalog ignores this fallback identifier.
+        public var fallbackBundleIdentifier: String? {
+            infoPlistFallbacks.fallbackBundleIdentifier
+        }
+        
+        /// A user-provided fallback version for the documentation bundle.
+        ///
+        /// If the documentation catalogs's Info.plist file contains a bundle version, the documentation catalog ignores this fallback version.
+        @available(*, deprecated, message: "The bundle version isn't used for anything.")
+        public var fallbackBundleVersion: String? {
+            infoPlistFallbacks.fallbackBundleVersion
+        }
+        
+        /// A user-provided default language for code listings.
+        ///
+        /// If the documentation catalogs's Info.plist file contains a default code listing language, the documentation catalog ignores this fallback language.
+        public var defaultCodeListingLanguage: String? {
+            infoPlistFallbacks.defaultCodeListingLanguage
+        }
+        
+        /// A user-provided default kind description for the module.
+        ///
+        /// If the documentation catalogs's Info.plist file contains a default module kind, the documentation catalog ignores this fallback module kind.
+        public var fallbackDefaultModuleKind: String? {
+            infoPlistFallbacks.fallbackDefaultModuleKind
+        }
+        
+        // MARK: - Documentation coverage options
+        
+        /// A user-provided value that is true if the user wants to opt in to Experimental documentation coverage generation.
+        ///
+        /// Defaults to none.
+        @OptionGroup(title: "Documentation coverage (Experimental)")
+        public var experimentalDocumentationCoverageOptions: DocumentationCoverageOptionsArgument
+        
+        // MARK: - Feature flag options
+        
+        @OptionGroup(title: "Feature flags")
+        var featureFlags: FeatureFlagOptions
+        
+        struct FeatureFlagOptions: ParsableArguments {
+            @Flag(help: "Allows for custom templates, like `header.html`.")
+            var experimentalEnableCustomTemplates = false
+            
+            @Flag(help: .hidden)
+            @available(*, deprecated, message: "Objective-C support is enabled by default.")
+            var enableExperimentalObjectiveCSupport = false
+            
+            @Flag(help: .hidden)
+            @available(*, deprecated, message: "Render Index JSON is emitted by default.")
+            var enableExperimentalJSONIndex = false
+            
+            @Flag(help: .hidden)
+            var enableExperimentalDeviceFrameSupport = false
+            
+            @Flag(help: "Inherit documentation for inherited symbols")
+            var enableInheritedDocs = false
+            
+            @Flag(help: .hidden)
+            @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+            var experimentalParseDoxygenCommands = false
+            
+            @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
+            var allowArbitraryCatalogDirectories = false
+            
+            @Flag(help: "Write additional metadata files to the output directory.")
+            var emitDigest = false
+            
+            @Flag(
+                help: ArgumentHelp(
+                    "Writes an LMDB representation of the navigator index to the output directory.",
+                    discussion: "A JSON representation of the navigator index is emitted by default."
+                )
+            )
+            var emitLMDBIndex = false
+            
+            @Flag(help: .hidden)
+            @available(*, deprecated, renamed: "emitLMDBIndex")
+            var index = false
+            
+            @available(*, deprecated) // This deprecation silences the access of the deprecated `index` flag.
+            mutating func validate() throws {
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-objective-c-support", message: "This flag has no effect. Objective-C support is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-json-index", message: "This flag has no effect. The JSON render is emitted by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
+                emitLMDBIndex = emitLMDBIndex || index
+            }
+        }
+        
+        /// A user-provided value that is true if the user wants to provide a custom template for rendered output.
+        ///
+        /// Defaults to false
+        public var experimentalEnableCustomTemplates: Bool {
+            featureFlags.experimentalEnableCustomTemplates
+        }
+        
+        /// A user-provided value that is true if the user enables experimental Objective-C language support.
+        ///
+        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
+        @available(*, deprecated, message: "Objective-C support is enabled by default.")
+        public var enableExperimentalObjectiveCSupport: Bool {
+            featureFlags.enableExperimentalObjectiveCSupport
+        }
+        
+        /// A user-provided value that is true if the user enables experimental support for emitting
+        /// a JSON index.
+        ///
+        /// This property exists for backwards compatibility with existing clients but is
+        /// deprecated and will be removed soon.
+        @available(*, deprecated, message: "Render Index JSON is emitted by default.")
+        public var enableExperimentalJSONIndex: Bool {
+            featureFlags.enableExperimentalJSONIndex
+        }
+        
+        /// A user-provided value that is true if the user enables experimental support for device frames.
+        ///
+        /// Defaults to false.
+        public var enableExperimentalDeviceFrameSupport: Bool {
+            featureFlags.enableExperimentalDeviceFrameSupport
+        }
+        
+        /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
+        ///
+        /// Defaults to false.
+        public var enableInheritedDocs: Bool {
+            featureFlags.enableInheritedDocs
+        }
+        
+        /// A user-provided value that is true if experimental Doxygen support should be enabled.
+        ///
+        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
+        @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+        public var experimentalParseDoxygenCommands: Bool {
+            featureFlags.experimentalParseDoxygenCommands
+        }
+        
+        /// A user-provided value that is true if additional metadata files should be produced.
+        ///
+        /// Defaults to false.
+        public var allowArbitraryCatalogDirectories: Bool {
+            featureFlags.allowArbitraryCatalogDirectories
+        }
+        
+        /// A user-provided value that is true if additional metadata files should be produced.
+        ///
+        /// Defaults to false.
+        public var emitDigest: Bool {
+            featureFlags.emitDigest
+        }
+        
+        /// A user-provided value that is true if the LMDB representation of the navigator index should be produced.
+        ///
+        /// Defaults to false.
+        public var emitLMDBIndex: Bool {
+            featureFlags.emitLMDBIndex
+        }
+        
+        /// This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to '--emit-lmdb-index'.
+        @available(*, deprecated, renamed: "emitLMDBIndex")
+        public var index: Bool {
+            featureFlags.emitLMDBIndex
+        }
+        
+        // MARK: - ParsableCommand conformance
+        
+        public mutating func validate() throws {
             if transformForStaticHosting  {
                 if let templateURL = templateOption.templateURL {
                     let neededFileName: String
-
+                    
                     if hostingBasePath != nil {
                         neededFileName = HTMLTemplate.templateFileName.rawValue
                     }else {
                         neededFileName = HTMLTemplate.indexFileName.rawValue
                     }
-
+                    
                     let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
                     if !FileManager.default.fileExists(atPath: indexTemplate.path) {
                         throw TemplateOption.invalidHTMLTemplateError(
@@ -337,7 +562,7 @@ extension Docc {
                             expectedFile: neededFileName
                         )
                     }
-
+                    
                 } else {
                     let invalidOrMissingTemplateDiagnostic = Diagnostic(
                         severity: .warning,
@@ -364,17 +589,34 @@ extension Docc {
                     transformForStaticHosting = false
                 }
             }
-
         }
-
-        // MARK: - Execution
-
+        
         public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
             var convertAction = try ConvertAction(fromConvertCommand: self)
-
+            
             // Perform the conversion and print any warnings or errors found
             try convertAction.performAndHandleResult()
+        }
+        
+        // MARK: Warnings
+        
+        static func warnAboutDeprecatedOptionIfNeeded(_ deprecatedOption: String, message: String) {
+            guard ProcessInfo.processInfo.arguments.contains("--\(deprecatedOption)") else {
+                return // Only warn if the flag is used
+            }
+            warnAboutDiagnostic(.init(
+                severity: .warning,
+                identifier: "org.swift.docc.DeprecatedOption",
+                summary: "'--\(deprecatedOption)' is deprecated. \(message)"
+            ))
+        }
+        
+        private static func warnAboutDiagnostic(_ diagnostic: Diagnostic) {
+            print(
+                DiagnosticConsoleWriter.formattedDescription(for: diagnostic),
+                to: &_errorLogHandle
+            )
         }
     }
 }
