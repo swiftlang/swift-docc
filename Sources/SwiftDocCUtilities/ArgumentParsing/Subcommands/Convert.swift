@@ -90,26 +90,31 @@ extension Docc {
         
         /// The user-provided path to a `.docc` documentation catalog.
         public var documentationCatalog: DocumentationCatalogOption {
-            inputsAndOutputs.documentationCatalog
+            get { inputsAndOutputs.documentationCatalog }
+            set { inputsAndOutputs.documentationCatalog = newValue }
         }
         @available(*, deprecated, renamed: "documentationCatalog")
-        public var documentationBundle: DocumentationCatalogOption {
-            inputsAndOutputs.documentationCatalog
+        public var documentationBundle: DocumentationBundleOption {
+            get { inputsAndOutputs.documentationCatalog }
+            set { inputsAndOutputs.documentationCatalog = newValue }
         }
         
         /// A user-provided path to a directory of additional symbol graph files that the convert action will process.
         public var additionalSymbolGraphDirectory: URL? {
-            inputsAndOutputs.additionalSymbolGraphDirectory
+            get { inputsAndOutputs.additionalSymbolGraphDirectory }
+            set { inputsAndOutputs.additionalSymbolGraphDirectory = newValue }
         }
         
         /// A user-provided list o path to additional symbol graph files that the convert action will process.
         public var additionalSymbolGraphFiles: [URL] { // Remove when other tools no longer use it. (rdar://72449411)
-            inputsAndOutputs.additionalSymbolGraphFiles
+            get { inputsAndOutputs.additionalSymbolGraphFiles }
+            set { inputsAndOutputs.additionalSymbolGraphFiles = newValue }
         }
         
         /// A user-provided location where the convert action writes the built documentation.
         public var providedOutputURL: URL? {
-            inputsAndOutputs.providedOutputURL
+            get { inputsAndOutputs.providedOutputURL }
+            set { inputsAndOutputs.providedOutputURL = newValue }
         }
         
         /// The path to the directory that all build output should be placed in.
@@ -160,7 +165,8 @@ extension Docc {
         /// "name=macOS,version=10.1.2,beta=true"
         /// ```
         public var platforms: [String] {
-            availabilityOptions.platforms
+            get { availabilityOptions.platforms }
+            set { availabilityOptions.platforms = newValue }
         }
         
         /// The user-provided path to an executable that can be used to resolve links.
@@ -239,12 +245,14 @@ extension Docc {
         
         /// Treat warning as errors.
         public var warningsAsErrors: Bool {
-            diagnosticOptions.warningsAsErrors
+            get { diagnosticOptions.warningsAsErrors }
+            set { diagnosticOptions.warningsAsErrors = newValue }
         }
         
         /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
         public var formatConsoleOutputForTools: Bool {
-            diagnosticOptions.formatConsoleOutputForTools
+            get { diagnosticOptions.formatConsoleOutputForTools }
+            set { diagnosticOptions.formatConsoleOutputForTools = newValue }
         }
         
         @available(*, deprecated, renamed: "formatConsoleOutputForTools")
@@ -254,19 +262,22 @@ extension Docc {
         
         /// A user-provided location where the convert action writes the diagnostics file.
         public var diagnosticsOutputPath: URL? {
-            diagnosticOptions.diagnosticsOutputPath
+            get { diagnosticOptions.diagnosticsOutputPath }
+            set { diagnosticOptions.diagnosticsOutputPath = newValue }
         }
         
         /// The diagnostic severity level to filter
         public var diagnosticLevel: String? {
-            diagnosticOptions.diagnosticLevel
+            get { diagnosticOptions.diagnosticLevel }
+            set { diagnosticOptions.diagnosticLevel = newValue }
         }
         
         /// A user-provided value that is true if additional analyzer style warnings should be outputted to the terminal.
         ///
         /// Defaults to false.
         public var analyze: Bool {
-            diagnosticOptions.analyze
+            get { diagnosticOptions.analyze }
+            set { diagnosticOptions.analyze = newValue }
         }
         
         // MARK: - Source repository options
@@ -300,12 +311,8 @@ extension Docc {
         ///
         /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
         public var transformForStaticHosting: Bool {
-            get {
-                hostingOptions.transformForStaticHosting
-            }
-            set {
-                hostingOptions.transformForStaticHosting = newValue
-            }
+            get { hostingOptions.transformForStaticHosting}
+            set { hostingOptions.transformForStaticHosting = newValue }
         }
         
         /// A user-provided relative path to be used in the archived output
@@ -373,14 +380,16 @@ extension Docc {
         ///
         /// If the documentation catalogs's Info.plist file contains a bundle display name, the documentation catalog ignores this fallback name.
         public var fallbackBundleDisplayName: String? {
-            infoPlistFallbacks.fallbackBundleDisplayName
+            get { infoPlistFallbacks.fallbackBundleDisplayName }
+            set { infoPlistFallbacks.fallbackBundleDisplayName = newValue }
         }
         
         /// A user-provided fallback identifier for the documentation bundle.
         ///
         /// If the documentation catalogs's Info.plist file contains a bundle identifier, the documentation catalog ignores this fallback identifier.
         public var fallbackBundleIdentifier: String? {
-            infoPlistFallbacks.fallbackBundleIdentifier
+            get { infoPlistFallbacks.fallbackBundleIdentifier }
+            set { infoPlistFallbacks.fallbackBundleIdentifier = newValue }
         }
         
         /// A user-provided fallback version for the documentation bundle.
@@ -388,21 +397,24 @@ extension Docc {
         /// If the documentation catalogs's Info.plist file contains a bundle version, the documentation catalog ignores this fallback version.
         @available(*, deprecated, message: "The bundle version isn't used for anything.")
         public var fallbackBundleVersion: String? {
-            infoPlistFallbacks.fallbackBundleVersion
+            get { infoPlistFallbacks.fallbackBundleVersion }
+            set { infoPlistFallbacks.fallbackBundleVersion = newValue }
         }
         
         /// A user-provided default language for code listings.
         ///
         /// If the documentation catalogs's Info.plist file contains a default code listing language, the documentation catalog ignores this fallback language.
         public var defaultCodeListingLanguage: String? {
-            infoPlistFallbacks.defaultCodeListingLanguage
+            get { infoPlistFallbacks.defaultCodeListingLanguage }
+            set { infoPlistFallbacks.defaultCodeListingLanguage = newValue }
         }
         
         /// A user-provided default kind description for the module.
         ///
         /// If the documentation catalogs's Info.plist file contains a default module kind, the documentation catalog ignores this fallback module kind.
         public var fallbackDefaultModuleKind: String? {
-            infoPlistFallbacks.fallbackDefaultModuleKind
+            get { infoPlistFallbacks.fallbackDefaultModuleKind }
+            set { infoPlistFallbacks.fallbackDefaultModuleKind = newValue }
         }
         
         // MARK: - Documentation coverage options
@@ -472,7 +484,8 @@ extension Docc {
         ///
         /// Defaults to false
         public var experimentalEnableCustomTemplates: Bool {
-            featureFlags.experimentalEnableCustomTemplates
+            get { featureFlags.experimentalEnableCustomTemplates }
+            set { featureFlags.experimentalEnableCustomTemplates = newValue }
         }
         
         /// A user-provided value that is true if the user enables experimental Objective-C language support.
@@ -480,7 +493,8 @@ extension Docc {
         /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
         @available(*, deprecated, message: "Objective-C support is enabled by default.")
         public var enableExperimentalObjectiveCSupport: Bool {
-            featureFlags.enableExperimentalObjectiveCSupport
+            get { featureFlags.enableExperimentalObjectiveCSupport }
+            set { featureFlags.enableExperimentalObjectiveCSupport = newValue }
         }
         
         /// A user-provided value that is true if the user enables experimental support for emitting
@@ -490,21 +504,24 @@ extension Docc {
         /// deprecated and will be removed soon.
         @available(*, deprecated, message: "Render Index JSON is emitted by default.")
         public var enableExperimentalJSONIndex: Bool {
-            featureFlags.enableExperimentalJSONIndex
+            get { featureFlags.enableExperimentalJSONIndex }
+            set { featureFlags.enableExperimentalJSONIndex = newValue }
         }
         
         /// A user-provided value that is true if the user enables experimental support for device frames.
         ///
         /// Defaults to false.
         public var enableExperimentalDeviceFrameSupport: Bool {
-            featureFlags.enableExperimentalDeviceFrameSupport
+            get { featureFlags.enableExperimentalDeviceFrameSupport }
+            set { featureFlags.enableExperimentalDeviceFrameSupport = newValue }
         }
         
         /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
         ///
         /// Defaults to false.
         public var enableInheritedDocs: Bool {
-            featureFlags.enableInheritedDocs
+            get { featureFlags.enableInheritedDocs }
+            set { featureFlags.enableInheritedDocs = newValue }
         }
         
         /// A user-provided value that is true if experimental Doxygen support should be enabled.
@@ -512,34 +529,39 @@ extension Docc {
         /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
         @available(*, deprecated, message: "Doxygen support is now enabled by default.")
         public var experimentalParseDoxygenCommands: Bool {
-            featureFlags.experimentalParseDoxygenCommands
+            get { featureFlags.experimentalParseDoxygenCommands }
+            set { featureFlags.experimentalParseDoxygenCommands = newValue }
         }
         
         /// A user-provided value that is true if additional metadata files should be produced.
         ///
         /// Defaults to false.
         public var allowArbitraryCatalogDirectories: Bool {
-            featureFlags.allowArbitraryCatalogDirectories
+            get { featureFlags.allowArbitraryCatalogDirectories }
+            set { featureFlags.allowArbitraryCatalogDirectories = newValue }
         }
         
         /// A user-provided value that is true if additional metadata files should be produced.
         ///
         /// Defaults to false.
         public var emitDigest: Bool {
-            featureFlags.emitDigest
+            get { featureFlags.emitDigest }
+            set { featureFlags.emitDigest = newValue }
         }
         
         /// A user-provided value that is true if the LMDB representation of the navigator index should be produced.
         ///
         /// Defaults to false.
         public var emitLMDBIndex: Bool {
-            featureFlags.emitLMDBIndex
+            get { featureFlags.emitLMDBIndex }
+            set { featureFlags.emitLMDBIndex = newValue }
         }
         
         /// This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to '--emit-lmdb-index'.
         @available(*, deprecated, renamed: "emitLMDBIndex")
         public var index: Bool {
-            featureFlags.emitLMDBIndex
+            get { featureFlags.emitLMDBIndex }
+            set { featureFlags.emitLMDBIndex = newValue }
         }
         
         // MARK: - ParsableCommand conformance
