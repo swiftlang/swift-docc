@@ -82,24 +82,6 @@ naming convention where "fill" colors are used for backgrounds and "figure"
 colors are used for foreground colors, like text. Note that colors defined in 
 `theme-settings.json` will be used across all pages of your documentation bundle.
 
-**Changing a color on for a specific article page**
-
-You can also use a ``PageColor`` metadata directive to set the fill color for an
-intro section of a specific article:
-
-```
-# What's New in SlothCreator
-
-@Metadata {
-    @PageColor(blue)
-}
-
-...
-```
-
-`@PageColor` only supports a subset of predefined color values: `blue`,
-`gray`, `green`, `orange`, `purple`, `red`, `yellow`.  
-
 > Tip:
 > For a more complete example of a fully customized documentation website, you
 > can check out [this fork][3] of the DocC documentation that is using this
@@ -257,6 +239,16 @@ be added as necessary for other features.
   }
 }
 ```
+
+### Customizing the appearance of specific pages
+
+Aside from the customizations available via `theme-settings.json`, Swift DocC
+provides several <doc:Metadata> directives that allow you to customize just
+one specific Article page.
+
+Most notably:
+- ``PageImage`` allows you to set a header image of a page.
+- ``PageColor`` allows you to set an accent color of a page.
 
 [1]: https://github.com/apple/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
