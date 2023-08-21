@@ -1,15 +1,17 @@
 <h1 align="center">
     Swift-DocC
     <br>
+    <br>
     <a href="https://www.swift.org/documentation/docc/">
         <img src="https://www.swift.org/images/docc-hero@2x.png" alt="DocC" width="500">
     </a>
     <br>
-    <br>
 </h1>
 
+<h4 align="center">
 Swift-DocC is a documentation compiler for Swift frameworks and packages aimed 
 at making it easy to write and publish great developer documentation.
+</h4>
 
 For an example of Swift-DocC in action, check out 
 [developer.apple.com](https://developer.apple.com/documentation).
