@@ -1,4 +1,12 @@
-# Swift-DocC
+<h1 align="center">
+    Swift-DocC
+    <br>
+    <a href="https://www.swift.org/documentation/docc/">
+        <img src="https://www.swift.org/images/docc-hero@2x.png" alt="DocC" width="500">
+    </a>
+    <br>
+    <br>
+</h1>
 
 Swift-DocC is a documentation compiler for Swift frameworks and packages aimed 
 at making it easy to write and publish great developer documentation.
@@ -8,7 +16,7 @@ For an example of Swift-DocC in action, check out
 Much of Apple's developer documentation,
 from [Reference documentation](https://developer.apple.com/documentation/GroupActivities)
 to [Tutorials](https://developer.apple.com/tutorials/swiftui),
-and [long-form content](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
+and [Long-form Content](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
 is built using Swift-DocC.
 
 To learn more about the essentials of this tool 
@@ -18,12 +26,6 @@ refer to the
 Swift-DocC is being actively developed. For more information about the
 Swift-DocC project, see the introductory blog post
 [here](https://swift.org/blog/swift-docc/).
-
-The latest documentation for the Swift-DocC project is available
-on [Swift.org](https://swift.org/documentation/docc).
-
-The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
-the best place to get help with Swift-DocC and discuss future plans.
 
 ## Getting Started with DocC
 
@@ -44,7 +46,7 @@ To see instructions on how to use DocC from the CLI run
 docc --help
 ```
 
-**2. For documenting frameworks via SPM:**
+**2. For documenting packages via SwiftPM:**
 
 If you want to generate documentation for your Swift package we recommend using the Swift-DocC Plugin. Please
 refer to the Plugin's [documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/) to get started with 
@@ -58,9 +60,6 @@ Please refer to the Xcode [documentation](https://developer.apple.com/documentat
 to learn the essentials of how to get started.
 
 ## Writing and Publishing Documentation with Swift-DocC
-
-The Starter Template provides the quickest, and easiest way to create a new article-only documentation website making use of DocC. 
-To get started just click "[use the template](https://github.com/sofiaromorales/docc-template)"!
 
 If you want to learn how to write and format your documentation please refer to
 [Formatting Your Documentation Content](https://www.swift.org/documentation/docc/formatting-your-documentation-content).
@@ -111,11 +110,11 @@ before being enabled by default.
 
 ## Contributing to Swift-DocC
 
+The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
+the best place to get help with Swift-DocC and discuss future plans.
+
 As an open-source project, we value any contribution made to this tool.
 Please see the [contributing guide](/CONTRIBUTING.md) for more information on how to 
 contribute and build DocC from source.
-
-The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
-the best place to get help with Swift-DocC and discuss future plans.
 
 <!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
