@@ -269,7 +269,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             let renderNodeFirst = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             let renderNodeSecond = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             
-            let differences = renderNodeSecond.difference(from: renderNodeFirst)
+            let differences = renderNodeSecond._difference(from: renderNodeFirst)
             XCTAssertTrue(differences.isEmpty, "Both render nodes should be identical.")
         }
     }
@@ -300,7 +300,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let renderNodeModified = try XCTUnwrap(converter.renderNode(for: nodeModified, at: fileURL))
         
-        let differences = renderNodeModified.difference(from: renderNodeOriginal)
+        let differences = renderNodeModified._difference(from: renderNodeOriginal)
         
         return differences
     }

@@ -11,7 +11,7 @@
 extension RenderNode: RenderJSONDiffable {
     
     /// Returns the differences between this RenderNode and the given one.
-    public func difference(from other: RenderNode) -> JSONPatchDifferences {
+    public func _difference(from other: RenderNode) -> JSONPatchDifferences {
         self.difference(from: other, at: [])
     }
     
