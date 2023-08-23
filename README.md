@@ -1,24 +1,14 @@
-<h1 align="center">
-    Swift-DocC
-    <br>
-    <br>
-    <a href="https://www.swift.org/documentation/docc/">
-        <img src="https://www.swift.org/images/docc-hero@2x.png" alt="DocC" width="500">
-    </a>
-    <br>
-</h1>
+# Swift-DocC
 
-<h4 align="center">
 Swift-DocC is a documentation compiler for Swift frameworks and packages aimed 
-at making it easy to write and publish great developer documentation.
-</h4>
+at making it easy to write and publish great developer documentation
 
 For an example of Swift-DocC in action, check out 
 [developer.apple.com](https://developer.apple.com/documentation).
 Much of Apple's developer documentation,
 from [Reference documentation](https://developer.apple.com/documentation/GroupActivities)
 to [Tutorials](https://developer.apple.com/tutorials/swiftui),
-and [Long-form Content](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
+and [long-form content](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
 is built using Swift-DocC.
 
 To learn more about the essentials of this tool 
@@ -32,33 +22,33 @@ Swift-DocC project, see the introductory blog post
 ## Getting Started with DocC
 
 `docc` is the command line interface (CLI) for Swift-DocC and provides
-support for converting and previewing DocC documentation.
+support for generating and previewing documentation.
 
 There are multiple ways you can make use of DocC depending on your use case:
 
-**1. For standalone documentation:**
-
-If you have Xcode installed, it's recommended to generate documentation using the `xcrun` command.
-You can get DocC working by invoking `xcrun docc` in your terminal.
-
-Swift-DocC is also included in the toolchain for both macOS and Linux.
-
-To see instructions on how to use DocC from the CLI run
-```
-docc --help
-```
-
-**2. For documenting packages via SwiftPM:**
+**1. For documenting packages via SwiftPM:**
 
 If you want to generate documentation for your Swift package we recommend using the Swift-DocC Plugin. Please
 refer to the Plugin's [documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/) to get started with 
 [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
 and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
 
+**2. For standalone documentation:**
+
+If you have Xcode installed, it's recommended to generate documentation using the `xcrun` command.
+You can get DocC working by invoking `xcrun docc` in your terminal.
+
+Swift-DocC is also included in the Swift toolchain for both macOS and Linux.
+
+To see instructions on how to use DocC from the CLI run
+```
+docc --help
+```
+
 **3. For documenting apps, frameworks, and packages using Xcode:**
 
-If you want to generate an API reference for your project you can use DocC via the Xcode GUI.
-Please refer to the Xcode [documentation](https://developer.apple.com/documentation/xcode/documenting-apps-frameworks-and-packages)
+If you want to generate an API reference for your project you can use DocC via Xcode.
+Please refer to the Xcode [documentation](https://developer.apple.com/documentation/xcode/writing-documentation)
 to learn the essentials of how to get started.
 
 ## Writing and Publishing Documentation with Swift-DocC
@@ -66,6 +56,8 @@ to learn the essentials of how to get started.
 If you want to learn how to write and format your documentation please refer to
 [Formatting Your Documentation Content](https://www.swift.org/documentation/docc/formatting-your-documentation-content).
 For publishing go to [Distributing Documentation to Other Developers](https://www.swift.org/documentation/docc/distributing-documentation-to-other-developers).
+
+To learn more about how Swift-DocC works internally please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Versioning
 
@@ -95,7 +87,7 @@ and provide as many details as possible.
 
 If you can confirm that the bug occurs when using the latest commit of Swift-DocC
 from the `main` branch (see [Building Swift-DocC](/CONTRIBUTING.md#building-swift-docc)),
-that will help us track down the bug faster.
+it will help us track down the bug faster..
 
 ### Submitting a Feature Request
 

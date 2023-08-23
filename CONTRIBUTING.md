@@ -50,7 +50,7 @@ more details.
 ## Building Swift-DocC
 
 `docc` is the command line interface (CLI) for Swift-DocC and provides
-support for converting and previewing DocC documentation.
+support for generating and previewing documentation.
 
 ### Prerequisites
 
@@ -264,7 +264,7 @@ export DOCC_HTML_DIR="/path/to/swift-docc-render-artifact/dist"
 
 The `docc preview` command performs a conversion of your documentation and
 starts a local web server to allow for easy previewing of the built documentation.
-It monitors the provided Documentation Catalog for changes and updates the preview
+It monitors the provided documentation catalog for changes and updates the preview
 as you're working.
 
 ```sh
@@ -441,9 +441,9 @@ follow the above instructions for [Building Swift-DocC](#building-swift-docc).
 
 ## Technical Overview and Related Projects
 
-Swift-DocC builds documentation by combining _Symbol Graph_ files containing API information 
-with a `.docc` Documentation Catalog containing articles and tutorials
-to create a final archive containing the compiled documentation.
+Swift-DocC builds documentation by combining _Symbol Graph_ files that contains API information 
+with a `.docc` documentation catalog that contains articles and tutorials
+to create a final archive with the compiled documentation.
 
 More concretely, Swift-DocC understands the following kinds of inputs:
 
@@ -451,11 +451,11 @@ More concretely, Swift-DocC understands the following kinds of inputs:
    _Symbol Graph_ files are a machine-readable representation of a module's APIs, 
    including their documentation comments and relationship with one another.
 
- 2. A Documentation Catalog with the `.docc` extension. 
-   Documentation Catalogs can include additional documentation content like the following:
+ 2. A documentation catalog directory with the `.docc` extension. 
+   Documentation catalogs can include additional documentation content like the following:
   
    - Documentation markup files with the `.md` extension. Documentation markup files can
-    be used to extend documentation for symbols and to write free-form articles.
+    be used to write articles and to extend documentation for symbols.
  
    - Tutorial files with the `.tutorial` extension. Tutorial files are used to author
     step-by-step instructions on how to use a framework.
@@ -500,4 +500,4 @@ project's technical documentation:
   with support for building and viewing documentation for your framework and
   its dependencies.
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
