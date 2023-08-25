@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(NIOHTTP1)
 import Foundation
 import SwiftDocC
 
+#if canImport(NIOHTTP1)
 /// A preview server instance.
 var servers: [String: PreviewServer] = [:]
 
@@ -262,6 +262,7 @@ extension PreviewAction {
     }
 }
 #endif
+#endif
 
 extension DocumentationContext {
     
@@ -283,4 +284,3 @@ extension DocumentationContext {
         }
     }
 }
-#endif
