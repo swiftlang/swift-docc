@@ -435,17 +435,20 @@ extension DefaultDiagnosticConsoleFormatter {
         } else {
             endColumn = sourceLine.count + 1
         }
-        
+
+        let sourceLineUTF8 = sourceLine.utf8
+
         let columnRange = startColumn..<endColumn
-        let startIndex = sourceLine.index(sourceLine.startIndex, offsetBy: columnRange.lowerBound - 1)
-        let endIndex = sourceLine.index(startIndex, offsetBy: columnRange.count)
+        let startIndex = sourceLineUTF8.index(sourceLineUTF8.startIndex, offsetBy: columnRange.lowerBound - 1)
+        let endIndex = sourceLineUTF8.index(startIndex, offsetBy: columnRange.count)
+        let highlightRange = startIndex..<endIndex
         
         let ansiAnnotation = ANSIAnnotation.sourceHighlight
 
         var result = ""
-        result += sourceLine[sourceLine.startIndex..<startIndex]
-        result += ansiAnnotation.applied(to: String(sourceLine[startIndex..<endIndex]))
-        result += sourceLine[endIndex..<sourceLine.endIndex]
+        result += sourceLine[sourceLine.startIndex..<highlightRange.lowerBound]
+        result += ansiAnnotation.applied(to: String(sourceLine[highlightRange]))
+        result += sourceLine[highlightRange.upperBound..<sourceLine.endIndex]
         
         return result
     }

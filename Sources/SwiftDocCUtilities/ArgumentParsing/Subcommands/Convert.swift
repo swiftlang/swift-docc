@@ -225,7 +225,7 @@ extension Docc {
         
         /// A user-provided location where the convert action writes the built documentation.
         @Option(
-            name: [.customLong("output-path"), .customLong("output-dir")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)
+            name: [.customLong("output-path"), .customLong("output-dir"), .customShort("o")], // Remove "output-dir" when other tools no longer pass that option. (rdar://72449411)
             help: "The location where the documentation compiler writes the built documentation.",
             transform: URL.init(fileURLWithPath:)
         )
