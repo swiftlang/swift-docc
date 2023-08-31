@@ -49,6 +49,9 @@ more details.
 
 ## Building Swift-DocC
 
+`docc` is the command line interface (CLI) for Swift-DocC and provides
+support for generating and previewing documentation.
+
 ### Prerequisites
 
 Swift-DocC is a Swift package. If you're new to Swift package manager,
@@ -99,7 +102,7 @@ You can run your newly built version of `docc` with:
   ```
 
 Or, in Xcode, run the `docc`
-[scheme](https://developer.apple.com/library/archive/documentation/ToolsLanguages/Conceptual/Xcode_Overview/ManagingSchemes.html).
+[scheme](https://developer.apple.com/documentation/xcode/customizing-the-build-schemes-for-a-project).
 
 ### Miscellaneous
 
@@ -261,7 +264,7 @@ export DOCC_HTML_DIR="/path/to/swift-docc-render-artifact/dist"
 
 The `docc preview` command performs a conversion of your documentation and
 starts a local web server to allow for easy previewing of the built documentation.
-It monitors the provided Documentation Catalog for changes and updates the preview
+It monitors the provided documentation catalog for changes and updates the preview
 as you're working.
 
 ```sh
@@ -436,4 +439,65 @@ page.
 Once you've found an issue to work on,
 follow the above instructions for [Building Swift-DocC](#building-swift-docc).
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+## Technical Overview and Related Projects
+
+Swift-DocC builds documentation by combining _Symbol Graph_ files that contains API information 
+with a `.docc` documentation catalog that contains articles and tutorials
+to create a final archive with the compiled documentation.
+
+More concretely, Swift-DocC understands the following kinds of inputs:
+
+ 1. _Symbol Graph_ files with the `.symbols.json` extension.
+   _Symbol Graph_ files are a machine-readable representation of a module's APIs, 
+   including their documentation comments and relationship with one another.
+
+ 2. A documentation catalog directory with the `.docc` extension. 
+   Documentation catalogs can include additional documentation content like the following:
+  
+   - Documentation markup files with the `.md` extension. Documentation markup files can
+    be used to write articles and to extend documentation for symbols.
+ 
+   - Tutorial files with the `.tutorial` extension. Tutorial files are used to author
+    step-by-step instructions on how to use a framework.
+ 
+   - Additional documentation assets with known extensions like `.png`, `.jpg`, `.mov`,
+    and `.zip`.
+ 
+   - An `Info.plist` file containing metadata such as the name of the documented module. 
+    This file is optional and the information it contains can be passed via the command line.
+
+Swift-DocC outputs a machine-readable archive of the compiled documentation.
+This archive contains _render JSON_ files, which fully describe the contents
+of a documentation page and can be processed by a renderer such as
+[Swift-DocC-Render](https://github.com/apple/swift-docc-render).
+
+For more in-depth technical information about Swift-DocC, please refer to the
+project's technical documentation:
+
+- [`SwiftDocC` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdocc/)
+- [`SwiftDocCUtilities` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdoccutilities/)
+
+### Related Projects
+
+ - As of Swift 5.5, the [Swift Compiler](https://github.com/apple/swift) is able to 
+  emit _Symbol Graph_ files as part of the compilation process.
+   
+ - [SymbolKit](https://github.com/apple/swift-docc-symbolkit) is a Swift package containing
+  the specification and reference model for the _Symbol Graph_ File Format.
+  
+ - [Swift Markdown](https://github.com/apple/swift-markdown) is a 
+  Swift package for parsing, building, editing, and analyzing 
+  Markdown documents. It includes support for the Block Directive elements
+  that Swift-DocC's tutorial files rely on.
+   
+ - [Swift-DocC-Render](https://github.com/apple/swift-docc-render) 
+  is a web application that understands and renders
+  Swift-DocC's _render JSON_ format.
+   
+ - [Xcode](https://developer.apple.com/xcode/) consists of a suite of
+  tools that developers use to build apps for Apple platforms.
+  Beginning with Xcode 13, Swift-DocC is integrated into Xcode
+  with support for building and viewing documentation for your framework and
+  its dependencies.
+
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
