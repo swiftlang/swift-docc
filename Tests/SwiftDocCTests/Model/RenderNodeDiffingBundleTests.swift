@@ -28,7 +28,10 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToSymbol, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToSymbol,
+                                                           modification: modification)
 
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
@@ -53,7 +56,10 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: articleURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToArticle, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToArticle,
+                                                           modification: modification)
 
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
@@ -64,7 +70,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                            identifiers: ["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial",
                                                                                                 "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2"],
                                                                                            generated: false)))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedDiff,
                           valueType: TaskGroupRenderSection.self)
     }
@@ -82,18 +88,21 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: articleURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToArticle, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToArticle,
+                                                           modification: modification)
         
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedSectionDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["seeAlsoSections", "0"]))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedSectionDiff,
                           valueType: RenderInlineContent.self)
         
         let expectedReferenceDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["references",
                                                                                                     "https://www.website.com"]))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedReferenceDiff,
                           valueType: RenderInlineContent.self)
     }
@@ -111,18 +120,21 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToSymbol, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToSymbol,
+                                                           modification: modification)
         
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedSectionDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["topicSections", "3"]))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedSectionDiff,
                           valueType: RenderInlineContent.self)
         
         let expectedReferenceDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["references",
                                                                                                     "doc://org.swift.docc.example/documentation/SideKit/UncuratedClass/angle"]))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedReferenceDiff,
                           valueType: RenderInlineContent.self)
     }
@@ -137,13 +149,16 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToSymbol, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToSymbol,
+                                                           modification: modification)
 
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedAbstractDiff = JSONPatchOperation.add(pointer: JSONPointer(pathComponents: ["abstract", "0"]),
                                                           value: AnyCodable(RenderInlineContent.text(newAbstractValue)))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedAbstractDiff,
                           valueType: RenderInlineContent.self)
         
@@ -151,7 +166,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                                     "doc://org.swift.docc.example/documentation/MyKit/MyClass",
                                                                                                     "abstract",
                                                                                                     "0"]))
-        assertDifferences(_: differences, 
+        assertDifferences(_: differences,
                           contains: expectedReferenceDiff,
                           valueType: AnyRenderReference.self)
     }
@@ -172,7 +187,10 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToSymbol, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToSymbol,
+                                                           modification: modification)
         
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
@@ -208,7 +226,10 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: symbolURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToSymbol, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToSymbol,
+                                                           modification: modification)
         
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
@@ -241,7 +262,10 @@ class RenderNodeDiffingBundleTests: XCTestCase {
             try text.write(to: articleURL, atomically: true, encoding: .utf8)
         }
         
-        let differences = try getDiffsFromModifiedDocument(topicReferencePath: pathToArticle, modification: modification)
+        let differences = try getDiffsFromModifiedDocument(bundleName: testBundleName,
+                                                           bundleIdentifier: testBundleIdentifier,
+                                                           topicReferencePath: pathToArticle,
+                                                           modification: modification)
         
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
@@ -274,11 +298,13 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         }
     }
     
-    func getDiffsFromModifiedDocument(topicReferencePath: String,
+    func getDiffsFromModifiedDocument(bundleName: String,
+                                      bundleIdentifier: String,
+                                      topicReferencePath: String,
                                       modification: @escaping (URL) throws -> ()
     ) throws -> JSONPatchDifferences {
-        let (bundleOriginal, contextOriginal) = try testBundleAndContext(named: testBundleName)
-        let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleIdentifier: testBundleIdentifier,
+        let (bundleOriginal, contextOriginal) = try testBundleAndContext(named: bundleName)
+        let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleIdentifier: bundleIdentifier,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
         var renderContext = RenderContext(documentationContext: contextOriginal, bundle: bundleOriginal)
@@ -288,10 +314,10 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal, at: fileURL))
         
         // Make copy of the bundle on disk, modify the document, and write it
-        let (_, bundleModified, contextModified) = try testBundleAndContext(copying: testBundleName) { url in
+        let (_, bundleModified, contextModified) = try testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }
-        let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleIdentifier: testBundleIdentifier,
+        let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleIdentifier: bundleIdentifier,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
         renderContext = RenderContext(documentationContext: contextModified, bundle: bundleModified)
