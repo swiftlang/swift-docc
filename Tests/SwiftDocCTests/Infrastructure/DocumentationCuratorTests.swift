@@ -279,6 +279,10 @@ class DocumentationCuratorTests: XCTestCase {
             ### Extraneous list item content
             - <doc:MyKit/MyClass>.
             - <doc:MyKit/MyClass> ![](featured.png) and *more* content...
+            - <doc:MyKit/MyClass> @Comment { This is an invalid comment directive }
+            - <doc:MyKit/MyClass>   <!-- This is a valid comment -->
+            - <doc:MyKit/MyClass> <!-- This is a valid comment --> but this is extra content :(
+            - <doc:MyKit/MyClass> This is extra content <!-- even if this is a valid comment -->
             ## See Also
             - <doc:MyKit/MyClass>
             - Blip blop!
@@ -324,11 +328,11 @@ class DocumentationCuratorTests: XCTestCase {
                 .filter({ $0.diagnostic.identifier == "org.swift.docc.UnexpectedTaskGroupItem" })
                 .compactMap({ $0.possibleSolutions.first?.replacements.first?.range })
                 .map({ "\($0.lowerBound.line):\($0.lowerBound.column)..<\($0.upperBound.line):\($0.upperBound.column)" }),
-            ["6:1..<6:13", "9:1..<9:20", "15:1..<15:13", "5:1..<5:13", "8:1..<8:20", "11:1..<11:13"]
+            ["6:1..<6:13", "9:1..<9:20", "19:1..<19:13", "5:1..<5:13", "8:1..<8:20", "11:1..<11:13"]
         )
         
-        // Verify the crawler emitted warnings for the 2 items with trailing content.
-        XCTAssertEqual(crawler.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" }).count, 2)
+        // Verify the crawler emitted warnings for the 5 items with trailing content.
+        XCTAssertEqual(crawler.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" }).count, 5)
         XCTAssertTrue(crawler.problems
             .filter({ $0.diagnostic.identifier == "org.swift.docc.ExtraneousTaskGroupItemContent" })
             .compactMap({ $0.diagnostic.source?.path })

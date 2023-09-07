@@ -93,6 +93,13 @@ struct ExtractLinks: MarkupRewriter {
                 guard let paragraph = item.child(at: 0) as? Paragraph,
                     paragraph.childCount >= 1 else { return true }
                 
+                // Check for trailing invalid content.
+                let containsInvalidContent = paragraph.children.dropFirst().contains(where: { child in
+                    let isComment = child is InlineHTML
+                    let isSpace = child is Text && child.format().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    return !(isComment || isSpace)
+                })
+                
                 switch paragraph.child(at: 0) {
                     case let link as Link:
                         // Topic link
@@ -114,7 +121,7 @@ struct ExtractLinks: MarkupRewriter {
                         links.append(link)
                         
                         // Warn if there is a trailing content after the link
-                        if paragraph.childCount > 1 {
+                        if containsInvalidContent {
                             problems.append(problemForTrailingContent(paragraph))
                         }
                         return false
@@ -123,7 +130,7 @@ struct ExtractLinks: MarkupRewriter {
                         links.append(link)
                         
                         // Warn if there is a trailing content after the link
-                        if paragraph.childCount > 1 {
+                        if containsInvalidContent {
                             problems.append(problemForTrailingContent(paragraph))
                         }
                         return false
