@@ -75,12 +75,19 @@ extension PathHierarchy.Error {
     ///
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.
-    func asTopicReferenceResolutionErrorInfo(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionErrorInfo {
-        
-        // This is defined inline because it captures `context`.
+    func asTopicReferenceResolutionErrorInfo(originalReference: String, fullNameOfNonSymbolNode: (PathHierarchy.Node) -> String) -> TopicReferenceResolutionErrorInfo {
+        // These are defined inline because they captures `fullNameOfNode`.
+        func fullNameOfNode(_ node: PathHierarchy.Node) -> String {
+            guard let symbol = node.symbol else { return fullNameOfNonSymbolNode(node) }
+            
+            if let fragments = symbol.declarationFragments {
+                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+            }
+            return symbol.names.title
+        }
         func collisionIsBefore(_ lhs: (node: PathHierarchy.Node, disambiguation: String), _ rhs: (node: PathHierarchy.Node, disambiguation: String)) -> Bool {
-            return lhs.node.fullNameOfValue(context: context) + lhs.disambiguation
-                 < rhs.node.fullNameOfValue(context: context) + rhs.disambiguation
+            return fullNameOfNode(lhs.node) + lhs.disambiguation
+                 < fullNameOfNode(rhs.node) + rhs.disambiguation
         }
         
         switch self {
@@ -141,7 +148,7 @@ extension PathHierarchy.Error {
             let solutions: [Solution] = candidates
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
                         Replacement(range: replacementRange, replacement: "-" + disambiguation)
                     ])
                 }
@@ -206,7 +213,7 @@ extension PathHierarchy.Error {
             let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             
             let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + disambiguation)
                 ])
             }
@@ -243,26 +250,6 @@ private extension PathHierarchy.Node {
             node = parent
         }
         return "/" + components.joined(separator: "/")
-    }
-    
-    /// Determines the full name of a node's value using information from the documentation context.
-    ///
-    /// > Note: This value is only intended for error messages and other presentation.
-    func fullNameOfValue(context: DocumentationContext) -> String {
-        guard let identifier = identifier else { return name }
-        if let symbol = symbol {
-            if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
-                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-            }
-            return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
-        }
-        // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
-        let reference = context.hierarchyBasedLinkResolver.resolvedReferenceMap[identifier]!
-        if reference.fragment != nil {
-            return context.nodeAnchorSections[reference]!.title
-        } else {
-            return context.documentationCache[reference]!.name.description
-        }
     }
 }
 

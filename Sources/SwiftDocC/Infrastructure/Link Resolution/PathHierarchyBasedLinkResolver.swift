@@ -200,7 +200,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    public func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult {
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult {
         // Check if the unresolved reference is external
         if let bundleID = unresolvedReference.bundleIdentifier,
            !context.registeredBundles.contains(where: { bundle in
@@ -237,10 +237,22 @@ final class PathHierarchyBasedLinkResolver {
                     originalReferenceString += "#" + fragment
                 }
                 
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(context: context, originalReference: originalReferenceString))
+                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { Self.fullName(of: $0, in: context) })
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
+        }
+    }
+    
+    static func fullName(of nonSymbolNode: PathHierarchy.Node, in context: DocumentationContext) -> String {
+        guard let identifier = nonSymbolNode.identifier else { return nonSymbolNode.name }
+        
+        // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
+        let reference = context.hierarchyBasedLinkResolver.resolvedReferenceMap[identifier]!
+        if reference.fragment != nil {
+            return context.nodeAnchorSections[reference]!.title
+        } else {
+            return context.documentationCache[reference]!.name.description
         }
     }
     
@@ -285,7 +297,7 @@ final class PathHierarchyBasedLinkResolver {
                 guard let reference = reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
-         }
+        }
         return result
     }
 }
