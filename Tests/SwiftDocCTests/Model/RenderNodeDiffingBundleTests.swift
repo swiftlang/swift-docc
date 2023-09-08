@@ -36,7 +36,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedSectionDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["primaryContentSections", "0"]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedSectionDiff,
                           valueType: RenderInlineContent.self)
     }
@@ -70,7 +70,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                            identifiers: ["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial",
                                                                                                 "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2"],
                                                                                            generated: false)))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedDiff,
                           valueType: TaskGroupRenderSection.self)
     }
@@ -96,13 +96,13 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedSectionDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["seeAlsoSections", "0"]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedSectionDiff,
                           valueType: RenderInlineContent.self)
         
         let expectedReferenceDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["references",
                                                                                                     "https://www.website.com"]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedReferenceDiff,
                           valueType: RenderInlineContent.self)
     }
@@ -128,13 +128,13 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         XCTAssertFalse(differences.isEmpty, "Both render nodes should be different.")
         
         let expectedSectionDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["topicSections", "3"]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedSectionDiff,
                           valueType: RenderInlineContent.self)
         
         let expectedReferenceDiff = JSONPatchOperation.remove(pointer: JSONPointer(pathComponents: ["references",
                                                                                                     "doc://org.swift.docc.example/documentation/SideKit/UncuratedClass/angle"]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedReferenceDiff,
                           valueType: RenderInlineContent.self)
     }
@@ -158,7 +158,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let expectedAbstractDiff = JSONPatchOperation.add(pointer: JSONPointer(pathComponents: ["abstract", "0"]),
                                                           value: AnyCodable(RenderInlineContent.text(newAbstractValue)))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedAbstractDiff,
                           valueType: RenderInlineContent.self)
         
@@ -166,7 +166,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                                     "doc://org.swift.docc.example/documentation/MyKit/MyClass",
                                                                                                     "abstract",
                                                                                                     "0"]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedReferenceDiff,
                           valueType: AnyRenderReference.self)
     }
@@ -197,7 +197,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let expectedDeprecationDiff = JSONPatchOperation.add(pointer: JSONPointer(pathComponents: ["deprecationSummary"]),
                                                              value: AnyCodable([RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
                                                                 inlineContent: [RenderInlineContent.text(newDeprecationValue)]))]))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedDeprecationDiff,
                           valueType: [RenderBlockContent].self)
         
@@ -205,7 +205,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                                      "doc://org.swift.docc.example/documentation/MyKit/MyProtocol",
                                                                                                      "deprecated"]),
                                                                value: AnyCodable(true))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedReferenceDiff,
                           valueType: Bool.self)
     }
@@ -235,13 +235,13 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let expectedTitleDiff = JSONPatchOperation.replace(pointer: JSONPointer(pathComponents: ["metadata", "title"]),
                                                            value: AnyCodable(newTitleValue))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedTitleDiff,
                           valueType: String.self)
         
         let expectedModuleDiff = JSONPatchOperation.add(pointer: JSONPointer(pathComponents: ["metadata", "modules", "0"]),
                                                         value: AnyCodable(RenderMetadata.Module(name: newTitleValue, relatedModules: nil)))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedModuleDiff,
                           valueType: RenderMetadata.Module.self)
     }
@@ -271,13 +271,13 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         
         let expectedRoleHeadingDiff = JSONPatchOperation.replace(pointer: JSONPointer(pathComponents: ["metadata", "roleHeading"]),
                                                                  value: AnyCodable("Sample Code"))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedRoleHeadingDiff,
                           valueType: String.self)
         
         let expectedRoleDiff = JSONPatchOperation.replace(pointer: JSONPointer(pathComponents: ["metadata", "role"]),
                                                           value: AnyCodable("sampleCode"))
-        assertDifferences(_: differences,
+        assertDifferences(differences,
                           contains: expectedRoleDiff,
                           valueType: String.self)
     }
