@@ -175,18 +175,57 @@ extension Docc {
         @OptionGroup() // This is only configured via environmental variables, so it doesn't display in the help text.
         public var outOfProcessLinkResolverOption: OutOfProcessLinkResolverOption
         
+        // MARK: - Source repository options
+        
+        /// Arguments for specifying information about the source code repository that hosts the documented project's code.
+        @OptionGroup(title: "Source repository options")
+        public var sourceRepositoryArguments: SourceRepositoryArguments
+        
+        // MARK: - Hosting options
+        
+        @OptionGroup(title: "Hosting options")
+        var hostingOptions: HostingOptions
+        struct HostingOptions: ParsableArguments {
+            @Option(
+                name: [.customLong("hosting-base-path")],
+                help: ArgumentHelp("The base path your documentation website will be hosted at.", discussion: """
+                For example, if you deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.
+                """)
+            )
+            var hostingBasePath: String?
+            
+            @Flag(
+                inversion: .prefixedNo,
+                exclusivity: .exclusive,
+                help: "Produce a DocC archive that supports static hosting environments."
+            )
+            var transformForStaticHosting = true
+        }
+        
+        /// A Boolean value that is true if the DocC archive produced by this conversion will support static hosting environments.
+        ///
+        /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
+        public var transformForStaticHosting: Bool {
+            get { hostingOptions.transformForStaticHosting}
+            set { hostingOptions.transformForStaticHosting = newValue }
+        }
+        
+        /// A user-provided relative path to be used in the archived output
+        var hostingBasePath: String? {
+            hostingOptions.hostingBasePath
+        }
+        
+        /// The user-provided path to an HTML documentation template.
+        @OptionGroup()
+        public var templateOption: TemplateOption
+        
         // MARK: Diagnostic options
         
         @OptionGroup(title: "Diagnostic options")
         var diagnosticOptions: DiagnosticOptions
         struct DiagnosticOptions: ParsableArguments {
-            @Flag(help: "Treat warnings as errors")
-            var warningsAsErrors = false
-            
-            @Flag(
-                name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
-                help: "Format output to the console intended for an IDE or other tool to parse.")
-            var formatConsoleOutputForTools = false
+            @Flag(help: "Include 'note'/'information' level diagnostics in addition to warnings and errors.")
+            var analyze = false
             
             @Option(
                 name: [.customLong("diagnostics-file"), .customLong("diagnostics-output-path")],
@@ -210,8 +249,13 @@ extension Docc {
             )
             var diagnosticLevel: String?
             
-            @Flag(help: "Include 'note'/'information' level diagnostics in addition to warnings and errors.")
-            var analyze = false
+            @Flag(
+                name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
+                help: "Format output to the console intended for an IDE or other tool to parse.")
+            var formatConsoleOutputForTools = false
+            
+            @Flag(help: "Treat warnings as errors")
+            var warningsAsErrors = false
             
             func validate() throws {
                 if analyze && diagnosticLevel != nil {
@@ -280,55 +324,17 @@ extension Docc {
             set { diagnosticOptions.analyze = newValue }
         }
         
-        // MARK: - Source repository options
-        
-        /// Arguments for specifying information about the source code repository that hosts the documented project's code.
-        @OptionGroup(title: "Source repository options")
-        public var sourceRepositoryArguments: SourceRepositoryArguments
-        
-        // MARK: - Hosting options
-        
-        @OptionGroup(title: "Hosting options")
-        var hostingOptions: HostingOptions
-        struct HostingOptions: ParsableArguments {
-            @Flag(
-                inversion: .prefixedNo,
-                exclusivity: .exclusive,
-                help: "Produce a DocC archive that supports static hosting environments."
-            )
-            var transformForStaticHosting = true
-            
-            @Option(
-                name: [.customLong("hosting-base-path")],
-                help: ArgumentHelp("The base path your documentation website will be hosted at.", discussion: """
-                For example, if you deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.
-                """)
-            )
-            var hostingBasePath: String?
-        }
-        
-        /// A Boolean value that is true if the DocC archive produced by this conversion will support static hosting environments.
-        ///
-        /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
-        public var transformForStaticHosting: Bool {
-            get { hostingOptions.transformForStaticHosting}
-            set { hostingOptions.transformForStaticHosting = newValue }
-        }
-        
-        /// A user-provided relative path to be used in the archived output
-        var hostingBasePath: String? {
-            hostingOptions.hostingBasePath
-        }
-        
-        /// The user-provided path to an HTML documentation template.
-        @OptionGroup()
-        public var templateOption: TemplateOption
-        
         // MARK: - Info.plist fallback options
         
         @OptionGroup(title: "Info.plist fallbacks")
         var infoPlistFallbacks: InfoPlistFallbackOptions
         struct InfoPlistFallbackOptions: ParsableArguments {
+            @Option(
+                name: [.customLong("default-code-listing-language")],
+                help: "A fallback default language for code listings if no value is provided in the documentation catalogs's Info.plist file."
+            )
+            var defaultCodeListingLanguage: String?
+            
             @Option(
                 name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback display name if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -354,12 +360,6 @@ extension Docc {
             )
             @available(*, deprecated, message: "The bundle version isn't used for anything.")
             var fallbackBundleVersion: String?
-            
-            @Option(
-                name: [.customLong("default-code-listing-language")],
-                help: "A fallback default language for code listings if no value is provided in the documentation catalogs's Info.plist file."
-            )
-            var defaultCodeListingLanguage: String?
             
             @Option(
                 help: ArgumentHelp("A fallback default module kind if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
