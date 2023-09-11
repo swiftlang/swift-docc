@@ -1927,7 +1927,7 @@
           "domain" : "Swift-DocC",
           "introduced" : {
             "major" : 5,
-            "minor" : 6,
+            "minor" : 7,
             "patch" : 0
           }
         }
@@ -3474,7 +3474,7 @@
           "domain" : "Swift-DocC",
           "introduced" : {
             "major" : 5,
-            "minor" : 8,
+            "minor" : 9,
             "patch" : 0
           }
         }

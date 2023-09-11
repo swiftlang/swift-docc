@@ -26,7 +26,7 @@ import Markdown
 /// }
 /// ```
 public final class DisplayName: Semantic, AutomaticDirectiveConvertible {
-    public static let introducedVersion = "5.6"
+    public static let introducedVersion = "5.7"
     public let originalMarkup: BlockDirective
     
     /// The custom display name for this symbol.
