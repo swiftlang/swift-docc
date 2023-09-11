@@ -34,3 +34,18 @@ public struct XcodeRequirementReference: RenderReference, Equatable {
         self.url = url
     }
 }
+
+// Diffable conformance
+extension XcodeRequirementReference: RenderJSONDiffable {
+    /// Returns the difference between this XcodeRequirementReference and the given one.
+    func difference(from other: XcodeRequirementReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+
+        return diffBuilder.differences
+    }
+}

@@ -181,14 +181,14 @@ public struct RenderMetadata: VariantContainer {
 
 extension RenderMetadata: Codable {
     /// A list of pre-defined roles to assign to nodes.
-    public enum Role: String {
+    public enum Role: String, Equatable {
         case symbol, containerSymbol, restRequestSymbol, dictionarySymbol, pseudoSymbol, pseudoCollection, collection, collectionGroup, article, sampleCode, unknown
         case table, codeListing, link, subsection, task, overview
         case tutorial = "project"
     }
     
     /// Metadata about a module dependency.
-    public struct Module: Codable {
+    public struct Module: Codable, Equatable {
         public let name: String
         /// Possible dependencies to the module, we allow for those in the render JSON model
         /// but have no authoring support at the moment.
@@ -210,7 +210,7 @@ extension RenderMetadata: Codable {
         }
     }
 
-    public struct CodingKeys: CodingKey, Hashable {
+    public struct CodingKeys: CodingKey, Hashable, Equatable {
         public var stringValue: String
         
         public init(stringValue: String) {
@@ -343,5 +343,58 @@ extension RenderMetadata: Codable {
         try container.encodeIfPresent(color, forKey: .color)
         try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
         try container.encodeIfTrue(hasNoExpandedDocumentation, forKey: .hasNoExpandedDocumentation)
+    }
+}
+
+// Diffable conformance
+extension RenderMetadata: RenderJSONDiffable {
+    /// Returns the differences between this RenderMetadata and the given one.
+    func difference(from other: RenderMetadata, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.category, forKey: CodingKeys.category)
+        diffBuilder.addDifferences(atKeyPath: \.categoryPathComponent, forKey: CodingKeys.categoryPathComponent)
+        diffBuilder.addDifferences(atKeyPath: \.estimatedTime, forKey: CodingKeys.estimatedTime)
+        diffBuilder.addDifferences(atKeyPath: \.modules, forKey: CodingKeys.modules)
+        diffBuilder.addDifferences(atKeyPath: \.extendedModule, forKey: CodingKeys.extendedModule)
+        diffBuilder.addDifferences(atKeyPath: \.modules, forKey: CodingKeys.modules)
+        diffBuilder.addDifferences(atKeyPath: \.platforms, forKey: CodingKeys.platforms)
+        diffBuilder.addDifferences(atKeyPath: \.required, forKey: CodingKeys.required)
+        diffBuilder.addDifferences(atKeyPath: \.roleHeading, forKey: CodingKeys.roleHeading)
+        diffBuilder.addDifferences(atKeyPath: \.role, forKey: CodingKeys.role)
+        diffBuilder.addDifferences(atKeyPath: \.images, forKey: CodingKeys.images)
+        diffBuilder.addDifferences(atKeyPath: \.color, forKey: CodingKeys.color)
+        diffBuilder.addDifferences(atKeyPath: \.customMetadata, forKey: CodingKeys.customMetadata)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.externalID, forKey: CodingKeys.externalID)
+        diffBuilder.addDifferences(atKeyPath: \.symbolKind, forKey: CodingKeys.symbolKind)
+        diffBuilder.addDifferences(atKeyPath: \.symbolAccessLevel, forKey: CodingKeys.symbolAccessLevel)
+        diffBuilder.addDifferences(atKeyPath: \.fragments, forKey: CodingKeys.fragments)
+        diffBuilder.addDifferences(atKeyPath: \.navigatorTitle, forKey: CodingKeys.navigatorTitle)
+        diffBuilder.addDifferences(atKeyPath: \.conformance, forKey: CodingKeys.conformance)
+        diffBuilder.addDifferences(atKeyPath: \.sourceFileURI, forKey: CodingKeys.sourceFileURI)
+        diffBuilder.addDifferences(atKeyPath: \.remoteSource, forKey: CodingKeys.remoteSource)
+        diffBuilder.addDifferences(atKeyPath: \.tags, forKey: CodingKeys.tags)
+        diffBuilder.addDifferences(atKeyPath: \.hasNoExpandedDocumentation, forKey: CodingKeys.hasNoExpandedDocumentation)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this RenderMetadata is similar enough to the given one.
+    func isSimilar(to other: RenderMetadata) -> Bool {
+        return self.title == other.title
+    }
+}
+
+// Diffable conformance
+extension RenderMetadata.Module: RenderJSONDiffable {
+    /// Returns the difference between two RenderMetadata.Modules.
+    func difference(from other: RenderMetadata.Module, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.name, forKey: CodingKeys.name)
+        diffBuilder.addDifferences(atKeyPath: \.relatedModules, forKey: CodingKeys.relatedModules)
+        
+        return diffBuilder.differences
     }
 }

@@ -9,7 +9,7 @@
 */
 
 /// A section of documentation content.
-public struct ContentRenderSection: RenderSection {
+public struct ContentRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind
     
     /// Arbitrary content for this section.
@@ -32,5 +32,23 @@ public struct ContentRenderSection: RenderSection {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         kind = try container.decode(RenderSectionKind.self, forKey: .kind)
         content = try container.decode([RenderBlockContent].self, forKey: .content)
+    }
+}
+
+// Diffable conformance
+extension ContentRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this ContentRenderSection and the given one.
+    func difference(from other: ContentRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this ContentRenderSection is similar enough to the given one.
+    func isSimilar(to other: ContentRenderSection) -> Bool {
+        return self.content == other.content
     }
 }
