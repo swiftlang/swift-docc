@@ -28,6 +28,7 @@ import Markdown
 /// }
 /// ```
 public final class PageColor: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// A context-dependent, standard color.

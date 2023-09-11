@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -48,6 +48,7 @@ import Markdown
 ///
 /// - ``Column``
 public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// The number of columns available in this row.
@@ -93,6 +94,7 @@ extension Row {
     ///
     /// Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive.
     public final class Column: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
+        public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective
         
         /// The size of this column.
