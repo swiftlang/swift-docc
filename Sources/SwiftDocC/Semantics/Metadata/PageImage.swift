@@ -18,6 +18,7 @@ import Markdown
 /// or the card image used to represent this page when using the ``Links`` directive and the ``Links/VisualStyle/detailedGrid``
 /// visual style.
 public final class PageImage: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// The image's purpose.

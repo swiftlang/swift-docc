@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,7 @@ import Markdown
  A tutorial to complete in order to gain knowledge of a ``Technology``.
  */
 public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted, Titled, Timed, Redirected {
+    public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
     
     /// The estimated time in minutes that the containing ``Tutorial`` will take.

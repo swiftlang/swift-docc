@@ -11,7 +11,7 @@
 import Foundation
 
 /// A section that contains a list of symbol relationships of the same kind.
-public struct RelationshipsRenderSection: RenderSection {
+public struct RelationshipsRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind = .relationships
     
     /// A title for the section.
@@ -41,5 +41,25 @@ public struct RelationshipsRenderSection: RenderSection {
         identifiers = try container.decode([String].self, forKey: .identifiers)
         
         decoder.registerReferences(identifiers)
+    }
+}
+
+// Diffable conformance
+extension RelationshipsRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this RelationshipsRenderSection and the given one.
+    func difference(from other: RelationshipsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.identifiers, forKey: CodingKeys.identifiers)
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this RelationshipsRenderSection is similar enough to the given one.
+    func isSimilar(to other: RelationshipsRenderSection) -> Bool {
+        return self.title == other.title
     }
 }

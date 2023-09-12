@@ -14,7 +14,9 @@ import SymbolKit
 
 struct Directive {
     var name: String
-
+    /// The earliest release of Swift-DocC that supports this directive.
+    var introducedVersion: String
+    
     /// The name of the type that implements this directive.
     ///
     /// This information is not presented in the documentation. It's only used to find undocumented directives.
@@ -26,9 +28,16 @@ struct Directive {
     /// `true` if the directive doesn't expect body content.
     var isLeaf: Bool
     
-    init(name: String, implementationName: String? = nil, acceptsArguments: Bool = true, isLeaf: Bool) {
+    init(
+        name: String,
+        implementationName: String? = nil,
+        introducedVersion: String,
+        acceptsArguments: Bool = true,
+        isLeaf: Bool
+    ) {
         self.name = name
         self.implementationName = implementationName ?? name
+        self.introducedVersion = introducedVersion
         self.acceptsArguments = acceptsArguments
         self.isLeaf = isLeaf
     }
@@ -75,73 +84,88 @@ let supportedDirectives: [Directive] = [
     .init(
         name: "Tutorials",
         implementationName: "Technology",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Volume",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Resources",
+        introducedVersion: "5.5",
         acceptsArguments: false,
         isLeaf: false
     ),
     .init(
         name: "Documentation",
         implementationName: "Tile",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "SampleCode",
         implementationName: "Tile",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Downloads",
         implementationName: "Tile",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Videos",
         implementationName: "Tile",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Forums",
         implementationName: "Tile",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Section",
         implementationName: "TutorialSection",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "Article",
         implementationName: "TutorialArticle",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "ContentAndMedia",
+        introducedVersion: "5.5",
         acceptsArguments: false,
         isLeaf: false
     ),
     .init(
         name: "Steps",
+        introducedVersion: "5.5",
         acceptsArguments: false,
         isLeaf: false
     ),
     .init(
         name: "Step",
+        introducedVersion: "5.5",
         acceptsArguments: false,
         isLeaf: false
     ),
     .init(
         name: "Code",
+        introducedVersion: "5.5",
         isLeaf: false
     ),
     .init(
         name: "MultipleChoice",
+        introducedVersion: "5.5",
         acceptsArguments: false,
         isLeaf: false
     ),
@@ -150,6 +174,7 @@ let supportedDirectives: [Directive] = [
 
     .init(
         name: "Comment",
+        introducedVersion: "5.5",
         acceptsArguments: false,
         isLeaf: false
     ),
@@ -159,6 +184,7 @@ let supportedDirectives: [Directive] = [
     .map { directive in
         return Directive(
             name: directive.name,
+            introducedVersion: directive.introducedVersion,
             acceptsArguments: !directive.documentableArguments.isEmpty,
             isLeaf: !directive.allowsMarkup && directive.childDirectives.isEmpty
         )
@@ -593,7 +619,20 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
         mixins: [
             SymbolGraph.Symbol.DeclarationFragments.mixinKey: SymbolGraph.Symbol.DeclarationFragments(
                 declarationFragments: fragments
-            )
+            ),
+            SymbolGraph.Symbol.Availability.mixinKey: SymbolGraph.Symbol.Availability(availability: [
+                .init(
+                    domain: .init(rawValue: "Swift-DocC"),
+                    introducedVersion: .init(string: directive.introducedVersion),
+                    deprecatedVersion: nil,
+                    obsoletedVersion: nil,
+                    message: nil,
+                    renamed: nil,
+                    isUnconditionallyDeprecated: false,
+                    isUnconditionallyUnavailable: false,
+                    willEventuallyBeDeprecated: false
+                )
+            ]),
         ]
     )
 }

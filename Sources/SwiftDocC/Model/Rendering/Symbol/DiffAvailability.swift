@@ -11,7 +11,7 @@
 import Foundation
 
 /// An availability-change diff for a symbol, if that data is available.
-public struct DiffAvailability: Codable {
+public struct DiffAvailability: Codable, Equatable {
     /// The change information for a symbol that was updated in a beta version of the current platform.
     public var beta: Info?
 

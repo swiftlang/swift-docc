@@ -44,7 +44,8 @@ extension Metadata {
     /// }
     /// ```
     public final class Availability: Semantic, AutomaticDirectiveConvertible {
-        static public let directiveName: String = "Available"
+        public static let directiveName: String = "Available"
+        public static let introducedVersion = "5.8"
 
         public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible {
             // FIXME: re-add `case any = "*"` when `isBeta` and `isDeprecated` are implemented
