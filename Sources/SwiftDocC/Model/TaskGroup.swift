@@ -94,11 +94,14 @@ struct ExtractLinks: MarkupRewriter {
                     paragraph.childCount >= 1 else { return true }
                 
                 // Check for trailing invalid content.
-                let containsInvalidContent = paragraph.children.dropFirst().contains(where: { child in
+                let containsInvalidContent = paragraph.children.dropFirst().contains { child in
                     let isComment = child is InlineHTML
-                    let isSpace = child is Text && child.format().trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    var isSpace = false
+                    if let text = child as? Text {
+                        isSpace = text.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    }
                     return !(isComment || isSpace)
-                })
+                }
                 
                 switch paragraph.child(at: 0) {
                     case let link as Link:

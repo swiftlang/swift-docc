@@ -279,7 +279,7 @@ class DocumentationCuratorTests: XCTestCase {
             ### Extraneous list item content
             - <doc:MyKit/MyClass>.
             - <doc:MyKit/MyClass> ![](featured.png) and *more* content...
-            - <doc:MyKit/MyClass> @Comment { This is an invalid comment directive }
+            - <doc:MyKit/MyClass> @Comment { We (unfortunately) expect a warning here because DocC doesn't support directives in the middle of a line. }
             - <doc:MyKit/MyClass>   <!-- This is a valid comment -->
             - <doc:MyKit/MyClass> <!-- This is a valid comment --> but this is extra content :(
             - <doc:MyKit/MyClass> This is extra content <!-- even if this is a valid comment -->
