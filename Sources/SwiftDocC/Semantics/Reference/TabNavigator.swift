@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,6 +36,7 @@ import Markdown
 ///
 /// - ``Tab``
 public final class TabNavigator: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// The tabs that make up this tab navigator.
@@ -64,6 +65,7 @@ extension TabNavigator {
     ///
     ///  To add a new tab to a ``TabNavigator``, add  a `@Tab` directive within the content of the `@TabNavigator` directive.
     public final class Tab: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
+        public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective
         
         /// The title that should identify the content in this tab when rendered.

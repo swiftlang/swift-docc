@@ -227,6 +227,9 @@ extension DirectiveMirror {
         var name: String {
             return type.directiveName
         }
+        var introducedVersion: String {
+            return type.introducedVersion
+        }
         
         let arguments: [ReflectedArgument]
         

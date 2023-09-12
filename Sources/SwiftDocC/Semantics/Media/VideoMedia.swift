@@ -15,6 +15,8 @@ import Markdown
 public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
     public static let directiveName = "Video"
     
+    public static let introducedVersion = "5.5"
+    
     public let originalMarkup: BlockDirective
     
     @DirectiveArgumentWrapped(
