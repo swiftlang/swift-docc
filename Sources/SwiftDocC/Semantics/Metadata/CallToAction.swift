@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,6 +42,8 @@ import Markdown
 /// }
 /// ```
 public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.8"
+    
     /// The kind of action the link is referencing.
     public enum Purpose: String, CaseIterable, DirectiveArgumentValueConvertible {
         /// References a link to download an associated asset, like a sample project.

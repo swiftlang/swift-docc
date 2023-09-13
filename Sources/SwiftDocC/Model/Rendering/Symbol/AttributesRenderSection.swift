@@ -152,3 +152,22 @@ public enum RenderAttribute: Codable, Equatable {
         }
     }
 }
+
+// Diffable conformance
+extension AttributesRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this AttributesRenderSection and the given one.
+    func difference(from other: AttributesRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.attributes, forKey: CodingKeys.attributes)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this AttributesRenderSection is similar enough to the given one.
+    func isSimilar(to other: AttributesRenderSection) -> Bool {
+        return self.attributes == other.attributes
+    }
+}
