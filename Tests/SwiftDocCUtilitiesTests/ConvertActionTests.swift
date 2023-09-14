@@ -3055,6 +3055,50 @@ class ConvertActionTests: XCTestCase {
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
     
+    func testWritingDiagnosticsToFile() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Documentation.md", utf8Content: """
+            # ``ModuleThatDoesNotExist``
+
+            This will result in two errors from two different phases of the build
+            """)
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
+        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        let fileConsumer = DiagnosticFileWriter(outputPath: diagnosticFile)
+        let engine = DiagnosticEngine()
+        engine.add(fileConsumer)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticEngine: engine
+        )
+        
+        let _ = try action.perform(logHandle: .standardOutput)
+        XCTAssertEqual(engine.problems.count, 2)
+        
+        XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
+        
+        let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
+        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
+        
+        XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
+            "No TechnologyRoot to organize article-only documentation.",
+            "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
+        ])
+    }
+    
     #endif
 }
 
