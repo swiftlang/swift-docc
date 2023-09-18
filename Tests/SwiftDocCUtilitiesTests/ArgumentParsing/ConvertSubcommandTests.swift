@@ -188,7 +188,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertNil(convertOptions.fallbackBundleDisplayName)
             XCTAssertNil(convertOptions.fallbackBundleIdentifier)
-            XCTAssertNil(convertOptions.fallbackBundleVersion)
             XCTAssertNil(convertOptions.defaultCodeListingLanguage)
         }
         
@@ -204,7 +203,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
         
@@ -220,7 +218,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
     }
@@ -298,7 +295,7 @@ class ConvertSubcommandTests: XCTestCase {
             "--index",
         ])
         
-        XCTAssertEqual(convertOptions.index, true)
+        XCTAssertTrue(convertOptions.emitLMDBIndex)
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         
@@ -332,11 +329,10 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Verify the options
         
-        XCTAssertNil(convertOptions.documentationBundle.url)
+        XCTAssertNil(convertOptions.documentationCatalog.url)
         
         XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
         XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-        XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
         
         XCTAssertEqual(
             convertOptions.additionalSymbolGraphDirectory,
