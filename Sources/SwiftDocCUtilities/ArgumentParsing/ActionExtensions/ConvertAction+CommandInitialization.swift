@@ -87,7 +87,8 @@ extension ConvertAction {
             transformForStaticHosting: convert.transformForStaticHosting,
             allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
-            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
+            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
+            dependencies: convert.dependencies
         )
     }
 }

@@ -114,7 +114,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// The link resolver is `nil` until some documentation content is registered with the context.
     /// It's safe to access the link resolver during symbol registration and at later points in the registration and conversion.
-    var hierarchyBasedLinkResolver: PathHierarchyBasedLinkResolver! = nil
+    var hierarchyBasedLinkResolver: PathHierarchyBasedLinkResolver! {
+        linkResolver.localResolver
+    }
+    
+    public var linkResolver = LinkResolver()
     
     /// The provider of documentation bundles for this context.
     var dataProvider: DocumentationContextDataProvider
@@ -2128,7 +2132,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             options = globalOptions.first
         }
         
-        self.hierarchyBasedLinkResolver = hierarchyBasedResolver
+        self.linkResolver.localResolver = hierarchyBasedResolver
         hierarchyBasedResolver.addMappingForRoots(bundle: bundle)
         for tutorial in tutorials {
             hierarchyBasedResolver.addTutorial(tutorial)
@@ -2646,7 +2650,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
         switch reference {
         case .unresolved(let unresolvedReference):
-            return hierarchyBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            return linkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            
         case .resolved(let resolved):
             // This reference is already resolved (either as a success or a failure), so don't change anything.
             return resolved

@@ -580,53 +580,6 @@ extension Docc {
         
         // MARK: - ParsableCommand conformance
         
-        public mutating func validate() throws {
-            if transformForStaticHosting  {
-                if let templateURL = templateOption.templateURL {
-                    let neededFileName: String
-                    
-                    if hostingBasePath != nil {
-                        neededFileName = HTMLTemplate.templateFileName.rawValue
-                    }else {
-                        neededFileName = HTMLTemplate.indexFileName.rawValue
-                    }
-                    
-                    let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
-                    if !FileManager.default.fileExists(atPath: indexTemplate.path) {
-                        throw TemplateOption.invalidHTMLTemplateError(
-                            path: templateURL.path,
-                            expectedFile: neededFileName
-                        )
-                    }
-                    
-                } else {
-                    let invalidOrMissingTemplateDiagnostic = Diagnostic(
-                        severity: .warning,
-                        identifier: "org.swift.docc.MissingHTMLTemplate",
-                        summary: "Invalid or missing HTML template directory",
-                        explanation: """
-                            Invalid or missing HTML template directory, relative to the docc \
-                            executable, at: '\(templateOption.defaultTemplateURL.path)'.
-                            Set the '\(TemplateOption.environmentVariableKey)' environment variable \
-                            to use a custom HTML template.
-                            
-                            Conversion will continue, but the produced DocC archive will not be \
-                            compatible with static hosting environments.
-                            
-                            Pass the '--no-transform-for-static-hosting' flag to silence this warning.
-                            """
-                    )
-                    
-                    print(
-                        DiagnosticConsoleWriter.formattedDescription(for: invalidOrMissingTemplateDiagnostic),
-                        to: &Self._errorLogHandle
-                    )
-                    
-                    transformForStaticHosting = false
-                }
-            }
-        }
-        
         public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
             var convertAction = try ConvertAction(fromConvertCommand: self)

@@ -654,7 +654,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             let unresolvedReference = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: authoredLink).map(UnresolvedTopicReference.init(topicURL:)))
             let rootModule = try XCTUnwrap(context.soleRootModuleReference)
             
-            let localResult = localResolver.resolve(unresolvedReference, in: rootModule, fromSymbolLink: true, context: context)
+            let localResult = try localResolver.resolve(unresolvedReference, in: rootModule, fromSymbolLink: true, context: context)
             let externalResult = externalResolver.resolve(unresolvedReference, fromSymbolLink: true)
             
             try verification(localResult, "local")
@@ -722,10 +722,6 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.identifier)
         let resolverData = try JSONEncoder().encode(resolverInfo)
-        
-        let str = String(data: resolverData, encoding: .utf8)!
-        print(str)
-        
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
         let externalResolver = ExternalPathHierarchyResolver(linkInformation: roundtripResolverInfo)

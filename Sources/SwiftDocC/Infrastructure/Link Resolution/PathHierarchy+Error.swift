@@ -29,6 +29,13 @@ extension PathHierarchy {
         /// - A list of the names for the top level elements.
         case notFound(remaining: [PathComponent], availableChildren: Set<String>)
         
+        /// No element was found at the beginning of an absolute path.
+        ///
+        /// Includes information about:
+        /// - The remaining portion of the path.
+        /// - A list of the names for the available modules.
+        case moduleNotFound(remaining: [PathComponent], availableChildren: Set<String>)
+        
         /// Matched node does not correspond to a documentation page.
         ///
         /// For partial symbol graph files, sometimes sparse nodes that don't correspond to known documentation need to be created to form a hierarchy. These nodes are not findable.
@@ -91,6 +98,30 @@ extension PathHierarchy.Error {
         }
         
         switch self {
+        case .moduleNotFound(remaining: let remaining, availableChildren: let availableChildren):
+            let firstPathComponent = remaining.first! // This would be a .notFound error if the remaining components were empty.
+            
+            let solutions: [Solution]
+            if let pathComponentIndex = originalReference.range(of: firstPathComponent.full) {
+                let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
+                
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
+                solutions = nearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            } else {
+                solutions = []
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                No module named \(firstPathComponent.full.singleQuoted)
+                """,
+                solutions: solutions
+            )
+            
         case .notFound(remaining: let remaining, availableChildren: let availableChildren):
             guard let firstPathComponent = remaining.first else {
                 return TopicReferenceResolutionErrorInfo(

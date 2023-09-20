@@ -30,7 +30,7 @@ final class ExternalPathHierarchyResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    public func resolve(_ unresolvedReference: UnresolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) -> TopicReferenceResolutionResult {
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) -> TopicReferenceResolutionResult {
         do {
             let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: nil, onlyFindSymbols: true)
             let foundReference = resolvedReferenceMap[found]!
@@ -55,6 +55,13 @@ final class ExternalPathHierarchyResolver {
         return "\(unresolved.path)#\(urlReadableFragment(fragment))"
     }
 
+    func entity(_ reference: ResolvedTopicReference) throws -> DocumentationNode {
+        let id = resolvedReferenceMap[reference]!
+        let node = pathHierarchy.lookup[id]!
+        var symbol = node.symbol!
+        return DocumentationNode(reference: reference, symbol: symbol, platformName: nil, moduleReference: reference, article: nil, engine: .init())
+    }
+    
     // MARK: Deserialization
     
     init(linkInformation fileRepresentation: SerializableLinkResolutionInformation) {

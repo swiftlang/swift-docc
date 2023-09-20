@@ -11,6 +11,85 @@
 import Foundation
 import SymbolKit
 
+public class LinkResolver {
+    var localResolver: PathHierarchyBasedLinkResolver!
+    // A map from module names to resolvers
+    var externalResolvers: [String: ExternalPathHierarchyResolver] = [:]
+    
+    public var dependencyLinkFiles: [URL] = [] {
+        didSet {
+            // TODO: Do this lazily
+            let resolvers = dependencyLinkFiles.compactMap {
+                try? ExternalPathHierarchyResolver(linkFileURL: $0)
+            }
+            for resolver in resolvers {
+                for moduleName in resolver.pathHierarchy.modules.keys {
+                    self.externalResolvers[moduleName] = resolver
+                }
+            }
+        }
+    }
+    
+    private let fallbackResolver = FallbackResolverBasedLinkResolver()
+    
+    /// Attempts to resolve an unresolved reference.
+    ///
+    /// - Parameters:
+    ///   - unresolvedReference: The unresolved reference to resolve.
+    ///   - parent: The parent reference to resolve the unresolved reference relative to.
+    ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
+    ///   - context: The documentation context to resolve the link in.
+    /// - Returns: The result of resolving the reference.
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult {
+        // Check if the unresolved reference is external
+        if let bundleID = unresolvedReference.bundleIdentifier,
+           !context.registeredBundles.contains(where: { bundle in
+               bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
+           }) {
+            
+            if context.externalReferenceResolvers[bundleID] != nil,
+               let resolvedExternalReference = context.externallyResolvedLinks[unresolvedReference.topicURL] {
+                // Return the successful or failed externally resolved reference.
+                return resolvedExternalReference
+            } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
+            }
+        }
+        
+        do {
+            return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context)
+        } catch let error as PathHierarchy.Error {
+            // Check if there's a known external resolver for this module.
+            if case .moduleNotFound(let remaining, _) = error, let resolver = externalResolvers[remaining.first!.full] {
+                if let previousResult = context.externallyResolvedLinks[unresolvedReference.topicURL] {
+                    return previousResult
+                } else {
+                    let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
+                    context.externallyResolvedLinks[unresolvedReference.topicURL] = result
+                    if case .success(let resolved) = result {
+                        context.documentationCache[resolved] = try! resolver.entity(resolved)
+                    }
+                    return result
+                }
+            }
+            
+            // If the reference didn't resolve in the path hierarchy, see if it can be resolved in the fallback resolver.
+            if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
+                return .success(resolvedFallbackReference)
+            } else {
+                var originalReferenceString = unresolvedReference.path
+                if let fragment = unresolvedReference.topicURL.components.fragment {
+                    originalReferenceString += "#" + fragment
+                }
+                
+                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { PathHierarchyBasedLinkResolver.fullName(of: $0, in: context) })
+            }
+        } catch {
+            fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
+        }
+    }
+}
+
 /// A type that encapsulates resolving links by searching a hierarchy of path components.
 final class PathHierarchyBasedLinkResolver {
     /// A hierarchy of path components used to resolve links in the documentation.
@@ -200,48 +279,17 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult {
-        // Check if the unresolved reference is external
-        if let bundleID = unresolvedReference.bundleIdentifier,
-           !context.registeredBundles.contains(where: { bundle in
-               bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
-           }) {
-            
-            if context.externalReferenceResolvers[bundleID] != nil,
-               let resolvedExternalReference = context.externallyResolvedLinks[unresolvedReference.topicURL] {
-                // Return the successful or failed externally resolved reference.
-                return resolvedExternalReference
-            } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
-            }
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) throws -> TopicReferenceResolutionResult {
+        let parentID = resolvedReferenceMap[parent]
+        let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
+        guard let foundReference = resolvedReferenceMap[found] else {
+            // It's possible for the path hierarchy to find a symbol that the local build doesn't create a page for. Such symbols can't be linked to.
+            let simplifiedFoundPath = sequence(first: pathHierarchy.lookup[found]!, next: \.parent)
+                .map(\.name).reversed().joined(separator: "/")
+            return .failure(unresolvedReference, .init("\(simplifiedFoundPath.singleQuoted) has no page and isn't available for linking."))
         }
         
-        do {
-            let parentID = resolvedReferenceMap[parent]
-            let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
-            guard let foundReference = resolvedReferenceMap[found] else {
-                // It's possible for the path hierarchy to find a symbol that the local build doesn't create a page for. Such symbols can't be linked to.
-                let simplifiedFoundPath = sequence(first: pathHierarchy.lookup[found]!, next: \.parent)
-                    .map(\.name).reversed().joined(separator: "/")
-                return .failure(unresolvedReference, .init("\(simplifiedFoundPath.singleQuoted) has no page and isn't available for linking."))
-            }
-            
-            return .success(foundReference)
-        } catch let error as PathHierarchy.Error {
-            // If the reference didn't resolve in the path hierarchy, see if it can be resolved in the fallback resolver.
-            if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
-                return .success(resolvedFallbackReference)
-            } else {
-                var originalReferenceString = unresolvedReference.path
-                if let fragment = unresolvedReference.topicURL.components.fragment {
-                    originalReferenceString += "#" + fragment
-                }
-                
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { Self.fullName(of: $0, in: context) })
-            }
-        } catch {
-            fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
-        }
+        return .success(foundReference)
     }
     
     static func fullName(of nonSymbolNode: PathHierarchy.Node, in context: DocumentationContext) -> String {
@@ -255,8 +303,6 @@ final class PathHierarchyBasedLinkResolver {
             return context.documentationCache[reference]!.name.description
         }
     }
-    
-    private let fallbackResolver = FallbackResolverBasedLinkResolver()
     
     // MARK: Symbol reference creation
     

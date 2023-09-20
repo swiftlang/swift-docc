@@ -101,7 +101,12 @@ extension PathHierarchy {
                 }
             }
             let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
-            throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+            
+            if isAbsolute {
+                throw Error.moduleNotFound(remaining: Array(remaining), availableChildren: Set(modules.keys))
+            } else {
+                throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+            }
         }
         
         // A recursive function to traverse up the path hierarchy searching for the matching node

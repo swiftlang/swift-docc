@@ -286,14 +286,14 @@ class PathHierarchyTests: XCTestCase {
         
         // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
         try assertPathRaisesErrorMessage("/MixFramework", in: tree, context: context, expectedErrorMessage: """
-        Can't resolve 'MixFramework'
+        No module named 'MixFramework'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 1, 13)]),
             ])
         }
         try assertPathRaisesErrorMessage("/documentation/MixFramework", in: tree, context: context, expectedErrorMessage: """
-        Can't resolve 'MixFramework'
+        No module named 'MixFramework'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 15, 27)]),
