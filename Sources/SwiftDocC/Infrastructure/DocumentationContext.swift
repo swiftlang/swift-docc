@@ -204,6 +204,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     
+    var externalCache = [ResolvedTopicReference: LinkResolver.ExternalEntity]()
+
     /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
     public var problems: [Problem] {
         return diagnosticEngine.problems

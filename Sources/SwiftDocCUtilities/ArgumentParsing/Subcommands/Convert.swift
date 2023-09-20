@@ -25,6 +25,8 @@ extension Docc {
         /// Provided as a static variable to allow for redirecting output in unit tests.
         static var _errorLogHandle: LogHandle = .standardError
         
+        static var _diagnosticFormattingOptions: DiagnosticFormattingOptions = []
+        
         public static var configuration = CommandConfiguration(
             abstract: "Convert documentation markup, assets, and symbol information into a documentation archive.",
             usage: """
@@ -206,7 +208,7 @@ extension Docc {
         ///
         /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
         public var transformForStaticHosting: Bool {
-            get { hostingOptions.transformForStaticHosting}
+            get { hostingOptions.transformForStaticHosting }
             set { hostingOptions.transformForStaticHosting = newValue }
         }
         
@@ -425,6 +427,70 @@ extension Docc {
         @OptionGroup(title: "Documentation coverage (Experimental)")
         public var experimentalDocumentationCoverageOptions: DocumentationCoverageOptionsArgument
         
+        // MARK: - Link resolution options
+        
+        @OptionGroup(title: "Link resolution options (Experimental)")
+        var linkResolutionOptions: LinkResolutionOptions
+        
+        struct LinkResolutionOptions: ParsableArguments {
+            @Option(
+                name: [.customLong("dependency")],
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp("A path to a documentation archive to resolve external links against.", discussion: """
+                Only documentation archives built with '--enable-experimental-external-link-support' are supported as dependencies.
+                
+                """),
+                transform: URL.init(fileURLWithPath:)
+            )
+            var dependencies: [URL] = []
+
+            func validate() throws {
+                let fileManager = FileManager.default
+                for dependency in dependencies {
+                    // Check that the dependency URL is a directory. We don't validate the extension.
+                    var isDirectory: ObjCBool = false
+                    guard fileManager.fileExists(atPath: dependency.path, isDirectory: &isDirectory) else {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.NotFound",
+                            summary: "No documentation archive exist at '\(dependency.path)'."
+                        ))
+                        continue
+                    }
+                    guard isDirectory.boolValue else {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.IsNotDirectory",
+                            summary: "Dependency at '\(dependency.path)' is not a directory."
+                        ))
+                        continue
+                    }
+                    // Check that the dependency contains both the expected files
+                    let linkableEntitiesFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkableEntitiesFileName, isDirectory: false)
+                    if !fileManager.fileExists(atPath: linkableEntitiesFile.path) {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.MissingLinkableEntities",
+                            summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableEntitiesFile.lastPathComponent)' file."
+                        ))
+                    }
+                    let linkableHierarchyFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkHierarchyFileName, isDirectory: false)
+                    if !fileManager.fileExists(atPath: linkableHierarchyFile.path) {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.MissingLinkHierarchy",
+                            summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableHierarchyFile.lastPathComponent)' file."
+                        ))
+                    }
+                }
+            }
+        }
+        
+        public var dependencies: [URL] {
+            get { linkResolutionOptions.dependencies }
+            set { linkResolutionOptions.dependencies = newValue }
+        }
+        
         // MARK: - Feature flag options
         
         @OptionGroup(title: "Feature flags")
@@ -456,7 +522,7 @@ extension Docc {
             var allowArbitraryCatalogDirectories = false
             
             @Flag(
-                name: .customLong("--enable-experimental-external-link-support"),
+                name: .customLong("enable-experimental-external-link-support"),
                 help: ArgumentHelp("Support external links to this documentation output.", discussion: """
                 Write additional link metadata files to the output directory to support resolving documentation links to the documentation in that output directory.
                 """)
@@ -580,6 +646,53 @@ extension Docc {
         
         // MARK: - ParsableCommand conformance
         
+        public mutating func validate() throws {
+            if transformForStaticHosting  {
+                if let templateURL = templateOption.templateURL {
+                    let neededFileName: String
+                    
+                    if hostingBasePath != nil {
+                        neededFileName = HTMLTemplate.templateFileName.rawValue
+                    }else {
+                        neededFileName = HTMLTemplate.indexFileName.rawValue
+                    }
+                    
+                    let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
+                    if !FileManager.default.fileExists(atPath: indexTemplate.path) {
+                        throw TemplateOption.invalidHTMLTemplateError(
+                            path: templateURL.path,
+                            expectedFile: neededFileName
+                        )
+                    }
+                    
+                } else {
+                    let invalidOrMissingTemplateDiagnostic = Diagnostic(
+                        severity: .warning,
+                        identifier: "org.swift.docc.MissingHTMLTemplate",
+                        summary: "Invalid or missing HTML template directory",
+                        explanation: """
+                            Invalid or missing HTML template directory, relative to the docc \
+                            executable, at: '\(templateOption.defaultTemplateURL.path)'.
+                            Set the '\(TemplateOption.environmentVariableKey)' environment variable \
+                            to use a custom HTML template.
+                            
+                            Conversion will continue, but the produced DocC archive will not be \
+                            compatible with static hosting environments.
+                            
+                            Pass the '--no-transform-for-static-hosting' flag to silence this warning.
+                            """
+                    )
+                    
+                    print(
+                        DiagnosticConsoleWriter.formattedDescription(for: invalidOrMissingTemplateDiagnostic),
+                        to: &Self._errorLogHandle
+                    )
+                    
+                    transformForStaticHosting = false
+                }
+            }
+        }
+        
         public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
             var convertAction = try ConvertAction(fromConvertCommand: self)
@@ -603,7 +716,7 @@ extension Docc {
         
         private static func warnAboutDiagnostic(_ diagnostic: Diagnostic) {
             print(
-                DiagnosticConsoleWriter.formattedDescription(for: diagnostic),
+                DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: _diagnosticFormattingOptions),
                 to: &_errorLogHandle
             )
         }

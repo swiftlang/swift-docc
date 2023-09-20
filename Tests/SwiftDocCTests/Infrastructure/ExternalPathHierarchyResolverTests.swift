@@ -355,7 +355,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/MixFramework",
-            errorMessage: "Can't resolve 'MixFramework'",
+            errorMessage: "No module named 'MixFramework'",
             solutions: [
                 .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacement: ("MixedFramework", 1, 13))
             ]
@@ -363,7 +363,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/documentation/MixFramework",
-            errorMessage: "Can't resolve 'MixFramework'",
+            errorMessage: "No module named 'MixFramework'",
             solutions: [
                 .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacement: ("MixedFramework", 15, 27))
             ]
@@ -654,7 +654,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             let unresolvedReference = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: authoredLink).map(UnresolvedTopicReference.init(topicURL:)))
             let rootModule = try XCTUnwrap(context.soleRootModuleReference)
             
-            let localResult = try localResolver.resolve(unresolvedReference, in: rootModule, fromSymbolLink: true, context: context)
+            let linkResolver = LinkResolver()
+            linkResolver.localResolver = localResolver
+            let localResult = linkResolver.resolve(unresolvedReference, in: rootModule, fromSymbolLink: true, context: context)
             let externalResult = externalResolver.resolve(unresolvedReference, fromSymbolLink: true)
             
             try verification(localResult, "local")
@@ -724,7 +726,18 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
-        let externalResolver = ExternalPathHierarchyResolver(linkInformation: roundtripResolverInfo)
+        var entitySummaries = [LinkDestinationSummary]()
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        for reference in context.knownPages {
+            let node = try context.entity(with: reference)
+            let renderNode = try converter.convert(node, at: nil)
+            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode))
+        }
+        
+        let externalResolver = ExternalPathHierarchyResolver(
+            linkInformation: roundtripResolverInfo,
+            entityInformation: entitySummaries
+        )
         
         return LinkResolvers(localResolver: localResolver, externalResolver: externalResolver, context: context)
     }

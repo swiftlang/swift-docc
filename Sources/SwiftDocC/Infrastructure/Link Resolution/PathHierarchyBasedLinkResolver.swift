@@ -18,9 +18,10 @@ public class LinkResolver {
     
     public var dependencyLinkFiles: [URL] = [] {
         didSet {
-            // TODO: Do this lazily
+            // TODO: Load the external resolvers lazily when they are needed.
             let resolvers = dependencyLinkFiles.compactMap {
-                try? ExternalPathHierarchyResolver(linkFileURL: $0)
+                // TODO: Make the setter a function and surface any decoding errors.
+                try! ExternalPathHierarchyResolver(dependencyArchiveLocation: $0)
             }
             for resolver in resolvers {
                 for moduleName in resolver.pathHierarchy.modules.keys {
@@ -29,6 +30,8 @@ public class LinkResolver {
             }
         }
     }
+    
+    typealias ExternalEntity = ExternalPathHierarchyResolver.ExternalEntity
     
     private let fallbackResolver = FallbackResolverBasedLinkResolver()
     
@@ -67,7 +70,8 @@ public class LinkResolver {
                     let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
                     context.externallyResolvedLinks[unresolvedReference.topicURL] = result
                     if case .success(let resolved) = result {
-                        context.documentationCache[resolved] = try! resolver.entity(resolved)
+                        
+                        context.externalCache[resolved] = resolver.entity(resolved)
                     }
                     return result
                 }

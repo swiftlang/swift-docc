@@ -36,7 +36,7 @@ public struct FeatureFlags: Codable {
     public var isExperimentalDoxygenSupportEnabled = false
     
     /// Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.
-    public var isExperimentalLinkHierarchySerializationEnabled = true
+    public var isExperimentalLinkHierarchySerializationEnabled = false
     
     /// Creates a set of feature flags with the given values.
     ///

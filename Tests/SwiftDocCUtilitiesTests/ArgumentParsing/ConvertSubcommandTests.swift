@@ -391,7 +391,6 @@ class ConvertSubcommandTests: XCTestCase {
     
     func testExperimentalEnableExternalLinkSupportFlag() throws {
         let originalFeatureFlagsState = FeatureFlags.current
-        
         defer {
             FeatureFlags.current = originalFeatureFlagsState
         }
@@ -408,6 +407,81 @@ class ConvertSubcommandTests: XCTestCase {
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.enableExperimentalLinkHierarchySerialization)
         XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+    }
+    
+    func testLinkDependencyValidation() throws {
+        let originalErrorLogHandle = Docc.Convert._errorLogHandle
+        let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+        defer {
+            Docc.Convert._errorLogHandle = originalErrorLogHandle
+            Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
+        }
+        Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+        
+        let rendererTemplateDirectory = try createTemporaryDirectory()
+        try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
+        defer {
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
+        }
+        
+        let dependencyDir = try createTemporaryDirectory()
+            .appendingPathComponent("SomeDependency.doccarchive")
+        let fileManager = FileManager.default
+        
+        let argumentsToParse = [
+            testBundleURL.path,
+            "--dependency",
+            dependencyDir.path
+        ]
+        
+        // The dependency doesn't exist
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            _ = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
+            warning: No documentation archive exist at '\(dependencyDir.path)'.
+            """)
+        }
+        // The dependency is a file instead of a directory
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            try "Some text".write(to: dependencyDir, atomically: true, encoding: .utf8)
+            
+            _ = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
+            warning: Dependency at '\(dependencyDir.path)' is not a directory.
+            """)
+            
+            try fileManager.removeItem(at: dependencyDir)
+        }
+        // The dependency doesn't have the necessary files
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            try fileManager.createDirectory(at: dependencyDir, withIntermediateDirectories: false)
+            
+            _ = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
+            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
+            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
+            """)
+        }
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            try "".write(to: dependencyDir.appendingPathComponent("linkable-entities.json"), atomically: true, encoding: .utf8)
+            try "".write(to: dependencyDir.appendingPathComponent("link-hierarchy.json"), atomically: true, encoding: .utf8)
+            
+            _ = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), "")
+        }
     }
     
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {

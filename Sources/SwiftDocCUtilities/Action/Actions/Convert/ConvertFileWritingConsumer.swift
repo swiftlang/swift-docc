@@ -138,7 +138,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     }
     
     func consume(linkableElementSummaries summaries: [LinkDestinationSummary]) throws {
-        let linkableElementsURL = targetFolder.appendingPathComponent("linkable-entities.json", isDirectory: false)
+        let linkableElementsURL = targetFolder.appendingPathComponent(Self.linkableEntitiesFileName, isDirectory: false)
         let data = try encode(summaries)
         try fileManager.createFile(at: linkableElementsURL, contents: data)
     }
@@ -171,13 +171,13 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
 
     func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {
         let data = try encode(documentationCoverageInfo)
-        let docCoverageURL = targetFolder.appendingPathComponent(ConvertFileWritingConsumer.docCoverageFileName, isDirectory: false)
+        let docCoverageURL = targetFolder.appendingPathComponent(Self.docCoverageFileName, isDirectory: false)
         try fileManager.createFile(at: docCoverageURL, contents: data)
     }
     
     func consume(buildMetadata: BuildMetadata) throws {
         let data = try encode(buildMetadata)
-        let buildMetadataURL = targetFolder.appendingPathComponent(ConvertFileWritingConsumer.buildMetadataFileName, isDirectory: false)
+        let buildMetadataURL = targetFolder.appendingPathComponent(Self.buildMetadataFileName, isDirectory: false)
         try fileManager.createFile(at: buildMetadataURL, contents: data)
     }
     
@@ -216,6 +216,9 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     /// File name for the build metadata file emitted during conversion.
     static var buildMetadataFileName = "metadata.json"
+    
+    /// File name for the linkable entity file emitted during conversion.
+    static var linkableEntitiesFileName = "linkable-entities.json"
     
     /// File name for the link hierarchy file emitted during conversion.
     static var linkHierarchyFileName = "link-hierarchy.json"
