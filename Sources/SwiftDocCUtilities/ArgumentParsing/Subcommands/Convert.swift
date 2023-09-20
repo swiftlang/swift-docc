@@ -455,6 +455,14 @@ extension Docc {
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
             
+            @Flag(
+                name: .customLong("--enable-experimental-external-link-support"),
+                help: ArgumentHelp("Support external links to this documentation output.", discussion: """
+                Write additional link metadata files to the output directory to support resolving documentation links to the documentation in that output directory.
+                """)
+            )
+            var enableExperimentalLinkHierarchySerialization = false
+            
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
             
@@ -539,6 +547,12 @@ extension Docc {
         public var allowArbitraryCatalogDirectories: Bool {
             get { featureFlags.allowArbitraryCatalogDirectories }
             set { featureFlags.allowArbitraryCatalogDirectories = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
+        public var enableExperimentalLinkHierarchySerialization: Bool {
+            get { featureFlags.enableExperimentalLinkHierarchySerialization }
+            set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
         }
         
         /// A user-provided value that is true if additional metadata files should be produced.

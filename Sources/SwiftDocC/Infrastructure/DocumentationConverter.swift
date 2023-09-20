@@ -362,6 +362,15 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             }
         }
         
+        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+            do {
+                let serializableLinkInformation = try context.hierarchyBasedLinkResolver.prepareForSerialization(bundleID: bundle.identifier)
+                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+            } catch {
+                recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
+            }
+        }
+        
         if emitDigest {
             do {
                 try outputConsumer.consume(problems: context.problems + conversionProblems)

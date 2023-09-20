@@ -389,6 +389,27 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
     }
     
+    func testExperimentalEnableExternalLinkSupportFlag() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+        
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+        
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalLinkHierarchySerialization)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-external-link-support",
+            testBundleURL.path,
+        ])
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalLinkHierarchySerialization)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+    }
+    
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
         UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
         

@@ -181,6 +181,13 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         try fileManager.createFile(at: buildMetadataURL, contents: data)
     }
     
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {
+        let data = try encode(linkResolutionInformation)
+        let linkResolutionInfoURL = targetFolder.appendingPathComponent(Self.linkHierarchyFileName, isDirectory: false)
+        
+        try fileManager.createFile(at: linkResolutionInfoURL, contents: data)
+    }
+    
     /// Encodes the given value using the default render node JSON encoder.
     private func encode<E: Encodable>(_ value: E) throws -> Data {
         try RenderJSONEncoder.makeEncoder().encode(value)
@@ -209,6 +216,9 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     /// File name for the build metadata file emitted during conversion.
     static var buildMetadataFileName = "metadata.json"
+    
+    /// File name for the link hierarchy file emitted during conversion.
+    static var linkHierarchyFileName = "link-hierarchy.json"
 }
 
 enum Digest {
