@@ -2084,6 +2084,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
+        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
+            do {
+                try linkResolver.loadExternalResolvers()
+            } catch {
+                // Pipe the error out of the dispatch queue.
+                discoveryError.sync({
+                    if $0 == nil { $0 = error }
+                })
+            }
+        }
+        
         discoveryGroup.wait()
 
         try shouldContinueRegistration()
@@ -2541,6 +2552,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let referenceWithoutFragment = reference.withFragment(nil)
             return try entity(with: referenceWithoutFragment).availableSourceLanguages
         } catch ContextError.notFound {
+            if let externalEntity = externalCache[reference.withFragment(nil)] {
+                return externalEntity.sourceLanguages
+            }
             preconditionFailure("Reference does not have an associated documentation node.")
         } catch {
             fatalError("Unexpected error when retrieving source languages: \(error)")

@@ -426,7 +426,7 @@ class ConvertSubcommandTests: XCTestCase {
         }
         
         let dependencyDir = try createTemporaryDirectory()
-            .appendingPathComponent("SomeDependency.doccarchive")
+            .appendingPathComponent("SomeDependency.doccarchive", isDirectory: true)
         let fileManager = FileManager.default
         
         let argumentsToParse = [
@@ -440,7 +440,8 @@ class ConvertSubcommandTests: XCTestCase {
             let logStorage = LogHandle.LogStorage()
             Docc.Convert._errorLogHandle = .memory(logStorage)
             
-            _ = try Docc.Convert.parse(argumentsToParse)
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
             warning: No documentation archive exist at '\(dependencyDir.path)'.
             """)
@@ -452,7 +453,8 @@ class ConvertSubcommandTests: XCTestCase {
             
             try "Some text".write(to: dependencyDir, atomically: true, encoding: .utf8)
             
-            _ = try Docc.Convert.parse(argumentsToParse)
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
             warning: Dependency at '\(dependencyDir.path)' is not a directory.
             """)
@@ -466,7 +468,8 @@ class ConvertSubcommandTests: XCTestCase {
             
             try fileManager.createDirectory(at: dependencyDir, withIntermediateDirectories: false)
             
-            _ = try Docc.Convert.parse(argumentsToParse)
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
             warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
             warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
@@ -479,7 +482,8 @@ class ConvertSubcommandTests: XCTestCase {
             try "".write(to: dependencyDir.appendingPathComponent("linkable-entities.json"), atomically: true, encoding: .utf8)
             try "".write(to: dependencyDir.appendingPathComponent("link-hierarchy.json"), atomically: true, encoding: .utf8)
             
-            _ = try Docc.Convert.parse(argumentsToParse)
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [dependencyDir])
             XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), "")
         }
     }

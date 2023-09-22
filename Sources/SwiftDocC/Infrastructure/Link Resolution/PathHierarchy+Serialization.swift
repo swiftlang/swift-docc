@@ -90,7 +90,7 @@ extension PathHierarchy {
             var name: String
             var isDisfavoredInCollision: Bool = false
             var children: [Disambiguation] = []
-            var symbol: SymbolGraph.Symbol?
+            var symbol: SymbolGraph.Symbol? // TODO: This repeats a lot of information from the link summary.
             
             struct Disambiguation: Codable {
                 var kind: String?
@@ -135,21 +135,21 @@ extension PathHierarchy.FileRepresentation.Node {
 
 // MARK: PathHierarchyBasedLinkResolver
 
+
 public struct SerializableLinkResolutionInformation: Codable {
+    // This type is public so that it can be an argument to a function in `ConvertOutputConsumer`
     
     // This format is not stable yet. Expect information to be significantly reorganized, added, and removed.
     
     var version: SemanticVersion
     var bundleID: String
     var pathHierarchy: PathHierarchy.FileRepresentation
+    // Separate storage of node data because the path hierarchy doesn't know the resolved references for articles.
     var nodeData: [Int: NodeData]
     
     struct NodeData: Codable {
-        var title: String?
-        var abstract: String? // This is only needed if we support curation of external symbols
-        var kind: DocumentationNode.Kind?
+        // ???: What information do we need to save here
         var path: String?
-        
     }
 }
 

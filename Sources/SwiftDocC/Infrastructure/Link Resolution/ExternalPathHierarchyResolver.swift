@@ -18,7 +18,7 @@ final class ExternalPathHierarchyResolver {
     private(set) var pathHierarchy: PathHierarchy!
     
     /// Map between resolved identifiers and resolved topic references.
-    private(set) var resolvedReferenceMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
+    private(set) var resolvedReferenceMap = [ResolvedIdentifier: ResolvedTopicReference]()
     
     private(set) var symbols: [String: ResolvedTopicReference]
     private(set) var entitySummaries: [ResolvedTopicReference: LinkDestinationSummary]
@@ -135,6 +135,7 @@ final class ExternalPathHierarchyResolver {
         
         self.pathHierarchy = PathHierarchy(fileRepresentation.pathHierarchy) { identifiers in
             // Read the serialized paths
+            self.resolvedReferenceMap.reserveCapacity(identifiers.count)
             for (index, nodeData) in fileRepresentation.nodeData {
                 let identifier = identifiers[index]
                 let url = URL(string: nodeData.path!)! // The file currently always encodes a file
@@ -143,10 +144,10 @@ final class ExternalPathHierarchyResolver {
         }
     }
     
-    convenience init(dependencyArchiveLocation: URL) throws {
+    convenience init(dependencyArchive: URL) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
-        let linkHierarchyFile = dependencyArchiveLocation.appendingPathComponent("link-resolver.json")
-        let entityURL = dependencyArchiveLocation.appendingPathComponent("linkable-entities.json")
+        let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
+        let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")
         
         self.init(
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: Data(contentsOf: linkHierarchyFile)),

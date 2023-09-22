@@ -438,14 +438,15 @@ extension Docc {
                 parsing: ArrayParsingStrategy.singleValue,
                 help: ArgumentHelp("A path to a documentation archive to resolve external links against.", discussion: """
                 Only documentation archives built with '--enable-experimental-external-link-support' are supported as dependencies.
-                
                 """),
                 transform: URL.init(fileURLWithPath:)
             )
             var dependencies: [URL] = []
 
-            func validate() throws {
+            mutating func validate() throws {
                 let fileManager = FileManager.default
+                
+                var filteredDependencies: [URL] = []
                 for dependency in dependencies {
                     // Check that the dependency URL is a directory. We don't validate the extension.
                     var isDirectory: ObjCBool = false
@@ -467,7 +468,8 @@ extension Docc {
                     }
                     // Check that the dependency contains both the expected files
                     let linkableEntitiesFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkableEntitiesFileName, isDirectory: false)
-                    if !fileManager.fileExists(atPath: linkableEntitiesFile.path) {
+                    let hasLinkableEntitiesFile = fileManager.fileExists(atPath: linkableEntitiesFile.path)
+                    if !hasLinkableEntitiesFile {
                         Convert.warnAboutDiagnostic(.init(
                             severity: .warning,
                             identifier: "org.swift.docc.Dependency.MissingLinkableEntities",
@@ -475,14 +477,19 @@ extension Docc {
                         ))
                     }
                     let linkableHierarchyFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkHierarchyFileName, isDirectory: false)
-                    if !fileManager.fileExists(atPath: linkableHierarchyFile.path) {
+                    let hasLinkableHierarchyFile = fileManager.fileExists(atPath: linkableHierarchyFile.path)
+                    if !hasLinkableHierarchyFile {
                         Convert.warnAboutDiagnostic(.init(
                             severity: .warning,
                             identifier: "org.swift.docc.Dependency.MissingLinkHierarchy",
                             summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableHierarchyFile.lastPathComponent)' file."
                         ))
                     }
+                    if hasLinkableEntitiesFile && hasLinkableHierarchyFile {
+                        filteredDependencies.append(dependency)
+                    }
                 }
+                self.dependencies = filteredDependencies
             }
         }
         

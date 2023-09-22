@@ -164,7 +164,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
         self.diagnosticLevel = filterLevel
         self.context.externalMetadata.diagnosticLevel = self.diagnosticLevel
-        self.context.linkResolver.dependencyLinkFiles = dependencies
+        self.context.linkResolver.dependencyArchives = dependencies
         
         // Inject current platform versions if provided
         if let currentPlatforms = currentPlatforms {
