@@ -154,4 +154,52 @@ class AvailabilityParserTests: XCTestCase {
         XCTAssertTrue(compiler.isDeprecated())
         XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
     }
+    
+    func testUnavailableIsNotDeprecated() throws {
+        let json = """
+        [
+            {
+                "domain": "tvOS",
+                "isUnconditionallyUnavailable" : true
+            }
+        ]
+        """
+        let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
+        
+        /// Test all platforms
+        let compiler = AvailabilityParser(availability)
+        XCTAssertFalse(compiler.isDeprecated())
+    }
+    
+    func testAllPlatformsUnavailableOrDeprecatedIsMarkedDeprecated() throws {
+        let json = """
+        [
+            {
+                "domain": "tvOS",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "macOS",
+                "message" : "deprecated",
+                "deprecated": { "major": 10, "minor": 17 }
+            },
+            {
+                "domain": "iOS",
+                "message" : "deprecated",
+                "deprecated": { "major": 10, "minor": 17 }
+            },
+            {
+                "domain": "watchOS",
+                "message" : "deprecated",
+                "deprecated": { "major": 10, "minor": 17 }
+            }
+        ]
+        """
+        let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
+        
+        /// Test all platforms
+        let compiler = AvailabilityParser(availability)
+        XCTAssertTrue(compiler.isDeprecated())
+        XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
+    }
 }
