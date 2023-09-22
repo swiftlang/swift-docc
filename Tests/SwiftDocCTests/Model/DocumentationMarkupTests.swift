@@ -154,7 +154,7 @@ class DocumentationMarkupTests: XCTestCase {
             Discussion content.
             """
             let expected = """
-            Image source: "image.jpg" title: ""
+            Image source: "image.jpg"
             └─ Text "Image title"
             Text " Abstract."
             """
