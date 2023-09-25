@@ -268,7 +268,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
     func testThrowsHumanFriendlyErrorWhenCannotStartServerOnAGivenPort() throws {
         // Binding an invalid address
-        try assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
+        try assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on host localhost and port -1")
     }
     
     func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line) throws {
@@ -404,7 +404,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?.channel.localAddress?.port)
 
         // Try to start another preview on the same port
-        try assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available at the moment, try a different port number")
+        try assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available on host localhost at the moment, try a different port number")
 
         try preview.stop()
         
