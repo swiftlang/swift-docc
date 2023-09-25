@@ -53,6 +53,7 @@ public final class PreviewAction: Action, RecreatingContext {
 
     var logHandle = LogHandle.standardOutput
     
+    let host: String
     let port: Int
     
     var convertAction: ConvertAction
@@ -75,6 +76,7 @@ public final class PreviewAction: Action, RecreatingContext {
     /// Creates a new preview action from the given parameters.
     ///
     /// - Parameters:
+    ///   - host: The host name used by the preview server.
     ///   - port: The port number used by the preview server.
     ///   - convertAction: The action used to convert the documentation bundle before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
@@ -84,6 +86,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///     is performed.
     /// - Throws: If an error is encountered while initializing the documentation context.
     public init(
+        host: String,
         port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
@@ -95,6 +98,7 @@ public final class PreviewAction: Action, RecreatingContext {
         }
         
         // Initialize the action context.
+        self.host = host
         self.port = port
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
@@ -108,13 +112,14 @@ public final class PreviewAction: Action, RecreatingContext {
     @available(*, deprecated, message: "TLS support has been removed.")
     public convenience init(
         tlsCertificateKey: URL?, tlsCertificateChain: URL?, serverUsername: String?,
-        serverPassword: String?, port: Int,
+        serverPassword: String?, host: String, port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
         context: DocumentationContext? = nil,
         printTemplatePath: Bool = true) throws
     {
         try self.init(
+            host: host,
             port: port,
             createConvertAction: createConvertAction,
             workspace: workspace,
@@ -163,13 +168,13 @@ public final class PreviewAction: Action, RecreatingContext {
         // Preview the output and monitor the source bundle for changes.
         do {
             print(String(repeating: "=", count: 40), to: &logHandle)
-            if let previewURL = URL(string: "http://localhost:\(port)") {
+            if let previewURL = URL(string: "http://\(host):\(port)") {
                 print("Starting Local Preview Server", to: &logHandle)
                 printPreviewAddresses(base: previewURL)
                 print(String(repeating: "=", count: 40), to: &logHandle)
             }
 
-            let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(host: "localhost", port: port)
+            let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(host: host, port: port)
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
             
             // When the user stops docc - stop the preview server first before exiting.

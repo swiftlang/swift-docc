@@ -24,6 +24,7 @@ extension PreviewAction {
     {
         // Initialize the `PreviewAction` from the options provided by the `Preview` command
         try self.init(
+            host: "localhost",
             port: previewOptions.port,
             createConvertAction: {
                 try ConvertAction(
