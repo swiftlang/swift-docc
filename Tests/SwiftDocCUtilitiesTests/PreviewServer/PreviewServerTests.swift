@@ -201,7 +201,7 @@ class PreviewServerTests {
     }
     
     func testPreviewServerBindDescription() {
-        let localhostBind = PreviewServer.Bind.localhost(port: 1234)
+        let localhostBind = PreviewServer.Bind.localhost(host: "localhost", port: 1234)
         XCTAssertEqual("\(localhostBind)", "localhost:1234")
         let socketBind = PreviewServer.Bind.socket(path: "/tmp/file.sock")
         XCTAssertEqual("\(socketBind)", "/tmp/file.sock")

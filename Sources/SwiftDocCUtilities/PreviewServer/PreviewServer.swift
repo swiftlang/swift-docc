@@ -72,15 +72,15 @@ final class PreviewServer {
     /// A list of server-bind destinations.
     public enum Bind: CustomStringConvertible {
         /// A port on the local machine.
-        case localhost(port: Int)
+        case localhost(host: String, port: Int)
         
         /// A file socket on disk.
         case socket(path: String)
         
         var description: String {
             switch self {
-            case .localhost(port: let port):
-                return "localhost:\(port)"
+            case .localhost(host: let host, port: let port):
+                return "\(host):\(port)"
             case .socket(path: let path):
                 return path
             }
@@ -146,21 +146,21 @@ final class PreviewServer {
         do {
             // Bind to the given destination
             switch bindTo {
-            case .localhost(let port):
-                channel = try bootstrap.bind(host: "localhost", port: port).wait()
+            case .localhost(let host, let port):
+                channel = try bootstrap.bind(host: host, port: port).wait()
             case .socket(let path):
                 channel = try bootstrap.bind(unixDomainSocketPath: path).wait()
             }
         } catch let error as NIO.IOError where error.errnoCode == EADDRINUSE {
             // The given port is not available.
             switch bindTo {
-                case .localhost(let port): throw Error.portNotAvailable(port: port)
+                case .localhost(_, let port): throw Error.portNotAvailable(port: port)
                 default: throw error
             }
         } catch {
             // Cannot bind the given address/port.
             switch bindTo {
-                case .localhost(let port): throw Error.cannotStartServer(port: port)
+                case .localhost(_, let port): throw Error.cannotStartServer(port: port)
                 default: throw error
             }
         }

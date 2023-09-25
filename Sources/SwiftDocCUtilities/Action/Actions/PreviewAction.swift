@@ -169,7 +169,7 @@ public final class PreviewAction: Action, RecreatingContext {
                 print(String(repeating: "=", count: 40), to: &logHandle)
             }
 
-            let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
+            let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(host: "localhost", port: port)
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
             
             // When the user stops docc - stop the preview server first before exiting.
