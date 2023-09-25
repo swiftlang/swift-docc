@@ -3055,7 +3055,7 @@ class ConvertActionTests: XCTestCase {
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
     
-    func testWritingDiagnosticsToFile() throws {
+    func testWrittenDiagnosticsAfterConvert() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "Documentation.md", utf8Content: """
@@ -3068,8 +3068,13 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
         let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
         let fileConsumer = DiagnosticFileWriter(outputPath: diagnosticFile)
+        
         let engine = DiagnosticEngine()
         engine.add(fileConsumer)
+        
+        let logStorage = LogHandle.LogStorage()
+        let consoleConsumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], baseURL: nil, highlight: false)
+        engine.add(consoleConsumer)
         
         var action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
@@ -3097,6 +3102,11 @@ class ConvertActionTests: XCTestCase {
             "No TechnologyRoot to organize article-only documentation.",
             "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
         ])
+        
+        let logLines = logStorage.text.splitByNewlines
+        XCTAssertEqual(logLines.filter { $0.utf8.contains("warning:".utf8) }.count, 2, "There should be two warnings printed to the console")
+        XCTAssertEqual(logLines.filter { $0.utf8.contains("No TechnologyRoot to organize article-only documentation.".utf8) }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { $0.utf8.contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.".utf8) }.count, 1, "The link warning shouldn't be repeated.")
     }
     
     #endif

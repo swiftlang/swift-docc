@@ -60,14 +60,20 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         }
     }
     
-    public func finalize() throws {
+    public func flush() throws {
         if formattingOptions.contains(.formatConsoleOutputForTools) {
             // For tools, the console writer writes each diagnostic as they are received.
         } else {
             let text = self.diagnosticFormatter.formattedDescription(for: problems)
             outputStream.write(text)
         }
+        problems = [] // `flush()` is called more than once. Don't emit the same problems again.
         self.diagnosticFormatter.finalize()
+    }
+    
+    // This is deprecated but still necessary to implement.
+    public func finalize() throws {
+        try flush()
     }
     
     private static func makeDiagnosticFormatter(
