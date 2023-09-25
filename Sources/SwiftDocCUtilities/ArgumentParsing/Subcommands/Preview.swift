@@ -23,9 +23,9 @@ extension Docc {
         public static var configuration = CommandConfiguration(
             abstract: "Convert documentation inputs and preview the documentation output.",
             usage: """
-            docc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>]
-            docc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>]
-            docc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<availability-options>] [<diagnostic-options>] [<source-repository-options>] [<hosting-options>] [<info-plist-fallbacks>] [<feature-flags>] [<other-options>]
+            docc preview [<catalog-path>] [--host <host-name>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>]
+            docc preview [<catalog-path>] [--host <host-name>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>]
+            docc preview [<catalog-path>] [--host <host-name>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<availability-options>] [<diagnostic-options>] [<source-repository-options>] [<hosting-options>] [<info-plist-fallbacks>] [<feature-flags>] [<other-options>]
             """,
             discussion: """
             The 'preview' command extends the 'convert' command by running a preview server and monitoring the documentation input for modifications to rebuild the documentation.

@@ -17,6 +17,16 @@ import Foundation
 public struct PreviewOptions: ParsableArguments {
     public init() { }
 
+    /// The host name to use for the preview web server.
+    ///
+    /// Defaults to `localhost`.
+    @Option(
+        name: .long,
+        help: ArgumentHelp(
+            "Host name to use for the preview web server.",
+            valueName: "host-name"))
+    public var host: String = "localhost"
+
     /// The port number to use for the preview web server.
     ///
     /// Defaults to `8080`.
