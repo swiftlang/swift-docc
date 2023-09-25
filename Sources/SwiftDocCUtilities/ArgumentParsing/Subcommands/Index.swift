@@ -53,4 +53,23 @@ extension Docc {
             try indexAction.performAndHandleResult()
         }
     }
+    
+    // This command wraps the Index command so that we can still support it as a top-level command without listing it in the help
+    // text (but still list the Index command as a subcommand of the ProcessArchive command).
+    struct _Index: ParsableCommand {
+        init() {}
+
+        static var configuration = CommandConfiguration(
+            commandName: "index",
+            abstract: "Create an index for the documentation from compiled data.",
+            shouldDisplay: false
+        )
+
+        @OptionGroup
+        var command: Index
+
+        public mutating func run() throws {
+            try command.run()
+        }
+    }
 }

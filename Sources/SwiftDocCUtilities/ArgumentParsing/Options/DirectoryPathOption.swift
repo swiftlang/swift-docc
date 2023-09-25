@@ -32,7 +32,7 @@ extension DirectoryPathOption {
 
         // Validate that the URL represents a directory
         guard url.hasDirectoryPath == true else {
-            throw ValidationError("No documentation directory exist at '\(url.path)'.")
+            throw ValidationError("No documentation directory exists at '\(url.path)'.")
         }
     }
 }

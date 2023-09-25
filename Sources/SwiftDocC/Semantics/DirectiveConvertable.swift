@@ -21,6 +21,11 @@ public protocol DirectiveConvertible {
     static var directiveName: String { get }
     
     /**
+     The earliest release of Swift-DocC that supports this directive.
+     */
+    static var introducedVersion: String { get }
+    
+    /**
      The `BlockDirective` that was analyzed and converted to this ``Semantic`` object.
      */
     var originalMarkup: BlockDirective { get }

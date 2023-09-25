@@ -116,7 +116,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         XCTAssertFalse(contentsToWrite.isEmpty)
         
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("ShapeKit-OverloadedProtocol.md")], """
+        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("ShapeKit/OverloadedProtocol.md")], """
         # ``/ShapeKit/OverloadedProtocol``
 
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -141,7 +141,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         XCTAssertFalse(contentsToWrite.isEmpty)
         
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("Operators-MyNumber.md")], """
+        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("Operators/MyNumber.md")], """
         # ``/Operators/MyNumber``
 
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->

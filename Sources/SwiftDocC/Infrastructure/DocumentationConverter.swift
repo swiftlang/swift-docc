@@ -181,6 +181,10 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
         outputConsumer: OutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
+        defer {
+            diagnosticEngine.flush()
+        }
+        
         // Unregister the current file data provider and all its bundles
         // when running repeated conversions.
         if let dataProvider = self.currentDataProvider {
@@ -408,10 +412,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context))
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
-
-        context.linkResolutionMismatches.reportGatheredMismatchesIfEnabled()
-        
-        diagnosticEngine.finalize()
         
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }

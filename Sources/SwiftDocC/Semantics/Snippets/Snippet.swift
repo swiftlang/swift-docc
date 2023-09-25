@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,8 +10,10 @@
 
 import Foundation
 import Markdown
+import SymbolKit
 
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.6"
     public let originalMarkup: BlockDirective
     
     /// The path components of a symbol link that would be used to resolve a reference to a snippet,
@@ -43,5 +45,35 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
         }
         
         return true
+    }
+}
+
+extension Snippet: RenderableDirectiveConvertible {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+        guard let snippet = Snippet(from: originalMarkup, for: contentCompiler.bundle, in: contentCompiler.context) else {
+                return []
+            }
+            
+            guard let snippetReference = contentCompiler.resolveSymbolReference(destination: snippet.path),
+                  let snippetEntity = try? contentCompiler.context.entity(with: snippetReference),
+                  let snippetSymbol = snippetEntity.symbol,
+                  let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
+                return []
+            }
+            
+            if let requestedSlice = snippet.slice,
+               let requestedLineRange = snippetMixin.slices[requestedSlice] {
+                // Render only the slice.
+                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
+                let lines = snippetMixin.lines[lineRange]
+                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
+                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
+            } else {
+                // Render the whole snippet with its explanation content.
+                let docCommentContent = snippetEntity.markup.children.flatMap { contentCompiler.visit($0) }
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
+                return docCommentContent + [code]
+            }
     }
 }

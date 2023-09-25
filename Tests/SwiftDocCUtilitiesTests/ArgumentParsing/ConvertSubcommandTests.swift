@@ -112,7 +112,7 @@ class ConvertSubcommandTests: XCTestCase {
             )
             let action = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(
-                action.htmlTemplateDirectory,
+                action.htmlTemplateDirectory?.standardizedFileURL,
                 defaultTemplateDir.standardizedFileURL
             )
         }
@@ -157,12 +157,14 @@ class ConvertSubcommandTests: XCTestCase {
     func testInvalidTargetPathOptions() throws {
         let fakeRootPath = "/nonexistentrootfolder/subfolder"
         // Test throws on non-existing parent folder.
-        for path in ["/tmp/output", "/tmp", "/"] {
-            SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-            XCTAssertThrowsError(try Docc.Convert.parse([
-                "--output-path", fakeRootPath + path,
-                testBundleURL.path,
-            ]), "Did not refuse target folder path '\(path)'")
+        for outputOption in ["-o", "--output-path"] {
+            for path in ["/tmp/output", "/tmp", "/"] {
+                SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
+                XCTAssertThrowsError(try Docc.Convert.parse([
+                    outputOption, fakeRootPath + path,
+                    testBundleURL.path,
+                ]), "Did not refuse target folder path '\(path)'")
+            }
         }
     }
 
@@ -186,7 +188,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertNil(convertOptions.fallbackBundleDisplayName)
             XCTAssertNil(convertOptions.fallbackBundleIdentifier)
-            XCTAssertNil(convertOptions.fallbackBundleVersion)
             XCTAssertNil(convertOptions.defaultCodeListingLanguage)
         }
         
@@ -202,7 +203,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
         
@@ -218,7 +218,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
     }
@@ -296,7 +295,7 @@ class ConvertSubcommandTests: XCTestCase {
             "--index",
         ])
         
-        XCTAssertEqual(convertOptions.index, true)
+        XCTAssertTrue(convertOptions.emitLMDBIndex)
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         
@@ -330,11 +329,10 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Verify the options
         
-        XCTAssertNil(convertOptions.documentationBundle.url)
+        XCTAssertNil(convertOptions.documentationCatalog.url)
         
         XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
         XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-        XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
         
         XCTAssertEqual(
             convertOptions.additionalSymbolGraphDirectory,

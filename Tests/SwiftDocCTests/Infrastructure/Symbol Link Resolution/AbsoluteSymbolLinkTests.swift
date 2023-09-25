@@ -541,7 +541,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             codeListings: [:]
         )
         
-        var expectedDescriptions = [
+        let expectedDescriptions = [
             // doc://com.shapes.ShapeKit/documentation/ShapeKit:
             """
             {
@@ -843,30 +843,6 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             }
             """,
         ]
-        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            // The cache-based resolver redundantly disambiguates these overloads with both kind and hash ...
-            for index in 7...11 {
-                expectedDescriptions[index] = expectedDescriptions[index].replacingOccurrences(
-                    of:   "basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '",
-                    with: "basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '"
-                )
-            }
-            // ... because of the above, the cache-based resolver sort the enum case before the methods
-            expectedDescriptions.insert(
-                expectedDescriptions.remove(at: 12),
-                at: 7
-            )
-            
-            // The cache-based resolver redundantly disambiguates these overloads which already have disambiguated parents.
-            expectedDescriptions[14] = expectedDescriptions[14].replacingOccurrences(
-                of:   "basePathComponents: [(name: 'fifthTestMember', suffix: (none))]",
-                with: "basePathComponents: [(name: 'fifthTestMember', suffix: (kind: 'swift.type.property'))]"
-            )
-            expectedDescriptions[29] = expectedDescriptions[29].replacingOccurrences(
-                of:   "basePathComponents: [(name: 'fifthTestMember', suffix: (none))]",
-                with: "basePathComponents: [(name: 'fifthTestMember', suffix: (kind: 'swift.property'))]"
-            )
-        }
         
         XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
         

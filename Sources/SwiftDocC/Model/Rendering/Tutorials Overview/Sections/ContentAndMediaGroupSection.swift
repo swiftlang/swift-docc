@@ -9,7 +9,7 @@
 */
 
 /// A section that groups content and media sections.
-public struct ContentAndMediaGroupSection: RenderSection {
+public struct ContentAndMediaGroupSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .contentAndMediaGroup
     
     /// The layout direction of all content and media sections in this group.
@@ -28,5 +28,24 @@ public struct ContentAndMediaGroupSection: RenderSection {
         
         self.layout = sections.first!.layout
         self.sections = sections
+    }
+}
+
+// Diffable conformance
+extension ContentAndMediaGroupSection: RenderJSONDiffable {
+    /// Returns the differences between this ContentAndMediaGroupSection and the given one.
+    func difference(from other: ContentAndMediaGroupSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.layout, forKey: CodingKeys.layout)
+        diffBuilder.addDifferences(atKeyPath: \.sections, forKey: CodingKeys.sections)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this ContentAndMediaGroupSection is similar enough to the given one.
+    func isSimilar(to other: ContentAndMediaGroupSection) -> Bool {
+        return self.sections == other.sections
     }
 }

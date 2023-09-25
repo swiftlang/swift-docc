@@ -46,7 +46,7 @@ enum URLArgumentValidator {
     ///
     /// - Throws: A `ValidationError` that includes the `argumentDescription` and current path.
     static func validateFileExists(_ url: URL?, forArgumentDescription argumentDescription: String) throws {
-        // Validation is only necesary if a non-optional value has been passed.
+        // Validation is only necessary if a non-optional value has been passed.
         guard let url = url else { return }
         
         guard FileManager.default.fileExists(atPath: url.path) else {

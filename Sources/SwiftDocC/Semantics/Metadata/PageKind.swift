@@ -28,6 +28,7 @@ extension Metadata {
     /// }
     /// ```
     public final class PageKind: Semantic, AutomaticDirectiveConvertible {
+        public static let introducedVersion = "5.8"
         /// The available kinds for use with the `@PageKind` directive.
         public enum Kind: String, CaseIterable, DirectiveArgumentValueConvertible {
             /// An article of free-form text; the default for standalone markdown files.
@@ -50,6 +51,15 @@ extension Metadata {
                     return "Article"
                 case .sampleCode:
                     return "Sample Code"
+                }
+            }
+
+            var documentationNodeKind: DocumentationNode.Kind {
+                switch self {
+                case .article:
+                    return .article
+                case .sampleCode:
+                    return .sampleCode
                 }
             }
         }

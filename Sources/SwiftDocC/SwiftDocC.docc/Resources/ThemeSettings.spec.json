@@ -856,6 +856,9 @@
                                     },
                                     "onThisPageNavigator": {
                                         "$ref": "#/components/schemas/FeatureFlagDisable"
+                                    },
+                                    "i18n": {
+                                        "$ref": "#/components/schemas/FeatureFlagEnable"
                                     }
                                 }
                             }

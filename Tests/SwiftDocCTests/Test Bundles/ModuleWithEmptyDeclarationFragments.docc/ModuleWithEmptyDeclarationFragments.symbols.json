@@ -1,0 +1,26 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Swift 5.9"
+    },
+    "module": {
+        "name": "ModuleWithEmptyDeclarationFragments",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4
+                }
+            }
+        }
+    },
+    "symbols": [],
+    "relationships": []
+}

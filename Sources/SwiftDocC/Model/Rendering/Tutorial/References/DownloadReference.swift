@@ -27,13 +27,12 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// The location of the downloadable resource.
     public var url: URL
 
-    /// Indicates whether the ``url`` property was loaded from the regular initializer or from the
-    /// `Decodable` initializer.
+    /// Indicates whether the ``url`` property should be encoded verbatim into Render JSON.
     ///
     /// This is used during encoding to determine whether to filter ``url`` through the
     /// `renderURL(for:)` method. In case the URL was loaded from JSON, we don't want to modify it
     /// further after a round-trip.
-    private var urlWasDecoded = false
+    private var encodeUrlVerbatim = false
 
     /// The SHA512 hash value for the resource.
     public var checksum: String?
@@ -57,11 +56,24 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// - Parameters:
     ///   - identifier: An identifier for the resource's reference.
     ///   - url: The path to the resource.
-    ///   - sha512Checksum: The SHA512 hash value for the resource.
+    ///   - checksum: The SHA512 hash value for the resource.
     public init(identifier: RenderReferenceIdentifier, renderURL url: URL, checksum: String?) {
         self.identifier = identifier
         self.url = url
         self.checksum = checksum
+    }
+
+    /// Creates a new reference to a downloadable resource, with a URL that should be encoded as-is.
+    ///
+    /// - Parameters:
+    ///   - identifier: An identifier for the resource's reference.
+    ///   - url: The path to the resource. This will be encoded as-is into the Render JSON.
+    ///   - checksum: The SHA512 hash value for the resource.
+    public init(identifier: RenderReferenceIdentifier, verbatimURL url: URL, checksum: String?) {
+        self.identifier = identifier
+        self.url = url
+        self.checksum = checksum
+        self.encodeUrlVerbatim = true
     }
 
     @available(*, deprecated, message: "Use 'init(identifier:renderURL:checksum:)' instead")
@@ -81,7 +93,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         self.type = try container.decode(RenderReferenceType.self, forKey: .type)
         self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
         self.url = try container.decode(URL.self, forKey: .url)
-        self.urlWasDecoded = true
+        self.encodeUrlVerbatim = true
         self.checksum = try container.decodeIfPresent(String.self, forKey: .checksum)
     }
 
@@ -89,10 +101,10 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encodeIfPresent(checksum, forKey: .checksum)
+        try container.encode(checksum, forKey: .checksum)
         
         // Render URL
-        if !urlWasDecoded {
+        if !encodeUrlVerbatim {
             try container.encode(renderURL(for: url), forKey: .url)
         } else {
             try container.encode(url, forKey: .url)
@@ -109,5 +121,20 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
 extension DownloadReference {
     private func renderURL(for url: URL) -> URL {
         url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent)
+    }
+}
+
+// Diffable conformance
+extension DownloadReference: RenderJSONDiffable {
+    /// Returns the difference between this DownloadReference and the given one.
+    func difference(from other: DownloadReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+        diffBuilder.addDifferences(atKeyPath: \.checksum, forKey: CodingKeys.checksum)
+
+        return diffBuilder.differences
     }
 }

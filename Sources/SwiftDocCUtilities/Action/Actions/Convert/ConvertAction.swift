@@ -152,7 +152,12 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        engine.add(DiagnosticConsoleWriter(formattingOptions: formattingOptions))
+        engine.add(
+            DiagnosticConsoleWriter(
+                formattingOptions: formattingOptions,
+                baseURL: documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
+            )
+        )
         if let diagnosticFilePath = diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }
@@ -359,6 +364,10 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+        
+        // The converter has already emitted its problems to the diagnostic engine. 
+        // Track additional problems separately to avoid repeating the converter's problems.
+        var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
         // While running this method keep the `isPerforming` flag up.
@@ -367,6 +376,7 @@ public struct ConvertAction: Action, RecreatingContext {
         defer {
             didPerformFuture?()
             isPerforming.sync({ $0 = false })
+            diagnosticEngine.flush()
         }
         
         if let outOfProcessResolver = outOfProcessResolver {
@@ -453,11 +463,18 @@ public struct ConvertAction: Action, RecreatingContext {
             throw error
         }
 
-        var allProblems = analysisProblems + conversionProblems
-
-        if allProblems.containsErrors == false {
-            let coverageResults = try coverageAction.perform(logHandle: logHandle)
-            allProblems.append(contentsOf: coverageResults.problems)
+        var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
+        if try context.renderRootModules.isEmpty {
+            postConversionProblems.append(
+                Problem(
+                    diagnostic: Diagnostic(
+                        severity: .warning,
+                        identifier: "org.swift.docc.MissingTechnologyRoot",
+                         summary: "No TechnologyRoot to organize article-only documentation.",
+                         explanation: "Article-only documentation needs a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
+                     )
+                )
+            )
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
@@ -470,17 +487,27 @@ public struct ConvertAction: Action, RecreatingContext {
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
-            allProblems.append(contentsOf: indexerProblems)
+            postConversionProblems.append(contentsOf: indexerProblems)
         }
+        
+        // Output to the user the problems encountered during the convert process
+        diagnosticEngine.emit(postConversionProblems)
 
         // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
         // New tasks and computations should be added above this line so that they're included in the benchmark.
         benchmark(end: totalTimeMetric)
         
+        if !didEncounterError {
+            let coverageResults = try coverageAction.perform(logHandle: logHandle)
+            postConversionProblems.append(contentsOf: coverageResults.problems)
+        }
+        
+        didEncounterError = didEncounterError || postConversionProblems.containsErrors
+        
         // We should generally only replace the current build output if we didn't encounter errors
         // during conversion. However, if the `emitDigest` flag is true,
         // we should replace the current output with our digest of problems.
-        if !allProblems.containsErrors || emitDigest {
+        if !didEncounterError || emitDigest {
             try moveOutput(from: temporaryFolder, to: targetDirectory)
         }
 
@@ -518,12 +545,7 @@ public struct ConvertAction: Action, RecreatingContext {
             try outputConsumer.consume(benchmarks: Benchmark.main)
         }
 
-        // If the user didn't provide the `analyze` flag, filter based on diagnostic level
-        if !analyze {
-            allProblems.removeAll(where: { $0.diagnostic.severity.rawValue >  diagnosticLevel.rawValue })
-        }
-
-        return ActionResult(didEncounterError: allProblems.containsErrors, outputs: [targetDirectory])
+        return ActionResult(didEncounterError: didEncounterError, outputs: [targetDirectory])
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {

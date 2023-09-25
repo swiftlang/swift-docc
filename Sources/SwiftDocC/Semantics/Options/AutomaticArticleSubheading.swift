@@ -17,6 +17,7 @@ import Markdown
 /// By default, articles receive a second-level "Overview" heading unless the author explicitly writes
 /// some other H2 heading below the abstract. This allows for opting out of that behavior.
 public class AutomaticArticleSubheading: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     // This property exist so that the generated directive documentation makes it

@@ -19,6 +19,7 @@ import Foundation
 /// An `ExternalLocationReference` is intended to encode to Render JSON compatible with a
 /// ``DownloadReference``, but with the `url` set to the text given in the `@CallToAction`'s `url`
 /// argument.
+@available(*, deprecated, message: "Use DownloadReference and its `init(identifier:verbatimURL:checksum)` initializer instead.")
 public struct ExternalLocationReference: RenderReference, URLReference {
     public static var baseURL: URL = DownloadReference.baseURL
 
