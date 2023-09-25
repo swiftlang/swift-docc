@@ -15,15 +15,7 @@ import Foundation
 ///
 /// These options are used by the ``Docc/Preview`` subcommand.
 public struct PreviewOptions: ParsableArguments {
-    
     public init() { }
-
-    /// Converts a documentation bundle.
-    ///
-    /// ``PreviewAction`` makes use of ``ConvertAction`` so we import all the options
-    /// that ``Docc/Convert`` provides.
-    @OptionGroup()
-    public var convertCommand: Docc.Convert
 
     /// The port number to use for the preview web server.
     ///
@@ -34,6 +26,13 @@ public struct PreviewOptions: ParsableArguments {
             "Port number to use for the preview web server.",
             valueName: "port-number"))
     public var port: Int = 8080
+    
+    /// Converts a documentation bundle.
+    ///
+    /// ``PreviewAction`` makes use of ``ConvertAction`` so we import all the options
+    /// that ``Docc/Convert`` provides.
+    @OptionGroup()
+    public var convertCommand: Docc.Convert
 
     public mutating func validate() throws {
         // Check that a valid port has been provided
