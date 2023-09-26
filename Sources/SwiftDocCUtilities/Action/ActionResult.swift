@@ -22,7 +22,7 @@ public struct ActionResult {
     /// If an error was encountered during the action.
     public var didEncounterError: Bool
     
-    /// Creates a new action results with a flag indicating if an error occured during the action and any URLs
+    /// Creates a new action results with a flag indicating if an error occurred during the action and any URLs
     /// the action generated.
     ///
     /// - Parameters:

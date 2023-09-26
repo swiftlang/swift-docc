@@ -320,7 +320,7 @@ extension Docc {
                 }
             }
 
-            if transformForStaticHosting  {
+            if transformForStaticHosting {
                 if let templateURL = templateOption.templateURL {
                     let neededFileName: String
 

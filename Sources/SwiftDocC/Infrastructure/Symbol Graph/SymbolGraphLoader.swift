@@ -296,7 +296,7 @@ struct SymbolGraphLoader {
     /// Returns the module name, if any, in the file name of a given symbol-graph URL.
     ///
     /// Returns "Combine", if it's a main symbol-graph file, such as "Combine.symbols.json".
-    ///  Returns "Swift", if it's an extension file such as, "Combine@Swift.symbols.json".
+    /// Returns "Swift", if it's an extension file such as, "Combine@Swift.symbols.json".
     /// - parameter url: A URL to a symbol graph file.
     /// - returns: A module name, or `nil` if the file name cannot be parsed.
     static func moduleNameFor(_ url: URL) -> String? {

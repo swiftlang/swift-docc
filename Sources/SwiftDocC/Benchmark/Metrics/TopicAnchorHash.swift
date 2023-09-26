@@ -11,7 +11,7 @@
 import Foundation
 
 extension Benchmark {
-    /// A anchor sections hash metric produced off the given documentation context.
+    /// An anchor sections hash metric produced off the given documentation context.
     ///
     /// Use this metric to verify that your code changes
     /// did not affect the anchor sections in the compiled documentation.

@@ -77,7 +77,7 @@ extension JSON {
     
     subscript(key: Any) -> JSON? {
         get {
-            if let array = self.array, let index = key as? Int, index < array.count  {
+            if let array = self.array, let index = key as? Int, index < array.count {
                 return array[index]
             } else if let dic = self.dictionary, let key = key as? String, let obj = dic[key] {
                 return obj

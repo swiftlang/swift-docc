@@ -58,7 +58,7 @@ public final class Tile: Semantic, DirectiveConvertible {
                 case .sampleCode: return .sampleCode
                 case .downloads: return .downloads
                 case .videos: return .videos
-                case .forums: return .forums                
+                case .forums: return .forums
             }
         }
     }
@@ -84,7 +84,7 @@ public final class Tile: Semantic, DirectiveConvertible {
         return [content]
     }
     
-    enum Semantics {        
+    enum Semantics {
         enum Destination: DirectiveArgument {
             typealias ArgumentValue = URL
             static let argumentName = "destination"

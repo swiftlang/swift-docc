@@ -95,7 +95,7 @@ extension UnifiedSymbolGraph.Symbol {
     var documentedSymbolSelector: UnifiedSymbolGraph.Selector? {
         // We'll prioritize the first documented 'swift' symbol, if we have
         // one.
-        return docComment.keys.first { selector  in
+        return docComment.keys.first { selector in
             return selector.interfaceLanguage == "swift"
         } ?? docComment.keys.first
     }
