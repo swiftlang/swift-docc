@@ -37,6 +37,7 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
     }
     
     // This is deprecated but still necessary to implement.
+    @available(*, deprecated, renamed: "flush()")
     public func finalize() throws {
         try flush()
     }
