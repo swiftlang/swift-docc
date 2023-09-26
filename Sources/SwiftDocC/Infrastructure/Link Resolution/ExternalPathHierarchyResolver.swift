@@ -75,8 +75,17 @@ final class ExternalPathHierarchyResolver {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
         
+        let topicReferences: [ResolvedTopicReference] = (resolvedInformation.references ?? []).compactMap {
+            guard let renderReference = $0 as? TopicRenderReference,
+                  let url = URL(string: renderReference.identifier.identifier),
+                  let bundleID = url.host
+            else {
+                return nil
+            }
+            return ResolvedTopicReference(bundleIdentifier: bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+        }
         let dependencies = RenderReferenceDependencies(
-            topicReferences: [], // TODO: extract topic references
+            topicReferences: topicReferences,
             linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
             imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
         )

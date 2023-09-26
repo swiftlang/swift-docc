@@ -309,7 +309,6 @@ public class DocumentationContentRenderer {
             // try resolving that way as a fallback after looking up `documentationCache`.
             titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
         } else if let external = documentationContext.externalCache[reference] {
-            // TODO: Add all the references
             dependencies.topicReferences.append(contentsOf: external.renderReferenceDependencies.topicReferences)
             dependencies.linkReferences.append(contentsOf: external.renderReferenceDependencies.linkReferences)
             dependencies.imageReferences.append(contentsOf: external.renderReferenceDependencies.imageReferences)
