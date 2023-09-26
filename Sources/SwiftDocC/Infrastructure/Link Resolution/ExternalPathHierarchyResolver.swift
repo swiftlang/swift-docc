@@ -70,31 +70,7 @@ final class ExternalPathHierarchyResolver {
         guard let resolvedInformation = entitySummaries[reference] else {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
-       
-        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedInformation.kind, semantic: nil)
         
-        // TODO: Language variants
-        let renderReference = TopicRenderReference(
-            identifier: .init(reference.absoluteString),
-            title: resolvedInformation.title,
-            abstract: resolvedInformation.abstract ?? [],
-            url: reference.absoluteString,
-            kind: kind,
-            required: false,
-            role: resolvedInformation.kind.isSymbol ? role : nil,
-            fragments: resolvedInformation.declarationFragments,
-            navigatorTitle: nil,
-            estimatedTime: nil,
-            conformance: nil,
-            isBeta: resolvedInformation.platforms?.contains(where: { $0.isBeta == true }) ?? false,
-            isDeprecated: resolvedInformation.platforms?.contains(where: { $0.unconditionallyDeprecated == true }) ?? false,
-            defaultImplementationCount: nil,
-            titleStyle: resolvedInformation.kind.isSymbol ? .symbol : .title,
-            name: resolvedInformation.title,
-            ideTitle: nil,
-            tags: nil,
-            images: resolvedInformation.topicImages ?? []
-        )
         let dependencies = RenderReferenceDependencies(
             topicReferences: [], // TODO: extract topic references
             linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
@@ -103,7 +79,7 @@ final class ExternalPathHierarchyResolver {
         
         return .init(
             reference: reference,
-            topicRenderReference: renderReference,
+            topicRenderReference: resolvedInformation.topicRenderReference(),
             renderReferenceDependencies: dependencies
         )
     }
@@ -179,5 +155,50 @@ extension ExternalPathHierarchyResolver {
                 renderReferenceDependencies: renderReferenceDependencies
             )
         }
+    }
+}
+
+private extension LinkDestinationSummary {
+    func topicRenderReference() -> TopicRenderReference {
+        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
+        
+        var titleVariants = VariantCollection(defaultValue: title)
+        var abstractVariants = VariantCollection(defaultValue: abstract ?? [])
+        var fragmentVariants = VariantCollection(defaultValue: declarationFragments)
+        
+        for variant in variants {
+            let traits = variant.traits
+            if let title = variant.title {
+                titleVariants.variants.append(.init(traits: traits, patch: [.replace(value: title)]))
+            }
+            if let abstract = variant.abstract {
+                abstractVariants.variants.append(.init(traits: traits, patch: [.replace(value: abstract ?? [])]))
+            }
+            if let fragment = variant.declarationFragments {
+                fragmentVariants.variants.append(.init(traits: traits, patch: [.replace(value: fragment)]))
+            }
+        }
+        
+        return TopicRenderReference(
+            identifier: .init(referenceURL.absoluteString),
+            titleVariants: titleVariants,
+            abstractVariants: abstractVariants,
+            url: referenceURL.absoluteString,
+            kind: kind,
+            required: false,
+            role: role,
+            fragmentsVariants: fragmentVariants,
+            navigatorTitleVariants: .init(defaultValue: nil),
+            estimatedTime: nil,
+            conformance: nil,
+            isBeta: platforms?.contains(where: { $0.isBeta == true }) ?? false,
+            isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true }) ?? false,
+            defaultImplementationCount: nil,
+            titleStyle: self.kind.isSymbol ? .symbol : .title,
+            name: title,
+            ideTitle: nil,
+            tags: nil,
+            images: topicImages ?? []
+        )
     }
 }
