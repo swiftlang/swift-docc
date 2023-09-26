@@ -135,7 +135,6 @@ extension PathHierarchy.FileRepresentation.Node {
 
 // MARK: PathHierarchyBasedLinkResolver
 
-
 public struct SerializableLinkResolutionInformation: Codable {
     // This type is public so that it can be an argument to a function in `ConvertOutputConsumer`
     
@@ -145,28 +144,17 @@ public struct SerializableLinkResolutionInformation: Codable {
     var bundleID: String
     var pathHierarchy: PathHierarchy.FileRepresentation
     // Separate storage of node data because the path hierarchy doesn't know the resolved references for articles.
-    var nodeData: [Int: NodeData]
-    
-    struct NodeData: Codable {
-        // ???: What information do we need to save here
-        var path: String?
-    }
-}
-
-extension PathHierarchy.FileRepresentation.Node.Disambiguation {
-
+    var nonSymbolPaths: [Int: String]
 }
 
 extension PathHierarchyBasedLinkResolver {
     func prepareForSerialization(bundleID: String) throws -> SerializableLinkResolutionInformation {
-        var nodeData: [Int: SerializableLinkResolutionInformation.NodeData] = [:]
+        var nonSymbolPaths: [Int: String] = [:]
         let hierarchyFileRepresentation = PathHierarchy.FileRepresentation(pathHierarchy) { identifiers in
-            nodeData.reserveCapacity(identifiers.count)
-            for (index, identifier) in zip(0..., identifiers) { // where pathHierarchy.lookup[identifier]?.symbol == nil {
-                // TODO: It should be possible to recompute the symbol paths in the decoded info.
-                nodeData[index] = .init(
-                    path: resolvedReferenceMap[identifier]!.url.withoutHostAndPortAndScheme().absoluteString
-                )
+            nonSymbolPaths.reserveCapacity(identifiers.count)
+            for (index, identifier) in zip(0..., identifiers) where pathHierarchy.lookup[identifier]?.symbol == nil {
+                // Encode the resolved reference for all non-symbols.
+                nonSymbolPaths[index] = resolvedReferenceMap[identifier]!.url.withoutHostAndPortAndScheme().absoluteString
             }
         }
         
@@ -174,7 +162,7 @@ extension PathHierarchyBasedLinkResolver {
             version: .init(major: 0, minor: 0, patch: 1), // This is still in development
             bundleID: bundleID,
             pathHierarchy: hierarchyFileRepresentation,
-            nodeData: nodeData
+            nonSymbolPaths: nonSymbolPaths
         )
     }
 }

@@ -136,11 +136,15 @@ final class ExternalPathHierarchyResolver {
         self.pathHierarchy = PathHierarchy(fileRepresentation.pathHierarchy) { identifiers in
             // Read the serialized paths
             self.resolvedReferenceMap.reserveCapacity(identifiers.count)
-            for (index, nodeData) in fileRepresentation.nodeData {
+            for (index, path) in fileRepresentation.nonSymbolPaths {
+                guard let url = URL(string: path) else { continue }
                 let identifier = identifiers[index]
-                let url = URL(string: nodeData.path!)! // The file currently always encodes a file
                 self.resolvedReferenceMap[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
+        }
+        for (identifier, node) in self.pathHierarchy.lookup {
+            guard let usr = node.symbol?.identifier.precise else { continue }
+            self.resolvedReferenceMap[identifier] = symbols[usr]
         }
     }
     
