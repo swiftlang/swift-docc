@@ -36,7 +36,9 @@ final class ExternalPathHierarchyResolver {
                 fatalError("Every identifier in the path hierarchy has a corresponding reference in the wrapping resolver. If it doesn't that's an indication that the file content that it was deserialized from was malformed.")
             }
             
-            // TODO: Check that content exist for reference
+            guard entitySummaries[foundReference] != nil else {
+                return .failure(unresolvedReference, .init("Resolved \(foundReference.url.withoutHostAndPortAndScheme().absoluteString.singleQuoted) but don't have any content to display for it."))
+            }
             
             return .success(foundReference)
         } catch let error as PathHierarchy.Error {
@@ -46,8 +48,10 @@ final class ExternalPathHierarchyResolver {
             }
             
             return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { node in 
-                // TODO: Read the display name from the entity summary data
-                node.name
+                guard let reference = resolvedReferenceMap[node.identifier], let summary = entitySummaries[reference] else {
+                    return node.name
+                }
+                return summary.title
             })
         } catch {
             fatalError("Only PathHierarchy.Error errors are raised from the symbol link resolution code above.")
