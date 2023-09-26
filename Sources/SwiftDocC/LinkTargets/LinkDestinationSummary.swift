@@ -304,12 +304,12 @@ public extension DocumentationNode {
     /// - Parameters:
     ///   - context: The context in which references that are found the node's content are resolved in.
     ///   - renderNode: The render node representation of this documentation node.
-    ///   - includeTaskGroups: Whether or not the link summaries should include ... TODO
+    ///   - includeTaskGroups: Whether or not the link summaries should include task groups
     /// - Returns: The list of summary elements, with the node's summary as the first element.
     func externallyLinkableElementSummaries(
         context: DocumentationContext,
         renderNode: RenderNode,
-        includeTaskGroups: Bool = true // TODO: DOCUMENT THIS ARGUMENT
+        includeTaskGroups: Bool = true
     ) -> [LinkDestinationSummary] {
         guard let bundle = context.bundle(identifier: reference.bundleIdentifier) else {
             // Don't return anything for external references that don't have a bundle in the context.
