@@ -96,7 +96,7 @@ public struct VideoReference: MediaReference, URLReference, Equatable {
         /// The traits of this video reference.
         public var traits: [String]
         
-        /// Creates a new proxy value with the given information about an video variant.
+        /// Creates a new proxy value with the given information about a video variant.
         ///
         /// - Parameters:
         ///   - url: The URL to the file for this video variant.

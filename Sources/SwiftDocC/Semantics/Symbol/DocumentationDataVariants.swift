@@ -162,7 +162,7 @@ extension Set where Element == DocumentationDataVariantsTrait {
     /// 
     /// - Parameter trait: The language variant being processed.
     /// 
-    /// Due to the interoptability of Swift and Objective-C, these languages represent separate views into the same APIs rather than being disjoint APIs.
+    /// Due to the interoperability of Swift and Objective-C, these languages represent separate views into the same APIs rather than being disjoint APIs.
     /// When constructing content, a page wants to display one or the other, not both, while other language variants are distinct and may be used concurrently.
     /// Use `compatible(withTrait:)` to obtain a subset of the current set of variants that can coexist on a page in the context of the input `trait`.
     func traitsCompatible(with trait: DocumentationDataVariantsTrait) -> Set<Element> {

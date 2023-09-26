@@ -540,7 +540,7 @@ extension DocumentationContentRenderer {
         static func subHeading(for tokens: [DeclarationRenderSection.Token], symbolTitle: String, symbolKind: String) -> [DeclarationRenderSection.Token] {
             var tokens = tokens
             
-            // 1. Map typeIdenifier tokens to identifier tokens where applicable
+            // 1. Map typeIdentifier tokens to identifier tokens where applicable
             tokens = tokens.mapNameFragmentsToIdentifierKind(matching: symbolTitle)
             
             

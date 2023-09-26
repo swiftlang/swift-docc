@@ -17,7 +17,7 @@ extension SymbolGraph.Relationship.Kind {
     /// respective extended module symbol.
     static let declaredIn = Self(rawValue: "declaredIn")
     
-    /// This relationship markes a parent-child hierarchy between a nested
+    /// This relationship marks a parent-child hierarchy between a nested
     /// extended type symbol and its parent extended type symbol. It mirrors the
     /// `memberOf` relationship between the two respective original type symbols.
     static let inContextOf = Self(rawValue: "inContextOf")

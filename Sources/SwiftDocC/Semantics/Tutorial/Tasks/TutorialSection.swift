@@ -22,7 +22,7 @@ public final class TutorialSection: Semantic, DirectiveConvertible, Abstracted, 
     /// The title of the section.
     public let title: String
     
-    /// The  content in the task section.
+    /// The content in the task section.
     public let introduction: [MarkupLayout]
     
     /// The ``Steps`` necessary to complete this section.

@@ -654,7 +654,7 @@ extension Docc {
         // MARK: - ParsableCommand conformance
         
         public mutating func validate() throws {
-            if transformForStaticHosting  {
+            if transformForStaticHosting {
                 if let templateURL = templateOption.templateURL {
                     let neededFileName: String
                     

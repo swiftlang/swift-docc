@@ -22,7 +22,7 @@ import Markdown
 ///       ![A diagram with the five sloth power types.](sloth-powers)
 ///    }
 ///
-///    @Tab("Excerise routines") {
+///    @Tab("Exercise routines") {
 ///       ![A sloth relaxing and enjoying a good book.](sloth-exercise)
 ///    }
 ///
@@ -63,7 +63,7 @@ extension TabNavigator {
     /// A container directive that holds general markup content describing an individual
     /// tab within a tab-based layout.
     ///
-    ///  To add a new tab to a ``TabNavigator``, add  a `@Tab` directive within the content of the `@TabNavigator` directive.
+    /// To add a new tab to a ``TabNavigator``, add a `@Tab` directive within the content of the `@TabNavigator` directive.
     public final class Tab: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public static let introducedVersion = "5.8"
         public let originalMarkup: BlockDirective

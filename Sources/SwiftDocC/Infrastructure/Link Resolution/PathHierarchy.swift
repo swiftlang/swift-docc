@@ -51,7 +51,7 @@ struct PathHierarchy {
     
     // MARK: Creating a path hierarchy
     
-    /// Initializes a path hierarchy with the all the symbols from all modules that a the given symbol graph loader provides.
+    /// Initializes a path hierarchy with all the symbols from all modules that the given symbol graph loader provides.
     ///
     /// - Parameters:
     ///   - loader: The symbol graph loader that provides all symbols.

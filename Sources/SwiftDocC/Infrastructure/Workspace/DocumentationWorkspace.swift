@@ -20,7 +20,7 @@ import Foundation
 /// ``DocumentationContextDataProvider/bundles`` and allows the context to access the contents of the various bundles without knowing any specifics
 /// of its source (files on disk, a database, or a web services).
 ///
-/// The second lets the the workspace notify the context when bundles are added or removed so that the context stays up to date, even after the context is created.
+/// The second lets the workspace notify the context when bundles are added or removed so that the context stays up to date, even after the context is created.
 ///
 /// ```
 ///                                                                                       ┌─────┐
