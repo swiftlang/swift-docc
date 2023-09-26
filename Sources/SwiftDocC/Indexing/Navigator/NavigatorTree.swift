@@ -31,7 +31,7 @@ public protocol Serializable: LMDBData, RawRepresentable where RawValue == Data 
 
  The object needs to be conforming to `Serializable` so it can be transformed to raw data and reconstructed back using the same one.
  
- - Note: The `parentID` might be missing if the object is the root, but to avoid creating an exception on the the object structure, its id is set to 0.
+ - Note: The `parentID` might be missing if the object is the root, but to avoid creating an exception on the object structure, its id is set to 0.
  */
 public class NavigatorTree {
     
@@ -225,7 +225,7 @@ public class NavigatorTree {
         queue.append(root)
         
         var index: UInt32 = 0
-        while index < queue.count  {
+        while index < queue.count {
             let node = queue[Int(index)]
             node.id = index
             numericIdentifierToNode[index] = node

@@ -147,7 +147,7 @@ class DefaultAvailabilityTests: XCTestCase {
                 let infoPlist = try String(contentsOf: self.infoPlistAvailabilityURL)
                 try infoPlist.replacingOccurrences(of: "Mac Catalyst", with: "iOS")
                     .write(to: url.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
-            } catch  {
+            } catch {
                 XCTFail("Could not copy Info.plist with custom availability in the test bundle")
             }
         }

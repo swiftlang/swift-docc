@@ -338,7 +338,7 @@ TutorialArticle @1:1-81:2
          This is the first question's phrasing.
 
          @Choice(isCorrect: true) {
-            This the the correcr answer.
+            This the correct answer.
             
             @Justification(reaction: "Nice work!") {
                This is correct because it is.

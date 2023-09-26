@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// An reference resolver that can be used to resolve references that couldn't be resolved locally.
+/// A reference resolver that can be used to resolve references that couldn't be resolved locally.
 ///
 /// Fallback reference resolvers are used by a ``DocumentationContext`` to resolve externally resolve references that
 /// couldn't be resolved internally.

@@ -43,7 +43,7 @@ public struct IndexAction: Action {
         self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: documentationBundleURL))
     }
     
-    /// Converts each eligable file from the source documentation bundle,
+    /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
         let problems = try buildIndex()
