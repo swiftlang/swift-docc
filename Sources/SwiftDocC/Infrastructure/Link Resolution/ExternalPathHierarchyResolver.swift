@@ -65,6 +65,7 @@ final class ExternalPathHierarchyResolver {
         return "\(unresolved.path)#\(urlReadableFragment(fragment))"
     }
 
+    // TODO: Resolve external symbols by USR (rdar://116085974)
     func entity(symbolID usr: String) -> ExternalEntity? {
         guard let reference = symbols[usr] else { return nil }
         return entity(reference)

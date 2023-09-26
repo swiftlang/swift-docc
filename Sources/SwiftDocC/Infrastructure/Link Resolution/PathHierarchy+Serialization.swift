@@ -90,7 +90,8 @@ extension PathHierarchy {
             var name: String
             var isDisfavoredInCollision: Bool = false
             var children: [Disambiguation] = []
-            var symbol: SymbolGraph.Symbol? // TODO: This repeats a lot of information from the link summary.
+            // TODO: Avoid repeating symbol information that's already in the linkable entities (rdar://116086280)
+            var symbol: SymbolGraph.Symbol?
             
             struct Disambiguation: Codable {
                 var kind: String?
