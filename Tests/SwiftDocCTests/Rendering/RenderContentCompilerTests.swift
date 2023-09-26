@@ -46,7 +46,7 @@ class RenderContentCompilerTests: XCTestCase {
         ├─ Paragraph
         │  └─ Link destination: "doc:article2"
         │     ├─ Text "Custom Image Content "
-        │     └─ Image source: "https://example.com/test.png" title: ""
+        │     └─ Image source: "https://example.com/test.png"
         │        └─ Text "random image"
         ├─ Paragraph
         │  └─ Link destination: "doc:UNRESOVLED"
