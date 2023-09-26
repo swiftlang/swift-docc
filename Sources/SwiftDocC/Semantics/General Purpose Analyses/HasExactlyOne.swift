@@ -255,7 +255,7 @@ extension Semantic.Analyses {
                 problems.append(Problem(diagnostic: missingListDiagnostic(source: source, range: directive.range), possibleSolutions: []))
             }
 
-            // Diagnose extreanous children.
+            // Diagnose extraneous children.
             problems.append(contentsOf:
                 notLists.map { notList in Problem(diagnostic: extraneousContentDiagnostic(source: source, range: notList.range), possibleSolutions: []) }
             )

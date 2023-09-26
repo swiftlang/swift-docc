@@ -120,5 +120,5 @@ public extension Lock {
         #error("Unsupported platform")
         #endif
         return try block()
-    }    
+    }
 }

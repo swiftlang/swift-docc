@@ -66,7 +66,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     func consume(assetsInBundle bundle: DocumentationBundle) throws {
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
-            for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL  {
+            for sourceURL in asset.variants.values where !sourceURL.isAbsoluteWebURL {
                 let assetName = sourceURL.lastPathComponent
                 try fileManager.copyItem(
                     at: sourceURL,
