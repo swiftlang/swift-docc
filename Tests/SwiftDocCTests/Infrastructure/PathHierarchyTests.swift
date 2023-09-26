@@ -1304,6 +1304,8 @@ class PathHierarchyTests: XCTestCase {
         let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
         
         // public struct MyNumber: SignedNumeric, Comparable, Equatable, Hashable {
+        //    public static func / (lhs: MyNumber, rhs: MyNumber) -> MyNumber { ... }
+        //    public static func /= (lhs: inout MyNumber, rhs: MyNumber) -> MyNumber { ... }
         //     ... stub minimal conformance
         // }
         let myNumberID = try tree.find(path: "/Operators/MyNumber", onlyFindSymbols: true)
@@ -1320,6 +1322,9 @@ class PathHierarchyTests: XCTestCase {
         
         XCTAssertEqual(try tree.findSymbol(path: "*(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1moiyA2C_ACtFZ")
         XCTAssertEqual(try tree.findSymbol(path: "*=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2meoiyyACz_ACtFZ")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "\\/(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1doiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "\\/=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ")
         
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-28faz", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-8ooeh", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
@@ -1357,6 +1362,10 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)-21jxf",  /* >(_:_:) */ paths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-9uewk", /* <=(_:_:) */ paths["s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-70j0d", /* >=(_:_:) */ paths["s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        
+        // "/" is an allowed character in URL paths.
+        XCTAssertEqual("/Operators/MyNumber//(_:_:)", paths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber//=(_:_:)", paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"])
     }
     
     func testSameNameForSymbolAndContainer() throws {
@@ -1622,6 +1631,11 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("path-swift.type.property-hash", [("path", "type.property", "hash")])
         assertParsedPathComponents("path-type.property", [("path", "type.property", nil)])
         assertParsedPathComponents("path-swift.type.property", [("path", "type.property", nil)])
+        
+        // Check escaped forward slashes
+        assertParsedPathComponents("\\/=(_:_:)", [("/=(_:_:)", nil, nil)])
+        assertParsedPathComponents("escaped\\/slashes\\/in\\/name", [("escaped/slashes/in/name", nil, nil)])
+        assertParsedPathComponents("escaped\\/slashes/in\\/name", [("escaped/slashes", nil, nil), ("in/name", nil, nil)])
     }
     
     // MARK: Test helpers

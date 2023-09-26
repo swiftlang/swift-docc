@@ -51,7 +51,7 @@ extension PathHierarchy {
     /// - Returns: A pair of the parsed path components and a flag that indicate if the documentation link is absolute or not.
     static func parse(path: String, omittingEmptyComponents: Bool = true) -> (components: [PathComponent], isAbsolute: Bool) {
         guard !path.isEmpty else { return ([], true) }
-        var components = path.split(separator: "/", omittingEmptySubsequences: omittingEmptyComponents)
+        var components = self.split(path, omittingEmptyComponents: omittingEmptyComponents)
         let isAbsolute = path.first == "/"
             || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
             || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
@@ -59,7 +59,7 @@ extension PathHierarchy {
         // If there is a # character in the last component, split that into two components
         if let hashIndex = components.last?.firstIndex(of: "#") {
             let last = components.removeLast()
-            // Allow anrhor-only links where there's nothing before #.
+            // Allow anchor-only links where there's nothing before #.
             // In case the pre-# part is empty, and we're omitting empty components, don't add it in.
             let pathName = last[..<hashIndex]
             if !pathName.isEmpty || !omittingEmptyComponents {
@@ -119,5 +119,53 @@ extension PathHierarchy {
     
     static func joined<PathComponents>(_ pathComponents: PathComponents) -> String where PathComponents: Sequence, PathComponents.Element == PathComponent {
         return pathComponents.map(\.full).joined(separator: "/")
+    }
+    
+    private static func split(_ path: String, omittingEmptyComponents: Bool) -> [Substring] {
+        var result = [Substring]()
+        var scanner = PathComponentScanner(path[...])
+        
+        while !scanner.isEmpty {
+            let component = scanner.scanPathComponent()
+            if !omittingEmptyComponents || !component.isEmpty {
+                result.append(component)
+            }
+        }
+
+        return result
+    }
+}
+
+private struct PathComponentScanner {
+    private var remaining: Substring
+    
+    init(_ original: Substring) {
+        remaining = original
+    }
+    
+    var isEmpty: Bool {
+        remaining.isEmpty
+    }
+    
+    mutating func scanPathComponent() -> Substring {
+        // If the string doesn't contain a slash then the rest of the string is the component
+        guard let index = remaining.firstIndex(of: "/") else {
+            defer { remaining.removeAll() }
+            return remaining
+        }
+        var component = remaining[..<index]
+        remaining = remaining[index...].dropFirst() // drop the slash
+        while component.last == "\\" {
+            // If this slash was escaped, add it unescaped to the component and scan for the next slash
+            component.removeLast()
+            component += "/"
+            guard let nextIndex = remaining.firstIndex(of: "/") else {
+                defer { remaining.removeAll() }
+                return component + remaining
+            }
+            component += remaining[..<nextIndex]
+            remaining = remaining[nextIndex...].dropFirst() // drop the slash
+        }
+        return component
     }
 }
