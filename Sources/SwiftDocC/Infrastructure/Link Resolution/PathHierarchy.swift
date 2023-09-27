@@ -468,7 +468,15 @@ extension PathHierarchy.DisambiguationContainer {
 extension PathHierarchy {
     // This is defined in the main PathHierarchy.swift file to access fileprivate properties and PathHierarchy.Node API without making it internally visible.
     
-    // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file.
+    // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file. They're an implementation detail and they are a not stable across executions.
+    
+    /// Decode a path hierarchy from its file representation.
+    ///
+    /// The caller can use `mapCreatedIdentifiers` when encoding and decoding path hierarchies to associate auxiliary data with a node in the hierarchy.
+    ///
+    /// - Parameters:
+    ///   - fileRepresentation: A file representation to decode.
+    ///   - mapCreatedIdentifiers: A closure that the caller can use to map indices to resolved identifiers.
     init(
         _ fileRepresentation: FileRepresentation,
         mapCreatedIdentifiers: (_ identifiers: [ResolvedIdentifier]) -> Void

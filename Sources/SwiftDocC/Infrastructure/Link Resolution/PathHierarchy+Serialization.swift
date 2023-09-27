@@ -14,7 +14,15 @@ import SymbolKit
 // MARK: PathHierarchy
 
 extension PathHierarchy.FileRepresentation {
-    // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file.
+    // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file. They're an implementation detail and they are a not stable across executions.
+    
+    /// Encode a path hierarchy into a file representation.
+    ///
+    /// The caller can use `mapCreatedIdentifiers` when encoding and decoding path hierarchies to associate auxiliary data with a node in the hierarchy.
+    ///
+    /// - Parameters:
+    ///   - fileRepresentation: A path hierarchy to encode.
+    ///   - mapCreatedIdentifiers: A closure that the caller can use to map indices to resolved identifiers.
     init(
         _ pathHierarchy: PathHierarchy,
         mapCreatedIdentifiers: (_ identifiers: [ResolvedIdentifier]) -> Void
@@ -62,6 +70,7 @@ extension PathHierarchy.FileRepresentation {
 }
 
 extension SymbolGraph.Symbol {
+    // If we can avoid including the symbols in the path hierarchy then we don't need this. See TODO below
     func withMinimalDataForSerialization() -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
             identifier: identifier,
@@ -78,14 +87,25 @@ extension SymbolGraph.Symbol {
 }
 
 extension PathHierarchy {
+    /// A file representation of a path hierarchy.
+    ///
+    /// The file representation can be decoded in later documentation builds to resolve external links to the content where the link resolver was originally created for.
     struct FileRepresentation: Codable {
+        /// All the nodes in the hierarchy.
+        ///
+        /// Other places in the file hierarchy references nodes by their index in this list.
         var nodes: [Node]
         
+        /// The module nodes in this hierarchy.
         var modules: [String: Int]
+        /// The container for articles and reference documentation.
         var articlesContainer: Int
+        /// The container of tutorials.
         var tutorialContainer: Int
+        /// The container of tutorial overview pages.
         var tutorialOverviewContainer: Int
         
+        /// A node in the
         struct Node: Codable {
             var name: String
             var isDisfavoredInCollision: Bool = false
@@ -149,6 +169,9 @@ public struct SerializableLinkResolutionInformation: Codable {
 }
 
 extension PathHierarchyBasedLinkResolver {
+    /// Create a file representation of the link resolver.
+    ///
+    /// The file representation can be decoded in later documentation builds to resolve external links to the content where the link resolver was originally created for.
     func prepareForSerialization(bundleID: String) throws -> SerializableLinkResolutionInformation {
         var nonSymbolPaths: [Int: String] = [:]
         let hierarchyFileRepresentation = PathHierarchy.FileRepresentation(pathHierarchy) { identifiers in
