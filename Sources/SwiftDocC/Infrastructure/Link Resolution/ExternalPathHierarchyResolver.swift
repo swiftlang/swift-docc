@@ -12,16 +12,18 @@ import Foundation
 import SymbolKit
 import Markdown
 
+/// A class that resolves links to an already
 final class ExternalPathHierarchyResolver {
-    
     /// A hierarchy of path components used to resolve links in the documentation.
     private(set) var pathHierarchy: PathHierarchy!
     
-    /// Map between resolved identifiers and resolved topic references.
-    private(set) var resolvedReferenceMap = [ResolvedIdentifier: ResolvedTopicReference]()
+    /// A map from the path hierarchies identifiers to resolved references.
+    private var resolvedReference = [ResolvedIdentifier: ResolvedTopicReference]()
+    /// A map from symbol's unique identifiers to their resolved references.
+    private var symbols: [String: ResolvedTopicReference]
     
-    private(set) var symbols: [String: ResolvedTopicReference]
-    private(set) var entitySummaries: [ResolvedTopicReference: LinkDestinationSummary]
+    /// The content for each external entity.
+    private var content: [ResolvedTopicReference: LinkDestinationSummary]
     
     /// Attempts to resolve an unresolved reference.
     ///
@@ -32,11 +34,11 @@ final class ExternalPathHierarchyResolver {
     func resolve(_ unresolvedReference: UnresolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) -> TopicReferenceResolutionResult {
         do {
             let foundID = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: nil, onlyFindSymbols: true)
-            guard let foundReference = resolvedReferenceMap[foundID] else {
+            guard let foundReference = resolvedReference[foundID] else {
                 fatalError("Every identifier in the path hierarchy has a corresponding reference in the wrapping resolver. If it doesn't that's an indication that the file content that it was deserialized from was malformed.")
             }
             
-            guard entitySummaries[foundReference] != nil else {
+            guard content[foundReference] != nil else {
                 return .failure(unresolvedReference, .init("Resolved \(foundReference.url.withoutHostAndPortAndScheme().absoluteString.singleQuoted) but don't have any content to display for it."))
             }
             
@@ -48,7 +50,7 @@ final class ExternalPathHierarchyResolver {
             }
             
             return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { node in 
-                guard let reference = resolvedReferenceMap[node.identifier], let summary = entitySummaries[reference] else {
+                guard let reference = resolvedReference[node.identifier], let summary = content[reference] else {
                     return node.name
                 }
                 return summary.title
@@ -65,14 +67,19 @@ final class ExternalPathHierarchyResolver {
         return "\(unresolved.path)#\(urlReadableFragment(fragment))"
     }
 
-    // TODO: Resolve external symbols by USR (rdar://116085974)
+    /// Returns the external entity for a symbol's unique identifier or `nil` if that symbol isn't known in this external context.
     func entity(symbolID usr: String) -> ExternalEntity? {
+        // TODO: Resolve external symbols by USR (rdar://116085974) (There is nothing calling this function)
+        // This function has an optional return value since it's not easy to check what module a symbol belongs to based on its identifier.
         guard let reference = symbols[usr] else { return nil }
         return entity(reference)
     }
     
+    /// Returns the external entity for a reference that was successfully resolved by this external resolver.
+    ///
+    /// - Important: Passing a resolved reference that wasn't resolved by this resolver will result in a fatal error.
     func entity(_ reference: ResolvedTopicReference) -> ExternalEntity {
-        guard let resolvedInformation = entitySummaries[reference] else {
+        guard let resolvedInformation = content[reference] else {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
         
@@ -92,9 +99,9 @@ final class ExternalPathHierarchyResolver {
         )
         
         return .init(
-            reference: reference,
             topicRenderReference: resolvedInformation.topicRenderReference(),
-            renderReferenceDependencies: dependencies
+            renderReferenceDependencies: dependencies,
+            sourceLanguages: resolvedInformation.availableLanguages
         )
     }
     
@@ -104,6 +111,7 @@ final class ExternalPathHierarchyResolver {
         linkInformation fileRepresentation: SerializableLinkResolutionInformation,
         entityInformation linkDestinationSummaries: [LinkDestinationSummary]
     ) {
+        // First, read the linkable entities and build up maps of USR -> Reference and Reference -> Content.
         var entities = [ResolvedTopicReference: LinkDestinationSummary]()
         var symbols = [String: ResolvedTopicReference]()
         entities.reserveCapacity(linkDestinationSummaries.count)
@@ -120,21 +128,23 @@ final class ExternalPathHierarchyResolver {
                 symbols[usr] = reference
             }
         }
-        self.entitySummaries = entities
+        self.content = entities
         self.symbols = symbols
         
+        // Second, decode the path hierarchy
         self.pathHierarchy = PathHierarchy(fileRepresentation.pathHierarchy) { identifiers in
-            // Read the serialized paths
-            self.resolvedReferenceMap.reserveCapacity(identifiers.count)
+            // Third, iterate over the newly created path hierarchy's identifiers and build up the map from Identifier -> Reference.
+            self.resolvedReference.reserveCapacity(identifiers.count)
             for (index, path) in fileRepresentation.nonSymbolPaths {
                 guard let url = URL(string: path) else { continue }
                 let identifier = identifiers[index]
-                self.resolvedReferenceMap[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+                self.resolvedReference[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
+        // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.
         for (identifier, node) in self.pathHierarchy.lookup {
             guard let usr = node.symbol?.identifier.precise else { continue }
-            self.resolvedReferenceMap[identifier] = symbols[usr]
+            self.resolvedReference[identifier] = symbols[usr]
         }
     }
     
@@ -153,12 +163,18 @@ final class ExternalPathHierarchyResolver {
 // MARK: ExternalEntity
 
 extension ExternalPathHierarchyResolver {
+    /// The minimal information about an external entity necessary to render links to it on another page.
     struct ExternalEntity {
-        var reference: ResolvedTopicReference
+        /// The render reference for this external topic.
         var topicRenderReference: TopicRenderReference
+        /// Any dependencies for the render reference.
+        ///
+        /// For example, if the external content contains links or images, those are included here.
         var renderReferenceDependencies: RenderReferenceDependencies
-        var sourceLanguages: Set<SourceLanguage> = []
+        /// The different source languages for which this page is available.
+        var sourceLanguages: Set<SourceLanguage>
         
+        /// Create a topic content for be cached in a render reference store.
         func topicContent() -> RenderReferenceStore.TopicContent {
             return .init(
                 renderReference: topicRenderReference,
@@ -173,6 +189,7 @@ extension ExternalPathHierarchyResolver {
 }
 
 private extension LinkDestinationSummary {
+    /// Create a topic render render reference for this link summary and its content variants.
     func topicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
         

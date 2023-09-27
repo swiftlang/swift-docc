@@ -11,13 +11,21 @@
 import Foundation
 import SymbolKit
 
+/// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
+    /// A list of URLs to documentation archives that the local documentation depends on.
+    public var dependencyArchives: [URL] = [] // This needs to be public so that the ConvertAction can set it. All other functionality is internal so far.
+    
+    /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
-    // A map from module names to resolvers
+    /// A fallback resolver to use when the local resolver fails to resolve a link.
+    ///
+    /// This exist to preserve some behaviors for the convert service.
+    private let fallbackResolver = FallbackResolverBasedLinkResolver()
+    /// A map of link resolvers for external, already build archives
     var externalResolvers: [String: ExternalPathHierarchyResolver] = [:]
     
-    public var dependencyArchives: [URL] = []
-    
+    /// Create link resolvers for all documentation archive dependencies.
     func loadExternalResolvers() throws {
         let resolvers = try dependencyArchives.compactMap {
             try ExternalPathHierarchyResolver(dependencyArchive: $0)
@@ -31,8 +39,6 @@ public class LinkResolver {
     
     // ???: Should this be aliased the other way around?
     typealias ExternalEntity = ExternalPathHierarchyResolver.ExternalEntity
-    
-    private let fallbackResolver = FallbackResolverBasedLinkResolver()
     
     /// Attempts to resolve an unresolved reference.
     ///
