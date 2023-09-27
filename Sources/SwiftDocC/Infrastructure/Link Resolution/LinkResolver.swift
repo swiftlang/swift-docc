@@ -91,7 +91,7 @@ public class LinkResolver {
                     originalReferenceString += "#" + fragment
                 }
                 
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { PathHierarchyBasedLinkResolver.fullName(of: $0, in: context) })
+                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { localResolver.fullName(of: $0, in: context) })
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")

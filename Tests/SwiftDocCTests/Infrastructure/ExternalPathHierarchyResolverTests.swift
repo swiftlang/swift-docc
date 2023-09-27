@@ -720,7 +720,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     
     private func makeLinkResolversForTestBundle(named testBundleName: String) throws -> LinkResolvers {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
-        let localResolver = try XCTUnwrap(context.hierarchyBasedLinkResolver)
+        let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
         let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.identifier)
         let resolverData = try JSONEncoder().encode(resolverInfo)

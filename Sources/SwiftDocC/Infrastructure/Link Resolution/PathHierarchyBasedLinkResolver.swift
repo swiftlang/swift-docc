@@ -213,11 +213,10 @@ final class PathHierarchyBasedLinkResolver {
         return .success(foundReference)
     }
     
-    static func fullName(of nonSymbolNode: PathHierarchy.Node, in context: DocumentationContext) -> String {
+    func fullName(of nonSymbolNode: PathHierarchy.Node, in context: DocumentationContext) -> String {
         guard let identifier = nonSymbolNode.identifier else { return nonSymbolNode.name }
         
-        // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
-        let reference = context.hierarchyBasedLinkResolver.resolvedReferenceMap[identifier]!
+        let reference = resolvedReferenceMap[identifier]!
         if reference.fragment != nil {
             return context.nodeAnchorSections[reference]!.title
         } else {
