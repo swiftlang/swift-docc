@@ -69,6 +69,19 @@ extension PathHierarchy.FileRepresentation {
     }
 }
 
+#if swift(<5.8)
+// This makes 'initializeElement(at:to:)' available before Swift 5.8.
+// Proposal: https://github.com/apple/swift-evolution/blob/main/proposals/0370-pointer-family-initialization-improvements.md
+// Implementation: https://github.com/apple/swift/blob/main/stdlib/public/core/UnsafeBufferPointer.swift.gyb#L1031
+private extension UnsafeMutableBufferPointer {
+    func initializeElement(at index: UnsafeMutableBufferPointer<Element>.Index, to value: Element) {
+        assert(startIndex <= index && index < endIndex)
+        let p = baseAddress!.advanced(by: index)
+        p.initialize(to: value)
+    }
+}
+#endif
+
 extension SymbolGraph.Symbol {
     // If we can avoid including the symbols in the path hierarchy then we don't need this. See TODO below
     func withMinimalDataForSerialization() -> SymbolGraph.Symbol {
