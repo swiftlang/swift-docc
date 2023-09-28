@@ -435,11 +435,11 @@ extension Docc {
             var experimentalEnableCustomTemplates = false
             
             @Flag(help: .hidden)
-            @available(*, deprecated, message: "Objective-C support is enabled by default.")
+            @available(*, deprecated, message: "Objective-C support is enabled by default. This deprecated API will be removed after 5.7 is released")
             var enableExperimentalObjectiveCSupport = false
             
             @Flag(help: .hidden)
-            @available(*, deprecated, message: "Render Index JSON is emitted by default.")
+            @available(*, deprecated, message: "Render Index JSON is emitted by default. This deprecated API will be removed after 5.9 is released.")
             var enableExperimentalJSONIndex = false
             
             @Flag(help: .hidden)
@@ -491,7 +491,7 @@ extension Docc {
         /// A user-provided value that is true if the user enables experimental Objective-C language support.
         ///
         /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @available(*, deprecated, message: "Objective-C support is enabled by default.")
+        @available(*, deprecated, message: "Objective-C support is enabled by default. This deprecated API will be removed after 5.7 is released.")
         public var enableExperimentalObjectiveCSupport: Bool {
             get { featureFlags.enableExperimentalObjectiveCSupport }
             set { featureFlags.enableExperimentalObjectiveCSupport = newValue }
@@ -502,7 +502,7 @@ extension Docc {
         ///
         /// This property exists for backwards compatibility with existing clients but is
         /// deprecated and will be removed soon.
-        @available(*, deprecated, message: "Render Index JSON is emitted by default.")
+        @available(*, deprecated, message: "Render Index JSON is emitted by default. This deprecated API will be removed after 5.9 is released.")
         public var enableExperimentalJSONIndex: Bool {
             get { featureFlags.enableExperimentalJSONIndex }
             set { featureFlags.enableExperimentalJSONIndex = newValue }
