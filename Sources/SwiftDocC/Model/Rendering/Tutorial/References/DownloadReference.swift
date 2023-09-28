@@ -36,20 +36,6 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
 
     /// The SHA512 hash value for the resource.
     public var checksum: String?
-
-    @available(*, deprecated, renamed: "checksum", message: "Use 'checksum' instead. This deprecated API will be removed after 5.9 is released.")
-    public var sha512Checksum: String {
-        get {
-            return checksum ?? ""
-        }
-        set {
-            if newValue.isEmpty {
-                self.checksum = nil
-            } else {
-                self.checksum = newValue
-            }
-        }
-    }
     
     /// Creates a new reference to a downloadable resource.
     ///
@@ -74,11 +60,6 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         self.url = url
         self.checksum = checksum
         self.encodeUrlVerbatim = true
-    }
-
-    @available(*, deprecated, message: "Use 'init(identifier:renderURL:checksum:)' instead. This deprecated API will be removed after 5.9 is released.")
-    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String) {
-        self.init(identifier: identifier, renderURL: url, checksum: sha512Checksum)
     }
 
     enum CodingKeys: CodingKey {

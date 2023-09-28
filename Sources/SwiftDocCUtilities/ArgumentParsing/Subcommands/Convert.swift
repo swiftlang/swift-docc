@@ -435,10 +435,6 @@ extension Docc {
             var experimentalEnableCustomTemplates = false
             
             @Flag(help: .hidden)
-            @available(*, deprecated, message: "Render Index JSON is emitted by default. This deprecated API will be removed after 5.9 is released.")
-            var enableExperimentalJSONIndex = false
-            
-            @Flag(help: .hidden)
             var enableExperimentalDeviceFrameSupport = false
             
             @Flag(help: "Inherit documentation for inherited symbols")
@@ -485,17 +481,6 @@ extension Docc {
             
         }
 
-        /// A user-provided value that is true if the user enables experimental support for emitting
-        /// a JSON index.
-        ///
-        /// This property exists for backwards compatibility with existing clients but is
-        /// deprecated and will be removed soon.
-        @available(*, deprecated, message: "Render Index JSON is emitted by default. This deprecated API will be removed after 5.9 is released.")
-        public var enableExperimentalJSONIndex: Bool {
-            get { featureFlags.enableExperimentalJSONIndex }
-            set { featureFlags.enableExperimentalJSONIndex = newValue }
-
-        }
         /// A user-provided value that is true if the user enables experimental support for device frames.
         ///
         /// Defaults to false.
