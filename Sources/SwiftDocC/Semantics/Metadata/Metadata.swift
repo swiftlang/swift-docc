@@ -29,6 +29,7 @@ import Markdown
 /// - ``SupportedLanguage``
 /// - ``TitleHeading``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
     
     /// Configuration that describes how this documentation extension file merges or overrides the in-source documentation.

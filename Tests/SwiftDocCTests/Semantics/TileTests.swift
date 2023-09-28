@@ -69,7 +69,7 @@ class TileTests: XCTestCase {
             (Tile.DirectiveNames.forums, Tile.Semantics.Title.forums),
         ].map { ($0.0.rawValue, $0.1.rawValue) }
         
-        for (directiveName, title) in directiveNamesAndTitles  {
+        for (directiveName, title) in directiveNamesAndTitles {
             do {
                 // Empty
                 let source = "@\(directiveName)"

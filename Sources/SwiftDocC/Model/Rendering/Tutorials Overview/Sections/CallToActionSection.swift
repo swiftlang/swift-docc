@@ -11,7 +11,7 @@
 import Foundation
 
 /// A section that prompts the user to perform an action.
-public struct CallToActionSection: RenderSection {
+public struct CallToActionSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .callToAction
     
     /// The title of the section.
@@ -52,5 +52,27 @@ public struct CallToActionSection: RenderSection {
         abstract = try container.decodeIfPresent([RenderInlineContent].self, forKey: .abstract) ?? []
         // The featured eyebrow might not be present in older JSON
         featuredEyebrow = try container.decodeIfPresent(String.self, forKey: .featuredEyebrow)
+    }
+}
+
+// Diffable conformance
+extension CallToActionSection: RenderJSONDiffable {
+    /// Returns the differences between this CallToActionSection and the given one.
+    func difference(from other: CallToActionSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.abstract, forKey: CodingKeys.abstract)
+        diffBuilder.addDifferences(atKeyPath: \.media, forKey: CodingKeys.media)
+        diffBuilder.addDifferences(atKeyPath: \.action, forKey: CodingKeys.action)
+        diffBuilder.addDifferences(atKeyPath: \.featuredEyebrow, forKey: CodingKeys.featuredEyebrow)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this CallToActionSection is similar enough to the given one.
+    func isSimilar(to other: CallToActionSection) -> Bool {
+        return self.title == other.title || self.action == other.action
     }
 }

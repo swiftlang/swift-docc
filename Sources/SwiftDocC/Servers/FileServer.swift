@@ -13,6 +13,9 @@ import SymbolKit
 #if canImport(FoundationNetworking)
 import FoundationNetworking
 #endif
+#if os(Windows)
+import WinSDK
+#endif
 
 fileprivate let slashCharSet = CharacterSet(charactersIn: "/")
 
@@ -122,7 +125,19 @@ public class FileServer {
         }
         
         return (mimeType as NSString) as String
-        
+
+        #elseif os(Windows)
+
+        return ".\(ext)".withCString(encodedAs: UTF16.self) {
+            var pwszMimeOut: UnsafeMutablePointer<WCHAR>?
+            guard FindMimeFromData(nil, $0, nil, 0, nil, DWORD(FMFD_URLASFILENAME), &pwszMimeOut, 0) >= 0,
+                    let pwszMimeOut = pwszMimeOut else {
+                return defaultMimeType
+            }
+            defer { CoTaskMemFree(pwszMimeOut) }
+            return String(decodingCString: pwszMimeOut, as: UTF16.self)
+        }
+
         #else
         
         let mimeTypes = [

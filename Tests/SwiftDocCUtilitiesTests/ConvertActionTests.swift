@@ -3055,6 +3055,60 @@ class ConvertActionTests: XCTestCase {
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
     
+    func testWrittenDiagnosticsAfterConvert() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Documentation.md", utf8Content: """
+            # ``ModuleThatDoesNotExist``
+
+            This will result in two errors from two different phases of the build
+            """)
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
+        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        let fileConsumer = DiagnosticFileWriter(outputPath: diagnosticFile)
+        
+        let engine = DiagnosticEngine()
+        engine.add(fileConsumer)
+        
+        let logStorage = LogHandle.LogStorage()
+        let consoleConsumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], baseURL: nil, highlight: false)
+        engine.add(consoleConsumer)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticEngine: engine
+        )
+        
+        let _ = try action.perform(logHandle: .standardOutput)
+        XCTAssertEqual(engine.problems.count, 2)
+        
+        XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
+        
+        let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
+        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
+        
+        XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
+            "No TechnologyRoot to organize article-only documentation.",
+            "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
+        ])
+        
+        let logLines = logStorage.text.splitByNewlines
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize article-only documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
+    }
+    
     #endif
 }
 

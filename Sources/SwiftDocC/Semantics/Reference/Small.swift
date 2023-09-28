@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,6 +33,7 @@ import Markdown
 /// }
 /// ```
 public final class Small: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// The inline markup that should be rendered in a small font.

@@ -35,7 +35,7 @@ class DirectoryMonitor {
             case .urlIsNotDirectory(let url): return "\(url.path) is not a directory"
             case .openFileHandleFailed(let url, let code): return "Failed to open file descriptor for \(url.path) with error code \(code)"
             case .attributesNotAccessible(let url): return "Could not read attributes of \(url.path)"
-            case .contentsEnumerationFailed(let url): return "Could not enumerate the contnents of \(url.path)"
+            case .contentsEnumerationFailed(let url): return "Could not enumerate the contents of \(url.path)"
             case .reachedOpenFileLimit(let fileCount):
                 return """
                 Watching the source bundle failed because it contains \(fileCount) files which is

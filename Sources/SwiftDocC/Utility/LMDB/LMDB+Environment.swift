@@ -72,7 +72,7 @@ extension LMDB {
             var status = mdb_env_open(opaquePointer, path, UInt32(flags.rawValue), fileMode)
             
             // In case the filesystem is ready-only or the user has not permission to write, just open the environment as read-only and return it.
-            if Error(errorCode: status) == Error.readOnlyFileSystem || (Error(errorCode: status) == Error.accessError && !flags.contains(.readOnly))  {
+            if Error(errorCode: status) == Error.readOnlyFileSystem || (Error(errorCode: status) == Error.accessError && !flags.contains(.readOnly)) {
                 close() // We need to release the previously failed pointer before performing the fallback process.
                 
                 guard mdb_env_create(&opaquePointer) == 0 else {

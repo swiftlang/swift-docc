@@ -77,3 +77,18 @@ public struct LinkReference: RenderReference, Equatable {
         try container.encode(url, forKey: .url)
     }
 }
+
+// Diffable conformance
+extension LinkReference: RenderJSONDiffable {
+    /// Returns the difference between this LinkReference and the given one.
+    func difference(from other: LinkReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.titleInlineContent, forKey: CodingKeys.titleInlineContent)
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+
+        return diffBuilder.differences
+    }
+}

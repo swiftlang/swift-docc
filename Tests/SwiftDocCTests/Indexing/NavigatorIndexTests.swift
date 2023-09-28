@@ -1645,10 +1645,10 @@ Root
 /// This function compares two nodes to ensure their data is equal.
 fileprivate func compare(lhs: Node, rhs: Node) -> Bool {
     
-    func dump(node: Node) -> [NavigatorItem]  {
+    func dump(node: Node) -> [NavigatorItem] {
         var index = 0
         var queue = [node]
-        while index < queue.count  {
+        while index < queue.count {
             let node = queue[index]
             if node.children.count > 0 {
                 queue.append(contentsOf: node.children)

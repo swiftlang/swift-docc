@@ -82,7 +82,7 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
     
     
     /// A codable proxy value that the image reference uses to serialize information about its asset variants.
-    public struct VariantProxy: Codable {
+    public struct VariantProxy: Codable, Equatable {
         /// The URL to the file for this image variant.
         public var url: URL
         /// The traits of this image reference.
@@ -124,5 +124,32 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
             try container.encode(traits, forKey: .traits)
             try container.encodeIfPresent(svgID, forKey: .svgID)
         }
+    }
+}
+
+// Diffable conformance
+extension ImageReference: RenderJSONDiffable {
+    /// Returns the difference between this ImageReference and the given one.
+    func difference(from other: ImageReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.asset, forKey: CodingKeys.variants)
+        diffBuilder.addDifferences(atKeyPath: \.altText, forKey: CodingKeys.alt)
+
+        return diffBuilder.differences
+    }
+}
+
+// Diffable conformance
+extension ImageReference.VariantProxy: RenderJSONDiffable {
+    /// Returns the difference between this VariantProxy and the given one.
+    func difference(from other: ImageReference.VariantProxy, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+        diffBuilder.addDifferences(atKeyPath: \.traits, forKey: CodingKeys.traits)
+        diffBuilder.addDifferences(atKeyPath: \.svgID, forKey: CodingKeys.svgID)
+
+        return diffBuilder.differences
     }
 }
