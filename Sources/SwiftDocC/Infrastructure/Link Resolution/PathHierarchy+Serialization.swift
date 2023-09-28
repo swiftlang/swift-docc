@@ -52,7 +52,7 @@ extension PathHierarchy.FileRepresentation {
                             }
                             return disambiguations
                         }),
-                        symbol: node.symbol?.withMinimalDataForSerialization()
+                        symbolID: node.symbol?.identifier
                     )
                 )
             }
@@ -82,23 +82,6 @@ private extension UnsafeMutableBufferPointer {
 }
 #endif
 
-extension SymbolGraph.Symbol {
-    // If we can avoid including the symbols in the path hierarchy then we don't need this. See TODO below
-    func withMinimalDataForSerialization() -> SymbolGraph.Symbol {
-        return SymbolGraph.Symbol(
-            identifier: identifier,
-            names: Names(title: names.title, navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: [],
-            docComment: nil,
-            accessLevel: accessLevel,
-            kind: kind,
-            mixins: declarationFragments.map {
-                [DeclarationFragments.mixinKey: DeclarationFragments(declarationFragments: $0)]
-            } ?? [:]
-        )
-    }
-}
-
 extension PathHierarchy {
     /// A file representation of a path hierarchy.
     ///
@@ -123,8 +106,7 @@ extension PathHierarchy {
             var name: String
             var isDisfavoredInCollision: Bool = false
             var children: [Disambiguation] = []
-            // TODO: Avoid repeating symbol information that's already in the linkable entities (rdar://116086280)
-            var symbol: SymbolGraph.Symbol?
+            var symbolID: SymbolGraph.Symbol.Identifier?
             
             struct Disambiguation: Codable {
                 var kind: String?
@@ -140,7 +122,7 @@ extension PathHierarchy.FileRepresentation.Node {
         case name
         case isDisfavoredInCollision = "disfavored"
         case children
-        case symbol
+        case symbolID
     }
     
     init(from decoder: Decoder) throws {
@@ -149,7 +131,7 @@ extension PathHierarchy.FileRepresentation.Node {
         self.name = try container.decode(String.self, forKey: .name)
         self.isDisfavoredInCollision = try container.decodeIfPresent(Bool.self, forKey: .isDisfavoredInCollision) ?? false
         self.children = try container.decodeIfPresent([Disambiguation].self, forKey: .children) ?? []
-        self.symbol = try container.decodeIfPresent(SymbolGraph.Symbol.self, forKey: .symbol)
+        self.symbolID = try container.decodeIfPresent(SymbolGraph.Symbol.Identifier.self, forKey: .symbolID)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -162,7 +144,7 @@ extension PathHierarchy.FileRepresentation.Node {
         if !self.children.isEmpty {
             try container.encode(self.children, forKey: .children)
         }
-        try container.encodeIfPresent(symbol, forKey: .symbol)
+        try container.encodeIfPresent(symbolID, forKey: .symbolID)
     }
 }
 

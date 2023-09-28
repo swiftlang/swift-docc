@@ -435,9 +435,7 @@ extension LinkDestinationSummary {
         
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
         let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
-        let declaration = (symbol.subHeadingVariants[summaryTrait] ?? symbol.subHeading).map { subHeading in
-            subHeading.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
-        }
+        let declaration = (symbol.declarationVariants[summaryTrait] ?? symbol.declaration).renderDeclarationTokens()
         let language = documentationNode.sourceLanguage
         
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
@@ -446,9 +444,7 @@ extension LinkDestinationSummary {
                 return nil
             }
             
-            let declarationVariant = symbol.subHeadingVariants[trait].map { subHeading in
-                subHeading.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
-            }
+            let declarationVariant = symbol.declarationVariants[trait]?.renderDeclarationTokens()
             
             let abstractVariant: Variant.VariantValue<Abstract?> = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
             
@@ -492,6 +488,25 @@ extension LinkDestinationSummary {
             references: references.nilIfEmpty,
             variants: variants
         )
+    }
+}
+
+private extension Dictionary where Key == [PlatformName?], Value == SymbolGraph.Symbol.DeclarationFragments {
+    func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
+        guard count > 1 else {
+            return first?.value
+        }
+        
+        return self.min(by: { lhs, rhs in
+            // Join all the platform IDs and use that to get a stable value
+            lhs.key.compactMap(\.?.rawValue).joined() < lhs.key.compactMap(\.?.rawValue).joined()
+        })?.value
+    }
+    
+    func renderDeclarationTokens() -> [DeclarationRenderSection.Token]? {
+        return mainRenderFragments()?.declarationFragments.map {
+            DeclarationRenderSection.Token(fragment: $0, identifier: nil)
+        }
     }
 }
 

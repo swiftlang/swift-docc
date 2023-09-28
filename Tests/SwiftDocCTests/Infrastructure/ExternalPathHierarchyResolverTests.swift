@@ -731,7 +731,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
             let renderNode = try converter.convert(node, at: nil)
-            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode))
+            entitySummaries.append(contentsOf: node.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false))
         }
         
         let externalResolver = ExternalPathHierarchyResolver(

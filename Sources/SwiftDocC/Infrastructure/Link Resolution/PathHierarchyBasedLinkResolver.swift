@@ -213,9 +213,14 @@ final class PathHierarchyBasedLinkResolver {
         return .success(foundReference)
     }
     
-    func fullName(of nonSymbolNode: PathHierarchy.Node, in context: DocumentationContext) -> String {
-        guard let identifier = nonSymbolNode.identifier else { return nonSymbolNode.name }
-        
+    func fullName(of node: PathHierarchy.Node, in context: DocumentationContext) -> String {
+        guard let identifier = node.identifier else { return node.name }
+        if let symbol = node.symbol {
+            if let fragments = symbol.declarationFragments {
+                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+            }
+            return symbol.names.title
+        }
         let reference = resolvedReferenceMap[identifier]!
         if reference.fragment != nil {
             return context.nodeAnchorSections[reference]!.title

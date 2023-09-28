@@ -76,22 +76,13 @@ extension PathHierarchy.Error {
     /// The resulting ``TopicReferenceResolutionError`` is human-readable and provides helpful solutions.
     ///
     /// - Parameters:
-    ///     - context: The ``DocumentationContext`` the `originalReference` was resolved in.
-    ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is
-    ///     used to calculate the proper replacement-ranges for fixits.
+    ///   - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is used to calculate the proper replacement-ranges for fixits.
+    ///   - fullNameOfNode: A closure that determines the full name of a node, to be displayed in collision diagnostics to precisely identify symbols and other pages.
     ///
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.
-    func asTopicReferenceResolutionErrorInfo(originalReference: String, fullNameOfNonSymbolNode: (PathHierarchy.Node) -> String) -> TopicReferenceResolutionErrorInfo {
-        // These are defined inline because they captures `fullNameOfNode`.
-        func fullNameOfNode(_ node: PathHierarchy.Node) -> String {
-            guard let symbol = node.symbol else { return fullNameOfNonSymbolNode(node) }
-            
-            if let fragments = symbol.declarationFragments {
-                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-            }
-            return symbol.names.title
-        }
+    func asTopicReferenceResolutionErrorInfo(originalReference: String, fullNameOfNode: (PathHierarchy.Node) -> String) -> TopicReferenceResolutionErrorInfo {
+        // This is defined inline because it captures `fullNameOfNode`.
         func collisionIsBefore(_ lhs: (node: PathHierarchy.Node, disambiguation: String), _ rhs: (node: PathHierarchy.Node, disambiguation: String)) -> Bool {
             return fullNameOfNode(lhs.node) + lhs.disambiguation
                  < fullNameOfNode(rhs.node) + rhs.disambiguation

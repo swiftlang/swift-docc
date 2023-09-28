@@ -49,9 +49,19 @@ final class ExternalPathHierarchyResolver {
                 originalReferenceString += "#" + fragment
             }
             
-            return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { node in 
+            return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { node in
                 guard let reference = resolvedReference[node.identifier], let summary = content[reference] else {
                     return node.name
+                }
+                if let symbolID = node.symbol?.identifier {
+                    if symbolID.interfaceLanguage == summary.language.id, let fragments = summary.declarationFragments {
+                        return fragments.plainTextDeclaration()
+                    }
+                    if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
+                       let fragments = variant.declarationFragments ?? summary.declarationFragments 
+                    {
+                        return fragments.plainTextDeclaration()
+                    }
                 }
                 return summary.title
             })
@@ -157,6 +167,12 @@ final class ExternalPathHierarchyResolver {
             linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: Data(contentsOf: linkHierarchyFile)),
             entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: Data(contentsOf: entityURL))
         )
+    }
+}
+
+private extension Sequence where Element == DeclarationRenderSection.Token {
+    func plainTextDeclaration() -> String {
+        return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
     }
 }
 
