@@ -435,10 +435,6 @@ extension Docc {
             var experimentalEnableCustomTemplates = false
             
             @Flag(help: .hidden)
-            @available(*, deprecated, message: "Objective-C support is enabled by default. This deprecated API will be removed after 5.7 is released")
-            var enableExperimentalObjectiveCSupport = false
-            
-            @Flag(help: .hidden)
             @available(*, deprecated, message: "Render Index JSON is emitted by default. This deprecated API will be removed after 5.9 is released.")
             var enableExperimentalJSONIndex = false
             
@@ -487,14 +483,6 @@ extension Docc {
             get { featureFlags.experimentalEnableCustomTemplates }
             set { featureFlags.experimentalEnableCustomTemplates = newValue }
             
-        }
-        /// A user-provided value that is true if the user enables experimental Objective-C language support.
-        ///
-        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @available(*, deprecated, message: "Objective-C support is enabled by default. This deprecated API will be removed after 5.7 is released.")
-        public var enableExperimentalObjectiveCSupport: Bool {
-            get { featureFlags.enableExperimentalObjectiveCSupport }
-            set { featureFlags.enableExperimentalObjectiveCSupport = newValue }
         }
 
         /// A user-provided value that is true if the user enables experimental support for emitting
