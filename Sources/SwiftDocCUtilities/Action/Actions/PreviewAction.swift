@@ -48,7 +48,7 @@ public final class PreviewAction: Action, RecreatingContext {
     }
 
     private let context: DocumentationContext
-    private let workspace: DocumentationWorkspace    
+    private let workspace: DocumentationWorkspace
     private let printHTMLTemplatePath: Bool
 
     var logHandle = LogHandle.standardOutput
@@ -78,7 +78,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///   - port: The port number used by the preview server.
     ///   - convertAction: The action used to convert the documentation bundle before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
-    ///   - workspace: The documentation workspace used by the the action's documentation context.
+    ///   - workspace: The documentation workspace used by the action's documentation context.
     ///   - context: The documentation context for the action.
     ///   - printTemplatePath: Whether or not the HTML template used by the convert action should be printed when the action
     ///     is performed.

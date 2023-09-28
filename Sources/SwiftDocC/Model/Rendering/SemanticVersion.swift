@@ -62,3 +62,17 @@ public struct SemanticVersion: Codable, Equatable, CustomStringConvertible {
         return result
     }
 }
+
+// Diffable conformance
+extension SemanticVersion: RenderJSONDiffable {
+    /// Returns the differences between this SemanticVersion and the given one.
+    func difference(from other: SemanticVersion, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.major, forKey: CodingKeys.major)
+        diffBuilder.addDifferences(atKeyPath: \.minor, forKey: CodingKeys.minor)
+        diffBuilder.addDifferences(atKeyPath: \.patch, forKey: CodingKeys.patch)
+
+        return diffBuilder.differences
+    }
+}

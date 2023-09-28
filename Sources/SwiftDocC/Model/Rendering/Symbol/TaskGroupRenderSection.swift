@@ -9,7 +9,7 @@
 */
 
 /// A task group section that contains links to other symbols.
-public struct TaskGroupRenderSection: RenderSection {
+public struct TaskGroupRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind = .taskGroup
     
     /// An optional title for the section.
@@ -17,7 +17,21 @@ public struct TaskGroupRenderSection: RenderSection {
     /// An optional abstract summary for the section.
     public let abstract: [RenderInlineContent]?
     /// An optional discussion for the section.
-    public let discussion: RenderSection?
+    public var discussion: RenderSection? {
+        get {
+            typeErasedSection?.value
+        }
+        set {
+            if let newValue = newValue {
+                typeErasedSection = AnyRenderSection(newValue)
+            } else {
+                typeErasedSection = nil
+            }
+        }
+    }
+
+    private var typeErasedSection: AnyRenderSection?
+    
     /// A list of topic graph references.
     public let identifiers: [String]
     /// If true, this is an automatically generated group. If false, this is an authored group.
@@ -33,9 +47,9 @@ public struct TaskGroupRenderSection: RenderSection {
     public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifiers: [String], generated: Bool = false) {
         self.title = title
         self.abstract = abstract
-        self.discussion = discussion
         self.identifiers = identifiers
         self.generated = generated
+        self.discussion = discussion
     }
     
     /// The list of keys you use to encode or decode this section.
@@ -60,12 +74,12 @@ public struct TaskGroupRenderSection: RenderSection {
         
         title = try container.decodeIfPresent(String.self, forKey: .title)
         abstract = try container.decodeIfPresent([RenderInlineContent].self, forKey: .abstract)
-        discussion = (try container.decodeIfPresent(CodableContentSection.self, forKey: .discussion)).map { $0.section }
         identifiers = try container.decode([String].self, forKey: .identifiers)
 
         decoder.registerReferences(identifiers)
 
         generated = try container.decodeIfPresent(Bool.self, forKey: .generated) ?? false
+        discussion = (try container.decodeIfPresent(CodableContentSection.self, forKey: .discussion)).map { $0.section }
     }
 }
 
@@ -75,8 +89,31 @@ extension TaskGroupRenderSection {
     init(taskGroup group: AutomaticCuration.TaskGroup) {
         self.title = group.title
         self.abstract = nil
-        self.discussion = nil
         self.identifiers = group.references.map({ $0.absoluteString })
         self.generated = false
+        self.discussion = nil
+    }
+}
+
+// Conformance to Diffable
+extension TaskGroupRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this TaskGroupRenderSection and the given one.
+    func difference(from other: TaskGroupRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.abstract, forKey: CodingKeys.abstract)
+        diffBuilder.addDifferences(atKeyPath: \.discussion, forKey: CodingKeys.discussion)
+        diffBuilder.addDifferences(atKeyPath: \.identifiers, forKey: CodingKeys.identifiers)
+        diffBuilder.addDifferences(atKeyPath: \.generated, forKey: CodingKeys.generated)
+        
+        return diffBuilder.differences
+    }
+
+    /// Returns if this TaskGroupRenderSection is similar enough to the given one.
+    func isSimilar(to other: TaskGroupRenderSection) -> Bool {
+        return ((self.title != nil) && self.title == other.title) ||
+               ((self.abstract != nil) && self.abstract == other.abstract) ||
+               self.identifiers == other.identifiers
     }
 }

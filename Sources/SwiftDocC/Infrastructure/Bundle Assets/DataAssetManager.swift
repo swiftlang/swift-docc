@@ -29,7 +29,7 @@ struct DataAssetManager {
     var fuzzyKeyIndex = [String: String]()
     
     /**
-     Returns the data that is registered to an data asset with the specified trait collection.
+     Returns the data that is registered to a data asset with the specified trait collection.
      
      If no data is registered that exactly matches the trait collection, the data with the trait
      collection that best matches the requested trait collection is returned.

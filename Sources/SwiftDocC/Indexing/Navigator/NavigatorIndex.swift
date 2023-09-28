@@ -63,6 +63,9 @@ public class NavigatorIndex {
     public enum Error: Swift.Error, DescribedError {
         
         /// Missing bundle identifier.
+        case missingBundleIdentifier
+        
+        @available(*, deprecated, renamed: "missingBundleIdentifier")
         case missingBundleIndentifier
         
         /// A RenderNode has no title and won't be indexed.
@@ -72,8 +75,8 @@ public class NavigatorIndex {
         case navigatorIndexIsNil
         
         public var errorDescription: String {
-            switch self  {
-            case .missingBundleIndentifier:
+            switch self {
+            case .missingBundleIdentifier, .missingBundleIndentifier:
                 return "A navigator index requires a bundle identifier, which is missing."
             case .missingTitle:
                 return "The page has no valid title available."
@@ -175,7 +178,7 @@ public class NavigatorIndex {
         let bundleIdentifier = bundleIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.bundleKey) ?? NavigatorIndex.UnknownBundleIdentifier
         
         guard bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
-            throw Error.missingBundleIndentifier
+            throw Error.missingBundleIdentifier
         }
         
         // Use `.fnv1` by default if no path hasher is set for compatibility reasons.
@@ -230,6 +233,41 @@ public class NavigatorIndex {
         self.pathHasher = pathHasher
         self.navigatorTree = navigatorTree
     }
+    /**
+     Initialize an `NavigatorIndex` from a given path.
+     
+     - Parameters:
+        - url: The URL pointing to the path from which the index should be read.
+        - bundleIdentifier: The name of the bundle the index is referring to.
+        - readNavigatorTree: Indicates if the init needs to read the navigator tree from the disk, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
+        - presentationIdentifier: Indicates if the index has an identifier useful for presentation contexts.
+     
+     - Throws: A `NavigatorIndex.Error` describing the nature of the problem.
+     
+     - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
+     */
+    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead")
+    public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
+        let navigator = try NavigatorIndex.readNavigatorIndex(
+            url: url,
+            bundleIdentifier: bundleIdentifier,
+            readNavigatorTree: readNavigatorTree,
+            presentationIdentifier: presentationIdentifier
+        )
+        
+        self.init(
+            url: navigator.url,
+            presentationIdentifier: navigator.presentationIdentifier,
+            bundleIdentifier: navigator.bundleIdentifier,
+            environment: navigator.environment!,
+            database: navigator.database!,
+            availability: navigator.availability!,
+            information: navigator.information!,
+            availabilityIndex: navigator.availabilityIndex,
+            pathHasher: navigator.pathHasher,
+            navigatorTree: navigator.navigatorTree
+        )
+    }
     
     /**
      Initialize an `NavigatorIndex` from a given path with an empty tree.
@@ -247,7 +285,7 @@ public class NavigatorIndex {
         self.availabilityIndex = AvailabilityIndex()
         
         guard self.bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
-            throw Error.missingBundleIndentifier
+            throw Error.missingBundleIdentifier
         }
     }
     
@@ -498,10 +536,10 @@ extension NavigatorIndex {
         /// A temporary list of pending references that are waiting for their parent to be indexed.
         private var pendingUncuratedReferences = Set<Identifier>()
         
-        /// A map with all nodes that are curated mutliple times in the tree and need to be processed at the very end.
+        /// A map with all nodes that are curated multiple times in the tree and need to be processed at the very end.
         private var multiCurated = [Identifier: NavigatorTree.Node]()
         
-        /// A set with all nodes that are curated mutliple times, but still have to be visited.
+        /// A set with all nodes that are curated multiple times, but still have to be visited.
         private var multiCuratedUnvisited = Set<Identifier>()
         
         /// A set with all nodes that are curated.
@@ -668,7 +706,7 @@ extension NavigatorIndex {
                     }
                 }
                 
-                // Sort the IDs so multiple entries with the same availiabilities
+                // Sort the IDs so multiple entries with the same availabilities
                 // will generate the same hash. In this way we can find them in the dictionary.
                 entryIDs.sort()
                 

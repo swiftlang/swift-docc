@@ -77,7 +77,7 @@ extension JSON {
     
     subscript(key: Any) -> JSON? {
         get {
-            if let array = self.array, let index = key as? Int, index < array.count  {
+            if let array = self.array, let index = key as? Int, index < array.count {
                 return array[index]
             } else if let dic = self.dictionary, let key = key as? String, let obj = dic[key] {
                 return obj
@@ -137,4 +137,35 @@ extension JSON {
         }
     }
     
+}
+
+extension JSON {
+    /// An integer coding key.
+    struct IntegerKey: CodingKey {
+        var intValue: Int?
+        var stringValue: String
+        
+        init(_ value: Int) {
+            self.intValue = value
+            self.stringValue = value.description
+        }
+        
+        init(_ value: String) {
+            self.intValue = nil
+            self.stringValue = value
+        }
+        
+        init?(intValue: Int) {
+            self.init(intValue)
+        }
+        
+        init?(stringValue: String) {
+            guard let intValue = Int(stringValue) else {
+                return nil
+            }
+            
+            self.intValue = intValue
+            self.stringValue = stringValue
+        }
+    }
 }

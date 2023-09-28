@@ -123,3 +123,18 @@ extension DownloadReference {
         url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent)
     }
 }
+
+// Diffable conformance
+extension DownloadReference: RenderJSONDiffable {
+    /// Returns the difference between this DownloadReference and the given one.
+    func difference(from other: DownloadReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+        diffBuilder.addDifferences(atKeyPath: \.checksum, forKey: CodingKeys.checksum)
+
+        return diffBuilder.differences
+    }
+}

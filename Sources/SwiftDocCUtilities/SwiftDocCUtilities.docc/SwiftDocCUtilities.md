@@ -6,7 +6,7 @@ Build custom documentation workflows by leveraging the DocC compiler pipeline.
 
 SwiftDocCUtilities provides a default, command-line workflow for DocC, powered by Swift [Argument Parser](https://apple.github.io/swift-argument-parser/documentation/argumentparser/). `docc` commands, such as `convert` and `preview`, are conformant ``Action`` types that use DocC to perform documentation tasks.
 
-Use SwiftDocCUtilities to build a custom, command-line interface and extend it with additional commands. To add a new sub-command called `example`, create an conformant ``Action`` type, `ExampleAction`, that performs the desired work, and add it as a sub-command. Optionally, you can also reuse any of the provided actions like ``ConvertAction``.
+Use SwiftDocCUtilities to build a custom, command-line interface and extend it with additional commands. To add a new sub-command called `example`, create a conformant ``Action`` type, `ExampleAction`, that performs the desired work, and add it as a sub-command. Optionally, you can also reuse any of the provided actions like ``ConvertAction``.
 
 ```swift
 import ArgumentParser

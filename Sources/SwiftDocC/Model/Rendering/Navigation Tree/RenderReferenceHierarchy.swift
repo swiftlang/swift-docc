@@ -11,7 +11,7 @@
 import Foundation
 
 /// A node that represents API symbol hierarchy.
-public struct RenderReferenceHierarchy: Codable {
+public struct RenderReferenceHierarchy: Codable, Equatable {
     /// The paths (breadcrumbs) that lead from the landing page to the given symbol.
     ///
     /// A single path is a list of topic-graph references, that trace the curation
@@ -26,4 +26,12 @@ public struct RenderReferenceHierarchy: Codable {
     ///
     /// Landing pages' hierarchy contains a single, empty path.
     public let paths: [[String]]
+}
+
+// Diffable conformance
+extension RenderReferenceHierarchy: RenderJSONDiffable {
+    /// Returns the difference between this RenderReferenceHierarchy and the given one.
+    func difference(from other: RenderReferenceHierarchy, at path: CodablePath) -> JSONPatchDifferences {
+        return paths.difference(from: other.paths, at: path + [CodingKeys.paths])
+    }
 }

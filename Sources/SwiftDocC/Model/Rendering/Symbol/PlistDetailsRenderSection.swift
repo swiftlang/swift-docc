@@ -19,13 +19,13 @@ public enum TitleStyle: String, Codable, Equatable {
 }
 
 /// A section that contains details about a property list key.
-struct PlistDetailsRenderSection: RenderSection {
+struct PlistDetailsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .plistDetails
     /// A title for the section.
     public var title = "Details"
     
     /// Details for a property list key.
-    struct Details: Codable {
+    struct Details: Codable, Equatable {
         /// The name of the key.
         let name: String
         /// A list of types acceptable for this key's value.
@@ -58,5 +58,23 @@ struct PlistDetailsRenderSection: RenderSection {
         try container.encode(kind, forKey: .kind)
         try container.encode(title, forKey: .title)
         try container.encode(details, forKey: .details)
+    }
+}
+
+// Diffable conformance
+extension PlistDetailsRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this PlistDetailsRenderSection and the given one.
+    func difference(from other: PlistDetailsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this PlistDetailsRenderSection is similar enough to the given one.
+    func isSimilar(to other: PlistDetailsRenderSection) -> Bool {
+        return self.title == other.title
     }
 }

@@ -9,7 +9,7 @@
 */
 
 /// A section that contains additional resources for learning about a technology.
-public struct ResourcesRenderSection: RenderSection {
+public struct ResourcesRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .resources
     
     /// The resource tiles.
@@ -26,5 +26,24 @@ public struct ResourcesRenderSection: RenderSection {
     public init(tiles: [RenderTile], content: [RenderBlockContent]) {
         self.tiles = tiles
         self.content = content
+    }
+}
+
+// Diffable conformance
+extension ResourcesRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this ResourcesRenderSection and the given one.
+    func difference(from other: ResourcesRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.tiles, forKey: CodingKeys.tiles)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this ResourcesRenderSection is similar enough to the given one.
+    func isSimilar(to other: ResourcesRenderSection) -> Bool {
+        return self.content == other.content
     }
 }

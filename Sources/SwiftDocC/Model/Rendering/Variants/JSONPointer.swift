@@ -13,7 +13,7 @@ import Foundation
 /// A pointer to a specific value in a JSON document.
 ///
 /// For more information, see [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
-public struct JSONPointer: Codable, CustomStringConvertible {
+public struct JSONPointer: Codable, CustomStringConvertible, Equatable {
     /// The path components of the pointer.
     ///
     /// The path components of the pointer are not escaped.

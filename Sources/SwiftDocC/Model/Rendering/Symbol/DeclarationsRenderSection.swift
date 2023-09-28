@@ -36,6 +36,25 @@ extension DeclarationsRenderSection: TextIndexing {
     }
 }
 
+// Diffable conformance
+extension DeclarationsRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this DeclarationsRenderSection and the given one.
+    func difference(from other: DeclarationsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.declarations, forKey: CodingKeys.declarations)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this DeclarationsRenderSection is similar enough to the given one.
+    func isSimilar(to other: DeclarationsRenderSection) -> Bool {
+        return self.declarations == other.declarations
+    }
+
+}
+
 /// A section that contains a symbol declaration.
 public struct DeclarationRenderSection: Codable, Equatable {
     /// The platforms this declaration applies to.
@@ -56,7 +75,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
     ///
     /// A lexical token is a string with an associated meaning in source code.
     /// For example, `123` is represented as a single token of kind "number".
-    public struct Token: Codable, Hashable {
+    public struct Token: Codable, Hashable, Equatable {
         /// The token text content.
         public let text: String
         /// The token programming kind.
@@ -164,5 +183,42 @@ extension DeclarationRenderSection: TextIndexing {
 
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
         return ""
+    }
+}
+
+// Diffable conformance
+extension DeclarationRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this DeclarationRenderSection and the given one.
+    func difference(from other: DeclarationRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.platforms, forKey: CodingKeys.platforms)
+        diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
+        diffBuilder.addDifferences(atKeyPath: \.languages, forKey: CodingKeys.languages)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this DeclarationRenderSection is similar enough to the given one.
+    func isSimilar(to other: DeclarationRenderSection) -> Bool {
+        return self.tokens == other.tokens
+    }
+}
+
+// Diffable conformance
+extension DeclarationRenderSection.Token: RenderJSONDiffable {
+    /// Returns the differences between this Token and the given one.
+    func difference(from other: DeclarationRenderSection.Token, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.text, forKey: CodingKeys.text)
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this Token is similar enough to the given one.
+    func isSimilar(to other: DeclarationRenderSection.Token) -> Bool {
+        return self.text == other.text
     }
 }

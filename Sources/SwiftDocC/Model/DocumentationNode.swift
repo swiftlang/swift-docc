@@ -500,7 +500,7 @@ public struct DocumentationNode {
     }
 
     static func kind(forKind symbolKind: SymbolGraph.Symbol.KindIdentifier) -> Kind {
-        switch symbolKind  {
+        switch symbolKind {
         case .`associatedtype`: return .associatedType
         case .`class`: return .class
         case .`deinit`: return .deinitializer

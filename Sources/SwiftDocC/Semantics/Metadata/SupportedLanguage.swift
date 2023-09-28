@@ -31,6 +31,7 @@ import Markdown
 /// | `swift`                                | Swift                       |
 /// | `objc`, `objective-c`   | Objective-C            |
 public final class SupportedLanguage: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// A source language that this symbol is available in.

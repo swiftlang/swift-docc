@@ -9,7 +9,7 @@
 */
 
 /// A section containing textual content and media laid out horizontally or vertically.
-public struct ContentAndMediaSection: RenderSection {
+public struct ContentAndMediaSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .contentAndMedia
     
     /// The layout direction.
@@ -63,7 +63,30 @@ public struct ContentAndMediaSection: RenderSection {
         content = try container.decodeIfPresent([RenderBlockContent].self, forKey: .content) ?? []
         media = try container.decodeIfPresent(RenderReferenceIdentifier.self, forKey: .media)
         mediaPosition = try container.decodeIfPresent(ContentAndMedia.MediaPosition.self, forKey: .mediaPosition)
-            // Provide backwards-compatibility for ContentAndMediaSections that don't have a `mediaPosition` key.
-            ?? .leading
+        // Provide backwards-compatibility for ContentAndMediaSections that don't have a `mediaPosition` key.
+        ?? .leading
+    }
+}
+    
+// Diffable conformance
+extension ContentAndMediaSection: RenderJSONDiffable {
+    /// Returns the differences between this ContentAndMediaSection and the given one.
+    func difference(from other: ContentAndMediaSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.layout, forKey: CodingKeys.layout)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.eyebrow, forKey: CodingKeys.eyebrow)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        diffBuilder.addDifferences(atKeyPath: \.media, forKey: CodingKeys.media)
+        diffBuilder.addDifferences(atKeyPath: \.mediaPosition, forKey: CodingKeys.mediaPosition)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this ContentAndMediaSection is similar enough to the given one.
+    func isSimilar(to other: ContentAndMediaSection) -> Bool {
+        return self.title == other.title || self.content == other.content
     }
 }

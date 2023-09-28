@@ -38,7 +38,7 @@ public struct Diagnostic {
         return summary
     }
 
-    /// Additional details that explain the the problem or issue to the end-user in plain language.
+    /// Additional details that explain the problem or issue to the end-user in plain language.
     public var explanation: String?
     
     @available(*, deprecated, renamed: "explanation", message: "Use 'explanation' instead. This deprecated API will be removed after 5.10 is released")
