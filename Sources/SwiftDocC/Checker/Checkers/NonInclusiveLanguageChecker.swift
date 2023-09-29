@@ -121,7 +121,7 @@ public struct NonInclusiveLanguageChecker: Checker {
 
     /// Checks for a term in text.
     ///
-    /// The regular expression created from the provided term is evaluated with the case insensitve flag.
+    /// The regular expression created from the provided term is evaluated with the case insensitive flag.
     ///
     /// - Parameters:
     ///   - term: The term to look for.

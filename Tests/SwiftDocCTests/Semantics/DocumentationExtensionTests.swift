@@ -72,7 +72,7 @@ class DocumentationExtensionTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-        XCTAssertNotNil(options, "Even if there are warnings we can create a options value")
+        XCTAssertNotNil(options, "Even if there are warnings we can create an options value")
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual("org.swift.docc.UnknownArgument", problems.first?.diagnostic.identifier)

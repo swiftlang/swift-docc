@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-/// A directive that accepts an arbitary key/valye pair and emits it into the metadata of the page
+/// A directive that accepts an arbitrary key/value pair and emits it into the metadata of the page
 ///
 /// It accepts following parameters:
 ///
@@ -25,6 +25,7 @@ import Markdown
 /// }
 /// ```
 public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.8"
     public let originalMarkup: BlockDirective
     
     /// A key to identify a piece of metadata

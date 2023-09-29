@@ -177,9 +177,9 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Argument text segments:
 │  │  │  │  |    "source: figure1.png, alt: figure1 "
 │  │  │  ├─ Paragraph
-│  │  │  │  └─ Image source: "figure1" title: ""
+│  │  │  │  └─ Image source: "figure1"
 │  │  │  ├─ Paragraph
-│  │  │  │  └─ Image source: "images/figure1" title: ""
+│  │  │  │  └─ Image source: "images/figure1"
 │  │  │  └─ Paragraph
 │  │  │     └─ Text "Quis auctor elit sed vulputate mi sit amet."
 │  │  ├─ BlockDirective name: "Comment"
@@ -345,7 +345,7 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  ├─ Paragraph
 │  │  │  │  └─ Text "Phasellus faucibus scelerisque eleifend donec pretium."
 │  │  │  ├─ Paragraph
-│  │  │  │  └─ Image source: "something.png" title: ""
+│  │  │  │  └─ Image source: "something.png"
 │  │  │  │     └─ Text "Diagram"
 │  │  │  ├─ CodeBlock language: swift
 │  │  │  │  let scene = ARSCNView()

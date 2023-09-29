@@ -12,7 +12,7 @@ import SwiftDocC
 import Foundation
 
 extension ConvertAction {
-    /// Creates a  convert action from the options in the given convert command.
+    /// Creates a convert action from the options in the given convert command.
     /// - Parameters:
     ///   - convert: The convert command this `ConvertAction` will be based on.
     ///   - fallbackTemplateURL: A template URL to use if the one provided by the convert command is `nil`.
@@ -47,7 +47,7 @@ extension ConvertAction {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             fallbackDisplayName: convert.fallbackBundleDisplayName,
             fallbackIdentifier: convert.fallbackBundleIdentifier,
-            fallbackVersion: convert.fallbackBundleVersion,
+            fallbackVersion: nil,
             fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
             fallbackDefaultModuleKind: convert.fallbackDefaultModuleKind,
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
@@ -57,9 +57,9 @@ extension ConvertAction {
         // when running `docc preview` and `docc convert` without any of the fallback options.
         let documentationBundleURL: URL?
         if bundleDiscoveryOptions.infoPlistFallbacks.isEmpty {
-            documentationBundleURL = convert.documentationBundle.urlOrFallback
+            documentationBundleURL = convert.documentationCatalog.urlOrFallback
         } else {
-            documentationBundleURL = convert.documentationBundle.url
+            documentationBundleURL = convert.documentationCatalog.url
         }
 
         // Initialize the ``ConvertAction`` with the options provided by the ``Convert`` command.
@@ -71,7 +71,7 @@ extension ConvertAction {
             htmlTemplateDirectory: convert.templateOption.templateURL ?? fallbackTemplateURL,
             emitDigest: convert.emitDigest,
             currentPlatforms: parsedPlatforms,
-            buildIndex: convert.emitLMDBIndex || convert.index,
+            buildIndex: convert.emitLMDBIndex,
             temporaryDirectory: FileManager.default.temporaryDirectory,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions

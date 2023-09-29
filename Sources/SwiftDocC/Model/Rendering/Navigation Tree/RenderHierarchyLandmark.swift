@@ -9,7 +9,7 @@
 */
 
 /// A hierarchy tree node that represents a landmark on a page.
-public struct RenderHierarchyLandmark: Codable {
+public struct RenderHierarchyLandmark: Codable, Equatable {
     /// The kind of a landmark.
     public enum Kind: String, Codable {
         /// A landmark at the start of a task.

@@ -9,11 +9,11 @@
 */
 
 /// Represents a volume containing a grouped list of tutorials.
-public struct VolumeRenderSection: RenderSection {
+public struct VolumeRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .volume
     
     /// A group in a volume.
-    public struct Chapter: Codable, TextIndexing {
+    public struct Chapter: Codable, TextIndexing, Equatable {
         /// The name of the chapter.
         public var name: String?
         /// An abstract describing the chapter.
@@ -75,5 +75,46 @@ public struct VolumeRenderSection: RenderSection {
         try container.encode(image, forKey: .image)
         try container.encode(content, forKey: .content)
         try container.encode(chapters, forKey: .chapters)
+    }
+}
+
+// Diffable conformance
+extension VolumeRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this VolumeRenderSection and the given one.
+    func difference(from other: VolumeRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.name, forKey: CodingKeys.name)
+        diffBuilder.addDifferences(atKeyPath: \.image, forKey: CodingKeys.image)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        diffBuilder.addDifferences(atKeyPath: \.chapters, forKey: CodingKeys.chapters)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this VolumeRenderSection is similar enough to the given one.
+    func isSimilar(to other: VolumeRenderSection) -> Bool {
+        return self.name == other.name || self.content == other.content
+    }
+}
+
+// Diffable conformance
+extension VolumeRenderSection.Chapter: RenderJSONDiffable {
+    /// Returns the differences between this Chapter and the given one.
+    func difference(from other: VolumeRenderSection.Chapter, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.name, forKey: CodingKeys.name)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        diffBuilder.addDifferences(atKeyPath: \.tutorials, forKey: CodingKeys.tutorials)
+        diffBuilder.addDifferences(atKeyPath: \.image, forKey: CodingKeys.image)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this Chapter is similar enough to the given one.
+    func isSimilar(to other: VolumeRenderSection.Chapter) -> Bool {
+        return self.name == other.name || self.content == other.content
     }
 }

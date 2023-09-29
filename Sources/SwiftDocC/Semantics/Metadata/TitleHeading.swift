@@ -24,6 +24,7 @@ import Markdown
 /// }
 /// ```
 public final class TitleHeading: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.9"
     public let originalMarkup: BlockDirective
 
     /// An unnamed parameter containing containing the page-title’s heading text.

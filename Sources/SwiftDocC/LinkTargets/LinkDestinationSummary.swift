@@ -69,7 +69,7 @@ import SymbolKit
 ///
 /// Various information from the summary is used depending on what content references the summarized element. For example:
 ///  - In a paragraph of text, a link to this element will use the ``title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
-///  - In a task group, the the ``title`` and ``abstract`` is displayed together to give more context about this element and the element may be marked as deprecated
+///  - In a task group, the ``title`` and ``abstract`` is displayed together to give more context about this element and the element may be marked as deprecated
 ///    based on the values of its  ``platforms`` and other metadata about the current versions of the platforms.
 ///
 /// The summary may include content that vary based on the source language. The content that is different in another source language is specified in a ``Variant``. Any property on the variant that is `nil` has the same value as the summarized element's value. 
@@ -206,7 +206,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// Creates a new summary variant with the values that are different from the main summarized values.
         /// 
         /// - Parameters:
-        ///   - traits:  The traits of the variant.
+        ///   - traits: The traits of the variant.
         ///   - kind: The kind of the variant or `nil` if the kind is the same as the summarized element.
         ///   - language: The source language of the variant or `nil` if the kind is the same as the summarized element.
         ///   - relativePresentationURL: The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
@@ -252,7 +252,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///   - relativePresentationURL: The relative presentation URL for this element.
     ///   - referenceURL: The resolved topic reference URL to this element.
     ///   - title: The title of the summarized element.
-    ///   - abstract:  The abstract of the summarized element.
+    ///   - abstract: The abstract of the summarized element.
     ///   - availableLanguages: All the languages in which the summarized element is available.
     ///   - platforms: Information about the platforms for which the summarized element is available.
     ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
