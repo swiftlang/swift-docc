@@ -10,10 +10,12 @@
 
 import ArgumentParser
 
+// TODO: Append `Docc.Init.self` depending on value of `isExperimentalDocCInitCommandEnabled` feature flag
+
 #if canImport(NIOHTTP1)
-private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.Preview.self, Docc.ProcessArchive.self]
+private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.Preview.self, Docc.ProcessArchive.self, Docc.Init.self]
 #else
-private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.ProcessArchive.self]
+private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.ProcessArchive.self, Docc.Init.self]
 #endif
 
 /// The default, command-line interface you use to compile and preview documentation.
