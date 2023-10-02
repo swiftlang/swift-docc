@@ -13,7 +13,16 @@ import SymbolKit
 /// All known symbol kind identifiers.
 ///
 /// This is used to identify parsed path components as kind information.
-private let knownSymbolKinds = Set(SymbolGraph.Symbol.KindIdentifier.allCases.map { $0.identifier })
+private let knownSymbolKinds = Set<String>(
+    (SymbolGraph.Symbol.KindIdentifier.allCases + [
+        .extendedProtocol,
+        .extendedStructure,
+        .extendedClass,
+        .extendedEnumeration,
+        .unknownExtendedType,
+        .extendedModule,
+    ]).map(\.identifier)
+)
 /// All known source language identifiers.
 ///
 /// This is used to skip language prefixes from kind disambiguation information.

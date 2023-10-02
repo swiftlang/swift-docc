@@ -115,7 +115,7 @@ struct PathHierarchy {
             }
             
             var topLevelCandidates = nodes
-            for relationship in graph.relationships where [.memberOf, .requirementOf, .optionalRequirementOf].contains(relationship.kind) {
+            for relationship in graph.relationships where [.memberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .declaredIn].contains(relationship.kind) {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
@@ -144,6 +144,11 @@ struct PathHierarchy {
                 // Default implementations collide with the protocol requirement that they implement.
                 // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
                 sourceNode.isDisfavoredInCollision = true
+                
+                guard sourceNode.parent == nil else {
+                    // This node already has a direct member-of parent. No need to go via the default-implementation-of relationship to find its location in the hierarchy.
+                    continue
+                }
                 
                 let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
                 guard !targetNodes.isEmpty else {
@@ -204,7 +209,10 @@ struct PathHierarchy {
         
         var lookup = [ResolvedIdentifier: Node]()
         func descend(_ node: Node) {
-            assert(node.identifier == nil)
+            assert(
+                node.identifier == nil,
+                "Already encountered \(node.name). This is an indication that a symbol is the source of more than one memberOf relationship."
+            )
             if node.symbol != nil {
                 node.identifier = ResolvedIdentifier()
                 lookup[node.identifier] = node

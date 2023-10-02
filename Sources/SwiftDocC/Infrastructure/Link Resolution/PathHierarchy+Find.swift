@@ -96,8 +96,27 @@ extension PathHierarchy {
             if modules.count == 1 {
                 do {
                     return try searchForNode(descendingFrom: modules.first!.value, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
-                } catch {
-                    // Ignore this error and raise an error about not finding the module instead.
+                } catch let error as PathHierarchy.Error {
+                    switch error {
+                    case .notFound:
+                        // Ignore this error and raise an error about not finding the module instead.
+                        break
+                    case .unknownName(let partialResult, remaining: _, availableChildren: _):
+                        if partialResult.node.symbol?.kind.identifier == .module {
+                            // Failed to find the first path component. Ignore this error and raise an error about not finding the module instead.
+                            break
+                        } else {
+                            // Partially resolved the link. Raise the more specific error instead of a module-not-found error.
+                            throw error
+                        }
+                        
+                    // These errors are all more specific than a module-not-found error would be.
+                    case .unfindableMatch,
+                         .nonSymbolMatchForSymbolLink,
+                         .unknownDisambiguation,
+                         .lookupCollision:
+                        throw error
+                    }
                 }
             }
             let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
@@ -223,14 +242,27 @@ extension PathHierarchy {
                 let possibleMatches = collisions.compactMap {
                     return try? $0.node.children[nextPathComponent.name]?.find(nextPathComponent.kind, nextPathComponent.hash)
                 }
+                let onlyPossibleMatch: Node?
                 // If only one collision matches, return that match.
                 if possibleMatches.count == 1 {
-                    return possibleMatches.first!
+                    onlyPossibleMatch = possibleMatches.first!
                 }
                 // If all matches are the same symbol, return the Swift version of that symbol
-                if !possibleMatches.isEmpty, possibleMatches.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatches.first!.symbol?.identifier.precise }) {
-                    return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
+                else if !possibleMatches.isEmpty, possibleMatches.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatches.first!.symbol?.identifier.precise }) {
+                    onlyPossibleMatch = possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
+                } else {
+                    onlyPossibleMatch = nil
                 }
+                if let onlyPossibleMatch = onlyPossibleMatch {
+                    remaining = remaining.dropFirst(2) // One for this path component and one for the next path component.
+                    if remaining.isEmpty {
+                        return onlyPossibleMatch
+                    } else {
+                        node = onlyPossibleMatch
+                        continue
+                    }
+                }
+                
                 // Couldn't resolve the collision by look ahead.
                 return try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols)
             }
