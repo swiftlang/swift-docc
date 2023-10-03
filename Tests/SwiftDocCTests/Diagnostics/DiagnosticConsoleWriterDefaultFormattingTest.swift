@@ -12,7 +12,8 @@ import XCTest
 import Markdown
 @testable import SwiftDocC
 
-class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
+// Reenable `DefaultDiagnosticConsoleFormatter` as the default formatter when the index-out-of-bounds crash is fixed. https://github.com/apple/swift-docc/issues/722
+class DiagnosticConsoleWriterDefaultFormattingTest/*: XCTestCase*/ {
 
     class Logger: TextOutputStream {
         var output = ""

@@ -42,7 +42,8 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         highlight: Bool? = nil
     ) {
         outputStream = stream
-        formattingOptions = options
+        // Reenable `DefaultDiagnosticConsoleFormatter` as the default formatter when the index-out-of-bounds crash is fixed. https://github.com/apple/swift-docc/issues/722
+        formattingOptions = [.formatConsoleOutputForTools]
         diagnosticFormatter = Self.makeDiagnosticFormatter(
             options,
             baseURL: baseURL,
