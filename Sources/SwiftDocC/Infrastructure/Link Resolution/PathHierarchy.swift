@@ -115,7 +115,7 @@ struct PathHierarchy {
             }
             
             var topLevelCandidates = nodes
-            for relationship in graph.relationships where [.memberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .declaredIn].contains(relationship.kind) {
+            for relationship in graph.relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
@@ -466,5 +466,17 @@ extension PathHierarchy.DisambiguationContainer {
                 return lhsValue
             })
         }))
+    }
+}
+
+private extension SymbolGraph.Relationship.Kind {
+    /// Whether or not this relationship kind forms a hierarchical relationship between the source and the target.
+    var formsHierarchy: Bool {
+        switch self {
+        case .memberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .declaredIn:
+            return true
+        default:
+            return false
+        }
     }
 }
