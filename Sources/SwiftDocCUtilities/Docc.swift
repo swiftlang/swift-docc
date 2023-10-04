@@ -10,7 +10,6 @@
 
 import ArgumentParser
 
-// TODO: Append `Docc.Init.self` depending on value of `isExperimentalDocCInitCommandEnabled` feature flag
 
 #if canImport(NIOHTTP1)
 private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.Preview.self, Docc.ProcessArchive.self, Docc.Init.self]

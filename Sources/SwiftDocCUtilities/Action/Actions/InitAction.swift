@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,23 +25,17 @@ public struct InitAction: Action {
     }
     
     private let catalogOutputPath: String
-    private let defaultDocumentationTitle: String
     private let documentationTitle: String
-    private let catalogOutputPathPlaceholder: String
-    private var templateLibraryPath: String
-    private var templateTutorialBaseFolderPath: String
-    private var templateCatalogBaseFolderPath: String
+    private let catalogOutputPathPlaceholder: String = "___CATALOG_OUTPUT_PATH___"
+    private let documentationTitlePlaceholder: String = "___DOCUMENTATION_TITLE___"
+    private let templateCatalogBaseFolderPath: String = Bundle.module.url(
+        forResource: "___FILEBASENAME_INIT___", withExtension: "docc", subdirectory: "TemplateLibrary/Init"
+    )!.path
+    private let templateTutorialBaseFolderPath: String = Bundle.module.url(
+        forResource: "Tutorial", withExtension: "", subdirectory: "TemplateLibrary/Tutorials"
+    )!.path
     private let includeTutorial: Bool
-    private let diagnosticEngine: DiagnosticEngine
-    
-    private let logHandle: LogHandle
-    // TODO: Refactor to properly get the DocC root
-    let templatePath = (
-        Bundle.main.bundleURL
-        .deletingLastPathComponent() // docc
-        .deletingLastPathComponent() // bin
-        .deletingLastPathComponent() // .build
-    ).path
+    private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     
     /// Creates a new Init action from the given parameters
     ///
@@ -56,16 +50,7 @@ public struct InitAction: Action {
     ) throws {
         self.documentationTitle = documentationTitle
         self.includeTutorial = includeTutorial
-        self.diagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
-        diagnosticEngine.filterLevel = .warning
-        diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
         catalogOutputPath = "\(catalogOutputDirectory)/\(documentationTitle).docc"
-        defaultDocumentationTitle = "Documentation"
-        catalogOutputPathPlaceholder = "___CATALOG_OUTPUT_PATH___"
-        templateLibraryPath = "\(templatePath)/Sources/SwiftDocCUtilities/TemplateLibrary"
-        templateTutorialBaseFolderPath = "\(templateLibraryPath)/Tutorials/Tutorial"
-        templateCatalogBaseFolderPath = "\(templateLibraryPath)/Init/___FILEBASENAME_INIT___.docc"
-        logHandle = LogHandle.standardOutput
     }
     
     /// Generates a documentation catalog from a catalog template
@@ -78,7 +63,10 @@ public struct InitAction: Action {
     func initAction() throws -> ActionResult {
         
         let fileManager = FileManager.default
+        var logHandle: LogHandle = .standardError
         var initProblems: [Problem] = []
+        diagnosticEngine.filterLevel = .warning
+        diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
         
         defer {
             diagnosticEngine.emit(initProblems)
@@ -105,14 +93,17 @@ public struct InitAction: Action {
             
             // Overwrite the top level article title
             var topLevelArticleContent = String(
-                decoding: fileManager.contents(atPath: "\(catalogOutputPath)/\(defaultDocumentationTitle).md")!,
+                decoding: fileManager.contents(atPath: "\(catalogOutputPath)/\(documentationTitlePlaceholder).md")!,
                 as: UTF8.self
             )
-            if (documentationTitle != defaultDocumentationTitle) {
-                topLevelArticleContent = topLevelArticleContent.replacingOccurrences(of: "# \(defaultDocumentationTitle)", with: "# \(documentationTitle)")
-                // Remove old template top-level article
-                try fileManager.removeItem(atPath: "\(catalogOutputPath)/\(defaultDocumentationTitle).md")
-            }
+            // Replace the documentation title placeholder with the title given by the user
+            topLevelArticleContent = topLevelArticleContent.replacingOccurrences(
+                of: documentationTitlePlaceholder,
+                with: documentationTitle
+            )
+            // Remove old template top-level article
+            try fileManager.removeItem(atPath: "\(catalogOutputPath)/\(documentationTitlePlaceholder).md")
+            
             topLevelArticleContent = topLevelArticleContent.replacingOccurrences(
                 of: catalogOutputPathPlaceholder,
                 with: catalogOutputPath
@@ -131,6 +122,14 @@ public struct InitAction: Action {
                     toPath: "\(catalogOutputPath)/Tutorial"
                 )
             }
+            
+            print(
+                """
+                A new documentation catalog has been generated at \(catalogOutputPath).
+                """,
+                to: &logHandle
+            )
+            
         } catch {
             // If an error occurs remove the ouptut created
             if fileManager.fileExists(atPath: catalogOutputPath) {

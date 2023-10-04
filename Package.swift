@@ -70,6 +70,9 @@ let package = Package(
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
             ],
+            resources: [
+                .copy("TemplateLibrary")
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(

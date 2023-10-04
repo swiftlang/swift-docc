@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,17 +40,6 @@ extension Docc {
         static var _errorLogHandle: LogHandle = .standardError
         
         public mutating func run() throws {
-            
-            if !FeatureFlags.current.isExperimentalDocCInitCommandEnabled {
-                print(
-                    """
-                    The `init` feature is not enabled.
-                    Set the `isExperimentalDocCInitCommandEnabled` feature flag to true.
-                    """,
-                    to: &Self._errorLogHandle
-                )
-                return
-            }
             
             // Initialize a `InitiAction` from the current options in the `Init` command.
             var initAction = try InitAction(fromInitOptions: initOptions)
