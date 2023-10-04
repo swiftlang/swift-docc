@@ -151,13 +151,18 @@ final class ExternalPathHierarchyResolver {
             // Third, iterate over the newly created path hierarchy's identifiers and build up the map from Identifier -> Reference.
             self.resolvedReference.reserveCapacity(identifiers.count)
             for (index, path) in fileRepresentation.nonSymbolPaths {
-                guard let url = URL(string: path) else { continue }
+                guard let url = URL(string: path) else { 
+                    assertionFailure("Failed to create URL from \"\(path)\". This is an indication of an encoding issue.")
+                    // In release builds, skip pages that failed to decode. It's possible that they're never linked to and that they won't cause any issue in the build.
+                    continue
+                }
                 let identifier = identifiers[index]
                 self.resolvedReference[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
         // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.
         for (identifier, node) in self.pathHierarchy.lookup {
+            // The hierarchy contains both symbols and non-symbols so skip anything that isn't a symbol.
             guard let usr = node.symbol?.identifier.precise else { continue }
             self.resolvedReference[identifier] = symbols[usr]
         }
