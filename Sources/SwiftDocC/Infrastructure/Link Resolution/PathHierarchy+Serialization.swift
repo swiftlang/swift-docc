@@ -138,16 +138,11 @@ extension PathHierarchy.FileRepresentation.Node {
         var container: KeyedEncodingContainer = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.name, forKey: .name)
-        if self.isDisfavoredInCollision {
-            try container.encode(self.isDisfavoredInCollision, forKey: .isDisfavoredInCollision)
-        }
-        if !self.children.isEmpty {
-            try container.encode(self.children, forKey: .children)
-        }
+        try container.encodeIfTrue(self.isDisfavoredInCollision, forKey: .isDisfavoredInCollision)
+        try container.encodeIfNotEmpty(self.children, forKey: .children)
         try container.encodeIfPresent(symbolID, forKey: .symbolID)
     }
 }
-
 
 // MARK: PathHierarchyBasedLinkResolver
 
