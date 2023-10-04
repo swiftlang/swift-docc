@@ -212,7 +212,8 @@ extension PathHierarchy {
                     try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols)
                 }
                 
-                // See if the collision can be resolved by looking ahead on level deeper.
+                // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
+                
                 guard let nextPathComponent = remaining.dropFirst().first else {
                     // This was the last path component so there's nothing to look ahead.
                     //
@@ -238,26 +239,33 @@ extension PathHierarchy {
                     // A wrapped error would have been raised while iterating over the collection.
                     return uniqueCollisions.first!.value
                 }
-                // Try resolving the rest of the path for each collision ...
-                let possibleMatches = collisions.compactMap {
+                
+                // Look ahead one path component to narrow down the list of collisions. 
+                // For each collision where the next path component can be found unambiguously, return that matching node one level down.
+                let possibleMatchesOneLevelDown = collisions.compactMap {
                     return try? $0.node.children[nextPathComponent.name]?.find(nextPathComponent.kind, nextPathComponent.hash)
                 }
                 let onlyPossibleMatch: Node?
-                // If only one collision matches, return that match.
-                if possibleMatches.count == 1 {
-                    onlyPossibleMatch = possibleMatches.first!
-                }
-                // If all matches are the same symbol, return the Swift version of that symbol
-                else if !possibleMatches.isEmpty, possibleMatches.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatches.first!.symbol?.identifier.precise }) {
-                    onlyPossibleMatch = possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
+                
+                if possibleMatchesOneLevelDown.count == 1 {
+                    // Only one of the collisions found a match for the next path component
+                    onlyPossibleMatch = possibleMatchesOneLevelDown.first!
+                } else if !possibleMatchesOneLevelDown.isEmpty, possibleMatchesOneLevelDown.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatchesOneLevelDown.first!.symbol?.identifier.precise }) {
+                    // It's also possible that different language representations of the same symbols appear as different collisions.
+                    // If _all_ collisions that can find the next path component are the same symbol, then we prefer the Swift version of that symbol.
+                    onlyPossibleMatch = possibleMatchesOneLevelDown.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatchesOneLevelDown.first!
                 } else {
                     onlyPossibleMatch = nil
                 }
+                
                 if let onlyPossibleMatch = onlyPossibleMatch {
-                    remaining = remaining.dropFirst(2) // One for this path component and one for the next path component.
+                    // If we found only a single match one level down then we've processed both this path component and the next.
+                    remaining = remaining.dropFirst(2)
                     if remaining.isEmpty {
+                        // If that was the end of the path we can simply return the result.
                         return onlyPossibleMatch
                     } else {
+                        // Otherwise we continue looping over the remaining path components.
                         node = onlyPossibleMatch
                         continue
                     }
