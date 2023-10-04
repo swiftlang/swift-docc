@@ -2545,7 +2545,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let referenceWithoutFragment = reference.withFragment(nil)
             return try entity(with: referenceWithoutFragment).availableSourceLanguages
         } catch ContextError.notFound {
-            if let externalEntity = externalCache[reference.withFragment(nil)] {
+            if let externalEntity = externalCache[reference] {
                 return externalEntity.sourceLanguages
             }
             preconditionFailure("Reference does not have an associated documentation node.")
