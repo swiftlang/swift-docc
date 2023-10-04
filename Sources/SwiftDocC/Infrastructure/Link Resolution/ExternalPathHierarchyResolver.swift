@@ -32,8 +32,9 @@ final class ExternalPathHierarchyResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     /// - Returns: The result of resolving the reference.
     func resolve(_ unresolvedReference: UnresolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) -> TopicReferenceResolutionResult {
+        let originalReferenceString = Self.path(for: unresolvedReference)
         do {
-            let foundID = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: nil, onlyFindSymbols: true)
+            let foundID = try pathHierarchy.find(path: originalReferenceString, parent: nil, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
             guard let foundReference = resolvedReference[foundID] else {
                 fatalError("Every identifier in the path hierarchy has a corresponding reference in the wrapping resolver. If it doesn't that's an indication that the file content that it was deserialized from was malformed.")
             }
@@ -49,25 +50,29 @@ final class ExternalPathHierarchyResolver {
                 originalReferenceString += "#" + fragment
             }
             
-            return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { node in
-                guard let reference = resolvedReference[node.identifier], let summary = content[reference] else {
-                    return node.name
-                }
-                if let symbolID = node.symbol?.identifier {
-                    if symbolID.interfaceLanguage == summary.language.id, let fragments = summary.declarationFragments {
-                        return fragments.plainTextDeclaration()
-                    }
-                    if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
-                       let fragments = variant.declarationFragments ?? summary.declarationFragments 
-                    {
-                        return fragments.plainTextDeclaration()
-                    }
-                }
-                return summary.title
+            return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { collidingNode in
+                self.fullName(of: collidingNode) // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
             })
         } catch {
             fatalError("Only PathHierarchy.Error errors are raised from the symbol link resolution code above.")
         }
+    }
+    
+    private func fullName(of collidingNode: PathHierarchy.Node) -> String {
+        guard let reference = resolvedReference[collidingNode.identifier], let summary = content[reference] else {
+            return collidingNode.name
+        }
+        if let symbolID = collidingNode.symbol?.identifier {
+            if symbolID.interfaceLanguage == summary.language.id, let fragments = summary.declarationFragments {
+                return fragments.plainTextDeclaration()
+            }
+            if let variant = summary.variants.first(where: { $0.traits.contains(.interfaceLanguage(symbolID.interfaceLanguage)) }),
+               let fragments = variant.declarationFragments ?? summary.declarationFragments
+            {
+                return fragments.plainTextDeclaration()
+            }
+        }
+        return summary.title
     }
     
     private static func path(for unresolved: UnresolvedTopicReference) -> String {
