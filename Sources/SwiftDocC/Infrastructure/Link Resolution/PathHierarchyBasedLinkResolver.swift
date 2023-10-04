@@ -161,7 +161,7 @@ final class PathHierarchyBasedLinkResolver {
         addAnchors(anchorSections, to: articleID)
     }
     
-    /// Adds a article and its headings to the path hierarchy.
+    /// Adds an article and its headings to the path hierarchy.
     func addArticle(filename: String, reference: ResolvedTopicReference, anchorSections: [AnchorSection]) {
         let articleID = pathHierarchy.addArticle(name: filename)
         resolvedReferenceMap[articleID] = reference

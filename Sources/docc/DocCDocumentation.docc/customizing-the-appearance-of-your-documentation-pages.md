@@ -79,7 +79,8 @@ of a green hue.
 
 As a general rule, the default color properties provided by DocC assumes a
 naming convention where "fill" colors are used for backgrounds and "figure"
-colors are used for foreground colors, like text.
+colors are used for foreground colors, like text. Note that colors defined in 
+`theme-settings.json` will be used across all pages of your documentation bundle.
 
 > Tip:
 > For a more complete example of a fully customized documentation website, you
@@ -238,6 +239,16 @@ be added as necessary for other features.
   }
 }
 ```
+
+### Customizing the appearance of specific pages
+
+Aside from the customizations available via `theme-settings.json`, Swift DocC
+provides several <doc:Metadata> directives that allow you to customize just
+one specific Article page.
+
+Most notably:
+- ``PageImage`` allows you to set a header image of a page.
+- ``PageColor`` allows you to set an accent color of a page.
 
 [1]: https://github.com/apple/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
