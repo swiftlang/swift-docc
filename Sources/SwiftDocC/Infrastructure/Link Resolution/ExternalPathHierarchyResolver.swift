@@ -18,7 +18,7 @@ final class ExternalPathHierarchyResolver {
     private(set) var pathHierarchy: PathHierarchy!
     
     /// A map from the path hierarchies identifiers to resolved references.
-    private var resolvedReference = [ResolvedIdentifier: ResolvedTopicReference]()
+    private var resolvedReferences = [ResolvedIdentifier: ResolvedTopicReference]()
     /// A map from symbol's unique identifiers to their resolved references.
     private var symbols: [String: ResolvedTopicReference]
     
@@ -35,7 +35,7 @@ final class ExternalPathHierarchyResolver {
         let originalReferenceString = Self.path(for: unresolvedReference)
         do {
             let foundID = try pathHierarchy.find(path: originalReferenceString, parent: nil, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
-            guard let foundReference = resolvedReference[foundID] else {
+            guard let foundReference = resolvedReferences[foundID] else {
                 fatalError("Every identifier in the path hierarchy has a corresponding reference in the wrapping resolver. If it doesn't that's an indication that the file content that it was deserialized from was malformed.")
             }
             
@@ -59,7 +59,7 @@ final class ExternalPathHierarchyResolver {
     }
     
     private func fullName(of collidingNode: PathHierarchy.Node) -> String {
-        guard let reference = resolvedReference[collidingNode.identifier], let summary = content[reference] else {
+        guard let reference = resolvedReferences[collidingNode.identifier], let summary = content[reference] else {
             return collidingNode.name
         }
         if let symbolID = collidingNode.symbol?.identifier {
@@ -149,7 +149,7 @@ final class ExternalPathHierarchyResolver {
         // Second, decode the path hierarchy
         self.pathHierarchy = PathHierarchy(fileRepresentation.pathHierarchy) { identifiers in
             // Third, iterate over the newly created path hierarchy's identifiers and build up the map from Identifier -> Reference.
-            self.resolvedReference.reserveCapacity(identifiers.count)
+            self.resolvedReferences.reserveCapacity(identifiers.count)
             for (index, path) in fileRepresentation.nonSymbolPaths {
                 guard let url = URL(string: path) else { 
                     assertionFailure("Failed to create URL from \"\(path)\". This is an indication of an encoding issue.")
@@ -157,14 +157,14 @@ final class ExternalPathHierarchyResolver {
                     continue
                 }
                 let identifier = identifiers[index]
-                self.resolvedReference[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
         // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.
         for (identifier, node) in self.pathHierarchy.lookup {
             // The hierarchy contains both symbols and non-symbols so skip anything that isn't a symbol.
             guard let usr = node.symbol?.identifier.precise else { continue }
-            self.resolvedReference[identifier] = symbols[usr]
+            self.resolvedReferences[identifier] = symbols[usr]
         }
     }
     
