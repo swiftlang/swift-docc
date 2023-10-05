@@ -14,7 +14,7 @@ import SymbolKit
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
     /// A list of URLs to documentation archives that the local documentation depends on.
-    @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it. 
+    @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
     public var dependencyArchives: [URL] = []
     
     /// The link resolver to use to resolve links in the local bundle
@@ -73,7 +73,7 @@ public class LinkResolver {
             return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context)
         } catch let error as PathHierarchy.Error {
             // Check if there's a known external resolver for this module.
-            if case .moduleNotFound(let remaining, _) = error, let resolver = externalResolvers[remaining.first!.full] {
+            if case .moduleNotFound(let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
                 let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
                 context.externallyResolvedLinks[unresolvedReference.topicURL] = result
                 if case .success(let resolved) = result {
