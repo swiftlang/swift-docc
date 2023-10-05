@@ -189,6 +189,71 @@ class ExtendedTypesFormatTransformationTests: XCTestCase {
         }
     }
     
+    func testCollapsedExtendedModuleRelationships() {
+        let declaredIn = SymbolGraph.Relationship(
+            source: "usr1",
+            target: "usr2",
+            kind: .declaredIn,
+            targetFallback: "Swift"
+        )
+        let memberOf = SymbolGraph.Relationship(
+            source: "usr3",
+            target: "usr4",
+            kind: .memberOf,
+            targetFallback: "Swift"
+        )
+        let conformsTo = SymbolGraph.Relationship(
+            source: "usr5",
+            target: "usr6",
+            kind: .conformsTo,
+            targetFallback: "Swift"
+        )
+        // Targets declaredIn defined above.
+        let inContextOf = SymbolGraph.Relationship(
+            source: "usr7",
+            target: "usr1",
+            kind: .inContextOf,
+            targetFallback: "Swift"
+        )
+        // Targets inContextOf just above.
+        let inContextOfChild = SymbolGraph.Relationship(
+            source: "usr8",
+            target: "usr7",
+            kind: .inContextOf,
+            targetFallback: "Swift"
+        )
+        // Invalid/missing target
+        let inContextOfMissing = SymbolGraph.Relationship(
+            source: "usr9",
+            target: "missing",
+            kind: .inContextOf,
+            targetFallback: "Swift"
+        )
+        // Invalid/introduces a cycle
+        let cycle1 = SymbolGraph.Relationship(
+            source: "usr9",
+            target: "usr10",
+            kind: .inContextOf,
+            targetFallback: "Swift"
+        )
+        let cycle2 = SymbolGraph.Relationship(
+            source: "usr10",
+            target: "usr9",
+            kind: .inContextOf,
+            targetFallback: "Swift"
+        )
+        let relationships: Set<SymbolGraph.Relationship> = [declaredIn, memberOf, conformsTo, inContextOf, inContextOfChild, inContextOfMissing, cycle1, cycle2]
+        let collapsed = ExtendedTypeFormatTransformation.collapsedExtendedModuleRelationships(from: relationships)
+        XCTAssertEqual(
+            [
+                "usr1" : "usr2",
+                "usr7" : "usr2",
+                "usr8" : "usr2"
+            ],
+            collapsed
+        )
+    }
+
     // MARK: Helpers
     
     private struct SymbolGraphContents {

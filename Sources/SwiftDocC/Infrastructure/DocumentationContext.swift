@@ -1413,7 +1413,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    
+
     /// Builds in-memory relationships between symbols based on the relationship information in a given symbol graph file.
     ///
     /// - Parameters:
@@ -1429,8 +1429,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         bundle: DocumentationBundle,
         engine: DiagnosticEngine
     ) {
+
+        // Find all of the relationships which refer to an extended module.
+        let extendedModuleRelationships = ExtendedTypeFormatTransformation.collapsedExtendedModuleRelationships(from: relationships)
+
         for edge in relationships {
             switch edge.kind {
+            case .memberOf, .optionalMemberOf:
+                // Add a "Self is" constraint for members of protocol extensions that
+                // extend a protocol from extended modules.
+                SymbolGraphRelationshipsBuilder.addProtocolExtensionMemberConstraint(
+                    edge: edge,
+                    selector: selector,
+                    extendedModuleRelationships: extendedModuleRelationships,
+                    symbolIndex: &symbolIndex,
+                    documentationCache: documentationCache
+                )
             case .conformsTo:
                 // Build conformant type <-> protocol relationships
                 SymbolGraphRelationshipsBuilder.addConformanceRelationship(

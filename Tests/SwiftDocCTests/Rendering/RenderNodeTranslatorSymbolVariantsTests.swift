@@ -106,7 +106,12 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testExtendedModuleVariants() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
-                symbol.extendedModule = "Custom Title"
+                let newConstraint = SymbolGraph.Symbol.Swift.GenericConstraint(
+                    kind: SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType,
+                    leftTypeName: "Self",
+                    rightTypeName: "MutableCollection"
+                )
+                symbol.addConstraint(extendedModule: "Custom Title", constraint: newConstraint)
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.metadata.extendedModule, "Custom Title")

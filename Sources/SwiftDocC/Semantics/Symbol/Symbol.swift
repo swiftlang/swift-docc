@@ -29,7 +29,7 @@ import SymbolKit
 /// - ``kindVariants``
 /// - ``platformNameVariants``
 /// - ``moduleReference``
-/// - ``extendedModule``
+/// - ``extendedModuleVariants``
 /// - ``bystanderModuleNames``
 /// - ``isRequiredVariants``
 /// - ``externalIDVariants``
@@ -115,9 +115,15 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// The reference to the documentation node that represents this symbol's module symbol.
     internal(set) public var moduleReference: ResolvedTopicReference
-    
-    /// The name of the module extension in which the symbol is defined, if applicable.
-    internal(set) public var extendedModule: String?
+
+    /// The name of the module extension in which the symbol is defined, in each language variant the symbol is available in
+    public var extendedModuleVariants: DocumentationDataVariants<String> {
+        var variants = DocumentationDataVariants<String>()
+        for (trait, swiftExtension) in swiftExtensionVariants() {
+            variants[trait] = swiftExtension.extendedModule
+        }
+        return variants
+    }
 
     /// The names of any "bystander" modules required for this symbol, if it came from a cross-import overlay.
     @available(*, deprecated, message: "Use crossImportOverlayModule instead")
@@ -146,10 +152,16 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     )
     
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
-    
+
     /// The symbol's availability or conformance constraints, in each language variant the symbol is available in.
-    public var constraintsVariants = DocumentationDataVariants<[SymbolGraph.Symbol.Swift.GenericConstraint]>()
-    
+    public var constraintsVariants: DocumentationDataVariants<[SymbolGraph.Symbol.Swift.GenericConstraint]> {
+        var variants = DocumentationDataVariants<[SymbolGraph.Symbol.Swift.GenericConstraint]>()
+        for (trait, swiftExtension) in swiftExtensionVariants() {
+            variants[trait] = swiftExtension.constraints
+        }
+        return variants
+    }
+
     /// The inheritance information for the symbol in each language variant the symbol is available in.
     public var originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin>
     
@@ -236,7 +248,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         roleHeadingVariants: DocumentationDataVariants<String>,
         platformNameVariants: DocumentationDataVariants<PlatformName>,
         moduleReference: ResolvedTopicReference,
-        extendedModule: String? = nil,
         requiredVariants: DocumentationDataVariants<Bool> = .init(defaultVariantValue: false),
         externalIDVariants: DocumentationDataVariants<String>,
         accessLevelVariants: DocumentationDataVariants<String>,
@@ -292,8 +303,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                     if !self.declarationVariants.hasVariant(for: trait) {
                         self.declarationVariants[trait] = [[platformNameVariants[trait]]: declaration]
                     }
-                case let extensionConstraints as SymbolGraph.Symbol.Swift.Extension where !extensionConstraints.constraints.isEmpty:
-                    self.constraintsVariants[trait] = extensionConstraints.constraints
                 case let location as SymbolGraph.Symbol.Location:
                     self.locationVariants[trait] = location
                 case let spi as SymbolGraph.Symbol.SPI:
@@ -323,11 +332,74 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.redirectsVariants = redirectsVariants
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
-        self.extendedModule = extendedModule
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitSymbol(self)
+    }
+
+    /**
+     Append a new generic constraint for the given extended module
+
+     - Parameters:
+        - extendedModule: Which module this symbol extends.
+        - typeKind: The ``SymbolGraph/Symbol/KindIdentifier`` of the symbol this extension extends.
+        - constraint: The new generic constraints to add
+        - trait: Which generic constraints variant to append to
+     - Returns: True if the constraint was appended to an existing or new swift extension variant. False if there was an existing swift extension variant for a different module.
+     */
+
+    public func addConstraint(
+        extendedModule: String,
+        typeKind: SymbolGraph.Symbol.KindIdentifier? = nil,
+        constraint newConstraint: SymbolGraph.Symbol.Swift.GenericConstraint,
+        trait: DocumentationDataVariantsTrait = DocumentationDataVariantsTrait.swift
+    ) {
+
+        var swiftExtension: SymbolGraph.Symbol.Swift.Extension
+
+        // Does this symbol already have a swift extension variant for the requested trait?
+        
+        // Yes: Create a new copy of the existing extension with
+        // the new constraint appended to the existing list
+        if let existing = swiftExtensionVariants()[trait] {
+            // Double check the existing extension uses the same module and type. If it does not,
+            // we must have a tooling or data consistency problem.
+            assert(
+                existing.extendedModule == extendedModule, //&& existing.typeKind == typeKind,
+                "New constraint's module and type kind do not match symbol's existing constraints."
+            )
+            swiftExtension = existing
+            swiftExtension.constraints = swiftExtension.constraints + [newConstraint]
+
+        // No: Create a new extension with the specified module, type and
+        // new constraint
+        } else {
+            swiftExtension = SymbolGraph.Symbol.Swift.Extension(
+                                extendedModule: extendedModule,
+                                typeKind: typeKind,
+                                constraints: [newConstraint]
+                             )
+        }
+
+        // Save the new or updated extension
+        self.mixinsVariants[
+                trait,
+                default: [:]
+            ][SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
+    }
+
+    // MARK: - Private helpers
+
+    /// Return all of this symbol's Swift extension variants.
+    func swiftExtensionVariants() -> [DocumentationDataVariantsTrait : SymbolGraph.Symbol.Swift.Extension] {
+        var variants: [DocumentationDataVariantsTrait : SymbolGraph.Symbol.Swift.Extension] = [:]
+        for (trait, mixins) in mixinsVariants.allValues {
+            if let swiftExtension = mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
+                variants[trait] = swiftExtension
+            }
+        }
+        return variants
     }
 }
 
@@ -432,6 +504,10 @@ extension Symbol {
     /// The first variant of the symbol's platform, if available.
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
+    /// The first variant of the symbol's extended module, if available
+    @available(*, deprecated, message: "Please use extendedModuleVariants instead.")
+    public var extendedModule: String? { extendedModuleVariants.firstValue }
+
     /// Whether the first variant of the symbol is required in its context.
     public var isRequired: Bool {
         get { isRequiredVariants.firstValue! }
@@ -462,10 +538,7 @@ extension Symbol {
     }
     
     /// The first variant of the symbol's availability or conformance constraints.
-    public var constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]? {
-        get { constraintsVariants.firstValue }
-        set { constraintsVariants.firstValue = newValue }
-    }
+    public var constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]? { constraintsVariants.firstValue }
     
     /// The inheritance information for the first variant of the symbol.
     public var origin: SymbolGraph.Relationship.SourceOrigin? {

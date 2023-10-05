@@ -396,5 +396,81 @@ struct SymbolGraphRelationshipsBuilder {
             setAsInheritedSymbol(origin: origin, for: &context.documentationCache[reference]!, originNode: symbolIndex[origin.identifier].flatMap { context.documentationCache[$0] })
         }
     }
-}
 
+    /// Add a new generic constraint: "Self is SomeProtocol" to members of
+    /// protocol extensions of protocols from external modules. When a protocol
+    /// is defined in a different module it's not clear which protocol the
+    /// extension is for since we don't otherwise display that, unless implied
+    /// by curation.
+    ///
+    /// - Parameters:
+    ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is
+    ///     relevant.
+    ///   - extendedModuleRelationships: Source->target dictionary for external
+    ///     module relationships.
+    ///   - symbolIndex: A symbol lookup map by precise identifier.
+    ///   - engine: A diagnostic collecting engine.
+
+    static func addProtocolExtensionMemberConstraint(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        extendedModuleRelationships: [String : String],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode]
+    ) {
+
+        // Utility function to look up a symbol identifier in the
+        // symbol index, returning its documentation node and semantic symbol
+        func nodeAndSymbolFor(identifier: String) -> (DocumentationNode, Symbol)? {
+            if let node = symbolIndex[identifier].flatMap({documentationCache[$0]}),
+               let symbol = node.semantic as? Symbol {
+                return (node, symbol)
+            }
+            return nil
+        }
+
+        // Is this symbol a member of some type from an extended module?
+        guard let extendedModuleRelationship = extendedModuleRelationships[edge.target] else {
+            return
+        }
+
+        // Return unless the target symbol is a protocol. The "Self is ..."
+        // constraint only makes sense for protocol extensions.
+        guard let (targetNode, targetSymbol) = nodeAndSymbolFor(identifier: edge.target) else {
+            return
+        }
+        guard targetNode.kind == .extendedProtocol else {
+            return
+        }
+
+        // Obtain the source symbol
+        guard let (_, sourceSymbol) = nodeAndSymbolFor(identifier: edge.source) else {
+            return
+        }
+
+        // Obtain the extended module documentation node.
+        guard let (_, extendedModuleSymbol) = nodeAndSymbolFor(identifier: extendedModuleRelationship) else {
+            return
+        }
+
+        // Create a new generic constraint: "Self is SomeProtocol" to show which
+        // protocol this function's extension is extending.  When the protocol is
+        // defined in a different module it's not clear at all which protocol it
+        // is, especially if the curation doesn't indicate that.
+        let newConstraint = SymbolGraph.Symbol.Swift.GenericConstraint(
+            kind: SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType,
+            leftTypeName: "Self",
+            rightTypeName: targetSymbol.title
+        )
+
+        // Add the constraint to the source symbol, the member of the protocol
+        // extension.
+        sourceSymbol.addConstraint(
+            extendedModule: extendedModuleSymbol.title,
+            typeKind: .protocol,
+            constraint: newConstraint,
+            trait: DocumentationDataVariantsTrait(for: selector)
+        )
+    }
+}
