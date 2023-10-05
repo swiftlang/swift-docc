@@ -14,7 +14,8 @@ import SymbolKit
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
     /// A list of URLs to documentation archives that the local documentation depends on.
-    public var dependencyArchives: [URL] = [] // This needs to be public so that the ConvertAction can set it. All other functionality is internal so far.
+    @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it. 
+    public var dependencyArchives: [URL] = []
     
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
