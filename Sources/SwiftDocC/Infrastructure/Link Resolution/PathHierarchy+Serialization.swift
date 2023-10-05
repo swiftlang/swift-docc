@@ -146,10 +146,11 @@ extension PathHierarchy.FileRepresentation.Node {
 
 // MARK: PathHierarchyBasedLinkResolver
 
+/// An opaque container of link resolution information that can be encoded and decoded.
+///
+/// > Note: This format is not stable yet. Expect information to be significantly reorganized, added, and removed.
 public struct SerializableLinkResolutionInformation: Codable {
     // This type is public so that it can be an argument to a function in `ConvertOutputConsumer`
-    
-    // This format is not stable yet. Expect information to be significantly reorganized, added, and removed.
     
     var version: SemanticVersion
     var bundleID: String
