@@ -102,7 +102,7 @@ extension PathHierarchy {
             }
             let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
             
-            if isAbsolute {
+            if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
                 throw Error.moduleNotFound(remaining: Array(remaining), availableChildren: Set(modules.keys))
             } else {
                 throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)

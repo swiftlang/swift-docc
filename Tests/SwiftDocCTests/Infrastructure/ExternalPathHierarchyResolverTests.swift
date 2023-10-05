@@ -14,6 +14,20 @@ import Markdown
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
+    private var originalFeatureFlagsState: FeatureFlags!
+    
+    override func setUp() {
+        super.setUp()
+        originalFeatureFlagsState = FeatureFlags.current
+        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = true
+    }
+    
+    override func tearDown() {
+        FeatureFlags.current = originalFeatureFlagsState
+        originalFeatureFlagsState = nil
+        super.tearDown()
+    }
+    
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
     
     func testUnambiguousAbsolutePaths() throws {
