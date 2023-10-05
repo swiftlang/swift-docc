@@ -493,6 +493,7 @@ extension Docc {
             }
         }
         
+        /// A list of URLs to documentation archives that the local documentation depends on.
         public var dependencies: [URL] {
             get { linkResolutionOptions.dependencies }
             set { linkResolutionOptions.dependencies = newValue }
