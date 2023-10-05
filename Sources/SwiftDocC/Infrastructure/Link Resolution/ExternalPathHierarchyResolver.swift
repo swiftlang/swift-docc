@@ -12,7 +12,7 @@ import Foundation
 import SymbolKit
 import Markdown
 
-/// A class that resolves links to an already
+/// A class that resolves links to an already built documentation archives.
 final class ExternalPathHierarchyResolver {
     /// A hierarchy of path components used to resolve links in the documentation.
     private(set) var pathHierarchy: PathHierarchy!
