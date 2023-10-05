@@ -484,7 +484,7 @@ extension PathHierarchy {
         // Generate new identifiers. While building the path hierarchy, the node numbers map to identifiers via index lookup in this array.
         var identifiers = [ResolvedIdentifier]()
         identifiers.reserveCapacity(fileRepresentation.nodes.count)
-        for _ in 0 ..< fileRepresentation.nodes.count {
+        for _ in fileRepresentation.nodes.indices {
             identifiers.append(ResolvedIdentifier())
         }
         
@@ -513,7 +513,7 @@ extension PathHierarchy {
             lookup[node.identifier] = node
         }
         // Iterate again to construct the tree
-        for (index, fileNode) in zip(0..., fileRepresentation.nodes) {
+        for (index, fileNode) in fileRepresentation.nodes.indexed() {
             let node = lookup[identifiers[index]]!
             for child in fileNode.children {
                 let childNode = lookup[identifiers[child.nodeID]]!
