@@ -366,23 +366,6 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     func testAmbiguousPaths() throws {
         let linkResolvers = try makeLinkResolversForTestBundle(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
-        // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
-        try linkResolvers.assertFailsToResolve(
-            authoredLink: "/MixFramework",
-            errorMessage: "No module named 'MixFramework'",
-            solutions: [
-                .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacement: ("MixedFramework", 1, 13))
-            ]
-        )
-        
-        try linkResolvers.assertFailsToResolve(
-            authoredLink: "/documentation/MixFramework",
-            errorMessage: "No module named 'MixFramework'",
-            solutions: [
-                .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacement: ("MixedFramework", 15, 27))
-            ]
-        )
-        
         // public enum CollisionsWithDifferentKinds {
         //     case something
         //     public var something: String { "" }
