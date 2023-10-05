@@ -65,22 +65,22 @@ public class LinkResolver {
             }
         }
         
+        if let previousExternalResult = context.externallyResolvedLinks[unresolvedReference.topicURL] {
+            return previousExternalResult
+        }
+        
         do {
             return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context)
         } catch let error as PathHierarchy.Error {
             // Check if there's a known external resolver for this module.
             if case .moduleNotFound(let remaining, _) = error, let resolver = externalResolvers[remaining.first!.full] {
-                if let previousResult = context.externallyResolvedLinks[unresolvedReference.topicURL] {
-                    return previousResult
-                } else {
-                    let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
-                    context.externallyResolvedLinks[unresolvedReference.topicURL] = result
-                    if case .success(let resolved) = result {
-                        
-                        context.externalCache[resolved] = resolver.entity(resolved)
-                    }
-                    return result
+                let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
+                context.externallyResolvedLinks[unresolvedReference.topicURL] = result
+                if case .success(let resolved) = result {
+                    
+                    context.externalCache[resolved] = resolver.entity(resolved)
                 }
+                return result
             }
             
             // If the reference didn't resolve in the path hierarchy, see if it can be resolved in the fallback resolver.
