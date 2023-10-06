@@ -141,7 +141,7 @@ enum GeneratedDocumentationTopics {
                     let inheritedSection = AutomaticTaskGroupSection(title: defaultImplementationGroupTitle, references: [collectionReference], renderPositionPreference: .bottom)
                     symbol.automaticTaskGroupsVariants[trait]?.append(inheritedSection)
                 }
-                context.hierarchyBasedLinkResolver.addTaskGroup(named: title, reference: collectionReference, to: parent)
+                context.linkResolver.localResolver.addTaskGroup(named: title, reference: collectionReference, to: parent)
             }
         } else {
             fatalError("createCollectionNode() should be used only to add nodes under symbols.")
