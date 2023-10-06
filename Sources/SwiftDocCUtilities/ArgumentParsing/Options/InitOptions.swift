@@ -53,7 +53,7 @@ public struct InitOptions: ParsableArguments {
             valueName: "template"
         )
     )
-    public var catalogTemplate: String = "init"
+    public var catalogTemplate: CatalogTemplateKind = .base
     
     /// A user-provided value that is true if the documentation catalog should contain a tutorial template.
     ///
@@ -67,3 +67,5 @@ public struct InitOptions: ParsableArguments {
     )
     public var includeTutorial: Bool = false
 }
+
+extension CatalogTemplateKind: ExpressibleByArgument {}

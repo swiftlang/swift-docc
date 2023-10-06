@@ -26,7 +26,7 @@ public struct InitAction: Action {
     
     private let catalogOutputPath: String
     private let documentationTitle: String
-    private let catalogTemplate: String
+    private let catalogTemplate: CatalogTemplateKind
     private let includeTutorial: Bool
     private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     
@@ -40,7 +40,7 @@ public struct InitAction: Action {
     public init(
         catalogOutputDirectory: String,
         documentationTitle: String,
-        catalogTemplate: String,
+        catalogTemplate: CatalogTemplateKind,
         includeTutorial: Bool
     ) throws {
         self.documentationTitle = documentationTitle
@@ -115,3 +115,5 @@ public struct InitAction: Action {
     }
     
 }
+
+

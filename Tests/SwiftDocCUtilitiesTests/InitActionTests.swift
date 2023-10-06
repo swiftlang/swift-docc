@@ -18,7 +18,7 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputTargetURL.path,
             documentationTitle: "MyTestDocumentation",
-            catalogTemplate: "init",
+            catalogTemplate: .base,
             includeTutorial: false
         )
         let fileManager = FileManager.default
@@ -38,7 +38,7 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputURL.path,
             documentationTitle: "MyTestDocumentation",
-            catalogTemplate: "init",
+            catalogTemplate: .base,
             includeTutorial: false
         )
         let fileManager = FileManager.default

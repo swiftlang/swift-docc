@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-struct Article {
+struct ArticleTemplate {
     let title: String
     let content: String
     var isTechnologyRoot: Bool = false

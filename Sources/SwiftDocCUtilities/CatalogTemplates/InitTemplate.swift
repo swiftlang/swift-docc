@@ -14,9 +14,9 @@ import SwiftDocC
 struct InitTemplateCatalog: Catalog {
     
     var title: String
-    var articles: [String : Article] {
+    var articles: [String : ArticleTemplate] {
         [
-            "\(title).md": Article(
+            "\(title).md": ArticleTemplate(
                 title: title,
                 content: """
                 
@@ -49,7 +49,7 @@ struct InitTemplateCatalog: Catalog {
                 """,
                 isTechnologyRoot: true
             ),
-            "Essentials/getting_started.md": Article(
+            "Essentials/getting_started.md": ArticleTemplate(
                 title: "Getting Started",
                 content: """
                 
@@ -58,7 +58,7 @@ struct InitTemplateCatalog: Catalog {
                 Overview
                 """
             ),
-            "Essentials/more_information.md": Article(
+            "Essentials/more_information.md": ArticleTemplate(
                 title: "More Information",
                 content: """
                 

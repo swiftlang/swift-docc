@@ -41,7 +41,7 @@ extension Docc {
         
         public mutating func run() throws {
             
-            // Initialize a `InitiAction` from the current options in the `Init` command.
+            // Initialize a `InitAction` from the current options in the `Init` command.
             var initAction = try InitAction(fromInitOptions: initOptions)
             
             // Perform the action and print any warnings or errors found

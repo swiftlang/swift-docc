@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 
 protocol Catalog {
-    var articles: [String:Article] { get }
+    var articles: [String : ArticleTemplate] { get }
     var title: String { get set }
 }
 
@@ -30,24 +30,13 @@ struct CatalogTemplateFactory {
     
     let fileManager: FileManager = .default
     
-    /// The different available templates
-    enum initTemplateOptions: String {
-        case initDefault = "init default template"
-        
-        public var description: String {
-            return rawValue
-        }
-    }
-    
     func createDocumentationCatalog(
-        _ catalogTemplate: String,
+        _ catalogTemplate: CatalogTemplateKind,
         catalogTitle: String
     ) throws -> Catalog {
         switch catalogTemplate {
-        case "init":
+        case .base:
             InitTemplateCatalog(title: catalogTitle)
-        default:
-            throw Error.missingCatalogTemplate
         }
     }
     
