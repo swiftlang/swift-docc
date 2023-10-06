@@ -409,6 +409,26 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
     }
     
+    func testExperimentalEnableOverloadedSymbolPresentation() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+        
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalOverloadedSymbolPresentation)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-overloaded-symbol-presentation",
+            testBundleURL.path,
+        ])
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalOverloadedSymbolPresentation)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
+    }
+    
     func testLinkDependencyValidation() throws {
         let originalErrorLogHandle = Docc.Convert._errorLogHandle
         let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
