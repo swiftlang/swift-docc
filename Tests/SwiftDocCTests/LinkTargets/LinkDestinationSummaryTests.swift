@@ -260,7 +260,17 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            XCTAssertEqual(summary.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
+            XCTAssertEqual(summary.declarationFragments, [
+                .init(text: "func", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "myFunction", kind: .identifier, identifier: nil),
+                .init(text: "(", kind: .text, identifier: nil),
+                .init(text: "for", kind: .externalParam, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "name", kind: .internalParam, identifier: nil),
+                .init(text: "...", kind: .text, identifier: nil),
+                .init(text: ")", kind: .text, identifier: nil)
+            ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
             
@@ -290,13 +300,14 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "globalFunction", kind: .identifier, identifier: nil),
                 .init(text: "(", kind: .text, identifier: nil),
+                .init(text: "_", kind: .identifier, identifier: nil),
+                .init(text: ": ", kind: .text, identifier: nil),
                 .init(text: "Data", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:10Foundation4DataV"),
                 .init(text: ", ", kind: .text, identifier: nil),
                 .init(text: "considering", kind: .identifier, identifier: nil),
                 .init(text: ": ", kind: .text, identifier: nil),
                 .init(text: "Int", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:Si"),
-                .init(text: ")", kind: .text, identifier: nil),
-                .init(text: "\n", kind: .text, identifier: nil),
+                .init(text: ")", kind: .text, identifier: nil)
             ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
@@ -341,7 +352,17 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            XCTAssertEqual(summary.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
+            XCTAssertEqual(summary.declarationFragments, [
+                .init(text: "func", kind: .keyword, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "myFunction", kind: .identifier, identifier: nil),
+                .init(text: "(", kind: .text, identifier: nil),
+                .init(text: "for", kind: .externalParam, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "name", kind: .internalParam, identifier: nil),
+                .init(text: "...", kind: .text, identifier: nil),
+                .init(text: ")", kind: .text, identifier: nil)
+            ])
             
             XCTAssertEqual(summary.topicImages, [
                 TopicImage(
@@ -511,11 +532,15 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "myStringFunction", kind: .identifier, identifier: nil),
                 .init(text: "(", kind: .text, identifier: nil),
-                .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: Optional("s:SS")),
+                .init(text: "_", kind: .externalParam, identifier: nil),
+                .init(text: " ", kind: .text, identifier: nil),
+                .init(text: "string", kind: .internalParam, identifier: nil),
+                .init(text: ": ", kind: .text, identifier: nil),
+                .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:SS"),
                 .init(text: ") ", kind: .text, identifier: nil),
                 .init(text: "throws", kind: .keyword, identifier: nil),
                 .init(text: " -> ", kind: .text, identifier: nil),
-                .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: Optional("s:SS"))
+                .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:SS")
             ])
             XCTAssertNil(summary.topicImages)
             XCTAssertNil(summary.references)
@@ -527,16 +552,17 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(variant.language, .objectiveC)
             XCTAssertEqual(variant.title, "myStringFunction:error:")
             XCTAssertEqual(variant.declarationFragments, [
-                .init(text: "typedef", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "enum", kind: .keyword, identifier: nil),
-                .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "Foo", kind: .identifier, identifier: nil),
-                .init(text: " : ", kind: .text, identifier: nil),
-                .init(text: "NSString", kind: .typeIdentifier, identifier: nil, preciseIdentifier: Optional("c:@T@NSInteger")),
-                .init(text: " {\n    ...\n} ", kind: .text, identifier: nil),
-                .init(text: "Foo", kind: .identifier, identifier: nil),
-                .init(text: ";", kind: .text, identifier: nil)
+                .init(text: "+ (", kind: .text, identifier: nil),
+                .init(text: "NSString", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSString"),
+                .init(text: " *) ", kind: .text, identifier: nil),
+                .init(text: "myStringFunction", kind: .identifier, identifier: nil),
+                .init(text: ": (", kind: .text, identifier: nil),
+                .init(text: "NSString", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSString"),
+                .init(text: " *)string", kind: .text, identifier: nil),
+                .init(text: "error", kind: .identifier, identifier: nil),
+                .init(text: ": (", kind: .text, identifier: nil),
+                .init(text: "NSError", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "c:objc(cs)NSError"),
+                .init(text: " **)error;", kind: .text, identifier: nil)
             ])
             
             // Check variant content that is the same as the summarized element

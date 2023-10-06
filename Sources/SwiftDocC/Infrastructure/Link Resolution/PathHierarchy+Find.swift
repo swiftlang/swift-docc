@@ -112,6 +112,7 @@ extension PathHierarchy {
                         
                     // These errors are all more specific than a module-not-found error would be.
                     case .unfindableMatch,
+                         .moduleNotFound,
                          .nonSymbolMatchForSymbolLink,
                          .unknownDisambiguation,
                          .lookupCollision:
@@ -120,7 +121,12 @@ extension PathHierarchy {
                 }
             }
             let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
-            throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+            
+            if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                throw Error.moduleNotFound(remaining: Array(remaining), availableChildren: Set(modules.keys))
+            } else {
+                throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+            }
         }
         
         // A recursive function to traverse up the path hierarchy searching for the matching node

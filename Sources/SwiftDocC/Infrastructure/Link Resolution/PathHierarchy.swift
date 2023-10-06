@@ -93,7 +93,7 @@ struct PathHierarchy {
                     accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
                     kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                     mixins: [:])
-                let newModuleNode = Node(symbol: moduleSymbol)
+                let newModuleNode = Node(symbol: moduleSymbol, name: moduleName)
                 roots[moduleName] = newModuleNode
                 moduleNode = newModuleNode
                 allNodes[moduleName] = [moduleNode]
@@ -105,7 +105,8 @@ struct PathHierarchy {
                 if let existingNode = allNodes[id]?.first(where: { $0.symbol!.identifier == symbol.identifier }) {
                     nodes[id] = existingNode
                 } else {
-                    let node = Node(symbol: symbol)
+                    assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
+                    let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
                     node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
@@ -339,9 +340,9 @@ extension PathHierarchy {
         var isDisfavoredInCollision: Bool
         
         /// Initializes a symbol node.
-        fileprivate init(symbol: SymbolGraph.Symbol!) {
+        fileprivate init(symbol: SymbolGraph.Symbol!, name: String) {
             self.symbol = symbol
-            self.name = symbol.pathComponents.last!
+            self.name = name
             self.children = [:]
             self.isDisfavoredInCollision = false
         }
@@ -366,6 +367,7 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?) {
+            // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
             children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
         }
@@ -468,6 +470,77 @@ extension PathHierarchy.DisambiguationContainer {
         }))
     }
 }
+
+// MARK: Deserialization
+
+extension PathHierarchy {
+    // This is defined in the main PathHierarchy.swift file to access fileprivate properties and PathHierarchy.Node API without making it internally visible.
+    
+    // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file. They're an implementation detail and they are a not stable across executions.
+    
+    /// Decode a path hierarchy from its file representation.
+    ///
+    /// The caller can use `mapCreatedIdentifiers` when encoding and decoding path hierarchies to associate auxiliary data with a node in the hierarchy.
+    ///
+    /// - Parameters:
+    ///   - fileRepresentation: A file representation to decode.
+    ///   - mapCreatedIdentifiers: A closure that the caller can use to map indices to resolved identifiers.
+    init(
+        _ fileRepresentation: FileRepresentation,
+        mapCreatedIdentifiers: (_ identifiers: [ResolvedIdentifier]) -> Void
+    ) {
+        // Generate new identifiers. While building the path hierarchy, the node numbers map to identifiers via index lookup in this array.
+        var identifiers = [ResolvedIdentifier]()
+        identifiers.reserveCapacity(fileRepresentation.nodes.count)
+        for _ in fileRepresentation.nodes.indices {
+            identifiers.append(ResolvedIdentifier())
+        }
+        
+        var lookup = [ResolvedIdentifier: Node]()
+        lookup.reserveCapacity(fileRepresentation.nodes.count)
+        // Iterate once to create all the nodes
+        for (index, fileNode) in zip(0..., fileRepresentation.nodes) {
+            let node: Node
+            if let symbolID = fileNode.symbolID {
+                // Symbols decoded from a file representation only need an accurate ID. The rest of the information is never read and can be left empty.
+                let symbol = SymbolGraph.Symbol(
+                    identifier: symbolID,
+                    names: .init(title: "", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: [],
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: SymbolGraph.Symbol.Kind(rawIdentifier: "", displayName: ""),
+                    mixins: [:]
+                )
+                node = Node(symbol: symbol, name: fileNode.name)
+            } else {
+                node = Node(name: fileNode.name)
+            }
+            node.isDisfavoredInCollision = fileNode.isDisfavoredInCollision
+            node.identifier = identifiers[index]
+            lookup[node.identifier] = node
+        }
+        // Iterate again to construct the tree
+        for (index, fileNode) in fileRepresentation.nodes.indexed() {
+            let node = lookup[identifiers[index]]!
+            for child in fileNode.children {
+                let childNode = lookup[identifiers[child.nodeID]]!
+                // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
+                node.add(child: childNode, kind: child.kind, hash: child.hash)
+            }
+        }
+        
+        self.lookup = lookup
+        self.modules = fileRepresentation.modules.mapValues({ lookup[identifiers[$0]]! })
+        self.articlesContainer = lookup[identifiers[fileRepresentation.articlesContainer]]!
+        self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
+        self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!
+        
+        mapCreatedIdentifiers(identifiers)
+    }
+}
+
+// MARK: Hierarchical symbol relationships
 
 private extension SymbolGraph.Relationship.Kind {
     /// Whether or not this relationship kind forms a hierarchical relationship between the source and the target.
