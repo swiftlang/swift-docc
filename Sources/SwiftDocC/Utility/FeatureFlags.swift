@@ -24,6 +24,9 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.
     public var isExperimentalLinkHierarchySerializationEnabled = false
     
+    /// Whether or not experimental support for combining overloaded symbol pages is enabled.
+    public var isExperimentalOverloadedSymbolPresentationEnabled = false
+    
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:
