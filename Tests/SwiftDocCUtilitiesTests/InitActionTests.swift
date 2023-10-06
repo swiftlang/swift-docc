@@ -15,17 +15,17 @@ final class InitActionTests: XCTestCase {
 
     func testInitActionCreatesDocCatalog() throws {
         let outputTargetURL = try createTemporaryDirectory()
-        let testDocumentationTitle = "MyTestDocumentation"
         var action = try InitAction(
             catalogOutputDirectory: outputTargetURL.path,
-            documentationTitle: testDocumentationTitle,
+            documentationTitle: "MyTestDocumentation",
+            catalogTemplate: "init",
             includeTutorial: false
         )
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
         _ = try action.perform(logHandle: .standardOutput)
         // Test an output folder exists
-        guard fileManager.fileExists(atPath: "\(outputTargetURL.path)/\(testDocumentationTitle).docc", isDirectory: &isDirectory) else {
+        guard fileManager.fileExists(atPath: "\(outputTargetURL.path)/MyTestDocumentation.docc", isDirectory: &isDirectory) else {
             XCTFail("InitAction failed to create output folder")
             return
         }
@@ -38,13 +38,14 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputURL.path,
             documentationTitle: "MyTestDocumentation",
+            catalogTemplate: "init",
             includeTutorial: false
         )
         let fileManager = FileManager.default
         _ = try action.perform(logHandle: .standardOutput)
         
         // Test the top-level content of the output folder.
-        var expectedContent = ["Essentials", "MyTestDocumentation.md", "Resources"]
+        var expectedContent = ["Essentials", "MyTestDocumentation.md"]
         var outputCatalogContent = try fileManager.contentsOfDirectory(
             atPath: outputURL.appendingPathComponent("MyTestDocumentation.docc").path
         ).sorted()
@@ -58,42 +59,13 @@ final class InitActionTests: XCTestCase {
             // Test the content of generated catalog matches the expected content from the template catalog.
             switch item {
             case "Essentials":
-                expectedContent = ["Resources", "getting-started.md", "more-information.md"]
+                expectedContent = ["getting-started.md", "more-information.md"]
                 outputCatalogContent = try fileManager.contentsOfDirectory(atPath: "\(templateCatalogBaseFolderURL.path)/Essentials/").sorted()
-                XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
-            case "Resources":
-                expectedContent = ["DocC@2x.png", "DocC~dark@2x.png"]
-                outputCatalogContent = try fileManager.contentsOfDirectory(atPath: "\(templateCatalogBaseFolderURL.path)/Resources/").sorted()
                 XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
             default:
                 continue
             }
         }
-    }
-    
-    func testInitActionTutorialGeneration() throws {
-        let outputURL = try createTemporaryDirectory()
-        var action = try InitAction(
-            catalogOutputDirectory: outputURL.path,
-            documentationTitle: "MyTestDocumentation",
-            includeTutorial: true
-        )
-        let fileManager = FileManager.default
-        _ = try action.perform(logHandle: .standardOutput)
-        // Test the top-level content of the output folder.
-        var expectedContent = ["Essentials", "MyTestDocumentation.md", "Resources", "Tutorial"]
-        let output = try fileManager.contentsOfDirectory(
-            atPath: outputURL.appendingPathComponent("MyTestDocumentation.docc").path
-        ).sorted()
-        XCTAssertEqual(output, expectedContent, "Unexpected output")
-        
-        // Test the content of the output tutorial folder.
-        let templateTutorialBaseFolderURL = Bundle.module.url(
-            forResource: "Tutorial", withExtension: "", subdirectory: "Test Resources/TemplateLibrary/Tutorials"
-        )!
-        let outputTutorialContent = try fileManager.contentsOfDirectory(atPath: templateTutorialBaseFolderURL.path).sorted()
-        expectedContent = ["Resources", "table-of-contents.tutorial", "tutorial-chapter.tutorial"]
-        XCTAssertEqual(outputTutorialContent, expectedContent, "Unexpected output")
     }
 
 }

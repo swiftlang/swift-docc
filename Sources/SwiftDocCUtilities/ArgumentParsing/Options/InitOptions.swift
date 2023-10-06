@@ -43,6 +43,18 @@ public struct InitOptions: ParsableArguments {
     )
     public var catalogOutputPath: String = FileManager().currentDirectoryPath
     
+    /// The catalog template to initialize.
+    ///
+    /// Defaults to init.
+    @Option(
+        name: .long,
+        help: ArgumentHelp(
+            "The catalog template to initialize.",
+            valueName: "template"
+        )
+    )
+    public var catalogTemplate: String = "init"
+    
     /// A user-provided value that is true if the documentation catalog should contain a tutorial template.
     ///
     /// Defaults to false.

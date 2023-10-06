@@ -26,14 +26,7 @@ public struct InitAction: Action {
     
     private let catalogOutputPath: String
     private let documentationTitle: String
-    private let catalogOutputPathPlaceholder: String = "___CATALOG_OUTPUT_PATH___"
-    private let documentationTitlePlaceholder: String = "___DOCUMENTATION_TITLE___"
-    private let templateCatalogBaseFolderPath: String = Bundle.module.url(
-        forResource: "___FILEBASENAME_INIT___", withExtension: "docc", subdirectory: "TemplateLibrary/Init"
-    )!.path
-    private let templateTutorialBaseFolderPath: String = Bundle.module.url(
-        forResource: "Tutorial", withExtension: "", subdirectory: "TemplateLibrary/Tutorials"
-    )!.path
+    private let catalogTemplate: String
     private let includeTutorial: Bool
     private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     
@@ -42,14 +35,17 @@ public struct InitAction: Action {
     /// - Parameters:
     ///     - catalogOutputDirectory: The path to the directory where the catalog will be stored.
     ///     - documentationTitle: The title of the technology root.
+    ///     - catalogTemplate: The template used to initialize the catalog.
     ///     - includeTutotial: The boolean that indicates if the tutorial template should be added to the otput catalog.
     public init(
         catalogOutputDirectory: String,
         documentationTitle: String,
+        catalogTemplate: String,
         includeTutorial: Bool
     ) throws {
         self.documentationTitle = documentationTitle
         self.includeTutorial = includeTutorial
+        self.catalogTemplate = catalogTemplate
         catalogOutputPath = "\(catalogOutputDirectory)/\(documentationTitle).docc"
     }
     
@@ -62,6 +58,7 @@ public struct InitAction: Action {
                             
     func initAction() throws -> ActionResult {
         
+        let catalogOutputURL = URL(fileURLWithPath: catalogOutputPath)
         let fileManager = FileManager.default
         var logHandle: LogHandle = .standardError
         var initProblems: [Problem] = []
@@ -72,7 +69,6 @@ public struct InitAction: Action {
             diagnosticEngine.emit(initProblems)
         }
         
-        // Copy template and store it in the output path
         if fileManager.fileExists(atPath: catalogOutputPath) {
             initProblems.append(
                 Problem(
@@ -86,50 +82,16 @@ public struct InitAction: Action {
         }
         
         do {
-            try fileManager.copyItem(
-                atPath: templateCatalogBaseFolderPath,
-                toPath: catalogOutputPath
-            )
-            
-            // Overwrite the top level article title
-            var topLevelArticleContent = String(
-                decoding: fileManager.contents(atPath: "\(catalogOutputPath)/\(documentationTitlePlaceholder).md")!,
-                as: UTF8.self
-            )
-            // Replace the documentation title placeholder with the title given by the user
-            topLevelArticleContent = topLevelArticleContent.replacingOccurrences(
-                of: documentationTitlePlaceholder,
-                with: documentationTitle
-            )
-            // Remove old template top-level article
-            try fileManager.removeItem(atPath: "\(catalogOutputPath)/\(documentationTitlePlaceholder).md")
-            
-            topLevelArticleContent = topLevelArticleContent.replacingOccurrences(
-                of: catalogOutputPathPlaceholder,
-                with: catalogOutputPath
-            )
-            
-            // Write the new top level article
-            fileManager.createFile(
-                atPath: "\(catalogOutputPath)/\(documentationTitle).md",
-                contents: topLevelArticleContent.data(using: .utf8)!
-            )
-            
-            // If the --include-tutorial flag is passed, append it to the output catalog
-            if (includeTutorial) {
-                try fileManager.copyItem(
-                    atPath: templateTutorialBaseFolderPath,
-                    toPath: "\(catalogOutputPath)/Tutorial"
-                )
-            }
-            
+            try fileManager.createDirectory(at: catalogOutputURL, withIntermediateDirectories: false)
+            let catalogTemplateFactory = CatalogTemplateFactory()
+            let documentationCatalog = try catalogTemplateFactory.createDocumentationCatalog(catalogTemplate, catalogTitle: documentationTitle)
+            try catalogTemplateFactory.constructCatalog(documentationCatalog, outputPath: catalogOutputPath)
             print(
                 """
                 A new documentation catalog has been generated at \(catalogOutputPath).
                 """,
                 to: &logHandle
             )
-            
         } catch {
             // If an error occurs remove the ouptut created
             if fileManager.fileExists(atPath: catalogOutputPath) {
