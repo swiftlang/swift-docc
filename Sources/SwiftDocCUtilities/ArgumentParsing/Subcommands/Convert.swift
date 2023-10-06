@@ -537,6 +537,12 @@ extension Docc {
             )
             var enableExperimentalLinkHierarchySerialization = false
             
+            @Flag(
+                name: .customLong("enable-experimental-overloaded-symbol-presentation"),
+                help: ArgumentHelp("Collects all the symbols that are overloads of each other onto a new merged-symbol page.")
+            )
+            var enableExperimentalOverloadedSymbolPresentation = false
+            
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
             
@@ -627,6 +633,12 @@ extension Docc {
         public var enableExperimentalLinkHierarchySerialization: Bool {
             get { featureFlags.enableExperimentalLinkHierarchySerialization }
             set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
+        public var enableExperimentalOverloadedSymbolPresentation: Bool {
+            get { featureFlags.enableExperimentalOverloadedSymbolPresentation }
+            set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
         }
         
         /// A user-provided value that is true if additional metadata files should be produced.
