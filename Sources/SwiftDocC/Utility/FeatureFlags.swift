@@ -34,7 +34,7 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for parsing Doxygen commands is enabled.
     @available(*, deprecated, message: "Doxygen support is now enabled by default.")
     public var isExperimentalDoxygenSupportEnabled = false
-     
+    
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:

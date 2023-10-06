@@ -30,7 +30,7 @@ docc convert ___DOCUMENTATION_TITLE___.docc -o ___DOCUMENTATION_TITLE___.doccarc
 
 ### Essentials
 
-- <doc:getting-started>
-- <doc:more-information>
+- <doc:getting_started>
+- <doc:more_information>
 
 

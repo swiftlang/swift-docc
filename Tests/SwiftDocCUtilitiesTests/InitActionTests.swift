@@ -59,7 +59,7 @@ final class InitActionTests: XCTestCase {
             // Test the content of generated catalog matches the expected content from the template catalog.
             switch item {
             case "Essentials":
-                expectedContent = ["getting-started.md", "more-information.md"]
+                expectedContent = ["getting_started.md", "more_information.md"]
                 outputCatalogContent = try fileManager.contentsOfDirectory(atPath: "\(templateCatalogBaseFolderURL.path)/Essentials/").sorted()
                 XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
             default:
