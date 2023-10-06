@@ -46,6 +46,9 @@ public protocol ConvertOutputConsumer {
     
     /// Consumes build metadata created during a conversion.
     func consume(buildMetadata: BuildMetadata) throws
+    
+    /// Consumes a file representation of the local link resolution information.
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws
 }
 
 // Default implementations that discard the documentation conversion products, for consumers that don't need these
@@ -53,4 +56,5 @@ public protocol ConvertOutputConsumer {
 public extension ConvertOutputConsumer {
     func consume(renderReferenceStore: RenderReferenceStore) throws {}
     func consume(buildMetadata: BuildMetadata) throws {}
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws {}
 }
