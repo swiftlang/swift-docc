@@ -39,8 +39,11 @@ struct AvailabilityParser {
         }
         
         // Check if the symbol is unconditionally deprecated
-        return availability.availability
+        let isUnconditionallyDeprecated = availability.availability
             .allSatisfy { $0.isUnconditionallyDeprecated || $0.isUnconditionallyUnavailable || $0.deprecatedVersion != nil }
+            // If a symbol is unavailable on all known platforms, it should not be marked unconditionally deprecated.
+            && availability.availability.contains(where: { $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil })
+        return isUnconditionallyDeprecated
     }
     
     /// Determines a symbol's deprecation message that either applies to a given platform or that applies to all platforms.
