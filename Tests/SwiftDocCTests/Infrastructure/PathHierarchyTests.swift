@@ -1225,6 +1225,49 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "Something/second", parent: topLevelSymbolID).identifier.precise, "s:9SomethingAAV6secondSivp")
     }
     
+    func testSymbolsWithSameNameAsExtendedModule() throws {
+        // ---- Inner
+        // public struct InnerStruct {}
+        // public class InnerClass {}
+        //
+        // ---- Outer
+        // // Shadow the Inner module with a local type
+        // public struct Inner {}
+        //
+        // public extension InnerStruct {
+        //     func something() {}
+        // }
+        // public extension InnerClass {
+        //     func something() {}
+        // }
+        let (_, context) = try testBundleAndContext(named: "ShadowExtendedModuleWithLocalSymbol")
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+
+        try assertPathCollision("Outer/Inner", in: tree, collisions: [
+            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "module.extension"),
+            ("s:5Outer5InnerV", "struct"),
+        ])
+        // If the first path component is ambiguous, it should have the same error as if that was a later path component.
+        try assertPathCollision("Inner", in: tree, collisions: [
+            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "module.extension"),
+            ("s:5Outer5InnerV", "struct"),
+        ])
+        
+        try assertFindsPath("Inner-struct", in: tree, asSymbolID: "s:5Outer5InnerV")
+        try assertFindsPath("Inner-module.extension", in: tree, asSymbolID: "s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF")
+        
+        try assertFindsPath("Inner-module.extension/InnerStruct", in: tree, asSymbolID: "s:e:s:5Inner0A6StructV5OuterE9somethingyyF")
+        try assertFindsPath("Inner-module.extension/InnerClass", in: tree, asSymbolID: "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF")
+        try assertFindsPath("Inner-module.extension/InnerStruct/something()", in: tree, asSymbolID: "s:5Inner0A6StructV5OuterE9somethingyyF")
+        try assertFindsPath("Inner-module.extension/InnerClass/something()", in: tree, asSymbolID: "s:5Inner0A5ClassC5OuterE9somethingyyF")
+        
+        // The "Inner" struct doesn't have "InnerStruct" or "InnerClass" descendants so the path is not ambiguous.
+        try assertFindsPath("Inner/InnerStruct", in: tree, asSymbolID: "s:e:s:5Inner0A6StructV5OuterE9somethingyyF")
+        try assertFindsPath("Inner/InnerClass", in: tree, asSymbolID: "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF")
+        try assertFindsPath("Inner/InnerStruct/something()", in: tree, asSymbolID: "s:5Inner0A6StructV5OuterE9somethingyyF")
+        try assertFindsPath("Inner/InnerClass/something()", in: tree, asSymbolID: "s:5Inner0A5ClassC5OuterE9somethingyyF")
+    }
+    
     func testSnippets() throws {
         let (_, context) = try testBundleAndContext(named: "Snippets")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
