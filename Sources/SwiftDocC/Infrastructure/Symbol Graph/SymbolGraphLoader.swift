@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -80,7 +80,6 @@ struct SymbolGraphLoader {
                 
                 configureSymbolGraph?(&symbolGraph)
 
-                // `moduleNameFor(_:at:)` is static because it's pure function.
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
@@ -131,25 +130,6 @@ struct SymbolGraphLoader {
         
         // define an appropriate merging strategy based on the graph formats
         let foundGraphUsingExtensionSymbolFormat = loadedGraphs.values.map(\.usesExtensionSymbolFormat).contains(true)
-        let foundGraphNotUsingExtensionSymbolFormat = loadedGraphs.values.map(\.usesExtensionSymbolFormat).contains(false)
-        
-        guard !foundGraphUsingExtensionSymbolFormat || !foundGraphNotUsingExtensionSymbolFormat else {
-            let usingExtensionSymbolFormat = loadedGraphs.filter { (_, value) in
-                guard let usesExtensionSymbolFormat = value.usesExtensionSymbolFormat else {
-                    return false
-                }
-                return usesExtensionSymbolFormat
-            }.map(\.key)
-            
-            let notUsingExtensionSymbolFormat = loadedGraphs.filter { (_, value) in
-                guard let usesExtensionSymbolFormat = value.usesExtensionSymbolFormat else {
-                    return false
-                }
-                return !usesExtensionSymbolFormat
-            }.map(\.key)
-            
-            throw LoadingError.mixedGraphFormats(usingExtensionSymbolFormat, notUsingExtensionSymbolFormat)
-        }
         
         let usingExtensionSymbolFormat = foundGraphUsingExtensionSymbolFormat
                 
@@ -168,24 +148,6 @@ struct SymbolGraphLoader {
         
         self.symbolGraphs = loadedGraphs.mapValues(\.graph)
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading()
-    }
-    
-    private enum LoadingError: DescribedError {
-        case mixedGraphFormats([URL], [URL])
-        
-        var errorDescription: String {
-            switch self {
-            case let .mixedGraphFormats(usingExtensionSymbolFormat, notUsingExtensionSymbolFormat):
-                return """
-                Mixing symbol graph files with and without extension declarations is not supported.
-                
-                Symbol graph files with extension declarations:
-                \(usingExtensionSymbolFormat.map(\.absoluteString).joined(separator: "\n"))
-                Symbol graph files without extension declarations:
-                \(notUsingExtensionSymbolFormat.map(\.absoluteString).joined(separator: "\n"))
-                """
-            }
-        }
     }
     
     // Alias to declutter code
@@ -209,7 +171,7 @@ struct SymbolGraphLoader {
         let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: url)
         
         if !isMainSymbolGraph && symbolGraph.module.bystanders == nil {
-            // If this is an extending another module, change the module name to match the exteneded module.
+            // If this is an extending another module, change the module name to match the extended module.
             // This makes the symbols in this graph have a path that starts with the extended module's name.
             symbolGraph.module.name = moduleName
         }

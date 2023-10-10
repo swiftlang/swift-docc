@@ -46,6 +46,10 @@ class RenderNodeCodableTests: XCTestCase {
             XCTAssertTrue(description.contains("schemaVersion"), "Missing key name in error description")
         }
     }
+    func testMissingReferenceKey() throws {
+        let renderNode = try! RenderNode.decode(fromJSON: missingReferenceKeyJSON)
+        XCTAssertNotNil(renderNode)
+    }
     
     func testTypeMismatchError() {
         do {
@@ -243,4 +247,7 @@ fileprivate let corruptedJSON = Data("{{}".utf8)
 fileprivate let emptyJSON = Data("{}".utf8)
 fileprivate let typeMismatch = Data("""
 {"schemaVersion":{"major":"type mismatch","minor":0,"patch":0}}
+""".utf8)
+fileprivate let missingReferenceKeyJSON = Data("""
+{"kind":"article","identifier":{"interfaceLanguage":"","url":"doc://org.swift.docc.example/documentation/Test-Bundle/article"},"abstract":[],"metadata":{},"schemaVersion":{"minor":3,"patch":0,"major":0},"sections":[],"hierarchy":{"paths":[[]]}}
 """.utf8)
