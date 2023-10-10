@@ -109,7 +109,7 @@ public struct ConformanceSection: Codable, Equatable {
         return typeName
     }
     
-    /// Filters the list of constraints to a the significant constraints only.
+    /// Filters the list of constraints to the significant constraints only.
     ///
     /// This method removes symbol graph constraints on `Self` that are always fulfilled.
     static func filterConstraints(_ constraints: [Constraint], options: ConstraintRenderOptions) -> [Constraint] {
@@ -118,7 +118,7 @@ public struct ConformanceSection: Codable, Equatable {
                 if options.isLeaf {
                     // Leaf symbol.
                     if constraint.leftTypeName == "Self" && constraint.rightTypeName == options.parentName {
-                        // The Swift compiler will sometimes incldue a constraint's to `Self`'s type,
+                        // The Swift compiler will sometimes include a constraint's to `Self`'s type,
                         // filter those generic constraints out.
                         return false
                     }
@@ -126,7 +126,7 @@ public struct ConformanceSection: Codable, Equatable {
                 } else {
                     // Non-leaf symbol.
                     if constraint.leftTypeName == "Self" && constraint.rightTypeName == options.selfName {
-                        // The Swift compiler will sometimes incldue a constraint's to `Self`'s type,
+                        // The Swift compiler will sometimes include a constraint's to `Self`'s type,
                         // filter those generic constraints out.
                         return false
                     }

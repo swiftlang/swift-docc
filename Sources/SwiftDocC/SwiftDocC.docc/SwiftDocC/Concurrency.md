@@ -2,7 +2,7 @@
 
 Perform concurrent work on the DocC model.
 
-DocC is, generally speaking, performing a sequence of operations on a set of documentation topics. Since the compilaton is a pipeline, you mostly do work serially as each stage's input is the previous stage's output.
+DocC is, generally speaking, performing a sequence of operations on a set of documentation topics. Since the compilation is a pipeline, you mostly do work serially as each stage's input is the previous stage's output.
 
 When working serially becomes a bottleneck, use a suitable method from a small number of `Collection` extensions that synchronously perform concurrent work on multiple threads but keep the complexity of your code manageable.
 
