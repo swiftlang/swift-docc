@@ -461,7 +461,7 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
-    func testTreatWarningAsrror() throws {
+    func testTreatWarningAsError() throws {
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         do {
             // Passing no argument should default to the current working directory.
