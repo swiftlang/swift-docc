@@ -132,4 +132,31 @@ class PlatformAvailabilityTests: XCTestCase {
             item.name == "My Package" && item.introduced == "2.0"
         }))
     }
+    
+    // Test that the Info.plist default availability does not affect the deprecated/unavailable availabilities provided by the symbol graph.
+    func testAvailabilityParserWithInfoPlistDefaultAvailability() throws {
+        let (bundle, context) = try testBundleAndContext(named: "AvailabilityOverrideBundle")
+
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/MyKit/MyClass",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        XCTAssertEqual(availability.count, 4)
+        availability.forEach { platform in
+            XCTAssertTrue(platform.deprecated != nil)
+        }
+        XCTAssertFalse(availability.contains(where: { platform in
+            platform.name == "tvOS"
+        }))
+    }
 }
