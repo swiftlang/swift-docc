@@ -346,7 +346,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         - typeKind: The ``SymbolGraph/Symbol/KindIdentifier`` of the symbol this extension extends.
         - constraint: The new generic constraints to add
         - trait: Which generic constraints variant to append to
-     - Returns: True if the constraint was appended to an existing or new swift extension variant. False if there was an existing swift extension variant for a different module.
      */
 
     public func addConstraint(
@@ -366,7 +365,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
             // Double check the existing extension uses the same module and type. If it does not,
             // we must have a tooling or data consistency problem.
             assert(
-                existing.extendedModule == extendedModule, //&& existing.typeKind == typeKind,
+                existing.extendedModule == extendedModule && existing.typeKind == typeKind,
                 "New constraint's module and type kind do not match symbol's existing constraints."
             )
             swiftExtension = existing
@@ -392,7 +391,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     // MARK: - Private helpers
 
     /// Return all of this symbol's Swift extension variants.
-    func swiftExtensionVariants() -> [DocumentationDataVariantsTrait : SymbolGraph.Symbol.Swift.Extension] {
+    private func swiftExtensionVariants() -> [DocumentationDataVariantsTrait : SymbolGraph.Symbol.Swift.Extension] {
         var variants: [DocumentationDataVariantsTrait : SymbolGraph.Symbol.Swift.Extension] = [:]
         for (trait, mixins) in mixinsVariants.allValues {
             if let swiftExtension = mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
