@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,17 +31,25 @@ public struct InitOptions: ParsableArguments {
     )
     public var documentationTitle: String = "Documentation"
     
-    /// The catalog output path.
-    ///
-    /// Defaults to the current directory when invoked.
+    /// A user-provided location where the init action writes the generated catalog documentation.
     @Option(
-        name: .long,
+        name: [.customLong("catalog-output-path"), .customShort("o")],
         help: ArgumentHelp(
             "The location where the documention catalog will be written",
             valueName: "catalog-output-path"
-        )
+        ),
+        transform: URL.init(fileURLWithPath:)
     )
-    public var catalogOutputPath: String = FileManager().currentDirectoryPath
+    var providedCatalogOutputURL: URL
+    
+    public func validate() throws {
+        // Verify that the directory exist for the output location.
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: providedCatalogOutputURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            throw ValidationError("No directory exists at '\(providedCatalogOutputURL.path)'.")
+        }
+        
+    }
     
     /// The catalog template to initialize.
     ///

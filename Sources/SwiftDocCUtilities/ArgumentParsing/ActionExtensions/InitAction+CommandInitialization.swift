@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,7 +20,7 @@ extension InitAction {
     ) throws {
         // Initialize the `InitAction` from the options provided by the `Init` command
         try self.init(
-            catalogOutputDirectory: initOptions.catalogOutputPath,
+            catalogOutputDirectory: initOptions.providedCatalogOutputURL,
             documentationTitle: initOptions.documentationTitle,
             catalogTemplate: initOptions.catalogTemplate,
             includeTutorial: initOptions.includeTutorial

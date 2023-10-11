@@ -1,5 +1,0 @@
-# More Information
-
-Summary
-
-Overview
