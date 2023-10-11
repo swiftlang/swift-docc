@@ -32,7 +32,7 @@ class SymbolExtensionsTests: XCTestCase {
             return SymbolGraph.Symbol(
                 identifier: .init(precise: "abcd", interfaceLanguage: interfaceLanguage),
                 names: .init(title: "abcd-in-\(interfaceLanguage)", navigator: nil, subHeading: nil, prose: nil),
-                pathComponents: ["documentation", "mykit", "abcd"],
+                pathComponents: ["abcd"],
                 docComment: lineListFrom(docs: docs),
                 accessLevel: .init(rawValue: "public"),
                 kind: .init(parsedIdentifier: .struct, displayName: "ABCD Name"),

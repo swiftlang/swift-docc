@@ -24,7 +24,7 @@ extension SymbolGraph.Symbol {
             return nil
         }
         // Return the original range for Swift and other languages
-        guard identifier.interfaceLanguage == "objective-c" else {
+        guard SourceLanguage(knownLanguageIdentifier: identifier.interfaceLanguage) == .objectiveC else {
             return range
         }
         // Decrement the line and character indexes for Objective-C
