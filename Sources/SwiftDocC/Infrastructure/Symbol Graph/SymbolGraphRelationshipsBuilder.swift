@@ -466,11 +466,10 @@ struct SymbolGraphRelationshipsBuilder {
 
         // Add the constraint to the source symbol, the member of the protocol
         // extension.
-        sourceSymbol.addConstraint(
+        sourceSymbol.addSwiftExtensionConstraint(
             extendedModule: extendedModuleSymbol.title,
-            typeKind: .protocol,
-            constraint: newConstraint,
-            trait: DocumentationDataVariantsTrait(for: selector)
+            extendedSymbolKind: .protocol,
+            constraint: newConstraint
         )
     }
 }

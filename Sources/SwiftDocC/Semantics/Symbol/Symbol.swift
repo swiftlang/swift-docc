@@ -338,34 +338,29 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         return visitor.visitSymbol(self)
     }
 
-    /**
-     Append a new generic constraint for the given extended module
-
-     - Parameters:
-        - extendedModule: Which module this symbol extends.
-        - typeKind: The ``SymbolGraph/Symbol/KindIdentifier`` of the symbol this extension extends.
-        - constraint: The new generic constraints to add
-        - trait: Which generic constraints variant to append to
-     */
-
-    public func addConstraint(
+    /// Append a new generic constraint for the given extended module
+    /// - Parameters:
+    ///    - extendedModule: The name of the extended module.
+    ///    - extendedSymbolKind: The kind of the extended symbol.
+    ///    - constraint: The new generic constraints to add.
+    public func addSwiftExtensionConstraint(
         extendedModule: String,
-        typeKind: SymbolGraph.Symbol.KindIdentifier? = nil,
-        constraint newConstraint: SymbolGraph.Symbol.Swift.GenericConstraint,
-        trait: DocumentationDataVariantsTrait = DocumentationDataVariantsTrait.swift
+        extendedSymbolKind: SymbolGraph.Symbol.KindIdentifier? = nil,
+        constraint newConstraint: SymbolGraph.Symbol.Swift.GenericConstraint
     ) {
 
         var swiftExtension: SymbolGraph.Symbol.Swift.Extension
 
-        // Does this symbol already have a swift extension variant for the requested trait?
-        
+        // Does this symbol already have a swift extension variant for the swift trait?
+
         // Yes: Create a new copy of the existing extension with
         // the new constraint appended to the existing list
+        let trait = DocumentationDataVariantsTrait.swift
         if let existing = swiftExtensionVariants()[trait] {
             // Double check the existing extension uses the same module and type. If it does not,
             // we must have a tooling or data consistency problem.
             assert(
-                existing.extendedModule == extendedModule && existing.typeKind == typeKind,
+                existing.extendedModule == extendedModule && existing.typeKind == extendedSymbolKind,
                 "New constraint's module and type kind do not match symbol's existing constraints."
             )
             swiftExtension = existing
@@ -376,7 +371,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         } else {
             swiftExtension = SymbolGraph.Symbol.Swift.Extension(
                                 extendedModule: extendedModule,
-                                typeKind: typeKind,
+                                typeKind: extendedSymbolKind,
                                 constraints: [newConstraint]
                              )
         }

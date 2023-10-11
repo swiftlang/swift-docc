@@ -111,7 +111,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                     leftTypeName: "Self",
                     rightTypeName: "MutableCollection"
                 )
-                symbol.addConstraint(extendedModule: "Custom Title", constraint: newConstraint)
+                symbol.addSwiftExtensionConstraint(extendedModule: "Custom Title", constraint: newConstraint)
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(renderNode.metadata.extendedModule, "Custom Title")

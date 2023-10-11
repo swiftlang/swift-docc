@@ -1177,7 +1177,7 @@ class SymbolTests: XCTestCase {
             leftTypeName: "Self",
             rightTypeName: "MutableCollection"
         )
-        withoutArticle.addConstraint(extendedModule: "MyKit", constraint: newConstraint)
+        withoutArticle.addSwiftExtensionConstraint(extendedModule: "MyKit", constraint: newConstraint)
 
         // Check there are now 4 constraints
         let constraints2 = try XCTUnwrap(withoutArticle.constraints)
@@ -1215,7 +1215,7 @@ class SymbolTests: XCTestCase {
             trait,
             default: [:]
         ].removeValue(forKey: SymbolGraph.Symbol.Swift.Extension.mixinKey)
-        withoutArticle.addConstraint(extendedModule: "Foundation", constraint: newConstraint2)
+        withoutArticle.addSwiftExtensionConstraint(extendedModule: "Foundation", constraint: newConstraint2)
 
         constraint = constraints2[0]
         XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType, constraint.kind)
