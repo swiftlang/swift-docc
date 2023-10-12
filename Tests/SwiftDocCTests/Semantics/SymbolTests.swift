@@ -1125,9 +1125,7 @@ class SymbolTests: XCTestCase {
             articleContent: nil
         )
 
-        // This symbol starts with 3 generic constraints. See:
-
-        // jq < "Tests/SwiftDocCTests/Test Bundles/TestBundle.docc/mykit-iOS.symbols.json" '.symbols[] | select(.identifier.precise == "s:5MyKit0A5ClassC10myFunctionyyF") | .swiftExtension'
+        // The original symbol has 3 generic constraints:
         // {
         //   "extendedModule": "MyKit",
         //   "constraints": [
@@ -1149,20 +1147,11 @@ class SymbolTests: XCTestCase {
         //   ]
         // }
         XCTAssertEqual("MyKit", withoutArticle.extendedModuleVariants[DocumentationDataVariantsTrait.swift])
-        let constraints = try XCTUnwrap(withoutArticle.constraints)
+        var constraints = try XCTUnwrap(withoutArticle.constraints)
         XCTAssertEqual(3, constraints.count)
-        var constraint = constraints[0]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType, constraint.kind)
-        XCTAssertEqual("Label", constraint.leftTypeName)
-        XCTAssertEqual("Text", constraint.rightTypeName)
-        constraint = constraints[1]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.superclass, constraint.kind)
-        XCTAssertEqual("Observer", constraint.leftTypeName)
-        XCTAssertEqual("NSObject", constraint.rightTypeName)
-        constraint = constraints[2]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.conformance, constraint.kind)
-        XCTAssertEqual("S", constraint.leftTypeName)
-        XCTAssertEqual("StringProtocol", constraint.rightTypeName)
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Label", rightTypeName: "Text"), constraints[0])
+        XCTAssertEqual(.init(kind: .superclass, leftTypeName: "Observer", rightTypeName: "NSObject"), constraints[1])
+        XCTAssertEqual(.init(kind: .conformance, leftTypeName: "S", rightTypeName: "StringProtocol"), constraints[2])
 
         // Declaration fragments are also stored as a mixins variant for this fixture.
         let trait = DocumentationDataVariantsTrait.swift
@@ -1173,31 +1162,19 @@ class SymbolTests: XCTestCase {
 
         // Add a new generic constraint for Swift
         let newConstraint = SymbolGraph.Symbol.Swift.GenericConstraint(
-            kind: SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType,
+            kind: .sameType,
             leftTypeName: "Self",
             rightTypeName: "MutableCollection"
         )
         withoutArticle.addSwiftExtensionConstraint(extendedModule: "MyKit", constraint: newConstraint)
 
         // Check there are now 4 constraints
-        let constraints2 = try XCTUnwrap(withoutArticle.constraints)
-        XCTAssertEqual(4, constraints2.count)
-        constraint = constraints2[0]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType, constraint.kind)
-        XCTAssertEqual("Label", constraint.leftTypeName)
-        XCTAssertEqual("Text", constraint.rightTypeName)
-        constraint = constraints2[1]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.superclass, constraint.kind)
-        XCTAssertEqual("Observer", constraint.leftTypeName)
-        XCTAssertEqual("NSObject", constraint.rightTypeName)
-        constraint = constraints2[2]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.conformance, constraint.kind)
-        XCTAssertEqual("S", constraint.leftTypeName)
-        XCTAssertEqual("StringProtocol", constraint.rightTypeName)
-        constraint = constraints2[3]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType, constraint.kind)
-        XCTAssertEqual("Self", constraint.leftTypeName)
-        XCTAssertEqual("MutableCollection", constraint.rightTypeName)
+        constraints = try XCTUnwrap(withoutArticle.constraints)
+        XCTAssertEqual(4, constraints.count)
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Label", rightTypeName: "Text"), constraints[0])
+        XCTAssertEqual(.init(kind: .superclass, leftTypeName: "Observer", rightTypeName: "NSObject"), constraints[1])
+        XCTAssertEqual(.init(kind: .conformance, leftTypeName: "S", rightTypeName: "StringProtocol"), constraints[2])
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "MutableCollection"), constraints[3])
 
         // Declaration fragments should remain unchanged
         XCTAssertEqual(1, withoutArticle.declarationVariants[trait]!.count)
@@ -1205,7 +1182,7 @@ class SymbolTests: XCTestCase {
         // Add another new generic constraint for Swift, but extending a
         // different module.
         let newConstraint2 = SymbolGraph.Symbol.Swift.GenericConstraint(
-            kind: SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType,
+            kind: .sameType,
             leftTypeName: "Self",
             rightTypeName: "NSExtensionRequestHandling"
         )
@@ -1216,11 +1193,9 @@ class SymbolTests: XCTestCase {
             default: [:]
         ].removeValue(forKey: SymbolGraph.Symbol.Swift.Extension.mixinKey)
         withoutArticle.addSwiftExtensionConstraint(extendedModule: "Foundation", constraint: newConstraint2)
-
-        constraint = constraints2[0]
-        XCTAssertEqual(SymbolGraph.Symbol.Swift.GenericConstraint.Kind.sameType, constraint.kind)
-        XCTAssertEqual("Label", constraint.leftTypeName)
-        XCTAssertEqual("Text", constraint.rightTypeName)
+        constraints = try XCTUnwrap(withoutArticle.constraints)
+        XCTAssertEqual(1, constraints.count)
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "NSExtensionRequestHandling"), constraints[0])
 
         // Declaration fragments should remain unchanged
         XCTAssertEqual(1, withoutArticle.declarationVariants[trait]!.count)

@@ -410,7 +410,7 @@ struct SymbolGraphRelationshipsBuilder {
     ///   - extendedModuleRelationships: Source->target dictionary for external
     ///     module relationships.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
-    ///   - engine: A diagnostic collecting engine.
+    ///   - documentationCache: A documentation node lookup by the node's resolved reference.
 
     static func addProtocolExtensionMemberConstraint(
         edge: SymbolGraph.Relationship,
