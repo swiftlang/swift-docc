@@ -90,13 +90,13 @@ public struct VideoReference: MediaReference, URLReference, Equatable {
     }
     
     /// A codable proxy value that the video reference uses to serialize information about its asset variants.
-    public struct VariantProxy: Codable {
+    public struct VariantProxy: Codable, Equatable {
         /// The URL to the file for this video variant.
         public var url: URL
         /// The traits of this video reference.
         public var traits: [String]
         
-        /// Creates a new proxy value with the given information about an video variant.
+        /// Creates a new proxy value with the given information about a video variant.
         ///
         /// - Parameters:
         ///   - url: The URL to the file for this video variant.
@@ -123,5 +123,34 @@ public struct VideoReference: MediaReference, URLReference, Equatable {
             try container.encode(url, forKey: .url)
             try container.encode(traits, forKey: .traits)
         }
+    }
+}
+
+// Diffable conformance
+extension VideoReference: RenderJSONDiffable {
+    /// Returns the difference between this VideoReference and the given one.
+    func difference(from other: VideoReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+        diffBuilder.addDifferences(atKeyPath: \.altText, forKey: CodingKeys.alt)
+        diffBuilder.addDifferences(atKeyPath: \.asset, forKey: CodingKeys.variants)
+        diffBuilder.addDifferences(atKeyPath: \.poster, forKey: CodingKeys.poster)
+
+        return diffBuilder.differences
+    }
+}
+
+// Diffable conformance
+extension VideoReference.VariantProxy: RenderJSONDiffable {
+    /// Returns the difference between this VariantProxy and the given one.
+    func difference(from other: VideoReference.VariantProxy, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+        diffBuilder.addDifferences(atKeyPath: \.traits, forKey: CodingKeys.traits)
+
+        return diffBuilder.differences
     }
 }

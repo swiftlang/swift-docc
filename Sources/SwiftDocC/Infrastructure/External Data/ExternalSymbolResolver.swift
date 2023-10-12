@@ -17,7 +17,7 @@ import Foundation
 ///  * Resolve authored symbol references and return the precise identifier for the resolved symbol.
 ///  * Return an external URL for the references that it was able to resolve.
 ///
-/// If a symbol in a symbol graph file references a type that's not in the local bundle — for a example, the symbol conforms to a protocol that's not defined in the local bundle, the
+/// If a symbol in a symbol graph file references a type that's not in the local bundle — for example, the symbol conforms to a protocol that's not defined in the local bundle, the
 /// symbol inherits from a class that's not defined in the local bundle, or the symbol has arguments or return values that are types which are not defined in the local bundle —
 /// then this external resolver can resolve those symbol references. This allows references in symbol declarations to be turned into links for external references, just like in-bundle
 /// symbol references can be.

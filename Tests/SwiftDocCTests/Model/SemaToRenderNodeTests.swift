@@ -1885,7 +1885,7 @@ Document
     }
     
     /*
-        Asserts if `expectedRoleHeading` does not match the the parsed render node's `roleHeading` after it's parsed.
+        Asserts if `expectedRoleHeading` does not match the parsed render node's `roleHeading` after it's parsed.
         Uses 'TestBundle's documentation as a base for compiling, overwriting 'article2' with `content`.
     */
     private func assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: String?, content: String, file: StaticString = #file, line: UInt = #line) throws {

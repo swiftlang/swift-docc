@@ -65,7 +65,7 @@ class DiagnosticFileWriterTests: XCTestCase {
             XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFileURL.pathExtension))
         }
         
-        try writer.finalize()
+        try writer.flush()
         XCTAssert(FileManager.default.fileExists(atPath: diagnosticFileURL.path))
         
         let diagnosticFile = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFileURL))

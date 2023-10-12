@@ -32,7 +32,7 @@ public struct TemplateOption: ParsableArguments {
         // that should always return the current executable's URL, regardless of how it is invoked.
         //
         // If docc is invoked directly, then the executable's path is always the first
-        // command line argument provided. So, in the exeptional case where Bundle.main.executableURL
+        // command line argument provided. So, in the exceptional case where Bundle.main.executableURL
         // is nil, we fall back to the value provided in CommandLine.arguments[0].
         return Bundle.main.executableURL ?? URL(fileURLWithPath: CommandLine.arguments[0])
     }()

@@ -110,11 +110,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    /// A link resolver that resolves references by finding them in path hierarchy.
-    ///
-    /// The link resolver is `nil` until some documentation content is registered with the context.
-    /// It's safe to access the link resolver during symbol registration and at later points in the registration and conversion.
-    var hierarchyBasedLinkResolver: PathHierarchyBasedLinkResolver! = nil
+    /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
+    public var linkResolver = LinkResolver()
     
     /// The provider of documentation bundles for this context.
     var dataProvider: DocumentationContextDataProvider
@@ -200,6 +197,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     
+    var externalCache = [ResolvedTopicReference: LinkResolver.ExternalEntity]()
+
     /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
     public var problems: [Problem] {
         return diagnosticEngine.problems
@@ -258,7 +257,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// The mapping of external symbol identifiers to known disambiguated symbol path components.
     ///
-    /// In situations where the the local documentation context doesn't contain all of the current module's
+    /// In situations where the local documentation context doesn't contain all of the current module's
     /// symbols, for example when using a ``ConvertService`` with a partial symbol graph,
     /// the documentation context is otherwise unable to accurately detect a collision for a given symbol and correctly
     /// disambiguate its path components. This value can be used to inject already disambiguated symbol
@@ -361,7 +360,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
-        hierarchyBasedLinkResolver?.unregisterBundle(identifier: bundle.identifier)
+        linkResolver.localResolver?.unregisterBundle(identifier: bundle.identifier)
         
         // Purge the reference cache for this bundle and disable reference caching for
         // this bundle moving forward.
@@ -435,7 +434,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameter moduleReference: The module reference to find the module name for.
     /// - Returns: The plain string name for the referenced module.
     func moduleName(forModuleReference moduleReference: ResolvedTopicReference) -> (displayName: String, symbolName: String) {
-        if let name = moduleNameCache[moduleReference]  {
+        if let name = moduleNameCache[moduleReference] {
             return name
         }
         // If no name is found it's considered a programmer error; either that the names haven't been resolved yet
@@ -1153,7 +1152,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = hierarchyBasedLinkResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            let symbolReferences = linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             symbolIndex.reserveCapacity(symbolReferences.count)
@@ -1270,7 +1269,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Only add the symbol mapping now if the path hierarchy based resolver is the main implementation.
             // If it is only used for mismatch checking then we must wait until the documentation cache code path has traversed and updated all the colliding nodes.
             // Otherwise the mappings will save the unmodified references and the hierarchy based resolver won't find the expected parent nodes when resolving links.
-            hierarchyBasedLinkResolver.addMappingForSymbols(symbolIndex: symbolIndex)
+            linkResolver.localResolver.addMappingForSymbols(symbolIndex: symbolIndex)
             
             // Track the symbols that have multiple matching documentation extension files for diagnostics.
             var symbolsWithMultipleDocumentationExtensionMatches = [ResolvedTopicReference: [SemanticResult<Article>]]()
@@ -1817,7 +1816,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.addNode(graphNode)
             documentationCache[reference] = documentation
             
-            hierarchyBasedLinkResolver.addRootArticle(article, anchorSections: documentation.anchorSections)
+            linkResolver.localResolver.addRootArticle(article, anchorSections: documentation.anchorSections)
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
@@ -1873,7 +1872,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
             
-            hierarchyBasedLinkResolver.addArticle(article, anchorSections: documentation.anchorSections)
+            linkResolver.localResolver.addArticle(article, anchorSections: documentation.anchorSections)
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
@@ -2078,6 +2077,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
+        discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
+            do {
+                try linkResolver.loadExternalResolvers()
+            } catch {
+                // Pipe the error out of the dispatch queue.
+                discoveryError.sync({
+                    if $0 == nil { $0 = error }
+                })
+            }
+        }
+        
         discoveryGroup.wait()
 
         try shouldContinueRegistration()
@@ -2128,7 +2138,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             options = globalOptions.first
         }
         
-        self.hierarchyBasedLinkResolver = hierarchyBasedResolver
+        self.linkResolver.localResolver = hierarchyBasedResolver
         hierarchyBasedResolver.addMappingForRoots(bundle: bundle)
         for tutorial in tutorials {
             hierarchyBasedResolver.addTutorial(tutorial)
@@ -2187,7 +2197,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         try shouldContinueRegistration()
-        var allCuratedReferences = try crawlSymbolCuration(in: hierarchyBasedLinkResolver.topLevelSymbols(), bundle: bundle)
+        var allCuratedReferences = try crawlSymbolCuration(in: linkResolver.localResolver.topLevelSymbols(), bundle: bundle)
         
         // Store the list of manually curated references if doc coverage is on.
         if shouldStoreManuallyCuratedReferences {
@@ -2222,7 +2232,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
-        hierarchyBasedLinkResolver.addAnchorForSymbols(symbolIndex: symbolIndex, documentationCache: documentationCache)
+        linkResolver.localResolver.addAnchorForSymbols(symbolIndex: symbolIndex, documentationCache: documentationCache)
         
         // Fifth, resolve links in nodes that are added solely via curation
         try preResolveExternalLinks(references: Array(allCuratedReferences), bundle: bundle)
@@ -2329,7 +2339,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: An ordered list of symbol references that have been added to the topic graph automatically.
     private func autoCurateSymbolsInTopicGraph(engine: DiagnosticEngine) -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
         var automaticallyCuratedSymbols = [(ResolvedTopicReference, ResolvedTopicReference)]()
-        hierarchyBasedLinkResolver.traverseSymbolAndParentPairs { reference, parentReference in
+        linkResolver.localResolver.traverseSymbolAndParentPairs { reference, parentReference in
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
                   let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
                   // Check that the node hasn't got any parents from manual curation
@@ -2535,6 +2545,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let referenceWithoutFragment = reference.withFragment(nil)
             return try entity(with: referenceWithoutFragment).availableSourceLanguages
         } catch ContextError.notFound {
+            if let externalEntity = externalCache[reference] {
+                return externalEntity.sourceLanguages
+            }
             preconditionFailure("Reference does not have an associated documentation node.")
         } catch {
             fatalError("Unexpected error when retrieving source languages: \(error)")
@@ -2543,7 +2556,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     // MARK: - Relationship queries
     
-    /// Fetch the child nodes of a documentation node with the given `reference``,  optionally filtering to only children of the given `kind`.
+    /// Fetch the child nodes of a documentation node with the given `reference`, optionally filtering to only children of the given `kind`.
     ///
     /// - Parameters:
     ///   - reference: The reference of the node to fetch children for.
@@ -2646,7 +2659,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
         switch reference {
         case .unresolved(let unresolvedReference):
-            return hierarchyBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            return linkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            
         case .resolved(let resolved):
             // This reference is already resolved (either as a success or a failure), so don't change anything.
             return resolved
@@ -2669,7 +2683,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - name: The name of the asset.
     ///   - parent: The topic where the asset is referenced.
-    /// - Returns: The data that's associated with a image asset if it was found, otherwise `nil`.
+    /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
         let bundleIdentifier = parent.bundleIdentifier
         return resolveAsset(named: name, bundleIdentifier: bundleIdentifier, withType: type)

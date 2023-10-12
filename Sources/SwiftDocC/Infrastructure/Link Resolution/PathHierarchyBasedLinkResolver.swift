@@ -161,7 +161,7 @@ final class PathHierarchyBasedLinkResolver {
         addAnchors(anchorSections, to: articleID)
     }
     
-    /// Adds a article and its headings to the path hierarchy.
+    /// Adds an article and its headings to the path hierarchy.
     func addArticle(filename: String, reference: ResolvedTopicReference, anchorSections: [AnchorSection]) {
         let articleID = pathHierarchy.addArticle(name: filename)
         resolvedReferenceMap[articleID] = reference
@@ -200,51 +200,34 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    public func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult {
-        // Check if the unresolved reference is external
-        if let bundleID = unresolvedReference.bundleIdentifier,
-           !context.registeredBundles.contains(where: { bundle in
-               bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
-           }) {
-            
-            if context.externalReferenceResolvers[bundleID] != nil,
-               let resolvedExternalReference = context.externallyResolvedLinks[unresolvedReference.topicURL] {
-                // Return the successful or failed externally resolved reference.
-                return resolvedExternalReference
-            } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
-            }
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) throws -> TopicReferenceResolutionResult {
+        let parentID = resolvedReferenceMap[parent]
+        let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
+        guard let foundReference = resolvedReferenceMap[found] else {
+            // It's possible for the path hierarchy to find a symbol that the local build doesn't create a page for. Such symbols can't be linked to.
+            let simplifiedFoundPath = sequence(first: pathHierarchy.lookup[found]!, next: \.parent)
+                .map(\.name).reversed().joined(separator: "/")
+            return .failure(unresolvedReference, .init("\(simplifiedFoundPath.singleQuoted) has no page and isn't available for linking."))
         }
         
-        do {
-            let parentID = resolvedReferenceMap[parent]
-            let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
-            guard let foundReference = resolvedReferenceMap[found] else {
-                // It's possible for the path hierarchy to find a symbol that the local build doesn't create a page for. Such symbols can't be linked to.
-                let simplifiedFoundPath = sequence(first: pathHierarchy.lookup[found]!, next: \.parent)
-                    .map(\.name).reversed().joined(separator: "/")
-                return .failure(unresolvedReference, .init("\(simplifiedFoundPath.singleQuoted) has no page and isn't available for linking."))
-            }
-            
-            return .success(foundReference)
-        } catch let error as PathHierarchy.Error {
-            // If the reference didn't resolve in the path hierarchy, see if it can be resolved in the fallback resolver.
-            if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
-                return .success(resolvedFallbackReference)
-            } else {
-                var originalReferenceString = unresolvedReference.path
-                if let fragment = unresolvedReference.topicURL.components.fragment {
-                    originalReferenceString += "#" + fragment
-                }
-                
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(context: context, originalReference: originalReferenceString))
-            }
-        } catch {
-            fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
-        }
+        return .success(foundReference)
     }
     
-    private let fallbackResolver = FallbackResolverBasedLinkResolver()
+    func fullName(of node: PathHierarchy.Node, in context: DocumentationContext) -> String {
+        guard let identifier = node.identifier else { return node.name }
+        if let symbol = node.symbol {
+            if let fragments = symbol.declarationFragments {
+                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+            }
+            return symbol.names.title
+        }
+        let reference = resolvedReferenceMap[identifier]!
+        if reference.fragment != nil {
+            return context.nodeAnchorSections[reference]!.title
+        } else {
+            return context.documentationCache[reference]!.name.description
+        }
+    }
     
     // MARK: Symbol reference creation
     
@@ -285,88 +268,7 @@ final class PathHierarchyBasedLinkResolver {
                 guard let reference = reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
-         }
+        }
         return result
-    }
-}
-
-/// A fallback resolver that replicates the exact order of resolved topic references that are attempted to resolve via a fallback resolver when the path hierarchy doesn't have a match.
-private final class FallbackResolverBasedLinkResolver {
-    var cachedResolvedFallbackReferences = Synchronized<[String: ResolvedTopicReference]>([:])
-    
-    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> ResolvedTopicReference? {
-        // Check if a fallback reference resolver should resolve this
-        let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
-        guard !context.fallbackReferenceResolvers.isEmpty,
-              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
-              let fallbackResolver = context.fallbackReferenceResolvers[knownBundleIdentifier]
-        else {
-            return nil
-        }
-        
-        if let cached = cachedResolvedFallbackReferences.sync({ $0[unresolvedReference.topicURL.absoluteString] }) {
-            return cached
-        }
-        var allCandidateURLs = [URL]()
-        
-        let alreadyResolved = ResolvedTopicReference(
-            bundleIdentifier: referenceBundleIdentifier,
-            path: unresolvedReference.path.prependingLeadingSlash,
-            fragment: unresolvedReference.topicURL.components.fragment,
-            sourceLanguages: parent.sourceLanguages
-        )
-        allCandidateURLs.append(alreadyResolved.url)
-        
-        let currentBundle = context.bundle(identifier: knownBundleIdentifier)!
-        if !isCurrentlyResolvingSymbolLink {
-            // First look up articles path
-            allCandidateURLs.append(contentsOf: [
-                // First look up articles path
-                currentBundle.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
-                // Then technology tutorials root path (for individual tutorial pages)
-                currentBundle.technologyTutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
-                // Then tutorials root path (for tutorial table of contents pages)
-                currentBundle.tutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
-            ])
-        }
-        // Try resolving in the local context (as child)
-        allCandidateURLs.append(parent.appendingPathOfReference(unresolvedReference).url)
-        
-        // To look for siblings we require at least a module (first)
-        // and a symbol (second) path components.
-        let parentPath = parent.path.components(separatedBy: "/").dropLast()
-        if parentPath.count >= 2 {
-            allCandidateURLs.append(parent.url.deletingLastPathComponent().appendingPathComponent(unresolvedReference.path))
-        }
-        
-        // Check that the parent is not an article (ignoring if absolute or relative link)
-        // because we cannot resolve in the parent context if it's not a symbol.
-        if parent.path.hasPrefix(currentBundle.documentationRootReference.path) && parentPath.count > 2 {
-            let rootPath = currentBundle.documentationRootReference.appendingPath(parentPath[2])
-            let resolvedInRoot = rootPath.url.appendingPathComponent(unresolvedReference.path)
-            
-            // Confirm here that we we're not already considering this link. We only need to specifically
-            // consider the parent reference when looking for deeper links.
-            if resolvedInRoot.path != allCandidateURLs.last?.path {
-                allCandidateURLs.append(resolvedInRoot)
-            }
-        }
-        
-        allCandidateURLs.append(currentBundle.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
-        
-        for candidateURL in allCandidateURLs {
-            if let cached = cachedResolvedFallbackReferences.sync({ $0[candidateURL.absoluteString] }) {
-                return cached
-            }
-            let unresolvedReference = UnresolvedTopicReference(topicURL: ValidatedURL(candidateURL)!)
-            let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
-            
-            if case .success(let resolvedReference) = reference {
-                cachedResolvedFallbackReferences.sync({ $0[resolvedReference.absoluteString] = resolvedReference })
-                return resolvedReference
-            }
-        }
-        // Give up: there is no local or external document for this reference.
-        return nil
     }
 }

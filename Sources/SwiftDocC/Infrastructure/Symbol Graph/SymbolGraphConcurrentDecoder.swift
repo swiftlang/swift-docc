@@ -104,7 +104,7 @@ enum SymbolGraphConcurrentDecoder {
         // Wait until all concurrent tasks have completed.
         group.wait()
         
-        // If an error happend during decoding re-throw.
+        // If an error happened during decoding re-throw.
         if let lastError = decodeError.sync({ $0 }) {
             throw lastError
         }
