@@ -14,6 +14,7 @@ import Markdown
 
 final class TestParent: Semantic, DirectiveConvertible {
     static let directiveName = "Parent"
+    static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
     let testChildren: [TestChild]
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
@@ -35,6 +36,7 @@ final class TestParent: Semantic, DirectiveConvertible {
 
 final class TestChild: Semantic, DirectiveConvertible {
     static let directiveName = "Child"
+    static let introducedVersion = "1.2.3"
     let originalMarkup: BlockDirective
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(TestChild.canConvertDirective(directive))

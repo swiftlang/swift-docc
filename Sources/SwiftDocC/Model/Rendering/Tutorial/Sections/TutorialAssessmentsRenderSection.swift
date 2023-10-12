@@ -9,7 +9,7 @@
 */
 
 /// A section that checks the user's understanding of the concepts presented in a tutorial.
-public struct TutorialAssessmentsRenderSection: RenderSection {
+public struct TutorialAssessmentsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .assessments
     
     /// The questions for this assessment section. 
@@ -24,7 +24,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection {
     public static let title = "Check Your Understanding"
     
     /// A render-friendly representation of an assessment question.
-    public struct Assessment: Codable, TextIndexing {
+    public struct Assessment: Codable, TextIndexing, Equatable {
         /// The type of assessment question.
         ///
         /// The default value is `multiple-choice`.
@@ -43,7 +43,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection {
         
         /// A render-friendly representation of an answer to a
         /// multiple-choice assessment question.
-        public struct Choice: Codable {
+        public struct Choice: Codable, Equatable {
             /// The content of the choice.
             public var content: [RenderBlockContent]
             
@@ -94,4 +94,60 @@ public struct TutorialAssessmentsRenderSection: RenderSection {
     }
 }
 
+// Diffable conformance
+extension TutorialAssessmentsRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this TutorialAssessmentsRenderSection and the given one.
+    func difference(from other: TutorialAssessmentsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
 
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.assessments, forKey: CodingKeys.assessments)
+        diffBuilder.addDifferences(atKeyPath: \.anchor, forKey: CodingKeys.anchor)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this TutorialAssessmentsRenderSection is similar enough to the given one.
+    func isSimilar(to other: TutorialAssessmentsRenderSection) -> Bool {
+        return self.assessments == other.assessments
+    }
+}
+
+// Diffable conformance
+extension TutorialAssessmentsRenderSection.Assessment: RenderJSONDiffable {
+    /// Returns the differences between this Assessment and the given one.
+    func difference(from other: TutorialAssessmentsRenderSection.Assessment, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        diffBuilder.addDifferences(atKeyPath: \.choices, forKey: CodingKeys.choices)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this Assessment is similar enough to the given one.
+    func isSimilar(to other: TutorialAssessmentsRenderSection.Assessment) -> Bool {
+        return self.title == other.title || self.content == other.content
+    }
+}
+
+// Diffable conformance
+extension TutorialAssessmentsRenderSection.Assessment.Choice: RenderJSONDiffable {
+    /// Returns the differences between this Choice and the given one.
+    func difference(from other: TutorialAssessmentsRenderSection.Assessment.Choice, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        diffBuilder.addDifferences(atKeyPath: \.isCorrect, forKey: CodingKeys.isCorrect)
+        diffBuilder.addDifferences(atKeyPath: \.justification, forKey: CodingKeys.justification)
+        diffBuilder.addDifferences(atKeyPath: \.reaction, forKey: CodingKeys.reaction)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this Choice is similar enough to the given one.
+    func isSimilar(to other: TutorialAssessmentsRenderSection.Assessment.Choice) -> Bool {
+        return self.content == other.content
+    }
+}

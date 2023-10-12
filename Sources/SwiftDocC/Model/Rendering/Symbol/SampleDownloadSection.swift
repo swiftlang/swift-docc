@@ -13,7 +13,7 @@ import Foundation
 /// A section that contains download data for a sample project.
 ///
 /// The `action` property is the reference to the file for download, e.g., `sample.zip`.
-public struct SampleDownloadSection: RenderSection {
+public struct SampleDownloadSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .sampleDownload
     /// The call to action in the section.
     public var action: RenderInlineContent
@@ -40,5 +40,23 @@ public struct SampleDownloadSection: RenderSection {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind, forKey: .kind)
         try container.encode(action, forKey: .action)
+    }
+}
+
+// Diffable conformance
+extension SampleDownloadSection: RenderJSONDiffable {
+    /// Returns the differences between this SampleDownloadSection and the given one.
+    func difference(from other: SampleDownloadSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.action, forKey: CodingKeys.action)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this SampleDownloadSection is similar enough to the given one.
+    func isSimilar(to other: SampleDownloadSection) -> Bool {
+        return self.action == other.action
     }
 }

@@ -90,7 +90,7 @@ final class PreviewServer {
     /// Where to try binding the server; can be an ip address or a socket.
     private let bindTo: Bind
     
-    /// The output to write log mesages to.
+    /// The output to write log messages to.
     private var logHandle: LogHandle
     
     /// Creates a new preview server with the given content directory, bind destination, and credentials.

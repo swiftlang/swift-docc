@@ -47,3 +47,24 @@ struct RESTBodyRenderSection: RenderSection, Equatable {
         self.parameters = parameters
     }
 }
+
+// Diffable conformance
+extension RESTBodyRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this RESTBodyRenderSection and the given one.
+    func difference(from other: RESTBodyRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.mimeType, forKey: CodingKeys.mimeType)
+        diffBuilder.addDifferences(atKeyPath: \.bodyContentType, forKey: CodingKeys.bodyContentType)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this RESTBodyRenderSection is similar enough to the given one.
+    func isSimilar(to other: RESTBodyRenderSection) -> Bool {
+        return self.title == other.title || self.content == other.content
+    }
+}

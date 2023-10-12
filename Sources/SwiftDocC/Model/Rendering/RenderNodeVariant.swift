@@ -17,7 +17,7 @@ extension RenderNode {
     /// ```json
     /// {
     ///   "traits" : [
-    ///     { "interfaceLanguge": "swift" }
+    ///     { "interfaceLanguage": "swift" }
     ///   ],
     ///   "paths" : ["/path/to/variant"]
     /// }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,7 @@ import Markdown
  One of possibly many choices in a ``MultipleChoice`` question.
  */
 public final class Choice: Semantic, AutomaticDirectiveConvertible {
+    public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
     
     /// `true` if this choice is a correct one; there can be multiple correct choices.

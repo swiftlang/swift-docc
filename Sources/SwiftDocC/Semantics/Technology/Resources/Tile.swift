@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,6 +16,8 @@ import Markdown
 /// A tile is a kind of thematic content block that contains links to resources
 /// such as sample code, videos, or forum topics.
 public final class Tile: Semantic, DirectiveConvertible {
+    public static let introducedVersion = "5.5"
+    
     /// A tile type to identify the tile during building page layout.
     public enum Identifier: String, Codable {
         /// Identifies a tile that links to documentation.
@@ -58,7 +60,7 @@ public final class Tile: Semantic, DirectiveConvertible {
                 case .sampleCode: return .sampleCode
                 case .downloads: return .downloads
                 case .videos: return .videos
-                case .forums: return .forums                
+                case .forums: return .forums
             }
         }
     }
@@ -84,7 +86,7 @@ public final class Tile: Semantic, DirectiveConvertible {
         return [content]
     }
     
-    enum Semantics {        
+    enum Semantics {
         enum Destination: DirectiveArgument {
             typealias ArgumentValue = URL
             static let argumentName = "destination"

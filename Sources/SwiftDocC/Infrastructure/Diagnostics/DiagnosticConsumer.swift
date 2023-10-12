@@ -31,7 +31,7 @@ public protocol DiagnosticFormattingConsumer: DiagnosticConsumer {
 }
 
 public extension DiagnosticConsumer {
-    // Deprecated for supressing the warning emitted when calling `finalize()`
+    // Deprecated for suppressing the warning emitted when calling `finalize()`
     @available(*, deprecated)
     func flush() throws {
         try finalize()

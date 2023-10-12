@@ -14,7 +14,7 @@
 /// Depending on its type, a render tile contains links to a 
 /// specific kind of resource such as sample code, videos,
 /// or forum topics.
-public struct RenderTile: Codable, TextIndexing {
+public struct RenderTile: Codable, TextIndexing, Equatable {
     /// Predefined semantic tile identifiers.
     public enum Identifier: String, Codable {
         /// Identifies a tile that links to featured content.

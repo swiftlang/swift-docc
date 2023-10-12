@@ -76,6 +76,24 @@ public struct FileReference: RenderReference, Equatable {
     }
 }
 
+// Diffable conformance
+extension FileReference: RenderJSONDiffable {
+    /// Returns the difference between this FileReference and the given one.
+    func difference(from other: FileReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+        diffBuilder.addDifferences(atKeyPath: \.fileType, forKey: CodingKeys.fileType)
+        diffBuilder.addDifferences(atKeyPath: \.fileName, forKey: CodingKeys.fileName)
+        diffBuilder.addDifferences(atKeyPath: \.syntax, forKey: CodingKeys.syntax)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        diffBuilder.addDifferences(atKeyPath: \.highlights, forKey: CodingKeys.highlights)
+        
+        return diffBuilder.differences
+    }
+}
+
 /// A reference to a type of file.
 ///
 /// This is not a reference to a specific file, but rather to a type of file. Use a file type reference together with a file reference to display an icon for that file type
@@ -101,5 +119,18 @@ public struct FileTypeReference: RenderReference, Equatable {
         self.identifier = identifier
         self.displayName = displayName
         self.iconBase64 = iconBase64
+    }
+}
+
+// Diffable conformance
+extension FileTypeReference: RenderJSONDiffable {
+    /// Returns the difference between this FileTypeReference and the given one.
+    func difference(from other: FileTypeReference, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.displayName, forKey: CodingKeys.displayName)
+        diffBuilder.addDifferences(atKeyPath: \.iconBase64, forKey: CodingKeys.iconBase64)
+
+        return diffBuilder.differences
     }
 }

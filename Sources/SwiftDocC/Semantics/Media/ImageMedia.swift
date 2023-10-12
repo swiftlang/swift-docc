@@ -14,7 +14,7 @@ import Markdown
 /// A block filled with an image.
 public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     public static let directiveName = "Image"
-    
+    public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
     
     @DirectiveArgumentWrapped(
