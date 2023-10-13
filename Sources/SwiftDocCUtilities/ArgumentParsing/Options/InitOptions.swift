@@ -62,18 +62,6 @@ public struct InitOptions: ParsableArguments {
         )
     )
     public var catalogTemplate: CatalogTemplateKind = .base
-    
-    /// A user-provided value that is true if the documentation catalog should contain a tutorial template.
-    ///
-    /// Defaults to false.
-    @Flag(
-        name: .long,
-        help: ArgumentHelp(
-            "Outputs a tutorial template as part of the documentation catalog",
-            valueName: "include-tutorial"
-        )
-    )
-    public var includeTutorial: Bool = false
 }
 
 extension CatalogTemplateKind: ExpressibleByArgument {}

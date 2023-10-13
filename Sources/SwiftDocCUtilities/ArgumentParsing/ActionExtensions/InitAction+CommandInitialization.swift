@@ -22,8 +22,7 @@ extension InitAction {
         try self.init(
             catalogOutputDirectory: initOptions.providedCatalogOutputURL,
             documentationTitle: initOptions.documentationTitle,
-            catalogTemplate: initOptions.catalogTemplate,
-            includeTutorial: initOptions.includeTutorial
+            catalogTemplate: initOptions.catalogTemplate
         )
     }
 }

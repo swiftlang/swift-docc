@@ -27,7 +27,6 @@ public struct InitAction: Action {
     private let catalogOutputURL: URL
     private let documentationTitle: String
     private let catalogTemplate: CatalogTemplateKind
-    private let includeTutorial: Bool
     private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     
     /// Creates a new Init action from the given parameters.
@@ -36,15 +35,12 @@ public struct InitAction: Action {
     ///     - catalogOutputDirectory: The URL to the directory where the catalog will be stored.
     ///     - documentationTitle: The title of the technology root.
     ///     - catalogTemplate: The template used to initialize the catalog.
-    ///     - includeTutorial: The boolean that indicates if the tutorial template should be added to the output catalog.
     public init(
         catalogOutputDirectory: URL,
         documentationTitle: String,
-        catalogTemplate: CatalogTemplateKind,
-        includeTutorial: Bool
+        catalogTemplate: CatalogTemplateKind
     ) throws {
         self.documentationTitle = documentationTitle
-        self.includeTutorial = includeTutorial
         self.catalogTemplate = catalogTemplate
         catalogOutputURL = catalogOutputDirectory.appendingPathComponent("\(documentationTitle).docc")
     }

@@ -20,8 +20,7 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputURL,
             documentationTitle: "MyTestDocumentation",
-            catalogTemplate: .base,
-            includeTutorial: false
+            catalogTemplate: .base
         )
         var isDirectory: ObjCBool = false
         _ = try action.perform(logHandle: .standardOutput)
@@ -39,8 +38,7 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputURL,
             documentationTitle: "MyTestDocumentation",
-            catalogTemplate: .base,
-            includeTutorial: false
+            catalogTemplate: .base
         )
         _ = try action.perform(logHandle: .standardOutput)
         // Test the top-level content of the output folder.

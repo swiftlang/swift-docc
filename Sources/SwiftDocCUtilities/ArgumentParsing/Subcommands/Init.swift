@@ -21,7 +21,7 @@ extension Docc {
         // MARK: - Configuration
         
         public static var configuration: CommandConfiguration = CommandConfiguration(
-            abstract: "(EXPERIMENTAL) Generates a .docc catalog for article-only documentation",
+            abstract: "(EXPERIMENTAL) Generate a documentation catalog from the selected template.",
             shouldDisplay: true
         )
         
