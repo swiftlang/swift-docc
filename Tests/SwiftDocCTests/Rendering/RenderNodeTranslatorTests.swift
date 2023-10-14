@@ -237,9 +237,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let article = try XCTUnwrap(
                 Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
             )
-            let translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/article", fragment: nil, sourceLanguage: .swift), source: nil)
-            
-            XCTAssertEqual(RenderMetadata.Role.article, translator.contentRenderer.roleForArticle(article, nodeKind: .article))
+            XCTAssertEqual(RenderMetadata.Role.article, DocumentationContentRenderer.roleForArticle(article, nodeKind: .article))
         }
 
         // Verify collections' role
@@ -254,13 +252,12 @@ class RenderNodeTranslatorTests: XCTestCase {
              - <doc:MyKit>
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
-            let translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/article", fragment: nil, sourceLanguage: .swift), source: nil)
 
             // Verify a collection group
             let article1 = try XCTUnwrap(
                 Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
             )
-            XCTAssertEqual(RenderMetadata.Role.collectionGroup, translator.contentRenderer.roleForArticle(article1, nodeKind: .article))
+            XCTAssertEqual(RenderMetadata.Role.collectionGroup, DocumentationContentRenderer.roleForArticle(article1, nodeKind: .article))
             
             let metadataSource = """
             @Metadata {
@@ -276,7 +273,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let article2 = try XCTUnwrap(
                 Article(from: metadataDocument.root, source: nil, for: bundle, in: context, problems: &problems)
             )
-            XCTAssertEqual(RenderMetadata.Role.collection, translator.contentRenderer.roleForArticle(article2, nodeKind: .article))
+            XCTAssertEqual(RenderMetadata.Role.collection, DocumentationContentRenderer.roleForArticle(article2, nodeKind: .article))
         }
     }
     
@@ -304,7 +301,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(renderReference.abstract.first?.plainText, "This is the tutorial abstract.")
     }
 
-    func testEmtpyTaskGroupsNotRendered() throws {
+    func testEmptyTaskGroupsNotRendered() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         var problems = [Problem]()
         

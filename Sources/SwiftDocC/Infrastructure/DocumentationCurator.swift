@@ -115,7 +115,7 @@ struct DocumentationCurator {
         context.topicGraph.addNode(curatedNode)
         
         // Move the article from the article cache to the documentation
-        context.hierarchyBasedLinkResolver.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
+        context.linkResolver.localResolver.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
         
         context.documentationCache[reference] = documentationNode
         for anchor in documentationNode.anchorSections {

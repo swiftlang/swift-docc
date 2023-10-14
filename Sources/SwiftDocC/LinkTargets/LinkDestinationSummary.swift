@@ -304,8 +304,13 @@ public extension DocumentationNode {
     /// - Parameters:
     ///   - context: The context in which references that are found the node's content are resolved in.
     ///   - renderNode: The render node representation of this documentation node.
+    ///   - includeTaskGroups: Whether or not the link summaries should include task groups
     /// - Returns: The list of summary elements, with the node's summary as the first element.
-    func externallyLinkableElementSummaries(context: DocumentationContext, renderNode: RenderNode) -> [LinkDestinationSummary] {
+    func externallyLinkableElementSummaries(
+        context: DocumentationContext,
+        renderNode: RenderNode,
+        includeTaskGroups: Bool = true
+    ) -> [LinkDestinationSummary] {
         guard let bundle = context.bundle(identifier: reference.bundleIdentifier) else {
             // Don't return anything for external references that don't have a bundle in the context.
             return []
@@ -322,15 +327,19 @@ public extension DocumentationNode {
         }
         
         var taskGroupVariants: [[RenderNode.Variant.Trait]: [LinkDestinationSummary.TaskGroup]] = [:]
-        let taskGroups: [LinkDestinationSummary.TaskGroup]
-        switch kind {
-        case .tutorial, .tutorialArticle, .technology, .technologyOverview, .chapter, .volume, .onPageLandmark:
-            taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
-        default:
-            taskGroups = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
-            for variant in renderNode.topicSectionsVariants.variants {
-                taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
+        let taskGroups: [LinkDestinationSummary.TaskGroup]?
+        if includeTaskGroups {
+            switch kind {
+            case .tutorial, .tutorialArticle, .technology, .technologyOverview, .chapter, .volume, .onPageLandmark:
+                taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
+            default:
+                taskGroups = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
+                for variant in renderNode.topicSectionsVariants.variants {
+                    taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
+                }
             }
+        } else {
+            taskGroups = nil
         }
         return [
             LinkDestinationSummary(
@@ -374,7 +383,7 @@ extension LinkDestinationSummary {
         documentationNode: DocumentationNode,
         renderNode: RenderNode,
         relativePresentationURL: URL,
-        taskGroups: [TaskGroup],
+        taskGroups: [TaskGroup]?,
         taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]],
         platforms: [PlatformAvailability]?,
         compiler: inout RenderContentCompiler
@@ -426,9 +435,7 @@ extension LinkDestinationSummary {
         
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
         let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
-        let declaration = (symbol.subHeadingVariants[summaryTrait] ?? symbol.subHeading).map { subHeading in
-            subHeading.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
-        }
+        let declaration = (symbol.declarationVariants[summaryTrait] ?? symbol.declaration).renderDeclarationTokens()
         let language = documentationNode.sourceLanguage
         
         let variants: [Variant] = documentationNode.availableVariantTraits.compactMap { trait in
@@ -437,9 +444,7 @@ extension LinkDestinationSummary {
                 return nil
             }
             
-            let declarationVariant = symbol.subHeadingVariants[trait].map { subHeading in
-                subHeading.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
-            }
+            let declarationVariant = symbol.declarationVariants[trait]?.renderDeclarationTokens()
             
             let abstractVariant: Variant.VariantValue<Abstract?> = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
             
@@ -483,6 +488,25 @@ extension LinkDestinationSummary {
             references: references.nilIfEmpty,
             variants: variants
         )
+    }
+}
+
+private extension Dictionary where Key == [PlatformName?], Value == SymbolGraph.Symbol.DeclarationFragments {
+    func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
+        guard count > 1 else {
+            return first?.value
+        }
+        
+        return self.min(by: { lhs, rhs in
+            // Join all the platform IDs and use that to get a stable value
+            lhs.key.compactMap(\.?.rawValue).joined() < lhs.key.compactMap(\.?.rawValue).joined()
+        })?.value
+    }
+    
+    func renderDeclarationTokens() -> [DeclarationRenderSection.Token]? {
+        return mainRenderFragments()?.declarationFragments.map {
+            DeclarationRenderSection.Token(fragment: $0, identifier: nil)
+        }
     }
 }
 
