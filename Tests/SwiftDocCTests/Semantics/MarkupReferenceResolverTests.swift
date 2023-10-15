@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,5 +26,12 @@ class MarkupReferenceResolverTests: XCTestCase {
         var resolver = MarkupReferenceResolver(context: context, bundle: bundle, source: nil, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
         XCTAssertEqual(0, resolver.problems.count)
+    }
+
+    func testDuplicatedDiagnosticForExtensionFile() throws {
+        let (_, context) = try testBundleAndContext(named: "ExtensionArticleBundle")
+        // Before #733's change, there will be 2 duplicated problems.
+        // And we'll trigger a index out of range crash in DefaultDiagnosticConsoleFormatter
+        XCTAssertEqual(1, context.problems.count)
     }
 }
