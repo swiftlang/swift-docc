@@ -137,7 +137,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         // MARK: - Codable
         
         private enum CodingKeys: CodingKey {
-            case text, kind, identifier, preciseIdentifier
+            case text, kind, identifier, preciseIdentifier, otherDeclarations
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -163,15 +163,41 @@ public struct DeclarationRenderSection: Codable, Equatable {
         }
     }
     
+    /// A declaration for a different symbol that is connected to this one, e.g. an overload.
+    public struct OtherDeclaration: Codable, Equatable, Hashable {
+        /// The overloaded symbol's declaration tokens.
+        public let tokens: [Token]
+        
+        /// The overloaded symbol's identifier.
+        public let identifier: ResolvedTopicReference
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: DeclarationRenderSection.OtherDeclaration.CodingKeys.self)
+            try container.encode(self.tokens, forKey: DeclarationRenderSection.OtherDeclaration.CodingKeys.tokens)
+            try container.encode(self.identifier.absoluteString, forKey: DeclarationRenderSection.OtherDeclaration.CodingKeys.identifier)
+        }
+    }
+    
+    /// The declarations for this symbol's overloads.
+    public let otherDeclarations: [OtherDeclaration]
+    
+    public enum CodingKeys: CodingKey {
+        case tokens
+        case platforms
+        case languages
+        case otherDeclarations
+    }
+    
     /// Creates a new declaration section.
     /// - Parameters:
     ///   - languages: The source languages to which this declaration applies.
     ///   - platforms: The platforms to which this declaration applies.
     ///   - tokens: The list of declaration tokens.
-    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token]) {
+    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: [OtherDeclaration] = []) {
         self.languages = languages
         self.platforms = platforms
         self.tokens = tokens
+        self.otherDeclarations = otherDeclarations
     }
     
     public init(from decoder: Decoder) throws {
@@ -179,6 +205,15 @@ public struct DeclarationRenderSection: Codable, Equatable {
         tokens = try container.decode([Token].self, forKey: .tokens)
         platforms = try container.decode([PlatformName?].self, forKey: .platforms)
         languages = try container.decodeIfPresent([String].self, forKey: .languages)
+        otherDeclarations = try container.decodeIfPresent([OtherDeclaration].self, forKey: .otherDeclarations) ?? []
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: DeclarationRenderSection.CodingKeys.self)
+        try container.encode(self.tokens, forKey: DeclarationRenderSection.CodingKeys.tokens)
+        try container.encode(self.platforms, forKey: DeclarationRenderSection.CodingKeys.platforms)
+        try container.encode(self.languages, forKey: DeclarationRenderSection.CodingKeys.languages)
+        try container.encodeIfNotEmpty(self.otherDeclarations, forKey: DeclarationRenderSection.CodingKeys.otherDeclarations)
     }
 }
 
