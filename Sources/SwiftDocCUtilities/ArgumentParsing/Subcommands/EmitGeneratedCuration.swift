@@ -17,7 +17,7 @@ extension Docc.ProcessCatalog {
         
         static var configuration = CommandConfiguration(
             commandName: "emit-generated-curation",
-            abstract: "Write documentation extension files into the DocC Catalog with  one that supports a static hosting environment.")
+            abstract: "Write documentation extension files into the DocC Catalog with one that supports a static hosting environment.")
         
         /// The path to an archive to be used by DocC.
         @Argument(
