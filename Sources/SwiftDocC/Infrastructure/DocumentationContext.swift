@@ -1328,9 +1328,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
             
+            let symbolGraphRelationships = combinedRelationships.flatMap(\.value)
+            
+            handleOverloads(relationships: symbolGraphRelationships)
+            
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
-                relationships: combinedRelationships.flatMap(\.value),
+                relationships: symbolGraphRelationships,
                 context: self,
                 bundle: bundle
             )
@@ -2397,6 +2401,100 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
         }
         return automaticallyCuratedSymbols
+    }
+
+    /// Handles overloaded symbols by grouping them together into one page.
+    private func handleOverloads(relationships: [SymbolGraph.Relationship]) {
+        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
+            return
+        }
+        
+        var parentToChildren = [SymbolGraph.Symbol.Identifier : [DocumentationNode]]()
+        
+        // Walk the symbol graph relationships and look for parent <-> child links.
+        // Build up the parentToChildren dictionary of all children under each parent.
+        for relationship in relationships {
+            
+            // Check the relationship type
+            if relationship.kind == .memberOf,
+               // Resolve the containing type
+               let parent = nodeWithSymbolIdentifier(relationship.target),
+               // Resolve the child
+               let child = nodeWithSymbolIdentifier(relationship.source),
+               // Get the parent symbol
+               let parentSymbol = parent.symbol
+            {
+                if parentToChildren[parentSymbol.identifier] != nil {
+                    parentToChildren[parentSymbol.identifier]?.append(child)
+                } else {
+                    parentToChildren[parentSymbol.identifier] = [child]
+                }
+            }
+        }
+        
+        // Create a dictionary of the names of all symbols and their documentation nodes.
+        // If there are any overloaded symbols, their names will collide.
+        for (_, children) in parentToChildren {
+            var overloadedSymbols = [String : [DocumentationNode]]()
+            for child in children {
+                
+                assert(
+                    child.semantic is Symbol,
+                    "The only nodes in the topic graph here should be symbols."
+                )
+                
+                guard let overloadName = getOverloadUnqiueName(for: child) else {
+                    // Symbol can't be overloaded
+                    continue
+                }
+                
+                if overloadedSymbols[overloadName] != nil {
+                    overloadedSymbols[overloadName]?.append(child)
+                } else {
+                    overloadedSymbols[overloadName] = [child]
+                }
+            }
+            
+            // Handle each group of overloads.
+            for (_, overloads) in overloadedSymbols {
+                guard overloads.count > 1 else {
+                    continue
+                }
+                
+                let overloadDeclarations = overloads.map {
+                    return Symbol.OtherDeclaration(declaration: ($0.semantic as! Symbol).declaration, identifier: $0.reference)
+                }
+                
+                // Create a documentation node for the generic overload. Currently this will contain the same content as one of the specific overloads
+                // to decrease requests made by the renderer.
+                let genericOverloadNode = overloads.first
+                (genericOverloadNode?.semantic as! Symbol).otherDeclarationsVariants = .init(swiftVariant: overloadDeclarations)
+                // TODO: Add genericOverloadNode to the topic graph.
+                
+                // Tell each symbol which other symbols overload it.
+                for (index, documentationNode) in overloads.indexed() {
+                    var otherOverloadDeclarations = overloadDeclarations
+                    otherOverloadDeclarations.remove(at: index)
+                    
+                    (documentationNode.semantic as! Symbol).otherDeclarationsVariants = .init(swiftVariant: otherOverloadDeclarations)
+                }
+            }
+        }
+    }
+    
+    /// Returns a name for an overload.
+    /// If two symbols have the same name, they are overloads of eachother.
+    private func getOverloadUnqiueName(for node: DocumentationNode) -> String? {
+        
+        // Types of symbols that we will collapse overloads for.
+        let overloadableTypes: [DocumentationNode.Kind] = [.instanceMethod, .typeMethod, .function,
+                                                           .macro, .operator, .initializer, .typeSubscript,
+                                                           .instanceSubscript]
+        guard overloadableTypes.contains(node.kind) else {
+            return nil
+        }
+        
+        return "\(node.kind.id)-\(node.name)"
     }
     
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
