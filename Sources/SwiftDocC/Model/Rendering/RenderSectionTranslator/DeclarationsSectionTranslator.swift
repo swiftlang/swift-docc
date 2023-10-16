@@ -43,7 +43,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             var declarations = [DeclarationRenderSection]()
             for pair in declaration {
                 let (platforms, declaration) = pair
-                
+
                 let renderedTokens = declaration.declarationFragments.map(translateFragment)
 
                 let platformNames = platforms.sorted { (lhs, rhs) -> Bool in
@@ -53,11 +53,23 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     return lhsValue.rawValue < rhsValue.rawValue
                 }
                 
+                // If this symbol has overloads, render their declarations as well.
+                // TODO: Handle objc overloads?
+                let otherDeclarationsVariant = symbol.otherDeclarationsVariants[trait]
+                let otherDeclarations = otherDeclarationsVariant?.map { overload -> DeclarationRenderSection.OtherDeclaration in
+                    let declarationFragments = overload.declaration[platforms]?.declarationFragments ?? []
+                    return DeclarationRenderSection.OtherDeclaration(
+                            tokens: declarationFragments.map(translateFragment),
+                            identifier: overload.identifier
+                        )
+                }
+                
                 declarations.append(
                     DeclarationRenderSection(
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
                         platforms: platformNames,
-                        tokens: renderedTokens
+                        tokens: renderedTokens,
+                        otherDeclarations: otherDeclarations ?? []
                     )
                 )
             }
