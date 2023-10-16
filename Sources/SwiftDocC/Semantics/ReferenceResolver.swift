@@ -504,7 +504,8 @@ struct ReferenceResolver: SemanticVisitor {
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
-            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
+            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants,
+            otherDeclarationsVariants: symbol.otherDeclarationsVariants
         )
     }
     
