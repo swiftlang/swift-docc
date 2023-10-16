@@ -29,7 +29,7 @@ public extension VariantCollection {
     
     /// Creates a variant collection from a non-empty symbol variants data of the same value type using the given transformation closure.
     ///
-    /// Use this initializer when the `Value` of  the given ``DocumentationDataVariants`` is the same as the variant collection's `Value`. If there are no variants
+    /// Use this initializer when the `Value` of the given ``DocumentationDataVariants`` is the same as the variant collection's `Value`. If there are no variants
     /// for the symbol data, this initializer returns `nil`.
     ///
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
@@ -43,7 +43,7 @@ public extension VariantCollection {
     
     /// Creates a variant collection of optional value from a symbol variants data of the same value type using the given transformation closure.
     ///
-    /// Use this initializer when the `Value` of  the given ``DocumentationDataVariants`` is the variant collection's `Value` wrapped in an `Optional` .
+    /// Use this initializer when the `Value` of the given ``DocumentationDataVariants`` is the variant collection's `Value` wrapped in an `Optional` .
     /// If there are no variants for the symbol data, the variant collection encodes a `nil` value.
     ///
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
@@ -96,7 +96,7 @@ public extension VariantCollection {
     ///   - traits: The traits to consider when creating a variant collection.
     ///   - fallbackDefaultValue: A fallback value to use if the given `transform` function
     ///     returns nil for the default trait.
-    ///   - transform: The function that should be used to transform the a given variant trait
+    ///   - transform: The function that should be used to transform the given variant trait
     ///     to a value for the variant collection
     init?(
         from traits: Set<DocumentationDataVariantsTrait>,

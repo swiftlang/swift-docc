@@ -15,7 +15,7 @@ public protocol DocumentationWorkspaceDataProvider {
     /// A string that uniquely identifies this data provider.
     ///
     /// Unless your implementation needs a stable identifier to associate with an external system, it's reasonable to
-    /// use `UUID().uuidString`  for the provider's identifier.
+    /// use `UUID().uuidString` for the provider's identifier.
     var identifier: String { get }
 
     /// Returns the data backing one of the files that this data provider provides.

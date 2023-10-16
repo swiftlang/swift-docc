@@ -48,5 +48,5 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
         }
         
         waitForExpectations(timeout: 2.0)
-    }    
+    }
 }

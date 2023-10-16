@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+@_spi(ExternalLinks) import SwiftDocC // SPI to set `context.linkResolver.dependencyArchives`
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {
@@ -112,7 +112,8 @@ public struct ConvertAction: Action, RecreatingContext {
         transformForStaticHosting: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
-        sourceRepository: SourceRepository? = nil
+        sourceRepository: SourceRepository? = nil,
+        dependencies: [URL] = []
     ) throws
     {
         self.rootURL = documentationBundleURL
@@ -166,7 +167,8 @@ public struct ConvertAction: Action, RecreatingContext {
         self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
         self.diagnosticLevel = filterLevel
         self.context.externalMetadata.diagnosticLevel = self.diagnosticLevel
-
+        self.context.linkResolver.dependencyArchives = dependencies
+        
         // Inject current platform versions if provided
         if let currentPlatforms = currentPlatforms {
             self.context.externalMetadata.currentPlatforms = currentPlatforms
@@ -256,7 +258,8 @@ public struct ConvertAction: Action, RecreatingContext {
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository,
-            temporaryDirectory: temporaryDirectory
+            temporaryDirectory: temporaryDirectory,
+            dependencies: []
         )
     }
     
@@ -286,7 +289,8 @@ public struct ConvertAction: Action, RecreatingContext {
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String?,
         sourceRepository: SourceRepository? = nil,
-        temporaryDirectory: URL
+        temporaryDirectory: URL,
+        dependencies: [URL] = []
     ) throws {
         // Note: This public initializer exists separately from the above internal one
         // because the FileManagerProtocol type we use to enable mocking in tests
@@ -320,7 +324,8 @@ public struct ConvertAction: Action, RecreatingContext {
             transformForStaticHosting: transformForStaticHosting,
             allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
             hostingBasePath: hostingBasePath,
-            sourceRepository: sourceRepository
+            sourceRepository: sourceRepository,
+            dependencies: dependencies
         )
     }
 

@@ -12,7 +12,7 @@ import SwiftDocC
 import Foundation
 
 extension ConvertAction {
-    /// Creates a  convert action from the options in the given convert command.
+    /// Creates a convert action from the options in the given convert command.
     /// - Parameters:
     ///   - convert: The convert command this `ConvertAction` will be based on.
     ///   - fallbackTemplateURL: A template URL to use if the one provided by the convert command is `nil`.
@@ -21,6 +21,7 @@ extension ConvertAction {
         let outOfProcessResolver: OutOfProcessReferenceResolver?
         
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
+        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -87,7 +88,8 @@ extension ConvertAction {
             transformForStaticHosting: convert.transformForStaticHosting,
             allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
-            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
+            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
+            dependencies: convert.dependencies
         )
     }
 }

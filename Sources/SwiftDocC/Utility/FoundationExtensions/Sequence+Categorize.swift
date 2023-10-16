@@ -29,7 +29,7 @@ extension Sequence {
     /// Splits a sequence into a list of elements that satisfy a given predicate and a list of those that don't.
     ///
     /// - Parameter isIncluded: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element should be included in the matching list.
-    /// - Returns: A path of the the elements that satisfied the predicate and those that didn't.
+    /// - Returns: A path of the elements that satisfied the predicate and those that didn't.
     func categorize(where isIncluded: (Element) -> Bool) -> (matching: [Element], remainder: [Element]) {
         return (filter(isIncluded), filter { !isIncluded($0) })
     }

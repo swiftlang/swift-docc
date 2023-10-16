@@ -30,6 +30,7 @@ class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
     func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
     func consume(renderReferenceStore: RenderReferenceStore) throws { }
     func consume(buildMetadata: BuildMetadata) throws { }
+    func consume(linkResolutionInformation: SerializableLinkResolutionInformation) throws { }
 }
 
 extension TestRenderNodeOutputConsumer {

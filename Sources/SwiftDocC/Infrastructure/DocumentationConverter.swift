@@ -344,13 +344,19 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                     }
                     
                     if emitDigest {
-                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: true)
                         let nodeIndexingRecords = try renderNode.indexingRecords(onPage: identifier)
                         
                         resultsGroup.async(queue: resultsSyncQueue) {
                             assets.merge(renderNode.assetReferences, uniquingKeysWith: +)
                             linkSummaries.append(contentsOf: nodeLinkSummaries)
                             indexingRecords.append(contentsOf: nodeIndexingRecords)
+                        }
+                    } else if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+                        let nodeLinkSummaries = entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+                        
+                        resultsGroup.async(queue: resultsSyncQueue) {
+                            linkSummaries.append(contentsOf: nodeLinkSummaries)
                         }
                     }
                 } catch {
@@ -373,6 +379,19 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                 try outputConsumer.consume(assets: assets)
             } catch {
                 recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
+            }
+        }
+        
+        if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
+            do {
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
+                try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
+                
+                if !emitDigest {
+                    try outputConsumer.consume(linkableElementSummaries: linkSummaries)
+                }
+            } catch {
+                recordProblem(from: error, in: &conversionProblems, withIdentifier: "link-resolver")
             }
         }
         
