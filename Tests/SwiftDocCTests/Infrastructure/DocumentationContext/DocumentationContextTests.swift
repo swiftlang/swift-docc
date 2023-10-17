@@ -3958,6 +3958,24 @@ let expected = """
         XCTAssertEqual(constraint.rightTypeName, "Hashable")
     }
 
+    func testDiagnosticLocations() throws {
+        // The ObjCFrameworkWithInvalidLink.docc test bundle contains symbol
+        // graphs for both Obj-C and Swift, built after setting:
+        //   "Build Multi-Language Documentation for Objective-C Only Targets" = true.
+        // One doc comment in the Obj-C header file contains an invalid doc
+        // link on line 24, columns 56-63:
+        // "Log a hello world message. This line contains an ``invalid`` link."
+        let (_, _, context) = try testBundleAndContext(copying: "ObjCFrameworkWithInvalidLink")
+        let problems = context.problems
+        XCTAssertEqual(1, problems.count)
+        let problem = try XCTUnwrap(problems.first)
+        let basename = try XCTUnwrap(problem.diagnostic.source?.lastPathComponent)
+        XCTAssertEqual("HelloWorldFramework.h", basename)
+        let start = Markdown.SourceLocation(line: 24, column: 56, source: nil)
+        let end = Markdown.SourceLocation(line: 24, column: 63, source: nil)
+        let range = try XCTUnwrap(problem.diagnostic.range)
+        XCTAssertEqual(start..<end, range)
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
