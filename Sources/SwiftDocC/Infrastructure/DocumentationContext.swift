@@ -2440,10 +2440,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 
                 assert(
                     child.semantic is Symbol,
-                    "The only nodes in the topic graph here should be symbols."
+                    "The only nodes in the graph here should be symbols."
                 )
                 
-                guard let overloadName = getOverloadUnqiueName(for: child) else {
+                guard let overloadName = uniqueName(forOverloadedSymbol: child) else {
                     // Symbol can't be overloaded
                     continue
                 }
@@ -2483,8 +2483,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Returns a name for an overload.
-    /// If two symbols have the same name, they are overloads of eachother.
-    private func getOverloadUnqiueName(for node: DocumentationNode) -> String? {
+    /// If two symbols have the same name, they are overloads of each other.
+    private func uniqueName(forOverloadedSymbol node: DocumentationNode) -> String? {
         
         // Types of symbols that we will collapse overloads for.
         let overloadableTypes: [DocumentationNode.Kind] = [.instanceMethod, .typeMethod, .function,
