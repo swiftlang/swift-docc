@@ -3909,6 +3909,55 @@ let expected = """
         )
     }
 
+    func testAddingProtocolExtensionMemberConstraint() throws
+    {
+
+        // This fixture contains a protocol extension:
+        // extension Swift.Collection {
+        //   public func fixture() -> String {
+        //     return "collection"
+        //   }
+        // }
+        let (_, _, context) = try testBundleAndContext(copying: "ModuleWithProtocolExtensions")
+
+        // The member function of the protocol extension
+        // should have a constraint: Self is Collection
+        var memberIdentifier = "s:Sl28ModuleWithProtocolExtensionsE7fixtureSSyF"
+        var memberRef = try XCTUnwrap(context.symbolIndex[memberIdentifier])
+        var memberNode = try XCTUnwrap(context.documentationCache[memberRef])
+        var memberSymbol = memberNode.semantic as! Symbol
+        var constraints = try XCTUnwrap(memberSymbol.constraints)
+        XCTAssertEqual(1, constraints.count)
+        var constraint = constraints.first!
+        XCTAssertEqual(constraint.kind, .sameType)
+        XCTAssertEqual(constraint.leftTypeName, "Self")
+        XCTAssertEqual(constraint.rightTypeName, "Collection")
+
+        // This fixture also contains a structure extension:
+        // extension Set.Iterator {
+        //     public func fixture() -> String {
+        //         return "set iterator"
+        //     }
+        // }
+
+        // The member function of the structure extension
+        // should NOT have a constraint, since it wouldn't
+        // make sense for a structure or for any types other
+        // than protocols: Self is Set.Iterator
+        memberIdentifier = "s:Sh8IteratorV28ModuleWithProtocolExtensionsE7fixtureSSyF"
+        memberRef = try XCTUnwrap(context.symbolIndex[memberIdentifier])
+        memberNode = try XCTUnwrap(context.documentationCache[memberRef])
+        memberSymbol = memberNode.semantic as! Symbol
+        constraints = try XCTUnwrap(memberSymbol.constraints)
+        // Contains existing constraint Element conforms to Hashable,
+        // but did not receive a new constraint Self Is Iterator.
+        XCTAssertEqual(1, constraints.count)
+        constraint = constraints.first!
+        XCTAssertEqual(constraint.kind, .conformance)
+        XCTAssertEqual(constraint.leftTypeName, "Element")
+        XCTAssertEqual(constraint.rightTypeName, "Hashable")
+    }
+
     func testDiagnosticLocations() throws {
         // The ObjCFrameworkWithInvalidLink.docc test bundle contains symbol
         // graphs for both Obj-C and Swift, built after setting:

@@ -239,10 +239,6 @@ public struct DocumentationNode {
         
         self.availableSourceLanguages = reference.sourceLanguages
         
-        let extendedModule: String? = unifiedSymbol.mixins
-            .first(where: { $0.0.platform == platformName })?.value
-            .getValueIfPresent(for: SymbolGraph.Symbol.Swift.Extension.self)?.extendedModule
-        
         let semanticSymbol = Symbol(
             kindVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.kind,
@@ -272,7 +268,6 @@ public struct DocumentationNode {
                 defaultVariantValue: platformName.map(PlatformName.init(operatingSystemName:))
             ),
             moduleReference: moduleReference,
-            extendedModule: extendedModule,
             externalIDVariants: DocumentationDataVariants(defaultVariantValue: unifiedSymbol.uniqueIdentifier),
             accessLevelVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.accessLevel,
