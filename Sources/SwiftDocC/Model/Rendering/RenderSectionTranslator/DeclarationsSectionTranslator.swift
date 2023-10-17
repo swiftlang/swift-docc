@@ -39,7 +39,6 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 let renderedTokens = renderDeclarationTokens(fragments: declaration.declarationFragments, renderNodeTranslator: &renderNodeTranslator)
                 
                 // If this symbol has overloads, render their declarations as well.
-                // TODO: Handle objc overloads?
                 let otherDeclarationsVariant = symbol.otherDeclarationsVariants[trait]
                 let otherDeclarations = otherDeclarationsVariant?.map { overload -> DeclarationRenderSection.OtherDeclaration in
                     return DeclarationRenderSection.OtherDeclaration(

@@ -164,7 +164,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
     }
     
     /// A declaration for a different symbol that is connected to this one, e.g. an overload.
-    public struct OtherDeclaration: Codable, Equatable, Hashable {
+    public struct OtherDeclaration: Codable, Hashable {
         /// The overloaded symbol's declaration tokens.
         public let tokens: [Token]
         
