@@ -30,8 +30,10 @@ class MarkupReferenceResolverTests: XCTestCase {
 
     func testDuplicatedDiagnosticForExtensionFile() throws {
         let (_, context) = try testBundleAndContext(named: "ExtensionArticleBundle")
-        // Before #733's change, there will be 2 duplicated problems.
-        // And we'll trigger a index out of range crash in DefaultDiagnosticConsoleFormatter
+        // Before #733, symbols with documentation extension files emitted duplicated problems:
+        // - one with a source location in the in-source documentation comment
+        // - one with a source location in the documentation extension file.
+        // The source range was only valid for one of these diagnostics. This resulted in an index out of range crash in DefaultDiagnosticConsoleFormatter when displaying line that caused the problem to the user
         XCTAssertEqual(1, context.problems.count)
     }
 }
