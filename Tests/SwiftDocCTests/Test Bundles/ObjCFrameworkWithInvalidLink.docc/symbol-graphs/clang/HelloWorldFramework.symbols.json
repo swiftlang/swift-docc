@@ -1,0 +1,561 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple clang version 15.0.0 (clang-1500.0.105.2)"
+  },
+  "module": {
+    "name": "HelloWorldFramework",
+    "platform": {
+      "architecture": "arm64",
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 11,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "macosx"
+      },
+      "vendor": "apple"
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "c:objc(cs)Hello(im)log:prefixWith:",
+      "target": "c:objc(cs)Hello",
+      "targetFallback": "Hello"
+    },
+    {
+      "kind": "inheritsFrom",
+      "source": "c:objc(cs)Hello",
+      "target": "c:objc(cs)NSObject",
+      "targetFallback": "NSObject"
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "extern"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:d",
+          "spelling": "double"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "HelloWorldFrameworkVersionNumber"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 52,
+                "line": 10
+              },
+              "start": {
+                "character": 5,
+                "line": 10
+              }
+            },
+            "text": "Project version number for HelloWorldFramework."
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c",
+        "precise": "c:@HelloWorldFrameworkVersionNumber"
+      },
+      "kind": {
+        "displayName": "Global Variable",
+        "identifier": "objective-c.var"
+      },
+      "location": {
+        "position": {
+          "character": 26,
+          "line": 11
+        },
+        "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "HelloWorldFrameworkVersionNumber"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "HelloWorldFrameworkVersionNumber"
+          }
+        ],
+        "title": "HelloWorldFrameworkVersionNumber"
+      },
+      "pathComponents": [
+        "HelloWorldFrameworkVersionNumber"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "extern"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:c",
+          "spelling": "unsigned char"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "HelloWorldFrameworkVersionString"
+        },
+        {
+          "kind": "text",
+          "spelling": "[]"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 52,
+                "line": 13
+              },
+              "start": {
+                "character": 5,
+                "line": 13
+              }
+            },
+            "text": "Project version string for HelloWorldFramework."
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c",
+        "precise": "c:@HelloWorldFrameworkVersionString"
+      },
+      "kind": {
+        "displayName": "Global Variable",
+        "identifier": "objective-c.var"
+      },
+      "location": {
+        "position": {
+          "character": 39,
+          "line": 14
+        },
+        "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "HelloWorldFrameworkVersionString"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "HelloWorldFrameworkVersionString"
+          }
+        ],
+        "title": "HelloWorldFrameworkVersionString"
+      },
+      "pathComponents": [
+        "HelloWorldFrameworkVersionString"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "@interface"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Hello"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:objc(cs)NSObject",
+          "spelling": "NSObject"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 40,
+                "line": 21
+              },
+              "start": {
+                "character": 5,
+                "line": 21
+              }
+            },
+            "text": "Manage hello world related logging."
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c",
+        "precise": "c:objc(cs)Hello"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "objective-c.class"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 22
+        },
+        "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Hello"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "Hello"
+          }
+        ],
+        "title": "Hello"
+      },
+      "pathComponents": [
+        "Hello"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "- ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:v",
+          "spelling": "void"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "log:"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:objc(cs)NSString",
+          "spelling": "NSString"
+        },
+        {
+          "kind": "text",
+          "spelling": " *) "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "message"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "prefixWith:"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:objc(cs)NSString",
+          "spelling": "NSString"
+        },
+        {
+          "kind": "text",
+          "spelling": " *) "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "prefix"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 71,
+                "line": 24
+              },
+              "start": {
+                "character": 5,
+                "line": 24
+              }
+            },
+            "text": "Log a hello world message. This line contains an ``invalid`` link."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 4,
+                "line": 25
+              },
+              "start": {
+                "character": 4,
+                "line": 25
+              }
+            },
+            "text": ""
+          },
+          {
+            "range": {
+              "end": {
+                "character": 18,
+                "line": 26
+              },
+              "start": {
+                "character": 5,
+                "line": 26
+              }
+            },
+            "text": "- Parameters:"
+          },
+          {
+            "range": {
+              "end": {
+                "character": 31,
+                "line": 27
+              },
+              "start": {
+                "character": 5,
+                "line": 27
+              }
+            },
+            "text": "  - log: The string to log"
+          },
+          {
+            "range": {
+              "end": {
+                "character": 52,
+                "line": 28
+              },
+              "start": {
+                "character": 5,
+                "line": 28
+              }
+            },
+            "text": "  - prefixWith: Prefix the log with this string"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "text",
+                "spelling": "("
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:objc(cs)NSString",
+                "spelling": "NSString"
+              },
+              {
+                "kind": "text",
+                "spelling": " *) "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "message"
+              }
+            ],
+            "name": "message"
+          },
+          {
+            "declarationFragments": [
+              {
+                "kind": "text",
+                "spelling": "("
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:objc(cs)NSString",
+                "spelling": "NSString"
+              },
+              {
+                "kind": "text",
+                "spelling": " *) "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "prefix"
+              }
+            ],
+            "name": "prefix"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c",
+        "precise": "c:objc(cs)Hello(im)log:prefixWith:"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c.method"
+      },
+      "location": {
+        "position": {
+          "character": 1,
+          "line": 29
+        },
+        "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "log:prefixWith:"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "- "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "log:prefixWith:"
+          }
+        ],
+        "title": "log:prefixWith:"
+      },
+      "pathComponents": [
+        "Hello",
+        "log:prefixWith:"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "#define"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "hello_h"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "objective-c",
+        "precise": "c:HelloWorldFramework.h@551@macro@hello_h"
+      },
+      "kind": {
+        "displayName": "Macro",
+        "identifier": "objective-c.macro"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 19
+        },
+        "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "hello_h"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "hello_h"
+          }
+        ],
+        "title": "hello_h"
+      },
+      "pathComponents": [
+        "hello_h"
+      ]
+    }
+  ]
+}
