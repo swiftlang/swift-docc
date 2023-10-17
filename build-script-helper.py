@@ -171,6 +171,8 @@ def get_swiftpm_options(action, args):
       # Library rpath for swift, dispatch, Foundation, etc. when installing
       '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/' + build_os,
     ]
+    if action == 'install':
+      swiftpm_args += ['--disable-local-rpath']
   
   cross_compile_hosts = args.cross_compile_hosts
   if cross_compile_hosts:
