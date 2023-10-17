@@ -82,7 +82,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         case .failure(let unresolved, let error):
             if let rangeLowerBoundSource = range?.lowerBound.source,
                let rangeUpperBoundSource = range?.upperBound.source,
-               let source,
+               let source = source,
                source != rangeLowerBoundSource || source != rangeUpperBoundSource {
                 return nil
             }
