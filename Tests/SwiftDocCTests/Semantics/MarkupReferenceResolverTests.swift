@@ -35,5 +35,6 @@ class MarkupReferenceResolverTests: XCTestCase {
         // - one with a source location in the documentation extension file.
         // The source range was only valid for one of these diagnostics. This resulted in an index out of range crash in DefaultDiagnosticConsoleFormatter when displaying line that caused the problem to the user
         XCTAssertEqual(1, context.problems.count)
+        XCTAssertEqual("Server.md", context.problems.first?.diagnostic.source?.lastPathComponent)
     }
 }
