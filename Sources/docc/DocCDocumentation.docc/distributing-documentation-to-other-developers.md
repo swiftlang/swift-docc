@@ -39,7 +39,7 @@ docc convert MyNewPackage.docc \
   --output-dir MyNewPackage.doccarchive
 ```
 
-#### Include links to your project's sources
+#### Include Links to your Project's Sources
 
 When publishing documentation to an audience that has access to your project's
 sources, e.g., for an open-source project hosted on GitHub, consider configuring
@@ -113,7 +113,7 @@ documentation might resemble the following:
 https://www.example.com/documentation/MyNewPackage/MyNewProtocol
 ```
 
-#### Host a documentation archive with a file server
+#### Host a Documentation Archive with a File Server
 
 You can host documentation archives you create with DocC from the Swift 5.7 
 toolchain and later using a regular file server. By default, the server hosts 
@@ -145,7 +145,7 @@ the `DOCC_HOSTING_BASE_PATH` build setting when building documentation in Xcode.
 
 [plugin-docs]: https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
 
-#### Host a documentation archive using custom routing
+#### Host a Documentation Archive Using Custom Routing
 
 A file server is the recommended solution to host your documentation. But, if 
 you need more control over how the server hosts your content, you can configure

@@ -1,0 +1,43 @@
+# Adding Images to Your Content
+
+Elevate your content's visual appeal by adding images.
+
+## Overview
+
+DocC extends Markdown's image support so you can provide appearance and 
+display scale-aware versions of an image. You use specific components to create image filenames, and DocC  uses the most appropriate version of the image when displaying your documentation.
+
+![An image of a filename that's split into four labeled sections to highlight the individual components. From left to right, the components are the image name, the appearance mode, the display scale, and the file extension.](docc-image-filename)
+
+| Component | Description |
+| --- | --- |
+| Image name | **Required**. Identifies the image within the documentation catalog. The name must be unique across all images in the catalog, even if you store them in separate folders. |
+| Appearance | **Optional**. Identifies the appearance mode in which DocC uses the image. Add `~dark` directly after the image name to identify the image as a dark mode variant. |
+| Display scale | **Optional**. Identifies the display scale at which DocC uses the image. Possible values are `@1x`, `@2x`, and `@3x`. When specifying a display scale, add it directly before the file extension. |
+| File extension | **Required**. Identifies the type of image, such as .png or .jpeg. |
+
+For example, the following are all valid DocC image filenames:
+
+- term `sloth.png`: An image that's independent of all appearance modes and display scales.
+- term `sloth~dark.png`: An image that's specific to dark mode, but is display-scale independent.
+- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2x display scale.
+
+> Important: You must store images you include in your documentation in a 
+documentation catalog. For more information, see <doc:documenting-a-swift-framework-or-package>.
+
+To add an image, use an exclamation mark (`!`), a set of square brackets 
+(`[]`), and a set of parentheses (`()`).
+
+Add a description of what the image shows between the square brackets. Screen 
+readers read this text aloud. Provide enough detail to 
+allow people with impaired vision to understand what the image shows. 
+
+Within the parentheses, include only the image name. Omit the appearance, 
+display scale, and file extension components. Don't include the path to the 
+image, even if you store the image in a folder in the documentation catalog.
+
+```markdown
+![A sloth hanging off a tree.](sloth)
+```
+
+<!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
