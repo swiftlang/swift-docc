@@ -480,7 +480,6 @@ struct ReferenceResolver: SemanticVisitor {
             roleHeadingVariants: symbol.roleHeadingVariants,
             platformNameVariants: symbol.platformNameVariants,
             moduleReference: symbol.moduleReference,
-            extendedModule: symbol.extendedModule,
             requiredVariants: symbol.isRequiredVariants,
             externalIDVariants: symbol.externalIDVariants,
             accessLevelVariants: symbol.accessLevelVariants,
