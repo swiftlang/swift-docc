@@ -36,16 +36,21 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     return lhsValue.rawValue < rhsValue.rawValue
                 }
                 
-                let renderedTokens = renderDeclarationTokens(fragments: declaration.declarationFragments, renderNodeTranslator: &renderNodeTranslator)
-                
+                let renderedTokens = renderDeclarationTokens(fragments: declaration.declarationFragments, 
+                                                             renderNodeTranslator: &renderNodeTranslator)
+
                 // If this symbol has overloads, render their declarations as well.
-                let otherDeclarationsVariant = symbol.otherDeclarationsVariants[trait]
-                let otherDeclarations = otherDeclarationsVariant?.map { overload -> DeclarationRenderSection.OtherDeclaration in
+                let overloadsVariant = symbol.overloadsVariants[trait]
+                let otherDeclarations = overloadsVariant?.compactMap { overloadReference -> DeclarationRenderSection.OtherDeclaration? in
+                    guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol,
+                          let declarationFragments = overload.declarationVariants[trait]?[platforms]?.declarationFragments else {
+                        return nil
+                    }
+                    let declarationTokens = renderDeclarationTokens(fragments: declarationFragments,
+                                                                    renderNodeTranslator: &renderNodeTranslator)
                     return DeclarationRenderSection.OtherDeclaration(
-                            tokens: renderDeclarationTokens(fragments: overload.declaration[platforms]?.declarationFragments ?? [],
-                                                            renderNodeTranslator: &renderNodeTranslator),
-                            identifier: overload.identifier
-                        )
+                            tokens: declarationTokens,
+                            identifier: overloadReference.absoluteString)
                 }
                 
                 declarations.append(

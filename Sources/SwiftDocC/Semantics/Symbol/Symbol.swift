@@ -227,17 +227,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
     
-    /// A declaration for a different symbol that is connected to this one, e.g. an overload.
-    struct OtherDeclaration {
-        /// The overloaded symbol's declaration fragments.
-        public let declaration: [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]
-        
-        /// The overloaded symbol's identifier.
-        public let identifier: ResolvedTopicReference
-    }
-    
     /// References to other symbols that overload this one.
-    var otherDeclarationsVariants: DocumentationDataVariants<[OtherDeclaration]>
+    var overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]>
 
     /// Creates a new symbol with the given data.
     init(
@@ -273,7 +264,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
         automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: []),
-        otherDeclarationsVariants: DocumentationDataVariants<[OtherDeclaration]> = .init(defaultVariantValue: [])
+        overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]> = .init(defaultVariantValue: [])
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
@@ -337,7 +328,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
         self.extendedModule = extendedModule
-        self.otherDeclarationsVariants = otherDeclarationsVariants
+        self.overloadsVariants = overloadsVariants
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
@@ -583,9 +574,9 @@ extension Symbol {
         set { automaticTaskGroupsVariants.firstValue = newValue }
     }
     
-    /// Any automatically created task groups of the first variant of the symbol.
-    var otherDeclarations: [OtherDeclaration] {
-        get { otherDeclarationsVariants.firstValue! }
-        set { otherDeclarationsVariants.firstValue = newValue }
+    /// References to other symbols that overload this one.
+    var overloads: [ResolvedTopicReference] {
+        get { overloadsVariants.firstValue! }
+        set { overloadsVariants.firstValue = newValue }
     }
 }
