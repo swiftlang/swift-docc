@@ -1,6 +1,6 @@
-# API Documentation
+# API and Conceptual Documentation
 
-Teach developers your Swift APIs through reference documentation you create from comments in source code and documentation extension files, or by crafting comprehensive articles that explain specific technologies or topics.
+Teach developers your Swift APIs through reference documentation you create from comments in source code and documentation extension files, or craft comprehensive articles that explain specific technologies, topics or conceptual guidelines.
 
 ## Overview
 
