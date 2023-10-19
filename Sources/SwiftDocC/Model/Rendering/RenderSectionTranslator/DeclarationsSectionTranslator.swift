@@ -52,17 +52,20 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     }
                     return lhsValue.rawValue < rhsValue.rawValue
                 }
-                
+
                 // If this symbol has overloads, render their declarations as well.
-                let otherDeclarationsVariant = symbol.otherDeclarationsVariants[trait]
-                let otherDeclarations = otherDeclarationsVariant?.map { overload -> DeclarationRenderSection.OtherDeclaration in
-                    let declarationFragments = overload.declaration[platforms]?.declarationFragments ?? []
+                let overloadsVariant = symbol.overloadsVariants[trait]
+                let otherDeclarations = overloadsVariant?.compactMap { overloadReference -> DeclarationRenderSection.OtherDeclaration? in
+                    guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol,
+                          let declarationFragments = overload.declarationVariants[trait]?[platforms]?.declarationFragments else {
+                        return nil
+                    }
+                    let declarationTokens = declarationFragments.map(translateFragment)
                     return DeclarationRenderSection.OtherDeclaration(
-                            tokens: declarationFragments.map(translateFragment),
-                            identifier: overload.identifier
-                        )
+                            tokens: declarationTokens,
+                            identifier: overloadReference.absoluteString)
                 }
-                
+
                 declarations.append(
                     DeclarationRenderSection(
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],

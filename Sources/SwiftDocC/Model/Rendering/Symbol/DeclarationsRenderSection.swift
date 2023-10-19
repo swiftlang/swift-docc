@@ -163,13 +163,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         public let tokens: [Token]
         
         /// The overloaded symbol's identifier.
-        public let identifier: ResolvedTopicReference
-        
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: DeclarationRenderSection.OtherDeclaration.CodingKeys.self)
-            try container.encode(self.tokens, forKey: DeclarationRenderSection.OtherDeclaration.CodingKeys.tokens)
-            try container.encode(self.identifier.absoluteString, forKey: DeclarationRenderSection.OtherDeclaration.CodingKeys.identifier)
-        }
+        public let identifier: String
     }
     
     /// The declarations for this symbol's overloads.

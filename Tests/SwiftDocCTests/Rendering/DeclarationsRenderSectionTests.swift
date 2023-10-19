@@ -40,6 +40,17 @@ class DeclarationsRenderSectionTests: XCTestCase {
                                 "text": "",
                                 "kind": "\(string)"
                             }
+                        ],
+                        "otherDeclarations": [
+                            {
+                                "tokens": [
+                                    {
+                                        "text": "",
+                                        "kind": "\(string)"
+                                    }
+                                ],
+                                "identifier": "identifier"
+                            }
                         ]
                     }
                 ]
