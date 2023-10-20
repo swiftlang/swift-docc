@@ -1584,12 +1584,43 @@ class ConvertActionTests: XCTestCase {
         }
     }
 
+    /// An empty implementation of `ConvertOutputConsumer` that purposefully does nothing except
+    /// to pass the number of documentation coverage info structs received to the given handler
+    struct TestDocumentationCoverageConsumer: ConvertOutputConsumer {
+
+        let coverageConsumeHandler: (Int) -> Void
+
+        init(coverageConsumeHandler: @escaping (Int) -> Void) {
+            self.coverageConsumeHandler = coverageConsumeHandler
+        }
+
+        func consume(renderNode: RenderNode) throws { }
+        func consume(problems: [Problem]) throws { }
+        func consume(assetsInBundle bundle: DocumentationBundle) throws {}
+        func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
+        func consume(indexingRecords: [IndexingRecord]) throws {}
+        func consume(assets: [RenderReferenceType: [RenderReference]]) throws {}
+        func consume(benchmarks: Benchmark) throws {}
+
+        // Call the handler with the number of coverage items consumed here
+        func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {
+            coverageConsumeHandler(documentationCoverageInfo.count)
+        }
+    }
+
     func testMetadataIsOnlyWrittenToOutputFolderWhenDocumentationCoverage() throws {
 
-        // An empty documentation bundle
+        // An empty documentation bundle, except for a single symbol graph file
+        // containing 8 symbols.
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
         ])
+
+        // Count the number of coverage info structs consumed by each test below,
+        // using TestDocumentationCoverageConsumer and this handler.
+        var coverageInfoCount = 0
+        let coverageInfoHandler = { count in coverageInfoCount += count }
 
         // Check that they're nothing is written for `.noCoverage`
         do {
@@ -1612,6 +1643,10 @@ class ConvertActionTests: XCTestCase {
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
+
+            // Rerun the convert and test no coverage info structs were consumed
+            let _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
+            XCTAssertEqual(coverageInfoCount, 0)
         }
 
         // Check that JSON is written for `.brief`
@@ -1635,6 +1670,11 @@ class ConvertActionTests: XCTestCase {
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
+
+            // Rerun the convert and test one coverage info structs was consumed for each symbol page (8)
+            coverageInfoCount = 0
+            let _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
+            XCTAssertEqual(coverageInfoCount, 8)
         }
 
         // Check that JSON is written for `.detailed`
@@ -1658,6 +1698,11 @@ class ConvertActionTests: XCTestCase {
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
+
+            // Rerun the convert and test one coverage info structs was consumed for each symbol page (8)
+            coverageInfoCount = 0
+            let _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
+            XCTAssertEqual(coverageInfoCount, 8)
         }
     }
     
