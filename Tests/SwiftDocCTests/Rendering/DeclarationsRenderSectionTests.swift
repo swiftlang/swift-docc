@@ -63,7 +63,8 @@ class DeclarationsRenderSectionTests: XCTestCase {
                     DeclarationRenderSection(
                         languages: nil,
                         platforms: [],
-                        tokens: [.init(text: "", kind: token)]
+                        tokens: [.init(text: "", kind: token)],
+                        otherDeclarations: [DeclarationRenderSection.OtherDeclaration(tokens: [.init(text: "", kind: token)], identifier: "identifier")]
                     ),
                 ])
             )
@@ -81,6 +82,17 @@ class DeclarationsRenderSectionTests: XCTestCase {
                         {
                             "text": "",
                             "kind": "label"
+                        }
+                    ],
+                    "otherDeclarations": [
+                        {
+                            "tokens": [
+                                {
+                                    "text": "",
+                                    "kind": "label"
+                                }
+                            ],
+                            "identifier": "identifier"
                         }
                     ]
                 }

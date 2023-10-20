@@ -2379,21 +2379,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    /// Returns a name for an overload.
-    /// If two symbols have the same name, they are overloads of each other.
-    private func uniqueName(forOverloadedSymbol node: DocumentationNode) -> String? {
-        
-        // Types of symbols that we will collapse overloads for.
-        let overloadableTypes: [DocumentationNode.Kind] = [.instanceMethod, .typeMethod, .function,
-                                                           .macro, .operator, .initializer, .typeSubscript,
-                                                           .instanceSubscript]
-        guard overloadableTypes.contains(node.kind) else {
-            return nil
-        }
-        
-        return "\(node.kind.id)-\(node.name)"
-    }
-    
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
 

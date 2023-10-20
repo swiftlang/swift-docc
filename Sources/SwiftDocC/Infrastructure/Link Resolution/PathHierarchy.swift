@@ -210,10 +210,10 @@ struct PathHierarchy {
         
         var lookup = [ResolvedIdentifier: Node]()
         func descend(_ node: Node) {
-//            assert(
-//                node.identifier == nil,
-//                "Already encountered \(node.name). This is an indication that a symbol is the source of more than one memberOf relationship."
-//            )
+            assert(
+                node.identifier == nil,
+                "Already encountered \(node.name). This is an indication that a symbol is the source of more than one memberOf relationship."
+            )
             if node.symbol != nil {
                 node.identifier = ResolvedIdentifier()
                 lookup[node.identifier] = node
@@ -242,10 +242,10 @@ struct PathHierarchy {
         self.tutorialContainer = newNode(bundleName)
         self.tutorialOverviewContainer = newNode("tutorials")
         
-//        assert(
-//            lookup.allSatisfy({ $0.key == $0.value.identifier }),
-//            "Every node lookup should match a node with that identifier."
-//        )
+        assert(
+            lookup.allSatisfy({ $0.key == $0.value.identifier }),
+            "Every node lookup should match a node with that identifier."
+        )
         
         self.modules = roots
         self.lookup = lookup
