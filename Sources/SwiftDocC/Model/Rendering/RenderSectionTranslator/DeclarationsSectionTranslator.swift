@@ -58,7 +58,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
                         platforms: platformNames,
                         tokens: renderedTokens,
-                        otherDeclarations: otherDeclarations ?? []
+                        otherDeclarations: otherDeclarations ?? [],
+                        indexInOtherDeclarations: symbol.indexInOverloadsVariants[trait]
                     )
                 )
             }

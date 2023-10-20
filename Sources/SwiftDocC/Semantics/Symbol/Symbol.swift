@@ -229,6 +229,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// References to other symbols that overload this one.
     var overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]>
+    
+    /// If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
+    var indexInOverloadsVariants: DocumentationDataVariants<Int>
 
     /// Creates a new symbol with the given data.
     init(
@@ -264,7 +267,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
         automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: []),
-        overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]> = .init(defaultVariantValue: [])
+        overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]> = .init(defaultVariantValue: []),
+        indexInOverloadsVariants: DocumentationDataVariants<Int> = .init(swiftVariant: nil)
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
@@ -329,6 +333,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
         self.extendedModule = extendedModule
         self.overloadsVariants = overloadsVariants
+        self.indexInOverloadsVariants = indexInOverloadsVariants
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {

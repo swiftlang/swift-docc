@@ -2375,6 +2375,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 var otherOverloadSymbols = overloadedSymbolReferences
                 otherOverloadSymbols.remove(at: index)
                 symbol.overloadsVariants = .init(swiftVariant: otherOverloadSymbols)
+                symbol.indexInOverloadsVariants = .init(swiftVariant: index)
             }
         }
     }
