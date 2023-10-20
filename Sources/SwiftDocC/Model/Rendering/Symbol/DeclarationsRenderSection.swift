@@ -169,11 +169,15 @@ public struct DeclarationRenderSection: Codable, Equatable {
     /// The declarations for this symbol's overloads.
     public let otherDeclarations: [OtherDeclaration]
     
+    /// If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
+    public let indexInOtherDeclarations: Int?
+    
     public enum CodingKeys: CodingKey {
         case tokens
         case platforms
         case languages
         case otherDeclarations
+        case indexInOtherDeclarations
     }
     
     /// Creates a new declaration section.
@@ -181,11 +185,13 @@ public struct DeclarationRenderSection: Codable, Equatable {
     ///   - languages: The source languages to which this declaration applies.
     ///   - platforms: The platforms to which this declaration applies.
     ///   - tokens: The list of declaration tokens.
-    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: [OtherDeclaration] = []) {
+    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: [OtherDeclaration] = [],
+                indexInOtherDeclarations: Int? = nil) {
         self.languages = languages
         self.platforms = platforms
         self.tokens = tokens
         self.otherDeclarations = otherDeclarations
+        self.indexInOtherDeclarations = indexInOtherDeclarations
     }
     
     public init(from decoder: Decoder) throws {
@@ -194,6 +200,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         platforms = try container.decode([PlatformName?].self, forKey: .platforms)
         languages = try container.decodeIfPresent([String].self, forKey: .languages)
         otherDeclarations = try container.decodeIfPresent([OtherDeclaration].self, forKey: .otherDeclarations) ?? []
+        indexInOtherDeclarations = try container.decodeIfPresent(Int.self, forKey: .indexInOtherDeclarations)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -202,6 +209,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         try container.encode(self.platforms, forKey: DeclarationRenderSection.CodingKeys.platforms)
         try container.encode(self.languages, forKey: DeclarationRenderSection.CodingKeys.languages)
         try container.encodeIfNotEmpty(self.otherDeclarations, forKey: DeclarationRenderSection.CodingKeys.otherDeclarations)
+        try container.encodeIfPresent(self.indexInOtherDeclarations, forKey: DeclarationRenderSection.CodingKeys.indexInOtherDeclarations)
     }
 }
 
