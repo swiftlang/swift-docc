@@ -26,6 +26,8 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 
 - <doc:adding-supplemental-content-to-a-documentation-catalog>
 
+- <doc:link-to-symbols-and-other-content>
+
 ### Structure and Formatting
 
 - <doc:formatting-your-documentation-content>
@@ -33,8 +35,6 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 - <doc:other-formatting-options>
 
 - <doc:adding-images>
-
-- <doc:link-to-symbols-and-other-content>
 
 - <doc:adding-structure-to-your-documentation-pages>
 
