@@ -14,11 +14,12 @@ import XCTest
 @testable import SwiftDocC
 
 class PageKindTests: XCTestCase {
-    func testPageKindSampleCode() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+    
+    private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) throws -> RenderNode {
+        let (bundle, context) = try testBundleAndContext(named: bundleName)
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/MyLocalSample",
+            path: resolvedTopicPath,
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
@@ -28,70 +29,43 @@ class PageKindTests: XCTestCase {
             identifier: reference,
             source: nil
         )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-
+        return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+    }
+    
+    func testPageKindSampleCode() throws {
+        let renderNode = try generateRenderNodeFromBundle(
+            bundleName: "SampleBundle",
+            resolvedTopicPath: "/documentation/SampleBundle/MyLocalSample"
+        )
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.sampleCode.rawValue)
         XCTAssertEqual(renderNode.metadata.roleHeading, Metadata.PageKind.Kind.sampleCode.titleHeading)
     }
 
     func testPageKindArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/MySample",
-            sourceLanguage: .swift
+        let renderNode = try generateRenderNodeFromBundle(
+            bundleName: "SampleBundle",
+            resolvedTopicPath: "/documentation/SampleBundle/MySample"
         )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.article.rawValue)
         XCTAssertEqual(renderNode.metadata.roleHeading, Metadata.PageKind.Kind.article.titleHeading)
     }
 
     func testPageKindDefault() throws {
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/AvailabilityBundle/ComplexAvailable",
-            sourceLanguage: .swift
+        let renderNode = try generateRenderNodeFromBundle(
+            bundleName: "AvailabilityBundle",
+            resolvedTopicPath: "/documentation/AvailabilityBundle/ComplexAvailable"
         )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-
         XCTAssertEqual(renderNode.metadata.role, "article")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
     }
 
     func testPageKindReference() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/SomeSample",
-            sourceLanguage: .swift
+        let renderNode = try generateRenderNodeFromBundle(
+            bundleName: "SampleBundle",
+            resolvedTopicPath: "/documentation/SomeSample"
         )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-
         let sampleReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.sample/documentation/SampleBundle/MyLocalSample"] as? TopicRenderReference)
-
         XCTAssertEqual(sampleReference.role, RenderMetadata.Role.sampleCode.rawValue)
     }
 
@@ -122,40 +96,20 @@ class PageKindTests: XCTestCase {
     // Verify that we assign the `Collection` role to the root article of a
     // documentation catalog that contains only one article.
     func testRoleForSingleArticleCatalog() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithSingleArticle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/Article",
-            sourceLanguage: .swift
+        let renderNode = try generateRenderNodeFromBundle(
+            bundleName: "BundleWithSingleArticle",
+            resolvedTopicPath: "/documentation/Article"
         )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.collection.rawValue)
     }
     
     // Verify we assign the `Collection` role to the root article of an article-only
     // documentation catalog that doesn't include manual curation
     func testRoleForArticleOnlyCatalogWithNoCuration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithArticlesNoCurated")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/Article",
-            sourceLanguage: .swift
+        let renderNode = try generateRenderNodeFromBundle(
+            bundleName: "BundleWithArticlesNoCurated",
+            resolvedTopicPath: "/documentation/Article"
         )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.collection.rawValue)
     }
 }
