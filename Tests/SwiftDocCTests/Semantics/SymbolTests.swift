@@ -27,6 +27,7 @@ class SymbolTests: XCTestCase {
                 """,
             articleContent: nil
         )
+        
         XCTAssert(problems.isEmpty)
         
         XCTAssertEqual(withoutArticle.abstract?.format(), "A cool API to call.")
@@ -1111,7 +1112,95 @@ class SymbolTests: XCTestCase {
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
         XCTAssertEqual(engine.problems.count, 0)
     }
-    
+
+    func testAddingConstraintsToSymbol() throws {
+        let (withoutArticle, _) = try makeDocumentationNodeSymbol(
+            docComment: """
+                A cool API to call.
+
+                - Parameters:
+                  - name: A parameter
+                - Returns: Return value
+                """,
+            articleContent: nil
+        )
+
+        // The original symbol has 3 generic constraints:
+        // {
+        //   "extendedModule": "MyKit",
+        //   "constraints": [
+        //     {
+        //       "kind": "sameType",
+        //       "lhs": "Label",
+        //       "rhs": "Text"
+        //     },
+        //     {
+        //       "kind": "superclass",
+        //       "lhs": "Observer",
+        //       "rhs": "NSObject"
+        //     },
+        //     {
+        //       "kind": "conformance",
+        //       "lhs": "S",
+        //       "rhs": "StringProtocol"
+        //     }
+        //   ]
+        // }
+        XCTAssertEqual("MyKit", withoutArticle.extendedModuleVariants[DocumentationDataVariantsTrait.swift])
+        var constraints = try XCTUnwrap(withoutArticle.constraints)
+        XCTAssertEqual(3, constraints.count)
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Label", rightTypeName: "Text"), constraints[0])
+        XCTAssertEqual(.init(kind: .superclass, leftTypeName: "Observer", rightTypeName: "NSObject"), constraints[1])
+        XCTAssertEqual(.init(kind: .conformance, leftTypeName: "S", rightTypeName: "StringProtocol"), constraints[2])
+
+        // Declaration fragments are also stored as a mixins variant for this fixture.
+        let trait = DocumentationDataVariantsTrait.swift
+        let swiftDeclarationVariants = try XCTUnwrap(withoutArticle.declarationVariants[trait])
+        XCTAssertEqual(1, swiftDeclarationVariants.count)
+        let fragments = swiftDeclarationVariants.first!.value
+        XCTAssertEqual(9, fragments.declarationFragments.count)
+
+        // Add a new generic constraint for Swift
+        let newConstraint = SymbolGraph.Symbol.Swift.GenericConstraint(
+            kind: .sameType,
+            leftTypeName: "Self",
+            rightTypeName: "MutableCollection"
+        )
+        withoutArticle.addSwiftExtensionConstraint(extendedModule: "MyKit", constraint: newConstraint)
+
+        // Check there are now 4 constraints
+        constraints = try XCTUnwrap(withoutArticle.constraints)
+        XCTAssertEqual(4, constraints.count)
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Label", rightTypeName: "Text"), constraints[0])
+        XCTAssertEqual(.init(kind: .superclass, leftTypeName: "Observer", rightTypeName: "NSObject"), constraints[1])
+        XCTAssertEqual(.init(kind: .conformance, leftTypeName: "S", rightTypeName: "StringProtocol"), constraints[2])
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "MutableCollection"), constraints[3])
+
+        // Declaration fragments should remain unchanged
+        XCTAssertEqual(1, withoutArticle.declarationVariants[trait]!.count)
+
+        // Add another new generic constraint for Swift, but extending a
+        // different module.
+        let newConstraint2 = SymbolGraph.Symbol.Swift.GenericConstraint(
+            kind: .sameType,
+            leftTypeName: "Self",
+            rightTypeName: "NSExtensionRequestHandling"
+        )
+
+        // Clear all the mixins for this symbol and test adding the first generic constraint
+        withoutArticle.mixinsVariants[
+            trait,
+            default: [:]
+        ].removeValue(forKey: SymbolGraph.Symbol.Swift.Extension.mixinKey)
+        withoutArticle.addSwiftExtensionConstraint(extendedModule: "Foundation", constraint: newConstraint2)
+        constraints = try XCTUnwrap(withoutArticle.constraints)
+        XCTAssertEqual(1, constraints.count)
+        XCTAssertEqual(.init(kind: .sameType, leftTypeName: "Self", rightTypeName: "NSExtensionRequestHandling"), constraints[0])
+
+        // Declaration fragments should remain unchanged
+        XCTAssertEqual(1, withoutArticle.declarationVariants[trait]!.count)
+    }
+
     // MARK: - Helpers
     
     func makeDocumentationNodeSymbol(docComment: String, articleContent: String?, file: StaticString = #file, line: UInt = #line) throws -> (Symbol, [Problem]) {
