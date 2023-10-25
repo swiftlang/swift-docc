@@ -80,6 +80,13 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return resolved
             
         case .failure(let unresolved, let error):
+            if let rangeLowerBoundSource = range?.lowerBound.source,
+               let rangeUpperBoundSource = range?.upperBound.source,
+               let source = source,
+               source != rangeLowerBoundSource || source != rangeUpperBoundSource {
+                return nil
+            }
+
             if let callback = problemForUnresolvedReference,
                let problem = callback(unresolved, source, range, fromSymbolLink, error.message) {
                 problems.append(problem)
