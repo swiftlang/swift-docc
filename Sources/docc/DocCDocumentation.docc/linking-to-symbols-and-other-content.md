@@ -1,4 +1,4 @@
-# Link to Symbols and Other Content
+# Linking to Symbols and Other Content
 
 Facilitate navigation between pages using links.
 

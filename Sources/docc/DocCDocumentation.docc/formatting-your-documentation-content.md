@@ -1,6 +1,6 @@
 # Formatting Your Documentation Content
 
-Enhance your content's presentation with special formatting and styling for text, and lists.
+Enhance your content's presentation with special formatting and styling for text and lists.
 
 ## Overview
 
