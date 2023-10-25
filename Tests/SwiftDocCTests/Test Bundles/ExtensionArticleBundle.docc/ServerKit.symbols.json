@@ -1,0 +1,130 @@
+{
+    "metadata": {
+        "formatVersion": { "major": 0, "minor": 6, "patch": 0 },
+        "generator": "Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)"
+    },
+    "module": {
+        "name": "ServerKit",
+        "platform": {
+            "architecture": "arm64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "ios",
+                "minimumVersion": { "major": 12, "minor": 0 }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:9ServerKit0A0C4echoyySSF",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": ["Server", "echo(_:)"],
+            "names": {
+                "title": "echo(_:)",
+                "subHeading": [
+                    { "kind": "keyword", "spelling": "func" },
+                    { "kind": "text", "spelling": " " },
+                    { "kind": "identifier", "spelling": "echo" },
+                    { "kind": "text", "spelling": "(" },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "String",
+                        "preciseIdentifier": "s:SS"
+                    },
+                    { "kind": "text", "spelling": ")" }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "message",
+                        "declarationFragments": [
+                            { "kind": "identifier", "spelling": "message" },
+                            { "kind": "text", "spelling": ": " },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "String",
+                                "preciseIdentifier": "s:SS"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [{ "kind": "text", "spelling": "()" }]
+            },
+            "declarationFragments": [
+                { "kind": "keyword", "spelling": "func" },
+                { "kind": "text", "spelling": " " },
+                { "kind": "identifier", "spelling": "echo" },
+                { "kind": "text", "spelling": "(" },
+                { "kind": "externalParam", "spelling": "_" },
+                { "kind": "text", "spelling": " " },
+                { "kind": "internalParam", "spelling": "message" },
+                { "kind": "text", "spelling": ": " },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "String",
+                    "preciseIdentifier": "s:SS"
+                },
+                { "kind": "text", "spelling": ")" }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///tmp/Server.swift",
+                "position": { "line": 2, "character": 16 }
+            }
+        },
+        {
+            "kind": { "identifier": "swift.class", "displayName": "Class" },
+            "identifier": {
+                "precise": "s:9ServerKit0A0C",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": ["Server"],
+            "names": {
+                "title": "Server",
+                "navigator": [{ "kind": "identifier", "spelling": "Server" }],
+                "subHeading": [
+                    { "kind": "keyword", "spelling": "class" },
+                    { "kind": "text", "spelling": " " },
+                    { "kind": "identifier", "spelling": "Server" }
+                ]
+            },
+            "docComment": {
+                "uri": "file:///tmp/Server.swift",
+                "module": "ServerKit",
+                "lines": [
+                    {
+                        "range": {
+                            "start": { "line": 0, "character": 4 },
+                            "end": { "line": 0, "character": 15 }
+                        },
+                        "text": "Hello World"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                { "kind": "keyword", "spelling": "class" },
+                { "kind": "text", "spelling": " " },
+                { "kind": "identifier", "spelling": "Server" }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///tmp/Server.swift",
+                "position": { "line": 1, "character": 13 }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:9ServerKit0A0C4echoyySSF",
+            "target": "s:9ServerKit0A0C"
+        }
+    ]
+}
