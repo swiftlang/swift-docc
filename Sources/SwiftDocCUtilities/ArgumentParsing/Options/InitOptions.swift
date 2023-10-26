@@ -26,27 +26,27 @@ public struct InitOptions: ParsableArguments {
         name: .long,
         help: ArgumentHelp(
             "Name to use as the catalog directory name, the top level article title and file name",
-            valueName: "documentation-title"
+            valueName: "name"
         )
     )
-    public var documentationTitle: String = "Documentation"
+    public var name: String
     
     /// A user-provided location where the init action writes the generated catalog documentation.
     @Option(
-        name: [.customLong("catalog-output-path"), .customShort("o")],
+        name: [.customLong("output-dir"), .customShort("o")],
         help: ArgumentHelp(
             "The location where the documention catalog will be written",
-            valueName: "catalog-output-path"
+            valueName: "output-dir"
         ),
         transform: URL.init(fileURLWithPath:)
     )
-    var providedCatalogOutputURL: URL
+    var providedCatalogOutputDirURL: URL
     
     public func validate() throws {
         // Verify that the directory exist for the output location.
         var isDirectory: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: providedCatalogOutputURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
-            throw ValidationError("No directory exists at '\(providedCatalogOutputURL.path)'.")
+        guard FileManager.default.fileExists(atPath: providedCatalogOutputDirURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+            throw ValidationError("No directory exists at '\(providedCatalogOutputDirURL.path)'.")
         }
         
     }
@@ -61,7 +61,7 @@ public struct InitOptions: ParsableArguments {
             valueName: "template"
         )
     )
-    public var catalogTemplate: CatalogTemplateKind = .base
+    public var catalogTemplate: CatalogTemplateKind = .articleOnly
 }
 
 extension CatalogTemplateKind: ExpressibleByArgument {}

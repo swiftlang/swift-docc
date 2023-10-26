@@ -20,7 +20,7 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputURL,
             documentationTitle: "MyTestDocumentation",
-            catalogTemplate: .base
+            catalogTemplate: .articleOnly
         )
         var isDirectory: ObjCBool = false
         _ = try action.perform(logHandle: .standardOutput)
@@ -38,7 +38,7 @@ final class InitActionTests: XCTestCase {
         var action = try InitAction(
             catalogOutputDirectory: outputURL,
             documentationTitle: "MyTestDocumentation",
-            catalogTemplate: .base
+            catalogTemplate: .articleOnly
         )
         _ = try action.perform(logHandle: .standardOutput)
         // Test the top-level content of the output folder.
@@ -52,7 +52,7 @@ final class InitActionTests: XCTestCase {
             // Test the content of generated catalog matches the expected content from the template catalog.
             switch item {
             case "Essentials":
-                expectedContent = ["Resources", "getting_started.md", "more_information.md"]
+                expectedContent = ["Resources", "getting-started.md", "more-information.md"]
                 outputCatalogContent = try fileManager.contentsOfDirectory(atPath: "\(outputURL.path)/MyTestDocumentation.docc/Essentials/").sorted()
                 XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
             default:

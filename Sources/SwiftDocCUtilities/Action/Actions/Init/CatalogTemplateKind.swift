@@ -15,7 +15,7 @@ import SwiftDocC
 /// initializing the documentation catalog.
 public enum CatalogTemplateKind: String {
     /// The default and most-basic form of catalog template.
-    case base
+    case articleOnly
     
     enum Error: DescribedError {
         case missingInformation
@@ -29,7 +29,7 @@ public enum CatalogTemplateKind: String {
     /// Generates the requested catalog template.
     func generate(catalogTitle: String?) throws -> CatalogTemplate {
         switch self {
-        case .base:
+        case .articleOnly:
             guard let catalogTitle = catalogTitle else {
                 throw Error.missingInformation
             }
@@ -42,49 +42,45 @@ public enum CatalogTemplateKind: String {
                         
                         Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
                         
-                        ## Overview
-                        
                         Add one or more paragraphs that introduce your content overview.
                         
                         ## Usage Instructions
                         
-                        To preview this documentation, use your terminal to navigate to the root of this
-                        DocC catalog and run:
+                        To preview this documentation, use your terminal to navigate to the root of this DocC catalog and run:
                         ```
                         docc preview
                         ```
                         
-                        To generate a doccarchive navigate to the root of this
-                        DocC catalog and run:
+                        To generate a doccarchive navigate to the root of this DocC catalog and run:
                         ```
-                        docc convert \(catalogTitle).docc -o \(catalogTitle).doccarchive
+                        docc convert \(catalogTitle).docc -o ./\(catalogTitle).doccarchive
                         ```
                         
                         ## Topics
                         
                         ### Essentials
                         
-                        - <doc:getting_started>
-                        - <doc:more_information>
+                        - <doc:getting-started>
+                        - <doc:more-information>
                         """,
                         isTechnologyRoot: true
                     ),
-                    "Essentials/getting_started.md": ArticleTemplate(
-                        title: "Getting Started",
+                    "Essentials/getting-started.md": ArticleTemplate(
+                        title: "Getting started",
                         content: """
                         
-                        Summary
+                        Provide a description of the concept at a high level.
                         
-                        Overview
+                        Write an article that engage the reader and communicate problems and solutions in a clear and concise manner.
                         """
                     ),
-                    "Essentials/more_information.md": ArticleTemplate(
-                        title: "More Information",
+                    "Essentials/more-information.md": ArticleTemplate(
+                        title: "More information",
                         content: """
                         
-                        Summary
+                        Show your readers more information on how to solve specific problems in an article.
                         
-                        Overview
+                        Make your documentation more useful by providing examples for the reader.
                         """
                     )
                 ],

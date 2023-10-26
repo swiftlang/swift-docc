@@ -20,8 +20,8 @@ extension InitAction {
     ) throws {
         // Initialize the `InitAction` from the options provided by the `Init` command
         try self.init(
-            catalogOutputDirectory: initOptions.providedCatalogOutputURL,
-            documentationTitle: initOptions.documentationTitle,
+            catalogOutputDirectory: initOptions.providedCatalogOutputDirURL,
+            documentationTitle: initOptions.name,
             catalogTemplate: initOptions.catalogTemplate
         )
     }

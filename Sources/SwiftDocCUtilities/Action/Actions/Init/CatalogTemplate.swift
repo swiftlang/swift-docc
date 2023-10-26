@@ -27,7 +27,7 @@ struct CatalogTemplate {
     let title: String
     
     /// Creates a catalog from the given articles and additional directories validating
-    /// that the paths are conforms to valid URLs.
+    /// that the paths conforms to valid URLs.
     init(title: String, articles: [String:ArticleTemplate], additionalDirectories: [String] = []) throws {
         self.title = title
         // Converts every key of the articles dictionary into
