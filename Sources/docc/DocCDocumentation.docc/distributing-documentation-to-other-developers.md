@@ -42,7 +42,7 @@ docc convert MyNewPackage.docc \
 #### Include Links to your Project's Sources
 
 When publishing documentation to an audience that has access to your project's
-sources, e.g., for an open-source project hosted on GitHub, consider configuring
+sources; for example, with an open source project hosted on GitHub, consider configuring
 DocC to automatically include links to the declarations of your project's symbols.
 
 For example, in the following screenshot, the "ParsableCommand.swift" link

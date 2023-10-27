@@ -35,7 +35,7 @@ path.
 
 In some cases, a symbol's path isn't unique, such as with overloaded methods in 
 Swift. For example, consider the `Sloth` structure, which has multiple 
-`update(_:)` methods.
+`update(_:)` methods:
 
 ```swift
 /// Updates the sloth's power.
@@ -65,7 +65,7 @@ ambiguous symbol path.
 - ``Sloth/update(_:)-jixx``
 ```
 
-In the example above, both symbols are functions so you need the unique 
+In the example above, both symbols are functions, so you need the unique 
 identifiers to disambiguate the `Sloth/update(_:)` link. 
 
 Unique identifiers aren't the only way to disambiguate symbol links. If a symbol
@@ -73,7 +73,7 @@ has a different type from the other symbols with the same symbol path, you can
 use that symbol's type suffix to disambiguate the link and make the link refer 
 to that symbol. For example, consider a `Color` structure with `red`, `green`, 
 and `blue` properties for color components and static properties for a handful 
-of predefined color values.
+of predefined color values:
 
 ```swift
 public struct Color {
@@ -131,12 +131,12 @@ Symbol type suffixes can include a source language identifier prefix — for
 example,  `-swift.enum` instead of `-enum`. However, the language 
 identifier doesn't disambiguate the link.
 
-Symbol paths are case-sensitive meaning that symbols with the same name in
+Symbol paths are case-sensitive, meaning that symbols with the same name in
 different text casing don't need disambiguation. 
 
 Symbols that have representations in both Swift and Objective-C can use
 symbol paths in either source language. For example, consider a `Sloth` 
-class with `@objc` attributes.
+class with `@objc` attributes:
 
 ```swift
 @objc public class Sloth: NSObject {
@@ -175,7 +175,7 @@ a colon (`:`), the name of the article, and a greater-than symbol
 
 When DocC resolves the link, it uses the article's page title as the link's 
 text, and the article's filename as the link's URL. Links to tutorials follow 
-the same format, except you must add the `/tutorials/` prefix to the path. 
+the same format, except you must add the `/tutorials/` prefix to the path: 
 
 ```
 <doc:/tutorials/SlothCreator>
@@ -187,9 +187,9 @@ symbol (`>`).
 
 ### Include web links
 
-To include a regular web link, add a set of square brackets (`[]`) and 
-a set of parentheses (`()`). Then add the link's text between the square brackets, and 
-add the link's URL destination within the parentheses. 
+To include a regular web link, add a set of brackets (`[]`) and 
+a set of parentheses (`()`). Then add the link's text between the brackets, and 
+add the link's URL within the parentheses. 
 
 ```markdown
 [Apple](https://www.apple.com)

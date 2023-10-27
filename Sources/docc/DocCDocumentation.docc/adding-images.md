@@ -5,7 +5,7 @@ Elevate your content's visual appeal by adding images.
 ## Overview
 
 DocC extends Markdown's image support so you can provide appearance and 
-display scale-aware versions of an image. You use specific components to create image filenames, and DocC  uses the most appropriate version of the image when displaying your documentation.
+display scale-aware versions of an image. You use specific components to create image filenames, and DocC uses the most appropriate version of the image when displaying your documentation.
 
 ![An image of a filename that's split into four labeled sections to highlight the individual components. From left to right, the components are the image name, the appearance mode, the display scale, and the file extension.](docc-image-filename)
 
@@ -22,19 +22,16 @@ For example, the following are all valid DocC image filenames:
 - term `sloth~dark.png`: An image that's specific to dark mode, but is display-scale independent.
 - term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2x display scale.
 
-> Important: You must store images you include in your documentation in a 
-documentation catalog. For more information, see <doc:documenting-a-swift-framework-or-package>.
+> Important: Include the image files in your documentation catalog. For more information, see <doc:documenting-a-swift-framework-or-package>.
 
-To add an image, use an exclamation mark (`!`), a set of square brackets 
+To add an image, use an exclamation mark (`!`), a set of brackets 
 (`[]`), and a set of parentheses (`()`).
 
-Add a description of what the image shows between the square brackets. Screen 
-readers read this text aloud. Provide enough detail to 
-allow people with impaired vision to understand what the image shows. 
+Within the brackets, add a description of the image. This text, otherwise known as _alternative text_, is used by screen readers for people who have vision difficulties. Provide enough detail to describe the image so that people can understand what the image shows.  
 
 Within the parentheses, include only the image name. Omit the appearance, 
 display scale, and file extension components. Don't include the path to the 
-image, even if you store the image in a folder in the documentation catalog.
+image.
 
 ```markdown
 ![A sloth hanging off a tree.](sloth)

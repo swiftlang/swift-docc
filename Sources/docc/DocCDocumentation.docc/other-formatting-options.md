@@ -8,7 +8,7 @@ DocC offers support for various types of elements such as tables, notes, asides,
 
 ### Add Tables of Data
 
-To create a table, start a new paragraph and use dashes (`-`) to define 
+To create a table, start a new paragraph and use hyphens (`-`) to define 
 columns, and pipes (`|`) as column separators. Construction of a table requires 
 at least three rows: 
 
@@ -26,7 +26,7 @@ column.
 | `supersonic` | Moves faster than the speed of sound. |
 ```
 There's no need to impose a column width. A column determines its width 
-using the contents of its widest cell. You can also omit the leading 
+based on the contents of that column's widest cell. You can also omit the leading 
 and trailing pipes.
 
 ```markdown
@@ -47,8 +47,7 @@ Both examples result in the same output:
 | `fast` | Moves faster than a hare. |
 | `supersonic` | Moves faster than the speed of sound. |
 
-> Note: Table cells don't support multiple paragraphs, lists, or code 
-listings.
+> Important: You can only place a single line of text within a table cell. For example, you can't have multiple paragraphs, lists, or images within a table cell.
 
 The text of a table cell can use the same style attributes as other text, and 
 include links to other content, including symbols. 
