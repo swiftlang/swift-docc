@@ -12,9 +12,8 @@ To create a table, start a new paragraph and use hyphens (`-`) to define
 columns, and pipes (`|`) as column separators. Construction of a table requires 
 at least three rows: 
 
-* A row that contains the column names.
-* A row with cells that contain only dashes (`-`); three or more for each 
-column.
+* A header row, which consists of pipes to separate the columns, and text for the headings of each column.
+* A row that consists of pipes and hyphens, used to separate the table header row from the rows of cell contents below.
 * One or more rows of content.
 
 ```markdown
@@ -25,7 +24,7 @@ column.
 | `fast`       | Moves faster than a hare.             |
 | `supersonic` | Moves faster than the speed of sound. |
 ```
-There's no need to impose a column width. A column determines its width 
+There's no need to impose a column width or add additional spaces to align the content of the table. A column determines its width 
 based on the contents of that column's widest cell. You can also omit the leading 
 and trailing pipes.
 
@@ -80,7 +79,7 @@ For the example above, DocC renders the following aside:
 > Tip: Sloths require sustenance to perform activities.
 
 The text of an aside can use the same style attributes as other text, and 
-include links to other content, including symbols.
+include links to other content, including symbols. However, asides don't provide support for multiple paragraphs, lists, code blocks, or images.
 
 ### Include Special Characters in Text
 
