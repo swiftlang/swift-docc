@@ -350,6 +350,18 @@ struct PathHierarchy {
         return newReference
     }
     
+    mutating func addOverloadGroupChild(parent: ResolvedIdentifier, name: String, kind: String, symbol: SymbolKit.SymbolGraph.Symbol?) -> ResolvedIdentifier {
+        let parent = lookup[parent]!
+        
+        let newReference = ResolvedIdentifier()
+        let newNode = Node(symbol: symbol, name: name)
+        newNode.identifier = newReference
+        self.lookup[newReference] = newNode
+        parent.add(child: newNode, kind: kind, hash: "overloadGroup")
+        
+        return newReference
+    }
+    
     /// Adds a non-symbol technology root.
     /// - Parameters:
     ///   - name: The path component name of the technology root.
@@ -472,13 +484,13 @@ extension PathHierarchy {
         return Array(result) + modules.map { $0.identifier }
     }
 
-    func traverseOverloadedSymbolGroups(observe: (_ overloadedSymbols: [ResolvedIdentifier]) throws -> Void) rethrows {
-        for node in lookup.values where node.symbol != nil {
+    func traverseOverloadedSymbolGroups(observe: (_ id: ResolvedIdentifier, _ overloadedSymbols: [ResolvedIdentifier]) throws -> Void) rethrows {
+        for (id, node) in lookup where node.symbol != nil {
             for disambiguation in node.children.values {
                 for (kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && SymbolGraph.Symbol.KindIdentifier(identifier: kind).isOverloadableKind {
                     assert(innerStorage.values.allSatisfy { $0.symbol != nil }, "Only symbols should have symbol kind identifiers (\(kind))")
 
-                    try observe(innerStorage.values.map(\.identifier))
+                    try observe(id, innerStorage.values.map(\.identifier))
                 }
             }
         }

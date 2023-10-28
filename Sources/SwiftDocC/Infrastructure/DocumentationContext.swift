@@ -2320,8 +2320,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
-        
-        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+
+        try linkResolver.traverseOverloadedSymbols { (parent, overloadedSymbolReferences) in
+            guard overloadedSymbolReferences.count > 1,
+                let firstOverloadReference = overloadedSymbolReferences.first,
+                let firstOverloadTopicNode = topicGraph.nodeWithReference(firstOverloadReference),
+                let firstOverloadDocumentationNode = try? entity(with: firstOverloadReference),
+                let firstOverloadSymbol = firstOverloadDocumentationNode.semantic as? Symbol else {
+                return
+            }
 
             // Tell each symbol what other symbols overload it.
             for (index, symbolReference) in overloadedSymbolReferences.indexed() {
@@ -2343,6 +2350,41 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
             }
+            
+            // Create the overload group topic reference without a disambiguating hash at the end.
+            guard let indexOfHash = firstOverloadReference.path.lastIndex(of: "-") else { return }
+            let overloadGroupPath = String(firstOverloadReference.path[..<indexOfHash])
+            let overloadGroupReference = ResolvedTopicReference(
+                bundleIdentifier: firstOverloadTopicNode.reference.bundleIdentifier,
+                path: overloadGroupPath,
+                sourceLanguages: firstOverloadTopicNode.reference.sourceLanguages
+            )
+            
+            // Add the topic graph node
+            let overloadGroupTopicGraphNode = TopicGraph.Node(reference: overloadGroupReference,
+                                                              kind: firstOverloadTopicNode.kind,
+                                                              source: .external,
+                                                              title: firstOverloadTopicNode.title,
+                                                              isResolvable: true) // not sure what to put here
+            topicGraph.addNode(overloadGroupTopicGraphNode)
+            
+            // Create the new overload group symbol
+            let overloadGroupSymbol = firstOverloadSymbol
+            
+            // Create the new overload group documentation node
+            let overloadGroupNode = DocumentationNode(
+                reference: overloadGroupReference,
+                kind: firstOverloadDocumentationNode.kind,
+                sourceLanguage: firstOverloadReference.sourceLanguage,
+                availableSourceLanguages: firstOverloadReference.sourceLanguages,
+                name: firstOverloadDocumentationNode.name, 
+                markup: firstOverloadDocumentationNode.markup,
+                semantic: overloadGroupSymbol
+            )
+
+            documentationCache[overloadGroupReference] = overloadGroupNode
+            linkResolver.addOverloadGroup(named: overloadGroupSymbol.title, reference: overloadGroupReference,
+                                          kind: overloadGroupSymbol.kind.identifier.identifier, symbol: firstOverloadDocumentationNode.symbol, to: parent)
         }
     }
     
