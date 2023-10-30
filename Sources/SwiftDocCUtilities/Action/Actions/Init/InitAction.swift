@@ -26,7 +26,7 @@ public struct InitAction: Action {
     
     private let catalogOutputURL: URL
     private let documentationTitle: String
-    private let catalogTemplate: CatalogTemplateKind
+    private let catalogTemplateKind: CatalogTemplateKind
     private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     
     /// Creates a new Init action from the given parameters.
@@ -41,7 +41,7 @@ public struct InitAction: Action {
         catalogTemplate: CatalogTemplateKind
     ) throws {
         self.documentationTitle = documentationTitle
-        self.catalogTemplate = catalogTemplate
+        self.catalogTemplateKind = catalogTemplate
         catalogOutputURL = catalogOutputDirectory.appendingPathComponent("\(documentationTitle).docc")
     }
     
@@ -66,9 +66,12 @@ public struct InitAction: Action {
         }
         
         do {
+            // Create the directory where the catalog will be initialized.
             try fileManager.createDirectory(at: catalogOutputURL, withIntermediateDirectories: false)
-            let documentationCatalog = try CatalogTemplateFactory.createDocumentationCatalog(catalogTemplate, catalogTitle: documentationTitle)
-            try CatalogTemplateFactory.constructCatalog(documentationCatalog, outputURL: catalogOutputURL)
+            // Create a catalog template using the options passed through the CLI.
+            let catalogTemplate = try CatalogTemplateKind.generate(catalogTemplateKind, catalogTitle: documentationTitle)
+            // Store the catalog on disk generating each of the template URLs.
+            try writeCatalog(catalogTemplate, outputURL: catalogOutputURL)
             print(
                 """
                 A new documentation catalog has been generated at \(catalogOutputURL.path)
@@ -93,19 +96,20 @@ public struct InitAction: Action {
                     to: &logHandle
                 )
             }
-            
+        
         } catch CocoaError.fileWriteFileExists {
             initProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
                         severity: .error,
                         identifier: "org.swift.DocumentationCatalogAlreadyExists",
-                        summary: Error.catalogAlreadyExists.errorDescription)
+                        summary: Error.catalogAlreadyExists.errorDescription
+                    )
                 )
             )
             throw Error.catalogAlreadyExists
         } catch {
-            // If an error occurs remove the output created
+            // If an error occurs, delete the generated output.
             if fileManager.fileExists(atPath: catalogOutputURL.path) {
                 try FileManager.default.removeItem(atPath: catalogOutputURL.path)
             }
@@ -118,6 +122,40 @@ public struct InitAction: Action {
                     )
                 )
             )
+        }
+        
+        /// Write the given catalog template to the specified output URL location on disk.
+        @discardableResult
+        func writeCatalog(
+            _ catalogTemplate: CatalogTemplate,
+            outputURL: URL
+        ) throws -> URL {
+            let fileManager: FileManager = .default
+            // We begin by creating the directory for each article in the template,
+            // where it should be stored, and then proceed to create the file.
+            try catalogTemplate.articles.forEach { (articleURL, articleContent) in
+                // Generate the directories for file storage
+                // by adding the article path to the output URL and
+                // excluding the file name.
+                try fileManager.createDirectory(
+                    at: outputURL.appendingPathComponent(articleURL.path).deletingLastPathComponent(),
+                    withIntermediateDirectories: true
+                )
+                // Generate the article file at the specified URL path.
+                try fileManager.createFile(
+                    at: outputURL.appendingPathComponent(articleURL.path),
+                    contents: Data(articleContent.formattedArticleContent.utf8)
+                )
+            }
+            // Writes additional directiories defined in the catalog.
+            // Ex. `Resources`
+            try catalogTemplate.additionalDirectories.forEach {
+                try fileManager.createDirectory(
+                    at: outputURL.appendingPathComponent($0.path),
+                    withIntermediateDirectories: true
+                )
+            }
+            return outputURL
         }
         
         return ActionResult(

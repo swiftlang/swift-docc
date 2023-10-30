@@ -57,7 +57,7 @@ public struct InitOptions: ParsableArguments {
     @Option(
         name: .long,
         help: ArgumentHelp(
-            "The catalog template to initialize.",
+            "The catalog template to initialize. If not provided, the template will default to 'article-only",
             valueName: "template"
         )
     )
