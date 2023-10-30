@@ -1320,7 +1320,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             )
             return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
         }
-        
+
         let exampleDocumentation = Folder(
             name: "unit-test.docc",
             content: [
@@ -1368,8 +1368,8 @@ class RenderNodeTranslatorTests: XCTestCase {
                 JSONFile(
                     name: "unit-test.symbols.json",
                     content: makeSymbolGraph(
-                       moduleName: "unit-test",
-                       symbols: [SymbolGraph.Symbol(
+                        moduleName: "unit-test",
+                        symbols: [SymbolGraph.Symbol(
                             identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
                             names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
                             pathComponents: ["Symbol"],
@@ -1377,14 +1377,14 @@ class RenderNodeTranslatorTests: XCTestCase {
                             accessLevel: .public,
                             kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
                             mixins: [:]
-                       )]
-                   )
+                        )]
+                    )
                 ),
             ]
         )
         let tempURL = try createTempFolder(content: [exampleDocumentation])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        
+
         // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
         var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/APICollection")
         XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
@@ -1400,5 +1400,45 @@ class RenderNodeTranslatorTests: XCTestCase {
         // Assert that articles that have a custom page kind the eyebrow title assigned properly.
         renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/SampleCode")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
+    }
+
+    func testEncodesOverloadsInRenderNode() throws {
+        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
+        
+        let (bundle, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        
+        let overloadPreciseIdentifiers = ["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"]
+        
+        let overloadReferences = try overloadPreciseIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        
+        for (index, reference) in overloadReferences.indexed() {
+            let documentationNode = try context.entity(with: reference)
+            
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+            let symbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            
+            let declarationSection = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0 is DeclarationsRenderSection }) as? DeclarationsRenderSection)
+
+            // Make sure it gives an index for the declaration in otherDeclarations.
+            XCTAssertNotNil(declarationSection.declarations.first?.indexInOtherDeclarations)
+            
+            // Each render node should contain declarations for all of its sibling overloads.
+            let otherDeclarations = try XCTUnwrap(declarationSection.declarations.first?.otherDeclarations)
+            XCTAssertEqual(otherDeclarations.count, overloadPreciseIdentifiers.count - 1)
+            
+            for declaration in otherDeclarations {
+                XCTAssertNotNil(declaration.tokens)
+            }
+            
+            for (otherIndex, otherReference) in overloadReferences.indexed() {
+                guard otherIndex != index else { continue }
+                XCTAssertTrue(otherDeclarations.contains(where: { $0.identifier == otherReference.absoluteString }))
+            }
+        }
     }
 }

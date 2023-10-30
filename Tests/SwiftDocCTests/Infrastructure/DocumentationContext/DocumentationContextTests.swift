@@ -4256,6 +4256,44 @@ let expected = """
         problem = try XCTUnwrap(linkResolutionProblems.last)
         XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
     }
+    
+    func testContextRecognizesOverloads() throws {
+        
+        func checkContainsSiblingOverloads(for overloadedReferences: [ResolvedTopicReference], using context: DocumentationContext) throws {
+            var seenIndices = Set<Int>()
+            
+            for (index, reference) in overloadedReferences.indexed() {
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+                
+                // Make sure that each symbol contains all of its sibling overloads.
+                XCTAssertEqual(overloadedSymbol.overloads.count, overloadedReferences.count - 1)
+                for (otherIndex, otherReference) in overloadedReferences.indexed() {
+                   guard otherIndex != index else { continue }
+                    XCTAssertTrue(overloadedSymbol.overloads.contains(otherReference))
+                }
+                
+                // Each symbol's declaration needs to tell the renderer where it belongs in the array of overloaded declarations.
+                let indexInOverloads = try XCTUnwrap(overloadedSymbol.indexInOverloads)
+                XCTAssertFalse(seenIndices.contains(indexInOverloads))
+                seenIndices.insert(indexInOverloads)
+            }
+        }
+        
+        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
+        
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+
+        let overloadedEnumMethodsIdentifiers = ["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF",
+                                   "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"]
+        
+        let overloadedEnumMethodsReferences = try overloadedEnumMethodsIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        
+        try checkContainsSiblingOverloads(for: overloadedEnumMethodsReferences, using: context)
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
