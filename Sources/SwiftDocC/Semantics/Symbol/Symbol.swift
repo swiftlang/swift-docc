@@ -584,4 +584,10 @@ extension Symbol {
         get { overloadsVariants.firstValue! }
         set { overloadsVariants.firstValue = newValue }
     }
+    
+    /// References to other symbols that overload this one.
+    var indexInOverloads: Int {
+        get { indexInOverloadsVariants.firstValue! }
+        set { indexInOverloadsVariants.firstValue = newValue }
+    }
 }
