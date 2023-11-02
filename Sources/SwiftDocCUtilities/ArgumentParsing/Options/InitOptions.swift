@@ -19,9 +19,7 @@ public struct InitOptions: ParsableArguments {
     
     public init() { }
     
-    /// The catalog directory name and top level article title.
-    ///
-    /// Defaults to `Documentation`.
+    /// The catalog directory name and top level article title and file name.
     @Option(
         name: .long,
         help: ArgumentHelp(
@@ -53,11 +51,11 @@ public struct InitOptions: ParsableArguments {
     
     /// The catalog template to initialize.
     ///
-    /// Defaults to init.
+    /// Defaults to articleOnly.
     @Option(
         name: .long,
         help: ArgumentHelp(
-            "The catalog template to initialize. If not provided, the template will default to 'article-only",
+            "The catalog template to initialize. If not provided, the template will default to 'article-only'",
             valueName: "template"
         )
     )

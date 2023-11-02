@@ -13,7 +13,7 @@ import XCTest
 
 final class CatalogTemplateTests: XCTestCase {
 
-    func testMalformedCatalogTemplateCreation() {
+    func testMalformedCatalogTemplateFileURL() {
         let catalogTitle = "Catalog Tite"
         let catalogArticles = [
             "": ArticleTemplate(
@@ -29,11 +29,35 @@ final class CatalogTemplateTests: XCTestCase {
                 isTechnologyRoot: true
             )
         ]
-        let additionalDirectories = ["Resources/", "Essentials/Resources/"]
+        let additionalDirectories = ["Resources", "Essentials/Resources/"]
         XCTAssertThrowsError(
             try CatalogTemplate(title: catalogTitle, articles: catalogArticles, additionalDirectories: additionalDirectories)
         ) { error in
-            XCTAssertEqual(error as! CatalogTemplate.Error, CatalogTemplate.Error.malformedCatalogTemplate)
+            XCTAssertEqual(error as! CatalogTemplate.Error, CatalogTemplate.Error.malformedCatalogFileURL(""))
+        }
+    }
+    
+    func testMalformedCatalogTemplateDirectoryURL() {
+        let catalogTitle = "Catalog Tite"
+        let catalogArticles = [
+            "File.md": ArticleTemplate(
+                title: "RootArticle",
+                content: """
+                
+                Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
+                
+                ## Overview
+                
+                Add one or more paragraphs that introduce your content overview.
+                """,
+                isTechnologyRoot: true
+            )
+        ]
+        let additionalDirectories = ["Resources/", "Essentials/Resources"]
+        XCTAssertThrowsError(
+            try CatalogTemplate(title: catalogTitle, articles: catalogArticles, additionalDirectories: additionalDirectories)
+        ) { error in
+            XCTAssertEqual(error as! CatalogTemplate.Error, CatalogTemplate.Error.malformedCatalogDirectoryURL("Essentials/Resources"))
         }
     }
 }
