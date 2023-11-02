@@ -2517,7 +2517,34 @@
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
                         }
+                    },
+                    "otherDeclarations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OtherDeclaration"
+                        }
+                    },
+                    "indexInOtherDeclarations": {
+                        "type": "integer"
                     }
+                }
+            },
+            "OtherDeclaration": {
+                "required": [
+                    "tokens",
+                    "identifier"
+                ],
+                "type": "object",
+                "properties": {
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                     },
+                     "identifier": {
+                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                     },
                 }
             },
             "DeclarationToken": {
