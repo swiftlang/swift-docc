@@ -24,17 +24,17 @@ struct CatalogTemplate {
         }
     }
     
-    let articles: [URL: ArticleTemplate]
+    let files: [URL: CatalogFileTemplate]
     let additionalDirectories: [URL]
     let title: String
     
     /// Creates a catalog from the given articles and additional directories validating
     /// that the paths conforms to valid URLs.
-    init(title: String, articles: [String: ArticleTemplate], additionalDirectories: [String] = []) throws {
+    init(title: String, articles: [String: CatalogFileTemplate], additionalDirectories: [String] = []) throws {
         self.title = title
         // Converts every key of the articles dictionary into
         // a valid URL.
-        self.articles = Dictionary(uniqueKeysWithValues:
+        self.files = Dictionary(uniqueKeysWithValues:
             try articles.map { (rawURL, article) in
                 guard
                     let articleURL = URL(string: rawURL),
@@ -65,7 +65,7 @@ struct CatalogTemplate {
         let fileManager: FileManager = .default
         // We begin by creating the directory for each article in the template,
         // where it should be stored, and then proceed to create the file.
-        try self.articles.forEach { (articleURL, articleContent) in
+        try self.files.forEach { (articleURL, articleContent) in
             // Generate the directories for file storage
             // by adding the article path to the output URL and
             // excluding the file name.
@@ -76,7 +76,7 @@ struct CatalogTemplate {
             // Generate the article file at the specified URL path.
             try fileManager.createFile(
                 at: outputURL.appendingPathComponent(articleURL.path),
-                contents: Data(articleContent.formattedArticleContent.utf8)
+                contents: Data(articleContent.content.utf8)
             )
         }
         // Writes additional directiories defined in the catalog.

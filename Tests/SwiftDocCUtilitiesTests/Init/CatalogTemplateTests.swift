@@ -16,7 +16,7 @@ final class CatalogTemplateTests: XCTestCase {
     func testMalformedCatalogTemplateFileURL() {
         let catalogTitle = "Catalog Tite"
         let catalogArticles = [
-            "": ArticleTemplate(
+            "": CatalogFileTemplate(
                 title: "RootArticle",
                 content: """
                 
@@ -40,7 +40,7 @@ final class CatalogTemplateTests: XCTestCase {
     func testMalformedCatalogTemplateDirectoryURL() {
         let catalogTitle = "Catalog Tite"
         let catalogArticles = [
-            "File.md": ArticleTemplate(
+            "File.md": CatalogFileTemplate(
                 title: "RootArticle",
                 content: """
                 

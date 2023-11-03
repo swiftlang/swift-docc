@@ -29,7 +29,6 @@ public enum CatalogTemplateKind: String {
                 articles: articleOnlyTemplateArticles(catalogTitle),
                 additionalDirectories: ["Resources/", "Essentials/Resources/"]
             )
-            
         }
     }
 }
@@ -38,10 +37,10 @@ public enum CatalogTemplateKind: String {
 extension CatalogTemplateKind {
     
     /// Content of the 'articleOnly' template
-    static private let articleOnlyTemplateArticles = { (_ title: String) -> [String: ArticleTemplate] in
+    static private let articleOnlyTemplateArticles = { (_ title: String) -> [String: CatalogFileTemplate] in
         return (
             [
-                "\(title).md": ArticleTemplate(
+                "\(title).md": CatalogFileTemplate(
                     title: title,
                     content: """
                     
@@ -74,9 +73,9 @@ extension CatalogTemplateKind {
                     """,
                     isTechnologyRoot: true
                 ),
-                "Essentials/getting-started.md": ArticleTemplate(
-                    title: "Getting started",
+                "Essentials/getting-started.md": CatalogFileTemplate(
                     content: """
+                    # Getting started
                     
                     Provide a description of the concept at a high level.
 
@@ -98,9 +97,9 @@ extension CatalogTemplateKind {
                     To learn more about this please visit [Customizing the Appearance of Your Documentation Pages](https://www.swift.org/documentation/docc/customizing-the-appearance-of-your-documentation-pages) in the DocC documentation.
                     """
                 ),
-                "Essentials/more-information.md": ArticleTemplate(
-                    title: "More information",
+                "Essentials/more-information.md": CatalogFileTemplate(
                     content: """
+                    # More Information
                     
                     Show your readers more information on how to solve specific problems in an article.
 

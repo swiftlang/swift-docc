@@ -14,7 +14,7 @@ import XCTest
 final class ArticleTemplateTests: XCTestCase {
 
     func testFormattedTechnologyRoot() {
-        let article = ArticleTemplate(
+        let article = CatalogFileTemplate(
             title: "MyTestArticle",
             content: """
             Test article summary
@@ -24,15 +24,17 @@ final class ArticleTemplateTests: XCTestCase {
             isTechnologyRoot: true
         )
         let rawArticle = """
-        # MyTestArticle \n
+        # MyTestArticle
+
         @Metadata {
           @TechnologyRoot
         }
+
         Test article summary
         ## Overview
         Test article overview
         """
-        XCTAssertEqual(article.formattedArticleContent, rawArticle)
+        XCTAssertEqual(article.content, rawArticle)
     }
     
 }
