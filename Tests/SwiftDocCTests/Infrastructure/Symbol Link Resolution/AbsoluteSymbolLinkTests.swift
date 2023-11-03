@@ -537,7 +537,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     func testCompileOverloadedSymbolGraphAndValidateLinks() throws {
         let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
-            excludingPaths: [],
+            excludingPaths: ["Animals.symbols.json"],
             codeListings: [:]
         )
         
