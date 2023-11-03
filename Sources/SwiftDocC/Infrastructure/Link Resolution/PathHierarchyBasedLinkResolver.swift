@@ -60,7 +60,8 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Traverse all symbols of the same kind that have collisions.
     func traverseOverloadedSymbols(_ observe: (_ overloadedSymbols: [ResolvedTopicReference]) -> Void) {
-        let overloadableKinds = ["method", "type.method", "function", "init", "macro", "type.subscript", "func.op"]
+        let overloadableKinds = ["method", "type.method", "func", "init", "macro", "subscript", "func.op"]
+        
         for (_, node) in pathHierarchy.lookup {
             guard node.symbol != nil else { continue }
             
