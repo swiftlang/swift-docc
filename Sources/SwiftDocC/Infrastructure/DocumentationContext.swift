@@ -1351,14 +1351,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
-            
-            let symbolGraphRelationships = combinedRelationships.flatMap(\.value)
-            
+
             handleOverloads(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
-                relationships: symbolGraphRelationships,
+                relationships: combinedRelationships.flatMap(\.value),
                 context: self,
                 bundle: bundle
             )
