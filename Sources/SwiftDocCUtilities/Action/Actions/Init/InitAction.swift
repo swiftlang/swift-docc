@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-/// An action that generates an article-only documentation catalog from a template seed.
+/// An action that generates a documentation catalog from a template seed.
 public struct InitAction: Action {
     
     enum Error: DescribedError {
@@ -25,15 +25,15 @@ public struct InitAction: Action {
     }
     
     private let catalogOutputURL: URL
-    private let documentationTitle: String
     private let catalogTemplateKind: CatalogTemplateKind
     private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
+    private let documentationTitle: String
     
     /// Creates a new Init action from the given parameters.
     ///
     /// - Parameters:
     ///     - catalogOutputDirectory: The URL to the directory where the catalog will be stored.
-    ///     - documentationTitle: The title of the technology root.
+    ///     - documentationTitle: The title of the used for the top-level root file.
     ///     - catalogTemplate: The template used to initialize the catalog.
     public init(
         catalogOutputDirectory: URL,
@@ -84,7 +84,7 @@ public struct InitAction: Action {
         do {
             // Create a catalog template using the options passed through the CLI.
             let catalogTemplate = try CatalogTemplateKind.generate(catalogTemplateKind, catalogTitle: documentationTitle)
-            // Store the catalog on disk generating each of the template URLs.
+            // Store the catalog on disk.
             try catalogTemplate.write(to: catalogOutputURL)
         } catch {
             // If an error occurs, delete the generated output.

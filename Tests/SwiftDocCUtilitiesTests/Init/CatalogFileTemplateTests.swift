@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocCUtilities
 
-final class ArticleTemplateTests: XCTestCase {
+final class CatalogFileTemplateTests: XCTestCase {
 
     func testFormattedTechnologyRoot() {
         let article = CatalogFileTemplate(

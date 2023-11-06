@@ -44,7 +44,7 @@ extension Docc {
             // Initialize a `InitAction` from the current options in the `Init` command.
             var initAction = try InitAction(fromInitOptions: initOptions)
             
-            // Perform the action and print any warnings or errors found
+            // Perform the action and print any warnings or errors found.
             try initAction.performAndHandleResult()
         }
     }

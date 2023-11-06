@@ -12,9 +12,9 @@ import SwiftDocC
 import Foundation
 
 extension InitAction {
-    /// Creates a init action from the options given in the init command
-    /// - Parameters:
-    ///   - initOptions: The init options this `InitAction` will be based on.
+    /// Creates a init action from the options given in the init command.
+    /// 
+    /// - Parameter initOptions: The init options this `InitAction` will be based on.
     public init(
         fromInitOptions initOptions: InitOptions
     ) throws {

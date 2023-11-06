@@ -30,12 +30,16 @@ struct CatalogTemplate {
     
     /// Creates a catalog from the given articles and additional directories validating
     /// that the paths conforms to valid URLs.
-    init(title: String, articles: [String: CatalogFileTemplate], additionalDirectories: [String] = []) throws {
+    init(
+        title: String,
+        files: [String: CatalogFileTemplate],
+        additionalDirectories: [String] = []
+    ) throws {
         self.title = title
         // Converts every key of the articles dictionary into
         // a valid URL.
         self.files = Dictionary(uniqueKeysWithValues:
-            try articles.map { (rawURL, article) in
+            try files.map { (rawURL, article) in
                 guard
                     let articleURL = URL(string: rawURL),
                     !articleURL.hasDirectoryPath

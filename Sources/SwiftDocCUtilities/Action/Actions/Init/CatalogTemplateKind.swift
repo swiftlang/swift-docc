@@ -26,14 +26,14 @@ public enum CatalogTemplateKind: String {
         case .articleOnly:
             return try CatalogTemplate(
                 title: catalogTitle,
-                articles: articleOnlyTemplateArticles(catalogTitle),
+                files: articleOnlyTemplateArticles(catalogTitle),
                 additionalDirectories: ["Resources/", "Essentials/Resources/"]
             )
         }
     }
 }
 
-/// Content of the different kinds of templates
+/// Content of the different templates
 extension CatalogTemplateKind {
     
     /// Content of the 'articleOnly' template

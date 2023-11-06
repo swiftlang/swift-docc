@@ -14,7 +14,7 @@ import XCTest
 final class CatalogTemplateTests: XCTestCase {
 
     func testMalformedCatalogTemplateFileURL() {
-        let catalogTitle = "Catalog Tite"
+        let catalogTitle = "Catalog Title"
         let catalogArticles = [
             "": CatalogFileTemplate(
                 title: "RootArticle",
@@ -30,15 +30,17 @@ final class CatalogTemplateTests: XCTestCase {
             )
         ]
         let additionalDirectories = ["Resources", "Essentials/Resources/"]
+        // Test that the template throws an error when the files URLs
+        // are not formatted properly.
         XCTAssertThrowsError(
-            try CatalogTemplate(title: catalogTitle, articles: catalogArticles, additionalDirectories: additionalDirectories)
+            try CatalogTemplate(title: catalogTitle, files: catalogArticles, additionalDirectories: additionalDirectories)
         ) { error in
             XCTAssertEqual(error as! CatalogTemplate.Error, CatalogTemplate.Error.malformedCatalogFileURL(""))
         }
     }
     
     func testMalformedCatalogTemplateDirectoryURL() {
-        let catalogTitle = "Catalog Tite"
+        let catalogTitle = "Catalog Title"
         let catalogArticles = [
             "File.md": CatalogFileTemplate(
                 title: "RootArticle",
@@ -54,8 +56,10 @@ final class CatalogTemplateTests: XCTestCase {
             )
         ]
         let additionalDirectories = ["Resources/", "Essentials/Resources"]
+        // Test that the template throws an error when the directories URLs
+        // are not formatted properly.
         XCTAssertThrowsError(
-            try CatalogTemplate(title: catalogTitle, articles: catalogArticles, additionalDirectories: additionalDirectories)
+            try CatalogTemplate(title: catalogTitle, files: catalogArticles, additionalDirectories: additionalDirectories)
         ) { error in
             XCTAssertEqual(error as! CatalogTemplate.Error, CatalogTemplate.Error.malformedCatalogDirectoryURL("Essentials/Resources"))
         }
