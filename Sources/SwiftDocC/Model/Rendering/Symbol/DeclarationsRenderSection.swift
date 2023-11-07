@@ -191,6 +191,8 @@ public struct DeclarationRenderSection: Codable, Equatable {
     ///   - languages: The source languages to which this declaration applies.
     ///   - platforms: The platforms to which this declaration applies.
     ///   - tokens: The list of declaration tokens.
+    ///   - otherDeclarations: The declarations for this symbol's overloads.
+    ///   - indexInOtherDeclarations: If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
     public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: [OtherDeclaration] = [],
                 indexInOtherDeclarations: Int? = nil) {
         self.languages = languages

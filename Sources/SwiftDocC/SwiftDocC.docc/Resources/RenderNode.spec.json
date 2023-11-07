@@ -2543,7 +2543,7 @@
                         }
                      },
                      "identifier": {
-                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                         "type": "string"
                      },
                 }
             },

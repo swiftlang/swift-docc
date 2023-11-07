@@ -585,7 +585,7 @@ extension Symbol {
         set { overloadsVariants.firstValue = newValue }
     }
     
-    /// References to other symbols that overload this one.
+    /// If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
     var indexInOverloads: Int {
         get { indexInOverloadsVariants.firstValue! }
         set { indexInOverloadsVariants.firstValue = newValue }
