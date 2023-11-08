@@ -3955,12 +3955,16 @@ let expected = """
         let functionIdentifiers = ["s:7Animals5sleepyyAA6DragonCF",
                                     "s:7Animals5sleepyyAA4BirdCF"]
         
+        let macroIdentifiers = ["s:10testMacros9stringifyyx_SStSSclufm",
+                                "s:10testMacros9stringifyyx_SStxclufm"]
+        
         let methodsReferences = try methodsIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
         let initializerReferences = try initializerIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
         let staticMethodsReferences = try staticMethodIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
         let operatorReferences = try operatorIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
         let subscriptReferences = try subscriptIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
         let functionReferences = try functionIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let macroReferences = try macroIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
         
         try checkContainsSiblingOverloads(for: methodsReferences, using: context)
         try checkContainsSiblingOverloads(for: initializerReferences, using: context)
@@ -3968,6 +3972,7 @@ let expected = """
         try checkContainsSiblingOverloads(for: operatorReferences, using: context)
         try checkContainsSiblingOverloads(for: subscriptReferences, using: context)
         try checkContainsSiblingOverloads(for: functionReferences, using: context)
+        try checkContainsSiblingOverloads(for: macroReferences, using: context)
     }
     
     // We do not want to add overload behavior for some symbol kinds, even if they are collisions in the link resolver.
