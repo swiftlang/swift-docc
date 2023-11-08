@@ -141,9 +141,9 @@ public class DocumentationContentRenderer {
         default: break
         }
 
-        if article.topics?.taskGroups.isEmpty == false {
+        let isTechnologyRoot = article.metadata?.technologyRoot != nil
+        if article.topics?.taskGroups.isEmpty == false || isTechnologyRoot {
             // The documentation includes a "Topics" section, it's a collection or a group
-            let isTechnologyRoot = article.metadata?.technologyRoot != nil
             return role(for: (isTechnologyRoot) ? .collection : .collectionGroup)
         } else {
             // The documentation is a plain article
