@@ -1667,7 +1667,7 @@ let expected = """
             try """
             # ``Operators/MyNumber``
             
-            A documentation extension that curates symbosl with characters not allowed in a resolved reference URL.
+            A documentation extension that curates symbols with characters not allowed in a resolved reference URL.
 
             ## Topics
 
@@ -1675,6 +1675,9 @@ let expected = """
             - ``>(_:_:)``
             - ``<=(_:_:)``
             - ``>=(_:_:)``
+            - ``-(_:_:)-22pw2``
+            - ``-(_:)-9xdx0``
+            - ``-=(_:_:)-7w3vn``
             """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
         }
         
