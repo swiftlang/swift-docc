@@ -1198,13 +1198,27 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: crossImportOverlayModule.declaringModule, relatedModules: crossImportOverlayModule.bystanderModules)])
-        } else if let extendedModule = symbol.extendedModule, extendedModule != moduleName.displayName {
-            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: [extendedModule])])
+
+        } else if let moduleVariants = VariantCollection<[RenderMetadata.Module]?>(
+            from: symbol.extendedModuleVariants,
+            transform: { (_, value) in
+                let relatedModules: [String]?
+                if value != moduleName.displayName {
+                    relatedModules = [value]
+                } else {
+                    relatedModules = nil
+                }
+                return [
+                    RenderMetadata.Module(name: moduleName.displayName, relatedModules: relatedModules)
+                ]
+            }
+        ) {
+            node.metadata.modulesVariants = moduleVariants
         } else {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)])
         }
-        
-        node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
+
+        node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
             availability.availability
