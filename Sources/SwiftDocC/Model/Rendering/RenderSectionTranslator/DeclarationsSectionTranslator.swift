@@ -41,9 +41,10 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 // If this symbol has overloads, render their declarations as well.
                 let overloadsVariant = symbol.overloadsVariants[trait]
+                // TODO: Support overloads that have platform variants
                 let otherDeclarations = overloadsVariant?.compactMap { overloadReference -> DeclarationRenderSection.OtherDeclaration? in
                     guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol,
-                          let declarationFragments = overload.declarationVariants[trait]?[platforms]?.declarationFragments else {
+                          let declarationFragments = overload.declarationVariants[trait]?.values.first?.declarationFragments else {
                         return nil
                     }
                     let declarationTokens = renderDeclarationTokens(fragments: declarationFragments,
