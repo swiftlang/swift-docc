@@ -575,7 +575,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     case _ where documentationNode.semantic is Article,
                             .documentationExtension:
                         source = documentLocationMap[reference]
-                    case .sourceCode(location: let location):
+                    case .sourceCode(let location, _):
                         // For symbols, first check if we should reference resolve
                         // inherited docs or not. If we don't inherit the docs
                         // we should also skip reference resolving the chunk.
@@ -623,11 +623,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                     var problems = resolver.problems
 
-                    if case DocumentationNode.DocumentationChunk.Source.sourceCode = doc.source,
-                       let docs = documentationNode.symbol?.docComment {
+                    if case .sourceCode(_, let offset) = doc.source {
                         // Offset all problem ranges by the start location of the
                         // source comment in the context of the complete file.
-                        if let docRange = docs.lines.first?.range {
+                        if let docRange = offset {
                             for i in problems.indices {
                                 problems[i].offsetWithRange(docRange)
                             }
