@@ -66,13 +66,16 @@ final class PathHierarchyBasedLinkResolver {
             guard node.symbol != nil else { continue }
             
             // TODO: Once we know what data and what structure we need we should probably create a PathHierarchy API that hides those implementation details.
-            for (_ /*name*/, disambiguation) in node.children {
+            for (_, disambiguation) in node.children {
                 for ( kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && overloadableKinds.contains(kind) {
-                    let childrenWithSameKind = innerStorage.values.compactMap {
+                    let overloadsWithSameKind = innerStorage.values.compactMap { potentialOverload in
                         // Filter out any non-symbols and pages that don't have a known reference
-                        $0.symbol == nil ? nil : resolvedReferenceMap[$0.identifier]
+                        potentialOverload.symbol == nil ? nil : resolvedReferenceMap[potentialOverload.identifier]
                     }
-                    observe(childrenWithSameKind)
+                    
+                    if overloadsWithSameKind.count > 1 {
+                        observe(overloadsWithSameKind)
+                    }
                 }
             }
         }

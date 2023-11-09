@@ -170,6 +170,12 @@ public struct DeclarationRenderSection: Codable, Equatable {
         
         /// The overloaded symbol's identifier.
         public let identifier: String
+        
+        /// Creates a new other declaration for a symbol that is connected to this one, e.g. an overload.
+        public init(tokens: [Token], identifier: String) {
+            self.tokens = tokens
+            self.identifier = identifier
+        }
     }
     
     /// The declarations for this symbol's overloads.

@@ -70,6 +70,24 @@ class DeclarationsRenderSectionTests: XCTestCase {
             )
         }
     }
+    
+    func testDoNotEmitOtherDeclarationsIfEmpty() throws {
+
+        let encoder = RenderJSONEncoder.makeEncoder(prettyPrint: true)
+        let encodedData = try encoder.encode(
+            DeclarationsRenderSection(declarations: [
+                DeclarationRenderSection(
+                    languages: nil,
+                    platforms: [],
+                    tokens: [.init(text: "", kind: .string)]
+                )]
+            )
+        )
+        
+        let encodedJsonString = try XCTUnwrap(String(data: encodedData, encoding: .utf8))
+        XCTAssertFalse(encodedJsonString.contains("otherDeclarations"))
+        XCTAssertFalse(encodedJsonString.contains("indexInOtherDeclarations"))
+    }
 
     func testRoundTrip() throws {
         let jsonData = """

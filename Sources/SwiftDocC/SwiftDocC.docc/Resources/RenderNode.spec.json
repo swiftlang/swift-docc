@@ -2544,7 +2544,7 @@
                      },
                      "identifier": {
                          "type": "string"
-                     },
+                     }
                 }
             },
             "DeclarationToken": {

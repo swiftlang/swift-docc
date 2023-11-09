@@ -1352,7 +1352,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
 
-            handleOverloads(with: linkResolver.localResolver)
+            groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -2354,13 +2354,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     /// Handles overloaded symbols by grouping them together into one page.
-    private func handleOverloads(with linkResolver: PathHierarchyBasedLinkResolver) {
+    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         
         linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
-            guard overloadedSymbolReferences.count > 1 else { return }
 
             // Tell each symbol what other symbols overload it.
             for (index, symbolReference) in overloadedSymbolReferences.indexed() {
@@ -2368,7 +2367,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 
                 assert(documentationNode?.semantic is Symbol,
                        "Overloads must be symbols.")
-                guard let symbol = (documentationNode?.semantic as? Symbol) else { continue }
+                assert(symbolReference.sourceLanguage == .swift,
+                       "Overloads must be Swift symbols.")
+                guard let symbol = (documentationNode?.semantic as? Symbol),
+                        symbolReference.sourceLanguage == .swift else { continue }
                 
                 var otherOverloadSymbols = overloadedSymbolReferences
                 otherOverloadSymbols.remove(at: index)
