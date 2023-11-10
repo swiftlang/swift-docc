@@ -1337,6 +1337,14 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "<=(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: ">=(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         
+        XCTAssertEqual(try tree.findSymbol(path: "-(_:_:)-22pw2", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1soiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "-(_:)-9xdx0", parent: myNumberID).identifier.precise, "s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "-=(_:_:)-7w3vn", parent: myNumberID).identifier.precise, "s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "-(_:_:)-func.op", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1soiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "-(_:)-func.op", parent: myNumberID).identifier.precise, "s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "-=(_:_:)-func.op", parent: myNumberID).identifier.precise, "s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         
         // Unmodified operator name in URL
@@ -1632,6 +1640,8 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("path-type.property", [("path", "type.property", nil)])
         assertParsedPathComponents("path-swift.type.property", [("path", "type.property", nil)])
         
+        assertParsedPathComponents("-(_:_:)-hash", [("-(_:_:)", nil, "hash")])
+
         // Check escaped forward slashes
         assertParsedPathComponents("\\/=(_:_:)", [("/=(_:_:)", nil, nil)])
         assertParsedPathComponents("escaped\\/slashes\\/in\\/name", [("escaped/slashes/in/name", nil, nil)])

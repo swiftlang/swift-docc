@@ -108,10 +108,11 @@ extension PathHierarchy {
         if let dashIndex = name.lastIndex(of: "-") {
             let kind = String(name[dashIndex...].dropFirst())
             let name = String(name[..<dashIndex])
-            if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
-                return PathComponent(full: full, name: name, kind: String(kind.dropFirst(languagePrefix.count)), hash: hash)
-            } else {
+            if knownSymbolKinds.contains(kind) {
                 return PathComponent(full: full, name: name, kind: kind, hash: hash)
+            } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
+                let kindWithoutLanguage = String(kind.dropFirst(languagePrefix.count))
+                return PathComponent(full: full, name: name, kind: kindWithoutLanguage, hash: hash)
             }
         }
         return PathComponent(full: full, name: name, kind: nil, hash: hash)
