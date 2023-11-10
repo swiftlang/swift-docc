@@ -97,7 +97,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -117,12 +117,13 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/init(rootURL:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/init(rootURL:allowArbitraryCatalogDirectories:)"
       ],
       "title" : "Initializers"
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/allowArbitraryCatalogDirectories",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/fileSystem",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/rootURL"
@@ -366,6 +367,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider\/documentationworkspacedataprovider-implementations"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/allowArbitraryCatalogDirectories": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "allowArbitraryCatalogDirectories"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/allowArbitraryCatalogDirectories",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "allowArbitraryCatalogDirectories",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider\/allowarbitrarycatalogdirectories"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/contentsOfURL(_:)": {
   "abstract" : [
 
@@ -485,7 +520,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider\/identifier"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/init(rootURL:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/init(rootURL:allowArbitraryCatalogDirectories:)": {
   "abstract" : [
     {
       "text" : "Creates a new provider that recursively traverses the content of the given root URL to discover documentation bundles.",
@@ -516,6 +551,23 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "allowArbitraryCatalogDirectories"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
       "text" : ") "
     },
     {
@@ -523,12 +575,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/init(rootURL:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/init(rootURL:allowArbitraryCatalogDirectories:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(rootURL:)",
+  "title" : "init(rootURL:allowArbitraryCatalogDirectories:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider\/init(rooturl:)"
+  "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider\/init(rooturl:allowarbitrarycatalogdirectories:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/rootURL": {
   "abstract" : [

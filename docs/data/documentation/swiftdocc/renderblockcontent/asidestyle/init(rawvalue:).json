@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Inherited from ",
-      "type" : "text"
-    },
-    {
-      "code" : "RawRepresentable.init(rawValue:)",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Creates an aside style for the specified raw value.",
       "type" : "text"
     }
   ],
@@ -29,7 +21,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC18RenderBlockContentO10AsideStyleO8rawValueAESgSS_tcfc",
+    "externalID" : "s:9SwiftDocC18RenderBlockContentO10AsideStyleV8rawValueAESS_tcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -37,7 +29,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?("
+        "text" : "("
       },
       {
         "kind" : "externalParam",
@@ -84,7 +76,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -107,11 +99,30 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The heading text to use when rendering this style of aside.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "rawValue"
+        }
+      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -182,14 +193,14 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle": {
   "abstract" : [
     {
-      "text" : "An aside style.",
+      "text" : "A type the describes an aside style.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "struct"
     },
     {
       "kind" : "text",
@@ -215,7 +226,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(rawValue:)": {
   "abstract" : [
-
+    {
+      "text" : "Creates an aside style for the specified raw value.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {
@@ -224,7 +238,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?("
+      "text" : "("
     },
     {
       "kind" : "externalParam",

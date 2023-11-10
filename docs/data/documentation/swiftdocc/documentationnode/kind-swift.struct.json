@@ -96,7 +96,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -112,6 +112,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/id",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/isExtendedSymbolKind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/isPage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/isSymbol",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/name"
@@ -129,11 +130,22 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/collection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/collectionGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/deinitializer",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/dictionary",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/dictionaryKey",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/enumeration",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/enumerationCase",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedClass",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedEnumeration",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedModule",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedProtocol",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedStructure",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extension",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/function",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/globalVariable",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpBody",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpParameter",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpRequest",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpResponse",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/initializer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/instanceMethod",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/instanceProperty",
@@ -154,7 +166,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/root",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/sampleCode",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/snippet",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/snippetGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/structure",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/tag",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/technology",
@@ -169,6 +180,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/typeSubscript",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/union",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/unknown",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/unknownExtendedType",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/unknownSymbol",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/volume"
       ],
@@ -813,6 +825,114 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/deinitializer"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/dictionary": {
+  "abstract" : [
+    {
+      "text" : "Documentation about a dictionary.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dictionary"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/dictionary",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dictionary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/dictionary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/dictionaryKey": {
+  "abstract" : [
+    {
+      "text" : "Documentation about a dictionary key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dictionaryKey"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/dictionaryKey",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dictionaryKey",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/dictionarykey"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/enumeration": {
   "abstract" : [
     {
@@ -920,6 +1040,261 @@
   "title" : "enumerationCase",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/enumerationcase"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/extendedClass": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedClass"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedClass",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedClass",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/extendedclass"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/extendedEnumeration": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedEnumeration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedEnumeration",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedEnumeration",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/extendedenumeration"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/extendedModule": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedModule"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedModule",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedModule",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/extendedmodule"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/extendedProtocol": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedProtocol"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedProtocol",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedProtocol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/extendedprotocol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/extendedStructure": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedStructure"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/extendedStructure",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedStructure",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/extendedstructure"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/extension": {
   "abstract" : [
@@ -1082,6 +1457,222 @@
   "title" : "globalVariable",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/globalvariable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/httpBody": {
+  "abstract" : [
+    {
+      "text" : "Documentation about an HTTP parameter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpBody"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpBody",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpBody",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/httpbody"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/httpParameter": {
+  "abstract" : [
+    {
+      "text" : "Documentation about an HTTP response.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpParameter",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpParameter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/httpparameter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/httpRequest": {
+  "abstract" : [
+    {
+      "text" : "Documentation about an HTTP request.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpRequest"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpRequest",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpRequest",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/httprequest"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/httpResponse": {
+  "abstract" : [
+    {
+      "text" : "Documentation about an HTTP body.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpResponse"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/httpResponse",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "httpResponse",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/httpresponse"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/id": {
   "abstract" : [
@@ -1431,6 +2022,43 @@
   "title" : "instanceVariable",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/instancevariable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/isExtendedSymbolKind": {
+  "abstract" : [
+    {
+      "text" : "Returns whether this symbol kind is a synthetic “Extended Symbol” symbol kind.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExtendedSymbolKind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/isExtendedSymbolKind",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExtendedSymbolKind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/isextendedsymbolkind"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/isPage": {
   "abstract" : [
@@ -2377,60 +3005,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/snippet"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/snippetGroup": {
-  "abstract" : [
-    {
-      "text" : "A group of snippets.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "let"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "snippetGroup"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
-      "text" : "DocumentationNode"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
-      "text" : "Kind"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/snippetGroup",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "snippetGroup",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/snippetgroup"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/structure": {
   "abstract" : [
     {
@@ -3186,6 +3760,57 @@
   "title" : "unknown",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/unknown"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/unknownExtendedType": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unknownExtendedType"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
+      "text" : "DocumentationNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct\/unknownExtendedType",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unknownExtendedType",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/kind-swift.struct\/unknownextendedtype"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Kind-swift.struct/unknownSymbol": {
   "abstract" : [

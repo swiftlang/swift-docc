@@ -87,6 +87,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing"
       ],
       "kind" : "relationships",
@@ -96,7 +97,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -140,6 +141,7 @@
     {
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMediaGroupSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMediaGroupSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -162,6 +164,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -293,6 +300,17 @@
   "title" : "ContentAndMediaGroupSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/contentandmediagroupsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ContentAndMediaGroupSection/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMediaGroupSection\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/contentandmediagroupsection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ContentAndMediaGroupSection/TextIndexing-Implementations": {
   "abstract" : [

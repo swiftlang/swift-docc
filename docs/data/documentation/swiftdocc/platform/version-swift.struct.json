@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -97,7 +91,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -123,8 +117,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Comparable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/CustomStringConvertible-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Decodable-Implementations",
@@ -263,17 +255,6 @@
   "title" : "Platform.Version",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/Comparable-Implementations": {
   "abstract" : [

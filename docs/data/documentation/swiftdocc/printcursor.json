@@ -93,7 +93,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -124,8 +124,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/Comparable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/Equatable-Implementations"
       ],
@@ -208,17 +206,6 @@
   "title" : "PrintCursor",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/printcursor"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/PrintCursor/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/printcursor\/-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PrintCursor/Comparable-Implementations": {
   "abstract" : [

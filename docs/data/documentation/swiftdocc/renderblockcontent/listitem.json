@@ -94,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -103,13 +103,14 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/init(content:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/init(content:checked:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/checked",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/content"
       ],
       "title" : "Instance Properties"
@@ -244,6 +245,47 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/listitem\/equatable-implementations"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ListItem/checked": {
+  "abstract" : [
+    {
+      "text" : "If this list item is a task list item, whether the task should be checked off.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "checked"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/checked",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "checked",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/listitem\/checked"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ListItem/content": {
   "abstract" : [
     {
@@ -285,7 +327,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/listitem\/content"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ListItem/init(content:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ListItem/init(content:checked:)": {
   "abstract" : [
     {
       "text" : "Creates a new list item with the given content.",
@@ -316,15 +358,32 @@
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "checked"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/init(content:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem\/init(content:checked:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(content:)",
+  "title" : "init(content:checked:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/listitem\/init(content:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/listitem\/init(content:checked:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ListItem/init(from:)": {
   "abstract" : [

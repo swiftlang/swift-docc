@@ -94,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -124,8 +124,10 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/default(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/maximum(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/maximumExclusive(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/maximumLength(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/minimum(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/minimumExclusive(_:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/minimumExclusive(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/minimumLength(_:)"
       ],
       "title" : "Enumeration Cases"
     },
@@ -913,6 +915,47 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderattribute\/maximumexclusive(_:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/maximumLength(_:)": {
+  "abstract" : [
+    {
+      "text" : "A maximum allowed length of a string.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maximumLength"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/maximumLength(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.maximumLength(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/maximumlength(_:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/minimum(_:)": {
   "abstract" : [
     {
@@ -1010,6 +1053,47 @@
   "title" : "RenderAttribute.minimumExclusive(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderattribute\/minimumexclusive(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/minimumLength(_:)": {
+  "abstract" : [
+    {
+      "text" : "A minimum allowed length of a string.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "minimumLength"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/minimumLength(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.minimumLength(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/minimumlength(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/rawIndexableTextContent(references:)": {
   "abstract" : [

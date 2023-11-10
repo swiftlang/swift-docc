@@ -137,7 +137,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : "  for the provider’s identifier.",
+              "text" : " for the provider’s identifier.",
               "type" : "text"
             }
           ],
@@ -149,7 +149,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

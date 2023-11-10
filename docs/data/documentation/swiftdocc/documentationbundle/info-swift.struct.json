@@ -115,7 +115,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -124,6 +124,7 @@
   "topicSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct\/init(displayName:identifier:version:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct\/init(from:)"
       ],
       "title" : "Initializers"
@@ -465,6 +466,132 @@
   "title" : "identifier",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/info-swift.struct\/identifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Info-swift.struct/init(displayName:identifier:version:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new documentation bundle information value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "displayName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "version"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "defaultCodeListingLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "defaultAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
+      "text" : "DefaultAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "defaultModuleKind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct\/init(displayName:identifier:version:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(displayName:identifier:version:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/info-swift.struct\/init(displayname:identifier:version:defaultcodelistinglanguage:defaultavailability:defaultmodulekind:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/Info-swift.struct/init(from:)": {
   "abstract" : [

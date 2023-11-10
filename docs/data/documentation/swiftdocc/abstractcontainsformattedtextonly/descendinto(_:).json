@@ -1,7 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Continue walking by descending in the given element.",
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "MarkupWalker.descendInto(_:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -52,7 +60,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocC"
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Markdown"
+        ]
       }
     ],
     "role" : "symbol",
@@ -124,30 +135,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "the element whose children the walker should visit.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "markup"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -228,10 +220,7 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AbstractContainsFormattedTextOnly/descendInto(_:)": {
   "abstract" : [
-    {
-      "text" : "Continue walking by descending in the given element.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

@@ -1,31 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Parses an instance of this type, or one of its subcommands, from",
+      "text" : "Inherited from ",
       "type" : "text"
     },
     {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "command-line arguments and calls its ",
-      "type" : "text"
-    },
-    {
-      "code" : "run()",
+      "code" : "ParsableCommand.main()",
       "type" : "codeVoice"
     },
     {
-      "text" : " method, exiting with a",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "relevant error message if necessary.",
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -75,7 +59,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -126,7 +113,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -241,34 +228,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/main()": {
   "abstract" : [
-    {
-      "text" : "Parses an instance of this type, or one of its subcommands, from",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "command-line arguments and calls its ",
-      "type" : "text"
-    },
-    {
-      "code" : "run()",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " method, exiting with a",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "relevant error message if necessary.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

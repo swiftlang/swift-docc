@@ -19,7 +19,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/Decodable-Implementations"
       ]
     ]
   },
@@ -29,6 +30,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC29OutOfProcessReferenceResolverC19ResolvedInformationV4fromAEs7Decoder_p_tKcfc",
     "fragments" : [
       {
@@ -127,7 +129,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -242,6 +244,17 @@
   "title" : "OutOfProcessReferenceResolver.ResolvedInformation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolvedinformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ResolvedInformation/Decodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/Decodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Decodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolvedinformation\/decodable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ResolvedInformation/init(from:)": {
   "abstract" : [

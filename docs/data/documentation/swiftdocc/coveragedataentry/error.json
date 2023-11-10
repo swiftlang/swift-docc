@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -95,7 +89,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -113,14 +107,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/errorDescription-767g5"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/LocalizedError-Implementations"
       ],
@@ -229,17 +222,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/Error-Implementations": {
   "abstract" : [
 
@@ -262,7 +244,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/errorDescription-767g5": {
+"doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/errorDescription": {
   "abstract" : [
 
   ],
@@ -289,12 +271,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/errorDescription-767g5",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error\/errordescription-767g5"
+  "url" : "\/documentation\/swiftdocc\/coveragedataentry\/error\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CoverageDataEntry/Error/failedConversion(description:)": {
   "abstract" : [

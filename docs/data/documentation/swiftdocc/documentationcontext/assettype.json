@@ -83,6 +83,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
         "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/SH"
       ],
@@ -93,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -106,6 +107,12 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/video"
       ],
       "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/description"
+      ],
+      "title" : "Instance Properties"
     },
     {
       "generated" : true,
@@ -232,6 +239,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/assettype\/equatable-implementations"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/AssetType/description": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "description"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/description",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "description",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/assettype\/description"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/AssetType/image": {
   "abstract" : [
     {
@@ -301,6 +342,11 @@
   "title" : "Documentation Context",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontextgroup"
+},
+"doc://SwiftDocC/s23CustomStringConvertibleP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
+  "title" : "Swift.CustomStringConvertible",
+  "type" : "unresolvable"
 }
 }
 }

@@ -142,7 +142,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "If a symbol in a symbol graph file references a type that’s not in the local bundle — for a example, the symbol conforms to a protocol that’s not defined in the local bundle, the",
+              "text" : "If a symbol in a symbol graph file references a type that’s not in the local bundle — for example, the symbol conforms to a protocol that’s not defined in the local bundle, the",
               "type" : "text"
             },
             {
@@ -214,7 +214,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

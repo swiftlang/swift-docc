@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -29,7 +23,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -39,7 +33,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/errorDescription-78mr6",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/failureReason",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/helpAnchor",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/recoverySuggestion"
@@ -108,44 +101,6 @@
   "title" : "DocumentationServerError",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationservererror"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationServerError/errorDescription-78mr6": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "errorDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/errorDescription-78mr6",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "errorDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationservererror\/errordescription-78mr6"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServerError/failureReason": {
   "abstract" : [

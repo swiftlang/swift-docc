@@ -28,7 +28,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -61,8 +61,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSectionWithoutSubheading"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker"
       ],
       "title" : "Predefined Checks"
     }
@@ -480,40 +479,6 @@
   "title" : "SeeAlsoInTopicsHeadingChecker",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/seealsointopicsheadingchecker"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicsSectionWithoutSubheading": {
-  "abstract" : [
-    {
-      "text" : "A Topics section  should have at least one subheading.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "TopicsSectionWithoutSubheading"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSectionWithoutSubheading",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "TopicsSectionWithoutSubheading"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "TopicsSectionWithoutSubheading",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicssectionwithoutsubheading"
 }
 }
 }

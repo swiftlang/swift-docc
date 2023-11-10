@@ -13,12 +13,24 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/CustomStringConvertible-Implementations"
       ]
     ]
   },
@@ -28,6 +40,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC14DiagnosticNoteV11descriptionSSvp",
     "fragments" : [
       {
@@ -56,6 +69,9 @@
       {
         "name" : "SwiftDocC"
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -114,7 +130,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -182,10 +198,22 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticnote"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/CustomStringConvertible-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/CustomStringConvertible-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "CustomStringConvertible Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/customstringconvertible-implementations"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/description": {
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

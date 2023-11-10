@@ -103,7 +103,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -140,6 +140,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/introducedVersion",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/mimeType",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/name",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/readOnly",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/required",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/type",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/typeDetails"
@@ -749,6 +750,47 @@
   "title" : "name",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderproperty\/name"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderProperty/readOnly": {
+  "abstract" : [
+    {
+      "text" : "If true, the property can only be accessed and not modified.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "readOnly"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/readOnly",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "readOnly",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderproperty\/readonly"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderProperty/required": {
   "abstract" : [

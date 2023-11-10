@@ -94,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -116,6 +116,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/all",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/formatConsoleOutputForTools",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/showFixits"
       ],
       "title" : "Type Properties"
@@ -280,6 +281,51 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/all"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/formatConsoleOutputForTools": {
+  "abstract" : [
+    {
+      "text" : "Output to the console should be formatted for an IDE or other tool to parse.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "formatConsoleOutputForTools"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+      "text" : "DiagnosticFormattingOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions\/formatConsoleOutputForTools",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "formatConsoleOutputForTools",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions\/formatconsoleoutputfortools"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions/init(rawValue:)": {
   "abstract" : [
 
@@ -359,6 +405,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

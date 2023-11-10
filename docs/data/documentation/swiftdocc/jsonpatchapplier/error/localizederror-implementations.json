@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -32,7 +26,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -42,7 +36,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription-2ymp8",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/failureReason",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/helpAnchor",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/recoverySuggestion"
@@ -145,44 +138,6 @@
   "title" : "JSONPatchApplier.Error",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/errorDescription-2ymp8": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "errorDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription-2ymp8",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "errorDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/errordescription-2ymp8"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/failureReason": {
   "abstract" : [

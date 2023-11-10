@@ -28,7 +28,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC9BenchmarkC14TopicGraphHashC6resultAA11MetricValueOSgvp",
+    "externalID" : "s:9SwiftDocC9BenchmarkC14TopicGraphHashC6resultAA0C7ResultsV6MetricV5ValueOSgvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -48,7 +48,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC11MetricValueO",
+        "preciseIdentifier" : "s:9SwiftDocC11MetricValuea",
         "text" : "MetricValue"
       },
       {
@@ -96,7 +96,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MetricValue",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC11MetricValueO",
+              "preciseIdentifier" : "s:9SwiftDocC11MetricValuea",
               "text" : "MetricValue"
             },
             {
@@ -111,7 +111,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -202,7 +202,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11MetricValueO",
+      "preciseIdentifier" : "s:9SwiftDocC11MetricValuea",
       "text" : "MetricValue"
     },
     {
@@ -234,14 +234,14 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MetricValue": {
   "abstract" : [
     {
-      "text" : "An encodable value which is either a number or a string.",
+      "text" : "A metric value which is either a duration, a number of bytes, or a checksum.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "typealias"
     },
     {
       "kind" : "text",

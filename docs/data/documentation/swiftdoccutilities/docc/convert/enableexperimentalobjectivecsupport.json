@@ -5,6 +5,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Objective-C support is enabled by default.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -48,6 +59,9 @@
       {
         "name" : "SwiftDocCUtilities"
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -131,6 +145,7 @@
               "type" : "paragraph"
             }
           ],
+          "name" : "Important",
           "style" : "important",
           "type" : "aside"
         }
@@ -140,7 +155,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -211,7 +226,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -249,6 +264,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

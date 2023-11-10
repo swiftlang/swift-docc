@@ -100,7 +100,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : ", create an conformant ",
+              "text" : ", create a conformant ",
               "type" : "text"
             },
             {
@@ -166,7 +166,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -206,8 +206,10 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CoverageAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments"
       ],
       "title" : "Structures"
     }
@@ -444,6 +446,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc"
 },
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCatalogOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a URL value that provides the path to a documentation catalog.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCatalogOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCatalogOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCatalogOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption"
+},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument": {
   "abstract" : [
     {
@@ -616,10 +652,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Signal": {
   "abstract" : [
-    {
-      "text" : "A handler that intercepts system signal-events.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -647,6 +680,40 @@
   "title" : "Signal",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/signal"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments": {
+  "abstract" : [
+    {
+      "text" : "Command-line arguments for specifying the catalog’s source repository information.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepositoryArguments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepositoryArguments"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceRepositoryArguments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Throttle": {
   "abstract" : [

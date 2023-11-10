@@ -168,6 +168,25 @@
       "kind" : "declarations"
     },
     {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The external reference that this resolver may have previously resolved.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "reference"
+        }
+      ]
+    },
+    {
       "content" : [
         {
           "anchor" : "return-value",
@@ -202,30 +221,11 @@
         }
       ],
       "kind" : "content"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The external reference that this resolver may have previously resolved.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "reference"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -368,7 +368,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackReferenceResolver": {
   "abstract" : [
     {
-      "text" : "An reference resolver that can be used to resolve references that couldn’t be resolved locally.",
+      "text" : "A reference resolver that can be used to resolve references that couldn’t be resolved locally.",
       "type" : "text"
     }
   ],

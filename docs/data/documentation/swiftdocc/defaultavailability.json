@@ -140,7 +140,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -165,7 +165,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(from:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(from:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(with:)"
       ],
       "title" : "Initializers"
     },
@@ -396,6 +397,65 @@
   "title" : "init(from:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/defaultavailability\/init(from:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability/init(with:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a default availability module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "with"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
+      "text" : "DefaultAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV06ModuleD0V",
+      "text" : "ModuleAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : "]])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(with:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(with:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultavailability\/init(with:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
   "abstract" : [

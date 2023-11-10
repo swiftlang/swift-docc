@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -84,7 +78,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -121,15 +115,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/BenchmarkBlockMetric": {
   "abstract" : [
     {
-      "text" : "A metric that runs over a period of time and needs",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "to be started and stopped to produce its result.",
+      "text" : "A metric that runs over a period of time and needs to be started and stopped to produce its result.",
       "type" : "text"
     }
   ],

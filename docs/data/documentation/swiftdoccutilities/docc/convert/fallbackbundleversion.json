@@ -5,6 +5,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "The bundle version isn't used for anything.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -52,6 +63,9 @@
       {
         "name" : "SwiftDocCUtilities"
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -126,7 +140,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "If the documentation bundle’s Info.plist file contains a bundle version, the documentation bundle ignores this fallback version.",
+              "text" : "If the documentation catalogs’s Info.plist file contains a bundle version, the documentation catalog ignores this fallback version.",
               "type" : "text"
             }
           ],
@@ -138,7 +152,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -209,7 +223,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -247,6 +261,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

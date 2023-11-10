@@ -160,7 +160,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/paragraph(inlineContent:)",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/paragraph(_:)",
               "isActive" : true,
               "type" : "reference"
             },
@@ -173,7 +173,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/heading(level:text:anchor:)",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/heading(_:)",
               "isActive" : true,
               "type" : "reference"
             },
@@ -186,7 +186,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/step(content:caption:media:code:runtimePreview:)",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/step(_:)",
               "isActive" : true,
               "type" : "reference"
             },
@@ -195,7 +195,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/endpointExample(summary:request:response:)",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/endpointExample(_:)",
               "isActive" : true,
               "type" : "reference"
             },
@@ -235,7 +235,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -254,31 +254,54 @@
   "topicSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Aside",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/DictionaryExample",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/EndpointExample",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Heading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ListItem",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/OrderedList",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Paragraph",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Small",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TabNavigator",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Table",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableCellExtendedData",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TermListItem"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TermList",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TermListItem",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TutorialStep",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/UnorderedList",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video"
       ],
       "title" : "Structures"
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/aside(style:content:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/codeListing(syntax:code:metadata:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/dictionaryExample(summary:example:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/endpointExample(summary:request:response:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/heading(level:text:anchor:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/orderedList(items:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/paragraph(inlineContent:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/step(content:caption:media:code:runtimePreview:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/table(header:rows:metadata:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/termList(items:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/unorderedList(items:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/aside(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/codeListing(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/dictionaryExample(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/endpointExample(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/heading(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/links(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/orderedList(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/paragraph(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/row(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/small(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/step(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/tabNavigator(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/table(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/termList(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/unorderedList(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/video(_:)"
       ],
       "title" : "Enumeration Cases"
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ColumnAlignment",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/HeaderType"
       ],
       "title" : "Enumerations"
@@ -371,17 +394,51 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Aside": {
   "abstract" : [
     {
-      "text" : "An aside style.",
+      "text" : "An aside block.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Aside"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Aside",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Aside"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Aside",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/aside"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle": {
+  "abstract" : [
+    {
+      "text" : "A type the describes an aside style.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
     },
     {
       "kind" : "text",
@@ -405,6 +462,74 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/CodeListing": {
+  "abstract" : [
+    {
+      "text" : "A block of sample code.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodeListing"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/CodeListing",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodeListing"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.CodeListing",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ColumnAlignment": {
+  "abstract" : [
+    {
+      "text" : "The methods by which a table column can have its text aligned.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ColumnAlignment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ColumnAlignment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.ColumnAlignment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/columnalignment"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Decodable-Implementations": {
   "abstract" : [
 
@@ -416,6 +541,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/decodable-implementations"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/DictionaryExample": {
+  "abstract" : [
+    {
+      "text" : "An example that contains a sample code block.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DictionaryExample"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/DictionaryExample",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DictionaryExample"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.DictionaryExample",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/dictionaryexample"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Encodable-Implementations": {
   "abstract" : [
 
@@ -426,6 +585,40 @@
   "title" : "Encodable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/encodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/EndpointExample": {
+  "abstract" : [
+    {
+      "text" : "A REST endpoint example that includes a request and the expected response.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EndpointExample"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/EndpointExample",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EndpointExample"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.EndpointExample",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/endpointexample"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Equatable-Implementations": {
   "abstract" : [
@@ -472,6 +665,82 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/headertype"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Heading": {
+  "abstract" : [
+    {
+      "text" : "A heading with the given level.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Heading"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Heading",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Heading"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Heading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/heading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Links": {
+  "abstract" : [
+    {
+      "text" : "A collection of authored links that should be rendered in a similar style",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "to links in an on-page Topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Links"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Links"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Links",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/links"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/ListItem": {
   "abstract" : [
     {
@@ -506,6 +775,244 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/listitem"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/OrderedList": {
+  "abstract" : [
+    {
+      "text" : "A list that contains ordered items.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "OrderedList"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/OrderedList",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "OrderedList"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.OrderedList",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/orderedlist"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Paragraph": {
+  "abstract" : [
+    {
+      "text" : "A paragraph of content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Paragraph"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Paragraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Paragraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Paragraph",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/paragraph"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Row": {
+  "abstract" : [
+    {
+      "text" : "A row in a grid-based layout system that describes a collection of columns.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Row"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Row",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Row"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Row",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Small": {
+  "abstract" : [
+    {
+      "text" : "A paragraph of small print content that should be rendered in a small font.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Small"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Small",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Small"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Small",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/small"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TabNavigator": {
+  "abstract" : [
+    {
+      "text" : "A collection of content that should be rendered in a tab-based layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TabNavigator"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TabNavigator",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TabNavigator"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.TabNavigator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tabnavigator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Table": {
+  "abstract" : [
+    {
+      "text" : "A table that contains a list of row data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Table"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Table",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Table"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Table",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/table"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TableCellExtendedData": {
+  "abstract" : [
+    {
+      "text" : "Extended data that may be applied to a table cell.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TableCellExtendedData"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableCellExtendedData",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TableCellExtendedData"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.TableCellExtendedData",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tablecellextendeddata"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TableRow": {
   "abstract" : [
     {
@@ -539,6 +1046,40 @@
   "title" : "RenderBlockContent.TableRow",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tablerow"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TermList": {
+  "abstract" : [
+    {
+      "text" : "A list of terms.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TermList"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TermList",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TermList"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.TermList",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/termlist"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TermListItem": {
   "abstract" : [
@@ -585,7 +1126,109 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/textindexing-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/aside(style:content:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/TutorialStep": {
+  "abstract" : [
+    {
+      "text" : "A step in a multi-step tutorial.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TutorialStep"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TutorialStep",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TutorialStep"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.TutorialStep",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tutorialstep"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/UnorderedList": {
+  "abstract" : [
+    {
+      "text" : "A list that contains unordered items.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnorderedList"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/UnorderedList",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnorderedList"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.UnorderedList",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/unorderedlist"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/Video": {
+  "abstract" : [
+    {
+      "text" : "A video with an optional caption.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Video"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Video"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.Video",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/video"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/aside(_:)": {
   "abstract" : [
     {
       "text" : "An aside block.",
@@ -610,14 +1253,6 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "style"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
@@ -628,39 +1263,22 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO10AsideStyleO",
-      "text" : "AsideStyle"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO5AsideV",
+      "text" : "Aside"
     },
     {
       "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "content"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/aside(style:content:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/aside(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.aside(style:content:)",
+  "title" : "RenderBlockContent.aside(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/aside(style:content:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/aside(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/codeListing(syntax:code:metadata:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/codeListing(_:)": {
   "abstract" : [
     {
       "text" : "A block of sample code.",
@@ -685,65 +1303,32 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "syntax"
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO11CodeListingV",
+      "text" : "CodeListing"
     },
     {
       "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "code"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "], "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "metadata"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC21RenderContentMetadataV",
-      "text" : "RenderContentMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "?)"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/codeListing(syntax:code:metadata:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/codeListing(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.codeListing(syntax:code:metadata:)",
+  "title" : "RenderBlockContent.codeListing(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting(syntax:code:metadata:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/codelisting(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/dictionaryExample(summary:example:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/dictionaryExample(_:)": {
   "abstract" : [
     {
       "text" : "An example that contains a sample code block.",
@@ -768,48 +1353,32 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "summary"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : "]?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "example"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11CodeExampleV",
-      "text" : "CodeExample"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO17DictionaryExampleV",
+      "text" : "DictionaryExample"
     },
     {
       "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/dictionaryExample(summary:example:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/dictionaryExample(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.dictionaryExample(summary:example:)",
+  "title" : "RenderBlockContent.dictionaryExample(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/dictionaryexample(summary:example:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/dictionaryexample(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/endpointExample(summary:request:response:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/endpointExample(_:)": {
   "abstract" : [
     {
       "text" : "A REST endpoint example that includes a request and the expected response.",
@@ -834,65 +1403,32 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "summary"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : "]?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "request"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11CodeExampleV",
-      "text" : "CodeExample"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "response"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11CodeExampleV",
-      "text" : "CodeExample"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO15EndpointExampleV",
+      "text" : "EndpointExample"
     },
     {
       "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/endpointExample(summary:request:response:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/endpointExample(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.endpointExample(summary:request:response:)",
+  "title" : "RenderBlockContent.endpointExample(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/endpointexample(summary:request:response:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/endpointexample(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/heading(level:text:anchor:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/heading(_:)": {
   "abstract" : [
     {
       "text" : "A heading with the given level.",
@@ -917,65 +1453,90 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "level"
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Si",
-      "text" : "Int"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO7HeadingV",
+      "text" : "Heading"
     },
     {
       "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "text"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "anchor"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?)"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/heading(level:text:anchor:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/heading(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.heading(level:text:anchor:)",
+  "title" : "RenderBlockContent.heading(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/heading(level:text:anchor:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/heading(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/orderedList(items:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/links(_:)": {
+  "abstract" : [
+    {
+      "text" : "A collection of authored links that should be rendered in a similar style",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "to links in an on-page Topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "links"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO5LinksV",
+      "text" : "Links"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/links(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.links(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/links(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/orderedList(_:)": {
   "abstract" : [
     {
       "text" : "A list that contains ordered items.",
@@ -1000,14 +1561,6 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "items"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
@@ -1018,22 +1571,22 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO8ListItemV",
-      "text" : "ListItem"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO11OrderedListV",
+      "text" : "OrderedList"
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/orderedList(items:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/orderedList(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.orderedList(items:)",
+  "title" : "RenderBlockContent.orderedList(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/orderedlist(items:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/orderedlist(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/paragraph(inlineContent:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/paragraph(_:)": {
   "abstract" : [
     {
       "text" : "A paragraph of content.",
@@ -1058,31 +1611,132 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "inlineContent"
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : ": ["
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
-      "text" : "RenderInlineContent"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO9ParagraphV",
+      "text" : "Paragraph"
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/paragraph(inlineContent:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/paragraph(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.paragraph(inlineContent:)",
+  "title" : "RenderBlockContent.paragraph(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/paragraph(inlinecontent:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/paragraph(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/step(content:caption:media:code:runtimePreview:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/row(_:)": {
+  "abstract" : [
+    {
+      "text" : "A row in a grid-based layout system that describes a collection of columns.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "row"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO3RowV",
+      "text" : "Row"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/row(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.row(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/row(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/small(_:)": {
+  "abstract" : [
+    {
+      "text" : "A paragraph of small print content that should be rendered in a small font.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "small"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO5SmallV",
+      "text" : "Small"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/small(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.small(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/small(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/step(_:)": {
   "abstract" : [
     {
       "text" : "A step in a multi-step tutorial.",
@@ -1107,99 +1761,82 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "content"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : "], "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "caption"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
+      "text" : "."
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO12TutorialStepV",
+      "text" : "TutorialStep"
     },
     {
       "kind" : "text",
-      "text" : "], "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "media"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
-      "text" : "RenderReferenceIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "code"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
-      "text" : "RenderReferenceIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "runtimePreview"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
-      "text" : "RenderReferenceIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : "?)"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/step(content:caption:media:code:runtimePreview:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/step(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.step(content:caption:media:code:runtimePreview:)",
+  "title" : "RenderBlockContent.step(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/step(content:caption:media:code:runtimepreview:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/step(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/table(header:rows:metadata:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/tabNavigator(_:)": {
+  "abstract" : [
+    {
+      "text" : "A collection of content that should be rendered in a tab-based layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tabNavigator"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO12TabNavigatorV",
+      "text" : "TabNavigator"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/tabNavigator(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.tabNavigator(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/tabnavigator(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/table(_:)": {
   "abstract" : [
     {
       "text" : "A table that contains a list of row data.",
@@ -1224,14 +1861,6 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "header"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
@@ -1242,65 +1871,22 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO10HeaderTypeO",
-      "text" : "HeaderType"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO5TableV",
+      "text" : "Table"
     },
     {
       "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "rows"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
-      "text" : "RenderBlockContent"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO8TableRowV",
-      "text" : "TableRow"
-    },
-    {
-      "kind" : "text",
-      "text" : "], "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "metadata"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC21RenderContentMetadataV",
-      "text" : "RenderContentMetadata"
-    },
-    {
-      "kind" : "text",
-      "text" : "?)"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/table(header:rows:metadata:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/table(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.table(header:rows:metadata:)",
+  "title" : "RenderBlockContent.table(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/table(header:rows:metadata:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/table(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/termList(items:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/termList(_:)": {
   "abstract" : [
     {
       "text" : "A list of terms.",
@@ -1325,14 +1911,6 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "items"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
       "text" : "RenderBlockContent"
@@ -1343,22 +1921,22 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO12TermListItemV",
-      "text" : "TermListItem"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO8TermListV",
+      "text" : "TermList"
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/termList(items:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/termList(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.termList(items:)",
+  "title" : "RenderBlockContent.termList(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/termlist(items:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/termlist(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/unorderedList(items:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/unorderedList(_:)": {
   "abstract" : [
     {
       "text" : "A list that contains unordered items.",
@@ -1383,12 +1961,54 @@
       "text" : "("
     },
     {
-      "kind" : "externalParam",
-      "text" : "items"
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
     },
     {
       "kind" : "text",
-      "text" : ": ["
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO13UnorderedListV",
+      "text" : "UnorderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/unorderedList(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.unorderedList(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/unorderedlist(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/video(_:)": {
+  "abstract" : [
+    {
+      "text" : "A video with an optional caption.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "video"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -1401,20 +2021,20 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO8ListItemV",
-      "text" : "ListItem"
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO5VideoV",
+      "text" : "Video"
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/unorderedList(items:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/video(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "RenderBlockContent.unorderedList(items:)",
+  "title" : "RenderBlockContent.video(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/unorderedlist(items:)"
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/video(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderContentMetadata": {
   "abstract" : [

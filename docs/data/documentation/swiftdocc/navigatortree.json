@@ -169,13 +169,14 @@
                   "type" : "codeVoice"
                 },
                 {
-                  "text" : " might be missing if the object is the root, but to avoid creating an exception on the the object structure, its id is set to 0.",
+                  "text" : " might be missing if the object is the root, but to avoid creating an exception on the object structure, its id is set to 0.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
+          "name" : "Note",
           "style" : "note",
           "type" : "aside"
         }
@@ -185,7 +186,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

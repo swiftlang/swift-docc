@@ -104,7 +104,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference",
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/SE"
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -113,7 +114,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -139,7 +140,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(identifier:fileName:fileType:syntax:content:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(identifier:fileName:fileType:syntax:content:highlights:)"
       ],
       "title" : "Initializers"
     },
@@ -154,6 +155,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/type"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -173,6 +181,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -227,6 +240,17 @@
   "title" : "FileReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filereference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileReference/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filereference\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FileReference/content": {
   "abstract" : [
@@ -472,7 +496,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/filereference\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FileReference/init(identifier:fileName:fileType:syntax:content:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/FileReference/init(identifier:fileName:fileType:syntax:content:highlights:)": {
   "abstract" : [
     {
       "text" : "Creates a new file reference.",
@@ -571,15 +595,41 @@
     },
     {
       "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "highlights"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15LineHighlighterV",
+      "text" : "LineHighlighter"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15LineHighlighterV9HighlightV",
+      "text" : "Highlight"
+    },
+    {
+      "kind" : "text",
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(identifier:fileName:fileType:syntax:content:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(identifier:fileName:fileType:syntax:content:highlights:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(identifier:fileName:fileType:syntax:content:)",
+  "title" : "init(identifier:fileName:fileType:syntax:content:highlights:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/filereference\/init(identifier:filename:filetype:syntax:content:)"
+  "url" : "\/documentation\/swiftdocc\/filereference\/init(identifier:filename:filetype:syntax:content:highlights:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FileReference/syntax": {
   "abstract" : [

@@ -136,7 +136,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -145,7 +145,6 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/init(from:source:for:in:problems:)"
       ],
       "title" : "Initializers"
@@ -168,7 +167,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/directiveName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -552,27 +552,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/multiplechoice\/image"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/multiplechoice\/init()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice/init(from:source:for:in:problems:)": {
   "abstract" : [
 
@@ -694,6 +673,48 @@
   "title" : "init(from:source:for:in:problems:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/multiplechoice\/init(from:source:for:in:problems:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice/introducedVersion": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "introducedVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice\/introducedVersion",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "introducedVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/multiplechoice\/introducedversion"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice/originalMarkup": {
   "abstract" : [

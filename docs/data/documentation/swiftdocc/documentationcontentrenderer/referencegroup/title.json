@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -20,7 +14,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC28DocumentationContentRendererC14ReferenceGroupV5titleSSvp",
+    "externalID" : "s:9SwiftDocC28DocumentationContentRendererC14ReferenceGroupV5titleSSSgvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -42,6 +36,10 @@
         "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:SS",
         "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
       }
     ],
     "modules" : [
@@ -85,6 +83,10 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:SS",
               "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
             }
           ]
         }
@@ -94,7 +96,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -221,6 +223,10 @@
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:SS",
       "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/ReferenceGroup\/title",

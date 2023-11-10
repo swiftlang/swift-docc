@@ -95,7 +95,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/SE"
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -104,7 +105,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -126,6 +127,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialAssessmentsRenderSection\/Assessment\/Choice\/reaction"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialAssessmentsRenderSection\/Assessment\/Choice\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -145,6 +153,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -320,6 +333,17 @@
   "title" : "TutorialAssessmentsRenderSection.Assessment.Choice",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialassessmentsrendersection\/assessment\/choice"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialAssessmentsRenderSection/Assessment/Choice/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialAssessmentsRenderSection\/Assessment\/Choice\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorialassessmentsrendersection\/assessment\/choice\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TutorialAssessmentsRenderSection/Assessment/Choice/content": {
   "abstract" : [

@@ -1,38 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "The desired level of documentation coverage. Options are ",
-      "type" : "text"
-    },
-    {
-      "code" : "none",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", ",
-      "type" : "text"
-    },
-    {
-      "code" : "brief",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", and ",
-      "type" : "text"
-    },
-    {
-      "code" : "detailed",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ". The default is ",
-      "type" : "text"
-    },
-    {
-      "code" : "none",
-      "type" : "codeVoice"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -76,6 +42,9 @@
         "name" : "SwiftDocCUtilities"
       }
     ],
+    "platforms" : [
+
+    ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -92,6 +61,19 @@
             "macOS"
           ],
           "tokens" : [
+            {
+              "kind" : "attribute",
+              "text" : "@"
+            },
+            {
+              "kind" : "attribute",
+              "preciseIdentifier" : "s:14ArgumentParser6OptionV",
+              "text" : "Option"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
             {
               "kind" : "keyword",
               "text" : "var"
@@ -141,7 +123,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -211,39 +193,9 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument/level": {
   "abstract" : [
-    {
-      "text" : "The desired level of documentation coverage. Options are ",
-      "type" : "text"
-    },
-    {
-      "code" : "none",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", ",
-      "type" : "text"
-    },
-    {
-      "code" : "brief",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", and ",
-      "type" : "text"
-    },
-    {
-      "code" : "detailed",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ". The default is ",
-      "type" : "text"
-    },
-    {
-      "code" : "none",
-      "type" : "codeVoice"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

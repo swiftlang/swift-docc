@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Converts each eligable file from the source documentation bundle,",
+      "text" : "Converts each eligible file from the source documentation bundle,",
       "type" : "text"
     },
     {
@@ -160,7 +160,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -265,7 +265,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/IndexAction/perform(logHandle:)": {
   "abstract" : [
     {
-      "text" : "Converts each eligable file from the source documentation bundle,",
+      "text" : "Converts each eligible file from the source documentation bundle,",
       "type" : "text"
     },
     {

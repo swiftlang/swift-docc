@@ -126,7 +126,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "If the documentation bundle’s Info.plist file contains a bundle display name, the documentation bundle ignores this fallback name.",
+              "text" : "If the documentation catalogs’s Info.plist file contains a bundle display name, the documentation catalog ignores this fallback name.",
               "type" : "text"
             }
           ],
@@ -138,7 +138,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -209,7 +209,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],

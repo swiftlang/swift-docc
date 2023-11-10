@@ -116,7 +116,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -127,10 +127,12 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/associatedType",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/class",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/dictionary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/enumeration",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/enumerationCase",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/function",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/globalVariable",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/httpRequest",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/initializer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/instanceMethod",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/instanceProperty",
@@ -486,6 +488,31 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation\/defaultvaluedescription"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct/BitFlagRepresentation/dictionary": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dictionary"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/dictionary",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.dictionary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation\/dictionary"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct/BitFlagRepresentation/enumeration": {
   "abstract" : [
 
@@ -585,6 +612,31 @@
   "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.globalVariable",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation\/globalvariable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct/BitFlagRepresentation/httpRequest": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "httpRequest"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/httpRequest",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.httpRequest",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation\/httprequest"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct/BitFlagRepresentation/init(argument:)": {
   "abstract" : [

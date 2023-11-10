@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "No overview available.",
+      "text" : "A user-provided default kind description for the module.",
       "type" : "text"
     }
   ],
@@ -114,11 +114,31 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the documentation catalogs’s Info.plist file contains a default module kind, the documentation catalog ignores this fallback module kind.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -189,7 +209,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -222,7 +242,10 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/fallbackDefaultModuleKind": {
   "abstract" : [
-
+    {
+      "text" : "A user-provided default kind description for the module.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {

@@ -181,7 +181,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -208,16 +208,23 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:references:)"
       ],
       "title" : "Initializers"
     },
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/interfaceLanguages",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/references",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/schemaVersion"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
     },
     {
       "identifiers" : [
@@ -564,6 +571,56 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex\/currentschemaversion"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderindex\/encode(to:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/init(from:)": {
   "abstract" : [
 
@@ -606,7 +663,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/init(interfaceLanguages:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/init(interfaceLanguages:references:)": {
   "abstract" : [
     {
       "text" : "Creates a new render index with the given interface language to node mapping.",
@@ -655,15 +712,41 @@
     },
     {
       "kind" : "text",
-      "text" : "]])"
+      "text" : "]], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "references"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14ImageReferenceV",
+      "text" : "ImageReference"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:references:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(interfaceLanguages:)",
+  "title" : "init(interfaceLanguages:references:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderindex\/init(interfacelanguages:)"
+  "url" : "\/documentation\/swiftdocc\/renderindex\/init(interfacelanguages:references:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/interfaceLanguages": {
   "abstract" : [
@@ -723,6 +806,56 @@
   "title" : "interfaceLanguages",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex\/interfacelanguages"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/references": {
+  "abstract" : [
+    {
+      "text" : "The values of the image references used in the documentation index.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "references"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14ImageReferenceV",
+      "text" : "ImageReference"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/references",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "references",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderindex\/references"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/schemaVersion": {
   "abstract" : [

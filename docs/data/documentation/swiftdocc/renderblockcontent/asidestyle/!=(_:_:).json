@@ -31,7 +31,7 @@
   "kind" : "symbol",
   "metadata" : {
     "extendedModule" : "Swift",
-    "externalID" : "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9SwiftDocC18RenderBlockContentO10AsideStyleO",
+    "externalID" : "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9SwiftDocC18RenderBlockContentO10AsideStyleV",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -85,7 +85,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocC"
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Swift"
+        ]
       }
     ],
     "role" : "symbol",
@@ -177,7 +180,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -248,14 +251,14 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle": {
   "abstract" : [
     {
-      "text" : "An aside style.",
+      "text" : "A type the describes an aside style.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "struct"
     },
     {
       "kind" : "text",

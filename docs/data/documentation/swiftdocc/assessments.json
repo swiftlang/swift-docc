@@ -107,20 +107,13 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
 
   ],
   "topicSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/init()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/init(from:source:for:in:problems:)"
-      ],
-      "title" : "Initializers"
-    },
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/originalMarkup",
@@ -136,7 +129,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -291,7 +284,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/assessments\/accept(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Assessments/directiveName": {
+"doc://SwiftDocC/documentation/SwiftDocC/Assessments/introducedVersion": {
   "abstract" : [
 
   ],
@@ -314,7 +307,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "directiveName"
+      "text" : "introducedVersion"
     },
     {
       "kind" : "text",
@@ -326,155 +319,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/directiveName",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/introducedVersion",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "directiveName",
+  "title" : "introducedVersion",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/assessments\/directivename"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Assessments/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/assessments\/init()"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Assessments/init(from:source:for:in:problems:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
-      "text" : "BlockDirective"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "source"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "for"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "in"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments\/init(from:source:for:in:problems:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(from:source:for:in:problems:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/assessments\/init(from:source:for:in:problems:)"
+  "url" : "\/documentation\/swiftdocc\/assessments\/introducedversion"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Assessments/originalMarkup": {
   "abstract" : [
@@ -520,7 +370,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",

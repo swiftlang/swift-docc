@@ -144,8 +144,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MissingAbstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSectionWithoutSubheading"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker"
       ],
       "kind" : "relationships",
       "title" : "Conforming Types",
@@ -154,7 +153,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -680,40 +679,6 @@
   "title" : "Static Analysis",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/staticanalysis"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicsSectionWithoutSubheading": {
-  "abstract" : [
-    {
-      "text" : "A Topics section  should have at least one subheading.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "TopicsSectionWithoutSubheading"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSectionWithoutSubheading",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "TopicsSectionWithoutSubheading"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "TopicsSectionWithoutSubheading",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicssectionwithoutsubheading"
 }
 }
 }

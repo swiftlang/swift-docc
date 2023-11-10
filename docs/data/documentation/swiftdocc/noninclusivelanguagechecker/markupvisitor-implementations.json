@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -48,10 +42,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitCustomBlock(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitCustomInline(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitDoxygenParameter(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitDoxygenReturns(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitEmphasis(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitHTMLBlock(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitHeading(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitImage(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineAttributes(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineCode(_:)-54kj2",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineHTML(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitLineBreak(_:)",
@@ -525,6 +522,106 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitdocument(_:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitDoxygenParameter(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown16DoxygenParameterV",
+      "text" : "DoxygenParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitDoxygenParameter(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenParameter(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitdoxygenparameter(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitDoxygenReturns(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenReturns"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14DoxygenReturnsV",
+      "text" : "DoxygenReturns"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitDoxygenReturns(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenReturns(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitdoxygenreturns(_:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitEmphasis(_:)": {
   "abstract" : [
 
@@ -724,6 +821,56 @@
   "title" : "visitImage(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitimage(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitInlineAttributes(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitInlineAttributes"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown16InlineAttributesV",
+      "text" : "InlineAttributes"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/visitInlineAttributes(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitInlineAttributes(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/noninclusivelanguagechecker\/visitinlineattributes(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NonInclusiveLanguageChecker/visitInlineCode(_:)-54kj2": {
   "abstract" : [

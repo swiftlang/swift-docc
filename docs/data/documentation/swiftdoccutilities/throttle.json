@@ -142,7 +142,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -201,10 +201,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Signal": {
   "abstract" : [
-    {
-      "text" : "A handler that intercepts system signal-events.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

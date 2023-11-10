@@ -1,8 +1,27 @@
 {
   "abstract" : [
     {
-      "text" : "Returns the text of the help screen for this type.",
+      "text" : "Inherited from ",
       "type" : "text"
+    },
+    {
+      "code" : "ParsableArguments.helpMessage(columns:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use helpMessage(includeHidden:columns:) instead.",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -72,8 +91,14 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -130,7 +155,7 @@
             },
             {
               "kind" : "text",
-              "text" : "? = nil) -> "
+              "text" : "?) -> "
             },
             {
               "kind" : "typeIdentifier",
@@ -141,90 +166,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The full help screen for this type.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The column width to use when wrapping long lines in",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "text" : "the help screen. If ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "columns",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " is ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : ", uses the current terminal width,",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "text" : "or a default value of ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "80",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the terminal width is not available.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "columns"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -305,11 +251,9 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument/helpMessage(columns:)": {
   "abstract" : [
-    {
-      "text" : "Returns the text of the help screen for this type.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

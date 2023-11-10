@@ -135,7 +135,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -144,7 +144,6 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/init(from:source:for:in:problems:)"
       ],
       "title" : "Initializers"
@@ -167,7 +166,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/directiveName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -643,27 +643,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tile\/identifier-swift.property"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Tile/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/tile\/init()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Tile/init(from:source:for:in:problems:)": {
   "abstract" : [
 
@@ -785,6 +764,48 @@
   "title" : "init(from:source:for:in:problems:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tile\/init(from:source:for:in:problems:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Tile/introducedVersion": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "introducedVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile\/introducedVersion",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "introducedVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tile\/introducedversion"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Tile/originalMarkup": {
   "abstract" : [

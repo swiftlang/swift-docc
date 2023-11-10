@@ -241,6 +241,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSection",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing"
       ],
       "kind" : "relationships",
@@ -250,7 +251,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -290,6 +291,7 @@
     {
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -312,6 +314,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -434,6 +441,17 @@
   "title" : "RESTEndpointRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/restendpointrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/restendpointrendersection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection/TextIndexing-Implementations": {
   "abstract" : [

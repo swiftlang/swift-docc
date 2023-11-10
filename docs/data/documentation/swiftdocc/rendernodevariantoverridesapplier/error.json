@@ -98,7 +98,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -113,14 +113,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/errorDescription-93dwg"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/LocalizedError-Implementations"
@@ -273,17 +272,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodevariantoverridesapplier\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernodevariantoverridesapplier\/error\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error/Equatable-Implementations": {
   "abstract" : [
 
@@ -345,7 +333,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernodevariantoverridesapplier\/error\/corruptedrendernode"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error/errorDescription-93dwg": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error/errorDescription": {
   "abstract" : [
 
   ],
@@ -372,12 +360,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/errorDescription-93dwg",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernodevariantoverridesapplier\/error\/errordescription-93dwg"
+  "url" : "\/documentation\/swiftdocc\/rendernodevariantoverridesapplier\/error\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
   "abstract" : [

@@ -82,7 +82,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -102,6 +102,7 @@
   "topicSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(name:contents:)"
       ],
       "title" : "Initializers"
@@ -216,6 +217,47 @@
   "title" : "contents",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/parameter\/contents"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Parameter/init(_:)": {
+  "abstract" : [
+    {
+      "text" : "Initialize a value to describe documentation about a symbol’s parameter via a Doxygen ",
+      "type" : "text"
+    },
+    {
+      "code" : "\\param",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " command.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown16DoxygenParameterV",
+      "text" : "DoxygenParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/parameter\/init(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Parameter/init(name:contents:)": {
   "abstract" : [

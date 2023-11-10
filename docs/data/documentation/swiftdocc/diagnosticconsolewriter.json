@@ -127,7 +127,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -137,7 +137,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:filterLevel:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:formattingOptions:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:formattingOptions:baseURL:highlight:)"
       ],
       "title" : "Initializers"
     },
@@ -149,9 +149,19 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/finalize()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/receive(_:)"
       ],
       "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8ceqw",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8wldy",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8x0zq"
+      ],
+      "title" : "Type Methods"
     }
   ],
   "variants" : [
@@ -216,6 +226,308 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/finalize()": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "finalize"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/finalize()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "finalize()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/finalize()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/flush()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "flush"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/flush()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "flush()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/flush()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/formattedDescription(for:options:)-8ceqw": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "formattedDescription"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+      "text" : "Problem"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+      "text" : "DiagnosticFormattingOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8ceqw",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "formattedDescription(for:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/formatteddescription(for:options:)-8ceqw"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/formattedDescription(for:options:)-8wldy": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "formattedDescription"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
+      "text" : "Diagnostic"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+      "text" : "DiagnosticFormattingOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8wldy",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "formattedDescription(for:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/formatteddescription(for:options:)-8wldy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/formattedDescription(for:options:)-8x0zq": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "formattedDescription"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Problems"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Problems"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+      "text" : "DiagnosticFormattingOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8x0zq",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "formattedDescription(for:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/formatteddescription(for:options:)-8x0zq"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/formattingOptions": {
   "abstract" : [
 
@@ -260,6 +572,14 @@
   "deprecated" : true,
   "fragments" : [
     {
+      "kind" : "keyword",
+      "text" : "convenience"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "identifier",
       "text" : "init"
     },
@@ -301,7 +621,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/init(_:filterlevel:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/init(_:formattingOptions:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/init(_:formattingOptions:baseURL:highlight:)": {
   "abstract" : [
     {
       "text" : "Creates a new instance of this class with the provided output stream.",
@@ -341,15 +661,49 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "baseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "highlight"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:formattingOptions:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:formattingOptions:baseURL:highlight:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(_:formattingOptions:)",
+  "title" : "init(_:formattingOptions:baseURL:highlight:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/init(_:formattingoptions:)"
+  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/init(_:formattingoptions:baseurl:highlight:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/receive(_:)": {
   "abstract" : [

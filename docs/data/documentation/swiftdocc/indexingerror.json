@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -94,7 +88,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -122,14 +116,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/errorDescription-evx1"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/LocalizedError-Implementations"
       ],
@@ -282,17 +275,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/indexingerror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/IndexingError/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/indexingerror\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/IndexingError/Error-Implementations": {
   "abstract" : [
 
@@ -315,7 +297,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/indexingerror\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/IndexingError/errorDescription-evx1": {
+"doc://SwiftDocC/documentation/SwiftDocC/IndexingError/errorDescription": {
   "abstract" : [
 
   ],
@@ -342,12 +324,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/errorDescription-evx1",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/indexingerror\/errordescription-evx1"
+  "url" : "\/documentation\/swiftdocc\/indexingerror\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/IndexingError/missingTitle(_:)": {
   "abstract" : [

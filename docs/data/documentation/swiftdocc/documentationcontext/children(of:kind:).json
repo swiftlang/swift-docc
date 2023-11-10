@@ -5,11 +5,19 @@
       "type" : "text"
     },
     {
-      "code" : "reference``,  optionally filtering to only children of the given ",
+      "code" : "reference",
       "type" : "codeVoice"
     },
     {
-      "text" : "kind`.",
+      "text" : ", optionally filtering to only children of the given ",
+      "type" : "text"
+    },
+    {
+      "code" : "kind",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -260,26 +268,6 @@
       "kind" : "declarations"
     },
     {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "A list of the reference and kind for each matching child node.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
       "kind" : "parameters",
       "parameters" : [
         {
@@ -311,11 +299,31 @@
           "name" : "kind"
         }
       ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "return-value",
+          "level" : 2,
+          "text" : "Return Value",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A list of the reference and kind for each matching child node.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -399,11 +407,19 @@
       "type" : "text"
     },
     {
-      "code" : "reference``,  optionally filtering to only children of the given ",
+      "code" : "reference",
       "type" : "codeVoice"
     },
     {
-      "text" : "kind`.",
+      "text" : ", optionally filtering to only children of the given ",
+      "type" : "text"
+    },
+    {
+      "code" : "kind",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],

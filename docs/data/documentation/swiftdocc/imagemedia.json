@@ -89,7 +89,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic"
       ],
       "kind" : "relationships",
       "title" : "Inherits From",
@@ -98,6 +98,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -107,7 +108,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -116,14 +117,11 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/init(from:source:for:in:problems:)"
-      ],
-      "title" : "Initializers"
-    },
-    {
-      "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/altText",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/originalMarkup"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/caption",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/deviceFrame",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/originalMarkup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/source"
       ],
       "title" : "Instance Properties"
     },
@@ -135,7 +133,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/directiveName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -334,7 +333,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -364,6 +363,84 @@
   "title" : "altText",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/imagemedia\/alttext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/caption": {
+  "abstract" : [
+    {
+      "text" : "An optional caption that should be rendered alongside the image.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "caption"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15MarkupContainerC",
+      "text" : "MarkupContainer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/caption",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "caption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagemedia\/caption"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/deviceFrame": {
+  "abstract" : [
+    {
+      "text" : "The name of a device frame that should wrap this image.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deviceFrame"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/deviceFrame",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deviceFrame",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagemedia\/deviceframe"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/directiveName": {
   "abstract" : [
@@ -407,14 +484,22 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/imagemedia\/directivename"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/init(from:source:for:in:problems:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/introducedVersion": {
   "abstract" : [
 
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "convenience"
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
     },
     {
       "kind" : "text",
@@ -422,15 +507,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
+      "text" : "introducedVersion"
     },
     {
       "kind" : "text",
@@ -438,96 +515,16 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
-      "text" : "BlockDirective"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "source"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "for"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "in"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/init(from:source:for:in:problems:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/introducedVersion",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(from:source:for:in:problems:)",
+  "title" : "introducedVersion",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/imagemedia\/init(from:source:for:in:problems:)"
+  "url" : "\/documentation\/swiftdocc\/imagemedia\/introducedversion"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/originalMarkup": {
   "abstract" : [
@@ -563,6 +560,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/imagemedia\/originalmarkup"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia/source": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "source"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17ResourceReferenceV",
+      "text" : "ResourceReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia\/source",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "source",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagemedia\/source"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Media": {
   "abstract" : [
     {
@@ -573,7 +604,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "class"
+      "text" : "protocol"
     },
     {
       "kind" : "text",
@@ -596,6 +627,40 @@
   "title" : "Media",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/media"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
+  "abstract" : [
+    {
+      "text" : "A semantic object is an abstract element with children which also are semantic objects.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic"
 }
 }
 }

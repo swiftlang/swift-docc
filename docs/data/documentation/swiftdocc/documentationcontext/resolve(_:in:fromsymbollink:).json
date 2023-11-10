@@ -222,26 +222,6 @@
       "kind" : "declarations"
     },
     {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The resolved identifier for the topic if the parent provided the correct context and the topic exists.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
       "kind" : "parameters",
       "parameters" : [
         {
@@ -249,7 +229,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "An unresolved (or resolved) identifer.",
+                  "text" : "An unresolved (or resolved) reference.",
                   "type" : "text"
                 }
               ],
@@ -276,14 +256,14 @@
                   "type" : "emphasis"
                 },
                 {
-                  "text" : " identifier that serves as an enclosing search context, especially the parent identifier’s bundle identifier.",
+                  "text" : " reference that serves as an enclosing search context, especially the parent reference’s bundle identifier.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "parentIdentifier"
+          "name" : "parent"
         },
         {
           "content" : [
@@ -333,6 +313,26 @@
     {
       "content" : [
         {
+          "anchor" : "return-value",
+          "level" : 2,
+          "text" : "Return Value",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Either the successfully resolved reference for the topic or error information about why the reference couldn’t resolve.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    },
+    {
+      "content" : [
+        {
           "anchor" : "discussion",
           "level" : 2,
           "text" : "Discussion",
@@ -350,96 +350,9 @@
               "type" : "paragraph"
             }
           ],
+          "name" : "Note",
           "style" : "note",
           "type" : "aside"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "We have four approaches to trying to resolve a reference:",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "items" : [
-            {
-              "content" : [
-                {
-                  "inlineContent" : [
-                    {
-                      "text" : "we check if the link is already resolved, i.e. the path is fully formed and there is a matching documentation node",
-                      "type" : "text"
-                    }
-                  ],
-                  "type" : "paragraph"
-                }
-              ]
-            },
-            {
-              "content" : [
-                {
-                  "inlineContent" : [
-                    {
-                      "text" : "we check if the link is resolvable in the local context (e.g. the parent), i.e. “MyClass” ~> “MyClass\/myFunction()”",
-                      "type" : "text"
-                    }
-                  ],
-                  "type" : "paragraph"
-                }
-              ]
-            },
-            {
-              "content" : [
-                {
-                  "inlineContent" : [
-                    {
-                      "text" : "we check if the link is resolvable as a sibling to the parent, i.e. “MyClass\/myFunction()” ~> “MyClass\/path”",
-                      "type" : "text"
-                    }
-                  ],
-                  "type" : "paragraph"
-                }
-              ]
-            },
-            {
-              "content" : [
-                {
-                  "inlineContent" : [
-                    {
-                      "text" : "we check if the link is resolvable in the root context (e.g. the module) of its parent, i.e. we will try resolving ‘MyClass’ as ‘MyKit\/MyClass’",
-                      "type" : "text"
-                    }
-                  ],
-                  "type" : "paragraph"
-                }
-              ]
-            },
-            {
-              "content" : [
-                {
-                  "inlineContent" : [
-                    {
-                      "text" : "we check if there is a registered external resolver for the link’s bundle id and if so, use that resolver",
-                      "type" : "text"
-                    }
-                  ],
-                  "type" : "paragraph"
-                }
-              ]
-            }
-          ],
-          "type" : "orderedList"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "If none of these succeeds we will return the original unresolved reference.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
         }
       ],
       "kind" : "content"
@@ -447,7 +360,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

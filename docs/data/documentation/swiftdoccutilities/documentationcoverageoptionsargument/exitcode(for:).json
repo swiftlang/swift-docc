@@ -1,7 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Returns the exit code for the given error.",
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ParsableArguments.exitCode(for:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -72,7 +80,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -149,102 +160,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The exit code for ",
-              "type" : "text"
-            },
-            {
-              "code" : "error",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ".",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An error to generate an exit code for.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "error"
-        }
-      ]
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The returned code is the same exit code that is used if ",
-              "type" : "text"
-            },
-            {
-              "code" : "error",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " is passed",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "to ",
-              "type" : "text"
-            },
-            {
-              "code" : "exit(withError:)",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ".",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -325,10 +245,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument/exitCode(for:)": {
   "abstract" : [
-    {
-      "text" : "Returns the exit code for the given error.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

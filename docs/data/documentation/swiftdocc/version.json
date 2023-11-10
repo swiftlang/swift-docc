@@ -100,7 +100,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -140,7 +140,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-56ggz"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)"
       ],
       "title" : "Subscripts"
     },
@@ -641,7 +641,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/startindex"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Version/subscript(_:)-56ggz": {
+"doc://SwiftDocC/documentation/SwiftDocC/Version/subscript(_:)": {
   "abstract" : [
     {
       "text" : "Returns the version component at the given index.",
@@ -672,12 +672,12 @@
       "text" : "Int"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-56ggz",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "subscript(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/subscript(_:)-56ggz"
+  "url" : "\/documentation\/swiftdocc\/version\/subscript(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet": {
   "abstract" : [

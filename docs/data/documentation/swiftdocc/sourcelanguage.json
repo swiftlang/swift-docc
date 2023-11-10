@@ -95,7 +95,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -120,7 +120,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(knownLanguageIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(knownLanguageName:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:id:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:id:idAliases:linkDisambiguationID:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(queryID:)"
       ],
       "title" : "Initializers"
@@ -128,9 +128,17 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/id",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/idAliases",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/linkDisambiguationID",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/name"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
     },
     {
       "identifiers" : [
@@ -337,6 +345,56 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/sourcelanguage\/data"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcelanguage\/encode(to:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/id": {
   "abstract" : [
     {
@@ -373,6 +431,47 @@
   "title" : "id",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/sourcelanguage\/id"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/idAliases": {
+  "abstract" : [
+    {
+      "text" : "Aliases for the language’s identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "idAliases"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/idAliases",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "idAliases",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcelanguage\/idaliases"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/init(from:)": {
   "abstract" : [
@@ -580,7 +679,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/sourcelanguage\/init(name:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/init(name:id:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/init(name:id:idAliases:linkDisambiguationID:)": {
   "abstract" : [
     {
       "text" : "Creates a new language with a given name and identifier.",
@@ -628,15 +727,49 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "idAliases"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "linkDisambiguationID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:id:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:id:idAliases:linkDisambiguationID:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(name:id:)",
+  "title" : "init(name:id:idAliases:linkDisambiguationID:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/sourcelanguage\/init(name:id:)"
+  "url" : "\/documentation\/swiftdocc\/sourcelanguage\/init(name:id:idaliases:linkdisambiguationid:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/init(queryID:)": {
   "abstract" : [
@@ -773,6 +906,43 @@
   "title" : "knownLanguages",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/sourcelanguage\/knownlanguages"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/linkDisambiguationID": {
+  "abstract" : [
+    {
+      "text" : "The identifier to use for link disambiguation purposes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "linkDisambiguationID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/linkDisambiguationID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "linkDisambiguationID",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcelanguage\/linkdisambiguationid"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/metal": {
   "abstract" : [

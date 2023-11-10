@@ -37,7 +37,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC15ContentAndMediaC5mediaAA0E0CSgvp",
+    "externalID" : "s:9SwiftDocC15ContentAndMediaC5mediaAA0E0_pSgvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -57,7 +57,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:9SwiftDocC5MediaC",
+        "preciseIdentifier" : "s:9SwiftDocC5MediaP",
         "text" : "Media"
       },
       {
@@ -105,7 +105,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC5MediaC",
+              "preciseIdentifier" : "s:9SwiftDocC5MediaP",
               "text" : "Media"
             },
             {
@@ -120,7 +120,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -269,7 +269,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC5MediaC",
+      "preciseIdentifier" : "s:9SwiftDocC5MediaP",
       "text" : "Media"
     },
     {
@@ -294,7 +294,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "class"
+      "text" : "protocol"
     },
     {
       "kind" : "text",

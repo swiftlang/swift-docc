@@ -127,7 +127,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -155,10 +155,10 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleName:article:engine:bystanderModules:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleName:article:engine:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleName:article:problems:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:engine:)"
       ],
       "title" : "Initializers"
     },
@@ -166,9 +166,12 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/availableSourceLanguages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/availableVariantTraits",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/isVirtual",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/kind-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/markup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/metadata",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/name-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/options",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/platformNames",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/reference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/semantic",
@@ -181,7 +184,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includeTaskGroups:)"
       ],
       "title" : "Instance Methods"
     },
@@ -542,7 +545,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/availablevarianttraits"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/externallyLinkableElementSummaries(context:renderNode:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/externallyLinkableElementSummaries(context:renderNode:includeTaskGroups:)": {
   "abstract" : [
     {
       "text" : "Summarizes the node and all of its child elements that you can link to from outside the bundle.",
@@ -598,6 +601,23 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includeTaskGroups"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
       "text" : ") -> ["
     },
     {
@@ -610,14 +630,14 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includeTaskGroups:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "externallyLinkableElementSummaries(context:renderNode:)",
+  "title" : "externallyLinkableElementSummaries(context:renderNode:includeTaskGroups:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:)"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/externallylinkableelementsummaries(context:rendernode:includetaskgroups:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)": {
   "abstract" : [
     {
       "text" : "Initializes a documentation node with all its initial values.",
@@ -803,17 +823,34 @@
     },
     {
       "kind" : "text",
-      "text" : ">?)"
+      "text" : ">?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isVirtual"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:)",
+  "title" : "init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:platformnames:)"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:kind:sourcelanguage:availablesourcelanguages:name:markup:semantic:platformnames:isvirtual:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:symbol:platformName:moduleName:article:engine:bystanderModules:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:symbol:platformName:moduleName:article:engine:)": {
   "abstract" : [
 
   ],
@@ -936,32 +973,15 @@
     },
     {
       "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bystanderModules"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?)"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleName:article:engine:bystanderModules:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleName:article:engine:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(reference:symbol:platformName:moduleName:article:engine:bystanderModules:)",
+  "title" : "init(reference:symbol:platformName:moduleName:article:engine:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulename:article:engine:bystandermodules:)"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulename:article:engine:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:symbol:platformName:moduleName:article:problems:)": {
   "abstract" : [
@@ -1107,7 +1127,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulename:article:problems:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/init(reference:symbol:platformName:moduleReference:article:engine:)": {
   "abstract" : [
     {
       "text" : "Initializes a documentation node to represent a symbol from a symbol graph.",
@@ -1232,32 +1252,52 @@
     },
     {
       "kind" : "text",
-      "text" : ", "
-    },
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:engine:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(reference:symbol:platformName:moduleReference:article:engine:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulereference:article:engine:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/isVirtual": {
+  "abstract" : [
     {
-      "kind" : "externalParam",
-      "text" : "bystanderModules"
+      "text" : "If true, the node was created implicitly and should not generally be rendered as a page of documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
     },
     {
       "kind" : "text",
-      "text" : ": ["
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isVirtual"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?)"
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/isVirtual",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:)",
+  "title" : "isVirtual",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/init(reference:symbol:platformname:modulereference:article:engine:bystandermodules:)"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/isvirtual"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/kind-swift.property": {
   "abstract" : [
@@ -1342,6 +1382,47 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/markup"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/metadata": {
+  "abstract" : [
+    {
+      "text" : "Authored metadata for the node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8MetadataC",
+      "text" : "Metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/metadata",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/metadata"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/name-swift.property": {
   "abstract" : [
     {
@@ -1387,6 +1468,47 @@
   "title" : "name",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/name-swift.property"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/options": {
+  "abstract" : [
+    {
+      "text" : "The authored options for this node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7OptionsC",
+      "text" : "Options"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/options",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "options",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/options"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/platformNames": {
   "abstract" : [

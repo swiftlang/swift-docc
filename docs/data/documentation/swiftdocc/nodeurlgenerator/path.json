@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -82,7 +76,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -110,6 +104,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/dataFolderName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/documentationFolder",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/documentationFolderName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/indexFolderName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/tutorialsFolder",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/tutorialsFolderName"
       ],
@@ -517,6 +512,48 @@
   "title" : "documentationFolderName",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/path\/documentationfoldername"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/Path/indexFolderName": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "indexFolderName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path\/indexFolderName",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "indexFolderName",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/path\/indexfoldername"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/Path/stringValue": {
   "abstract" : [

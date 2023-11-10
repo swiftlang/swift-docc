@@ -194,6 +194,7 @@
               "type" : "paragraph"
             }
           ],
+          "name" : "Warning",
           "style" : "warning",
           "type" : "aside"
         }
@@ -203,7 +204,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -448,7 +449,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackReferenceResolver": {
   "abstract" : [
     {
-      "text" : "An reference resolver that can be used to resolve references that couldn’t be resolved locally.",
+      "text" : "A reference resolver that can be used to resolve references that couldn’t be resolved locally.",
       "type" : "text"
     }
   ],

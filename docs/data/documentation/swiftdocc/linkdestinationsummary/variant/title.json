@@ -29,7 +29,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV5titleSSSgSgvp",
+    "externalID" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV5titleSSSgvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -63,7 +63,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?>"
+        "text" : ">"
       }
     ],
     "modules" : [
@@ -119,7 +119,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?>"
+              "text" : ">"
             }
           ]
         }
@@ -129,7 +129,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -279,7 +279,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?>"
+      "text" : ">"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/title",

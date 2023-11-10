@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Inherited from ",
-      "type" : "text"
-    },
-    {
-      "code" : "RawRepresentable.init(from:)",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Creates an aside style by decoding the specified decoder.",
       "type" : "text"
     }
   ],
@@ -19,8 +11,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/RawRepresentable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle"
       ]
     ]
   },
@@ -30,56 +21,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "conformance" : {
-      "availabilityPrefix" : [
-        {
-          "text" : "Available when",
-          "type" : "text"
-        }
-      ],
-      "conformancePrefix" : [
-        {
-          "text" : "Conforms when",
-          "type" : "text"
-        }
-      ],
-      "constraints" : [
-        {
-          "code" : "Self",
-          "type" : "codeVoice"
-        },
-        {
-          "text" : " conforms to ",
-          "type" : "text"
-        },
-        {
-          "code" : "Decodable",
-          "type" : "codeVoice"
-        },
-        {
-          "text" : " and ",
-          "type" : "text"
-        },
-        {
-          "code" : "RawValue",
-          "type" : "codeVoice"
-        },
-        {
-          "text" : " is ",
-          "type" : "text"
-        },
-        {
-          "code" : "String",
-          "type" : "codeVoice"
-        },
-        {
-          "text" : ".",
-          "type" : "text"
-        }
-      ]
-    },
-    "extendedModule" : "Swift",
-    "externalID" : "s:SYsSeRzSS8RawValueSYRtzrlE4fromxs7Decoder_p_tKcfc::SYNTHESIZED::s:9SwiftDocC18RenderBlockContentO10AsideStyleO",
+    "externalID" : "s:9SwiftDocC18RenderBlockContentO10AsideStyleV4fromAEs7Decoder_p_tKcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -173,11 +115,30 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The decoder to read data from.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "decoder"
+        }
+      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -248,14 +209,14 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle": {
   "abstract" : [
     {
-      "text" : "An aside style.",
+      "text" : "A type the describes an aside style.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "enum"
+      "text" : "struct"
     },
     {
       "kind" : "text",
@@ -279,69 +240,13 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/RawRepresentable-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/RawRepresentable-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "RawRepresentable Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/rawrepresentable-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(from:)": {
   "abstract" : [
-
+    {
+      "text" : "Creates an aside style by decoding the specified decoder.",
+      "type" : "text"
+    }
   ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "Self",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " conforms to ",
-        "type" : "text"
-      },
-      {
-        "code" : "Decodable",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " and ",
-        "type" : "text"
-      },
-      {
-        "code" : "RawValue",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " is ",
-        "type" : "text"
-      },
-      {
-        "code" : "String",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
   "fragments" : [
     {
       "kind" : "identifier",

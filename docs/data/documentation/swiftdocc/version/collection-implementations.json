@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -31,7 +25,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -44,7 +38,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/count",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/first",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/isEmpty",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/underestimatedCount-113dx"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/underestimatedCount"
       ],
       "title" : "Instance Properties"
     },
@@ -55,6 +49,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/dropFirst(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/firstIndex(of:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/firstIndex(where:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/firstRange(of:)-4bkxo",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/formIndex(_:offsetBy:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/formIndex(_:offsetBy:limitedBy:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/formIndex(after:)",
@@ -67,20 +62,14 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/prefix(while:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/randomElement()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/randomElement(using:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/ranges(of:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/split(maxSplits:omittingEmptySubsequences:whereSeparator:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/split(separator:maxSplits:omittingEmptySubsequences:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/suffix(from:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/suffix(from:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/trimmingPrefix(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/trimmingPrefix(while:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-5msc5",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-6nww",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-8mlll"
-      ],
-      "title" : "Subscripts"
     }
   ],
   "variants" : [
@@ -606,6 +595,116 @@
   "title" : "firstIndex(where:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/firstindex(where:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Version/firstRange(of:)-4bkxo": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Element",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "Equatable",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "firstRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "of"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sn",
+      "text" : "Range"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Index"
+    },
+    {
+      "kind" : "text",
+      "text" : ">?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/firstRange(of:)-4bkxo",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "firstRange(of:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/version\/firstrange(of:)-4bkxo"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Version/formIndex(_:offsetBy:)": {
   "abstract" : [
@@ -1528,6 +1627,116 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/randomelement(using:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Version/ranges(of:)": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Element",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "Equatable",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ranges"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "of"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sn",
+      "text" : "Range"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Index"
+    },
+    {
+      "kind" : "text",
+      "text" : ">]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/ranges(of:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "ranges(of:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/version\/ranges(of:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Version/split(maxSplits:omittingEmptySubsequences:whereSeparator:)": {
   "abstract" : [
 
@@ -1791,192 +2000,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/split(separator:maxsplits:omittingemptysubsequences:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Version/subscript(_:)-5msc5": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "subscript"
-    },
-    {
-      "kind" : "text",
-      "text" : "(("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s15UnboundedRange_O",
-      "text" : "UnboundedRange_"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> ()) -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "SubSequence"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-5msc5",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "subscript(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/subscript(_:)-5msc5"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Version/subscript(_:)-6nww": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "subscript"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "R"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "SubSequence"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-6nww",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "subscript(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/subscript(_:)-6nww"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Version/subscript(_:)-8mlll": {
-  "abstract" : [
-
-  ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "SubSequence",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " is ",
-        "type" : "text"
-      },
-      {
-        "code" : "Slice<Self>",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "subscript"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sn",
-      "text" : "Range"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Index"
-    },
-    {
-      "kind" : "text",
-      "text" : ">) -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s5SliceV",
-      "text" : "Slice"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Self"
-    },
-    {
-      "kind" : "text",
-      "text" : ">"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)-8mlll",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "subscript(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/subscript(_:)-8mlll"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Version/suffix(from:)": {
   "abstract" : [
 
@@ -2042,7 +2065,186 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/suffix(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Version/underestimatedCount-113dx": {
+"doc://SwiftDocC/documentation/SwiftDocC/Version/trimmingPrefix(_:)": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Element",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "Equatable",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "trimmingPrefix"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Prefix"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Prefix"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "SubSequence"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/trimmingPrefix(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "trimmingPrefix(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/version\/trimmingprefix(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Version/trimmingPrefix(while:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "trimmingPrefix"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "while"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Element"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "rethrows"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "SubSequence"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/trimmingPrefix(while:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "trimmingPrefix(while:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/version\/trimmingprefix(while:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Version/underestimatedCount": {
   "abstract" : [
 
   ],
@@ -2069,12 +2271,12 @@
       "text" : "Int"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/underestimatedCount-113dx",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/underestimatedCount",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "underestimatedCount",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/underestimatedcount-113dx"
+  "url" : "\/documentation\/swiftdocc\/version\/underestimatedcount"
 }
 }
 }

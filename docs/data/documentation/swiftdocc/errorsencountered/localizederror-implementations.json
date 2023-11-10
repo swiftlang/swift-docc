@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -29,7 +23,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -39,7 +33,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/errorDescription-3ajl9",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/failureReason",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/helpAnchor",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/recoverySuggestion"
@@ -108,44 +101,6 @@
   "title" : "ErrorsEncountered",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorsencountered"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/errorDescription-3ajl9": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "errorDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/errorDescription-3ajl9",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "errorDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorsencountered\/errordescription-3ajl9"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/failureReason": {
   "abstract" : [

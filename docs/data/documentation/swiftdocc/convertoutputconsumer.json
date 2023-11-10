@@ -108,7 +108,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -123,6 +123,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(buildMetadata:)-832tf",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(documentationCoverageInfo:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(indexingRecords:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)-6wfnr",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkableElementSummaries:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(problems:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(renderNode:)",
@@ -526,6 +527,61 @@
   "title" : "consume(indexingRecords:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(indexingrecords:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkResolutionInformation:)-6wfnr": {
+  "abstract" : [
+    {
+      "text" : "Consumes a file representation of the local link resolution information.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "consume"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "linkResolutionInformation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC37SerializableLinkResolutionInformationV",
+      "text" : "SerializableLinkResolutionInformation"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer\/consume(linkResolutionInformation:)-6wfnr",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "consume(linkResolutionInformation:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertoutputconsumer\/consume(linkresolutioninformation:)-6wfnr"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertOutputConsumer/consume(linkableElementSummaries:)": {
   "abstract" : [

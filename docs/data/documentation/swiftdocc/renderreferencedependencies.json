@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -91,7 +85,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -100,7 +94,7 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/init(topicReferences:linkReferences:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/init(topicReferences:linkReferences:imageReferences:)"
       ],
       "title" : "Initializers"
     },
@@ -204,7 +198,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencedependencies\/encodable-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceDependencies/init(topicReferences:linkReferences:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceDependencies/init(topicReferences:linkReferences:imageReferences:)": {
   "abstract" : [
 
   ],
@@ -249,15 +243,32 @@
     },
     {
       "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "imageReferences"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14ImageReferenceV",
+      "text" : "ImageReference"
+    },
+    {
+      "kind" : "text",
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/init(topicReferences:linkReferences:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/init(topicReferences:linkReferences:imageReferences:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(topicReferences:linkReferences:)",
+  "title" : "init(topicReferences:linkReferences:imageReferences:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderreferencedependencies\/init(topicreferences:linkreferences:)"
+  "url" : "\/documentation\/swiftdocc\/renderreferencedependencies\/init(topicreferences:linkreferences:imagereferences:)"
 }
 }
 }

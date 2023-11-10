@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -31,7 +25,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -51,6 +45,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/difference(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/difference(from:by:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/dropLast(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/firstRange(of:)-1wscj",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/formIndex(before:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/last(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/lastIndex(of:)",
@@ -457,6 +452,116 @@
   "title" : "dropLast(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/droplast(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Version/firstRange(of:)-1wscj": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Element",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "Comparable",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "firstRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "of"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sn",
+      "text" : "Range"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Index"
+    },
+    {
+      "kind" : "text",
+      "text" : ">?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/firstRange(of:)-1wscj",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "firstRange(of:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/version\/firstrange(of:)-1wscj"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Version/formIndex(before:)": {
   "abstract" : [

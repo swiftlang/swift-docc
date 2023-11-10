@@ -20,7 +20,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Comparable-Implementations"
       ]
     ]
   },
@@ -97,7 +97,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocC"
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Swift"
+        ]
       }
     ],
     "role" : "symbol",
@@ -201,7 +204,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -317,17 +320,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/versiontriplet"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/versiontriplet\/-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/...(_:_:)": {
   "abstract" : [
 
@@ -401,6 +393,17 @@
   "title" : "...(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/versiontriplet\/'...(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/Comparable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Comparable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Comparable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/versiontriplet\/comparable-implementations"
 }
 }
 }

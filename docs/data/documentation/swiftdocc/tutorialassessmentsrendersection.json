@@ -87,6 +87,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing"
       ],
       "kind" : "relationships",
@@ -96,7 +97,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -152,6 +153,7 @@
     {
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialAssessmentsRenderSection\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialAssessmentsRenderSection\/TextIndexing-Implementations"
       ],
       "title" : "Default Implementations"
@@ -174,6 +176,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -808,6 +815,17 @@
   "title" : "TutorialAssessmentsRenderSection.Assessment",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialassessmentsrendersection\/assessment"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialAssessmentsRenderSection/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialAssessmentsRenderSection\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorialassessmentsrendersection\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TutorialAssessmentsRenderSection/TextIndexing-Implementations": {
   "abstract" : [

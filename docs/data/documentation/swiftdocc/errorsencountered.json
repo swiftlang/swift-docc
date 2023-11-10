@@ -93,7 +93,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -108,14 +108,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/errorDescription-8d1id"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/LocalizedError-Implementations"
       ],
@@ -223,17 +222,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorsencountered"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorsencountered\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/Error-Implementations": {
   "abstract" : [
 
@@ -256,7 +244,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorsencountered\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/errorDescription-8d1id": {
+"doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/errorDescription": {
   "abstract" : [
 
   ],
@@ -283,12 +271,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/errorDescription-8d1id",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorsencountered\/errordescription-8d1id"
+  "url" : "\/documentation\/swiftdocc\/errorsencountered\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered/init()": {
   "abstract" : [

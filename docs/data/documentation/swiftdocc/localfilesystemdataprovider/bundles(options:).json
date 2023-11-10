@@ -36,40 +36,8 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "conformance" : {
-      "availabilityPrefix" : [
-        {
-          "text" : "Available when",
-          "type" : "text"
-        }
-      ],
-      "conformancePrefix" : [
-        {
-          "text" : "Conforms when",
-          "type" : "text"
-        }
-      ],
-      "constraints" : [
-        {
-          "code" : "Self",
-          "type" : "codeVoice"
-        },
-        {
-          "text" : " conforms to ",
-          "type" : "text"
-        },
-        {
-          "code" : "FileSystemProvider",
-          "type" : "codeVoice"
-        },
-        {
-          "text" : ".",
-          "type" : "text"
-        }
-      ]
-    },
     "extendedModule" : "SwiftDocC",
-    "externalID" : "s:9SwiftDocC34DocumentationWorkspaceDataProviderPA2A010FileSystemF0RzrlE7bundles7optionsSayAA0C6BundleVGAA0K16DiscoveryOptionsV_tKF::SYNTHESIZED::s:9SwiftDocC27LocalFileSystemDataProviderV",
+    "externalID" : "s:9SwiftDocC27LocalFileSystemDataProviderV7bundles7optionsSayAA19DocumentationBundleVGAA0K16DiscoveryOptionsV_tKF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -203,7 +171,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -402,38 +370,6 @@
   "abstract" : [
 
   ],
-  "conformance" : {
-    "availabilityPrefix" : [
-      {
-        "text" : "Available when",
-        "type" : "text"
-      }
-    ],
-    "conformancePrefix" : [
-      {
-        "text" : "Conforms when",
-        "type" : "text"
-      }
-    ],
-    "constraints" : [
-      {
-        "code" : "Self",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : " conforms to ",
-        "type" : "text"
-      },
-      {
-        "code" : "FileSystemProvider",
-        "type" : "codeVoice"
-      },
-      {
-        "text" : ".",
-        "type" : "text"
-      }
-    ]
-  },
   "fragments" : [
     {
       "kind" : "keyword",

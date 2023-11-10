@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -48,10 +42,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitCustomBlock(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitCustomInline(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitDoxygenParameter(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitDoxygenReturns(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitEmphasis(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHTMLBlock(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHeading(_:)-8ozuf",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitImage(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitInlineAttributes(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitInlineCode(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitInlineHTML(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitLineBreak(_:)",
@@ -533,6 +530,106 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitdocument(_:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitDoxygenParameter(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown16DoxygenParameterV",
+      "text" : "DoxygenParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitDoxygenParameter(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenParameter(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitdoxygenparameter(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitDoxygenReturns(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenReturns"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14DoxygenReturnsV",
+      "text" : "DoxygenReturns"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitDoxygenReturns(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenReturns(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitdoxygenreturns(_:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitEmphasis(_:)": {
   "abstract" : [
 
@@ -732,6 +829,56 @@
   "title" : "visitImage(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitimage(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitInlineAttributes(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitInlineAttributes"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown16InlineAttributesV",
+      "text" : "InlineAttributes"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitInlineAttributes(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitInlineAttributes(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/duplicatetopicssections\/visitinlineattributes(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DuplicateTopicsSections/visitInlineCode(_:)": {
   "abstract" : [

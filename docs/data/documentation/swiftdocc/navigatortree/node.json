@@ -109,7 +109,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -130,6 +130,7 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/attributes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/children",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/id",
@@ -454,6 +455,55 @@
   "title" : "add(child:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/add(child:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/attributes": {
+  "abstract" : [
+    {
+      "text" : "Storage for additional information in the nodes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attributes"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/attributes",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "attributes",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/attributes"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/bundleIdentifier": {
   "abstract" : [

@@ -21,7 +21,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17VariantCollectionV0C0V8mapPatchyAEyqd0___qd0__Gqd0__qd__XESeRd0__SERd0__lF",
+    "externalID" : "s:9SwiftDocC17VariantCollectionV0C0V8mapPatchyAEyqd___Gqd__xXESeRd__SERd__lF",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -84,18 +84,6 @@
         "kind" : "typeIdentifier",
         "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV0C0V",
         "text" : "Variant"
-      },
-      {
-        "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "typeIdentifier",
-        "text" : "TransformedValue"
-      },
-      {
-        "kind" : "text",
-        "text" : ">"
       }
     ],
     "modules" : [
@@ -201,15 +189,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "TransformedValue"
-            },
-            {
-              "kind" : "text",
-              "text" : "> "
+              "text" : " "
             },
             {
               "kind" : "keyword",
@@ -257,7 +237,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -482,18 +462,6 @@
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV0C0V",
       "text" : "Variant"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "TransformedValue"
-    },
-    {
-      "kind" : "text",
-      "text" : ">"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant\/mapPatch(_:)",

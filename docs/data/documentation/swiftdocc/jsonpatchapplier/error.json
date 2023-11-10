@@ -96,7 +96,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -114,7 +114,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription-792wm"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
@@ -127,7 +127,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/LocalizedError-Implementations"
       ],
@@ -269,17 +268,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/Error-Implementations": {
   "abstract" : [
 
@@ -302,7 +290,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/errorDescription-792wm": {
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/errorDescription": {
   "abstract" : [
 
   ],
@@ -329,12 +317,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription-792wm",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/errordescription-792wm"
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/invalidArrayPointer(_:index:arrayCount:)": {
   "abstract" : [

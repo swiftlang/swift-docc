@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -29,7 +23,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -40,8 +34,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/lazy",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/publisher",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/underestimatedCount-48k70"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/publisher"
       ],
       "title" : "Instance Properties"
     },
@@ -54,7 +47,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/contains(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/elementsEqual(_:by:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/enumerated()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-25j29",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-9kv1v",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/first(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/flatMap(_:)-6k7e1",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/flatMap(_:)-8eb6p",
@@ -625,7 +619,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/enumerated()"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/filter(_:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/filter(_:)-25j29": {
   "abstract" : [
 
   ],
@@ -704,12 +698,90 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-25j29",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "filter(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/filter(_:)"
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/filter(_:)-25j29"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/filter(_:)-9kv1v": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "filter"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation9PredicateV",
+      "text" : "Predicate"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Element"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Element"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/filter(_:)-9kv1v",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "filter(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/filter(_:)-9kv1v"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/first(where:)": {
   "abstract" : [
@@ -2339,40 +2411,6 @@
   "title" : "starts(with:by:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/starts(with:by:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/underestimatedCount-48k70": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "underestimatedCount"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Si",
-      "text" : "Int"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/underestimatedCount-48k70",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "underestimatedCount",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/underestimatedcount-48k70"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/withContiguousStorageIfAvailable(_:)": {
   "abstract" : [

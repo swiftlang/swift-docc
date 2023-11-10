@@ -104,7 +104,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -122,14 +122,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription-8rf8n"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/LocalizedError-Implementations"
       ],
@@ -280,17 +279,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/Error-Implementations": {
   "abstract" : [
 
@@ -313,7 +301,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/errorDescription-8rf8n": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/errorDescription": {
   "abstract" : [
 
   ],
@@ -340,12 +328,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription-8rf8n",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/errordescription-8rf8n"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/notFound(_:)": {
   "abstract" : [

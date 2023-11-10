@@ -1,0 +1,394 @@
+{
+  "abstract" : [
+    {
+      "text" : "Command-line arguments for specifying the catalog’s source repository information.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:18SwiftDocCUtilities25SourceRepositoryArgumentsV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "SourceRepositoryArguments"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "SourceRepositoryArguments"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "SourceRepositoryArguments"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "SourceRepositoryArguments"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
+        "doc:\/\/SwiftDocCUtilities\/Se"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/init()",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/checkoutPath",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/sourceService",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/sourceServiceBaseURL"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/ParsableArguments-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/14ArgumentParser17ParsableArgumentsP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
+  "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/Se": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments": {
+  "abstract" : [
+    {
+      "text" : "Command-line arguments for specifying the catalog’s source repository information.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepositoryArguments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepositoryArguments"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceRepositoryArguments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/ParsableArguments-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/ParsableArguments-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ParsableArguments Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/parsablearguments-implementations"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/checkoutPath": {
+  "abstract" : [
+    {
+      "text" : "The root path on disk of the repository’s checkout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "checkoutPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/checkoutPath",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "checkoutPath",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/checkoutpath"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/init()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/init()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/init()"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/init(from:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/sourceService": {
+  "abstract" : [
+    {
+      "text" : "The source code service used to host the project’s sources.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sourceService"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/sourceService",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sourceService",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/sourceservice"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments/sourceServiceBaseURL": {
+  "abstract" : [
+    {
+      "text" : "The base URL where the source service hosts the project’s sources.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sourceServiceBaseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/sourceServiceBaseURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sourceServiceBaseURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/sourceservicebaseurl"
+}
+}
+}

@@ -120,7 +120,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -137,7 +137,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/convertCommand",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/externalConnectionOptions",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/port"
       ],
       "title" : "Instance Properties"
@@ -197,7 +196,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -361,43 +360,6 @@
   "title" : "convertCommand",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/previewoptions\/convertcommand"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewOptions/externalConnectionOptions": {
-  "abstract" : [
-    {
-      "text" : "The options used when configuring the preview server for external connections.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "externalConnectionOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:18SwiftDocCUtilities32PreviewExternalConnectionOptionsV",
-      "text" : "PreviewExternalConnectionOptions"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/externalConnectionOptions",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "externalConnectionOptions",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/previewoptions\/externalconnectionoptions"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewOptions/init()": {
   "abstract" : [

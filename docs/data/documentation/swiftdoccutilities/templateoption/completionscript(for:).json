@@ -1,7 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Returns a shell completion script for the specified shell.",
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ParsableArguments.completionScript(for:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -73,7 +81,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -150,58 +161,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The completion script for ",
-              "type" : "text"
-            },
-            {
-              "code" : "shell",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ".",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The shell to generate a completion script for.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "shell"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -325,10 +289,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption/completionScript(for:)": {
   "abstract" : [
-    {
-      "text" : "Returns a shell completion script for the specified shell.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

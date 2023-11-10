@@ -330,6 +330,7 @@
               "type" : "paragraph"
             }
           ],
+          "name" : "Note",
           "style" : "note",
           "type" : "aside"
         }
@@ -339,7 +340,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -547,7 +548,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/references": {
   "abstract" : [
     {
-      "text" : "The values of the references used in documentation node. These can be references to other nodes, media, and more.",
+      "text" : "The references used in the render node. These can be references to other nodes, media, and more.",
       "type" : "text"
     }
   ],

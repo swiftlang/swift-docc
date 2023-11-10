@@ -13,6 +13,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use NavigatorIndex.readNavigatorIndex instead",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,6 +41,14 @@
   "metadata" : {
     "externalID" : "s:9SwiftDocC14NavigatorIndexC3url16bundleIdentifier04readC4Tree012presentationG0AC10Foundation3URLV_SSSgSbAKtKcfc",
     "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "convenience"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
       {
         "kind" : "identifier",
         "text" : "init"
@@ -116,6 +135,9 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",
@@ -132,6 +154,14 @@
             "macOS"
           ],
           "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "convenience"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
             {
               "kind" : "keyword",
               "text" : "init"
@@ -283,7 +313,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Indicates if the index has an indentifier useful for presentation contexts.",
+                  "text" : "Indicates if the index has an identifier useful for presentation contexts.",
                   "type" : "text"
                 }
               ],
@@ -346,6 +376,7 @@
               "type" : "paragraph"
             }
           ],
+          "name" : "Note",
           "style" : "note",
           "type" : "aside"
         }
@@ -355,7 +386,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -484,7 +515,16 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "convenience"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
     {
       "kind" : "identifier",
       "text" : "init"

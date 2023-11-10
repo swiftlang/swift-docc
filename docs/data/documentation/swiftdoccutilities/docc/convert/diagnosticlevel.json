@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "No overview available.",
+      "text" : "The diagnostic severity level to filter",
       "type" : "text"
     }
   ],
@@ -118,7 +118,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -189,7 +189,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -222,7 +222,10 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/diagnosticLevel": {
   "abstract" : [
-
+    {
+      "text" : "The diagnostic severity level to filter",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {

@@ -89,7 +89,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -111,7 +111,7 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:)"
       ],
       "title" : "Initializers"
     },
@@ -128,6 +128,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/clearDiagnostics()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-1xqdb",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/emit(_:)-5rcke",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/finalize()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/flush()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/remove(_:)"
       ],
       "title" : "Instance Methods"
@@ -455,7 +457,66 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticengine\/filterlevel"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/init(filterLevel:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/finalize()": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "finalize"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/finalize()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "finalize()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/finalize()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/flush()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "flush"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/flush()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "flush()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/flush()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/init(filterLevel:treatWarningsAsErrors:)": {
   "abstract" : [
     {
       "text" : "Creates a new diagnostic engine instance with no consumers.",
@@ -486,15 +547,32 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "treatWarningsAsErrors"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(filterLevel:)",
+  "title" : "init(filterLevel:treatWarningsAsErrors:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/init(filterlevel:)"
+  "url" : "\/documentation\/swiftdocc\/diagnosticengine\/init(filterlevel:treatwarningsaserrors:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticEngine/problems": {
   "abstract" : [

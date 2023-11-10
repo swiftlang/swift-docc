@@ -120,7 +120,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -131,7 +131,8 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/Duration",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/OutputSize",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/DataDirectoryOutputSize",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/IndexDirectoryOutputSize",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/PeakMemory",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ExternalTopicsHash"
       ],
@@ -186,6 +187,40 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Benchmark/DataDirectoryOutputSize": {
+  "abstract" : [
+    {
+      "text" : "Measures the output size of the data subdirectory in a DocC archive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataDirectoryOutputSize"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/DataDirectoryOutputSize",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataDirectoryOutputSize"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Benchmark.DataDirectoryOutputSize",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/benchmark\/datadirectoryoutputsize"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/Duration": {
   "abstract" : [
@@ -255,17 +290,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/benchmark\/externaltopicshash"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Benchmark/OutputSize": {
+"doc://SwiftDocC/documentation/SwiftDocC/Benchmark/IndexDirectoryOutputSize": {
   "abstract" : [
     {
-      "text" : "A disk size metric for a given directory.",
+      "text" : "Measures the output size of the index subdirectory in a DocC archive.",
       "type" : "text"
     }
   ],
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "class"
+      "text" : "struct"
     },
     {
       "kind" : "text",
@@ -273,21 +308,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "OutputSize"
+      "text" : "IndexDirectoryOutputSize"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/OutputSize",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/IndexDirectoryOutputSize",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "OutputSize"
+      "text" : "IndexDirectoryOutputSize"
     }
   ],
   "role" : "symbol",
-  "title" : "Benchmark.OutputSize",
+  "title" : "Benchmark.IndexDirectoryOutputSize",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/benchmark\/outputsize"
+  "url" : "\/documentation\/swiftdocc\/benchmark\/indexdirectoryoutputsize"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/PeakMemory": {
   "abstract" : [
@@ -505,7 +540,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11MetricValueO",
+      "preciseIdentifier" : "s:9SwiftDocC11MetricValuea",
       "text" : "MetricValue"
     },
     {

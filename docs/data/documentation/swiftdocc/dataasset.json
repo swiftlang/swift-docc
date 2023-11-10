@@ -154,7 +154,8 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/SE"
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -163,7 +164,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -189,6 +190,12 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Metadata-swift.struct"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/init(from:)"
       ],
@@ -197,6 +204,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/context-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/metadata-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/variants"
       ],
       "title" : "Instance Properties"
@@ -205,7 +213,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/data(bestMatching:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/data(with:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/register(_:with:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/register(_:with:metadata:)"
       ],
       "title" : "Instance Methods"
     },
@@ -214,6 +222,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum"
       ],
       "title" : "Enumerations"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -233,6 +248,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -355,6 +375,51 @@
   "title" : "DataAsset.Context",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/dataasset\/context-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/dataasset\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/Metadata-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "Metadata specific to this data asset.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Metadata-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataAsset.Metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/dataasset\/metadata-swift.struct"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DataAsset/context-swift.property": {
   "abstract" : [
@@ -577,7 +642,66 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/dataasset\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/register(_:with:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/metadata-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The metadata associated with each variant.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
+      "text" : "DataAsset"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV8MetadataV",
+      "text" : "Metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/metadata-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/dataasset\/metadata-swift.property"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/register(_:with:metadata:)": {
   "abstract" : [
     {
       "text" : "Registers a variant of the asset.",
@@ -625,15 +749,41 @@
     },
     {
       "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV",
+      "text" : "DataAsset"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9DataAssetV8MetadataV",
+      "text" : "Metadata"
+    },
+    {
+      "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/register(_:with:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/register(_:with:metadata:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "register(_:with:)",
+  "title" : "register(_:with:metadata:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/dataasset\/register(_:with:)"
+  "url" : "\/documentation\/swiftdocc\/dataasset\/register(_:with:metadata:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DataAsset/variants": {
   "abstract" : [

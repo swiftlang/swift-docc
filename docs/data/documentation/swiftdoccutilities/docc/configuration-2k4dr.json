@@ -63,7 +63,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -131,7 +134,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

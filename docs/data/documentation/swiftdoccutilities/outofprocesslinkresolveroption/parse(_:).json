@@ -1,7 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Parses a new instance of this type from command-line arguments.",
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ParsableArguments.parse(_:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -72,7 +80,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -156,70 +167,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "A new instance of this type.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An array of arguments to use for parsing. If",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "arguments",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " is ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : ", this uses the program’s command-line arguments.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "arguments"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -334,10 +286,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/parse(_:)": {
   "abstract" : [
-    {
-      "text" : "Parses a new instance of this type from command-line arguments.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

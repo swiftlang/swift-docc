@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -99,7 +93,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -114,14 +108,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/errorDescription-93au3"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/LocalizedError-Implementations"
@@ -339,17 +332,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Variant/Trait/Error/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Variant/Trait/Error/Equatable-Implementations": {
   "abstract" : [
 
@@ -383,7 +365,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Variant/Trait/Error/errorDescription-93au3": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Variant/Trait/Error/errorDescription": {
   "abstract" : [
 
   ],
@@ -410,12 +392,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/errorDescription-93au3",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error\/errordescription-93au3"
+  "url" : "\/documentation\/swiftdocc\/rendernode\/variant\/trait\/error\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Variant/Trait/Error/invalidTrait": {
   "abstract" : [

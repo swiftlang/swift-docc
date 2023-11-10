@@ -99,7 +99,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -120,6 +120,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction\/init(fromPreviewOptions:withFallbackTemplate:printTemplatePath:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction\/init(port:createConvertAction:workspace:context:printTemplatePath:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction\/init(tlsCertificateKey:tlsCertificateChain:serverUsername:serverPassword:port:createConvertAction:workspace:context:printTemplatePath:)"
       ],
       "title" : "Initializers"
@@ -440,7 +441,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/previewaction\/init(frompreviewoptions:withfallbacktemplate:printtemplatepath:)"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewAction/init(tlsCertificateKey:tlsCertificateChain:serverUsername:serverPassword:port:createConvertAction:workspace:context:printTemplatePath:)": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewAction/init(port:createConvertAction:workspace:context:printTemplatePath:)": {
   "abstract" : [
     {
       "text" : "Creates a new preview action from the given parameters.",
@@ -448,6 +449,133 @@
     }
   ],
   "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "port"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "createConvertAction"
+    },
+    {
+      "kind" : "text",
+      "text" : ": () "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:18SwiftDocCUtilities13ConvertActionV",
+      "text" : "ConvertAction"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "workspace"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22DocumentationWorkspaceC",
+      "text" : "DocumentationWorkspace"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "context"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "printTemplatePath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction\/init(port:createConvertAction:workspace:context:printTemplatePath:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(port:createConvertAction:workspace:context:printTemplatePath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewaction\/init(port:createconvertaction:workspace:context:printtemplatepath:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewAction/init(tlsCertificateKey:tlsCertificateChain:serverUsername:serverPassword:port:createConvertAction:workspace:context:printTemplatePath:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "convenience"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
     {
       "kind" : "identifier",
       "text" : "init"

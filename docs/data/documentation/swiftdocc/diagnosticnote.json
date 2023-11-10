@@ -91,7 +91,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -113,12 +113,18 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/description",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/range",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/source"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/CustomStringConvertible-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -285,39 +291,16 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticnote"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/description": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/CustomStringConvertible-Implementations": {
   "abstract" : [
 
   ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "description"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/description",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "description",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/CustomStringConvertible-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "CustomStringConvertible Implementations",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/description"
+  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/customstringconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/message": {
   "abstract" : [

@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "This value is provided for backwards compatibility with existing clients but",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "will be removed soon. Renamed to ‘–emit-lmdb-index’.",
+      "text" : "This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to ‘–emit-lmdb-index’.",
       "type" : "text"
     }
   ],
@@ -56,6 +48,9 @@
       {
         "name" : "SwiftDocCUtilities"
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -122,7 +117,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -193,7 +188,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -227,18 +222,11 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/index": {
   "abstract" : [
     {
-      "text" : "This value is provided for backwards compatibility with existing clients but",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "will be removed soon. Renamed to ‘–emit-lmdb-index’.",
+      "text" : "This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to ‘–emit-lmdb-index’.",
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

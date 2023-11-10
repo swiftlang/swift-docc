@@ -93,7 +93,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -120,7 +120,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/content",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/taskGroups-1ysii"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/taskGroups"
       ],
       "title" : "Instance Properties"
     },
@@ -129,13 +129,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/title"
       ],
       "title" : "Type Properties"
-    },
-    {
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/GroupedSection-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -551,17 +544,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/seealsosection"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoSection/GroupedSection-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/GroupedSection-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "GroupedSection Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/seealsosection\/groupedsection-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoSection/content": {
   "abstract" : [
 
@@ -600,7 +582,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/seealsosection\/content"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoSection/taskGroups-1ysii": {
+"doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoSection/taskGroups": {
   "abstract" : [
     {
       "text" : "The list of groups for the section.",
@@ -634,12 +616,12 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/taskGroups-1ysii",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection\/taskGroups",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "taskGroups",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/seealsosection\/taskgroups-1ysii"
+  "url" : "\/documentation\/swiftdocc\/seealsosection\/taskgroups"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoSection/title": {
   "abstract" : [

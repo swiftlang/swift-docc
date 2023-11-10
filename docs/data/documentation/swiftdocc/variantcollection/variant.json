@@ -114,56 +114,6 @@
             {
               "kind" : "identifier",
               "text" : "Variant"
-            },
-            {
-              "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Value"
-            },
-            {
-              "kind" : "text",
-              "text" : "> "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Value"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:Se",
-              "text" : "Decodable"
-            },
-            {
-              "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Value"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SE",
-              "text" : "Encodable"
             }
           ]
         }
@@ -171,9 +121,19 @@
       "kind" : "declarations"
     }
   ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -198,6 +158,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant\/mapPatch(_:)"
       ],
       "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -214,6 +181,11 @@
   ]
 , 
 "references": {
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
 "doc://SwiftDocC/documentation/SwiftDocC": {
   "abstract" : [
     {
@@ -349,6 +321,17 @@
   "title" : "VariantCollection.Variant",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantcollection\/variant"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantCollection/Variant/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantcollection\/variant\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VariantCollection/Variant/init(traits:patch:)": {
   "abstract" : [
@@ -503,18 +486,6 @@
       "kind" : "typeIdentifier",
       "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV0C0V",
       "text" : "Variant"
-    },
-    {
-      "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "TransformedValue"
-    },
-    {
-      "kind" : "text",
-      "text" : ">"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant\/mapPatch(_:)",

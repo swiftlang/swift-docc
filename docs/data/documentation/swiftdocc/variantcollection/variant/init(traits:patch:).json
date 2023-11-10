@@ -21,7 +21,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC17VariantCollectionV0C0V6traits5patchAEyx_qd__GSayAA10RenderNodeVADV5TraitOG_SayAA0C14PatchOperationOyqd__GGtcfc",
+    "externalID" : "s:9SwiftDocC17VariantCollectionV0C0V6traits5patchAEyx_GSayAA10RenderNodeVADV5TraitOG_SayAA0C14PatchOperationOyxGGtcfc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -226,7 +226,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

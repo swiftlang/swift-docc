@@ -129,9 +129,19 @@
       "kind" : "declarations"
     }
   ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -167,6 +177,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/operation"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -183,6 +200,11 @@
   ]
 , 
 "references": {
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
 "doc://SwiftDocC/documentation/SwiftDocC": {
   "abstract" : [
     {
@@ -523,6 +545,17 @@
   "title" : "VariantPatchOperation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantpatchoperation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantPatchOperation/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantpatchoperation\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VariantPatchOperation/add(value:)": {
   "abstract" : [

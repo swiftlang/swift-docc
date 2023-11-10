@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -95,7 +89,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -139,6 +133,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restEndpoint",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restParameters",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restResponses",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/row",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/sampleDownload",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/taskGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/tasks",
@@ -997,6 +992,31 @@
   "title" : "RenderSectionKind.restResponses",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendersectionkind\/restresponses"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/row": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "row"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/row",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.row",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/row"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/sampleDownload": {
   "abstract" : [

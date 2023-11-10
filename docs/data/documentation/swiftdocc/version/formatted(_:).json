@@ -80,7 +80,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocC"
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Swift"
+        ]
       }
     ],
     "platforms" : [
@@ -246,7 +249,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

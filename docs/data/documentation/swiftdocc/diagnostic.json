@@ -94,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -122,20 +122,21 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/identifier",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedDescription-7g2hm",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedSummary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/notes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/range",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/severity",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/source"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/source",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/summary"
       ],
       "title" : "Instance Properties"
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetedWithRange(_:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetWithRange(_:)"
       ],
       "title" : "Instance Methods"
     },
@@ -143,7 +144,6 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/DescribedError-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/LocalizedError-Implementations"
       ],
       "title" : "Default Implementations"
@@ -261,17 +261,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/describederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/Error-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/Error-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "Error Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/error-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/LocalizedError-Implementations": {
   "abstract" : [
 
@@ -282,6 +271,47 @@
   "title" : "LocalizedError Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/localizederror-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/explanation": {
+  "abstract" : [
+    {
+      "text" : "Additional details that explain the problem or issue to the end-user in plain language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "explanation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "explanation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/explanation"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/identifier": {
   "abstract" : [
@@ -460,63 +490,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/init(source:severity:range:identifier:summary:explanation:notes:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedDescription-7g2hm": {
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedExplanation": {
   "abstract" : [
 
   ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "localizedDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedDescription-7g2hm",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "localizedDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/localizeddescription-7g2hm"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedExplanation": {
-  "abstract" : [
-    {
-      "text" : "Provides a markup document for this diagnostic in the end-user’s most preferred language, the base language",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "if one isn’t available, or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if no explanations are provided for this diagnostic’s identifier.",
-      "type" : "text"
-    }
-  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -553,28 +531,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedSummary": {
   "abstract" : [
-    {
-      "text" : "Provides the short, localized abstract provided by ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " in plain text if an",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "explanation is available.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -646,10 +605,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/notes"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/offsetedWithRange(_:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/offsetWithRange(_:)": {
   "abstract" : [
     {
-      "text" : "Returns a copy of the diagnostic but offset using a certain ",
+      "text" : "Offsets the diagnostic using a certain SymbolKit ",
       "type" : "text"
     },
     {
@@ -658,14 +617,6 @@
     },
     {
       "text" : ".",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "Useful when validating a doc comment that needs to be projected in its containing file “space”.",
       "type" : "text"
     }
   ],
@@ -680,7 +631,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "offsetedWithRange"
+      "text" : "offsetWithRange"
     },
     {
       "kind" : "text",
@@ -711,20 +662,15 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10DiagnosticV",
-      "text" : "Diagnostic"
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetedWithRange(_:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetWithRange(_:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "offsetedWithRange(_:)",
+  "title" : "offsetWithRange(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/offsetedwithrange(_:)"
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/offsetwithrange(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/range": {
   "abstract" : [
@@ -852,6 +798,43 @@
   "title" : "source",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/source"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/summary": {
+  "abstract" : [
+    {
+      "text" : "A brief summary that describe the problem or issue.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "summary"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/summary",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "summary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/summary"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsumer": {
   "abstract" : [

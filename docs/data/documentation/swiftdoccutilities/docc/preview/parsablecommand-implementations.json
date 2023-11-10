@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -54,7 +48,7 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/helpMessage(for:columns:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/helpMessage(for:includeHidden:columns:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/main()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/main(_:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/parseAsRoot(_:)"
@@ -127,7 +121,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -243,20 +237,9 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/preview\/configuration-2n8jx"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/helpMessage(for:columns:)": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/helpMessage(for:includeHidden:columns:)": {
   "abstract" : [
-    {
-      "text" : "Returns the text of the help screen for the given subcommand of this",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "command.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -302,6 +285,23 @@
     },
     {
       "kind" : "externalParam",
+      "text" : "includeHidden"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
       "text" : "columns"
     },
     {
@@ -323,43 +323,16 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/helpMessage(for:columns:)",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Preview\/helpMessage(for:includeHidden:columns:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "helpMessage(for:columns:)",
+  "title" : "helpMessage(for:includeHidden:columns:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/preview\/helpmessage(for:columns:)"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/preview\/helpmessage(for:includehidden:columns:)"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/main()": {
   "abstract" : [
-    {
-      "text" : "Parses an instance of this type, or one of its subcommands, from",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "command-line arguments and calls its ",
-      "type" : "text"
-    },
-    {
-      "code" : "run()",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " method, exiting with a",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "relevant error message if necessary.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -396,34 +369,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/main(_:)": {
   "abstract" : [
-    {
-      "text" : "Parses an instance of this type, or one of its subcommands, from",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "the given arguments and calls its ",
-      "type" : "text"
-    },
-    {
-      "code" : "run()",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " method, exiting with a",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "relevant error message if necessary.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -469,18 +415,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Preview/parseAsRoot(_:)": {
   "abstract" : [
-    {
-      "text" : "Parses an instance of this type, or one of its subcommands, from",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "command-line arguments.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

@@ -1,0 +1,2073 @@
+{
+  "interfaceLanguages" : {
+    "swift" : [
+      {
+        "children" : [
+          {
+            "title" : "Compiler Workflow",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Commands",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Initializers",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/init()",
+                    "title" : "init()",
+                    "type" : "init"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/init(from:)",
+                    "title" : "init(from: Decoder) throws",
+                    "type" : "init"
+                  },
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/additionalsymbolgraphdirectory",
+                    "title" : "var additionalSymbolGraphDirectory: URL?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/additionalsymbolgraphfiles",
+                    "title" : "var additionalSymbolGraphFiles: [URL]",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/allowarbitrarycatalogdirectories",
+                    "title" : "var allowArbitraryCatalogDirectories: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/analyze",
+                    "title" : "var analyze: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/defaultcodelistinglanguage",
+                    "title" : "var defaultCodeListingLanguage: String?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/dependencies",
+                    "title" : "var dependencies: [URL]",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/diagnosticlevel",
+                    "title" : "var diagnosticLevel: String?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/diagnosticsoutputpath",
+                    "title" : "var diagnosticsOutputPath: URL?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/documentationbundle",
+                    "title" : "var documentationBundle: DocumentationBundleOption",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/documentationcatalog",
+                    "title" : "var documentationCatalog: DocumentationCatalogOption",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/emitdigest",
+                    "title" : "var emitDigest: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/emitfixits",
+                    "title" : "var emitFixits: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/emitlmdbindex",
+                    "title" : "var emitLMDBIndex: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentaldeviceframesupport",
+                    "title" : "var enableExperimentalDeviceFrameSupport: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentaljsonindex",
+                    "title" : "var enableExperimentalJSONIndex: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentallinkhierarchyserialization",
+                    "title" : "var enableExperimentalLinkHierarchySerialization: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentalobjectivecsupport",
+                    "title" : "var enableExperimentalObjectiveCSupport: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableinheriteddocs",
+                    "title" : "var enableInheritedDocs: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentaldocumentationcoverageoptions",
+                    "title" : "var experimentalDocumentationCoverageOptions: DocumentationCoverageOptionsArgument",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentalenablecustomtemplates",
+                    "title" : "var experimentalEnableCustomTemplates: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/experimentalparsedoxygencommands",
+                    "title" : "var experimentalParseDoxygenCommands: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fallbackbundledisplayname",
+                    "title" : "var fallbackBundleDisplayName: String?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fallbackbundleidentifier",
+                    "title" : "var fallbackBundleIdentifier: String?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fallbackbundleversion",
+                    "title" : "var fallbackBundleVersion: String?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fallbackdefaultmodulekind",
+                    "title" : "var fallbackDefaultModuleKind: String?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/formatconsoleoutputfortools",
+                    "title" : "var formatConsoleOutputForTools: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/index",
+                    "title" : "var index: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/outofprocesslinkresolveroption",
+                    "title" : "var outOfProcessLinkResolverOption: OutOfProcessLinkResolverOption",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/outputurl",
+                    "title" : "var outputURL: URL",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/platforms",
+                    "title" : "var platforms: [String]",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/providedoutputurl",
+                    "title" : "var providedOutputURL: URL?",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/sourcerepositoryarguments",
+                    "title" : "var sourceRepositoryArguments: SourceRepositoryArguments",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/templateoption",
+                    "title" : "var templateOption: TemplateOption",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/transformforstatichosting",
+                    "title" : "var transformForStaticHosting: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/warningsaserrors",
+                    "title" : "var warningsAsErrors: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/run()-6n6ql",
+                    "title" : "func run() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/validate()-1hb4l",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/configuration-1ow2d",
+                    "title" : "static var configuration: CommandConfiguration",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/validate()-4d4mc",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/completionscript(for:)",
+                        "title" : "static func completionScript(for: CompletionShell) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/exit(witherror:)",
+                        "title" : "static func exit(withError: Error?) -> Never",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/exitcode(for:)",
+                        "title" : "static func exitCode(for: Error) -> ExitCode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/fullmessage(for:)",
+                        "title" : "static func fullMessage(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/helpmessage(columns:)",
+                        "title" : "static func helpMessage(columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/helpmessage(includehidden:columns:)",
+                        "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/message(for:)",
+                        "title" : "static func message(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parse(_:)",
+                        "title" : "static func parse([String]?) throws -> Self",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parseorexit(_:)",
+                        "title" : "static func parseOrExit([String]?) -> Self",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/run()-8t5t8",
+                        "title" : "func run() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Properties",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/configuration-68h9a",
+                        "title" : "static var configuration: CommandConfiguration",
+                        "type" : "property"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/helpmessage(for:includehidden:columns:)",
+                        "title" : "static func helpMessage(for: ParsableCommand.Type, includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/main()",
+                        "title" : "static func main()",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/main(_:)",
+                        "title" : "static func main([String]?)",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parseasroot(_:)",
+                        "title" : "static func parseAsRoot([String]?) throws -> ParsableCommand",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/parsablecommand-implementations",
+                    "title" : "ParsableCommand Implementations",
+                    "type" : "symbol"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/convert",
+                "title" : "Docc.Convert",
+                "type" : "struct"
+              },
+              {
+                "title" : "Command Line Options",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Initializers",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/init()",
+                    "title" : "init()",
+                    "type" : "init"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/init(from:)",
+                    "title" : "init(from: Decoder) throws",
+                    "type" : "init"
+                  },
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/url",
+                    "title" : "var url: URL?",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/validate()-7mwn9",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Properties",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/urlorfallback",
+                        "title" : "var urlOrFallback: URL",
+                        "type" : "property"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/directorypathoption-implementations",
+                    "title" : "DirectoryPathOption Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/validate()-8fnp0",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/validate()-9s24d",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/completionscript(for:)",
+                        "title" : "static func completionScript(for: CompletionShell) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/exit(witherror:)",
+                        "title" : "static func exit(withError: Error?) -> Never",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/exitcode(for:)",
+                        "title" : "static func exitCode(for: Error) -> ExitCode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/fullmessage(for:)",
+                        "title" : "static func fullMessage(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/helpmessage(columns:)",
+                        "title" : "static func helpMessage(columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/helpmessage(includehidden:columns:)",
+                        "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/message(for:)",
+                        "title" : "static func message(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/parse(_:)",
+                        "title" : "static func parse([String]?) throws -> Self",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/parseorexit(_:)",
+                        "title" : "static func parseOrExit([String]?) -> Self",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "symbol"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/doccarchiveoption",
+                "title" : "DocCArchiveOption",
+                "type" : "struct"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationbundleoption",
+                "title" : "DocumentationBundleOption",
+                "type" : "typealias"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Initializers",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/init()",
+                    "title" : "init()",
+                    "type" : "init"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/init(from:)",
+                    "title" : "init(from: Decoder) throws",
+                    "type" : "init"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/validate()-2xp0s",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/validate()-6kc8k",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/completionscript(for:)",
+                        "title" : "static func completionScript(for: CompletionShell) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/exit(witherror:)",
+                        "title" : "static func exit(withError: Error?) -> Never",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/exitcode(for:)",
+                        "title" : "static func exitCode(for: Error) -> ExitCode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/fullmessage(for:)",
+                        "title" : "static func fullMessage(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/helpmessage(columns:)",
+                        "title" : "static func helpMessage(columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/helpmessage(includehidden:columns:)",
+                        "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/message(for:)",
+                        "title" : "static func message(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/parse(_:)",
+                        "title" : "static func parse([String]?) throws -> Self",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/parseorexit(_:)",
+                        "title" : "static func parseOrExit([String]?) -> Self",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "symbol"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption",
+                "title" : "OutOfProcessLinkResolverOption",
+                "type" : "struct"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Initializers",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/templateoption\/init()",
+                    "title" : "init()",
+                    "type" : "init"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/templateoption\/init(from:)",
+                    "title" : "init(from: Decoder) throws",
+                    "type" : "init"
+                  },
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/templateoption\/templateurl",
+                    "title" : "var templateURL: URL?",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/templateoption\/validate()-2gibg",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/validate()-6csl7",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/completionscript(for:)",
+                        "title" : "static func completionScript(for: CompletionShell) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/exit(witherror:)",
+                        "title" : "static func exit(withError: Error?) -> Never",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/exitcode(for:)",
+                        "title" : "static func exitCode(for: Error) -> ExitCode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/fullmessage(for:)",
+                        "title" : "static func fullMessage(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/helpmessage(columns:)",
+                        "title" : "static func helpMessage(columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/helpmessage(includehidden:columns:)",
+                        "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/message(for:)",
+                        "title" : "static func message(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/parse(_:)",
+                        "title" : "static func parse([String]?) throws -> Self",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/templateoption\/parseorexit(_:)",
+                        "title" : "static func parseOrExit([String]?) -> Self",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/templateoption\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "symbol"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/templateoption",
+                "title" : "TemplateOption",
+                "type" : "struct"
+              },
+              {
+                "title" : "Structures",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Initializers",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/init()",
+                    "title" : "init()",
+                    "type" : "init"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/init(from:)",
+                    "title" : "init(from: Decoder) throws",
+                    "type" : "init"
+                  },
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/bundleidentifier",
+                    "title" : "var bundleIdentifier: String",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/documentationbundle",
+                    "title" : "var documentationBundle: DocCArchiveOption",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/outputurl",
+                    "title" : "var outputURL: URL",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/verbose",
+                    "title" : "var verbose: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/run()-6f8ki",
+                    "title" : "func run() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/configuration-53oo7",
+                    "title" : "static var configuration: CommandConfiguration",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/validate()",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/completionscript(for:)",
+                        "title" : "static func completionScript(for: CompletionShell) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/exit(witherror:)",
+                        "title" : "static func exit(withError: Error?) -> Never",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/exitcode(for:)",
+                        "title" : "static func exitCode(for: Error) -> ExitCode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/fullmessage(for:)",
+                        "title" : "static func fullMessage(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/helpmessage(columns:)",
+                        "title" : "static func helpMessage(columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/helpmessage(includehidden:columns:)",
+                        "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/message(for:)",
+                        "title" : "static func message(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/parse(_:)",
+                        "title" : "static func parse([String]?) throws -> Self",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/parseorexit(_:)",
+                        "title" : "static func parseOrExit([String]?) -> Self",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/run()-31ufo",
+                        "title" : "func run() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Properties",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/configuration-8wp3g",
+                        "title" : "static var configuration: CommandConfiguration",
+                        "type" : "property"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/helpmessage(for:includehidden:columns:)",
+                        "title" : "static func helpMessage(for: ParsableCommand.Type, includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/main()",
+                        "title" : "static func main()",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/main(_:)",
+                        "title" : "static func main([String]?)",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/parseasroot(_:)",
+                        "title" : "static func parseAsRoot([String]?) throws -> ParsableCommand",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/index\/parsablecommand-implementations",
+                    "title" : "ParsableCommand Implementations",
+                    "type" : "symbol"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/index",
+                "title" : "Docc.Index",
+                "type" : "struct"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Initializers",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/init()",
+                    "title" : "init()",
+                    "type" : "init"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/init(from:)",
+                    "title" : "init(from: Decoder) throws",
+                    "type" : "init"
+                  },
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/previewoptions",
+                    "title" : "var previewOptions: PreviewOptions",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/run()-439k5",
+                    "title" : "func run() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/validate()-6ngxd",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/configuration-1c5gv",
+                    "title" : "static var configuration: CommandConfiguration",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/validate()-xb38",
+                        "title" : "func validate() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/completionscript(for:)",
+                        "title" : "static func completionScript(for: CompletionShell) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/exit(witherror:)",
+                        "title" : "static func exit(withError: Error?) -> Never",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/exitcode(for:)",
+                        "title" : "static func exitCode(for: Error) -> ExitCode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/fullmessage(for:)",
+                        "title" : "static func fullMessage(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/helpmessage(columns:)",
+                        "title" : "static func helpMessage(columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/helpmessage(includehidden:columns:)",
+                        "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/message(for:)",
+                        "title" : "static func message(for: Error) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/parse(_:)",
+                        "title" : "static func parse([String]?) throws -> Self",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/parseorexit(_:)",
+                        "title" : "static func parseOrExit([String]?) -> Self",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/parsablearguments-implementations",
+                    "title" : "ParsableArguments Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/run()-3zhtn",
+                        "title" : "func run() throws",
+                        "type" : "method"
+                      },
+                      {
+                        "title" : "Type Properties",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/configuration-2n8jx",
+                        "title" : "static var configuration: CommandConfiguration",
+                        "type" : "property"
+                      },
+                      {
+                        "title" : "Type Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/helpmessage(for:includehidden:columns:)",
+                        "title" : "static func helpMessage(for: ParsableCommand.Type, includeHidden: Bool, columns: Int?) -> String",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/main()",
+                        "title" : "static func main()",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/main(_:)",
+                        "title" : "static func main([String]?)",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/parseasroot(_:)",
+                        "title" : "static func parseAsRoot([String]?) throws -> ParsableCommand",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/preview\/parsablecommand-implementations",
+                    "title" : "ParsableCommand Implementations",
+                    "type" : "symbol"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/preview",
+                "title" : "Docc.Preview",
+                "type" : "struct"
+              },
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/init()",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/init(from:)",
+                "title" : "init(from: Decoder) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Type Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/configuration-2317z",
+                "title" : "static var configuration: CommandConfiguration",
+                "type" : "property"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/validate()",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/completionscript(for:)",
+                    "title" : "static func completionScript(for: CompletionShell) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/exit(witherror:)",
+                    "title" : "static func exit(withError: Error?) -> Never",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/exitcode(for:)",
+                    "title" : "static func exitCode(for: Error) -> ExitCode",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/fullmessage(for:)",
+                    "title" : "static func fullMessage(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/helpmessage(columns:)",
+                    "title" : "static func helpMessage(columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/helpmessage(includehidden:columns:)",
+                    "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/message(for:)",
+                    "title" : "static func message(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/parse(_:)",
+                    "title" : "static func parse([String]?) throws -> Self",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/parseorexit(_:)",
+                    "title" : "static func parseOrExit([String]?) -> Self",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/parsablearguments-implementations",
+                "title" : "ParsableArguments Implementations",
+                "type" : "symbol"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/run()",
+                    "title" : "func run() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/configuration-2k4dr",
+                    "title" : "static var configuration: CommandConfiguration",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Type Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/helpmessage(for:includehidden:columns:)",
+                    "title" : "static func helpMessage(for: ParsableCommand.Type, includeHidden: Bool, columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/main()",
+                    "title" : "static func main()",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/main(_:)",
+                    "title" : "static func main([String]?)",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/parseasroot(_:)",
+                    "title" : "static func parseAsRoot([String]?) throws -> ParsableCommand",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/docc\/parsablecommand-implementations",
+                "title" : "ParsableCommand Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/docc",
+            "title" : "Docc",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:workspace:context:dataprovider:documentationcoverageoptions:bundlediscoveryoptions:diagnosticlevel:diagnos-5drdh",
+                "title" : "init(documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool, workspace: DocumentationWorkspace, context: DocumentationContext?, dataProvider: DocumentationWorkspaceDataProvider?, documentationCoverageOptions: DocumentationCoverageOptions, bundleDiscoveryOptions: BundleDiscoveryOptions, diagnosticLevel: String?, diagnosticEngine: DiagnosticEngine?, emitFixits: Bool, inheritDocs: Bool, experimentalEnableCustomTemplates: Bool, transformForStaticHosting: Bool, hostingBasePath: String?, sourceRepository: SourceRepository?, temporaryDirectory: URL) throws",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:workspace:context:dataprovider:documentationcoverageoptions:bundlediscoveryoptions:diagnosticlevel:diagnos-etz1",
+                "title" : "init(documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?, analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool, currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool, workspace: DocumentationWorkspace, context: DocumentationContext?, dataProvider: DocumentationWorkspaceDataProvider?, documentationCoverageOptions: DocumentationCoverageOptions, bundleDiscoveryOptions: BundleDiscoveryOptions, diagnosticLevel: String?, diagnosticEngine: DiagnosticEngine?, formatConsoleOutputForTools: Bool, inheritDocs: Bool, experimentalEnableCustomTemplates: Bool, transformForStaticHosting: Bool, allowArbitraryCatalogDirectories: Bool, hostingBasePath: String?, sourceRepository: SourceRepository?, temporaryDirectory: URL, dependencies: [URL]) throws",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/convertaction\/init(fromconvertcommand:withfallbacktemplate:)",
+                "title" : "init(fromConvertCommand: Docc.Convert, withFallbackTemplate: URL?) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/convertaction\/setupcontext",
+                "title" : "var setupContext: ((inout DocumentationContext) -> Void)?",
+                "type" : "property"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/convertaction\/perform(loghandle:)",
+                "title" : "func perform(logHandle: LogHandle) throws -> ActionResult",
+                "type" : "method"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/convertaction\/performandhandleresult()",
+                    "title" : "func performAndHandleResult() throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/convertaction\/action-implementations",
+                "title" : "Action Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/convertaction",
+            "title" : "ConvertAction",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewaction\/init(frompreviewoptions:withfallbacktemplate:printtemplatepath:)",
+                "title" : "convenience init(fromPreviewOptions: PreviewOptions, withFallbackTemplate: URL?, printTemplatePath: Bool) throws",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewaction\/init(port:createconvertaction:workspace:context:printtemplatepath:)",
+                "title" : "init(port: Int, createConvertAction: () throws -> ConvertAction, workspace: DocumentationWorkspace, context: DocumentationContext?, printTemplatePath: Bool) throws",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewaction\/init(tlscertificatekey:tlscertificatechain:serverusername:serverpassword:port:createconvertaction:workspace:context:printtemplatepath:)",
+                "title" : "convenience init(tlsCertificateKey: URL?, tlsCertificateChain: URL?, serverUsername: String?, serverPassword: String?, port: Int, createConvertAction: () throws -> ConvertAction, workspace: DocumentationWorkspace, context: DocumentationContext?, printTemplatePath: Bool) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewaction\/setupcontext",
+                "title" : "var setupContext: ((inout DocumentationContext) -> Void)?",
+                "type" : "property"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewaction\/perform(loghandle:)",
+                "title" : "func perform(logHandle: LogHandle) throws -> ActionResult",
+                "type" : "method"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewaction\/performandhandleresult()",
+                    "title" : "func performAndHandleResult() throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/previewaction\/action-implementations",
+                "title" : "Action Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/previewaction",
+            "title" : "PreviewAction",
+            "type" : "class"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/indexaction\/init(documentationbundleurl:outputurl:bundleidentifier:diagnosticengine:)",
+                "title" : "init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/indexaction\/perform(loghandle:)",
+                "title" : "func perform(logHandle: LogHandle) throws -> ActionResult",
+                "type" : "method"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/indexaction\/performandhandleresult()",
+                    "title" : "func performAndHandleResult() throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/indexaction\/action-implementations",
+                "title" : "Action Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/indexaction",
+            "title" : "IndexAction",
+            "type" : "struct"
+          },
+          {
+            "title" : "Actions Design",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/action\/perform(loghandle:)",
+                "title" : "func perform(logHandle: LogHandle) throws -> ActionResult",
+                "type" : "method"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/action\/performandhandleresult()",
+                "title" : "func performAndHandleResult() throws",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/action",
+            "title" : "Action",
+            "type" : "protocol"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/actionresult\/init(didencountererror:outputs:)",
+                "title" : "init(didEncounterError: Bool, outputs: [URL])",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/actionresult\/didencountererror",
+                "title" : "var didEncounterError: Bool",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/actionresult\/outputs",
+                "title" : "var outputs: [URL]",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/actionresult\/problems",
+                "title" : "var problems: [Problem]",
+                "type" : "property"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/actionresult",
+            "title" : "ActionResult",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/recreatingcontext\/setupcontext",
+                "title" : "var setupContext: ((inout DocumentationContext) -> Void)?",
+                "type" : "property"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/recreatingcontext",
+            "title" : "RecreatingContext",
+            "type" : "protocol"
+          },
+          {
+            "title" : "Execution Workflow",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/throttle\/init(interval:)",
+                "title" : "init(interval: DispatchTimeInterval)",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/throttle\/schedule(block:)",
+                "title" : "func schedule(block: () -> Void)",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/throttle",
+            "title" : "Throttle",
+            "type" : "class"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Type Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/signal\/all",
+                "title" : "static let all: [Int32]",
+                "type" : "property"
+              },
+              {
+                "title" : "Type Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/signal\/on(_:callback:)",
+                "title" : "static func on([Int32], callback: (Int32) -> Void)",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/signal",
+            "title" : "Signal",
+            "type" : "struct"
+          },
+          {
+            "title" : "Protocols",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/directorypathoption\/url",
+                "title" : "var url: URL?",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/directorypathoption\/urlorfallback",
+                "title" : "var urlOrFallback: URL",
+                "type" : "property"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/directorypathoption\/validate()",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/directorypathoption\/parsablearguments-implementations",
+                "title" : "ParsableArguments Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/directorypathoption",
+            "title" : "DirectoryPathOption",
+            "type" : "protocol"
+          },
+          {
+            "title" : "Structures",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/coverageaction\/documentationcoverageoptions",
+                "title" : "let documentationCoverageOptions: DocumentationCoverageOptions",
+                "type" : "property"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/coverageaction\/perform(loghandle:)",
+                "title" : "func perform(logHandle: LogHandle) throws -> ActionResult",
+                "type" : "method"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/coverageaction\/performandhandleresult()",
+                    "title" : "func performAndHandleResult() throws",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/coverageaction\/action-implementations",
+                "title" : "Action Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/coverageaction",
+            "title" : "CoverageAction",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/init()",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/init(from:)",
+                "title" : "init(from: Decoder) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/url",
+                "title" : "var url: URL?",
+                "type" : "property"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/urlorfallback",
+                    "title" : "var urlOrFallback: URL",
+                    "type" : "property"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/directorypathoption-implementations",
+                "title" : "DirectoryPathOption Implementations",
+                "type" : "symbol"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/validate()-5hga6",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/validate()-8r4u3",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/completionscript(for:)",
+                    "title" : "static func completionScript(for: CompletionShell) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/exit(witherror:)",
+                    "title" : "static func exit(withError: Error?) -> Never",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/exitcode(for:)",
+                    "title" : "static func exitCode(for: Error) -> ExitCode",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/fullmessage(for:)",
+                    "title" : "static func fullMessage(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/helpmessage(columns:)",
+                    "title" : "static func helpMessage(columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/helpmessage(includehidden:columns:)",
+                    "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/message(for:)",
+                    "title" : "static func message(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/parse(_:)",
+                    "title" : "static func parse([String]?) throws -> Self",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/parseorexit(_:)",
+                    "title" : "static func parseOrExit([String]?) -> Self",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption\/parsablearguments-implementations",
+                "title" : "ParsableArguments Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption",
+            "title" : "DocumentationCatalogOption",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/init()",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/init(from:)",
+                "title" : "init(from: Decoder) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/kinds",
+                "title" : "var kinds: [DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation]",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/level",
+                "title" : "var level: DocumentationCoverageLevel",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/symbolkindfilter",
+                "title" : "var symbolKindFilter: [DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation]",
+                "type" : "property"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/validate()-3ui",
+                "title" : "func validate() throws",
+                "type" : "method"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/validate()-21efx",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/completionscript(for:)",
+                    "title" : "static func completionScript(for: CompletionShell) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/exit(witherror:)",
+                    "title" : "static func exit(withError: Error?) -> Never",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/exitcode(for:)",
+                    "title" : "static func exitCode(for: Error) -> ExitCode",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/fullmessage(for:)",
+                    "title" : "static func fullMessage(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/helpmessage(columns:)",
+                    "title" : "static func helpMessage(columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/helpmessage(includehidden:columns:)",
+                    "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/message(for:)",
+                    "title" : "static func message(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/parse(_:)",
+                    "title" : "static func parse([String]?) throws -> Self",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/parseorexit(_:)",
+                    "title" : "static func parseOrExit([String]?) -> Self",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/parsablearguments-implementations",
+                "title" : "ParsableArguments Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument",
+            "title" : "DocumentationCoverageOptionsArgument",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/init()",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/init(from:)",
+                "title" : "init(from: Decoder) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/convertcommand",
+                "title" : "var convertCommand: Docc.Convert",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/port",
+                "title" : "var port: Int",
+                "type" : "property"
+              },
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/validate()-2prs9",
+                "title" : "func validate() throws",
+                "type" : "method"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/validate()-raw7",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/completionscript(for:)",
+                    "title" : "static func completionScript(for: CompletionShell) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/exit(witherror:)",
+                    "title" : "static func exit(withError: Error?) -> Never",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/exitcode(for:)",
+                    "title" : "static func exitCode(for: Error) -> ExitCode",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/fullmessage(for:)",
+                    "title" : "static func fullMessage(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/helpmessage(columns:)",
+                    "title" : "static func helpMessage(columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/helpmessage(includehidden:columns:)",
+                    "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/message(for:)",
+                    "title" : "static func message(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/parse(_:)",
+                    "title" : "static func parse([String]?) throws -> Self",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/parseorexit(_:)",
+                    "title" : "static func parseOrExit([String]?) -> Self",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/previewoptions\/parsablearguments-implementations",
+                "title" : "ParsableArguments Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/previewoptions",
+            "title" : "PreviewOptions",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/init()",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/init(from:)",
+                "title" : "init(from: Decoder) throws",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/checkoutpath",
+                "title" : "var checkoutPath: String?",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/sourceservice",
+                "title" : "var sourceService: String?",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/sourceservicebaseurl",
+                "title" : "var sourceServiceBaseURL: String?",
+                "type" : "property"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/validate()",
+                    "title" : "func validate() throws",
+                    "type" : "method"
+                  },
+                  {
+                    "title" : "Type Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/completionscript(for:)",
+                    "title" : "static func completionScript(for: CompletionShell) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/exit(witherror:)",
+                    "title" : "static func exit(withError: Error?) -> Never",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/exitcode(for:)",
+                    "title" : "static func exitCode(for: Error) -> ExitCode",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/fullmessage(for:)",
+                    "title" : "static func fullMessage(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/helpmessage(columns:)",
+                    "title" : "static func helpMessage(columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/helpmessage(includehidden:columns:)",
+                    "title" : "static func helpMessage(includeHidden: Bool, columns: Int?) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/message(for:)",
+                    "title" : "static func message(for: Error) -> String",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/parse(_:)",
+                    "title" : "static func parse([String]?) throws -> Self",
+                    "type" : "method"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/parseorexit(_:)",
+                    "title" : "static func parseOrExit([String]?) -> Self",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments\/parsablearguments-implementations",
+                "title" : "ParsableArguments Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments",
+            "title" : "SourceRepositoryArguments",
+            "type" : "struct"
+          }
+        ],
+        "path" : "\/documentation\/swiftdoccutilities",
+        "title" : "SwiftDocCUtilities",
+        "type" : "module"
+      }
+    ]
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 1,
+    "patch" : 1
+  }
+}

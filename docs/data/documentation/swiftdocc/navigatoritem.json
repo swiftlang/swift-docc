@@ -114,7 +114,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -141,7 +141,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(rawValue:)"
       ],
       "title" : "Initializers"
@@ -647,7 +647,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatoritem\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(pageType:languageID:title:platformMask:availabilityID:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(pageType:languageID:title:platformMask:availabilityID:icon:)": {
   "abstract" : [
     {
       "text" : "Initialize a ",
@@ -754,15 +754,32 @@
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "icon"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
+      "text" : "RenderReferenceIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(pageType:languageID:title:platformMask:availabilityID:)",
+  "title" : "init(pageType:languageID:title:platformMask:availabilityID:icon:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatoritem\/init(pagetype:languageid:title:platformmask:availabilityid:)"
+  "url" : "\/documentation\/swiftdocc\/navigatoritem\/init(pagetype:languageid:title:platformmask:availabilityid:icon:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorItem/init(rawValue:)": {
   "abstract" : [

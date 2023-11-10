@@ -83,6 +83,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference"
       ],
@@ -93,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -179,6 +180,50 @@
   "title" : "DownloadReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/downloadreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalLocationReference": {
+  "abstract" : [
+    {
+      "text" : "A specialized ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " used for references to external links.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ExternalLocationReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ExternalLocationReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ExternalLocationReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externallocationreference"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ImageReference": {
   "abstract" : [

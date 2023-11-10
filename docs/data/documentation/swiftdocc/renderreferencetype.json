@@ -95,7 +95,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -116,6 +116,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/download",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/externalLocation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/file",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/fileType",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/image",
@@ -344,6 +345,31 @@
   "title" : "RenderReferenceType.download",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencetype\/download"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceType/externalLocation": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalLocation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/externalLocation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderReferenceType.externalLocation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreferencetype\/externallocation"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceType/file": {
   "abstract" : [

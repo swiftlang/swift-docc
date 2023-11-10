@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The values of the references used in documentation node. These can be references to other nodes, media, and more.",
+      "text" : "The references used in the render node. These can be references to other nodes, media, and more.",
       "type" : "text"
     }
   ],
@@ -117,11 +117,49 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The key for each reference is the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceIdentifier\/identifier",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " of the reference’s ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference\/identifier",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -329,7 +367,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/references": {
   "abstract" : [
     {
-      "text" : "The values of the references used in documentation node. These can be references to other nodes, media, and more.",
+      "text" : "The references used in the render node. These can be references to other nodes, media, and more.",
       "type" : "text"
     }
   ],
@@ -487,6 +525,81 @@
   "title" : "RenderReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReference/identifier": {
+  "abstract" : [
+    {
+      "text" : "The identifier of the reference.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
+      "text" : "RenderReferenceIdentifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference\/identifier",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreference\/identifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceIdentifier/identifier": {
+  "abstract" : [
+    {
+      "text" : "The wrapped string identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceIdentifier\/identifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreferenceidentifier\/identifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
   "abstract" : [

@@ -85,7 +85,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/SE"
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -94,7 +95,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -132,7 +133,8 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Decodable-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Encodable-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Encodable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Equatable-Implementations"
       ],
       "title" : "Default Implementations"
     }
@@ -154,6 +156,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -375,6 +382,17 @@
   "title" : "Encodable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/contentlayout\/encodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ContentLayout/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/contentlayout\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ContentLayout/columns(content:)": {
   "abstract" : [

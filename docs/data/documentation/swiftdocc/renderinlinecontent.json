@@ -187,7 +187,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -218,7 +218,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/superscript(inlineContent:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/text(_:)"
       ],
-      "title" : "Enumeration Cases"
+      "title" : "Inline content types"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/plainText"
+      ],
+      "title" : "Getting a plain text representation"
     },
     {
       "generated" : true,
@@ -681,6 +687,43 @@
   "title" : "RenderInlineContent.newTerm(inlineContent:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/newterm(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/plainText": {
+  "abstract" : [
+    {
+      "text" : "Returns a lossy conversion of the formatted content to a plain-text string.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "plainText"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/plainText",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "plainText",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/plaintext"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/reference(identifier:isActive:overridingTitle:overridingTitleInlineContent:)": {
   "abstract" : [

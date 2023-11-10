@@ -95,7 +95,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -111,14 +111,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/errorDescription-lv4m"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/LocalizedError-Implementations"
       ],
@@ -260,17 +259,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError/Error-Implementations": {
   "abstract" : [
 
@@ -293,7 +281,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError/errorDescription-lv4m": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError/errorDescription": {
   "abstract" : [
     {
       "text" : "A plain-text description of the error.",
@@ -323,12 +311,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/errorDescription-lv4m",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror\/errordescription-lv4m"
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError/unknownBundle(id:)": {
   "abstract" : [

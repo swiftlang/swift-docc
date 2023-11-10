@@ -93,7 +93,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -120,6 +120,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/anchor",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/deviceFrame",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/title"
       ],
       "title" : "Instance Properties"
@@ -341,6 +342,47 @@
   "title" : "anchor",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendercontentmetadata\/anchor"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderContentMetadata/deviceFrame": {
+  "abstract" : [
+    {
+      "text" : "An optional identifier for the device frame that should wrap this element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deviceFrame"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/deviceFrame",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deviceFrame",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendercontentmetadata\/deviceframe"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderContentMetadata/init(from:)": {
   "abstract" : [

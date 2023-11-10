@@ -1,15 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Terminates execution with a message and exit code that is appropriate",
+      "text" : "Inherited from ",
       "type" : "text"
     },
     {
-      "text" : " ",
-      "type" : "text"
+      "code" : "ParsableArguments.exit(withError:)",
+      "type" : "codeVoice"
     },
     {
-      "text" : "for the given error.",
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -81,7 +81,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -158,146 +161,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The error to use when exiting, if any.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "error"
-        }
-      ]
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "If the ",
-              "type" : "text"
-            },
-            {
-              "code" : "error",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " parameter is ",
-              "type" : "text"
-            },
-            {
-              "code" : "nil",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ", this method prints nothing and exits",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "with code ",
-              "type" : "text"
-            },
-            {
-              "code" : "EXIT_SUCCESS",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ". If ",
-              "type" : "text"
-            },
-            {
-              "code" : "error",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " represents a help request or",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "another ",
-              "type" : "text"
-            },
-            {
-              "code" : "CleanExit",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " error, this method prints help information and",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "exits with code ",
-              "type" : "text"
-            },
-            {
-              "code" : "EXIT_SUCCESS",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ". Otherwise, this method prints a relevant",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "error message and exits with code ",
-              "type" : "text"
-            },
-            {
-              "code" : "EX_USAGE",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " or ",
-              "type" : "text"
-            },
-            {
-              "code" : "EXIT_FAILURE",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : ".",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -368,7 +236,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -412,18 +280,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/exit(withError:)": {
   "abstract" : [
-    {
-      "text" : "Terminates execution with a message and exit code that is appropriate",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "for the given error.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

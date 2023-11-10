@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -42,7 +36,7 @@
           "type" : "text"
         },
         {
-          "code" : "Void",
+          "code" : "()",
           "type" : "codeVoice"
         },
         {
@@ -212,7 +206,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -307,7 +301,7 @@
         "type" : "text"
       },
       {
-        "code" : "Void",
+        "code" : "()",
         "type" : "codeVoice"
       },
       {

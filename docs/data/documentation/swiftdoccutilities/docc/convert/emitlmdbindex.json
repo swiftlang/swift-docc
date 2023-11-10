@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A user-provided value that is true if the LMDB representation of the",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "navigator index should be produced.",
+      "text" : "A user-provided value that is true if the LMDB representation of the navigator index should be produced.",
       "type" : "text"
     }
   ],
@@ -142,7 +134,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -213,7 +205,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -247,15 +239,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/emitLMDBIndex": {
   "abstract" : [
     {
-      "text" : "A user-provided value that is true if the LMDB representation of the",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "navigator index should be produced.",
+      "text" : "A user-provided value that is true if the LMDB representation of the navigator index should be produced.",
       "type" : "text"
     }
   ],

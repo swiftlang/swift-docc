@@ -102,7 +102,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -133,11 +133,18 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/headings",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/kind-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/location-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/platforms",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/rawIndexableTextContent",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/summary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/title"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/PlatformAvailability"
+      ],
+      "title" : "Type Aliases"
     },
     {
       "identifiers" : [
@@ -409,6 +416,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/indexingrecord\/location-swift.enum"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/IndexingRecord/PlatformAvailability": {
+  "abstract" : [
+    {
+      "text" : "The availability information for a platform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PlatformAvailability"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/PlatformAvailability",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PlatformAvailability"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "IndexingRecord.PlatformAvailability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/indexingrecord\/platformavailability"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/IndexingRecord/headings": {
   "abstract" : [
     {
@@ -541,6 +582,56 @@
   "title" : "location",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/indexingrecord\/location-swift.property"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/IndexingRecord/platforms": {
+  "abstract" : [
+    {
+      "text" : "Information about the platforms for which the summarized element is available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "platforms"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14IndexingRecordV",
+      "text" : "IndexingRecord"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14IndexingRecordV20PlatformAvailabilitya",
+      "text" : "PlatformAvailability"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/platforms",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "platforms",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/indexingrecord\/platforms"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/IndexingRecord/rawIndexableTextContent": {
   "abstract" : [

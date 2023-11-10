@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -40,8 +34,7 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription-1vyul",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription-7sykq"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription"
       ],
       "title" : "Instance Properties"
     }
@@ -108,10 +101,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/errorDescription-1vyul": {
+"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/errorDescription": {
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -135,50 +129,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription-1vyul",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/errordescription-1vyul"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/errorDescription-7sykq": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "errorDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription-7sykq",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "errorDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/errordescription-7sykq"
+  "url" : "\/documentation\/swiftdocc\/diagnostic\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/EmittingDiagnostics": {
   "abstract" : [

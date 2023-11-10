@@ -302,7 +302,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The function that should be used to transform the a given variant trait",
+                  "text" : "The function that should be used to transform the given variant trait",
                   "type" : "text"
                 },
                 {
@@ -386,7 +386,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -681,15 +681,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Value"
-    },
-    {
-      "kind" : "text",
-      "text" : ">]"
+      "text" : "]"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/variants",

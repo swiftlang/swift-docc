@@ -126,7 +126,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -162,7 +162,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(displayName:identifier:version:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:defaultCodeListingLanguage:defaultAvailability:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)"
       ],
       "title" : "Initializers"
     },
@@ -180,6 +180,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/rootReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/symbolGraphURLs",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/technologyTutorialsRootReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/themeSettings",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/tutorialsRootReference"
       ],
       "title" : "Instance Properties"
@@ -1034,7 +1035,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/init(displayname:identifier:version:baseurl:attributedcodelistings:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:defaultcodelistinglanguage:defaultavailability:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)": {
   "abstract" : [
     {
       "text" : "Creates a documentation bundle.",
@@ -1202,15 +1203,32 @@
     },
     {
       "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "themeSettings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
       "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:)",
+  "title" : "init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/init(info:baseurl:attributedcodelistings:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:)"
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/init(info:baseurl:attributedcodelistings:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:themesettings:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/markupURLs": {
   "abstract" : [
@@ -1405,6 +1423,47 @@
   "title" : "technologyTutorialsRootReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/technologytutorialsrootreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/themeSettings": {
+  "abstract" : [
+    {
+      "text" : "JSON settings file used to theme renderer output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "themeSettings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/themeSettings",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "themeSettings",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/themesettings"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/tutorialsRootReference": {
   "abstract" : [

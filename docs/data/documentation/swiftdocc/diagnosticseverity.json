@@ -117,7 +117,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -162,8 +162,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Comparable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/RawRepresentable-Implementations"
@@ -398,17 +396,6 @@
   "title" : "DiagnosticSeverity",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/Comparable-Implementations": {
   "abstract" : [

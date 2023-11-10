@@ -121,7 +121,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -130,7 +130,6 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init(from:source:for:in:problems:)"
       ],
       "title" : "Initializers"
@@ -153,7 +152,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/directiveName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -551,27 +551,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/step\/directivename"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Step/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/step\/init()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Step/init(from:source:for:in:problems:)": {
   "abstract" : [
 
@@ -694,6 +673,48 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/step\/init(from:source:for:in:problems:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Step/introducedVersion": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "introducedVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step\/introducedVersion",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "introducedVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/step\/introducedversion"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Step/media": {
   "abstract" : [
     {
@@ -720,7 +741,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC5MediaC",
+      "preciseIdentifier" : "s:9SwiftDocC5MediaP",
       "text" : "Media"
     },
     {
@@ -737,34 +758,7 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Step/originalMarkup": {
   "abstract" : [
-    {
-      "text" : "The original ",
-      "type" : "text"
-    },
-    {
-      "code" : "Markup",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " node that was parsed into this semantic step,",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if it was created elsewhere.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

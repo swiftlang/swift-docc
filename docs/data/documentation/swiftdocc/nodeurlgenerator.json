@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -81,7 +75,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -102,13 +96,16 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.method",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:fileSafePath:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:lowercased:)"
       ],
       "title" : "Instance Methods"
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeReferencePath(_:lowercased:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.type.method",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/pathForSemantic(_:source:bundle:)"
       ],
       "title" : "Type Methods"
@@ -261,13 +258,82 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/baseurl"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeURL(_:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeReferencePath(_:lowercased:)": {
   "abstract" : [
     {
-      "text" : "Patch path components for writing to the file system.",
+      "text" : "Returns the reference’s path in a format that is safe for writing to disk.",
       "type" : "text"
     }
   ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fileSafeReferencePath"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "lowercased"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeReferencePath(_:lowercased:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fileSafeReferencePath(_:lowercased:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafereferencepath(_:lowercased:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeURL(_:)-swift.method": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -300,12 +366,66 @@
       "text" : "URL"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.method",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "fileSafeURL(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafeurl(_:)"
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafeurl(_:)-swift.method"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeURL(_:)-swift.type.method": {
+  "abstract" : [
+    {
+      "text" : "Patch path components for writing to the file system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fileSafeURL"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.type.method",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fileSafeURL(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafeurl(_:)-swift.type.method"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/init(baseURL:)": {
   "abstract" : [
@@ -432,6 +552,69 @@
   "title" : "pathForSemantic(_:source:bundle:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/pathforsemantic(_:source:bundle:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/urlForReference(_:fileSafePath:)": {
+  "abstract" : [
+    {
+      "text" : "Returns a URL appropriate for the given reference and file safe path.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "urlForReference"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fileSafePath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:fileSafePath:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "urlForReference(_:fileSafePath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/urlforreference(_:filesafepath:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/urlForReference(_:lowercased:)": {
   "abstract" : [

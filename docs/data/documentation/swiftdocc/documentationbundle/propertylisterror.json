@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -95,7 +89,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -111,14 +105,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/errorDescription-3qexr"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/LocalizedError-Implementations"
       ],
@@ -257,17 +250,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/propertylisterror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/propertylisterror\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError/Error-Implementations": {
   "abstract" : [
 
@@ -290,7 +272,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/propertylisterror\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError/errorDescription-3qexr": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError/errorDescription": {
   "abstract" : [
 
   ],
@@ -317,12 +299,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/errorDescription-3qexr",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/propertylisterror\/errordescription-3qexr"
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/propertylisterror\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError/invalidVersionString(_:)": {
   "abstract" : [

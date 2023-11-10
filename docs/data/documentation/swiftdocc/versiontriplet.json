@@ -93,7 +93,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -124,8 +124,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Comparable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Equatable-Implementations"
       ],
@@ -285,17 +283,6 @@
   "title" : "VersionTriplet",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/versiontriplet"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/versiontriplet\/-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/VersionTriplet/Comparable-Implementations": {
   "abstract" : [

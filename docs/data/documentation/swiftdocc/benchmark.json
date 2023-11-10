@@ -91,7 +91,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -115,6 +115,12 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ArchiveOutputSize"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/date",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/isEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/metrics",
@@ -125,7 +131,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/encode(to:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/encode(to:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/results()"
       ],
       "title" : "Instance Methods"
     }
@@ -197,10 +204,44 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/benchmark"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Benchmark/ArchiveOutputSize": {
+  "abstract" : [
+    {
+      "text" : "Measures the total output size of a DocC archive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ArchiveOutputSize"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ArchiveOutputSize",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ArchiveOutputSize"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Benchmark.ArchiveOutputSize",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/benchmark\/archiveoutputsize"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/TopicAnchorHash": {
   "abstract" : [
     {
-      "text" : "A anchor sections hash metric produced off the given documentation context.",
+      "text" : "An anchor sections hash metric produced off the given documentation context.",
       "type" : "text"
     }
   ],
@@ -515,6 +556,47 @@
   "title" : "platform",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/benchmark\/platform"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Benchmark/results()": {
+  "abstract" : [
+    {
+      "text" : "Prepare the gathered measurements into a benchmark results.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "results"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16BenchmarkResultsV",
+      "text" : "BenchmarkResults"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/results()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "results()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/benchmark\/results()"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmarking": {
   "abstract" : [

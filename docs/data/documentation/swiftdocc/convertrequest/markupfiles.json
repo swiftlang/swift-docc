@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The markup file data included in the documentation bundle to convert.",
+      "text" : "The article and documentation extension file data included in the documentation bundle to convert.",
       "type" : "text"
     }
   ],
@@ -101,7 +101,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -180,7 +180,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/markupFiles": {
   "abstract" : [
     {
-      "text" : "The markup file data included in the documentation bundle to convert.",
+      "text" : "The article and documentation extension file data included in the documentation bundle to convert.",
       "type" : "text"
     }
   ],

@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -40,7 +34,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/errorDescription-9adqq",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/failureReason",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/helpAnchor",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/recoverySuggestion"
@@ -110,44 +103,6 @@
   "title" : "ErrorWithProblems",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorwithproblems"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/errorDescription-9adqq": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "errorDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/errorDescription-9adqq",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "errorDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorwithproblems\/errordescription-9adqq"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/failureReason": {
   "abstract" : [

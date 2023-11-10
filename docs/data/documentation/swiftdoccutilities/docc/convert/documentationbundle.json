@@ -1,18 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "The user-provided path to a ",
-      "type" : "text"
-    },
-    {
-      "code" : ".docc",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " documentation bundle.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -28,7 +14,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:18SwiftDocCUtilities4DoccV7ConvertV19documentationBundleAA013DocumentationG6OptionVvp",
+    "externalID" : "s:18SwiftDocCUtilities4DoccV7ConvertV19documentationBundleAA26DocumentationCatalogOptionVvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -48,7 +34,7 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptionV",
+        "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptiona",
         "text" : "DocumentationBundleOption"
       }
     ],
@@ -56,6 +42,9 @@
       {
         "name" : "SwiftDocCUtilities"
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -92,7 +81,7 @@
             {
               "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptionV",
+              "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptiona",
               "text" : "DocumentationBundleOption"
             },
             {
@@ -123,7 +112,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -194,7 +183,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -227,19 +216,9 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/documentationBundle": {
   "abstract" : [
-    {
-      "text" : "The user-provided path to a ",
-      "type" : "text"
-    },
-    {
-      "code" : ".docc",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " documentation bundle.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -259,7 +238,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptionV",
+      "preciseIdentifier" : "s:18SwiftDocCUtilities25DocumentationBundleOptiona",
       "text" : "DocumentationBundleOption"
     }
   ],
@@ -272,15 +251,13 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationBundleOption": {
   "abstract" : [
-    {
-      "text" : "Resolves and validates a URL value that provides the path to a documentation bundle.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "struct"
+      "text" : "typealias"
     },
     {
       "kind" : "text",

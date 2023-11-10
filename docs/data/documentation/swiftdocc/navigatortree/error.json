@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -95,7 +89,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -112,14 +106,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/errorDescription-8zwtr"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/LocalizedError-Implementations"
       ],
@@ -280,17 +273,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Error/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatortree\/error\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Error/Error-Implementations": {
   "abstract" : [
 
@@ -411,7 +393,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/error\/cannotopenfile(path:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Error/errorDescription-8zwtr": {
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Error/errorDescription": {
   "abstract" : [
 
   ],
@@ -438,12 +420,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/errorDescription-8zwtr",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatortree\/error\/errordescription-8zwtr"
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/error\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Error/invalidData": {
   "abstract" : [

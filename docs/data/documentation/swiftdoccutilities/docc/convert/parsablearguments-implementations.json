@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -52,6 +46,7 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/exitCode(for:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/fullMessage(for:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/helpMessage(columns:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/helpMessage(includeHidden:columns:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/message(for:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/parse(_:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/parseOrExit(_:)"
@@ -124,7 +119,7 @@
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert": {
   "abstract" : [
     {
-      "text" : "Converts a documentation bundle.",
+      "text" : "Converts documentation markup, assets, and symbol information into a documentation archive.",
       "type" : "text"
     }
   ],
@@ -157,10 +152,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/completionScript(for:)": {
   "abstract" : [
-    {
-      "text" : "Returns a shell completion script for the specified shell.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -219,18 +211,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/exit(withError:)": {
   "abstract" : [
-    {
-      "text" : "Terminates execution with a message and exit code that is appropriate",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "for the given error.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -289,10 +270,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/exitCode(for:)": {
   "abstract" : [
-    {
-      "text" : "Returns the exit code for the given error.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -351,18 +329,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/fullMessage(for:)": {
   "abstract" : [
-    {
-      "text" : "Returns a full message for the given error, including usage information,",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "if appropriate.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -421,11 +388,9 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/helpMessage(columns:)": {
   "abstract" : [
-    {
-      "text" : "Returns the text of the help screen for this type.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -481,12 +446,85 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/helpmessage(columns:)"
 },
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/helpMessage(includeHidden:columns:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "helpMessage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includeHidden"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "columns"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert\/helpMessage(includeHidden:columns:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "helpMessage(includeHidden:columns:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/convert\/helpmessage(includehidden:columns:)"
+},
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/message(for:)": {
   "abstract" : [
-    {
-      "text" : "Returns a brief message for the given error.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -545,10 +583,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/parse(_:)": {
   "abstract" : [
-    {
-      "text" : "Parses a new instance of this type from command-line arguments.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -606,18 +641,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/parseOrExit(_:)": {
   "abstract" : [
-    {
-      "text" : "Parses a new instance of this type from command-line arguments or exits",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "with a relevant message.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

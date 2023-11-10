@@ -20,7 +20,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Comparable-Implementations"
       ]
     ]
   },
@@ -97,7 +97,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocC"
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Swift"
+        ]
       }
     ],
     "role" : "symbol",
@@ -201,7 +204,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -311,17 +314,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/...(_:_:)": {
   "abstract" : [
 
@@ -395,6 +387,17 @@
   "title" : "...(_:_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/'...(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Platform/Version-swift.struct/Comparable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Platform\/Version-swift.struct\/Comparable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Comparable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platform\/version-swift.struct\/comparable-implementations"
 }
 }
 }

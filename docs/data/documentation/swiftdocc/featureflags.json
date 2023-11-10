@@ -92,7 +92,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -117,7 +117,10 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDeviceFrameSupportEnabled",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDoxygenSupportEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalJSONIndexEnabled",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalLinkHierarchySerializationEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalObjectiveCSupportEnabled"
       ],
       "title" : "Instance Properties"
@@ -380,6 +383,81 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/init(from:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalDeviceFrameSupportEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not experimental support for device frames on images and video is enabled.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExperimentalDeviceFrameSupportEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDeviceFrameSupportEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExperimentalDeviceFrameSupportEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaldeviceframesupportenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalDoxygenSupportEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not experimental support for parsing Doxygen commands is enabled.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExperimentalDoxygenSupportEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDoxygenSupportEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExperimentalDoxygenSupportEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaldoxygensupportenabled"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalJSONIndexEnabled": {
   "abstract" : [
     {
@@ -425,6 +503,43 @@
   "title" : "isExperimentalJSONIndexEnabled",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaljsonindexenabled"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalLinkHierarchySerializationEnabled": {
+  "abstract" : [
+    {
+      "text" : "Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isExperimentalLinkHierarchySerializationEnabled"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalLinkHierarchySerializationEnabled",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isExperimentalLinkHierarchySerializationEnabled",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentallinkhierarchyserializationenabled"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalObjectiveCSupportEnabled": {
   "abstract" : [

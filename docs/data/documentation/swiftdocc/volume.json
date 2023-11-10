@@ -107,7 +107,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -116,7 +116,6 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/init(from:source:for:in:problems:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/init(originalMarkup:name:image:content:chapters:redirects:)"
       ],
@@ -141,7 +140,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/directiveName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -529,27 +529,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/volume\/image"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Volume/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/volume\/init()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Volume/init(from:source:for:in:problems:)": {
   "abstract" : [
 
@@ -797,6 +776,48 @@
   "title" : "init(originalMarkup:name:image:content:chapters:redirects:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/volume\/init(originalmarkup:name:image:content:chapters:redirects:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Volume/introducedVersion": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "introducedVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume\/introducedVersion",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "introducedVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/volume\/introducedversion"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Volume/name": {
   "abstract" : [

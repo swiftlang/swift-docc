@@ -116,20 +116,13 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
 
   ],
   "topicSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/init()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/init(from:source:for:in:problems:)"
-      ],
-      "title" : "Initializers"
-    },
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/content",
@@ -146,7 +139,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/directiveName"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
@@ -397,7 +390,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -424,7 +417,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/justification\/content"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Justification/directiveName": {
+"doc://SwiftDocC/documentation/SwiftDocC/Justification/introducedVersion": {
   "abstract" : [
 
   ],
@@ -447,7 +440,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "directiveName"
+      "text" : "introducedVersion"
     },
     {
       "kind" : "text",
@@ -459,155 +452,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/directiveName",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/introducedVersion",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "directiveName",
+  "title" : "introducedVersion",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/justification\/directivename"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Justification/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/justification\/init()"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Justification/init(from:source:for:in:problems:)": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
-      "text" : "BlockDirective"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "source"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "for"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "in"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "inout"
-    },
-    {
-      "kind" : "text",
-      "text" : " ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
-      "text" : "Problem"
-    },
-    {
-      "kind" : "text",
-      "text" : "])"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification\/init(from:source:for:in:problems:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(from:source:for:in:problems:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/justification\/init(from:source:for:in:problems:)"
+  "url" : "\/documentation\/swiftdocc\/justification\/introducedversion"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Justification/originalMarkup": {
   "abstract" : [
@@ -662,7 +512,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",

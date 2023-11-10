@@ -85,6 +85,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer"
       ],
       "kind" : "relationships",
@@ -94,7 +95,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -120,8 +121,8 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)"
       ],
       "title" : "Initializers"
     },
@@ -136,6 +137,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/fragmentsVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/ideTitle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/identifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/images",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/isBeta",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/isDeprecated",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/kind",
@@ -162,6 +164,7 @@
     {
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/VariantContainer-Implementations"
       ],
       "title" : "Default Implementations"
@@ -184,6 +187,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -490,6 +498,17 @@
   "title" : "TopicRenderReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicrenderreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/VariantContainer-Implementations": {
   "abstract" : [
@@ -947,6 +966,47 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicrenderreference\/identifier"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/images": {
+  "abstract" : [
+    {
+      "text" : "Author provided images that should be used to represent this page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "images"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
+      "text" : "TopicImage"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/images",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "images",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/images"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/init(from:)": {
   "abstract" : [
 
@@ -989,7 +1049,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicrenderreference\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)": {
   "abstract" : [
     {
       "text" : "Creates a new topic reference with all its initial values.",
@@ -1345,17 +1405,34 @@
     },
     {
       "kind" : "text",
-      "text" : "]?)"
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "images"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
+      "text" : "TopicImage"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)",
+  "title" : "init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/init(identifier:title:abstract:url:kind:required:role:fragments:navigatortitle:estimatedtime:conformance:isbeta:isdeprecated:defaultimplementationcount:titlestyle:name:idetitle:tags:)"
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/init(identifier:title:abstract:url:kind:required:role:fragments:navigatortitle:estimatedtime:conformance:isbeta:isdeprecated:defaultimplementationcount:titlestyle:name:idetitle:tags:images:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)": {
   "abstract" : [
     {
       "text" : "Creates a new topic reference with all its initial values.",
@@ -1747,15 +1824,32 @@
     },
     {
       "kind" : "text",
-      "text" : "]?)"
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "images"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
+      "text" : "TopicImage"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:)",
+  "title" : "init(identifier:titleVariants:abstractVariants:url:kind:required:role:fragmentsVariants:navigatorTitleVariants:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/init(identifier:titlevariants:abstractvariants:url:kind:required:role:fragmentsvariants:navigatortitlevariants:estimatedtime:conformance:isbeta:isdeprecated:defaultimplementationcount:titlestyle:name:idetitle:tags:)"
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/init(identifier:titlevariants:abstractvariants:url:kind:required:role:fragmentsvariants:navigatortitlevariants:estimatedtime:conformance:isbeta:isdeprecated:defaultimplementationcount:titlestyle:name:idetitle:tags:images:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/isBeta": {
   "abstract" : [

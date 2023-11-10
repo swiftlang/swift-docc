@@ -1,0 +1,460 @@
+{
+  "abstract" : [
+    {
+      "text" : "A visual style for a page’s Topics section.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC17TopicsVisualStyleC0E0O",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Style"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Style"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "TopicsVisualStyle.Style"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Style"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s12CaseIterableP",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/compactGrid",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/detailedGrid",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/hidden",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/list"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Options": {
+  "abstract" : [
+    {
+      "text" : "A directive to adjust Swift-DocC’s default behaviors when rendering a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Options",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/options"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle": {
+  "abstract" : [
+    {
+      "text" : "A directive for specifying the style that should be used when rendering a page’s",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicsVisualStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicsVisualStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "A visual style for a page’s Topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Style"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Style"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle.Style",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/compactGrid": {
+  "abstract" : [
+    {
+      "text" : "A grid of items based on the card image for each page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "compactGrid"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/compactGrid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle.Style.compactGrid",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/compactgrid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/detailedGrid": {
+  "abstract" : [
+    {
+      "text" : "A grid of items based on the card image for each page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "detailedGrid"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/detailedGrid",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle.Style.detailedGrid",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/detailedgrid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/hidden": {
+  "abstract" : [
+    {
+      "text" : "Do not show child pages anywhere on the page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hidden"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/hidden",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle.Style.hidden",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/hidden"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle/Style-swift.enum/list": {
+  "abstract" : [
+    {
+      "text" : "A list of the page’s topics, including their full declaration and abstract.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "list"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/list",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle.Style.list",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle\/style-swift.enum\/list"
+},
+"doc://SwiftDocC/s12CaseIterableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s12CaseIterableP",
+  "title" : "Swift.CaseIterable",
+  "type" : "unresolvable"
+}
+}
+}

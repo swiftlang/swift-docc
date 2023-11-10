@@ -84,7 +84,8 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/Se",
-        "doc:\/\/SwiftDocC\/SE"
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -93,7 +94,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -108,6 +109,7 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/svgID",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/traits",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/url"
       ],
@@ -118,6 +120,13 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/encode(to:)"
       ],
       "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -137,6 +146,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/Se": {
@@ -225,6 +239,17 @@
   "title" : "ImageReference.VariantProxy",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/imagereference\/variantproxy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImageReference/VariantProxy/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagereference\/variantproxy\/equatable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ImageReference/VariantProxy/encode(to:)": {
   "abstract" : [
@@ -317,6 +342,47 @@
   "title" : "init(from:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/imagereference\/variantproxy\/init(from:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImageReference/VariantProxy/svgID": {
+  "abstract" : [
+    {
+      "text" : "The ID for the SVG that should be rendered for this variant.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "svgID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference\/VariantProxy\/svgID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "svgID",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagereference\/variantproxy\/svgid"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ImageReference/VariantProxy/traits": {
   "abstract" : [

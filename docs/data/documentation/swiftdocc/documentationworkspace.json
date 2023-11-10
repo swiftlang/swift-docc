@@ -186,7 +186,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "The second lets the the workspace notify the context when bundles are added or removed so that the context stays up to date, even after the context is created.",
+              "text" : "The second lets the workspace notify the context when bundles are added or removed so that the context stays up to date, even after the context is created.",
               "type" : "text"
             }
           ],
@@ -226,6 +226,7 @@
               "type" : "paragraph"
             }
           ],
+          "name" : "Note",
           "style" : "note",
           "type" : "aside"
         }
@@ -245,7 +246,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

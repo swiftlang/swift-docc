@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -30,7 +24,7 @@
   },
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -40,7 +34,6 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription-6o81m",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/failureReason",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/helpAnchor",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/recoverySuggestion"
@@ -109,44 +102,6 @@
   "title" : "Diagnostic",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/errorDescription-6o81m": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "errorDescription"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/errorDescription-6o81m",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "errorDescription",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/errordescription-6o81m"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/failureReason": {
   "abstract" : [

@@ -81,7 +81,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -107,6 +107,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isMarkupFile(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isReferenceDocumentationFile(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isSymbolGraphFile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isThemeSettingsFile(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isTutorialFile(_:)"
       ],
       "title" : "Type Methods"
@@ -619,6 +620,68 @@
   "title" : "isSymbolGraphFile(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes\/issymbolgraphfile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes/isThemeSettingsFile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Checks if a file is ",
+      "type" : "text"
+    },
+    {
+      "code" : "theme-settings.json",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isThemeSettingsFile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundleFileTypes\/isThemeSettingsFile(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isThemeSettingsFile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundlefiletypes\/isthemesettingsfile(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundleFileTypes/isTutorialFile(_:)": {
   "abstract" : [

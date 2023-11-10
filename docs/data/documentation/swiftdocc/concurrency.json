@@ -39,7 +39,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "DocC is, generally speaking, performing a sequence of operations on a set of documentation topics. Since the compilaton is a pipeline, you mostly do work serially as each stage’s input is the previous stage’s output.",
+              "text" : "DocC is, generally speaking, performing a sequence of operations on a set of documentation topics. Since the compilation is a pipeline, you mostly do work serially as each stage’s input is the previous stage’s output.",
               "type" : "text"
             }
           ],
@@ -196,7 +196,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

@@ -18,11 +18,11 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC5MediaC",
+    "externalID" : "s:9SwiftDocC5MediaP",
     "fragments" : [
       {
         "kind" : "keyword",
-        "text" : "class"
+        "text" : "protocol"
       },
       {
         "kind" : "text",
@@ -45,8 +45,8 @@
       }
     ],
     "role" : "symbol",
-    "roleHeading" : "Class",
-    "symbolKind" : "class",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
     "title" : "Media"
   },
   "primaryContentSections" : [
@@ -62,7 +62,7 @@
           "tokens" : [
             {
               "kind" : "keyword",
-              "text" : "class"
+              "text" : "protocol"
             },
             {
               "kind" : "text",
@@ -71,6 +71,16 @@
             {
               "kind" : "identifier",
               "text" : "Media"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+              "text" : "Semantic"
             }
           ]
         }
@@ -93,33 +103,19 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia"
       ],
       "kind" : "relationships",
-      "title" : "Inherited By",
-      "type" : "inheritedBy"
-    },
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/SQ"
-      ],
-      "kind" : "relationships",
-      "title" : "Conforms To",
-      "type" : "conformsTo"
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
 
   ],
   "topicSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media\/init()"
-      ],
-      "title" : "Initializers"
-    },
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media\/source"
@@ -141,11 +137,6 @@
   ]
 , 
 "references": {
-"doc://SwiftDocC/SQ": {
-  "identifier" : "doc:\/\/SwiftDocC\/SQ",
-  "title" : "Swift.Equatable",
-  "type" : "unresolvable"
-},
 "doc://SwiftDocC/documentation/SwiftDocC": {
   "abstract" : [
     {
@@ -204,7 +195,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "class"
+      "text" : "protocol"
     },
     {
       "kind" : "text",
@@ -228,27 +219,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/media"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Media/init()": {
-  "abstract" : [
-
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "()"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media\/init()",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init()",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/media\/init()"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Media/source": {
   "abstract" : [
     {
@@ -259,7 +229,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -281,6 +251,7 @@
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media\/source",
   "kind" : "symbol",
+  "required" : true,
   "role" : "symbol",
   "title" : "source",
   "type" : "topic",

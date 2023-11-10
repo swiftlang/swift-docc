@@ -1,31 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "The original ",
+      "text" : "Inherited from ",
       "type" : "text"
     },
     {
-      "code" : "Markup",
+      "code" : "DirectiveConvertible.originalMarkup",
       "type" : "codeVoice"
     },
     {
-      "text" : " node that was parsed into this semantic step,",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if it was created elsewhere.",
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -117,7 +101,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -235,34 +219,7 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Step/originalMarkup": {
   "abstract" : [
-    {
-      "text" : "The original ",
-      "type" : "text"
-    },
-    {
-      "code" : "Markup",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " node that was parsed into this semantic step,",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if it was created elsewhere.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

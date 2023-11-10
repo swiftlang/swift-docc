@@ -19,7 +19,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/-Implementations"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Comparable-Implementations"
       ]
     ]
   },
@@ -88,7 +88,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocC"
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Swift"
+        ]
       }
     ],
     "role" : "symbol",
@@ -176,7 +179,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -244,17 +247,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : " Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/.._(_:)": {
   "abstract" : [
 
@@ -320,6 +312,17 @@
   "title" : "..<(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/'.._(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/Comparable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/Comparable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Comparable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/comparable-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/EmittingDiagnostics": {
   "abstract" : [

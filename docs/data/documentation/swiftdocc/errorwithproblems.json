@@ -97,7 +97,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -121,14 +121,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/errorDescription-9f7yr"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/LocalizedError-Implementations"
       ],
@@ -237,17 +236,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorwithproblems"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorwithproblems\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/Error-Implementations": {
   "abstract" : [
 
@@ -270,7 +258,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/errorwithproblems\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/errorDescription-9f7yr": {
+"doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/errorDescription": {
   "abstract" : [
 
   ],
@@ -298,12 +286,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/errorDescription-9f7yr",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorwithproblems\/errordescription-9f7yr"
+  "url" : "\/documentation\/swiftdocc\/errorwithproblems\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems/init(_:)": {
   "abstract" : [

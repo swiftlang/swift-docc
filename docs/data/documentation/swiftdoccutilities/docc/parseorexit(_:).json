@@ -1,15 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Parses a new instance of this type from command-line arguments or exits",
+      "text" : "Inherited from ",
       "type" : "text"
     },
     {
-      "text" : " ",
-      "type" : "text"
+      "code" : "ParsableArguments.parseOrExit(_:)",
+      "type" : "codeVoice"
     },
     {
-      "text" : "with a relevant message.",
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -71,7 +71,10 @@
     ],
     "modules" : [
       {
-        "name" : "SwiftDocCUtilities"
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
       }
     ],
     "role" : "symbol",
@@ -147,50 +150,11 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An array of arguments to use for parsing. If",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "arguments",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " is ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : ", this uses the program’s command-line arguments.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "arguments"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -271,18 +235,7 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/parseOrExit(_:)": {
   "abstract" : [
-    {
-      "text" : "Parses a new instance of this type from command-line arguments or exits",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "with a relevant message.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {

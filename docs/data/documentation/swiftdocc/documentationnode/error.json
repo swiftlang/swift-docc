@@ -1,10 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "No overview available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -97,7 +91,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -112,14 +106,13 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/errorDescription-7vzxp"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/DescribedError-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/Equatable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/Error-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/LocalizedError-Implementations"
@@ -283,17 +276,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/error"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/describederror-implementations"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/Equatable-Implementations": {
   "abstract" : [
 
@@ -327,7 +309,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/localizederror-implementations"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/errorDescription-7vzxp": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/errorDescription": {
   "abstract" : [
 
   ],
@@ -354,12 +336,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/errorDescription-7vzxp",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error\/errorDescription",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "errorDescription",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/errordescription-7vzxp"
+  "url" : "\/documentation\/swiftdocc\/documentationnode\/error\/errordescription"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNode/Error/missingMarkup": {
   "abstract" : [

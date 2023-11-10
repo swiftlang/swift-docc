@@ -119,7 +119,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -190,7 +190,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/TopicAnchorHash": {
   "abstract" : [
     {
-      "text" : "A anchor sections hash metric produced off the given documentation context.",
+      "text" : "An anchor sections hash metric produced off the given documentation context.",
       "type" : "text"
     }
   ],

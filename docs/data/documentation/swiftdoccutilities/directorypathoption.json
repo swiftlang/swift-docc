@@ -97,7 +97,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "This option validates the the provided path exists and that it’s a directory.",
+              "text" : "This option validates the provided path exists and that it’s a directory.",
               "type" : "text"
             }
           ],
@@ -120,7 +120,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption"
       ],
       "kind" : "relationships",
       "title" : "Conforming Types",
@@ -129,7 +129,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -356,10 +356,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationBundleOption": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCatalogOption": {
   "abstract" : [
     {
-      "text" : "Resolves and validates a URL value that provides the path to a documentation bundle.",
+      "text" : "Resolves and validates a URL value that provides the path to a documentation catalog.",
       "type" : "text"
     }
   ],
@@ -374,21 +374,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundleOption"
+      "text" : "DocumentationCatalogOption"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "DocumentationBundleOption"
+      "text" : "DocumentationCatalogOption"
     }
   ],
   "role" : "symbol",
-  "title" : "DocumentationBundleOption",
+  "title" : "DocumentationCatalogOption",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/documentationbundleoption"
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption"
 }
 }
 }

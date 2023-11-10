@@ -155,7 +155,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The duration value in milliseconds to be logged.",
+                  "text" : "The duration value in seconds to be logged.",
                   "type" : "text"
                 }
               ],
@@ -169,7 +169,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [

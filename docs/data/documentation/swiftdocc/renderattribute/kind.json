@@ -97,7 +97,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -111,8 +111,10 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/default",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximum",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumExclusive",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumLength",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimum",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumExclusive"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumExclusive",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumLength"
       ],
       "title" : "Enumeration Cases"
     },
@@ -437,6 +439,31 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/maximumexclusive"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/maximumLength": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maximumLength"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumLength",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.maximumLength",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/maximumlength"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/minimum": {
   "abstract" : [
 
@@ -486,6 +513,31 @@
   "title" : "RenderAttribute.Kind.minimumExclusive",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/minimumexclusive"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/minimumLength": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "minimumLength"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumLength",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.minimumLength",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/minimumlength"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
   "abstract" : [

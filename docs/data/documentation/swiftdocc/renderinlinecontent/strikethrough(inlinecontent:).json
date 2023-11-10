@@ -119,11 +119,29 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
 
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/codeVoice(code:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/emphasis(inlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/image(identifier:metadata:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/inlineHead(inlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/newTerm(inlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/reference(identifier:isActive:overridingTitle:overridingTitleInlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/strong(inlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/subscript(inlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/superscript(inlineContent:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/text(_:)"
+      ],
+      "title" : "Inline content types"
+    }
   ],
   "variants" : [
     {
@@ -187,6 +205,368 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderinlinecontent"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/codeVoice(code:)": {
+  "abstract" : [
+    {
+      "text" : "A piece of code like a variable name or a single operator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "codeVoice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "code"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/codeVoice(code:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.codeVoice(code:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/codevoice(code:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/emphasis(inlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "An emphasized piece of inline content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "emphasis"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/emphasis(inlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.emphasis(inlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/emphasis(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/image(identifier:metadata:)": {
+  "abstract" : [
+    {
+      "text" : "An image element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "image"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
+      "text" : "RenderReferenceIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC21RenderContentMetadataV",
+      "text" : "RenderContentMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/image(identifier:metadata:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.image(identifier:metadata:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/image(identifier:metadata:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/inlineHead(inlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "An inline heading.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inlineHead"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/inlineHead(inlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.inlineHead(inlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/inlinehead(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/newTerm(inlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "A piece of content that introduces a new term.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "newTerm"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/newTerm(inlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.newTerm(inlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/newterm(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/reference(identifier:isActive:overridingTitle:overridingTitleInlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "A reference to another resource.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "reference"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
+      "text" : "RenderReferenceIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isActive"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "overridingTitle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "overridingTitleInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/reference(identifier:isActive:overridingTitle:overridingTitleInlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.reference(identifier:isActive:overridingTitle:overridingTitleInlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/reference(identifier:isactive:overridingtitle:overridingtitleinlinecontent:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/strikethrough(inlineContent:)": {
   "abstract" : [
     {
@@ -235,6 +615,194 @@
   "title" : "RenderInlineContent.strikethrough(inlineContent:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/strikethrough(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/strong(inlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "A strongly emphasized piece of inline content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "strong"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/strong(inlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.strong(inlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/strong(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/subscript(inlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "A subscript piece of content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "`subscript`"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/subscript(inlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.subscript(inlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/subscript(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/superscript(inlineContent:)": {
+  "abstract" : [
+    {
+      "text" : "A superscript piece of content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "superscript"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "inlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/superscript(inlineContent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.superscript(inlineContent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/superscript(inlinecontent:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent/text(_:)": {
+  "abstract" : [
+    {
+      "text" : "A piece of plain text.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/text(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderInlineContent.text(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent\/text(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
   "abstract" : [

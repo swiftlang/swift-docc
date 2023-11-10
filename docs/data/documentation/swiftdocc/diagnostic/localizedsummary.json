@@ -1,27 +1,4 @@
 {
-  "abstract" : [
-    {
-      "text" : "Provides the short, localized abstract provided by ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " in plain text if an",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "explanation is available.",
-      "type" : "text"
-    }
-  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -66,6 +43,9 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -102,36 +82,28 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:SS",
               "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "At a bare minimum, all diagnostics must have at least one paragraph or sentence describing what the diagnostic is.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -199,87 +171,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedExplanation": {
-  "abstract" : [
-    {
-      "text" : "Provides a markup document for this diagnostic in the end-user’s most preferred language, the base language",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "if one isn’t available, or ",
-      "type" : "text"
-    },
-    {
-      "code" : "nil",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " if no explanations are provided for this diagnostic’s identifier.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "localizedExplanation"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "localizedExplanation",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/localizedexplanation"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedSummary": {
   "abstract" : [
-    {
-      "text" : "Provides the short, localized abstract provided by ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " in plain text if an",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "explanation is available.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

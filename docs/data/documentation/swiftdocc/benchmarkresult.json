@@ -90,7 +90,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -264,7 +264,7 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC11MetricValueO",
+      "preciseIdentifier" : "s:9SwiftDocC11MetricValuea",
       "text" : "MetricValue"
     },
     {

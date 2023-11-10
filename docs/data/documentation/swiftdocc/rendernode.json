@@ -359,7 +359,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -464,7 +464,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/assetReferences",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/downloadNotAvailableSummary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/headings",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/identifier"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/identifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/topicSectionsStyle"
       ],
       "title" : "Instance Properties"
     },
@@ -487,7 +488,8 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/TopicsSectionStyle"
       ],
       "title" : "Enumerations"
     },
@@ -889,6 +891,40 @@
   "title" : "RenderNode.Tag",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/tag"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/TopicsSectionStyle": {
+  "abstract" : [
+    {
+      "text" : "The rendering style of the topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicsSectionStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/TopicsSectionStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicsSectionStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNode.TopicsSectionStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/topicssectionstyle"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/Variant": {
   "abstract" : [
@@ -2068,7 +2104,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/references": {
   "abstract" : [
     {
-      "text" : "The values of the references used in documentation node. These can be references to other nodes, media, and more.",
+      "text" : "The references used in the render node. These can be references to other nodes, media, and more.",
       "type" : "text"
     }
   ],
@@ -2456,6 +2492,52 @@
   "title" : "topicSections",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendernode\/topicsections"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/topicSectionsStyle": {
+  "abstract" : [
+    {
+      "text" : "The visual style that should be used when rendering this page’s Topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "topicSectionsStyle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
+      "text" : "RenderNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV18TopicsSectionStyleO",
+      "text" : "TopicsSectionStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/topicSectionsStyle",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "topicSectionsStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/topicsectionsstyle"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNode/topicSectionsVariants": {
   "abstract" : [

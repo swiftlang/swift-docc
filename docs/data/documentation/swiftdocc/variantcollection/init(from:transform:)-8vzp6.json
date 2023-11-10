@@ -251,7 +251,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " of  the given ",
+              "text" : " of the given ",
               "type" : "text"
             },
             {
@@ -322,7 +322,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -642,15 +642,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "text" : "Value"
-    },
-    {
-      "kind" : "text",
-      "text" : ">]"
+      "text" : "]"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/variants",

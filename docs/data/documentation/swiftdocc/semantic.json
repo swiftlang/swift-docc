@@ -182,34 +182,55 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticTitleHeading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Code",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Comment",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CustomMetadata",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Intro",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Redirect",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Resources",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row\/Column",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Small",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Snippet",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Stack",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Steps",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TabNavigator",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TabNavigator\/Tab",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyRoot",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialArticle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirement"
       ],
@@ -228,7 +249,7 @@
   ],
   "schemaVersion" : {
     "major" : 0,
-    "minor" : 2,
+    "minor" : 3,
     "patch" : 0
   },
   "sections" : [
@@ -368,6 +389,166 @@
   "title" : "Assessments",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/assessments"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AutomaticArticleSubheading": {
+  "abstract" : [
+    {
+      "text" : "A directive that modifies Swift-DocC’s default behavior for automatic subheading generation on",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "article pages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AutomaticArticleSubheading"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticArticleSubheading",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AutomaticArticleSubheading"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AutomaticArticleSubheading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/automaticarticlesubheading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AutomaticSeeAlso": {
+  "abstract" : [
+    {
+      "text" : "A directive for specifying Swift-DocC’s automatic behavior when generating a page’s",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "See Also section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AutomaticSeeAlso"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AutomaticSeeAlso"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AutomaticSeeAlso",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/automaticseealso"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AutomaticTitleHeading": {
+  "abstract" : [
+    {
+      "text" : "A directive for specifying Swift-DocC’s automatic behavior when generating a page’s",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "title heading.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AutomaticTitleHeading"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticTitleHeading",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AutomaticTitleHeading"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AutomaticTitleHeading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/automatictitleheading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CallToAction": {
+  "abstract" : [
+    {
+      "text" : "A directive that adds a prominent button or link to a page’s header.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CallToAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CallToAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CallToAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/calltoaction"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Chapter": {
   "abstract" : [
@@ -566,6 +747,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/contentandmedia"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/CustomMetadata": {
+  "abstract" : [
+    {
+      "text" : "A directive that accepts an arbitrary key\/value pair and emits it into the metadata of the page",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CustomMetadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CustomMetadata",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CustomMetadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CustomMetadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/custommetadata"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
@@ -702,6 +917,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationextension"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia": {
+  "abstract" : [
+    {
+      "text" : "A block filled with an image.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ImageMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ImageMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ImageMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagemedia"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Intro": {
   "abstract" : [
     {
@@ -779,6 +1028,64 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/justification"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Links": {
+  "abstract" : [
+    {
+      "text" : "A directive for authoring authoring embedded",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "previews of documentation links (similar to how links are currently",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "rendered in Topics sections) anywhere on the page without affecting page",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "curation behavior.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Links"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Links"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Links",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/links"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer": {
   "abstract" : [
     {
@@ -831,7 +1138,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "class"
+      "text" : "protocol"
     },
     {
       "kind" : "text",
@@ -889,6 +1196,74 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
+  "abstract" : [
+    {
+      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Availability"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Availability"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Metadata.Availability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/metadata\/availability"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Metadata/PageKind": {
+  "abstract" : [
+    {
+      "text" : "A directive that allows you to set a page’s kind, which affects its default title heading and page icon.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PageKind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PageKind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Metadata.PageKind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/metadata\/pagekind"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice": {
   "abstract" : [
     {
@@ -922,6 +1297,108 @@
   "title" : "MultipleChoice",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/multiplechoice"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Options": {
+  "abstract" : [
+    {
+      "text" : "A directive to adjust Swift-DocC’s default behaviors when rendering a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Options",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Options"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Options",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/options"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor": {
+  "abstract" : [
+    {
+      "text" : "A directive that specifies an accent color for a given documentation page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PageColor"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PageColor"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PageColor",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageImage": {
+  "abstract" : [
+    {
+      "text" : "Associates an image with a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PageImage"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageImage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PageImage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PageImage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pageimage"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Redirect": {
   "abstract" : [
@@ -990,6 +1467,90 @@
   "title" : "Resources",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/resources"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Row": {
+  "abstract" : [
+    {
+      "text" : "A container directive that arranges content into a grid-based row and column",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Row"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Row"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Row",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/row"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Row/Column": {
+  "abstract" : [
+    {
+      "text" : "A container directive that holds general markup content describing a column",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "with a row in a grid-based layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Column"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Row\/Column",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Column"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Row.Column",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/row\/column"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
   "abstract" : [
@@ -1318,6 +1879,48 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticvisitor"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Small": {
+  "abstract" : [
+    {
+      "text" : "A directive for specifying small print text like legal, license, or copyright text that",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "should be rendered in a smaller font size.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Small"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Small",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Small"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Small",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/small"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Snippet": {
   "abstract" : [
 
@@ -1474,6 +2077,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/steps"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/SupportedLanguage": {
+  "abstract" : [
+    {
+      "text" : "A directive that controls what programming languages an article is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SupportedLanguage"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SupportedLanguage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SupportedLanguage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SupportedLanguage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/supportedlanguage"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol": {
   "abstract" : [
     {
@@ -1507,6 +2144,82 @@
   "title" : "Symbol",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TabNavigator": {
+  "abstract" : [
+    {
+      "text" : "A container directive that arranges content into a tab-based layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TabNavigator"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TabNavigator",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TabNavigator"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TabNavigator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tabnavigator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TabNavigator/Tab": {
+  "abstract" : [
+    {
+      "text" : "A container directive that holds general markup content describing an individual",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "tab within a tab-based layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Tab"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TabNavigator\/Tab",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Tab"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TabNavigator.Tab",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tabnavigator\/tab"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Technology": {
   "abstract" : [
@@ -1609,6 +2322,82 @@
   "title" : "Tile",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tile"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TitleHeading": {
+  "abstract" : [
+    {
+      "text" : "A directive for customizing the text of a page’s title heading.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TitleHeading"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleHeading",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TitleHeading"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TitleHeading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/titleheading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsVisualStyle": {
+  "abstract" : [
+    {
+      "text" : "A directive for specifying the style that should be used when rendering a page’s",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Topics section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicsVisualStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicsVisualStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicsVisualStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicsvisualstyle"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Tutorial": {
   "abstract" : [
@@ -1789,6 +2578,40 @@
   "title" : "TutorialSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VideoMedia": {
+  "abstract" : [
+    {
+      "text" : "A block filled with a video.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VideoMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VideoMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VideoMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/videomedia"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Volume": {
   "abstract" : [
