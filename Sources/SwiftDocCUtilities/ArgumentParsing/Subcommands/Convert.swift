@@ -539,6 +539,12 @@ extension Docc {
             )
             var enableExperimentalOverloadedSymbolPresentation = false
 
+            @Flag(
+                name: .customLong("enable-experimental-mentioned-in"),
+                help: ArgumentHelp("Render a section on symbol documentation which links to articles that mention that symbol")
+            )
+            var enableExperimentalMentionedIn = false
+
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
@@ -626,6 +632,13 @@ extension Docc {
         public var enableExperimentalOverloadedSymbolPresentation: Bool {
             get { featureFlags.enableExperimentalOverloadedSymbolPresentation }
             set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
+        }
+
+        /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
+        /// links on symbols.
+        public var enableExperimentalMentionedIn: Bool {
+            get { featureFlags.enableExperimentalMentionedIn }
+            set { featureFlags.enableExperimentalMentionedIn = newValue }
         }
 
         /// A user-provided value that is true if additional metadata files should be produced.
