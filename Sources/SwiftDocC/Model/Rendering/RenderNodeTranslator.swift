@@ -736,9 +736,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
+            // If there are no links to other nodes from the article,
+            // set the eyebrow for articles.
             if node.topicSections.isEmpty {
                 // Set an eyebrow for articles
                 node.metadata.roleHeading = "Article"
+            }
+            // If the article links to other nodes, set the eyebrow for
+            // API Collections if any linked node is a symbol.
+            else {
+                let isAPICollection = contentCompiler.collectedTopicReferences.contains { topicReference in
+                    context.topicGraph.nodeWithReference(topicReference)?.kind.isSymbol ?? false
+                }
+                if isAPICollection {
+                    // Set an eyebrow for API Collection
+                    node.metadata.roleHeading = "API Collection"
+                }
             }
             node.metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         }
