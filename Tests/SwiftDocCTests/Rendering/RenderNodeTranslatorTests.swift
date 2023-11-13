@@ -58,6 +58,26 @@ class RenderNodeTranslatorTests: XCTestCase {
         return paragraph
     }
     
+    private func getRenderNodeArticleFromBundlePath(
+        bundleName: String,
+        referencePath: String
+    ) throws -> RenderNode {
+        let (bundle, context) = try testBundleAndContext(named: bundleName)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: referencePath,
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
+    }
+    
     func testResolvingSymbolLinks() throws {
         guard let paragraph = try findParagraph(withPrefix: "Exercise links to symbols", forSymbolPath: "/documentation/MyKit/MyProtocol") else {
             XCTFail("Failed to fetch test content")
@@ -1302,5 +1322,20 @@ class RenderNodeTranslatorTests: XCTestCase {
         let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
         XCTAssertEqual(roundTrippedSymbol.metadata.roleHeading, "TestBed Notes")
         XCTAssertEqual(roundTrippedSymbol.metadata.role, "collection")
+    }
+    
+    func testsCorrectRoleHeadingForAPICollection() throws {
+        let renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "MixedManualAutomaticCuration", referencePath: "/documentation/TestBed/SecondArticle")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
+    }
+    
+    func testsCorrectRoleHeadingForCollection() throws {
+        let renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "MixedManualAutomaticCuration", referencePath: "/documentation/TestBed/Collection")
+        XCTAssertEqual(renderNode.metadata.roleHeading, nil)
+    }
+    
+    func testsCorrectRoleHeadingForArticle() throws {
+        let renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "MixedManualAutomaticCuration", referencePath: "/documentation/TestBed/Article")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
     }
 }
