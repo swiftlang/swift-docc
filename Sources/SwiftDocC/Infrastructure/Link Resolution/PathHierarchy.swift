@@ -364,6 +364,14 @@ struct PathHierarchy {
         
         return newReference
     }
+    
+    /// Traverses the overloaded children of the given node and `observe`s each group of overloads.
+    /// - Parameters:
+    ///   - node: The node to traverse.
+    ///   - observe: The closure that is called for each group of overloaded children.
+    func traverseOverloadedChildren(of node: Node, with observe: (_ overloadedSymbols: [ResolvedIdentifier]) -> Void) {
+        node.traverseOverloadedChildren(observe)
+    }
 }
 
 // MARK: Node
@@ -446,6 +454,24 @@ extension PathHierarchy {
                 for subtree in tree.storage.values {
                     for node in subtree.values {
                         node.parent = self
+                    }
+                }
+            }
+        }
+        
+        /// Traverses the overloaded children of this node and `observe`s each group of overloaded children.
+        /// - Parameter observe: The closure that is called for each group of overloaded children.
+        fileprivate func traverseOverloadedChildren(_ observe: (_ overloadedSymbols: [ResolvedIdentifier]) -> Void) {
+            for (_, disambiguation) in children {
+                for ( kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 
+                && SymbolGraph.Symbol.KindIdentifier.isOverloadableKind(kind) {
+                    let overloadsWithSameKind = innerStorage.values.compactMap { potentialOverload in
+                        // Filter out any non-symbols and pages that don't have a known reference
+                        potentialOverload.symbol == nil ? nil : potentialOverload.identifier
+                    }
+                    
+                    if overloadsWithSameKind.count > 1 {
+                        observe(overloadsWithSameKind)
                     }
                 }
             }
