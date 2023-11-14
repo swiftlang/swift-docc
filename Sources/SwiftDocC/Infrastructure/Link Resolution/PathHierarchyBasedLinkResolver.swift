@@ -60,23 +60,11 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Traverse all symbols of the same kind that have collisions.
     func traverseOverloadedSymbols(_ observe: (_ overloadedSymbols: [ResolvedTopicReference]) -> Void) {
-        let overloadableKinds = ["method", "type.method", "func", "init", "macro", "subscript", "func.op"]
-        
         for (_, node) in pathHierarchy.lookup {
             guard node.symbol != nil else { continue }
             
-            // TODO: Once we know what data and what structure we need we should probably create a PathHierarchy API that hides those implementation details.
-            for (_, disambiguation) in node.children {
-                for ( kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && overloadableKinds.contains(kind) {
-                    let overloadsWithSameKind = innerStorage.values.compactMap { potentialOverload in
-                        // Filter out any non-symbols and pages that don't have a known reference
-                        potentialOverload.symbol == nil ? nil : resolvedReferenceMap[potentialOverload.identifier]
-                    }
-                    
-                    if overloadsWithSameKind.count > 1 {
-                        observe(overloadsWithSameKind)
-                    }
-                }
+            pathHierarchy.traverseOverloadedChildren(of: node) { overloadedSymbols in
+                observe(overloadedSymbols.map { resolvedReferenceMap[$0]! })
             }
         }
     }

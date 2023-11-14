@@ -40,25 +40,16 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                                              renderNodeTranslator: &renderNodeTranslator)
 
                 // If this symbol has overloads, render their declarations as well.
-                let overloadsVariant = symbol.overloadsVariants[trait]
-                let otherDeclarations = overloadsVariant?.compactMap { overloadReference -> DeclarationRenderSection.OtherDeclaration? in
-                    guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol,
-                          let declarationFragments = overload.declarationVariants[trait]?.values.first?.declarationFragments else {
-                        return nil
-                    }
-                    let declarationTokens = renderDeclarationTokens(fragments: declarationFragments,
-                                                                    renderNodeTranslator: &renderNodeTranslator)
-                    return DeclarationRenderSection.OtherDeclaration(
-                            tokens: declarationTokens,
-                            identifier: overloadReference.absoluteString)
-                }
+                let otherDeclarations = renderOtherDeclarationsTokens(from: symbol.overloadsVariants[trait] ?? [],
+                                                                      for: trait,
+                                                                      renderNodeTranslator: &renderNodeTranslator)
                 
                 declarations.append(
                     DeclarationRenderSection(
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
                         platforms: platformNames,
                         tokens: renderedTokens,
-                        otherDeclarations: otherDeclarations ?? [],
+                        otherDeclarations: otherDeclarations,
                         indexInOtherDeclarations: symbol.indexInOverloadsVariants[trait]
                     )
                 )
@@ -68,6 +59,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
         }
     }
     
+    /// Translates the given declaration fragments into encodable tokens.
     func renderDeclarationTokens(fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], renderNodeTranslator: inout RenderNodeTranslator)  -> [DeclarationRenderSection.Token] {
         
         return fragments.map { token in
@@ -84,5 +76,30 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             // Add the declaration token
             return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
         }
+    }
+    
+    /// Translates the given resolved topic references into encodable `OtherDeclaration`s representing the declarations of this symbol's overloads.
+    func renderOtherDeclarationsTokens(from overloads: [ResolvedTopicReference], for trait: DocumentationDataVariantsTrait,
+                                       renderNodeTranslator: inout RenderNodeTranslator) -> [DeclarationRenderSection.OtherDeclaration] {
+        var otherDeclarations = [DeclarationRenderSection.OtherDeclaration]()
+        for overloadReference in overloads {
+            guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol else {
+                continue
+            }
+            
+            let declarationFragments = overload.declarationVariants[trait]?.values.first?.declarationFragments
+            assert(declarationFragments != nil, "Overloaded symbols must have declaration fragments.")
+            guard let declarationFragments else { continue }
+            
+            let declarationTokens = renderDeclarationTokens(fragments: declarationFragments,
+                                                            renderNodeTranslator: &renderNodeTranslator)
+            otherDeclarations.append(
+                DeclarationRenderSection.OtherDeclaration(
+                    tokens: declarationTokens,
+                    identifier: overloadReference.absoluteString
+                )
+            )
+        }
+        return otherDeclarations
     }
 }
