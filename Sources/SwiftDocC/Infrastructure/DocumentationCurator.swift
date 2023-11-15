@@ -229,10 +229,27 @@ struct DocumentationCurator {
                     (childDocumentationNode.kind == .article || childDocumentationNode.kind.isSymbol || childDocumentationNode.kind == .tutorial || childDocumentationNode.kind == .tutorialArticle) else {
                         continue
                 }
-                
-                guard childDocumentationNode.kind != .module else {
+
+
+                // If a module has a path with a manual technology root there shouldn't
+                // be an error messsage. Using an if statement allows fallthrough behavior 
+                // in that specific case
+                if childDocumentationNode.kind == .module {
+
+                    let hasTechnologyRoot = context.pathsTo(nodeReference).contains { path in
+                        if path.count == 0 {
+                            return false
+                        }
+
+                        let node = context.topicGraph.nodeWithReference(path[0])
+                        return node?.kind == .module && node?.kind.isSymbol == false
+                    }
+
+                    if !hasTechnologyRoot {
                     problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
                     continue
+                    }
+                    
                 }
                 
                 // Verify we are not creating a graph cyclic relationship.
