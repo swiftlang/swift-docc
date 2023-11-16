@@ -1323,8 +1323,8 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "*(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1moiyA2C_ACtFZ")
         XCTAssertEqual(try tree.findSymbol(path: "*=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2meoiyyACz_ACtFZ")
         
-        XCTAssertEqual(try tree.findSymbol(path: "\\/(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1doiyA2C_ACtFZ")
-        XCTAssertEqual(try tree.findSymbol(path: "\\/=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "/(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1doiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "/=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ")
         
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-28faz", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-8ooeh", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
@@ -1618,9 +1618,11 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("/", [])
         assertParsedPathComponents("/first", [("first", nil, nil)])
         assertParsedPathComponents("first", [("first", nil, nil)])
-        assertParsedPathComponents("first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
         assertParsedPathComponents("first/", [("first", nil, nil)])
-        assertParsedPathComponents("first//second", [("first", nil, nil), ("second", nil, nil)])
+        assertParsedPathComponents("first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
+        assertParsedPathComponents("/first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
+        assertParsedPathComponents("first/", [("first", nil, nil)])
+        assertParsedPathComponents("first//second", [("first", nil, nil), ("/second", nil, nil)])
         assertParsedPathComponents("first/second#third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
         assertParsedPathComponents("#first", [("first", nil, nil)])
 
@@ -1641,11 +1643,19 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("path-swift.type.property", [("path", "type.property", nil)])
         
         assertParsedPathComponents("-(_:_:)-hash", [("-(_:_:)", nil, "hash")])
-
-        // Check escaped forward slashes
-        assertParsedPathComponents("\\/=(_:_:)", [("/=(_:_:)", nil, nil)])
-        assertParsedPathComponents("escaped\\/slashes\\/in\\/name", [("escaped/slashes/in/name", nil, nil)])
-        assertParsedPathComponents("escaped\\/slashes/in\\/name", [("escaped/slashes", nil, nil), ("in/name", nil, nil)])
+        assertParsedPathComponents("/=(_:_:)", [("/=(_:_:)", nil, nil)])
+        assertParsedPathComponents("/(_:_:)-func.op", [("/(_:_:)", "func.op", nil)])
+        assertParsedPathComponents("//(_:_:)-hash", [("//(_:_:)", nil, "hash")])
+        assertParsedPathComponents("+/-(_:_:)", [("+/-(_:_:)", nil, nil)])
+        assertParsedPathComponents("+/-(_:_:)-hash", [("+/-(_:_:)", nil, "hash")])
+        assertParsedPathComponents("+/-(_:_:)-func.op", [("+/-(_:_:)", "func.op", nil)])
+        assertParsedPathComponents("+/-(_:_:)-func.op-hash", [("+/-(_:_:)", "func.op", "hash")])
+        assertParsedPathComponents("+/-(_:_:)/+/-(_:_:)/+/-(_:_:)/+/-(_:_:)", [("+/-(_:_:)", nil, nil), ("+/-(_:_:)", nil, nil), ("+/-(_:_:)", nil, nil), ("+/-(_:_:)", nil, nil)])
+        assertParsedPathComponents("+/-(_:_:)-hash/+/-(_:_:)-func.op/+/-(_:_:)-func.op-hash/+/-(_:_:)", [("+/-(_:_:)", nil, "hash"), ("+/-(_:_:)", "func.op", nil), ("+/-(_:_:)", "func.op", "hash"), ("+/-(_:_:)", nil, nil)])
+        
+        assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil, nil), ("/=(_:_:)", nil, nil)])
+        assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil, nil), ("///=(_:_:)", nil, nil)])
+        assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil, nil), ("+/-(_:_:)", nil, nil)])
     }
     
     // MARK: Test helpers
@@ -1712,12 +1722,12 @@ class PathHierarchyTests: XCTestCase {
     }
     
     private func assertParsedPathComponents(_ path: String, _ expected: [(String, String?, String?)], file: StaticString = #file, line: UInt = #line) {
-        let (actual, _) = PathHierarchy.parse(path: path)
+        let (actual, _) = PathHierarchy.PathParser.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
-            XCTAssertEqual(actualComponents.name, expectedComponents.0, "Incorrect path component", file: file, line: line)
-            XCTAssertEqual(actualComponents.kind, expectedComponents.1, "Incorrect kind disambiguation", file: file, line: line)
-            XCTAssertEqual(actualComponents.hash, expectedComponents.2, "Incorrect hash disambiguation", file: file, line: line)
+            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component", file: file, line: line)
+            XCTAssertEqual(actualComponents.kind.map(String.init), expectedComponents.1, "Incorrect kind disambiguation", file: file, line: line)
+            XCTAssertEqual(actualComponents.hash.map(String.init), expectedComponents.2, "Incorrect hash disambiguation", file: file, line: line)
         }
     }
 }

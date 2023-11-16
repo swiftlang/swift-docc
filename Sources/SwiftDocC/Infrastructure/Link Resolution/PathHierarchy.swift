@@ -190,10 +190,10 @@ struct PathHierarchy {
                         parent.children[components.first!] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
-                    let component = Self.parse(pathComponent: component[...])
-                    let nodeWithoutSymbol = Node(name: component.name)
+                    let component = PathParser.parse(pathComponent: component[...])
+                    let nodeWithoutSymbol = Node(name: String(component.name))
                     nodeWithoutSymbol.isDisfavoredInCollision = true
-                    parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
+                    parent.add(child: nodeWithoutSymbol, kind: component.kind.map(String.init), hash: component.hash.map(String.init))
                     parent = nodeWithoutSymbol
                 }
                 parent.add(symbolChild: node)

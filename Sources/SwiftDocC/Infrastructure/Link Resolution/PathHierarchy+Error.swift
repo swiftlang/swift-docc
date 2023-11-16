@@ -19,8 +19,8 @@ extension PathHierarchy {
         ///
         /// Includes information about:
         /// - The node that was found
-        /// - The remaining portion of the path.
-        typealias PartialResult = (node: Node, path: [PathComponent])
+        /// - The portion of the path up and including to the found node and its trailing path separator.
+        typealias PartialResult = (node: Node, pathPrefix: Substring)
         
         /// No element was found at the beginning of the path.
         ///
@@ -97,7 +97,7 @@ extension PathHierarchy.Error {
                 let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
                 
-                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -125,7 +125,7 @@ extension PathHierarchy.Error {
                 let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
                 
-                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -158,11 +158,7 @@ extension PathHierarchy.Error {
             
         case .unknownDisambiguation(partialResult: let partialResult, remaining: let remaining, candidates: let candidates):
             let nextPathComponent = remaining.first!
-            var validPrefix = ""
-            if !partialResult.path.isEmpty {
-                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
-            }
-            validPrefix += nextPathComponent.name
+            let validPrefix = partialResult.pathPrefix + nextPathComponent.name
             
             let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
             let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
@@ -184,22 +180,19 @@ extension PathHierarchy.Error {
             
         case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
             let nextPathComponent = remaining.first!
-            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent.name)
+            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(nextPathComponent.name))
             
             // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
             // only make suggestions for similarly spelled structs.
             let filteredNearMisses = nearMisses.filter { name in
-                (try? partialResult.node.children[name]?.find(nextPathComponent.kind, nextPathComponent.hash)) != nil
+                (try? partialResult.node.children[name]?.find(nextPathComponent.kind.map(String.init), nextPathComponent.hash.map(String.init))) != nil
             }
 
-            var validPrefix = ""
-            if !partialResult.path.isEmpty {
-                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
-            }
+            let pathPrefix = partialResult.pathPrefix
             let solutions: [Solution]
             if filteredNearMisses.isEmpty {
                 // If there are no near-misses where the authored disambiguation narrow down the results, replace the full path component
-                let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -207,7 +200,7 @@ extension PathHierarchy.Error {
                 }
             } else {
                 // If the authored disambiguation narrows down the possible near-misses, only replace the name part of the path component
-                let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.name.count)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.name.count)
                 solutions = filteredNearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -219,20 +212,16 @@ extension PathHierarchy.Error {
                 \(nextPathComponent.full.singleQuoted) doesn't exist at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
-                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
+                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: nextPathComponent.full.count)
             )
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
             let nextPathComponent = remaining.first!
             
-            var validPrefix = ""
-            if !partialResult.path.isEmpty {
-                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
-            }
-            validPrefix += nextPathComponent.name
+            let pathPrefix = partialResult.pathPrefix + nextPathComponent.name
 
             let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
-            let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: disambiguations.count)
             
             let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
                 return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
@@ -244,7 +233,7 @@ extension PathHierarchy.Error {
                 \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
-                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
+                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
             )
         }
     }

@@ -1670,7 +1670,9 @@ let expected = """
             A documentation extension that curates symbols with characters not allowed in a resolved reference URL.
 
             ## Topics
-
+            
+            ### Operator name only
+            
             - ``<(_:_:)``
             - ``>(_:_:)``
             - ``<=(_:_:)``
@@ -1678,8 +1680,20 @@ let expected = """
             - ``-(_:_:)-22pw2``
             - ``-(_:)-9xdx0``
             - ``-=(_:_:)-7w3vn``
-            - ``\\/(_:_:)``
-            - ``\\/=(_:_:)``
+            - ``/(_:_:)``
+            - ``/=(_:_:)``
+            
+            ### Prefixes with containing type name
+            
+            - ``MyNumber/<(_:_:)``
+            - ``MyNumber/>(_:_:)``
+            - ``MyNumber/<=(_:_:)``
+            - ``MyNumber/>=(_:_:)``
+            - ``MyNumber/-(_:_:)-22pw2``
+            - ``MyNumber/-(_:)-9xdx0``
+            - ``MyNumber/-=(_:_:)-7w3vn``
+            - ``MyNumber//(_:_:)``
+            - ``MyNumber//=(_:_:)``
             """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
         }
         
