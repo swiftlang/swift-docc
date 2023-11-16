@@ -23,7 +23,7 @@ extension PathHierarchy {
             throw Error.unfindableMatch(node)
         }
         if onlyFindSymbols, node.symbol == nil {
-            throw Error.nonSymbolMatchForSymbolLink
+            throw Error.nonSymbolMatchForSymbolLink(path: rawPath[...])
         }
         return node.identifier
     }
@@ -35,7 +35,7 @@ extension PathHierarchy {
         // - Third, traverse the hierarchy from those starting points to search for the node.
         let (path, isAbsolute) = PathParser.parse(path: rawPath)
         guard !path.isEmpty else {
-            throw Error.notFound(remaining: [], availableChildren: [])
+            throw Error.notFound(pathPrefix: rawPath[...], remaining: [], availableChildren: [])
         }
         
         var remaining = path[...]
@@ -49,7 +49,7 @@ extension PathHierarchy {
         }
         
         guard let firstComponent = remaining.first else {
-            throw Error.notFound(remaining: [], availableChildren: [])
+            throw Error.notFound(pathPrefix: rawPath[...], remaining: [], availableChildren: [])
         }
         
         if !onlyFindSymbols {
@@ -118,9 +118,17 @@ extension PathHierarchy {
             let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
             
             if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
-                throw Error.moduleNotFound(remaining: Array(remaining), availableChildren: Set(modules.keys))
+                throw Error.moduleNotFound(
+                    pathPrefix: pathForError(of: rawPath, droppingLast: remaining.count),
+                    remaining: Array(remaining),
+                    availableChildren: Set(modules.keys)
+                )
             } else {
-                throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+                throw Error.notFound(
+                    pathPrefix: pathForError(of: rawPath, droppingLast: remaining.count),
+                    remaining: Array(remaining),
+                    availableChildren: topLevelNames
+                )
             }
         }
         

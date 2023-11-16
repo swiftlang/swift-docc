@@ -1715,7 +1715,7 @@ class PathHierarchyTests: XCTestCase {
     private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line, _ additionalAssertion: (TopicReferenceResolutionErrorInfo) -> Void = { _ in }) throws {
         XCTAssertThrowsError(try tree.findSymbol(path: path), "Finding path \(path) didn't raise an error.",file: file,line: line) { untypedError in
             let error = untypedError as! PathHierarchy.Error
-            let referenceError = error.asTopicReferenceResolutionErrorInfo(originalReference: path) { context.linkResolver.localResolver.fullName(of: $0, in: context) }
+            let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
             XCTAssertEqual(referenceError.message, expectedErrorMessage, file: file, line: line)
             additionalAssertion(referenceError)
         }
