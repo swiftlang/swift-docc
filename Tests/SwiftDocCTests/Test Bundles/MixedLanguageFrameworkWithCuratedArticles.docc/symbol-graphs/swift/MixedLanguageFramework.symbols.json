@@ -1,0 +1,79 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.5"
+    },
+    "module": {
+        "name": "MixedLanguageFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 0,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)Bar",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Bar"
+            ],
+            "names": {
+                "title": "Bar",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "Bar"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "Bar"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "Bar"
+                }
+            ],
+            "accessLevel": "open"
+        }
+    ],
+    "relationships": []
+}

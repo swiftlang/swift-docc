@@ -888,6 +888,40 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
+    func testDoesNotFilterBasedOnArticleLanguage() throws {
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFrameworkWithCuratedArticles"
+        )
+        
+        assertIsAvailableInLanguages(
+            try outputConsumer.renderNode(
+                withTitle: "Article"
+            ),
+            languages: ["occ"],
+            defaultLanguage: .objectiveC
+        )
+        
+        let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
+        
+        XCTAssertEqual(
+            mixedLanguageFrameworkRenderNode.topicSections.flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCOnlyArticle",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+            ]
+        )
+        
+        let objectiveCVariant = try renderNodeApplyingObjectiveCVariantOverrides(to: mixedLanguageFrameworkRenderNode)
+        
+        XCTAssertEqual(
+            objectiveCVariant.topicSections.flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCOnlyArticle",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+            ]
+        )
+    }
+    
     func renderNodeApplyingObjectiveCVariantOverrides(to renderNode: RenderNode) throws -> RenderNode {
         return try renderNodeApplying(variant: "occ", to: renderNode)
     }
