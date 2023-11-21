@@ -103,4 +103,7 @@ DocC doesn't prematurely terminate the styling.
 **Sloths require sustenance\*\* to perform activities.**
 ```
 
+DocC also supports the translation of hex codes and HTML entities. For example, using the hex code `\&#xa9;`
+will render as the copyright sign (&#xa9;).
+
 <!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
