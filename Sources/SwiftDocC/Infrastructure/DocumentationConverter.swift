@@ -323,7 +323,9 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                             context: context
                         )
                         if coverageFilterClosure(coverageEntry) {
-                            coverageInfo.append(coverageEntry)
+                            resultsGroup.async(queue: resultsSyncQueue) {
+                                coverageInfo.append(coverageEntry)
+                            }
                         }
                     case .none:
                         break
