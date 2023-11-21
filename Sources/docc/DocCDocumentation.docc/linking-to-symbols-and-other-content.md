@@ -184,6 +184,7 @@ the same format, except you must add the `/tutorials/` prefix to the path:
 > Tip: You can also link to symbols using the `<doc:>` syntax. Just insert the 
 symbol's path between the colon (`:`) and the terminating greater-than 
 symbol (`>`).
+`<doc:Sloth/init(name:color:power:)>`
 
 ### Include web links
 

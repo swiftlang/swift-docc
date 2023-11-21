@@ -14,7 +14,9 @@ display scale-aware versions of an image. You use specific components to create 
 | Image name | **Required**. Identifies the image within the documentation catalog. The name must be unique across all images in the catalog, even if you store them in separate folders. |
 | Appearance | **Optional**. Identifies the appearance mode in which DocC uses the image. Add `~dark` directly after the image name to identify the image as a dark mode variant. |
 | Display scale | **Optional**. Identifies the display scale at which DocC uses the image. Possible values are `@1x`, `@2x`, and `@3x`. When specifying a display scale, add it directly before the file extension. |
-| File extension | **Required**. Identifies the type of image, such as .png or .jpeg. |
+| File extension | **Required**. Identifies the type of image. The supported file extensions are `png`, `jpg`, `jpeg`, `svg` and `gif`. |
+
+> Tip: To best support your readers, provide images in standard resolution and `@2x` scale.
 
 For example, the following are all valid DocC image filenames:
 
