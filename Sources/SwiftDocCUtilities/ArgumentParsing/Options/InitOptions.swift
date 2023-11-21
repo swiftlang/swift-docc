@@ -50,16 +50,24 @@ public struct InitOptions: ParsableArguments {
     }
     
     /// The catalog template to initialize.
-    ///
-    /// Defaults to articleOnly.
     @Option(
-        name: .long,
+        name: .customLong("template"),
         help: ArgumentHelp(
-            "The catalog template to initialize. If not provided, the template will default to 'article-only'",
-            valueName: "template"
+            """
+            The catalog template to initialize.
+            
+            The provided templates are:
+            
+            - minimal: This template is crafted for creating conceptual documentation and includes a catalog with just one markdown file. It provides minimal content, allowing users to start writing right away.
+            
+            - expanded: This template is designed for authoring conceptual documentation, featuring a catalog containing only articles. It includes an expanded structure and content, along with guidelines on how to author content using DocC.
+            
+            - tutorial: This template contains the necessary structure and directives to get started on authoring tutorials.
+            """,
+            valueName: "template-name"
         )
     )
-    public var catalogTemplate: CatalogTemplateKind = .articleOnly
+    public var catalogTemplate: CatalogTemplateKind
 }
 
 extension CatalogTemplateKind: ExpressibleByArgument {}
