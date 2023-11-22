@@ -537,10 +537,7 @@ extension Docc {
             )
             var enableExperimentalLinkHierarchySerialization = false
             
-            @Flag(help: ArgumentHelp(
-                "Write documentation files containing generated curation to the documentation catalog.",
-                discussion: "The documentation catalog used in the build will be modified in-place. "
-            ))
+            @Flag(help: .hidden)
             var experimentalModifyCatalogWithGeneratedCuration = false
 
             @Flag(help: "Write additional metadata files to the output directory.")
