@@ -252,8 +252,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
             let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: catalogURL)
-            let curation = try writer?.generateDefaultCurationContents()
-            for (url, updatedContent) in curation ?? [:] {
+            let curation = try writer.generateDefaultCurationContents()
+            for (url, updatedContent) in curation {
                 guard let data = updatedContent.data(using: .utf8) else { continue }
                 try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
                 try? data.write(to: url, options: .atomic)

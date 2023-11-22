@@ -19,7 +19,9 @@ extension EmitGeneratedCurationAction {
         try self.init(
             documentationCatalog: cmd.documentationCatalog,
             additionalSymbolGraphDirectory: cmd.additionalSymbolGraphDirectory,
-            outputURL: cmd.outputURL
+            outputURL: cmd.outputURL,
+            depthLimit: cmd.depthLimit,
+            startingPointSymbolLink: cmd.startingPointSymbolLink
         )
     }
 }

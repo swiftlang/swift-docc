@@ -16,13 +16,17 @@ struct EmitGeneratedCurationAction: Action {
     let catalogURL: URL?
     let additionalSymbolGraphDirectory: URL?
     let outputURL: URL
-
+    let depthLimit: Int?
+    let startingPointSymbolLink: String?
+    
     let fileManager: FileManagerProtocol
     
     init(
         documentationCatalog: URL?,
         additionalSymbolGraphDirectory: URL?,
         outputURL: URL?,
+        depthLimit: Int?,
+        startingPointSymbolLink: String?,
         fileManager: FileManagerProtocol = FileManager.default
     ) throws {
         self.catalogURL = documentationCatalog
@@ -31,6 +35,8 @@ struct EmitGeneratedCurationAction: Action {
         } else {
             self.outputURL = URL(fileURLWithPath: fileManager.currentDirectoryPath).appendingPathComponent("Generated.docc")
         }
+        self.depthLimit = depthLimit
+        self.startingPointSymbolLink = startingPointSymbolLink
         self.additionalSymbolGraphDirectory = additionalSymbolGraphDirectory
         self.fileManager = fileManager
     }
@@ -54,8 +60,8 @@ struct EmitGeneratedCurationAction: Action {
         try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
 
         let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: outputURL)
-        let curation = try writer?.generateDefaultCurationContents()
-        for (url, updatedContent) in curation ?? [:] {
+        let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)
+        for (url, updatedContent) in curation {
             guard let data = updatedContent.data(using: .utf8) else { continue }
             try? fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
             try? fileManager.createFile(at: url, contents: data, options: .atomic)

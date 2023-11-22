@@ -18,7 +18,7 @@ public struct GeneratedCurationWriter {
     let outputURL: URL
     let linkResolver: PathHierarchyBasedLinkResolver
     
-    public init?(
+    public init(
         context: DocumentationContext,
         catalogURL: URL?,
         outputURL: URL
@@ -27,13 +27,8 @@ public struct GeneratedCurationWriter {
         
         self.catalogURL = catalogURL
         self.outputURL = outputURL
-        guard let linkResolver = context.hierarchyBasedLinkResolver else {
-            context.diagnosticEngine.emit(
-                Problem(diagnostic: Diagnostic(severity: .warning, identifier: "org.swift.docc.", summary: "Writing auto-generated curation into documentation extension files is only supported with the default link resolver."))
-            )
-            return nil
-        }
-        self.linkResolver = linkResolver
+        
+        self.linkResolver = context.linkResolver.localResolver
     }
     
     /// Generates the markdown representation of the auto-generated curation for a given symbol reference.
@@ -105,13 +100,52 @@ public struct GeneratedCurationWriter {
             """ + text
     }
     
-    public func generateDefaultCurationContents() throws -> [URL: String] {
+    enum Error: DescribedError {
+        case symbolLinkNotFound(TopicReferenceResolutionErrorInfo)
+        
+        var errorDescription: String {
+            switch self {
+            case .symbolLinkNotFound(let errorInfo):
+                var errorMessage = "'--from-symbol <symbol-link>' not found: \(errorInfo.message)"
+                for solution in errorInfo.solutions {
+                    errorMessage.append("\n\(solution.summary.replacingOccurrences(of: "\n", with: ""))")
+                }
+                return errorMessage
+            }
+        }
+    }
+    
+    /// Generates documentation extension content with a markdown representation of DocC's auto-generated curation.
+    /// - Parameters:
+    ///   - symbolLink: A link to the symbol whose sub hierarchy the curation writer will descend.
+    ///   - depthLimit: The depth limit of how far the curation writer will descend from its starting point symbol.
+    /// - Returns: A collection of file URLs and their markdown content.
+    public func generateDefaultCurationContents(fromSymbol symbolLink: String? = nil, depthLimit: Int? = nil) throws -> [URL: String] {
         // Used in documentation extension page titles to reference symbols that don't already have a documentation extension file.
         let allAbsoluteLinks = linkResolver.pathHierarchy.disambiguatedAbsoluteLinks()
         
-        var contentsToWrite = [URL: String]()
+        guard var curationCrawlRoot = linkResolver.modules().first else {
+            return [:]
+        }
         
+        if let symbolLink = symbolLink {
+            switch context.linkResolver.resolve(UnresolvedTopicReference(topicURL: .init(symbolPath: symbolLink)), in: curationCrawlRoot, fromSymbolLink: true, context: context) {
+            case .success(let foundSymbol):
+                curationCrawlRoot = foundSymbol
+            case .failure(_, let errorInfo):
+                throw Error.symbolLinkNotFound(errorInfo)
+            }
+        }
+        
+        var contentsToWrite = [URL: String]()
         for (usr, reference) in context.symbolIndex {
+            // Filter out symbols that aren't in the specified sub hierarchy.
+            if symbolLink != nil || depthLimit != nil {
+                guard reference == curationCrawlRoot || context.pathsTo(reference).contains(where: { path in path.suffix(depthLimit ?? .max).contains(curationCrawlRoot)}) else {
+                    continue
+                }
+            }
+            
             guard let absoluteLink = allAbsoluteLinks[usr], let curationText = defaultCurationText(for: reference) else { continue }
             if let catalogURL = catalogURL, let existingURL = context.documentationExtensionURL(for: reference) {
                 let updatedFileURL: URL
