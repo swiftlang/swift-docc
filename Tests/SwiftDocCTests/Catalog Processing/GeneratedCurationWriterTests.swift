@@ -71,6 +71,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``MyEnum``
         - ``MyObjectiveCEnum``
         - ``MyObjectiveCEnumSwiftName``
+        
         """)
     }
     
@@ -101,6 +102,7 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         - ``someThing``
         - ``something``
+        
         """)
     }
     
@@ -128,6 +130,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             ### Structures
 
             - ``Something``
+            
             """)
             
             if expectedFileCount > 1 {
@@ -145,6 +148,7 @@ class GeneratedCurationWriterTests: XCTestCase {
                 ### Enumerations
                 
                 - ``SomethingElse``
+                
                 """)
             }
             
@@ -159,6 +163,7 @@ class GeneratedCurationWriterTests: XCTestCase {
                 ### Enumerations
                 
                 - ``SomethingElse``
+                
                 """)
             }
         }
@@ -185,6 +190,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             ### Enumerations
             
             - ``SomethingElse``
+            
             """)
             
             if expectedFileCount > 1 {
@@ -198,6 +204,7 @@ class GeneratedCurationWriterTests: XCTestCase {
                 ### Enumerations
                 
                 - ``SomethingElse``
+                
                 """)
             }
         }
@@ -237,6 +244,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         ### Enumerations
 
         - ``NestedEnum``
+        
         """)
     }
     
@@ -262,6 +270,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``fourthTestMemberName(test:)-8iuz7`` <!-- func fourthTestMemberName(test: String) -> Double -->
         - ``fourthTestMemberName(test:)-91hxs`` <!-- func fourthTestMemberName(test: String) -> Int -->
         - ``fourthTestMemberName(test:)-961zx`` <!-- func fourthTestMemberName(test: String) -> String -->
+        
         """)
     }
     
@@ -297,6 +306,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         ### Instance Properties
 
         - ``magnitude``
+        
         """)
     }
     
