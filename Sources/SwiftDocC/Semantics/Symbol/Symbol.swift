@@ -124,12 +124,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         }
         return variants
     }
-
-    /// The names of any "bystander" modules required for this symbol, if it came from a cross-import overlay.
-    @available(*, deprecated, message: "Use 'crossImportOverlayModule' instead. This deprecated API will be removed after 5.9 is released")
-    public var bystanderModuleNames: [String]? {
-        self.crossImportOverlayModule?.bystanderModules
-    }
     
     /// Optional cross-import module names of the symbol.
     internal(set) public var crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])?
