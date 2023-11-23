@@ -313,4 +313,112 @@ class TaskGroupTests: XCTestCase {
             XCTAssertEqual(taskGroup.links.count, 1)
         }
     }
+    
+    func testTopicContentOrder() throws {
+        func assertExpectedParsedTaskGroupContent(_ content: String, file: StaticString = #file, line: UInt = #line) throws {
+            let document = Document(parsing: """
+                # Title
+                
+                Abstract.
+                
+                ## Topics
+                
+                \(content)
+                
+                """, options: [.parseBlockDirectives, .parseSymbolLinks])
+            let markupModel = DocumentationMarkup(markup: document)
+            
+            let topicSection = try XCTUnwrap(markupModel.topicsSection, file: file, line: line)
+            XCTAssertEqual(topicSection.taskGroups.count, 1, file: file, line: line)
+            
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.first, file: file, line: line)
+            
+            XCTAssertEqual(taskGroup.heading?.title, "Topic name", file: file, line: line)
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "Abstract paragraph", file: file, line: line)
+            XCTAssertEqual(taskGroup.discussion?.content.map { $0.detachedFromParent.format() }, [
+                "Discussion paragraph 1",
+                "Discussion paragraph 2",
+            ], file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.count, 1, file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.first?.name, "SupportedLanguage", file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.first?.arguments().count, 1, file: file, line: line)
+            XCTAssertEqual(taskGroup.links.map(\.destination), ["Link1", "Link2"], file: file, line: line)
+        }
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            @SupportedLanguage(swift)
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            @SupportedLanguage(swift)
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            @SupportedLanguage(swift)
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            @SupportedLanguage(swift)
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            
+            @SupportedLanguage(swift)
+            """)
+        
+    }
 }
