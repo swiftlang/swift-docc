@@ -221,4 +221,96 @@ class TaskGroupTests: XCTestCase {
             XCTAssertEqual("https://www.example.com", links[1].destination)
         }
     }
+    
+    func testSupportedLanguages() throws {
+        let markupSource = """
+            # Title
+            
+            Abstract.
+            
+            ## Topics
+            
+            ### Something Swift only
+            
+            This link is only for Swift
+            
+            @SupportedLanguage(swift)
+            
+            - ``Link1``
+            
+            ### Something Objective-C only
+                        
+            This link is only for Objective-C
+            
+            @SupportedLanguage(objc)
+            
+            - ``Link1``
+            
+            ### Something for both
+                        
+            This link is for both Swift and Objective-C
+            
+            @SupportedLanguage(objc)
+            @SupportedLanguage(swift)
+            
+            - ``Link3``
+                            
+            ### Something without a language filter
+                        
+            This link is for all languages
+            
+            - ``Link4``
+            """
+        let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
+        let markupModel = DocumentationMarkup(markup: document)
+        
+        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).detachedFromParent.format())
+        
+        let topicSection = try XCTUnwrap(markupModel.topicsSection)
+        XCTAssertEqual(topicSection.taskGroups.count, 4)
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something Swift only")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is only for Swift")
+            XCTAssertEqual(taskGroup.directives.count, 1)
+            for directive in taskGroup.directives {
+                XCTAssertEqual(directive.name, "SupportedLanguage")
+                XCTAssertEqual(directive.arguments().count, 1)
+            }
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst().first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something Objective-C only")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is only for Objective-C")
+            XCTAssertEqual(taskGroup.directives.count, 1)
+            for directive in taskGroup.directives {
+                XCTAssertEqual(directive.name, "SupportedLanguage")
+                XCTAssertEqual(directive.arguments().count, 1)
+            }
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst(2).first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something for both")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is for both Swift and Objective-C")
+            XCTAssertEqual(taskGroup.directives.count, 2)
+            for directive in taskGroup.directives {
+                XCTAssertEqual(directive.name, "SupportedLanguage")
+                XCTAssertEqual(directive.arguments().count, 1)
+            }
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst(3).first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something without a language filter")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is for all languages")
+            XCTAssert(taskGroup.directives.isEmpty)
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+    }
 }

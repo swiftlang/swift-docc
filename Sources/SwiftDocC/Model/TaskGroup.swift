@@ -225,6 +225,10 @@ public struct TaskGroup {
         self.heading = heading
         self.originalContent = content
     }
+    
+    var directives: [BlockDirective] {
+        originalContent.compactMap { $0 as? BlockDirective }
+    }
 }
 
 extension TaskGroup {
