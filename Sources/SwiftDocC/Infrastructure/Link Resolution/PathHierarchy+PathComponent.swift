@@ -13,7 +13,19 @@ import SymbolKit
 /// All known symbol kind identifiers.
 ///
 /// This is used to identify parsed path components as kind information.
-private let knownSymbolKinds = Set(SymbolGraph.Symbol.KindIdentifier.allCases.map { $0.identifier })
+private let knownSymbolKinds: Set<String> = {
+    // There's nowhere else that registers these extended symbol kinds and we need to know them in this list.
+    SymbolGraph.Symbol.KindIdentifier.register(
+        .extendedProtocol,
+        .extendedStructure,
+        .extendedClass,
+        .extendedEnumeration,
+        .unknownExtendedType,
+        .extendedModule
+    )
+    return Set(SymbolGraph.Symbol.KindIdentifier.allCases.map(\.identifier))
+}()
+
 /// All known source language identifiers.
 ///
 /// This is used to skip language prefixes from kind disambiguation information.
@@ -96,10 +108,11 @@ extension PathHierarchy {
         if let dashIndex = name.lastIndex(of: "-") {
             let kind = String(name[dashIndex...].dropFirst())
             let name = String(name[..<dashIndex])
-            if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
-                return PathComponent(full: full, name: name, kind: String(kind.dropFirst(languagePrefix.count)), hash: hash)
-            } else {
+            if knownSymbolKinds.contains(kind) {
                 return PathComponent(full: full, name: name, kind: kind, hash: hash)
+            } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
+                let kindWithoutLanguage = String(kind.dropFirst(languagePrefix.count))
+                return PathComponent(full: full, name: name, kind: kindWithoutLanguage, hash: hash)
             }
         }
         return PathComponent(full: full, name: name, kind: nil, hash: hash)

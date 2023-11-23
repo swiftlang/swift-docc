@@ -24,7 +24,9 @@ extension Docc {
         ///
         /// Provided as a static variable to allow for redirecting output in unit tests.
         static var _errorLogHandle: LogHandle = .standardError
-
+        
+        static var _diagnosticFormattingOptions: DiagnosticFormattingOptions = []
+        
         public static var configuration = CommandConfiguration(
             abstract: "Convert documentation markup, assets, and symbol information into a documentation archive.",
             usage: """
@@ -206,7 +208,7 @@ extension Docc {
         ///
         /// This value defaults to true but can be explicitly disabled with the `--no-transform-for-static-hosting` flag.
         public var transformForStaticHosting: Bool {
-            get { hostingOptions.transformForStaticHosting}
+            get { hostingOptions.transformForStaticHosting }
             set { hostingOptions.transformForStaticHosting = newValue }
         }
         
@@ -425,6 +427,78 @@ extension Docc {
         @OptionGroup(title: "Documentation coverage (Experimental)")
         public var experimentalDocumentationCoverageOptions: DocumentationCoverageOptionsArgument
         
+        // MARK: - Link resolution options
+        
+        @OptionGroup(title: "Link resolution options (Experimental)")
+        var linkResolutionOptions: LinkResolutionOptions
+        
+        struct LinkResolutionOptions: ParsableArguments {
+            @Option(
+                name: [.customLong("dependency")],
+                parsing: ArrayParsingStrategy.singleValue,
+                help: ArgumentHelp("A path to a documentation archive to resolve external links against.", discussion: """
+                Only documentation archives built with '--enable-experimental-external-link-support' are supported as dependencies.
+                """),
+                transform: URL.init(fileURLWithPath:)
+            )
+            var dependencies: [URL] = []
+
+            mutating func validate() throws {
+                let fileManager = FileManager.default
+                
+                var filteredDependencies: [URL] = []
+                for dependency in dependencies {
+                    // Check that the dependency URL is a directory. We don't validate the extension.
+                    var isDirectory: ObjCBool = false
+                    guard fileManager.fileExists(atPath: dependency.path, isDirectory: &isDirectory) else {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.NotFound",
+                            summary: "No documentation archive exist at '\(dependency.path)'."
+                        ))
+                        continue
+                    }
+                    guard isDirectory.boolValue else {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.IsNotDirectory",
+                            summary: "Dependency at '\(dependency.path)' is not a directory."
+                        ))
+                        continue
+                    }
+                    // Check that the dependency contains both the expected files
+                    let linkableEntitiesFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkableEntitiesFileName, isDirectory: false)
+                    let hasLinkableEntitiesFile = fileManager.fileExists(atPath: linkableEntitiesFile.path)
+                    if !hasLinkableEntitiesFile {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.MissingLinkableEntities",
+                            summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableEntitiesFile.lastPathComponent)' file."
+                        ))
+                    }
+                    let linkableHierarchyFile = dependency.appendingPathComponent(ConvertFileWritingConsumer.linkHierarchyFileName, isDirectory: false)
+                    let hasLinkableHierarchyFile = fileManager.fileExists(atPath: linkableHierarchyFile.path)
+                    if !hasLinkableHierarchyFile {
+                        Convert.warnAboutDiagnostic(.init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.Dependency.MissingLinkHierarchy",
+                            summary: "Dependency at '\(dependency.path)' doesn't contain a is not a '\(linkableHierarchyFile.lastPathComponent)' file."
+                        ))
+                    }
+                    if hasLinkableEntitiesFile && hasLinkableHierarchyFile {
+                        filteredDependencies.append(dependency)
+                    }
+                }
+                self.dependencies = filteredDependencies
+            }
+        }
+        
+        /// A list of URLs to documentation archives that the local documentation depends on.
+        public var dependencies: [URL] {
+            get { linkResolutionOptions.dependencies }
+            set { linkResolutionOptions.dependencies = newValue }
+        }
+        
         // MARK: - Feature flag options
         
         @OptionGroup(title: "Feature flags")
@@ -446,7 +520,15 @@ extension Docc {
         
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
-        
+            
+            @Flag(
+                name: .customLong("enable-experimental-external-link-support"),
+                help: ArgumentHelp("Support external links to this documentation output.", discussion: """
+                Write additional link metadata files to the output directory to support resolving documentation links to the documentation in that output directory.
+                """)
+            )
+            var enableExperimentalLinkHierarchySerialization = false
+            
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
@@ -512,6 +594,12 @@ extension Docc {
         public var allowArbitraryCatalogDirectories: Bool {
             get { featureFlags.allowArbitraryCatalogDirectories }
             set { featureFlags.allowArbitraryCatalogDirectories = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
+        public var enableExperimentalLinkHierarchySerialization: Bool {
+            get { featureFlags.enableExperimentalLinkHierarchySerialization }
+            set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
         }
 
         /// A user-provided value that is true if additional metadata files should be produced.
@@ -609,7 +697,7 @@ extension Docc {
         
         private static func warnAboutDiagnostic(_ diagnostic: Diagnostic) {
             print(
-                DiagnosticConsoleWriter.formattedDescription(for: diagnostic),
+                DiagnosticConsoleWriter.formattedDescription(for: diagnostic, options: _diagnosticFormattingOptions),
                 to: &_errorLogHandle
             )
         }

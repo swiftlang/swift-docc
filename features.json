@@ -2,6 +2,9 @@
   "features": [
     {
       "name": "diagnostics-file"
+    },
+    {
+      "name": "dependency"
     }
   ]
 }
