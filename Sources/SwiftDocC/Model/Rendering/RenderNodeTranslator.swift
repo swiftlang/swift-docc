@@ -1040,9 +1040,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-//                guard context.isSymbol(reference: reference) else {
-//                    return true
-//                }
+                // If the reference corresponds to an article, allow the topic
+                // to appear independently of the source language it belongs to.
+                // rdar://118461894
+                //
+                // TODO: Make article-only catalog pages language-less https://github.com/apple/swift-docc/issues/240
+                guard context.isSymbol(reference: reference) else {
+                    return true
+                }
                 
                 let referenceSourceLanguageIDs = Set(context.sourceLanguages(for: reference).map(\.id))
                 
