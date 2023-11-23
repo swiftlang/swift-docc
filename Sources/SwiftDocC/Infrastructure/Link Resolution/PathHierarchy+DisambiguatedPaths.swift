@@ -120,7 +120,7 @@ extension PathHierarchy {
                         if hash != "_" {
                             knownDisambiguation += "-\(hash)"
                         }
-                        path = accumulatedPath + "/" +  nameTransform(node.name) + knownDisambiguation
+                        path = accumulatedPath + "/" + nameTransform(node.name) + knownDisambiguation
                     } else {
                         path = accumulatedPath + "/" + nameTransform(node.name)
                     }

@@ -12,15 +12,17 @@ import XCTest
 @testable import SwiftDocC
 
 class GeneratedCurationWriterTests: XCTestCase {
+    private let testOutputURL = URL(fileURLWithPath: "/unit-test/output-dir") // Nothing is written to this path in this test
+    
     func testWriteTopLevelSymbolCuration() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements")
+        let (url, _, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: url))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(depthLimit: 0)
         
         XCTAssertEqual(contentsToWrite.count, 1, "Results is limited to only the module")
         
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("MixedFramework.md")], """
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("MixedFramework.md")], """
         # ``/MixedFramework``
 
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -76,9 +78,9 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testWriteSymbolCurationFromTopLevelSymbol() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements")
+        let (url, _, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: url))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         
         XCTAssertThrowsError(try writer.generateDefaultCurationContents(fromSymbol: "MyClas")) { error in
             XCTAssertEqual(error.localizedDescription, """
@@ -91,7 +93,7 @@ class GeneratedCurationWriterTests: XCTestCase {
         
         XCTAssertEqual(contentsToWrite.count, 1, "Descendants don't have any curation to write.")
         
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("MixedFramework/CollisionsWithDifferentCapitalization.md")], """
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("MixedFramework/CollisionsWithDifferentCapitalization.md")], """
         # ``/MixedFramework/CollisionsWithDifferentCapitalization``
 
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -107,9 +109,9 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testWriteSymbolCurationWithLimitedDepth() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "BundleWithSameNameForSymbolAndContainer")
+        let (url, _, context) = try testBundleAndContext(named: "BundleWithSameNameForSymbolAndContainer")
         
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: url))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let depthLevelsToTest = [nil, 0, 1, 2, 3, 4, 5]
         
         // From the module
@@ -120,7 +122,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             let expectedFileCount = min(2, depthLimit ?? .max) + 1
             XCTAssertEqual(contentsToWrite.count, expectedFileCount)
             
-            XCTAssertEqual(contentsToWrite[url.appendingPathComponent("SameNames.md")], """
+            XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames.md")], """
             # ``/SameNames``
 
             <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -134,7 +136,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             """)
             
             if expectedFileCount > 1 {
-                XCTAssertEqual(contentsToWrite[url.appendingPathComponent("SameNames/Something.md")], """
+                XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something.md")], """
                 # ``/SameNames/Something``
                 
                 <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -153,7 +155,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             }
             
             if expectedFileCount > 2 {
-                XCTAssertEqual(contentsToWrite[url.appendingPathComponent("SameNames/Something/Something.md")], """
+                XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something/Something.md")], """
                 # ``/SameNames/Something/Something``
                 
                 <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -176,7 +178,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             let expectedFileCount = min(1, depthLimit ?? .max) + 1
             XCTAssertEqual(contentsToWrite.count, expectedFileCount)
             
-            XCTAssertEqual(contentsToWrite[url.appendingPathComponent("SameNames/Something.md")], """
+            XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something.md")], """
             # ``/SameNames/Something``
             
             <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -194,7 +196,7 @@ class GeneratedCurationWriterTests: XCTestCase {
             """)
             
             if expectedFileCount > 1 {
-                XCTAssertEqual(contentsToWrite[url.appendingPathComponent("SameNames/Something/Something.md")], """
+                XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("SameNames/Something/Something.md")], """
                 # ``/SameNames/Something/Something``
                 
                 <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -218,15 +220,15 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testSkipsManuallyCuratedPages() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "MixedManualAutomaticCuration")
+        let (url, _, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: url))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
         
         XCTAssertFalse(contentsToWrite.isEmpty)
         
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("TopClass.md")], """
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("TopClass.md")], """
         # ``TestBed/TopClass``
 
         ## Topics
@@ -249,15 +251,15 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testAddsCommentForDisambiguatedLinks() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "OverloadedSymbols")
+        let (url, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: url))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "OverloadedProtocol")
         
         XCTAssertEqual(contentsToWrite.count, 1, "Descendants don't have any curation to write.")
         
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("ShapeKit/OverloadedProtocol.md")], """
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("ShapeKit/OverloadedProtocol.md")], """
         # ``/ShapeKit/OverloadedProtocol``
 
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -275,15 +277,15 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testLinksSupportNonPathCharacters() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "InheritedOperators")
+        let (url, _, context) = try testBundleAndContext(named: "InheritedOperators")
         
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: url))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "MyNumber")
         
         XCTAssertEqual(contentsToWrite.count, 1, "Descendants don't have any curation to write.")
         
         // Manually curated pages are skipped in the automatic curation
-        XCTAssertEqual(contentsToWrite[url.appendingPathComponent("Operators/MyNumber.md")], """
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("Operators/MyNumber.md")], """
         # ``/Operators/MyNumber``
 
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
@@ -311,17 +313,15 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testCustomOutputLocation() throws {
-        let outputURL = URL(fileURLWithPath: "/path/to/somewhere") // Nothing is written to this path in this test
+        let (url, _, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         
-        let (url, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements")
-          
-        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: outputURL))
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents()
         
         XCTAssertFalse(contentsToWrite.isEmpty)
         
         for fileURL in contentsToWrite.keys {
-            XCTAssert(fileURL.path.hasPrefix(outputURL.path))
+            XCTAssert(fileURL.path.hasPrefix(testOutputURL.path))
         }
     }
 }

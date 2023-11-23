@@ -167,7 +167,8 @@ public struct GeneratedCurationWriter {
                 contents.append(curationText)
                 contentsToWrite[updatedFileURL] = contents
             } else {
-                let fileName = urlReadablePath(absoluteLink)
+                let relativeReferencePath = reference.url.pathComponents.dropFirst(2).joined(separator: "/")
+                let fileName = urlReadablePath("/" + relativeReferencePath)
                 let newFileURL = NodeURLGenerator.fileSafeURL(outputURL.appendingPathComponent("\(fileName).md"))
                 
                 let contents = """
