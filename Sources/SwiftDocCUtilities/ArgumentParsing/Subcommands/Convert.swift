@@ -95,7 +95,7 @@ extension Docc {
             get { inputsAndOutputs.documentationCatalog }
             set { inputsAndOutputs.documentationCatalog = newValue }
         }
-        @available(*, deprecated, renamed: "documentationCatalog")
+        @available(*, deprecated, renamed: "documentationCatalog", message: "Use 'documentationCatalog' instead. This deprecated API will be removed after 5.12 is released")
         public var documentationBundle: DocumentationBundleOption {
             get { inputsAndOutputs.documentationCatalog }
             set { inputsAndOutputs.documentationCatalog = newValue }
@@ -360,7 +360,7 @@ extension Docc {
                 name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: .hidden
             )
-            @available(*, deprecated, message: "The bundle version isn't used for anything.")
+            @available(*, deprecated, message: "The bundle version isn't used for anything. This deprecated API will be removed after 5.12 is released")
             var fallbackBundleVersion: String?
             
             @Option(
@@ -397,7 +397,7 @@ extension Docc {
         /// A user-provided fallback version for the documentation bundle.
         ///
         /// If the documentation catalogs's Info.plist file contains a bundle version, the documentation catalog ignores this fallback version.
-        @available(*, deprecated, message: "The bundle version isn't used for anything.")
+        @available(*, deprecated, message: "The bundle version isn't used for anything. This deprecated API will be removed after 5.12 is released")
         public var fallbackBundleVersion: String? {
             get { infoPlistFallbacks.fallbackBundleVersion }
             set { infoPlistFallbacks.fallbackBundleVersion = newValue }
@@ -541,7 +541,7 @@ extension Docc {
             var emitLMDBIndex = false
 
             @Flag(help: .hidden)
-            @available(*, deprecated, renamed: "emitLMDBIndex")
+            @available(*, deprecated, renamed: "emitLMDBIndex", message: "Use 'emitLMDBIndex' instead. This deprecated API will be removed after 5.12 is released")
             var index = false
         
             @available(*, deprecated) // This deprecation silences the access of the deprecated `index` flag.
@@ -619,7 +619,7 @@ extension Docc {
             
         }
         /// This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to '--emit-lmdb-index'.
-        @available(*, deprecated, renamed: "emitLMDBIndex")
+        @available(*, deprecated, renamed: "emitLMDBIndex", message: "Use 'emitLMDBIndex' instead. This deprecated API will be removed after 5.12 is released")
         public var index: Bool {
             get { featureFlags.emitLMDBIndex }
             set { featureFlags.emitLMDBIndex = newValue }

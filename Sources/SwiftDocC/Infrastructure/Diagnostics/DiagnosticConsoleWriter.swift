@@ -64,7 +64,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     }
     
     // This is deprecated but still necessary to implement.
-    @available(*, deprecated, renamed: "flush()")
+    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 5.11 is released")
     public func finalize() throws {
         try flush()
     }

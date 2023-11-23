@@ -65,7 +65,7 @@ public class NavigatorIndex {
         /// Missing bundle identifier.
         case missingBundleIdentifier
         
-        @available(*, deprecated, renamed: "missingBundleIdentifier")
+        @available(*, deprecated, renamed: "missingBundleIdentifier", message: "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 5.11 is released")
         case missingBundleIndentifier
         
         /// A RenderNode has no title and won't be indexed.
@@ -246,7 +246,7 @@ public class NavigatorIndex {
      
      - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
      */
-    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead")
+    @available(*, deprecated, message: "Use 'NavigatorIndex.readNavigatorIndex instead. This deprecated API will be removed after 5.9 is released")
     public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
         let navigator = try NavigatorIndex.readNavigatorIndex(
             url: url,
