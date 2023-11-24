@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -41,6 +41,7 @@ let package = Package(
         .target(
             name: "SwiftDocC",
             dependencies: [
+                .target(name: "_Common"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -66,6 +67,7 @@ let package = Package(
         .target(
             name: "SwiftDocCUtilities",
             dependencies: [
+                .target(name: "_Common"),
                 .target(name: "SwiftDocC"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
@@ -82,6 +84,13 @@ let package = Package(
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
+            ],
+            swiftSettings: swiftSettings
+        ),
+        
+        .target(
+            name: "_Common",
+            dependencies: [
             ],
             swiftSettings: swiftSettings
         ),

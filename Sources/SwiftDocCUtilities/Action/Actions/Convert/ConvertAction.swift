@@ -10,6 +10,7 @@
 
 import Foundation
 @_spi(ExternalLinks) import SwiftDocC // SPI to set `context.linkResolver.dependencyArchives`
+import _Common
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {

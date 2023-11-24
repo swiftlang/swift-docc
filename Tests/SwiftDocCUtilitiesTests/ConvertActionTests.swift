@@ -15,6 +15,7 @@ import Foundation
 import SymbolKit
 import Markdown
 import SwiftDocCTestUtilities
+import _Common
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)

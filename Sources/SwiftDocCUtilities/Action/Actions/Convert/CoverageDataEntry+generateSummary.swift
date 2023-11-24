@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 import Foundation
 import SwiftDocC
+import _Common
 
 extension CoverageDataEntry {
     /// Outputs a short table summarizing the coverage statistics for a list of data entries in a file at the given URL.
