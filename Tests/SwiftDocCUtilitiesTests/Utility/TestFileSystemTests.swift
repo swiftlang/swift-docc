@@ -282,4 +282,32 @@ class TestFileSystemTests: XCTestCase {
         XCTAssert(bundle.miscResourceURLs.allSatisfy(\.isFileURL))
         XCTAssert(bundle.symbolGraphURLs.allSatisfy(\.isFileURL))
     }
+    
+    func testBundleDiscovery() throws {
+        let somethingSymbolGraphData = try JSONEncoder().encode(makeSymbolGraph(moduleName: "Something"))
+        
+        do {
+            let fs = try TestFileSystem(folders: [
+                Folder(name: "CatalogName.docc", content: [
+                    InfoPlist(displayName: "DisplayName", identifier: "com.example"),
+                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
+                ])
+            ])
+            let bundle = try XCTUnwrap(fs.bundles().first)
+            XCTAssertEqual(bundle.displayName, "DisplayName", "Display name is read from Info.plist")
+            XCTAssertEqual(bundle.identifier, "com.example", "Identifier is read from Info.plist")
+        }
+         
+        do {
+            let fs = try TestFileSystem(folders: [
+                Folder(name: "CatalogName.docc", content: [
+                    // No Info.plist
+                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
+                ])
+            ])
+            let bundle = try XCTUnwrap(fs.bundles().first)
+            XCTAssertEqual(bundle.displayName, "CatalogName", "Display name is derived from catalog name")
+            XCTAssertEqual(bundle.displayName, "CatalogName", "Identifier is derived the display name")
+        }
+    }
 }

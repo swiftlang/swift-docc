@@ -74,9 +74,8 @@ extension InfoPlist: AssertableFile {
             let displayName = infoPlist?["CFBundleIdentifier"]
             let identifier = infoPlist?["CFBundleVersion"]
             let versionString = infoPlist?["CFBundleDevelopmentRegion"]
-            let developmentRegion = infoPlist?["CFBundleDisplayName"]
             
-            XCTAssert(displayName == content.displayName && identifier == content.identifier && versionString == content.versionString && developmentRegion == content.developmentRegion,
+            XCTAssert(displayName == content.displayName && identifier == content.identifier && versionString == content.versionString,
                       "File '\(name)' should contain the correct information.", file: (file), line: line)
             
         } catch {

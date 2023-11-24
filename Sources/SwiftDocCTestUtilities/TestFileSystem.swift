@@ -75,13 +75,21 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         try updateDocumentationBundles(withFolders: folders)
     }
     
-    public func updateDocumentationBundles(withFolders folders: [Folder]) throws {
+    func updateDocumentationBundles(withFolders folders: [Folder]) throws {
         _bundles.removeAll()
         
         for folder in folders {
             let files = try addFolder(folder)
-            if let info = folder.recursiveContent.mapFirst(where: { $0 as? InfoPlist }) {
-                let files = files.filter({ $0.hasPrefix(folder.absoluteURL.path) }).compactMap({ URL(fileURLWithPath: $0) })
+            
+            func asCatalog(_ file: File) -> Folder? {
+                if let folder = file as? Folder, folder.absoluteURL.pathExtension == "docc" {
+                    return folder
+                }
+                return nil
+            }
+            
+            if let catalog = asCatalog(folder) ?? folder.recursiveContent.mapFirst(where: asCatalog(_:)) {
+                let files = files.filter({ $0.hasPrefix(catalog.absoluteURL.path) }).compactMap({ URL(fileURLWithPath: $0) })
 
                 let markupFiles = files.filter({ DocumentationBundleFileTypes.isMarkupFile($0) })
                 let miscFiles = files.filter({ !DocumentationBundleFileTypes.isMarkupFile($0) })
@@ -89,12 +97,14 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
                 let customHeader = files.first(where: { DocumentationBundleFileTypes.isCustomHeader($0) })
                 let customFooter = files.first(where: { DocumentationBundleFileTypes.isCustomFooter($0) })
                 
+                let info = try DocumentationBundle.Info(
+                    from: try catalog.recursiveContent.mapFirst(where: { $0 as? InfoPlist })?.data(),
+                    bundleDiscoveryOptions: nil,
+                    derivedDisplayName: catalog.absoluteURL.deletingPathExtension().lastPathComponent
+                )
+                
                 let bundle = DocumentationBundle(
-                    info: DocumentationBundle.Info(
-                        displayName: info.content.displayName,
-                        identifier: info.content.identifier,
-                        version: info.content.versionString
-                    ),
+                    info: info,
                     symbolGraphURLs: graphs,
                     markupURLs: markupFiles,
                     miscResourceURLs: miscFiles,
