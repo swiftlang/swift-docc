@@ -145,6 +145,6 @@ class BidirectionalTreeTests: XCTestCase {
         }
         
         // Test starting at non-existing node
-        XCTAssertThrowsError(try tree.traversePreOrder(from: 1000) { _ in print("") })
+        XCTAssertThrowsError(try tree.traversePreOrder(from: 1000) { _ in fatalError() })
     }
 }

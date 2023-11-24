@@ -233,7 +233,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
         consumer.receive([problem])
         try? consumer.flush()
-        print(logger.output)
+        
         XCTAssertEqual(logger.output, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
@@ -321,7 +321,6 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.flush()
 
-            print(logger.output)
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
@@ -346,7 +345,6 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.flush()
 
-            print(logger.output)
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
@@ -378,7 +376,6 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.flush()
 
-            print(logger.output)
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
