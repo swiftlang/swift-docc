@@ -11,6 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
@@ -237,7 +238,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
           --> TestTutorial.tutorial:44:59-44:138
-        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
         43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
         44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
         45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
@@ -245,32 +246,48 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         """)
     }
 
-    func testDisplaysSource_WithEmojis_ProperlyHighlightsSource() {
-        let identifier = "org.swift.docc.test-identifier"
+    func testDisplaysSourceAndProperlyHighlightsRangesSpanningEmoji() throws {
+        let fs = try TestFileSystem(folders: [
+            Folder(name: "Something.docc", content: [
+                Folder(name: "Nested folder", content: [
+                    TextFile(name: "Article.md", utf8Content: """
+                    # Title
+                    
+                    A short abstract with emoji 💻 in it.
+                    
+                    @Metadata {
+                      @TechnologyRoot
+                    }
+                    
+                    """)
+                ])
+            ])
+        ])
+        
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
-        let baseURL =  Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
-        let range = SourceLocation(line: 39, column: 4, source: source)..<SourceLocation(line: 39, column: 53, source: source)
+        
+        let bundle = try XCTUnwrap(fs.bundles().first)
+        let baseURL = bundle.baseURL
+        let source = try XCTUnwrap(bundle.markupURLs.first)
+        let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 32, source: source)
 
-        let logger = Logger()
-        let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
+        let logStorage = LogHandle.LogStorage()
+        let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
 
-        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        consumer.receive([problem])
-        try? consumer.flush()
-        print(logger.output)
-        XCTAssertEqual(logger.output, """
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
+        consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
+        try consumer.flush()
+        
+        XCTAssertEqual(logStorage.text, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
-          --> TestTutorial.tutorial:39:4-39:53
-        37 |    }
-        38 |    
-        39 +    \u{001B}[1;32m@Section(title: "Create a New AR Project 💻") {\u{001B}[0;0m
-        40 |       @ContentAndMedia {
-        41 |          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+         --> Something.docc/Nested folder/Article.md:3:18-3:32
+        1 | # Title
+        2 |
+        3 + A short abstract \u{001B}[1;32mwith emoji \u{001B}[0;0m💻 in it.
+        4 |
+        5 | @Metadata {
         """)
     }
 
@@ -309,7 +326,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;0m
@@ -334,7 +351,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
@@ -366,7 +383,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m

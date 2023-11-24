@@ -10,6 +10,7 @@
 
 import Foundation
 import Markdown
+import _Common
 
 /// Writes diagnostic messages to a text output stream.
 ///
@@ -35,18 +36,21 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     ///   - formattingOptions: The formatting options for the diagnostics.
     ///   - baseUrl: A url to be used as a base url when formatting diagnostic source path.
     ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
+    ///   - fileManager: The file manager that reads the contents of source files.
     public init(
         _ stream: TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
-        highlight: Bool? = nil
+        highlight: Bool? = nil,
+        fileManager: FileManagerProtocol = FileManager.default
     ) {
         outputStream = stream
         formattingOptions = options
         diagnosticFormatter = Self.makeDiagnosticFormatter(
             options,
             baseURL: baseURL,
-            highlight: highlight ?? TerminalHelper.isConnectedToTerminal
+            highlight: highlight ?? TerminalHelper.isConnectedToTerminal,
+            fileManager: fileManager
         )
     }
 
@@ -80,12 +84,13 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     private static func makeDiagnosticFormatter(
         _ options: DiagnosticFormattingOptions,
         baseURL: URL?,
-        highlight: Bool
+        highlight: Bool,
+        fileManager: FileManagerProtocol
     ) -> DiagnosticConsoleFormatter {
         if options.contains(.formatConsoleOutputForTools) {
             return IDEDiagnosticConsoleFormatter(options: options)
         } else {
-            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options)
+            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options, fileManager: fileManager)
         }
     }
 }
@@ -94,17 +99,17 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 
 extension DiagnosticConsoleWriter {
     
-    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
-        return problems.map { formattedDescription(for: $0, options: options) }.joined(separator: "\n")
+    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
     
-    public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal)
+    public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
     
-    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal)
+    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
 }
@@ -213,6 +218,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     private let baseUrl: URL?
     private let highlight: Bool
     private var sourceLines: [URL: [String]] = [:]
+    private var fileManager: FileManagerProtocol
 
     /// The number of additional lines from the source file that should be displayed both before and after the diagnostic source line.
     private static let contextSize = 2
@@ -220,11 +226,13 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     init(
         baseUrl: URL?,
         highlight: Bool,
-        options: DiagnosticFormattingOptions
+        options: DiagnosticFormattingOptions,
+        fileManager: FileManagerProtocol
     ) {
         self.baseUrl = baseUrl
         self.highlight = highlight
         self.options = options
+        self.fileManager = fileManager
     }
     
     func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
@@ -368,7 +376,7 @@ extension DefaultDiagnosticConsoleFormatter {
             // Example:
             // 9  | A line outside the diagnostic range.
             // 10 + A line inside the diagnostic range.
-            result.append("\n\(linePrefix) \(separator) \(highlightedSource)")
+            result.append("\n\(linePrefix) \(separator) \(highlightedSource)".removingTrailingWhitespace())
 
             var suggestionsPerColumn = [Int: [String]]()
 
@@ -474,8 +482,11 @@ extension DefaultDiagnosticConsoleFormatter {
         }
 
         // TODO: Add support for also getting the source lines from the symbol graph files.
-        guard let content = try? String(contentsOf: url)
-        else { return [] }
+        guard let data = fileManager.contents(atPath: url.path),
+              let content = String(data: data, encoding: .utf8)
+        else { 
+            return []
+        }
         
         let lines = content.splitByNewlines
         sourceLines[url] = lines
