@@ -10,9 +10,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftDocCUtilities
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
 import _Common
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
@@ -43,10 +41,10 @@ import _Common
 ///
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
-class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
-    let currentDirectoryPath = "/"
+public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
+    public let currentDirectoryPath = "/"
     
-    var identifier: String = UUID().uuidString
+    public var identifier: String = UUID().uuidString
     
     private var _bundles = [DocumentationBundle]()
     public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
@@ -67,7 +65,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
     /// A data fixture to use in the `files` index to mark folders.
     static let folderFixtureData = "Folder".data(using: .utf8)!
     
-    convenience init(folders: [Folder]) throws {
+    public convenience init(folders: [Folder]) throws {
         self.init()
         
         // Default system paths
@@ -108,7 +106,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         }
     }
 
-    func contentsOfURL(_ url: URL) throws -> Data {
+    public func contentsOfURL(_ url: URL) throws -> Data {
         filesLock.lock()
         defer { filesLock.unlock() }
 
@@ -153,7 +151,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         return Array(fileList.keys)
     }
     
-    func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
+    public func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -166,14 +164,14 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         return true
     }
     
-    func fileExists(atPath path: String) -> Bool {
+    public func fileExists(atPath path: String) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files.keys.contains(path)
     }
     
-    func copyItem(at srcURL: URL, to dstURL: URL) throws {
+    public func copyItem(at srcURL: URL, to dstURL: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -188,7 +186,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         }
     }
     
-    func moveItem(at srcURL: URL, to dstURL: URL) throws {
+    public func moveItem(at srcURL: URL, to dstURL: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -226,7 +224,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         files[path] = Self.folderFixtureData
     }
     
-    func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
+    public func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -235,14 +233,14 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         try createDirectory(atPath: url.path, withIntermediateDirectories: createIntermediates)
     }
     
-    func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
+    public func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files[path1] == files[path2]
     }
     
-    func removeItem(at: URL) throws {
+    public func removeItem(at: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -254,7 +252,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         }
     }
     
-    func createFile(at: URL, contents: Data) throws {
+    public func createFile(at: URL, contents: Data) throws {
         filesLock.lock()
         defer { filesLock.unlock() }
 
@@ -267,18 +265,18 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         }
     }
     
-    func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
+    public func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
         try createFile(at: url, contents: contents)
     }
     
-    func contents(atPath: String) -> Data? {
+    public func contents(atPath: String) -> Data? {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files[atPath]
     }
     
-    func contentsOfDirectory(atPath path: String) throws -> [String] {
+    public func contentsOfDirectory(atPath path: String) throws -> [String] {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -298,7 +296,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
 
 
 
-    func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
+    public func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
 
         if let keys = keys {
             XCTAssertTrue(
@@ -336,4 +334,9 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
 
         return files.keys.sorted().joined(separator: "\n")
     }
+}
+
+private extension File {
+    /// A URL of the file node if it was located in the root of the file system.
+    var absoluteURL: URL { return URL(string: "/\(name)")! }
 }

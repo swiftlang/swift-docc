@@ -14,7 +14,7 @@ import Foundation
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
-import SwiftDocCTestUtilities
+@testable import SwiftDocCTestUtilities
 import _Common
 
 class ConvertActionTests: XCTestCase {
