@@ -1491,8 +1491,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let topics = symbol.topicsVariants[trait]
             
             var sections = [TaskGroupRenderSection]()
-            // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
             if let topics = topics, !topics.taskGroups.isEmpty {
+                // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
                         topics,
