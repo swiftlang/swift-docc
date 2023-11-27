@@ -37,7 +37,7 @@ class IndexActionTests: XCTestCase {
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory()
         )
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
         let bundleIdentifier = "org.swift.docc.example"
         
@@ -56,7 +56,7 @@ class IndexActionTests: XCTestCase {
                 bundleIdentifier: bundleIdentifier,
                 diagnosticEngine: engine
             )
-            _ = try indexAction.perform(logHandle: .standardOutput)
+            _ = try indexAction.perform(logHandle: .none)
             
             let index = try NavigatorIndex.readNavigatorIndex(url: indexURL)
             
@@ -87,7 +87,7 @@ class IndexActionTests: XCTestCase {
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory()
         )
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         let bundleIdentifier = "org.swift.docc.example"
         let indexURL = targetURL.appendingPathComponent("index")
         let engine = DiagnosticEngine(filterLevel: .warning)
@@ -97,7 +97,7 @@ class IndexActionTests: XCTestCase {
             bundleIdentifier: bundleIdentifier,
             diagnosticEngine: engine
         )
-        let indexPerform = try indexAction.perform(logHandle: .standardOutput)
+        let indexPerform = try indexAction.perform(logHandle: .none)
         let index = try NavigatorIndex.readNavigatorIndex(url: indexPerform.outputs[0])
         XCTAssertEqual(index.availabilityIndex.interfaceLanguages.count, 1)
     }

@@ -43,8 +43,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory()
         )
-
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
         let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
 
@@ -143,8 +142,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: createTemporaryDirectory()
         )
-
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
 
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)

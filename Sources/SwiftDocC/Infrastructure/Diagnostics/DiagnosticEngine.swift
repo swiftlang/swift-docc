@@ -33,6 +33,15 @@ public final class DiagnosticEngine {
         }
     }
     
+    /// Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.
+    /// - Parameter predicate: A closure that takes one of the engine's consumers as its argument and returns a Boolean value that indicates whether the passed consumer represents a match.
+    /// - Returns: `true` if the engine contains a consumer that satisfies predicate; otherwise, `false`.
+    public func hasConsumer(matching predicate: (DiagnosticConsumer) throws -> Bool) rethrows -> Bool {
+        try consumers.sync {
+            try $0.values.contains(where: predicate)
+        }
+    }
+    
     /// Determines whether warnings will be treated as errors.
     private let treatWarningsAsErrors: Bool
 

@@ -44,8 +44,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             hostingBasePath: basePath,
             temporaryDirectory: try createTemporaryDirectory()
         )
-       
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
         // Test the content of the output folder.
         var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html", "index"]
