@@ -888,37 +888,54 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
-    func testDoesNotFilterBasedOnArticleLanguage() throws {
+    func testDoesNotFilterArticlesBasedOnSymbolAndArticleLanguageVariant() throws {
         let outputConsumer = try renderNodeConsumer(
-            for: "MixedLanguageFrameworkWithCuratedArticles"
+            for: "MixedLanguageFramework",
+            configureBundle: { bundleURL in
+                try """
+                # ObjCArticle
+
+                @Metadata {
+                    @SupportedLanguage(objc)
+                }
+
+                This article has Objective-C as the source language.
+                """.write(to: bundleURL.appendingPathComponent("ObjCArticle.md"), atomically: true, encoding: .utf8)
+                try """
+                # ``MixedLanguageFramework``
+                
+                This symbol has a Swift and Objective-C variant.
+
+                ## Topics
+
+                - <doc:ObjCArticle>
+                - ``_MixedLanguageFrameworkVersionNumber``
+                """.write(to: bundleURL.appendingPathComponent("MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
+            }
         )
-        
         assertIsAvailableInLanguages(
             try outputConsumer.renderNode(
-                withTitle: "Article"
+                withTitle: "ObjCArticle"
             ),
             languages: ["occ"],
             defaultLanguage: .objectiveC
         )
-        
+        assertIsAvailableInLanguages(
+            try outputConsumer.renderNode(
+                withTitle: "_MixedLanguageFrameworkVersionNumber"
+            ),
+            languages: ["occ"],
+            defaultLanguage: .objectiveC
+        )
         let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
         
-        XCTAssertEqual(
-            mixedLanguageFrameworkRenderNode.topicSections.flatMap(\.identifiers),
-            [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCOnlyArticle",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
-            ]
+        // Verify that the curated ObjC articles don't get dropped from the Swift variant of a symbol extension file.
+        XCTAssertTrue(
+            mixedLanguageFrameworkRenderNode.topicSections.flatMap(\.identifiers).contains(["doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCArticle"])
         )
-        
-        let objectiveCVariant = try renderNodeApplyingObjectiveCVariantOverrides(to: mixedLanguageFrameworkRenderNode)
-        
-        XCTAssertEqual(
-            objectiveCVariant.topicSections.flatMap(\.identifiers),
-            [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/ObjCOnlyArticle",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
-            ]
+        // Verify that the curated ObjC symbols do get dropped from the Swift variant of a symbol extension file.
+        XCTAssertFalse(
+            mixedLanguageFrameworkRenderNode.topicSections.flatMap(\.identifiers).contains(["doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber"])
         )
     }
     

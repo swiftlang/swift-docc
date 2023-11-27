@@ -1,7 +1,0 @@
-# ``MixedLanguageFramework``
-
-## Topics
-
-- <doc:ObjCOnlyArticle>
-
-

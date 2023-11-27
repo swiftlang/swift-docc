@@ -912,4 +912,57 @@ Document @1:1-1:35
         let finalURL = urlGenerator.presentationURLForReference(linkReference)
         XCTAssertEqual(finalURL.absoluteString, "https://example.com/example/externally/resolved/path#67890")
     }
+    
+    func testExternalReferenceArticleIsIncludedInTopicGroup() throws {
+        let externalArticleResolver = TestExternalReferenceResolver()
+        externalArticleResolver.bundleIdentifier = "com.test.external"
+        externalArticleResolver.expectedReferencePath = "/path/to/external/article"
+        externalArticleResolver.resolvedEntityTitle = "ObjCArticle"
+        externalArticleResolver.resolvedEntityKind = .article
+        externalArticleResolver.resolvedEntityLanguage = .objectiveC
+        
+        let externalSymbolResolver = TestExternalReferenceResolver()
+        externalSymbolResolver.bundleIdentifier = "com.test.externalSymbol"
+        externalSymbolResolver.expectedReferencePath = "/path/to/external/symbol"
+        externalSymbolResolver.resolvedEntityTitle = "ObjCSymbol"
+        externalSymbolResolver.resolvedEntityKind = .class
+        externalSymbolResolver.resolvedEntityLanguage = .objectiveC
+        
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "MixedLanguageFramework",
+            externalResolvers: [externalArticleResolver.bundleIdentifier: externalArticleResolver, externalSymbolResolver.bundleIdentifier: externalSymbolResolver]
+        ) { url in
+            let mixedLanguageFrameworkExtension = """
+                # ``MixedLanguageFramework``
+                
+                This symbol has a Swift and Objective-C variant.
+
+                ## Topics
+                
+                ### External Reference
+
+                - <doc://com.test.external/path/to/external/article>
+                - <doc://com.test.externalSymbol/path/to/external/symbol>
+                """
+            try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
+        }
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let mixedLanguageFrameworkReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/MixedLanguageFramework",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: mixedLanguageFrameworkReference)
+        let fileURL = try XCTUnwrap(context.documentURL(for: node.reference))
+        let renderNode = try converter.convert(node, at: fileURL)
+        
+        // Verify that the curated external ObjC articles don't get dropped from the Swift variant of a symbol extension file.
+        XCTAssertTrue(
+            renderNode.topicSections.flatMap(\.identifiers).contains(["doc://com.test.external/path/to/external/article"])
+        )
+        // Verify that the curated external ObjC symbols do get dropped from the Swift variant of a symbol extension file..
+        XCTAssertFalse(
+            renderNode.topicSections.flatMap(\.identifiers).contains(["doc://com.test.externalSymbol/path/to/external/symbol"])
+        )
+    }
 }
