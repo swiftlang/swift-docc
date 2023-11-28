@@ -60,9 +60,10 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     private func getRenderNodeArticleFromBundlePath(
         bundleName: String,
-        referencePath: String
+        referencePath: String,
+        configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> RenderNode {
-        let (bundle, context) = try testBundleAndContext(named: bundleName)
+        let (_, bundle, context) = try testBundleAndContext(copying: bundleName, configureBundle: configureBundle)
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
             path: referencePath,
@@ -1321,18 +1322,58 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(roundTrippedSymbol.metadata.role, "collection")
     }
     
-    func testsCorrectRoleHeadingForAPICollection() throws {
-        let renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "MixedManualAutomaticCuration", referencePath: "/documentation/TestBed/SecondArticle")
+    func testExpectedRoleHeadingIsAssigned() throws {
+        // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
+        var renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            try """
+            # API Collection
+            My API Collection Abstract.
+            ## Topics
+            - ``MyKit/MyProtocol``
+            - <doc:article>
+            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+        })
         XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
-    }
-    
-    func testsCorrectRoleHeadingForCollection() throws {
-        let renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "MixedManualAutomaticCuration", referencePath: "/documentation/TestBed/Collection")
+        // Assert that articles that curates only other articles don't get any value assigned as the eyebrow title.
+        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            try """
+            # Collection
+            My Collection Abstract.
+            ## Topics
+            - <doc:article>
+            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+        })
         XCTAssertEqual(renderNode.metadata.roleHeading, nil)
-    }
-    
-    func testsCorrectRoleHeadingForArticle() throws {
-        let renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "MixedManualAutomaticCuration", referencePath: "/documentation/TestBed/Article")
+        // Assert that articles that don't curate anything else get 'Article' assigned as the eyebrow title.
+        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            try """
+            # Article
+            My Article Abstract.
+            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+        })
         XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
+        // Assert that articles that have a custom title heading the eyebrow title assigned properly.
+        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            try """
+            # Article
+            @Metadata {
+                @TitleHeading("My Cool Article")
+            }
+            My Article Abstract.
+            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+        })
+        XCTAssertEqual(renderNode.metadata.roleHeading, "My Cool Article")
+        // Assert that articles that have a custom page kind the eyebrow title assigned properly.
+        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            try """
+            # Article
+            @Metadata {
+                @PageKind(sampleCode)
+            }
+            ## Topics
+            - <doc:article>
+            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+        })
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
     }
 }
