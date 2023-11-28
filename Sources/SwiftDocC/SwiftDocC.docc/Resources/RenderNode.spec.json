@@ -2519,14 +2519,26 @@
                         }
                     },
                     "otherDeclarations": {
+                        "$ref": "#/components/schemas/OtherDeclarations"
+                    }
+                }
+            },
+            "OtherDeclarations": {
+                "required": [
+                    "declarations",
+                    "displayIndex"
+                ],
+                "type": "object",
+                "properties": {
+                    "declarations": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/OtherDeclaration"
                         }
-                    },
-                    "indexInOtherDeclarations": {
-                        "type": "integer"
-                    }
+                     },
+                     "displayIndex": {
+                         "type": "integer"
+                     }
                 }
             },
             "OtherDeclaration": {

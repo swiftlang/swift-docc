@@ -41,17 +41,20 @@ class DeclarationsRenderSectionTests: XCTestCase {
                                 "kind": "\(string)"
                             }
                         ],
-                        "otherDeclarations": [
-                            {
-                                "tokens": [
-                                    {
-                                        "text": "",
-                                        "kind": "\(string)"
-                                    }
-                                ],
-                                "identifier": "identifier"
-                            }
-                        ]
+                        "otherDeclarations": {
+                            "declarations": [
+                                {
+                                    "identifier": "identifier",
+                                    "tokens": [
+                                        {
+                                            "text": "",
+                                            "kind": "\(string)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayIndex": 0
+                        }
                     }
                 ]
             }
@@ -64,7 +67,10 @@ class DeclarationsRenderSectionTests: XCTestCase {
                         languages: nil,
                         platforms: [],
                         tokens: [.init(text: "", kind: token)],
-                        otherDeclarations: [DeclarationRenderSection.OtherDeclaration(tokens: [.init(text: "", kind: token)], identifier: "identifier")]
+                        otherDeclarations: DeclarationRenderSection.OtherDeclarations(
+                            declarations: [.init(tokens: [.init(text: "", kind: token)], identifier: "identifier")],
+                            displayIndex: 0
+                        )
                     ),
                 ])
             )
@@ -102,17 +108,20 @@ class DeclarationsRenderSectionTests: XCTestCase {
                             "kind": "label"
                         }
                     ],
-                    "otherDeclarations": [
-                        {
-                            "tokens": [
-                                {
-                                    "text": "",
-                                    "kind": "label"
-                                }
-                            ],
-                            "identifier": "identifier"
-                        }
-                    ]
+                    "otherDeclarations": {
+                        "declarations": [
+                            {
+                                "identifier": "identifier",
+                                "tokens": [
+                                    {
+                                        "text": "",
+                                        "kind": "label"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayIndex": 0
+                    }
                 }
             ]
         }

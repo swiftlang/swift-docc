@@ -163,33 +163,42 @@ public struct DeclarationRenderSection: Codable, Equatable {
         }
     }
     
-    /// A declaration for a different symbol that is connected to this one, e.g. an overload.
-    public struct OtherDeclaration: Codable, Hashable {
-        /// The overloaded symbol's declaration tokens.
-        public let tokens: [Token]
+    /// Declarations for other symbols that are related to this one, e.g. overloads.
+    public struct OtherDeclarations: Codable, Equatable {
+        /// A displayable declaration for a different symbol that is connected to this one.
+        public struct Declaration: Codable, Equatable {
+            /// The symbol's declaration tokens.
+            public let tokens: [Token]
+            
+            /// The symbol's identifier.
+            public let identifier: String
+            
+            /// Creates a new other declaration for a symbol that is connected to this one, e.g. an overload.
+            public init(tokens: [Token], identifier: String) {
+                self.tokens = tokens
+                self.identifier = identifier
+            }
+        }
+        /// The displayable declarations for this symbol's overloads.
+        let declarations: [Declaration]
+        /// The index where this symbol's declaration should be displayed (inserted) among the declarations.
+        let displayIndex: Int
         
-        /// The overloaded symbol's identifier.
-        public let identifier: String
-        
-        /// Creates a new other declaration for a symbol that is connected to this one, e.g. an overload.
-        public init(tokens: [Token], identifier: String) {
-            self.tokens = tokens
-            self.identifier = identifier
+        /// Creates a group of declarations for symbols that are connected to this one, e.g. overloads.
+        public init(declarations: [Declaration], displayIndex: Int) {
+            self.declarations = declarations
+            self.displayIndex = displayIndex
         }
     }
     
     /// The declarations for this symbol's overloads.
-    public let otherDeclarations: [OtherDeclaration]
-    
-    /// If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
-    public let indexInOtherDeclarations: Int?
+    public let otherDeclarations: OtherDeclarations?
     
     public enum CodingKeys: CodingKey {
         case tokens
         case platforms
         case languages
         case otherDeclarations
-        case indexInOtherDeclarations
     }
     
     /// Creates a new declaration section.
@@ -198,14 +207,11 @@ public struct DeclarationRenderSection: Codable, Equatable {
     ///   - platforms: The platforms to which this declaration applies.
     ///   - tokens: The list of declaration tokens.
     ///   - otherDeclarations: The declarations for this symbol's overloads.
-    ///   - indexInOtherDeclarations: If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
-    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: [OtherDeclaration] = [],
-                indexInOtherDeclarations: Int? = nil) {
+    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: OtherDeclarations? = nil) {
         self.languages = languages
         self.platforms = platforms
         self.tokens = tokens
         self.otherDeclarations = otherDeclarations
-        self.indexInOtherDeclarations = indexInOtherDeclarations
     }
     
     public init(from decoder: Decoder) throws {
@@ -213,8 +219,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         tokens = try container.decode([Token].self, forKey: .tokens)
         platforms = try container.decode([PlatformName?].self, forKey: .platforms)
         languages = try container.decodeIfPresent([String].self, forKey: .languages)
-        otherDeclarations = try container.decodeIfPresent([OtherDeclaration].self, forKey: .otherDeclarations) ?? []
-        indexInOtherDeclarations = try container.decodeIfPresent(Int.self, forKey: .indexInOtherDeclarations)
+        otherDeclarations = try container.decodeIfPresent(OtherDeclarations.self, forKey: .otherDeclarations)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -222,8 +227,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         try container.encode(self.tokens, forKey: DeclarationRenderSection.CodingKeys.tokens)
         try container.encode(self.platforms, forKey: DeclarationRenderSection.CodingKeys.platforms)
         try container.encode(self.languages, forKey: DeclarationRenderSection.CodingKeys.languages)
-        try container.encodeIfNotEmpty(self.otherDeclarations, forKey: DeclarationRenderSection.CodingKeys.otherDeclarations)
-        try container.encodeIfPresent(self.indexInOtherDeclarations, forKey: DeclarationRenderSection.CodingKeys.indexInOtherDeclarations)
+        try container.encodeIfPresent(self.otherDeclarations, forKey: DeclarationRenderSection.CodingKeys.otherDeclarations)
     }
 }
 

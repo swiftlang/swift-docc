@@ -227,11 +227,15 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
     
-    /// References to other symbols that overload this one.
-    var overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]>
+    struct Overloads {
+         /// References to other symbols that overload this one.
+         let references: [ResolvedTopicReference]
+         /// The index where this symbol's should be displayed (inserted) among the overloads declarations.
+         let displayIndex: Int
+    }
     
-    /// If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
-    var indexInOverloadsVariants: DocumentationDataVariants<Int>
+    /// References to other symbols that overload this one.
+    var overloadsVariants: DocumentationDataVariants<Overloads>
 
     /// Creates a new symbol with the given data.
     init(
@@ -267,8 +271,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
         automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: []),
-        overloadsVariants: DocumentationDataVariants<[ResolvedTopicReference]> = .init(defaultVariantValue: []),
-        indexInOverloadsVariants: DocumentationDataVariants<Int> = .init(swiftVariant: nil)
+        overloadsVariants: DocumentationDataVariants<Overloads> = .init(defaultVariantValue: nil)
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
@@ -333,7 +336,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
         self.extendedModule = extendedModule
         self.overloadsVariants = overloadsVariants
-        self.indexInOverloadsVariants = indexInOverloadsVariants
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
@@ -577,17 +579,5 @@ extension Symbol {
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
-    }
-    
-    /// References to other symbols that overload this one.
-    var overloads: [ResolvedTopicReference] {
-        get { overloadsVariants.firstValue! }
-        set { overloadsVariants.firstValue = newValue }
-    }
-    
-    /// If this symbol has overloads, this symbol's declaration should be displayed at this index among the other overloads on the page.
-    var indexInOverloads: Int {
-        get { indexInOverloadsVariants.firstValue! }
-        set { indexInOverloadsVariants.firstValue = newValue }
     }
 }

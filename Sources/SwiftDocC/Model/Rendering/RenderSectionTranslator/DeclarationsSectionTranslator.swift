@@ -40,7 +40,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                                              renderNodeTranslator: &renderNodeTranslator)
 
                 // If this symbol has overloads, render their declarations as well.
-                let otherDeclarations = renderOtherDeclarationsTokens(from: symbol.overloadsVariants[trait] ?? [],
+                let otherDeclarations = renderOtherDeclarationsTokens(from: symbol.overloadsVariants[trait],
                                                                       for: trait,
                                                                       renderNodeTranslator: &renderNodeTranslator)
                 
@@ -49,8 +49,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
                         platforms: platformNames,
                         tokens: renderedTokens,
-                        otherDeclarations: otherDeclarations,
-                        indexInOtherDeclarations: symbol.indexInOverloadsVariants[trait]
+                        otherDeclarations: otherDeclarations
                     )
                 )
             }
@@ -60,7 +59,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
     }
     
     /// Translates the given declaration fragments into encodable tokens.
-    func renderDeclarationTokens(fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], renderNodeTranslator: inout RenderNodeTranslator)  -> [DeclarationRenderSection.Token] {
+    func renderDeclarationTokens(fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], renderNodeTranslator: inout RenderNodeTranslator) -> [DeclarationRenderSection.Token] {
         
         return fragments.map { token in
             // Create a reference if one found
@@ -79,10 +78,16 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
     }
     
     /// Translates the given resolved topic references into encodable `OtherDeclaration`s representing the declarations of this symbol's overloads.
-    func renderOtherDeclarationsTokens(from overloads: [ResolvedTopicReference], for trait: DocumentationDataVariantsTrait,
-                                       renderNodeTranslator: inout RenderNodeTranslator) -> [DeclarationRenderSection.OtherDeclaration] {
-        var otherDeclarations = [DeclarationRenderSection.OtherDeclaration]()
-        for overloadReference in overloads {
+    func renderOtherDeclarationsTokens(from overloads: Symbol.Overloads?,
+                                       for trait: DocumentationDataVariantsTrait,
+                                       renderNodeTranslator: inout RenderNodeTranslator) -> DeclarationRenderSection.OtherDeclarations? {
+        guard let overloads else {
+            // This symbol does not have overloads.
+            return nil
+        }
+        
+        var otherDeclarations = [DeclarationRenderSection.OtherDeclarations.Declaration]()
+        for overloadReference in overloads.references {
             guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol else {
                 continue
             }
@@ -94,12 +99,12 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             let declarationTokens = renderDeclarationTokens(fragments: declarationFragments,
                                                             renderNodeTranslator: &renderNodeTranslator)
             otherDeclarations.append(
-                DeclarationRenderSection.OtherDeclaration(
+                .init(
                     tokens: declarationTokens,
                     identifier: overloadReference.absoluteString
                 )
             )
         }
-        return otherDeclarations
+        return .init(declarations: otherDeclarations, displayIndex: overloads.displayIndex)
     }
 }
