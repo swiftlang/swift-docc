@@ -1423,21 +1423,18 @@ class RenderNodeTranslatorTests: XCTestCase {
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
             
             let declarationSection = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0 is DeclarationsRenderSection }) as? DeclarationsRenderSection)
-
-            // Make sure it gives an index for the declaration in otherDeclarations.
-            XCTAssertNotNil(declarationSection.declarations.first?.indexInOtherDeclarations)
             
             // Each render node should contain declarations for all of its sibling overloads.
             let otherDeclarations = try XCTUnwrap(declarationSection.declarations.first?.otherDeclarations)
-            XCTAssertEqual(otherDeclarations.count, overloadPreciseIdentifiers.count - 1)
+            XCTAssertEqual(otherDeclarations.declarations.count, overloadPreciseIdentifiers.count - 1)
             
-            for declaration in otherDeclarations {
+            for declaration in otherDeclarations.declarations {
                 XCTAssertNotNil(declaration.tokens)
             }
             
             for (otherIndex, otherReference) in overloadReferences.indexed() {
                 guard otherIndex != index else { continue }
-                XCTAssertTrue(otherDeclarations.contains(where: { $0.identifier == otherReference.absoluteString }))
+                XCTAssertTrue(otherDeclarations.declarations.contains(where: { $0.identifier == otherReference.absoluteString }))
             }
         }
     }

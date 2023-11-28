@@ -2420,10 +2420,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 guard let symbol = (documentationNode?.semantic as? Symbol),
                         symbolReference.sourceLanguage == .swift else { continue }
                 
-                var otherOverloadSymbols = overloadedSymbolReferences
-                otherOverloadSymbols.remove(at: index)
-                symbol.overloadsVariants = .init(swiftVariant: otherOverloadSymbols)
-                symbol.indexInOverloadsVariants = .init(swiftVariant: index)
+                var otherOverloadedSymbolReferences = overloadedSymbolReferences
+                otherOverloadedSymbolReferences.remove(at: index)
+                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                symbol.overloadsVariants = .init(swiftVariant: overloads)
             }
         }
     }

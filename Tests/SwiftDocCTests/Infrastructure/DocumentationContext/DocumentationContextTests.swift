@@ -4266,17 +4266,20 @@ let expected = """
                 let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
                 let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
                 
+                XCTAssertNotNil(overloadedSymbol.overloadsVariants.firstValue)
+                let overloads = overloadedSymbol.overloadsVariants.firstValue!
+                
                 // Make sure that each symbol contains all of its sibling overloads.
-                XCTAssertEqual(overloadedSymbol.overloads.count, overloadedReferences.count - 1)
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
                 for (otherIndex, otherReference) in overloadedReferences.indexed() {
                    guard otherIndex != index else { continue }
-                    XCTAssertTrue(overloadedSymbol.overloads.contains(otherReference))
+                    XCTAssertTrue(overloads.references.contains(otherReference))
                 }
                 
-                // Each symbol's declaration needs to tell the renderer where it belongs in the array of overloaded declarations.
-                let indexInOverloads = try XCTUnwrap(overloadedSymbol.indexInOverloads)
-                XCTAssertFalse(seenIndices.contains(indexInOverloads))
-                seenIndices.insert(indexInOverloads)
+                // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
+                let displayIndex = try XCTUnwrap(overloads.displayIndex)
+                XCTAssertFalse(seenIndices.contains(displayIndex))
+                seenIndices.insert(displayIndex)
             }
         }
         
@@ -4337,8 +4340,7 @@ let expected = """
         for reference in structReferences {
             let documentationNode = try XCTUnwrap(context.documentationCache[reference])
             let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
-            XCTAssertTrue(overloadedSymbol.overloadsVariants.isEmpty)
-            XCTAssertTrue(overloadedSymbol.indexInOverloadsVariants.isEmpty)
+            XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
         }
     }
 }

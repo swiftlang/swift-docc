@@ -507,8 +507,7 @@ struct ReferenceResolver: SemanticVisitor {
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
             automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants,
-            overloadsVariants: symbol.overloadsVariants,
-            indexInOverloadsVariants: symbol.indexInOverloadsVariants
+            overloadsVariants: symbol.overloadsVariants
         )
     }
     

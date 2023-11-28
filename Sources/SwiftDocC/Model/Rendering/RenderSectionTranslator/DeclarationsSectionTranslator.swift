@@ -40,9 +40,14 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
             }
 
-            func renderOtherDeclarationsTokens(from overloads: [ResolvedTopicReference]) -> [DeclarationRenderSection.OtherDeclaration] {
-                var otherDeclarations = [DeclarationRenderSection.OtherDeclaration]()
-                for overloadReference in overloads {
+            func renderOtherDeclarationsTokens(from overloads: Symbol.Overloads?) -> DeclarationRenderSection.OtherDeclarations? {
+                guard let overloads else {
+                    // This symbol does not have overloads.
+                    return nil
+                }
+
+                var otherDeclarations = [DeclarationRenderSection.OtherDeclarations.Declaration]()
+                for overloadReference in overloads.references {
                     guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol else {
                         continue
                     }
@@ -53,13 +58,13 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                     let declarationTokens = declarationFragments.map(translateFragment)
                     otherDeclarations.append(
-                        DeclarationRenderSection.OtherDeclaration(
+                        .init(
                             tokens: declarationTokens,
                             identifier: overloadReference.absoluteString
                         )
                     )
                 }
-                return otherDeclarations
+                return .init(declarations: otherDeclarations, displayIndex: overloads.displayIndex)
             }
 
             var declarations = [DeclarationRenderSection]()
@@ -76,15 +81,14 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 }
 
                 // If this symbol has overloads, render their declarations as well.
-                let otherDeclarations = renderOtherDeclarationsTokens(from: symbol.overloadsVariants[trait] ?? [])
+                let otherDeclarations = renderOtherDeclarationsTokens(from: symbol.overloadsVariants[trait])
 
                 declarations.append(
                     DeclarationRenderSection(
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
                         platforms: platformNames,
                         tokens: renderedTokens,
-                        otherDeclarations: otherDeclarations,
-                        indexInOtherDeclarations: symbol.indexInOverloadsVariants[trait]
+                        otherDeclarations: otherDeclarations
                     )
                 )
             }
