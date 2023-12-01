@@ -411,7 +411,13 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?) {
-            guard child.parent !== self else { return }
+            guard child.parent !== self else { 
+                assert(
+                    (try? children[child.name]?.find(kind, hash)) === child,
+                    "If the new child node already has this node as its parent it should already exist among this node's children."
+                )
+                return
+            }
             // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
             children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
