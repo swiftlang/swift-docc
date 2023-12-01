@@ -106,7 +106,7 @@ struct PathHierarchy {
                     // If both identifiers are in the same language, they are the same symbol
                     $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
                     // Otherwise, if both have the same name and kind their differences doesn't matter for link resolution purposes
-                    || $0.name == symbol.pathComponents.last && $0.symbol!.kind.identifier == symbol.kind.identifier
+                    || ($0.name == symbol.pathComponents.last && $0.symbol!.kind.identifier == symbol.kind.identifier)
                 }) {
                     nodes[id] = existingNode
                 } else {
