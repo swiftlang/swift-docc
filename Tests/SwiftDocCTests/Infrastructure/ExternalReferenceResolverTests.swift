@@ -914,23 +914,30 @@ Document @1:1-1:35
     }
     
     func testExternalReferenceArticleIsIncludedInTopicGroup() throws {
-        let externalArticleResolver = TestExternalReferenceResolver()
-        externalArticleResolver.bundleIdentifier = "com.test.external"
-        externalArticleResolver.expectedReferencePath = "/path/to/external/article"
-        externalArticleResolver.resolvedEntityTitle = "ObjCArticle"
-        externalArticleResolver.resolvedEntityKind = .article
-        externalArticleResolver.resolvedEntityLanguage = .objectiveC
+        let externalResolver = TestMultiResultExternalReferenceResolver()
+        externalResolver.bundleIdentifier = "com.test.external"
         
-        let externalSymbolResolver = TestExternalReferenceResolver()
-        externalSymbolResolver.bundleIdentifier = "com.test.externalSymbol"
-        externalSymbolResolver.expectedReferencePath = "/path/to/external/symbol"
-        externalSymbolResolver.resolvedEntityTitle = "ObjCSymbol"
-        externalSymbolResolver.resolvedEntityKind = .class
-        externalSymbolResolver.resolvedEntityLanguage = .objectiveC
+        externalResolver.entitiesToReturn["/path/to/external/article"] = .success(
+            .init(
+                    referencePath: "/path/to/external/article",
+                    title: "ObjCArticle",
+                    kind: .article,
+                    language: .objectiveC
+                )
+        )
+                
+        externalResolver.entitiesToReturn["/path/to/external/symbol"] = .success(
+            .init(
+                referencePath: "/path/to/external/symbol",
+                title: "ObjCSymbol",
+                kind: .class,
+                language: .objectiveC
+            )
+        )
         
         let (_, bundle, context) = try testBundleAndContext(
             copying: "MixedLanguageFramework",
-            externalResolvers: [externalArticleResolver.bundleIdentifier: externalArticleResolver, externalSymbolResolver.bundleIdentifier: externalSymbolResolver]
+            externalResolvers: [externalResolver.bundleIdentifier: externalResolver]
         ) { url in
             let mixedLanguageFrameworkExtension = """
                 # ``MixedLanguageFramework``
