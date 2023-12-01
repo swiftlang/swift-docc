@@ -71,13 +71,15 @@ step-by-step, interactive content. For more information, see
 > Important: To use a documentation catalog in a Swift package, make sure the 
 manifest's Swift tools version is set to `5.5` or later. 
 
-## Building, publishing, and previewing documentation
+## Building, Publishing, and Previewing Documentation with the DocC Plug-in
 
 The preferred way of building documentation for your Swift package is by using
 the Swift-DocC Plugin. Refer to instructions in the plugin's 
 [documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
 to get started with [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
 and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
+
+You can also use the DocC command-line interface, as described in <doc:distributing-documentation-to-other-developers>.
 
 ## See Also
 
