@@ -46,7 +46,13 @@ extension PathHierarchy.FileRepresentation {
                         children: node.children.values.flatMap({ tree in
                             var disambiguations = [Node.Disambiguation]()
                             for element in tree.storage where element.node.identifier != nil { // nodes without identifiers can't be found in the tree
-                                disambiguations.append(.init(kind: element.kind, hash: element.hash, nodeID: identifierMap[element.node.identifier]!))
+                                disambiguations.append(.init(
+                                    kind: element.kind,
+                                    hash: element.hash,
+                                    parameterTypes: element.parameterTypes,
+                                    returnTypes: element.returnTypes,
+                                    nodeID: identifierMap[element.node.identifier]!
+                                ))
                             }
                             return disambiguations
                         }),
@@ -99,7 +105,7 @@ extension PathHierarchy {
         /// The container of tutorial overview pages.
         var tutorialOverviewContainer: Int
         
-        /// A node in the
+        /// A node in the hierarchy.
         struct Node: Codable {
             var name: String
             var isDisfavoredInCollision: Bool = false
@@ -109,6 +115,8 @@ extension PathHierarchy {
             struct Disambiguation: Codable {
                 var kind: String?
                 var hash: String?
+                var parameterTypes: [String]?
+                var returnTypes: [String]?
                 var nodeID: Int
             }
         }
@@ -172,7 +180,7 @@ extension PathHierarchyBasedLinkResolver {
         }
         
         return SerializableLinkResolutionInformation(
-            version: .init(major: 0, minor: 0, patch: 1), // This is still in development
+            version: .init(major: 0, minor: 0, patch: 2), // This is still in development
             bundleID: bundleID,
             pathHierarchy: hierarchyFileRepresentation,
             nonSymbolPaths: nonSymbolPaths

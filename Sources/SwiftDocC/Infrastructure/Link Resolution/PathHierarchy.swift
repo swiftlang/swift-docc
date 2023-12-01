@@ -604,7 +604,13 @@ extension PathHierarchy {
             for child in fileNode.children {
                 let childNode = lookup[identifiers[child.nodeID]]!
                 // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
-                node.add(child: childNode, kind: child.kind, hash: child.hash)
+                node.add(
+                    child: childNode,
+                    kind: child.kind,
+                    hash: child.hash,
+                    parameterTypes: child.parameterTypes,
+                    returnTypes: child.returnTypes
+                )
             }
         }
         

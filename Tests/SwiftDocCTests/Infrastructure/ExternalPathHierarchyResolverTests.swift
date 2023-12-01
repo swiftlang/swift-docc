@@ -204,13 +204,40 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         //     public func something(argument: String) -> Int { 0 }
         // }
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments")
-        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp")
-        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2")
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)"
+        )
        
+        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)")
+        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)")
+        
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)->Int",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)->Int",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)->_",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)->_",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)"
+        )
+        
         // public enum CollisionsWithDifferentSubscriptArguments {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
+        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments")
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj")
@@ -458,24 +485,24 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)",
             errorMessage: "'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 77, 77)),
-                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 77, 77)),
+                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 77)),
+                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 77)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)",
             errorMessage: "'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 91, 91)),
-                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 91, 91)),
+                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 91, 91)),
+                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 91, 91)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123",
             errorMessage: "'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'abc123' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 77, 84)),
-                .init(summary: "Replace 'abc123' with '2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 77, 84)),
+                .init(summary: "Replace 'abc123' with '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 84)),
+                .init(summary: "Replace 'abc123' with '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 84)),
             ]
         )
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
@@ -497,16 +524,16 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method",
             errorMessage: "'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 77, 84)),
-                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 77, 84)),
+                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 84)),
+                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 84)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method",
             errorMessage: "'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 91, 98)),
-                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 91, 98)),
+                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 91, 98)),
+                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 91, 98)),
             ]
         )
         
