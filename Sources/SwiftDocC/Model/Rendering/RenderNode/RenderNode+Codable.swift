@@ -9,9 +9,9 @@
 */
 
 import Foundation
-
+    
 extension RenderNode: Codable {
-    private enum CodingKeys: CodingKey {
+    enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
         case abstract, topicSections, topicSectionsStyle, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }
@@ -22,7 +22,7 @@ extension RenderNode: Codable {
         
         identifier = try container.decode(ResolvedTopicReference.self, forKey: .identifier)
         sections = try container.decode([CodableRenderSection].self, forKey: .sections).map { $0.section }
-        references = try container.decode([String: CodableRenderReference].self, forKey: .references).mapValues({$0.reference})
+        references = try (container.decodeIfPresent([String: CodableRenderReference].self, forKey: .references) ?? [:]).mapValues({$0.reference})
         metadata = try container.decode(RenderMetadata.self, forKey: .metadata)
         kind = try container.decode(Kind.self, forKey: .kind)
         hierarchy = try container.decodeIfPresent(RenderHierarchy.self, forKey: .hierarchy)

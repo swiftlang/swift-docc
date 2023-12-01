@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if canImport(NIOHTTP1)
 import Foundation
 import SwiftDocC
 
+#if canImport(NIOHTTP1)
 /// A preview server instance.
 var servers: [String: PreviewServer] = [:]
 
@@ -48,7 +48,7 @@ public final class PreviewAction: Action, RecreatingContext {
     }
 
     private let context: DocumentationContext
-    private let workspace: DocumentationWorkspace    
+    private let workspace: DocumentationWorkspace
     private let printHTMLTemplatePath: Bool
 
     var logHandle = LogHandle.standardOutput
@@ -78,7 +78,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///   - port: The port number used by the preview server.
     ///   - convertAction: The action used to convert the documentation bundle before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
-    ///   - workspace: The documentation workspace used by the the action's documentation context.
+    ///   - workspace: The documentation workspace used by the action's documentation context.
     ///   - context: The documentation context for the action.
     ///   - printTemplatePath: Whether or not the HTML template used by the convert action should be printed when the action
     ///     is performed.
@@ -163,9 +163,11 @@ public final class PreviewAction: Action, RecreatingContext {
         // Preview the output and monitor the source bundle for changes.
         do {
             print(String(repeating: "=", count: 40), to: &logHandle)
-            print("Starting Local Preview Server", to: &logHandle)
-            printPreviewAddresses(base: URL(string: "http://localhost:\(port)")!)
-            print(String(repeating: "=", count: 40), to: &logHandle)
+            if let previewURL = URL(string: "http://localhost:\(port)") {
+                print("Starting Local Preview Server", to: &logHandle)
+                printPreviewAddresses(base: previewURL)
+                print(String(repeating: "=", count: 40), to: &logHandle)
+            }
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
@@ -260,17 +262,25 @@ extension PreviewAction {
     }
 }
 #endif
+#endif
 
 extension DocumentationContext {
+    
+    /// A collection of non-implicit root modules
+    var renderRootModules: [ResolvedTopicReference] {
+        get throws {
+            try rootModules.filter({ try !entity(with: $0).isVirtual })
+        }
+    }
+    
     /// Finds the module and technology pages in the context and returns their paths.
     func previewPaths() throws -> [String] {
         let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
         
-        let rootModules = try rootModules.filter { try !entity(with: $0).isVirtual }
+        let rootModules = try renderRootModules
         
         return (rootModules + rootTechnologies).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString
         }
     }
 }
-#endif

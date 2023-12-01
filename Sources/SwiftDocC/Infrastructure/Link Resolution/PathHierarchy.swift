@@ -11,9 +11,6 @@
 import Foundation
 import SymbolKit
 
-// The path hierarchy implementation is divided into different files for different responsibilities.
-// This file defines the core types and the behavior of creating a path hierarchy.
-
 /// An opaque identifier that uniquely identifies a resolved entry in the path hierarchy,
 ///
 /// Resolved identifiers cannot be inspected and can only be created by the path hierarchy.
@@ -53,7 +50,7 @@ struct PathHierarchy {
     
     // MARK: Creating a path hierarchy
     
-    /// Initializes a path hierarchy with the all the symbols from all modules that a the given symbol graph loader provides.
+    /// Initializes a path hierarchy with all the symbols from all modules that the given symbol graph loader provides.
     ///
     /// - Parameters:
     ///   - loader: The symbol graph loader that provides all symbols.
@@ -95,7 +92,7 @@ struct PathHierarchy {
                     accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
                     kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                     mixins: [:])
-                let newModuleNode = Node(symbol: moduleSymbol)
+                let newModuleNode = Node(symbol: moduleSymbol, name: moduleName)
                 roots[moduleName] = newModuleNode
                 moduleNode = newModuleNode
                 allNodes[moduleName] = [moduleNode]
@@ -104,10 +101,16 @@ struct PathHierarchy {
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                if let existingNode = allNodes[id]?.first(where: { $0.symbol!.identifier == symbol.identifier }) {
+                if let existingNode = allNodes[id]?.first(where: {
+                    // If both identifiers are in the same language, they are the same symbol
+                    $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
+                    // Otherwise, if both have the same name and kind their differences doesn't matter for link resolution purposes
+                    || ($0.name == symbol.pathComponents.last && $0.symbol!.kind.identifier == symbol.kind.identifier)
+                }) {
                     nodes[id] = existingNode
                 } else {
-                    let node = Node(symbol: symbol)
+                    assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
+                    let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
                     node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
@@ -117,7 +120,7 @@ struct PathHierarchy {
             }
             
             var topLevelCandidates = nodes
-            for relationship in graph.relationships where [.memberOf, .requirementOf, .optionalRequirementOf].contains(relationship.kind) {
+            for relationship in graph.relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
@@ -146,6 +149,11 @@ struct PathHierarchy {
                 // Default implementations collide with the protocol requirement that they implement.
                 // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
                 sourceNode.isDisfavoredInCollision = true
+                
+                guard sourceNode.parent == nil else {
+                    // This node already has a direct member-of parent. No need to go via the default-implementation-of relationship to find its location in the hierarchy.
+                    continue
+                }
                 
                 let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
                 guard !targetNodes.isEmpty else {
@@ -204,22 +212,50 @@ struct PathHierarchy {
         }
         
         assert(
-            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
-            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
+            Every node should either have a parent node or be a root node. \
+            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
+            """
         )
+        
+        assert(
+            allNodes.values.allSatisfy({ nodesWithSameUSR in nodesWithSameUSR.allSatisfy({ node in
+                Array(sequence(first: node, next: \.parent)).last!.symbol!.kind.identifier == .module })
+            }), """
+            Every node should reach a root node by following its parents up. \
+            This wasn't true for \(allNodes.filter({ $0.value.allSatisfy({ Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier == .module }) }).map(\.key).sorted())
+            """
+        )
+        
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node
         
         var lookup = [ResolvedIdentifier: Node]()
         func descend(_ node: Node) {
-            assert(node.identifier == nil)
+            assert(
+                node.identifier == nil,
+                "Already encountered \(node.name). This is an indication that a symbol is the source of more than one memberOf relationship."
+            )
             if node.symbol != nil {
                 node.identifier = ResolvedIdentifier()
                 lookup[node.identifier] = node
             }
             for tree in node.children.values {
                 for element in tree.storage {
+                    assert(element.node.parent === node, {
+                        func describe(_ node: Node?) -> String {
+                            guard let node = node else { return "<nil>" }
+                            guard let identifier = node.symbol?.identifier else { return node.name }
+                            return "\(identifier.precise) (\(identifier.interfaceLanguage))"
+                        }
+                        return """
+                        Every child node should point back to its parent so that the tree can be traversed both up and down without any dead-ends. \
+                        This wasn't true for '\(describe(element.node))' which pointed to '\(describe(element.node.parent))' but should have pointed to '\(describe(node))'.
+                        """ }()
+                    )
+                    // In release builds we close off any dead-ends in the tree as a precaution for what shouldn't happen.
+                    element.node.parent = node
                     descend(element.node)
                 }
             }
@@ -228,6 +264,13 @@ struct PathHierarchy {
         for module in roots.values {
             descend(module)
         }
+        
+        assert(
+            lookup.allSatisfy({ $0.value.parent != nil || roots[$0.value.name] != nil }), """
+            Every node should either have a parent node or be a root node. \
+            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
+            """
+        )
         
         func newNode(_ name: String) -> Node {
             let id = ResolvedIdentifier()
@@ -243,6 +286,13 @@ struct PathHierarchy {
         assert(
             lookup.allSatisfy({ $0.key == $0.value.identifier }),
             "Every node lookup should match a node with that identifier."
+        )
+        
+        assert(
+            lookup.values.allSatisfy({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }), """
+            Every node's findable parent should exist in the lookup. \
+            This wasn't true for \(lookup.values.filter({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }).map(\.symbol!.identifier.precise).sorted())
+            """
         )
         
         self.modules = roots
@@ -309,7 +359,7 @@ struct PathHierarchy {
 }
 
 // MARK: Node
-    
+
 extension PathHierarchy {
     /// A node in the path hierarchy.
     final class Node {
@@ -325,7 +375,7 @@ extension PathHierarchy {
         /// Each name maps to a disambiguation tree that handles
         private(set) var children: [String: DisambiguationContainer]
         
-        private(set) unowned var parent: Node?
+        fileprivate(set) unowned var parent: Node?
         /// The symbol, if a node has one.
         private(set) var symbol: SymbolGraph.Symbol?
         
@@ -338,9 +388,9 @@ extension PathHierarchy {
         var isDisfavoredInCollision: Bool
         
         /// Initializes a symbol node.
-        fileprivate init(symbol: SymbolGraph.Symbol!) {
+        fileprivate init(symbol: SymbolGraph.Symbol!, name: String) {
             self.symbol = symbol
-            self.name = symbol.pathComponents.last!
+            self.name = name
             self.children = [:]
             self.isDisfavoredInCollision = false
         }
@@ -370,8 +420,19 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?, parameterTypes: [String]? = nil, returnTypes: [String]? = nil) {
+            guard child.parent !== self else { 
+                assert(
+                    children.keys.contains(child.name),
+//                    (try? children[child.name]?.find(kind, hash)) === child,
+                    "If the new child node already has this node as its parent it should already exist among this node's children."
+                )
+                return
+            }
+            // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
             children[child.name, default: .init()].add(child, kind: kind, hash: hash, parameterTypes: parameterTypes, returnTypes: returnTypes)
+            
+            assert(child.parent === self, "Potentially merging nodes shouldn't break the child node's reference to its parent.")
         }
         
         /// Combines this node with another node.
@@ -485,5 +546,88 @@ extension PathHierarchy.DisambiguationContainer {
             newStorage.append(element)
         }
         return .init(storage: newStorage)
+    }
+}
+
+// MARK: Deserialization
+
+extension PathHierarchy {
+    // This is defined in the main PathHierarchy.swift file to access fileprivate properties and PathHierarchy.Node API without making it internally visible.
+    
+    // This mapping closure exist so that we don't encode ResolvedIdentifier values into the file. They're an implementation detail and they are a not stable across executions.
+    
+    /// Decode a path hierarchy from its file representation.
+    ///
+    /// The caller can use `mapCreatedIdentifiers` when encoding and decoding path hierarchies to associate auxiliary data with a node in the hierarchy.
+    ///
+    /// - Parameters:
+    ///   - fileRepresentation: A file representation to decode.
+    ///   - mapCreatedIdentifiers: A closure that the caller can use to map indices to resolved identifiers.
+    init(
+        _ fileRepresentation: FileRepresentation,
+        mapCreatedIdentifiers: (_ identifiers: [ResolvedIdentifier]) -> Void
+    ) {
+        // Generate new identifiers. While building the path hierarchy, the node numbers map to identifiers via index lookup in this array.
+        var identifiers = [ResolvedIdentifier]()
+        identifiers.reserveCapacity(fileRepresentation.nodes.count)
+        for _ in fileRepresentation.nodes.indices {
+            identifiers.append(ResolvedIdentifier())
+        }
+        
+        var lookup = [ResolvedIdentifier: Node]()
+        lookup.reserveCapacity(fileRepresentation.nodes.count)
+        // Iterate once to create all the nodes
+        for (index, fileNode) in zip(0..., fileRepresentation.nodes) {
+            let node: Node
+            if let symbolID = fileNode.symbolID {
+                // Symbols decoded from a file representation only need an accurate ID. The rest of the information is never read and can be left empty.
+                let symbol = SymbolGraph.Symbol(
+                    identifier: symbolID,
+                    names: .init(title: "", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: [],
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: SymbolGraph.Symbol.Kind(rawIdentifier: "", displayName: ""),
+                    mixins: [:]
+                )
+                node = Node(symbol: symbol, name: fileNode.name)
+            } else {
+                node = Node(name: fileNode.name)
+            }
+            node.isDisfavoredInCollision = fileNode.isDisfavoredInCollision
+            node.identifier = identifiers[index]
+            lookup[node.identifier] = node
+        }
+        // Iterate again to construct the tree
+        for (index, fileNode) in fileRepresentation.nodes.indexed() {
+            let node = lookup[identifiers[index]]!
+            for child in fileNode.children {
+                let childNode = lookup[identifiers[child.nodeID]]!
+                // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
+                node.add(child: childNode, kind: child.kind, hash: child.hash)
+            }
+        }
+        
+        self.lookup = lookup
+        self.modules = fileRepresentation.modules.mapValues({ lookup[identifiers[$0]]! })
+        self.articlesContainer = lookup[identifiers[fileRepresentation.articlesContainer]]!
+        self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
+        self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!
+        
+        mapCreatedIdentifiers(identifiers)
+    }
+}
+
+// MARK: Hierarchical symbol relationships
+
+private extension SymbolGraph.Relationship.Kind {
+    /// Whether or not this relationship kind forms a hierarchical relationship between the source and the target.
+    var formsHierarchy: Bool {
+        switch self {
+        case .memberOf, .requirementOf, .optionalRequirementOf, .extensionTo, .declaredIn:
+            return true
+        default:
+            return false
+        }
     }
 }

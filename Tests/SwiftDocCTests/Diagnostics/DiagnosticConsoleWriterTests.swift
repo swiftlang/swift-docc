@@ -37,7 +37,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: [])
 
         let logger = Logger()
-        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [])
+        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
         consumer.receive([problem])
         XCTAssertEqual(logger.output, "warning: Test diagnostic\n")
@@ -47,7 +47,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: [])
 
         let logger = Logger()
-        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [])
+        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
         XCTAssert(logger.output.isEmpty)
         consumer.receive([problem, problem])
         XCTAssertEqual(logger.output, """
@@ -126,29 +126,5 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             
             """)
         }
-    }
-    
-    func testDoesNotEmitFixits() {
-        let source = URL(string: "/path/to/file.md")!
-        let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
-        let identifier = "org.swift.docc.test-identifier"
-        let summary = "Test diagnostic summary"
-        let explanation = "Test diagnostic explanation."
-        let expectedLocation = "/path/to/file.md:1:8"
-        
-        let replacementRange = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 1, column: 24, source: source)
-        let replacement = Replacement(range: replacementRange, replacement: "Replacement text")
-        let solution = Solution(summary: "", replacements: [replacement])
-        let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
-        
-        let logger = Logger()
-        let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [])
-        consumer.receive([problem])
-        XCTAssertEqual(logger.output, """
-            \(expectedLocation): error: \(summary)
-            \(explanation)
-            
-            """)
     }
 }

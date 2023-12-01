@@ -11,9 +11,6 @@
 import Foundation
 import SymbolKit
 
-// The path hierarchy implementation is divided into different files for different responsibilities.
-// This file defines specific additions for disambiguating symbol links with type signature information.
-
 // MARK: From symbols
 
 extension PathHierarchy {

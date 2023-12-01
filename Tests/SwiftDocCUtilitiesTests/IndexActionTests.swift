@@ -68,4 +68,37 @@ class IndexActionTests: XCTestCase {
         XCTAssertEqual(resultIndexDumps.count, 1)
     }
     #endif
+    
+    func testIndexActionOutputContainsInterfaceLanguageContent() throws {
+        // Convert a test bundle as input for the IndexAction
+        let bundleURL = Bundle.module.url(
+            forResource: "SingleArticleTestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let targetURL = try createTemporaryDirectory()
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
+        try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
+        let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")
+        var action = try ConvertAction(
+            documentationBundleURL: bundleURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetBundleURL,
+            htmlTemplateDirectory: templateURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            temporaryDirectory: createTemporaryDirectory()
+        )
+        _ = try action.perform(logHandle: .standardOutput)
+        let bundleIdentifier = "org.swift.docc.example"
+        let indexURL = targetURL.appendingPathComponent("index")
+        let engine = DiagnosticEngine(filterLevel: .warning)
+        var indexAction = try IndexAction(
+            documentationBundleURL: targetBundleURL,
+            outputURL: indexURL,
+            bundleIdentifier: bundleIdentifier,
+            diagnosticEngine: engine
+        )
+        let indexPerform = try indexAction.perform(logHandle: .standardOutput)
+        let index = try NavigatorIndex.readNavigatorIndex(url: indexPerform.outputs[0])
+        XCTAssertEqual(index.availabilityIndex.interfaceLanguages.count, 1)
+    }
 }

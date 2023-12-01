@@ -33,7 +33,7 @@ public enum RenderReferenceType: String, Codable, Equatable {
 /// The identifier of a render reference.
 ///
 /// This structure wraps a string value to make handling of render identifiers more type safe and explicit.
-public struct RenderReferenceIdentifier: Codable, Hashable {
+public struct RenderReferenceIdentifier: Codable, Hashable, Equatable {
     /// The wrapped string identifier.
     public var identifier: String
     
@@ -51,6 +51,10 @@ public struct RenderReferenceIdentifier: Codable, Hashable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(identifier)
+    }
+    
+    private enum CodingKeys: CodingKey {
+        case identifier
     }
 }
 
@@ -80,5 +84,17 @@ extension RenderReferenceIdentifier {
     /// - Parameter linkDestination: The full path of the external link represented as a `String`.
     public init(forExternalLink linkDestination: String) {
         self.identifier = "\(linkDestination)"
+    }
+}
+
+// Diffable conformance
+extension RenderReferenceIdentifier: RenderJSONDiffable {
+    /// Returns the difference between this RenderReferenceIdentifier and the given one.
+    func difference(from other: RenderReferenceIdentifier, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+
+        return diffBuilder.differences
     }
 }

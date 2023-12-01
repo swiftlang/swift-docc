@@ -318,7 +318,7 @@ extension CoverageDataEntry {
                         context: context))
             case .structure, .extendedStructure:
                 self = try .structure(
-                    memberStats:  KindSpecificData.extractChildStats(
+                    memberStats: KindSpecificData.extractChildStats(
                         documentationNode: documentationNode,
                         context: context))
             case .protocol, .extendedProtocol:
@@ -464,7 +464,7 @@ extension CoverageDataEntry.KindSpecificData {
 
         /// For cases that have an associated type `RatioStatistic`, the appropriate initializer for that case on `KindSpecificData`
         /// - Throws: If the instance does not represent a case with associated type `RatioStatistic`
-        /// - Returns: An closure that accepts an instance of `RatioStatistic` and returns an instance of `KindSpecificData`
+        /// - Returns: A closure that accepts an instance of `RatioStatistic` and returns an instance of `KindSpecificData`
         func associatedRatioStatisticInitializer() throws -> (RatioStatistic) -> CoverageDataEntry
             .KindSpecificData
         {
@@ -500,7 +500,7 @@ extension CoverageDataEntry.KindSpecificData {
 
         /// For cases that have an associated type `[InstanceMemberType: RatioStatistic]`, the appropriate initializer for that case on `KindSpecificData`
         /// - Throws: If the instance does not represent a case with associated type `RatioStatistic`
-        /// - Returns: An closure that accepts an instance of `[InstanceMemberType: RatioStatistic]` and returns an instance of `KindSpecificData`
+        /// - Returns: A closure that accepts an instance of `[InstanceMemberType: RatioStatistic]` and returns an instance of `KindSpecificData`
         func associatedMemberStatisticsInitializer() throws -> ([InstanceMemberType: RatioStatistic]) -> CoverageDataEntry
             .KindSpecificData
         {

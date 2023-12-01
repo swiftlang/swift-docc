@@ -26,7 +26,7 @@ enum RESTParameterSource: String, Codable {
 }
 
 /// A section that contains a list of REST parameters.
-struct RESTParametersRenderSection: RenderSection {
+struct RESTParametersRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restParameters
     /// The title for the section.
     public let title: String
@@ -44,5 +44,25 @@ struct RESTParametersRenderSection: RenderSection {
         self.title = title
         self.items = items
         self.source = source
+    }
+}
+
+// Diffable conformance
+extension RESTParametersRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this RESTParametersRenderSection and the given one.
+    func difference(from other: RESTParametersRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.items, forKey: CodingKeys.items)
+        diffBuilder.addDifferences(atKeyPath: \.source, forKey: CodingKeys.source)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this RESTParametersRenderSection is similar enough to the given one.
+    func isSimilar(to other: RESTParametersRenderSection) -> Bool {
+        return self.title == other.title
     }
 }

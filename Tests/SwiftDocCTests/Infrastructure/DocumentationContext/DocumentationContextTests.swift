@@ -177,9 +177,9 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Argument text segments:
 │  │  │  │  |    "source: figure1.png, alt: figure1 "
 │  │  │  ├─ Paragraph
-│  │  │  │  └─ Image source: "figure1" title: ""
+│  │  │  │  └─ Image source: "figure1"
 │  │  │  ├─ Paragraph
-│  │  │  │  └─ Image source: "images/figure1" title: ""
+│  │  │  │  └─ Image source: "images/figure1"
 │  │  │  └─ Paragraph
 │  │  │     └─ Text "Quis auctor elit sed vulputate mi sit amet."
 │  │  ├─ BlockDirective name: "Comment"
@@ -345,7 +345,7 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  ├─ Paragraph
 │  │  │  │  └─ Text "Phasellus faucibus scelerisque eleifend donec pretium."
 │  │  │  ├─ Paragraph
-│  │  │  │  └─ Image source: "something.png" title: ""
+│  │  │  │  └─ Image source: "something.png"
 │  │  │  │     └─ Text "Diagram"
 │  │  │  ├─ CodeBlock language: swift
 │  │  │  │  let scene = ARSCNView()
@@ -1667,7 +1667,7 @@ let expected = """
             try """
             # ``Operators/MyNumber``
             
-            A documentation extension that curates symbosl with characters not allowed in a resolved reference URL.
+            A documentation extension that curates symbols with characters not allowed in a resolved reference URL.
 
             ## Topics
 
@@ -1675,6 +1675,9 @@ let expected = """
             - ``>(_:_:)``
             - ``<=(_:_:)``
             - ``>=(_:_:)``
+            - ``-(_:_:)-22pw2``
+            - ``-(_:)-9xdx0``
+            - ``-=(_:_:)-7w3vn``
             """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
         }
         
@@ -1718,10 +1721,10 @@ let expected = """
             
             ## Topics
             
+            Only curate the pages. Headings don't support curation.
+            
             - ``MyClass/myFunc🙂()``
-            - <doc:article-with-emoji-in-heading#Hello-🌍>
             - <doc:article-with-😃-in-filename>
-            - <doc:article-with-😃-in-filename#Hello-world>
             """),
         ])
         let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
@@ -1739,9 +1742,7 @@ let expected = """
         // Verify that all the links in the topic section resolved
         XCTAssertEqual(topicSection.links.map(\.destination), [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
-            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
-            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
         ])
         
         // Verify that all resolved link exist in the context.
@@ -1756,12 +1757,10 @@ let expected = """
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
-        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 2)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
-            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
-            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
         ])
         
         
@@ -3911,6 +3910,74 @@ let expected = """
             ),
             "Expectedly returned non-nil value for non-symbol content."
         )
+    }
+
+    func testAddingProtocolExtensionMemberConstraint() throws
+    {
+
+        // This fixture contains a protocol extension:
+        // extension Swift.Collection {
+        //   public func fixture() -> String {
+        //     return "collection"
+        //   }
+        // }
+        let (_, _, context) = try testBundleAndContext(copying: "ModuleWithProtocolExtensions")
+
+        // The member function of the protocol extension
+        // should have a constraint: Self is Collection
+        var memberIdentifier = "s:Sl28ModuleWithProtocolExtensionsE7fixtureSSyF"
+        var memberRef = try XCTUnwrap(context.symbolIndex[memberIdentifier])
+        var memberNode = try XCTUnwrap(context.documentationCache[memberRef])
+        var memberSymbol = memberNode.semantic as! Symbol
+        var constraints = try XCTUnwrap(memberSymbol.constraints)
+        XCTAssertEqual(1, constraints.count)
+        var constraint = constraints.first!
+        XCTAssertEqual(constraint.kind, .sameType)
+        XCTAssertEqual(constraint.leftTypeName, "Self")
+        XCTAssertEqual(constraint.rightTypeName, "Collection")
+
+        // This fixture also contains a structure extension:
+        // extension Set.Iterator {
+        //     public func fixture() -> String {
+        //         return "set iterator"
+        //     }
+        // }
+
+        // The member function of the structure extension
+        // should NOT have a constraint, since it wouldn't
+        // make sense for a structure or for any types other
+        // than protocols: Self is Set.Iterator
+        memberIdentifier = "s:Sh8IteratorV28ModuleWithProtocolExtensionsE7fixtureSSyF"
+        memberRef = try XCTUnwrap(context.symbolIndex[memberIdentifier])
+        memberNode = try XCTUnwrap(context.documentationCache[memberRef])
+        memberSymbol = memberNode.semantic as! Symbol
+        constraints = try XCTUnwrap(memberSymbol.constraints)
+        // Contains existing constraint Element conforms to Hashable,
+        // but did not receive a new constraint Self Is Iterator.
+        XCTAssertEqual(1, constraints.count)
+        constraint = constraints.first!
+        XCTAssertEqual(constraint.kind, .conformance)
+        XCTAssertEqual(constraint.leftTypeName, "Element")
+        XCTAssertEqual(constraint.rightTypeName, "Hashable")
+    }
+
+    func testDiagnosticLocations() throws {
+        // The ObjCFrameworkWithInvalidLink.docc test bundle contains symbol
+        // graphs for both Obj-C and Swift, built after setting:
+        //   "Build Multi-Language Documentation for Objective-C Only Targets" = true.
+        // One doc comment in the Obj-C header file contains an invalid doc
+        // link on line 24, columns 56-63:
+        // "Log a hello world message. This line contains an ``invalid`` link."
+        let (_, _, context) = try testBundleAndContext(copying: "ObjCFrameworkWithInvalidLink")
+        let problems = context.problems
+        XCTAssertEqual(1, problems.count)
+        let problem = try XCTUnwrap(problems.first)
+        let basename = try XCTUnwrap(problem.diagnostic.source?.lastPathComponent)
+        XCTAssertEqual("HelloWorldFramework.h", basename)
+        let start = Markdown.SourceLocation(line: 24, column: 56, source: nil)
+        let end = Markdown.SourceLocation(line: 24, column: 63, source: nil)
+        let range = try XCTUnwrap(problem.diagnostic.range)
+        XCTAssertEqual(start..<end, range)
     }
 }
 

@@ -13,9 +13,6 @@ import struct Markdown.SourceRange
 import struct Markdown.SourceLocation
 import SymbolKit
 
-// The path hierarchy implementation is divided into different files for different responsibilities.
-// This file defines error messages and suggested solutions for user facing diagnostics.
-
 extension PathHierarchy {
     /// An error finding an entry in the path hierarchy.
     enum Error: Swift.Error {
@@ -32,6 +29,13 @@ extension PathHierarchy {
         /// - The remaining portion of the path. This may be empty
         /// - A list of the names for the top level elements.
         case notFound(remaining: [PathComponent], availableChildren: Set<String>)
+        
+        /// No element was found at the beginning of an absolute path.
+        ///
+        /// Includes information about:
+        /// - The remaining portion of the path.
+        /// - A list of the names for the available modules.
+        case moduleNotFound(remaining: [PathComponent], availableChildren: Set<String>)
         
         /// Matched node does not correspond to a documentation page.
         ///
@@ -73,21 +77,43 @@ extension PathHierarchy.Error {
     /// The resulting ``TopicReferenceResolutionError`` is human-readable and provides helpful solutions.
     ///
     /// - Parameters:
-    ///     - context: The ``DocumentationContext`` the `originalReference` was resolved in.
-    ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is
-    ///     used to calculate the proper replacement-ranges for fixits.
+    ///   - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is used to calculate the proper replacement-ranges for fixits.
+    ///   - fullNameOfNode: A closure that determines the full name of a node, to be displayed in collision diagnostics to precisely identify symbols and other pages.
     ///
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.
-    func asTopicReferenceResolutionErrorInfo(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionErrorInfo {
-        
-        // This is defined inline because it captures `context`.
+    func asTopicReferenceResolutionErrorInfo(originalReference: String, fullNameOfNode: (PathHierarchy.Node) -> String) -> TopicReferenceResolutionErrorInfo {
+        // This is defined inline because it captures `fullNameOfNode`.
         func collisionIsBefore(_ lhs: (node: PathHierarchy.Node, disambiguation: String), _ rhs: (node: PathHierarchy.Node, disambiguation: String)) -> Bool {
-            return lhs.node.fullNameOfValue(context: context) + lhs.disambiguation
-                 < rhs.node.fullNameOfValue(context: context) + rhs.disambiguation
+            return fullNameOfNode(lhs.node) + lhs.disambiguation
+                 < fullNameOfNode(rhs.node) + rhs.disambiguation
         }
         
         switch self {
+        case .moduleNotFound(remaining: let remaining, availableChildren: let availableChildren):
+            let firstPathComponent = remaining.first! // This would be a .notFound error if the remaining components were empty.
+            
+            let solutions: [Solution]
+            if let pathComponentIndex = originalReference.range(of: firstPathComponent.full) {
+                let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
+                
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
+                solutions = nearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            } else {
+                solutions = []
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                No module named \(firstPathComponent.full.singleQuoted)
+                """,
+                solutions: solutions
+            )
+            
         case .notFound(remaining: let remaining, availableChildren: let availableChildren):
             guard let firstPathComponent = remaining.first else {
                 return TopicReferenceResolutionErrorInfo(
@@ -100,7 +126,7 @@ extension PathHierarchy.Error {
                 let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
                 let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
                 
-                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(firstPathComponent.name))
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -146,7 +172,7 @@ extension PathHierarchy.Error {
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
                     let toDisplay = disambiguation.first == ">" ? ("-" + disambiguation) : disambiguation
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
                         Replacement(range: replacementRange, replacement: "-" + disambiguation)
                     ])
                 }
@@ -160,7 +186,7 @@ extension PathHierarchy.Error {
             
         case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
             let nextPathComponent = remaining.first!
-            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: String(nextPathComponent.name))
+            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent.name)
             
             // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
             // only make suggestions for similarly spelled structs.
@@ -212,7 +238,7 @@ extension PathHierarchy.Error {
             
             let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
                 let toDisplay = disambiguation.first == ">" ? ("-" + disambiguation) : disambiguation
-                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + disambiguation)
                 ])
             }
@@ -249,26 +275,6 @@ private extension PathHierarchy.Node {
             node = parent
         }
         return "/" + components.joined(separator: "/")
-    }
-    
-    /// Determines the full name of a node's value using information from the documentation context.
-    ///
-    /// > Note: This value is only intended for error messages and other presentation.
-    func fullNameOfValue(context: DocumentationContext) -> String {
-        guard let identifier = identifier else { return name }
-        if let symbol = symbol {
-            if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
-                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-            }
-            return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
-        }
-        // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
-        let reference = context.hierarchyBasedLinkResolver.resolvedReferenceMap[identifier]!
-        if reference.fragment != nil {
-            return context.nodeAnchorSections[reference]!.title
-        } else {
-            return context.documentationCache[reference]!.name.description
-        }
     }
 }
 

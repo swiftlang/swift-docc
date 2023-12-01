@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,22 +11,20 @@
 import ArgumentParser
 import Foundation
 
-/// Resolves and validates a URL value that provides the path to a documentation bundle.
+/// Resolves and validates a URL value that provides the path to a documentation catalog.
 ///
 /// This option is used by the ``Docc/Convert`` subcommand.
-public struct DocumentationBundleOption: DirectoryPathOption {
-
+public struct DocumentationCatalogOption: DirectoryPathOption {
     public init() {}
 
-    /// The name of the command line argument used to specify a source bundle path.
-    static let argumentValueName = "source-bundle-path"
-
-    /// The path to a bundle to be compiled by DocC.
+    /// The path to a '.docc' documentation catalog directory of markup files and assets.
     @Argument(
         help: ArgumentHelp(
-            "Path to a documentation bundle directory.",
-            discussion: "The '.docc' bundle docc will build.",
-            valueName: argumentValueName),
+            "Path to a '.docc' documentation catalog directory.",
+            valueName: "catalog-path"),
         transform: URL.init(fileURLWithPath:))
     public var url: URL?
 }
+
+@available(*, deprecated, renamed: "DocumentationCatalogOption")
+public typealias DocumentationBundleOption = DocumentationCatalogOption

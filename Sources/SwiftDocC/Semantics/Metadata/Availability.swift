@@ -14,7 +14,7 @@ import Markdown
 extension Metadata {
     /// A directive that sets the platform availability information for a documentation page.
     ///
-    /// `@Available` is analagous to the `@available` attribute in Swift: It allows you to specify a
+    /// `@Available` is analogous to the `@available` attribute in Swift: It allows you to specify a
     /// platform version that the page relates to. To specify a platform and version, list the platform
     /// name and use the `introduced` argument:
     ///
@@ -44,7 +44,8 @@ extension Metadata {
     /// }
     /// ```
     public final class Availability: Semantic, AutomaticDirectiveConvertible {
-        static public let directiveName: String = "Available"
+        public static let directiveName: String = "Available"
+        public static let introducedVersion = "5.8"
 
         public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible {
             // FIXME: re-add `case any = "*"` when `isBeta` and `isDeprecated` are implemented

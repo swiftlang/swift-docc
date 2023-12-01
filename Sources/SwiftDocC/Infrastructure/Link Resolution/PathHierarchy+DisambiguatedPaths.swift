@@ -10,9 +10,6 @@
 
 import Foundation
 
-// The path hierarchy implementation is divided into different files for different responsibilities.
-// This file defines the functionality for the least disambiguated paths for elements in the path hierarchy.
-
 private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted
 
 private func symbolFileName(_ symbolName: String) -> String {

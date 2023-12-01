@@ -184,6 +184,50 @@ extension ExtendedTypeFormatTransformation {
         return true
     }
 
+    // Collapse inContextOf relationships into their target declaredIn
+    // relationships. See the diagram above. Return a dictionary of source
+    // identifiers to the target identifiers.
+    typealias SourceIdentifier = String
+    typealias TargetIdentifier = String
+    static func collapsedExtendedModuleRelationships(from relationships: Set<SymbolGraph.Relationship>) -> [ SourceIdentifier : TargetIdentifier] {
+
+        // Filter all the relationships down to only declaredIn and inContextOf.
+        let filtered = relationships.filter { $0.kind == .declaredIn || $0.kind == .inContextOf }
+
+        // Create a dictionary of relationships by their source identifier, to
+        // speed up lookup below.
+        let relsBySource = filtered.reduce(into: [:]) { result, rel in
+            result[rel.source] = rel
+        }
+
+        // Reduce the filtered list and build up a dictionary of:
+        // - key = original source symbol
+        // - value = target of declaredIn = which external module the symbol was
+        //           declared in.
+        return filtered.reduce(into: [:]) { result, relationship in
+            var rel = relationship
+            var seen: Set<String> = []
+            // Walk the target->relationship hierarchy until we find declaredIn
+            while rel.kind != .declaredIn {
+                // Stop if we encounter a cycle in the hierarchy
+                guard !seen.contains(rel.source) else {
+                    return
+                }
+                seen.insert(rel.source)
+                // Look up the target relationship in the dictionary created
+                // above. Stop if not found.
+                guard let r = relsBySource[rel.target] else {
+                    return
+                }
+                // Step to the target relationship looking for
+                // declaredIn.
+                rel = r
+            }
+            // Save the original source as the key to the declaredIn target
+            result[relationship.source] = rel.target
+        }
+    }
+
     /// Tries to obtain `docComment`s for all `targets` and copies the documentation from sources to the target.
     ///
     /// Iterates over all `targets` calling the `source` method to obtain a list of symbols that should serve as sources for the target's `docComment`.
@@ -202,7 +246,7 @@ extension ExtendedTypeFormatTransformation {
             }
             
             for source in source(target) {
-                if case (.some(_), .some(_)) =  (target.docComment, source.docComment) {
+                if case (.some(_), .some(_)) = (target.docComment, source.docComment) {
                     target.docComment = resolveConflict(target, source)
                 } else {
                     target.docComment = target.docComment ?? source.docComment
@@ -314,7 +358,7 @@ extension ExtendedTypeFormatTransformation {
         
         extensionBlockToExtendedTypeMapping.reserveCapacity(extensionBlockSymbols.count)
         
-        let createExtendedTypeSymbolAndAnchestors = { (extensionBlockSymbol: SymbolGraph.Symbol, id: String) -> SymbolGraph.Symbol in
+        let createExtendedTypeSymbolAndAncestors = { (extensionBlockSymbol: SymbolGraph.Symbol, id: String) -> SymbolGraph.Symbol in
             var newMixins = [String: Mixin]()
             
             if var swiftExtension = extensionBlockSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self] {
@@ -365,7 +409,7 @@ extension ExtendedTypeFormatTransformation {
             
             let symbol: SymbolGraph.Symbol = extendedTypeSymbols[extendedSymbolId]?.replacing(\.accessLevel) { oldSymbol in
                 max(oldSymbol.accessLevel, extensionBlockSymbol.accessLevel)
-            } ?? createExtendedTypeSymbolAndAnchestors(extensionBlockSymbol, extendedSymbolId)
+            } ?? createExtendedTypeSymbolAndAncestors(extensionBlockSymbol, extendedSymbolId)
             
             pathComponentToExtendedTypeMapping[symbol.pathComponents[...]] = symbol.identifier.precise
             
@@ -385,7 +429,7 @@ extension ExtendedTypeFormatTransformation {
     /// - ``SymbolKit/SymbolGraph/Symbol/KindIdentifier/unknownExtendedType``
     ///
     /// If a nested type is extended, but its parent (or another ancestor) is not, this ancestor is not part of the
-    /// extension block symbol format. In that case, a extended type symbol of unknown kind is synthesized by
+    /// extension block symbol format. In that case, an extended type symbol of unknown kind is synthesized by
     /// this function. However, if the ancestor symbol is extended, the `extendedTypeSymbols` should
     /// already contain the respective symbol. In that case, the ``SymbolKit/SymbolGraph/Relationship/inContextOf``
     /// is attached to the existing symbol.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -79,7 +79,7 @@ public struct DocumentationNode {
             /// The documentation comes from a documentation extension file.
             case documentationExtension
             /// The documentation comes from an in-source documentation comment.
-            case sourceCode(location: SymbolGraph.Symbol.Location?)
+            case sourceCode(location: SymbolGraph.Symbol.Location?, offset: SymbolGraph.LineList.SourceRange?)
         }
 
         let source: Source
@@ -145,7 +145,7 @@ public struct DocumentationNode {
         self.semantic = semantic
         self.symbol = nil
         self.platformNames = platformNames
-        self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
+        self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil, offset: nil), markup: markup)]
         self.isVirtual = isVirtual
         
         if let article = semantic as? Article {
@@ -239,10 +239,6 @@ public struct DocumentationNode {
         
         self.availableSourceLanguages = reference.sourceLanguages
         
-        let extendedModule: String? = unifiedSymbol.mixins
-            .first(where: { $0.0.platform == platformName })?.value
-            .getValueIfPresent(for: SymbolGraph.Symbol.Swift.Extension.self)?.extendedModule
-        
         let semanticSymbol = Symbol(
             kindVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.kind,
@@ -272,7 +268,6 @@ public struct DocumentationNode {
                 defaultVariantValue: platformName.map(PlatformName.init(operatingSystemName:))
             ),
             moduleReference: moduleReference,
-            extendedModule: extendedModule,
             externalIDVariants: DocumentationDataVariants(defaultVariantValue: unifiedSymbol.uniqueIdentifier),
             accessLevelVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.accessLevel,
@@ -440,7 +435,8 @@ public struct DocumentationNode {
 
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
             let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
-            
+            let offset = symbol.offsetAdjustedForInterfaceLanguage()
+
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
                 let location = symbol.mixins.getValueIfPresent(
@@ -475,7 +471,7 @@ public struct DocumentationNode {
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
                     
-                    if let offset = docComment.lines.first?.range {
+                    if let offset = offset {
                         problem.offsetWithRange(offset)
                     }
                     
@@ -485,7 +481,10 @@ public struct DocumentationNode {
 
             documentationChunks = [
                 DocumentationChunk(
-                    source: .sourceCode(location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)),
+                    source: .sourceCode(
+                        location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self),
+                        offset: offset
+                    ),
                     markup: docCommentMarkup
                 )
             ]
@@ -502,7 +501,7 @@ public struct DocumentationNode {
             }
         } else {
             markup = Document()
-            documentationChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
+            documentationChunks = [DocumentationChunk(source: .sourceCode(location: nil, offset: nil), markup: markup)]
         }
         
         return (markup: markup, docChunks: documentationChunks)
@@ -516,7 +515,7 @@ public struct DocumentationNode {
     }
 
     static func kind(forKind symbolKind: SymbolGraph.Symbol.KindIdentifier) -> Kind {
-        switch symbolKind  {
+        switch symbolKind {
         case .`associatedtype`: return .associatedType
         case .`class`: return .class
         case .`deinit`: return .deinitializer

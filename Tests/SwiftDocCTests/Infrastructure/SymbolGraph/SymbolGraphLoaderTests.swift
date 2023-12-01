@@ -309,149 +309,25 @@ class SymbolGraphLoaderTests: XCTestCase {
             XCTAssertTrue(foundMainAsyncMethodsGraph, "AsyncMethods graph wasn't found")
         }
     }
-    
-    func testInputWithMixedGraphFormats() throws {
-        let tempURL = try createTemporaryDirectory()
-        
-        let mainGraph = (url: tempURL.appendingPathComponent("A.symbols.json"),
-                         content: makeSymbolGraphString(moduleName: "A"))
-        
-        let emptyExtensionGraph = (url: tempURL.appendingPathComponent("A@Empty.symbols.json"),
-                                   content: makeSymbolGraphString(moduleName: "A"))
-        
-        let extensionBlockFormatExtensionGraph = (url: tempURL.appendingPathComponent("A@EBF.symbols.json"),
-                                                  content: makeSymbolGraphString(moduleName: "A", symbols: """
-        {
-            "kind": {
-                "identifier": "swift.extension",
-                "displayName": "Extension"
-            },
-            "identifier": {
-                "precise": "s:e:s:EBFfunction",
-                "interfaceLanguage": "swift"
-            },
-            "pathComponents": [
-                "EBF"
-            ],
-            "names": {
-                "title": "EBF",
-            },
-            "swiftExtension": {
-                "extendedModule": "A",
-                "typeKind": "struct"
-            },
-            "accessLevel": "public"
-        },
-        {
-            "kind": {
-                "identifier": "swift.func",
-                "displayName": "Function"
-            },
-            "identifier": {
-                "precise": "s:EBFfunction",
-                "interfaceLanguage": "swift"
-            },
-            "pathComponents": [
-                "EBF",
-                "function"
-            ],
-            "names": {
-                "title": "function",
-            },
-            "swiftExtension": {
-                "extendedModule": "A",
-                "typeKind": "struct"
-            },
-            "accessLevel": "public"
-        }
-        """, relationships: """
-        {
-            "kind": "memberOf",
-            "source": "s:EBFfunction",
-            "target": "s:e:s:EBFfunction",
-            "targetFallback": "A.EBF"
-        },
-        {
-            "kind": "extensionTo",
-            "source": "s:e:s:EBFfunction",
-            "target": "s:EBF",
-            "targetFallback": "A.EBF"
-        }
-        """))
-        
-        let noExtensionBlockFormatExtensionGraph = (url: tempURL.appendingPathComponent("A@NEBF.symbols.json"),
-                                                    content: makeSymbolGraphString(moduleName: "A", symbols: """
-        {
-            "kind": {
-                "identifier": "swift.func",
-                "displayName": "Function"
-            },
-            "identifier": {
-                "precise": "s:EBFfunction",
-                "interfaceLanguage": "swift"
-            },
-            "pathComponents": [
-                "EBF",
-                "function"
-            ],
-            "names": {
-                "title": "function",
-            },
-            "swiftExtension": {
-                "extendedModule": "A",
-                "typeKind": "struct"
-            },
-            "accessLevel": "public"
-        }
-        """, relationships: """
-        {
-            "kind": "memberOf",
-            "source": "s:EBFfunction",
-            "target": "s:EBF",
-            "targetFallback": "A.EBF"
-        }
-        """))
-        
-        let allGraphs = [mainGraph, emptyExtensionGraph, extensionBlockFormatExtensionGraph, noExtensionBlockFormatExtensionGraph]
-        
-        for graph in allGraphs {
-            try XCTUnwrap(graph.content.data(using: .utf8)).write(to: graph.url)
-        }
-        
-        let validUndetermined = [mainGraph, emptyExtensionGraph]
-        var loader = try makeSymbolGraphLoader(symbolGraphURLs: validUndetermined.map(\.url))
+
+    /// Ensure that loading symbol graphs from a directory with an at-sign properly selects the
+    /// `concurrentlyAllFiles` decoding strategy on macOS and iOS.
+    func testLoadingSymbolsInAtSignDirectory() throws {
+        let tempURL = try createTemporaryDirectory(pathComponents: "MyTempDir@2")
+        let originalSymbolGraphs = [
+            CopyOfFile(original: Bundle.module.url(forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+            CopyOfFile(original: Bundle.module.url(forResource: "WithCompletionHandler.symbols", withExtension: "json", subdirectory: "Test Resources")!)
+        ]
+        let symbolGraphURLs = try originalSymbolGraphs.map({ try $0.write(inside: tempURL) })
+
+        var loader = try makeSymbolGraphLoader(symbolGraphURLs: symbolGraphURLs)
         try loader.loadAll()
-        // by default, extension graphs should be associated with the extended graph
-        XCTAssertEqual(loader.unifiedGraphs.count, 2)
-        
-        let validEBF = [mainGraph, emptyExtensionGraph, extensionBlockFormatExtensionGraph]
-        loader = try makeSymbolGraphLoader(symbolGraphURLs: validEBF.map(\.url))
-        try loader.loadAll()
-        // found extension block symbols; extension graphs should be associated with the extending graph
-        XCTAssertEqual(loader.unifiedGraphs.count, 1)
-        
-        let validNEBF = [mainGraph, emptyExtensionGraph, noExtensionBlockFormatExtensionGraph]
-        loader = try makeSymbolGraphLoader(symbolGraphURLs: validNEBF.map(\.url))
-        try loader.loadAll()
-        // found no extension block symbols; extension graphs should be associated with the extended graph
-        XCTAssertEqual(loader.unifiedGraphs.count, 3)
-        
-        let invalid = allGraphs
-        loader = try makeSymbolGraphLoader(symbolGraphURLs: invalid.map(\.url))
-        // found non-empty extension graphs with and without extension block symbols -> should throw
-        XCTAssertThrowsError(try loader.loadAll(),
-                             "SymbolGraphLoader should throw when encountering a collection of symbol graph files, where some do and some don't use the extension block format") { error in
-            XCTAssertFalse(error.localizedDescription.contains(mainGraph.url.absoluteString))
-            XCTAssertFalse(error.localizedDescription.contains(emptyExtensionGraph.url.absoluteString))
-            XCTAssert(error.localizedDescription.contains("""
-            Symbol graph files with extension declarations:
-            \(extensionBlockFormatExtensionGraph.url.absoluteString)
-            """))
-            XCTAssert(error.localizedDescription.contains("""
-            Symbol graph files without extension declarations:
-            \(noExtensionBlockFormatExtensionGraph.url.absoluteString)
-            """))
-        }
+
+        #if os(macOS) || os(iOS)
+        XCTAssertEqual(loader.decodingStrategy, .concurrentlyAllFiles)
+        #else
+        XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
+        #endif
     }
     
     func testConfiguresSymbolGraphs() throws {

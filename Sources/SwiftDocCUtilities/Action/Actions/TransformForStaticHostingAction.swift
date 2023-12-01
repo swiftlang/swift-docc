@@ -40,7 +40,7 @@ struct TransformForStaticHostingAction: Action {
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.fileManager = fileManager
         self.diagnosticEngine = diagnosticEngine
-        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
+        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: documentationBundleURL))
     }
     
     /// Converts each eligible file from the source archive and
@@ -50,7 +50,7 @@ struct TransformForStaticHostingAction: Action {
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
     
-    mutating private func emit() throws  {
+    mutating private func emit() throws {
         
 
         // If the emit is to create the static hostable content outside of the source archive

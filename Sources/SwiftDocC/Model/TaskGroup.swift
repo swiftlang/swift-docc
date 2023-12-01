@@ -93,6 +93,16 @@ struct ExtractLinks: MarkupRewriter {
                 guard let paragraph = item.child(at: 0) as? Paragraph,
                     paragraph.childCount >= 1 else { return true }
                 
+                // Check for trailing invalid content.
+                let containsInvalidContent = paragraph.children.dropFirst().contains { child in
+                    let isComment = child is InlineHTML
+                    var isSpace = false
+                    if let text = child as? Text {
+                        isSpace = text.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    }
+                    return !(isComment || isSpace)
+                }
+                
                 switch paragraph.child(at: 0) {
                     case let link as Link:
                         // Topic link
@@ -114,7 +124,7 @@ struct ExtractLinks: MarkupRewriter {
                         links.append(link)
                         
                         // Warn if there is a trailing content after the link
-                        if paragraph.childCount > 1 {
+                        if containsInvalidContent {
                             problems.append(problemForTrailingContent(paragraph))
                         }
                         return false
@@ -123,7 +133,7 @@ struct ExtractLinks: MarkupRewriter {
                         links.append(link)
                         
                         // Warn if there is a trailing content after the link
-                        if paragraph.childCount > 1 {
+                        if containsInvalidContent {
                             problems.append(problemForTrailingContent(paragraph))
                         }
                         return false
@@ -177,7 +187,7 @@ public struct TaskGroup {
     
     /// An optional abstract for the task group.
     public var abstract: AbstractSection? {
-        if let firstParagraph = originalContent.first as? Paragraph {
+        if let firstParagraph = originalContent.mapFirst(where: { $0 as? Paragraph }) {
             return AbstractSection(paragraph: firstParagraph)
         }
         return nil
@@ -190,18 +200,15 @@ public struct TaskGroup {
             return nil
         }
         
-        let startIndex: Int
-        if originalContent.first is Paragraph {
-            startIndex = 1
-        } else {
-            startIndex = 0
+        var discussionChildren = originalContent
+            .prefix(while: { !($0 is UnorderedList) })
+            .filter({ !($0 is BlockDirective) })
+        
+        // Drop the abstract
+        if discussionChildren.first is Paragraph {
+            discussionChildren.removeFirst()
         }
         
-        let endIndex = originalContent.firstIndex(where: {
-            $0 is UnorderedList
-        }) ?? originalContent.endIndex
-        
-        let discussionChildren = originalContent[startIndex..<endIndex]
         guard !discussionChildren.isEmpty else { return nil }
 
         return DiscussionSection(content: Array(discussionChildren))
@@ -214,6 +221,10 @@ public struct TaskGroup {
     public init(heading: Heading?, content: [Markup]) {
         self.heading = heading
         self.originalContent = content
+    }
+    
+    var directives: [BlockDirective] {
+        originalContent.compactMap { $0 as? BlockDirective }
     }
 }
 

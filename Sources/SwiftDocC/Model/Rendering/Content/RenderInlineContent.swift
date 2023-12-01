@@ -217,3 +217,16 @@ extension Sequence where Element == RenderInlineContent {
         return map { $0.plainText }.joined()
     }
 }
+
+// Diffable conformance
+extension RenderInlineContent: RenderJSONDiffable {
+    /// Returns the differences between this RenderInlineContent and the given one.
+    func difference(from other: RenderInlineContent, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.plainText, forKey: CodingKeys.text)
+
+        return diffBuilder.differences
+    }
+}

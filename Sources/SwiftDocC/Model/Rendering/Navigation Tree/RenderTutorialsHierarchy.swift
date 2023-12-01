@@ -9,7 +9,7 @@
 */
 
 /// A root node of a tutorials series hierarchy.
-public struct RenderTutorialsHierarchy {
+public struct RenderTutorialsHierarchy: Equatable {
     /// The topic reference for the landing page.
     public var reference: RenderReferenceIdentifier
     

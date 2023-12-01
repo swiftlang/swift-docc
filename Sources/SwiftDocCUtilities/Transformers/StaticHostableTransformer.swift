@@ -11,13 +11,13 @@
 import Foundation
 import SwiftDocC
 
-enum HTMLTemplate: String  {
+enum HTMLTemplate: String {
     case templateFileName = "index-template.html"
     case indexFileName = "index.html"
     case tag = "{{BASE_PATH}}"
 }
 
-enum StaticHostableTransformerError: DescribedError  {
+enum StaticHostableTransformerError: DescribedError {
     case dataProviderDoesNotReferenceValidInput(url: URL)
     
     var errorDescription: String {

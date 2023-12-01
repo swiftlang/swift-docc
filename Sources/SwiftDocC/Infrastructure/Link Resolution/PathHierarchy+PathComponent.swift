@@ -11,13 +11,23 @@
 import Foundation
 import SymbolKit
 
-// The path hierarchy implementation is divided into different files for different responsibilities.
-// This file defines the functionality for parsing an authored documentation link into components.
-
 /// All known symbol kind identifiers.
 ///
 /// This is used to identify parsed path components as kind information.
-private let knownSymbolKinds = Set(SymbolGraph.Symbol.KindIdentifier.allCases.map { $0.identifier })
+private let knownSymbolKinds: Set<String> = {
+    // We don't want to register these extended symbol kinds because that makes them available for decoding from symbol graphs which isn't expected.
+    return Set(
+        (SymbolGraph.Symbol.KindIdentifier.allCases + [
+            .extendedProtocol,
+            .extendedStructure,
+            .extendedClass,
+            .extendedEnumeration,
+            .unknownExtendedType,
+            .extendedModule
+        ]).map(\.identifier)
+    )
+}()
+
 /// All known source language identifiers.
 ///
 /// This is used to skip language prefixes from kind disambiguation information.
@@ -103,10 +113,11 @@ extension PathHierarchy {
             if let dashIndex = name.lastIndex(of: "-") {
                 let kind = String(name[dashIndex...].dropFirst())
                 let name = String(name[..<dashIndex])
-                if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
-                    return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: String(kind.dropFirst(languagePrefix.count)), hash: disambiguation))
-                } else {
+                if knownSymbolKinds.contains(kind) {
                     return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kind, hash: disambiguation))
+                } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
+                    let kindWithoutLanguage = String(kind.dropFirst(languagePrefix.count))
+                    return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kindWithoutLanguage, hash: disambiguation))
                 }
             }
             return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: nil, hash: disambiguation))

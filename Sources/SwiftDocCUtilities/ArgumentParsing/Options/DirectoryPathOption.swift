@@ -13,7 +13,7 @@ import ArgumentParser
 
 /// A parsable argument for an optional directory path.
 ///
-/// This option validates the the provided path exists and that it's a directory.
+/// This option validates the provided path exists and that it's a directory.
 public protocol DirectoryPathOption: ParsableArguments {
     /// The path to a directory.
     var url: URL? { get }
@@ -32,7 +32,7 @@ extension DirectoryPathOption {
 
         // Validate that the URL represents a directory
         guard url.hasDirectoryPath == true else {
-            throw ValidationError("No documentation directory exist at '\(url.path)'.")
+            throw ValidationError("No documentation directory exists at '\(url.path)'.")
         }
     }
 }

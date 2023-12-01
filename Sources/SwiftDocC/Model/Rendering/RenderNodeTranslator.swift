@@ -151,7 +151,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.metadata.title = tutorial.intro.title
-        node.metadata.role = contentRenderer.role(for: .tutorial).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: .tutorial).rawValue
         
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
@@ -386,7 +386,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.category = technology.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration(for: technology)
-        node.metadata.role = contentRenderer.role(for: .technology).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
@@ -740,7 +740,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Set an eyebrow for articles
                 node.metadata.roleHeading = "Article"
             }
-            node.metadata.role = contentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
+            node.metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         }
        
         if let pageImages = documentationNode.metadata?.pageImages {
@@ -881,7 +881,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.metadata.category = technology.name
         node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
-        node.metadata.role = contentRenderer.role(for: .tutorialArticle).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: .tutorialArticle).rawValue
         
         // Unlike for other pages, in here we use `RenderHierarchyTranslator` to crawl the technology
         // and produce the list of modules for the render hierarchy to display in the tutorial local navigation.
@@ -1022,6 +1022,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         contentCompiler: inout RenderContentCompiler
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
+            let supportedLanguages = Set(group.directives.compactMap {
+                SupportedLanguage(from: $0, source: nil, for: bundle, in: context)?.language
+            })
+            
+            // If the task group has a set of supported languages, see if it should render for the allowed traits.
+            guard supportedLanguages.isEmpty || supportedLanguages.matchesOneOf(traits: allowedTraits) else {
+                return nil
+            }
             
             let abstractContent = group.abstract.map {
                 return visitMarkup($0.content) as! [RenderInlineContent]
@@ -1198,13 +1206,27 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: crossImportOverlayModule.declaringModule, relatedModules: crossImportOverlayModule.bystanderModules)])
-        } else if let extendedModule = symbol.extendedModule, extendedModule != moduleName.displayName {
-            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: [extendedModule])])
+
+        } else if let moduleVariants = VariantCollection<[RenderMetadata.Module]?>(
+            from: symbol.extendedModuleVariants,
+            transform: { (_, value) in
+                let relatedModules: [String]?
+                if value != moduleName.displayName {
+                    relatedModules = [value]
+                } else {
+                    relatedModules = nil
+                }
+                return [
+                    RenderMetadata.Module(name: moduleName.displayName, relatedModules: relatedModules)
+                ]
+            }
+        ) {
+            node.metadata.modulesVariants = moduleVariants
         } else {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)])
         }
-        
-        node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
+
+        node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
             availability.availability
@@ -1243,7 +1265,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
-        node.metadata.role = contentRenderer.role(for: documentationNode.kind).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: documentationNode.kind).rawValue
         node.metadata.titleVariants = VariantCollection<String?>(from: symbol.titleVariants)
         node.metadata.externalIDVariants = VariantCollection<String?>(from: symbol.externalIDVariants)
         
@@ -1955,3 +1977,16 @@ extension TutorialArticleSection: RenderTree {}
 extension ContentLayout: RenderTree {}
 
 extension ContentRenderSection: RenderTree {}
+
+private extension Set where Element == SourceLanguage {
+    func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
+        traits.contains(where: {
+            guard let languageID = $0.interfaceLanguage,
+                  let traitLanguage = SourceLanguage(knownLanguageIdentifier: languageID)
+            else {
+                return false
+            }
+            return self.contains(traitLanguage)
+        })
+    }
+}

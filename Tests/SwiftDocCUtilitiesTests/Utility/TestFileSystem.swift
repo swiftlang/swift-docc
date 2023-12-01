@@ -82,7 +82,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         for folder in folders {
             let files = try addFolder(folder)
             if let info = folder.recursiveContent.mapFirst(where: { $0 as? InfoPlist }) {
-                let files = files.filter({ $0.hasPrefix(folder.absoluteURL.path) }).compactMap({ URL(string: $0) })
+                let files = files.filter({ $0.hasPrefix(folder.absoluteURL.path) }).compactMap({ URL(fileURLWithPath: $0) })
 
                 let markupFiles = files.filter({ DocumentationBundleFileTypes.isMarkupFile($0) })
                 let miscFiles = files.filter({ !DocumentationBundleFileTypes.isMarkupFile($0) })

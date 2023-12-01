@@ -65,7 +65,7 @@ extension LMDB {
             case MDB_TLS_FULL: self = .tlsFull
             case MDB_TXN_FULL: self = .txnFull
             case MDB_CURSOR_FULL: self = .cursorFull
-            case MDB_PAGE_FULL:  self = .pageFull
+            case MDB_PAGE_FULL: self = .pageFull
             case MDB_MAP_RESIZED: self = .mapResized
             case MDB_INCOMPATIBLE: self = .incompatible
             case MDB_BAD_RSLOT: self = .badReaderSlot

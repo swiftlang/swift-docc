@@ -11,14 +11,14 @@
 import Foundation
 
 /// A section of a Tutorial page.
-public struct TutorialSectionsRenderSection: RenderSection {
+public struct TutorialSectionsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .tasks
     
     /// The tasks in the section.
     public var tasks: [Section]
     
     /// A render-friendly representation of a tutorial section.
-    public struct Section: TextIndexing {
+    public struct Section: TextIndexing, Equatable {
         /// The title of the section.
         public var title: String
 
@@ -79,5 +79,43 @@ extension TutorialSectionsRenderSection.Section: Codable {
         try container.encode(contentSection, forKey: .contentSection)
         try container.encode(stepsSection, forKey: .stepsSection)
         try container.encode(anchor, forKey: .anchor)
+    }
+}
+
+// Diffable conformance
+extension TutorialSectionsRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this TutorialSectionsRenderSection and the given one.
+    func difference(from other: TutorialSectionsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.tasks, forKey: CodingKeys.tasks)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this TutorialSectionsRenderSection is similar enough to the given one.
+    func isSimilar(to other: TutorialSectionsRenderSection) -> Bool {
+        return self.tasks == other.tasks
+    }
+}
+
+// Diffable conformance
+extension TutorialSectionsRenderSection.Section: RenderJSONDiffable {
+    /// Returns the differences between this Section and the given one.
+    func difference(from other: TutorialSectionsRenderSection.Section, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.contentSection, forKey: CodingKeys.contentSection)
+        diffBuilder.addDifferences(atKeyPath: \.stepsSection, forKey: CodingKeys.stepsSection)
+        diffBuilder.addDifferences(atKeyPath: \.anchor, forKey: CodingKeys.contentSection)
+
+        return diffBuilder.differences
+    }
+
+    /// Returns if this Section is similar enough to the given one.
+    func isSimilar(to other: TutorialSectionsRenderSection.Section) -> Bool {
+        return self.title == other.title || self.contentSection == other.contentSection
     }
 }

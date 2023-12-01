@@ -112,7 +112,7 @@ class ConvertSubcommandTests: XCTestCase {
             )
             let action = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(
-                action.htmlTemplateDirectory,
+                action.htmlTemplateDirectory?.standardizedFileURL,
                 defaultTemplateDir.standardizedFileURL
             )
         }
@@ -157,12 +157,14 @@ class ConvertSubcommandTests: XCTestCase {
     func testInvalidTargetPathOptions() throws {
         let fakeRootPath = "/nonexistentrootfolder/subfolder"
         // Test throws on non-existing parent folder.
-        for path in ["/tmp/output", "/tmp", "/"] {
-            SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-            XCTAssertThrowsError(try Docc.Convert.parse([
-                "--output-path", fakeRootPath + path,
-                testBundleURL.path,
-            ]), "Did not refuse target folder path '\(path)'")
+        for outputOption in ["-o", "--output-path"] {
+            for path in ["/tmp/output", "/tmp", "/"] {
+                SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
+                XCTAssertThrowsError(try Docc.Convert.parse([
+                    outputOption, fakeRootPath + path,
+                    testBundleURL.path,
+                ]), "Did not refuse target folder path '\(path)'")
+            }
         }
     }
 
@@ -186,7 +188,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertNil(convertOptions.fallbackBundleDisplayName)
             XCTAssertNil(convertOptions.fallbackBundleIdentifier)
-            XCTAssertNil(convertOptions.fallbackBundleVersion)
             XCTAssertNil(convertOptions.defaultCodeListingLanguage)
         }
         
@@ -202,7 +203,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
         
@@ -218,7 +218,6 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
             XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
     }
@@ -296,7 +295,7 @@ class ConvertSubcommandTests: XCTestCase {
             "--index",
         ])
         
-        XCTAssertEqual(convertOptions.index, true)
+        XCTAssertTrue(convertOptions.emitLMDBIndex)
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         
@@ -330,11 +329,10 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Verify the options
         
-        XCTAssertNil(convertOptions.documentationBundle.url)
+        XCTAssertNil(convertOptions.documentationCatalog.url)
         
         XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
         XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-        XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
         
         XCTAssertEqual(
             convertOptions.additionalSymbolGraphDirectory,
@@ -389,6 +387,105 @@ class ConvertSubcommandTests: XCTestCase {
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
         XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+    }
+    
+    func testExperimentalEnableExternalLinkSupportFlag() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+        
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalLinkHierarchySerialization)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-external-link-support",
+            testBundleURL.path,
+        ])
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalLinkHierarchySerialization)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+    }
+    
+    func testLinkDependencyValidation() throws {
+        let originalErrorLogHandle = Docc.Convert._errorLogHandle
+        let originalDiagnosticFormattingOptions = Docc.Convert._diagnosticFormattingOptions
+        defer {
+            Docc.Convert._errorLogHandle = originalErrorLogHandle
+            Docc.Convert._diagnosticFormattingOptions = originalDiagnosticFormattingOptions
+        }
+        Docc.Convert._diagnosticFormattingOptions = .formatConsoleOutputForTools
+        
+        let rendererTemplateDirectory = try createTemporaryDirectory()
+        try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
+        defer {
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
+        }
+        
+        let dependencyDir = try createTemporaryDirectory()
+            .appendingPathComponent("SomeDependency.doccarchive", isDirectory: true)
+        let fileManager = FileManager.default
+        
+        let argumentsToParse = [
+            testBundleURL.path,
+            "--dependency",
+            dependencyDir.path
+        ]
+        
+        // The dependency doesn't exist
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
+            warning: No documentation archive exist at '\(dependencyDir.path)'.
+            """)
+        }
+        // The dependency is a file instead of a directory
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            try "Some text".write(to: dependencyDir, atomically: true, encoding: .utf8)
+            
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
+            warning: Dependency at '\(dependencyDir.path)' is not a directory.
+            """)
+            
+            try fileManager.removeItem(at: dependencyDir)
+        }
+        // The dependency doesn't have the necessary files
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            try fileManager.createDirectory(at: dependencyDir, withIntermediateDirectories: false)
+            
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [])
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), """
+            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'linkable-entities.json' file.
+            warning: Dependency at '\(dependencyDir.path)' doesn't contain a is not a 'link-hierarchy.json' file.
+            """)
+        }
+        do {
+            let logStorage = LogHandle.LogStorage()
+            Docc.Convert._errorLogHandle = .memory(logStorage)
+            
+            try "".write(to: dependencyDir.appendingPathComponent("linkable-entities.json"), atomically: true, encoding: .utf8)
+            try "".write(to: dependencyDir.appendingPathComponent("link-hierarchy.json"), atomically: true, encoding: .utf8)
+            
+            let command = try Docc.Convert.parse(argumentsToParse)
+            XCTAssertEqual(command.linkResolutionOptions.dependencies, [dependencyDir])
+            XCTAssertEqual(logStorage.text.trimmingCharacters(in: .newlines), "")
+        }
     }
     
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
@@ -459,7 +556,7 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
-    func testTreatWarningAsrror() throws {
+    func testTreatWarningAsError() throws {
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         do {
             // Passing no argument should default to the current working directory.

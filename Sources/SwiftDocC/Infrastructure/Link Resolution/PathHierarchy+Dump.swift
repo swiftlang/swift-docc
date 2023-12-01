@@ -1,16 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-
-// This API isn't exposed anywhere and isn't used. It exist as a debugging mechanism and (so far) only need to be
-// available in debug builds.
+// This API isn't exposed anywhere and is only used from a debugger.
 #if DEBUG
 
 /// A node in a tree structure that can be printed into a visual representation for debugging.

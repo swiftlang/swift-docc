@@ -1,0 +1,326 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)"
+    },
+    "module": {
+        "name": "Outer",
+        "platform": {
+            "architecture": "arm64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 14,
+                    "minor": 0
+                },
+                "name": "macosx"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [
+        {
+            "kind": "extensionTo",
+            "source": "s:e:s:5Inner0A6StructV5OuterE9somethingyyF",
+            "target": "s:5Inner0A6StructV",
+            "targetFallback": "Inner.InnerStruct"
+        },
+        {
+            "kind": "extensionTo",
+            "source": "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF",
+            "target": "s:5Inner0A5ClassC",
+            "targetFallback": "Inner.InnerClass"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:5Inner0A5ClassC5OuterE9somethingyyF",
+            "target": "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF",
+            "targetFallback": "Inner.InnerClass"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:5Inner0A6StructV5OuterE9somethingyyF",
+            "target": "s:e:s:5Inner0A6StructV5OuterE9somethingyyF",
+            "targetFallback": "Inner.InnerStruct"
+        }
+    ],
+    "symbols": [
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "something"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:5Inner0A5ClassC5OuterE9somethingyyF"
+            },
+            "kind": {
+                "displayName": "Instance Method",
+                "identifier": "swift.method"
+            },
+            "location": {
+                "position": {
+                    "character": 9,
+                    "line": 17
+                },
+                "uri": "file:///Users/username/path/to/ShadowExtendedModuleWithLocalSymbol/Outer.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "something"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ],
+                "title": "something()"
+            },
+            "pathComponents": [
+                "InnerClass",
+                "something()"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Inner",
+                "typeKind": "swift.class"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "something"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:5Inner0A6StructV5OuterE9somethingyyF"
+            },
+            "kind": {
+                "displayName": "Instance Method",
+                "identifier": "swift.method"
+            },
+            "location": {
+                "position": {
+                    "character": 9,
+                    "line": 14
+                },
+                "uri": "file:///Users/username/path/to/ShadowExtendedModuleWithLocalSymbol/Outer.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "something"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ],
+                "title": "something()"
+            },
+            "pathComponents": [
+                "InnerStruct",
+                "something()"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Inner",
+                "typeKind": "swift.struct"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "extension"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:5Inner0A5ClassC",
+                    "spelling": "InnerClass"
+                }
+            ],
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF"
+            },
+            "kind": {
+                "displayName": "Extension",
+                "identifier": "swift.extension"
+            },
+            "location": {
+                "position": {
+                    "character": 7,
+                    "line": 16
+                },
+                "uri": "file:///Users/username/path/to/ShadowExtendedModuleWithLocalSymbol/Outer.swift"
+            },
+            "names": {
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "InnerClass"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "extension"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:5Inner0A5ClassC",
+                        "spelling": "InnerClass"
+                    }
+                ],
+                "title": "InnerClass"
+            },
+            "pathComponents": [
+                "InnerClass"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Inner",
+                "typeKind": "swift.class"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "extension"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:5Inner0A6StructV",
+                    "spelling": "InnerStruct"
+                }
+            ],
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:e:s:5Inner0A6StructV5OuterE9somethingyyF"
+            },
+            "kind": {
+                "displayName": "Extension",
+                "identifier": "swift.extension"
+            },
+            "location": {
+                "position": {
+                    "character": 7,
+                    "line": 13
+                },
+                "uri": "file:///Users/username/path/to/ShadowExtendedModuleWithLocalSymbol/Outer.swift"
+            },
+            "names": {
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "InnerStruct"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "extension"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:5Inner0A6StructV",
+                        "spelling": "InnerStruct"
+                    }
+                ],
+                "title": "InnerStruct"
+            },
+            "pathComponents": [
+                "InnerStruct"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Inner",
+                "typeKind": "swift.struct"
+            }
+        }
+    ]
+}

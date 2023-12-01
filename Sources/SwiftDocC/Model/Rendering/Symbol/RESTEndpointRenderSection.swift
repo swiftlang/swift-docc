@@ -34,10 +34,10 @@ enum RESTEndpointType: String, Codable {
 ///  - (baseURL) `https://www.example.com`
 ///  - (path) `/api/artists/`
 ///  - (parameter) `{id}`
-public struct RESTEndpointRenderSection: RenderSection {
+public struct RESTEndpointRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restEndpoint
     /// A single token in a REST endpoint.
-    public struct Token: Codable {
+    public struct Token: Codable, Equatable {
         /// The kind of REST endpoint token.
         public enum Kind: String, Codable {
             case method, baseURL, path, parameter, text
@@ -62,5 +62,42 @@ public struct RESTEndpointRenderSection: RenderSection {
     public init(title: String, tokens: [Token]) {
         self.title = title
         self.tokens = tokens
+    }
+}
+
+// Diffable conformance
+extension RESTEndpointRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this RESTEndpointRenderSection and the given one.
+    func difference(from other: RESTEndpointRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this RESTEndpointRenderSection is similar enough to the given one.
+    func isSimilar(to other: RESTEndpointRenderSection) -> Bool {
+        return self.title == other.title
+    }
+}
+
+// Diffable conformance
+extension RESTEndpointRenderSection.Token: RenderJSONDiffable {
+    /// Returns the differences between this Token and the given one.
+    func difference(from other: RESTEndpointRenderSection.Token, at path: CodablePath) -> JSONPatchDifferences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.text, forKey: CodingKeys.text)
+
+        return diffBuilder.differences
+    }
+    
+    /// Returns if this Token is similar enough to the given one.
+    func isSimilar(to other: RESTEndpointRenderSection.Token) -> Bool {
+        return self.text == other.text
     }
 }

@@ -1584,12 +1584,43 @@ class ConvertActionTests: XCTestCase {
         }
     }
 
+    /// An empty implementation of `ConvertOutputConsumer` that purposefully does nothing except
+    /// to pass the number of documentation coverage info structs received to the given handler
+    struct TestDocumentationCoverageConsumer: ConvertOutputConsumer {
+
+        let coverageConsumeHandler: (Int) -> Void
+
+        init(coverageConsumeHandler: @escaping (Int) -> Void) {
+            self.coverageConsumeHandler = coverageConsumeHandler
+        }
+
+        func consume(renderNode: RenderNode) throws { }
+        func consume(problems: [Problem]) throws { }
+        func consume(assetsInBundle bundle: DocumentationBundle) throws {}
+        func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
+        func consume(indexingRecords: [IndexingRecord]) throws {}
+        func consume(assets: [RenderReferenceType: [RenderReference]]) throws {}
+        func consume(benchmarks: Benchmark) throws {}
+
+        // Call the handler with the number of coverage items consumed here
+        func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {
+            coverageConsumeHandler(documentationCoverageInfo.count)
+        }
+    }
+
     func testMetadataIsOnlyWrittenToOutputFolderWhenDocumentationCoverage() throws {
 
-        // An empty documentation bundle
+        // An empty documentation bundle, except for a single symbol graph file
+        // containing 8 symbols.
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
         ])
+
+        // Count the number of coverage info structs consumed by each test below,
+        // using TestDocumentationCoverageConsumer and this handler.
+        var coverageInfoCount = 0
+        let coverageInfoHandler = { count in coverageInfoCount += count }
 
         // Check that they're nothing is written for `.noCoverage`
         do {
@@ -1612,6 +1643,10 @@ class ConvertActionTests: XCTestCase {
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
+
+            // Rerun the convert and test no coverage info structs were consumed
+            let _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
+            XCTAssertEqual(coverageInfoCount, 0)
         }
 
         // Check that JSON is written for `.brief`
@@ -1635,6 +1670,11 @@ class ConvertActionTests: XCTestCase {
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
+
+            // Rerun the convert and test one coverage info structs was consumed for each symbol page (8)
+            coverageInfoCount = 0
+            let _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
+            XCTAssertEqual(coverageInfoCount, 8)
         }
 
         // Check that JSON is written for `.detailed`
@@ -1658,6 +1698,11 @@ class ConvertActionTests: XCTestCase {
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
+
+            // Rerun the convert and test one coverage info structs was consumed for each symbol page (8)
+            coverageInfoCount = 0
+            let _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
+            XCTAssertEqual(coverageInfoCount, 8)
         }
     }
     
@@ -3024,6 +3069,89 @@ class ConvertActionTests: XCTestCase {
             }
             return lhs.diagnostic.identifier < rhs.diagnostic.identifier
         }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }.sorted().joined(separator: "\n")
+    }
+    
+    // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
+    func testConvertWithNoTechnologyRoot() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Documentation.md", utf8Content: "")
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        let engine = DiagnosticEngine()
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: true,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticEngine: engine
+        )
+        let _ = try action.perform(logHandle: .standardOutput)
+        XCTAssertEqual(engine.problems.count, 1)
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
+        XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+    }
+    
+    func testWrittenDiagnosticsAfterConvert() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Documentation.md", utf8Content: """
+            # ``ModuleThatDoesNotExist``
+
+            This will result in two errors from two different phases of the build
+            """)
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
+        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        let fileConsumer = DiagnosticFileWriter(outputPath: diagnosticFile)
+        
+        let engine = DiagnosticEngine()
+        engine.add(fileConsumer)
+        
+        let logStorage = LogHandle.LogStorage()
+        let consoleConsumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], baseURL: nil, highlight: false)
+        engine.add(consoleConsumer)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticEngine: engine
+        )
+        
+        let _ = try action.perform(logHandle: .standardOutput)
+        XCTAssertEqual(engine.problems.count, 2)
+        
+        XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
+        
+        let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
+        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
+        
+        XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
+            "No TechnologyRoot to organize article-only documentation.",
+            "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
+        ])
+        
+        let logLines = logStorage.text.splitByNewlines
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize article-only documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
     }
     
     #endif
