@@ -68,12 +68,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
-                        let platformNames = platforms.sorted { (lhs, rhs) -> Bool in
-                            guard let lhsValue = lhs, let rhsValue = rhs else {
-                                return lhs == nil
-                            }
-                            return lhsValue.rawValue < rhsValue.rawValue
-                        }
+                        let platformNames = platforms
+                            .compactMap { $0 }
+                            .sorted(by: \.rawValue)
 
                         declarations.append(
                             DeclarationRenderSection(
