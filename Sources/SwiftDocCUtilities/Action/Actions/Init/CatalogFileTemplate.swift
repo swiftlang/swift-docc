@@ -34,6 +34,8 @@ struct CatalogFileTemplate {
         self.content = """
         # \(title)
         
+        <!--- Metadata configuration to make appear this documentation page as a top-level page -->
+        
         @Metadata {
           @TechnologyRoot
         }

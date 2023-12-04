@@ -58,9 +58,7 @@ public struct InitOptions: ParsableArguments {
             
             The provided templates are:
             
-            - minimal: This template is crafted for creating conceptual documentation and includes a catalog with just one markdown file. It provides minimal content, allowing users to start writing right away.
-            
-            - expanded: This template is designed for authoring conceptual documentation, featuring a catalog containing only articles. It includes an expanded structure and content, along with guidelines on how to author content using DocC.
+            - articleOnly: This template contains the minimal needed for creating article-only reference documentation not tied to symbols. It includes a catalog with just one markdown file and a references folder.
             
             - tutorial: This template contains the necessary structure and directives to get started on authoring tutorials.
             """,

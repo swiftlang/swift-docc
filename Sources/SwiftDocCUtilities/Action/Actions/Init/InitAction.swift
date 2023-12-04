@@ -28,6 +28,14 @@ public struct InitAction: Action {
     private let catalogTemplateKind: CatalogTemplateKind
     private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     private let documentationTitle: String
+    private var resourceDocumentationLink: String {
+        switch catalogTemplateKind {
+        case .articleOnly:
+            "https://www.swift.org/documentation/docc/"
+        case .tutorial:
+            "https://www.swift.org/documentation/docc/tutorial-syntax"
+        }
+    }
     
     /// Creates a new Init action from the given parameters.
     ///
@@ -127,6 +135,14 @@ public struct InitAction: Action {
                 to: &logHandle
             )
         }
+        
+        print(
+            """
+            
+            For additional resources on how to get started with DocC, please refer to \(resourceDocumentationLink).
+            """,
+            to: &logHandle
+        )
         
         return ActionResult(
             didEncounterError: !diagnosticEngine.problems.isEmpty,
