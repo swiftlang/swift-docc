@@ -1618,6 +1618,35 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/MemberName")
     }
     
+    func testOptionalMemberUnderCorrectContainer() throws {
+        let containerID = "some-container-symbol-id"
+        let otherID = "some-other-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    (containerID, .swift, ["ContainerName"]),
+                    (otherID, .swift, ["ContainerName"]),
+                    (memberID, .swift, ["ContainerName", "MemberName1"]),
+                ],
+                relationships: [
+                    .init(source: memberID, target: containerID, kind: .optionalMemberOf, targetFallback: nil),
+                ]
+            ))
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
+        XCTAssertEqual(paths[otherID], "/ModuleName/ContainerName-2vaqf")
+        XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName-qwwf")
+        XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName-qwwf/MemberName1")
+    }
+    
     func testMultiPlatformModuleWithExtension() throws {
         let (_, context) = try testBundleAndContext(named: "MultiPlatformModuleWithExtension")
         let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
