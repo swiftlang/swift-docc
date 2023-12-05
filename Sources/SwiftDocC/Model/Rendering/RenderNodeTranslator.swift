@@ -1022,6 +1022,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         contentCompiler: inout RenderContentCompiler
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
+            let supportedLanguages = Set(group.directives.compactMap {
+                SupportedLanguage(from: $0, source: nil, for: bundle, in: context)?.language
+            })
+            
+            // If the task group has a set of supported languages, see if it should render for the allowed traits.
+            guard supportedLanguages.isEmpty || supportedLanguages.matchesOneOf(traits: allowedTraits) else {
+                return nil
+            }
             
             let abstractContent = group.abstract.map {
                 return visitMarkup($0.content) as! [RenderInlineContent]
@@ -1976,3 +1984,16 @@ extension TutorialArticleSection: RenderTree {}
 extension ContentLayout: RenderTree {}
 
 extension ContentRenderSection: RenderTree {}
+
+private extension Set where Element == SourceLanguage {
+    func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
+        traits.contains(where: {
+            guard let languageID = $0.interfaceLanguage,
+                  let traitLanguage = SourceLanguage(knownLanguageIdentifier: languageID)
+            else {
+                return false
+            }
+            return self.contains(traitLanguage)
+        })
+    }
+}

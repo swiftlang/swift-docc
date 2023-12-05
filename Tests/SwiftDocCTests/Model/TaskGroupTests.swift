@@ -221,4 +221,204 @@ class TaskGroupTests: XCTestCase {
             XCTAssertEqual("https://www.example.com", links[1].destination)
         }
     }
+    
+    func testSupportedLanguages() throws {
+        let markupSource = """
+            # Title
+            
+            Abstract.
+            
+            ## Topics
+            
+            ### Something Swift only
+            
+            This link is only for Swift
+            
+            @SupportedLanguage(swift)
+            
+            - ``Link1``
+            
+            ### Something Objective-C only
+                        
+            This link is only for Objective-C
+            
+            @SupportedLanguage(objc)
+            
+            - ``Link1``
+            
+            ### Something for both
+                        
+            This link is for both Swift and Objective-C
+            
+            @SupportedLanguage(objc)
+            @SupportedLanguage(swift)
+            
+            - ``Link3``
+                            
+            ### Something without a language filter
+                        
+            This link is for all languages
+            
+            - ``Link4``
+            """
+        let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
+        let markupModel = DocumentationMarkup(markup: document)
+        
+        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).detachedFromParent.format())
+        
+        let topicSection = try XCTUnwrap(markupModel.topicsSection)
+        XCTAssertEqual(topicSection.taskGroups.count, 4)
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something Swift only")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is only for Swift")
+            XCTAssertEqual(taskGroup.directives.count, 1)
+            for directive in taskGroup.directives {
+                XCTAssertEqual(directive.name, "SupportedLanguage")
+                XCTAssertEqual(directive.arguments().count, 1)
+            }
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst().first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something Objective-C only")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is only for Objective-C")
+            XCTAssertEqual(taskGroup.directives.count, 1)
+            for directive in taskGroup.directives {
+                XCTAssertEqual(directive.name, "SupportedLanguage")
+                XCTAssertEqual(directive.arguments().count, 1)
+            }
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst(2).first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something for both")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is for both Swift and Objective-C")
+            XCTAssertEqual(taskGroup.directives.count, 2)
+            for directive in taskGroup.directives {
+                XCTAssertEqual(directive.name, "SupportedLanguage")
+                XCTAssertEqual(directive.arguments().count, 1)
+            }
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+        
+        do {
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst(3).first)
+            XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something without a language filter")
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is for all languages")
+            XCTAssert(taskGroup.directives.isEmpty)
+            XCTAssertEqual(taskGroup.links.count, 1)
+        }
+    }
+    
+    func testTopicContentOrder() throws {
+        func assertExpectedParsedTaskGroupContent(_ content: String, file: StaticString = #file, line: UInt = #line) throws {
+            let document = Document(parsing: """
+                # Title
+                
+                Abstract.
+                
+                ## Topics
+                
+                \(content)
+                
+                """, options: [.parseBlockDirectives, .parseSymbolLinks])
+            let markupModel = DocumentationMarkup(markup: document)
+            
+            let topicSection = try XCTUnwrap(markupModel.topicsSection, file: file, line: line)
+            XCTAssertEqual(topicSection.taskGroups.count, 1, file: file, line: line)
+            
+            let taskGroup = try XCTUnwrap(topicSection.taskGroups.first, file: file, line: line)
+            
+            XCTAssertEqual(taskGroup.heading?.title, "Topic name", file: file, line: line)
+            XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "Abstract paragraph", file: file, line: line)
+            XCTAssertEqual(taskGroup.discussion?.content.map { $0.detachedFromParent.format() }, [
+                "Discussion paragraph 1",
+                "Discussion paragraph 2",
+            ], file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.count, 1, file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.first?.name, "SupportedLanguage", file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.first?.arguments().count, 1, file: file, line: line)
+            XCTAssertEqual(taskGroup.links.map(\.destination), ["Link1", "Link2"], file: file, line: line)
+        }
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            @SupportedLanguage(swift)
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            @SupportedLanguage(swift)
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            @SupportedLanguage(swift)
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            @SupportedLanguage(swift)
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            """)
+        
+        try assertExpectedParsedTaskGroupContent("""
+            ### Topic name
+            
+            Abstract paragraph
+            
+            Discussion paragraph 1
+            
+            Discussion paragraph 2
+            
+            - ``Link1``
+            - ``Link2``
+            
+            @SupportedLanguage(swift)
+            """)
+        
+    }
 }

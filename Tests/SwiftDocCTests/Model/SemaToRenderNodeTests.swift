@@ -3284,4 +3284,65 @@ Document
             ]
         )
     }
+    
+    func testLanguageSpecificTopicSections() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Provide different curation in different languages
+            
+            ## Topics
+            
+            ### Something Swift only
+            
+            This link is only for Swift
+            
+            @SupportedLanguage(swift)
+            
+            - ``MyObjectiveCClassSwiftName/myMethodSwiftName()``
+            
+            ### Something Objective-C only
+                        
+            This link is only for Objective-C
+            
+            @SupportedLanguage(objc)
+            
+            - ``MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            """.write(to: url.appendingPathComponent("MyObjectiveCClassObjectiveCName.md"), atomically: true, encoding: .utf8)
+        }
+        
+        XCTAssert(context.problems.isEmpty, "\(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = try XCTUnwrap(context.knownIdentifiers.first { $0.path.hasSuffix("MixedFramework/MyObjectiveCClassSwiftName") })
+        
+        let documentationNode = try context.entity(with: reference)
+        XCTAssertEqual(documentationNode.availableVariantTraits.count, 2, "This page has Swift and Objective-C variants")
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(documentationNode, at: nil)
+        
+        let topicSectionsVariants = renderNode.topicSectionsVariants
+        
+        let swiftTopicSection = topicSectionsVariants.defaultValue
+        
+        XCTAssertEqual(swiftTopicSection.first?.title, "Something Swift only")
+        XCTAssertEqual(swiftTopicSection.first?.abstract?.plainText, "This link is only for Swift")
+        XCTAssertEqual(swiftTopicSection.first?.identifiers, [
+            "doc://org.swift.MixedFramework/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()"
+        ])
+        
+        let objcTopicSectionVariant = try XCTUnwrap(topicSectionsVariants.variants.first { $0.traits[0] == .interfaceLanguage("occ") })
+        let objcTopicSection = objcTopicSectionVariant.applyingPatchTo(swiftTopicSection)
+        
+        XCTAssertEqual(objcTopicSection.first?.title, "Something Objective-C only")
+        XCTAssertEqual(objcTopicSection.first?.abstract?.plainText, "This link is only for Objective-C")
+        XCTAssertEqual(objcTopicSection.first?.identifiers, [
+            "doc://org.swift.MixedFramework/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)"
+        ])
+    }
 }
