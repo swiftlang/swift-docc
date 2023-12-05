@@ -1538,31 +1538,11 @@ class PathHierarchyTests: XCTestCase {
             ["X", "Y"],
             ["X", "Y2", "Z", "W"],
         ]
-        let graph = SymbolGraph(
-            metadata: SymbolGraph.Metadata(
-                formatVersion: SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1),
-                generator: "unit-test"
-            ),
-            module: SymbolGraph.Module(
-                name: "Module",
-                platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
-            ),
-            symbols: symbolPaths.map {
-                SymbolGraph.Symbol(
-                    identifier: SymbolGraph.Symbol.Identifier(precise: $0.joined(separator: "."), interfaceLanguage: "swift"),
-                    names: SymbolGraph.Symbol.Names(title: "Title", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
-                    pathComponents: $0,
-                    docComment: nil,
-                    accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
-                    kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
-                    mixins: [:]
-                )
-            },
-            relationships: []
-        )
-        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
-            try TextFile(name: "mykit.symbols.json", utf8Content: XCTUnwrap(String(data: JSONEncoder().encode(graph), encoding: .utf8))),
-            InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "Module.symbols.json", content: makeSymbolGraph(
+                moduleName: "Module",
+                symbols: symbolPaths.map { ($0.joined(separator: "."), .swift, $0) }
+            )),
         ])
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
@@ -1587,6 +1567,49 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths["A.B.C2"], "/Module/A/B/C2")
         XCTAssertEqual(paths["X.Y"], "/Module/X/Y")
         XCTAssertEqual(paths["X.Y2.Z.W"], "/Module/X/Y2/Z/W")
+    }
+    
+    func testMixedLanguageSymbolWithItsExtendingModule() throws {
+        let containerID = "some-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName", 
+                    symbols: [
+                        (containerID, .objectiveC, ["ContainerName"])
+                    ]
+                )),
+            ]),
+            
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        (containerID, .swift, ["ContainerName"])
+                    ]
+                )),
+                
+                JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ExtendingModule",
+                    symbols: [
+                        (memberID, .swift, ["ContainerName", "MemberName"])
+                    ],
+                    relationships: [
+                        .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                    ]
+                )),
+            ])
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
+        XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/MemberName")
     }
     
     func testMultiPlatformModuleWithExtension() throws {
@@ -1629,6 +1652,29 @@ class PathHierarchyTests: XCTestCase {
     }
     
     // MARK: Test helpers
+    
+    private func makeSymbolGraph(
+        moduleName: String,
+        symbols: [(identifier: String, language: SourceLanguage, pathComponents: [String])],
+        relationships: [SymbolGraph.Relationship] = []
+    ) -> SymbolGraph {
+        return SymbolGraph(
+            metadata: SymbolGraph.Metadata(formatVersion: .init(major: 0, minor: 5, patch: 3), generator: "unit-test"),
+            module: SymbolGraph.Module(name: moduleName, platform: .init()),
+            symbols: symbols.map { identifier, language, pathComponents in
+                SymbolGraph.Symbol(
+                    identifier: .init(precise: identifier, interfaceLanguage: language.id),
+                    names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
+                    pathComponents: pathComponents,
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
+                    mixins: [:]
+                )
+            },
+            relationships: relationships
+        )
+    }
     
     private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
         do {
