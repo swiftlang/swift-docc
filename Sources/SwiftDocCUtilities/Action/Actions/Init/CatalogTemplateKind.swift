@@ -15,10 +15,10 @@ import SwiftDocC
 /// initializing the documentation catalog.
 public enum CatalogTemplateKind: String {
     
-    /// A template designed for authoring article-only reference documentation consisting of a catalog containing only one markdown file.
+    /// A template designed for authoring article-only reference documentation, consisting of a catalog that contains only one markdown file.
     case articleOnly
     
-    /// A template with the necessary structure and directives to get started on authoring tutorials.
+    /// A template designed for authoring tutorials, consisting of a catalog that contains a table of contents and a chapter.
     case tutorial
     
     /// Generates the catalog template using the provided template kind.
