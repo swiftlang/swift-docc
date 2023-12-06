@@ -102,7 +102,12 @@ struct PathHierarchy {
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                if let existingNode = allNodes[id]?.first(where: { $0.symbol!.identifier == symbol.identifier }) {
+                if let existingNode = allNodes[id]?.first(where: {
+                    // If both identifiers are in the same language, they are the same symbol
+                    $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
+                    // Otherwise, if both have the same name and kind their differences doesn't matter for link resolution purposes
+                    || ($0.name == symbol.pathComponents.last && $0.symbol!.kind.identifier == symbol.kind.identifier)
+                }) {
                     nodes[id] = existingNode
                 } else {
                     let node = Node(symbol: symbol)
@@ -200,9 +205,21 @@ struct PathHierarchy {
         }
         
         assert(
-            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
-            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
+            Every node should either have a parent node or be a root node. \
+            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
+            """
         )
+        
+        assert(
+            allNodes.values.allSatisfy({ nodesWithSameUSR in nodesWithSameUSR.allSatisfy({ node in
+                Array(sequence(first: node, next: \.parent)).last!.symbol!.kind.identifier == .module })
+            }), """
+            Every node should reach a root node by following its parents up. \
+            This wasn't true for \(allNodes.filter({ $0.value.allSatisfy({ Array(sequence(first: $0, next: \.parent)).last!.symbol!.kind.identifier == .module }) }).map(\.key).sorted())
+            """
+        )
+        
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node
@@ -219,8 +236,21 @@ struct PathHierarchy {
             }
             for tree in node.children.values {
                 for (_, subtree) in tree.storage {
-                    for (_, node) in subtree {
-                        descend(node)
+                    for (_, childNode) in subtree {
+                        assert(childNode.parent === node, {
+                            func describe(_ node: Node?) -> String {
+                                guard let node = node else { return "<nil>" }
+                                guard let identifier = node.symbol?.identifier else { return node.name }
+                                return "\(identifier.precise) (\(identifier.interfaceLanguage))"
+                            }
+                            return """
+                            Every child node should point back to its parent so that the tree can be traversed both up and down without any dead-ends. \
+                            This wasn't true for '\(describe(childNode))' which pointed to '\(describe(childNode.parent))' but should have pointed to '\(describe(node))'.
+                            """ }()
+                        )
+                        // In release builds we close off any dead-ends in the tree as a precaution for what shouldn't happen.
+                        childNode.parent = node
+                        descend(childNode)
                     }
                 }
             }
@@ -229,6 +259,13 @@ struct PathHierarchy {
         for module in roots.values {
             descend(module)
         }
+        
+        assert(
+            lookup.allSatisfy({ $0.value.parent != nil || roots[$0.value.name] != nil }), """
+            Every node should either have a parent node or be a root node. \
+            This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())
+            """
+        )
         
         func newNode(_ name: String) -> Node {
             let id = ResolvedIdentifier()
@@ -244,6 +281,13 @@ struct PathHierarchy {
         assert(
             lookup.allSatisfy({ $0.key == $0.value.identifier }),
             "Every node lookup should match a node with that identifier."
+        )
+        
+        assert(
+            lookup.values.allSatisfy({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }), """
+            Every node's findable parent should exist in the lookup. \
+            This wasn't true for \(lookup.values.filter({ $0.parent?.identifier == nil || lookup[$0.parent!.identifier] != nil }).map(\.symbol!.identifier.precise).sorted())
+            """
         )
         
         self.modules = roots
@@ -326,7 +370,7 @@ extension PathHierarchy {
         /// Each name maps to a disambiguation tree that handles
         private(set) var children: [String: DisambiguationContainer]
         
-        private(set) unowned var parent: Node?
+        fileprivate(set) unowned var parent: Node?
         /// The symbol, if a node has one.
         private(set) var symbol: SymbolGraph.Symbol?
         
@@ -366,8 +410,18 @@ extension PathHierarchy {
         
         /// Adds a descendant of this node.
         fileprivate func add(child: Node, kind: String?, hash: String?) {
+            guard child.parent !== self else { 
+                assert(
+                    (try? children[child.name]?.find(kind, hash)) === child,
+                    "If the new child node already has this node as its parent it should already exist among this node's children."
+                )
+                return
+            }
+            // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
             children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
+            
+            assert(child.parent === self, "Potentially merging nodes shouldn't break the child node's reference to its parent.")
         }
         
         /// Combines this node with another node.
