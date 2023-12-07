@@ -994,15 +994,15 @@ Document @1:1-1:35
         
         // Verify that external articles are included in the Topics section of both symbol
         // variants regardless of their perceived language.
-        XCTAssertTrue(swiftTopicIDs.contains(["doc://com.test.external/path/to/external/swiftArticle"]))
-        XCTAssertTrue(swiftTopicIDs.contains(["doc://com.test.external/path/to/external/objCArticle"]))
-        XCTAssertTrue(objCTopicIDs.contains(["doc://com.test.external/path/to/external/swiftArticle"]))
-        XCTAssertTrue(objCTopicIDs.contains(["doc://com.test.external/path/to/external/objCArticle"]))
+        XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/swiftArticle"))
+        XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/objCArticle"))
+        XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftArticle"))
+        XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/objCArticle"))
         // Verify that external language specific symbols are dropped from the Topics section in the
         // variants for languages where the symbol isn't available.
-        XCTAssertFalse(swiftTopicIDs.contains(["doc://com.test.external/path/to/external/objCSymbol"]))
-        XCTAssertTrue(swiftTopicIDs.contains(["doc://com.test.external/path/to/external/swiftSymbol"]))
-        XCTAssertTrue(objCTopicIDs.contains(["doc://com.test.external/path/to/external/objCSymbol"]))
-        XCTAssertFalse(objCTopicIDs.contains(["doc://com.test.external/path/to/external/swiftSymbol"]))
+        XCTAssertFalse(swiftTopicIDs.contains("doc://com.test.external/path/to/external/objCSymbol"))
+        XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
+        XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/objCSymbol"))
+        XCTAssertFalse(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
     }
 }
