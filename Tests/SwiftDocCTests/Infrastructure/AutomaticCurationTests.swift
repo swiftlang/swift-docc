@@ -539,7 +539,34 @@ class AutomaticCurationTests: XCTestCase {
             ]
         )
     }
-    
+
+    func testNamespacesAreCuratedProperly() throws {
+        let (bundle, context) = try testBundleAndContext(named: "CxxNamespaces")
+
+        let rootDocumentationNode = try context.entity(
+            with: .init(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/CxxNamespaces",
+                sourceLanguage: .objectiveC
+            )
+        )
+        let topics = try AutomaticCuration.topics(
+            for: rootDocumentationNode,
+            withTraits: [.objectiveC],
+            context: context
+        )
+
+        XCTAssertEqual(
+            topics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Namespaces",
+                "/documentation/CxxNamespaces/Foo",
+            ]
+        )
+    }
+
     // Ensures that manually curated sample code articles are not also
     // automatically curated.
     func testSampleCodeArticlesRespectManualCuration() throws {
