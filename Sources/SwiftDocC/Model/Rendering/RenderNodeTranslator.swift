@@ -1040,6 +1040,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
+                guard context.isSymbol(reference: reference) else {
+                    // If the reference corresponds to any kind except Symbol
+                    // (e.g., Article, Tutorial, SampleCode...), allow the topic
+                    // to appear independently of the source language it belongs to.
+                    return true
+                }
+                
                 let referenceSourceLanguageIDs = Set(context.sourceLanguages(for: reference).map(\.id))
                 
                 let availableSourceLanguageTraits = Set(availableTraits.compactMap(\.interfaceLanguage))
@@ -1469,7 +1476,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
-                // Allowed traits should be all traits except the reverse of the objc/swift pairing
+                // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
                         topics,
