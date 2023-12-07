@@ -137,7 +137,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-lmdb.git", branch: "release/5.10"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.2"),
         .package(url: "https://github.com/apple/swift-docc-symbolkit", branch: "release/5.10"),
-        .package(url: "https://github.com/apple/swift-crypto.git", from: "2.5.0"),
+        .package(url: "httpsx://github.com/apple/swift-crypto.git", from: "2.5.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
     ]
 } else {

@@ -2547,7 +2547,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         knownEntityValue(
             reference: reference,
             valueInLocalEntity: \.availableSourceLanguages
-            // valueInExternalEntity: \.sourceLanguages
         )
     }
     
