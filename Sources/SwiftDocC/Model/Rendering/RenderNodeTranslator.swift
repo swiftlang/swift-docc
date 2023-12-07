@@ -741,13 +741,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.metadata.role = role.rawValue
             
             switch role {
-            // If there are no links to other nodes from the article,
-            // set the eyebrow for articles.
             case .article:
+                // If there are no links to other nodes from the article,
+                // set the eyebrow for articles.
                 node.metadata.roleHeading = "Article"
-            // If the article links to other nodes, set the eyebrow for
-            // API Collections if any linked node is a symbol.
             case .collectionGroup:
+                // If the article links to other nodes, set the eyebrow for
+                // API Collections if any linked node is a symbol.
+                //
+                // If none of the linked nodes are symbols (it's a plain collection),
+                // don't display anything as the eyebrow title.
                 let curatesSymbols = contentCompiler.collectedTopicReferences.contains { topicReference in
                     context.topicGraph.nodeWithReference(topicReference)?.kind.isSymbol ?? false
                 }

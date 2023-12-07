@@ -58,27 +58,6 @@ class RenderNodeTranslatorTests: XCTestCase {
         return paragraph
     }
     
-    private func getRenderNodeArticleFromBundlePath(
-        bundleName: String,
-        referencePath: String,
-        configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> RenderNode {
-        let (_, bundle, context) = try testBundleAndContext(copying: bundleName, configureBundle: configureBundle)
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: referencePath,
-            sourceLanguage: .swift
-        )
-        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
-    }
-    
     func testResolvingSymbolLinks() throws {
         guard let paragraph = try findParagraph(withPrefix: "Exercise links to symbols", forSymbolPath: "/documentation/MyKit/MyProtocol") else {
             XCTFail("Failed to fetch test content")
@@ -1323,57 +1302,83 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingIsAssigned() throws {
-        // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
-        var renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+        func renderNodeArticleFromReferencePath(
+            referencePath: String
+        ) throws -> RenderNode {
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: referencePath,
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+            var translator = RenderNodeTranslator(
+                context: context,
+                bundle: bundle,
+                identifier: reference,
+                source: nil
+            )
+            return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
+        }
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configureBundle: { url in
             try """
             # API Collection
             My API Collection Abstract.
             ## Topics
             - ``MyKit/MyProtocol``
-            - <doc:article>
+            - <doc:article2>
+            - <doc:article3>
+            ## See Also
             """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-        })
-        XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
-        // Assert that articles that curates only other articles don't get any value assigned as the eyebrow title.
-        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
             try """
             # Collection
-            My Collection Abstract.
+            An abstract with a symbol link: ``MyKit/MyProtocol``
+            ## Overview
+            An overview with a symbol link: ``MyKit/MyProtocol``
             ## Topics
-            - <doc:article>
-            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-        })
-        XCTAssertEqual(renderNode.metadata.roleHeading, nil)
-        // Assert that articles that don't curate anything else get 'Article' assigned as the eyebrow title.
-        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            A topic group abstract with a symbol link: ``MyKit/MyProtocol``
+            - <doc:article4>
+            - <doc:article5>
+            """.write(to: url.appendingPathComponent("article2.md"), atomically: true, encoding: .utf8)
             try """
             # Article
             My Article Abstract.
-            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-        })
-        XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
-        // Assert that articles that have a custom title heading the eyebrow title assigned properly.
-        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            ## Overview
+            An overview.
+            """.write(to: url.appendingPathComponent("article3.md"), atomically: true, encoding: .utf8)
             try """
-            # Article
+            # My Cool Article
             @Metadata {
                 @TitleHeading("My Cool Article")
             }
             My Article Abstract.
-            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
-        })
-        XCTAssertEqual(renderNode.metadata.roleHeading, "My Cool Article")
-        // Assert that articles that have a custom page kind the eyebrow title assigned properly.
-        renderNode = try getRenderNodeArticleFromBundlePath(bundleName: "TestBundle", referencePath: "/documentation/Test-Bundle/article", configureBundle: { url in
+            ## Overview
+            An overview.
+            """.write(to: url.appendingPathComponent("article4.md"), atomically: true, encoding: .utf8)
             try """
-            # Article
+            # Sample Code
             @Metadata {
                 @PageKind(sampleCode)
             }
             ## Topics
             - <doc:article>
-            """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+            """.write(to: url.appendingPathComponent("article5.md"), atomically: true, encoding: .utf8)
         })
+        
+        // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
+        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/Test-Bundle/article")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")
+        // Assert that articles that curates only other articles don't get any value assigned as the eyebrow title.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/Test-Bundle/article2")
+        XCTAssertEqual(renderNode.metadata.roleHeading, nil)
+        // Assert that articles that don't curate anything else get 'Article' assigned as the eyebrow title.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/Test-Bundle/article3")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
+        // Assert that articles that have a custom title heading the eyebrow title assigned properly.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/Test-Bundle/article4")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "My Cool Article")
+        // Assert that articles that have a custom page kind the eyebrow title assigned properly.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/Test-Bundle/article5")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
     }
 }
