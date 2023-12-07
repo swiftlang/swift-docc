@@ -223,8 +223,8 @@ public struct TaskGroup {
         self.originalContent = content
     }
     
-    var directives: [BlockDirective] {
-        originalContent.compactMap { $0 as? BlockDirective }
+    var directives: [String: [BlockDirective]] {
+        .init(grouping: originalContent.compactMap { $0 as? BlockDirective }, by: \.name)
     }
 }
 
