@@ -135,6 +135,7 @@ public struct SourceLanguage: Hashable, Codable {
             "objective-c",
             "objc",
             "c", // FIXME: DocC should display C as its own language (github.com/apple/swift-docc/issues/169).
+            "c++",
         ],
         linkDisambiguationID: "c"
     )
