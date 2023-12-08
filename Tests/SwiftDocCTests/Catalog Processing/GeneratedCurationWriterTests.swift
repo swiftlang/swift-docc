@@ -237,6 +237,8 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         - ``age``
 
+        <!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+        
         <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
 
         ### Enumerations
