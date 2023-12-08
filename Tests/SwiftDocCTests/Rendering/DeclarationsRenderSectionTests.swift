@@ -80,4 +80,25 @@ class DeclarationsRenderSectionTests: XCTestCase {
         let value = try JSONDecoder().decode(DeclarationsRenderSection.self, from: jsonData)
         try assertRoundTripCoding(value)
     }
+
+    func testAlternateDeclarations() throws {
+        let (bundle, context) = try testBundleAndContext(named: "AlternateDeclarations")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/AlternateDeclarations/MyClass/present(completion:)",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+
+        XCTAssertEqual(declarationsSection.declarations.count, 2)
+        XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.macOS] }))
+    }
 }
