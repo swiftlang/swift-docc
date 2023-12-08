@@ -17,10 +17,20 @@ extension Docc.ProcessCatalog {
         
         static var configuration = CommandConfiguration(
             commandName: "emit-generated-curation",
-            abstract: "Write documentation extension files into the DocC Catalog with one that supports a static hosting environment.")
+            abstract: "Write documentation extension files with markdown representations of DocC's automatic curation.",
+            discussion: """
+            Pass the same '<catalog-path>' and '--additional-symbol-graph-dir <symbol-graph-dir>' as you would for `docc convert` to emit documentation extension files for your project.
+            
+            If you're getting started with arranging your symbols into topic groups you can pass '--depth 0' to only write topic sections for top-level symbols to a documentation extension file for your module.
+            
+            If you want to arrange specific sub-hierarchy of your project into topic groups you can pass '--from-symbol <symbol-link>' to only write documentation extension files with topic sections for that symbol and its descendants. \
+            This can be combined with '--depth <limit>' to control how far to descend from the specified symbol.
+            
+            For more information on arranging symbols into topic groups, see https://www.swift.org/documentation/docc/adding-structure-to-your-documentation-pages.
+            """)
         
         // Note:
-        // The order of the option groups in this file is reflected in the 'docc process-catalog emit-generated-curation --help' output.
+        // The order of the option groups and their arguments is reflected in the 'docc process-catalog emit-generated-curation --help' output.
         
         // MARK: Inputs and outputs
         
@@ -28,13 +38,19 @@ extension Docc.ProcessCatalog {
         var inputsAndOutputs: InputAndOutputOptions
         struct InputAndOutputOptions: ParsableArguments {
             @Argument(
-                help: "Path to the DocC Catalog ('.docc') directory.",
+                help: ArgumentHelp(
+                    "Path to the documentation catalog ('.docc') directory.",
+                    valueName: "catalog-path"
+                ),
                 transform: URL.init(fileURLWithPath:))
             var documentationCatalog: URL?
             
             @Option(
                 name: [.customLong("additional-symbol-graph-dir")],
-                help: "Path to a directory of additional symbol graph files.",
+                help: ArgumentHelp(
+                    "Path to a directory of additional symbol graph files.",
+                    valueName: "symbol-graph-dir"
+                ),
                 transform: URL.init(fileURLWithPath:)
             )
             var additionalSymbolGraphDirectory: URL?
@@ -43,7 +59,7 @@ extension Docc.ProcessCatalog {
                 name: [.customLong("output-path")],
                 help: ArgumentHelp(
                     "The location where docc writes the transformed catalog.",
-                    discussion: "If no output-path is provided, docc will perform an in-place transformation of the provided DocC Catalog."
+                    discussion: "If no output-path is provided, docc will perform an in-place transformation of the provided documentation catalog."
                 ),
                 transform: URL.init(fileURLWithPath:)
             )
@@ -53,13 +69,13 @@ extension Docc.ProcessCatalog {
                 if let documentationCatalog = documentationCatalog {
                     guard documentationCatalog.pathExtension == "docc" else {
                         throw ValidationError("""
-                        Missing DocC catalog directory configuration.
+                        Missing documentation catalog directory configuration.
                         The directory at '\(documentationCatalog.path)' doesn't have a '.docc' extension.
                         """)
                     }
                     guard FileManager.default.fileExists(atPath: documentationCatalog.path) else {
                         throw ValidationError("""
-                        Missing DocC catalog directory configuration.
+                        Missing documentation catalog directory configuration.
                         The directory at '\(documentationCatalog.path)' does not exist.
                         """)
                     }
@@ -143,10 +159,7 @@ extension Docc.ProcessCatalog {
         // MARK: - Execution
         
         mutating func run() throws {
-            // Initialize an `EmitGeneratedCurationAction` from the current options in the `EmitGeneratedCuration` command.
             var action = try EmitGeneratedCurationAction(fromCommand: self)
-
-            // Perform the emit and print any warnings or errors found
             try action.performAndHandleResult()
         }
     }
