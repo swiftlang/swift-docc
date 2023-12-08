@@ -274,7 +274,8 @@ class TaskGroupTests: XCTestCase {
             XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something Swift only")
             XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is only for Swift")
             XCTAssertEqual(taskGroup.directives.count, 1)
-            for directive in taskGroup.directives {
+            XCTAssertEqual(taskGroup.directives[SupportedLanguage.directiveName]?.count, 1)
+            for directive in taskGroup.directives[SupportedLanguage.directiveName] ?? [] {
                 XCTAssertEqual(directive.name, "SupportedLanguage")
                 XCTAssertEqual(directive.arguments().count, 1)
             }
@@ -286,7 +287,8 @@ class TaskGroupTests: XCTestCase {
             XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something Objective-C only")
             XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is only for Objective-C")
             XCTAssertEqual(taskGroup.directives.count, 1)
-            for directive in taskGroup.directives {
+            XCTAssertEqual(taskGroup.directives[SupportedLanguage.directiveName]?.count, 1)
+            for directive in taskGroup.directives[SupportedLanguage.directiveName] ?? [] {
                 XCTAssertEqual(directive.name, "SupportedLanguage")
                 XCTAssertEqual(directive.arguments().count, 1)
             }
@@ -297,8 +299,9 @@ class TaskGroupTests: XCTestCase {
             let taskGroup = try XCTUnwrap(topicSection.taskGroups.dropFirst(2).first)
             XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something for both")
             XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "This link is for both Swift and Objective-C")
-            XCTAssertEqual(taskGroup.directives.count, 2)
-            for directive in taskGroup.directives {
+            XCTAssertEqual(taskGroup.directives.count, 1)
+            XCTAssertEqual(taskGroup.directives[SupportedLanguage.directiveName]?.count, 2)
+            for directive in taskGroup.directives[SupportedLanguage.directiveName] ?? [] {
                 XCTAssertEqual(directive.name, "SupportedLanguage")
                 XCTAssertEqual(directive.arguments().count, 1)
             }
@@ -312,6 +315,74 @@ class TaskGroupTests: XCTestCase {
             XCTAssert(taskGroup.directives.isEmpty)
             XCTAssertEqual(taskGroup.links.count, 1)
         }
+    }
+    
+    func testOtherDirectivesAreIgnored() throws {
+        let markupSource = """
+            # Title
+            
+            Abstract.
+            
+            ## Topics
+            
+            ### Something
+            
+            A mix of different directives that aren't supported in task groups.
+            
+            @Comment {
+              Some commented out markup
+            }
+            
+            @Metadata {
+            }
+            
+            @SomeUnknownDirective()
+            
+            @SupportedLanguage(swift)
+            
+            - ``SomeLink``
+            
+            """
+        let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
+        let markupModel = DocumentationMarkup(markup: document)
+        
+        XCTAssertEqual("Abstract.", Paragraph(markupModel.abstractSection?.content.compactMap { $0 as? InlineMarkup } ?? []).detachedFromParent.format())
+        
+        let topicSection = try XCTUnwrap(markupModel.topicsSection)
+        XCTAssertEqual(topicSection.taskGroups.count, 1)
+        
+        let taskGroup = try XCTUnwrap(topicSection.taskGroups.first)
+        XCTAssertEqual(taskGroup.heading?.detachedFromParent.format(), "### Something")
+        XCTAssertEqual(taskGroup.abstract?.paragraph.detachedFromParent.format(), "A mix of different directives that aren’t supported in task groups.")
+        XCTAssertEqual(taskGroup.directives.count, 4)
+        
+        XCTAssertEqual(taskGroup.directives[Comment.directiveName]?.count, 1)
+        if let comment = taskGroup.directives[Comment.directiveName]?.first {
+            XCTAssertEqual(comment.name, "Comment")
+            XCTAssertEqual(comment.childCount, 1)
+            XCTAssert(comment.arguments().isEmpty)
+        }
+        
+        XCTAssertEqual(taskGroup.directives[Metadata.directiveName]?.count, 1)
+        if let metadata = taskGroup.directives[Metadata.directiveName]?.first {
+            XCTAssertEqual(metadata.name, "Metadata")
+            XCTAssertEqual(metadata.childCount, 0)
+                XCTAssertEqual(metadata.childCount, 0)
+            XCTAssert(metadata.arguments().isEmpty)
+        }
+        
+        if let directive = taskGroup.directives["SomeUnknownDirective"]?.first {
+            XCTAssertEqual(directive.childCount, 0)
+            XCTAssert(directive.arguments().isEmpty)
+        }
+        XCTAssertEqual(taskGroup.directives[SupportedLanguage.directiveName]?.count, 1)
+        if let supportedLanguage = taskGroup.directives[SupportedLanguage.directiveName]?.first {
+            XCTAssertEqual(supportedLanguage.name, "SupportedLanguage")
+            XCTAssertEqual(supportedLanguage.childCount, 0)
+            XCTAssertEqual(supportedLanguage.arguments().count, 1)
+        }
+        
+        XCTAssertEqual(taskGroup.links.count, 1)
     }
     
     func testTopicContentOrder() throws {
@@ -340,8 +411,9 @@ class TaskGroupTests: XCTestCase {
                 "Discussion paragraph 2",
             ], file: file, line: line)
             XCTAssertEqual(taskGroup.directives.count, 1, file: file, line: line)
-            XCTAssertEqual(taskGroup.directives.first?.name, "SupportedLanguage", file: file, line: line)
-            XCTAssertEqual(taskGroup.directives.first?.arguments().count, 1, file: file, line: line)
+            XCTAssertEqual(taskGroup.directives.keys.first, SupportedLanguage.directiveName, file: file, line: line)
+            XCTAssertEqual(taskGroup.directives[SupportedLanguage.directiveName]?.first?.name, "SupportedLanguage", file: file, line: line)
+            XCTAssertEqual(taskGroup.directives[SupportedLanguage.directiveName]?.first?.arguments().count, 1, file: file, line: line)
             XCTAssertEqual(taskGroup.links.map(\.destination), ["Link1", "Link2"], file: file, line: line)
         }
         
