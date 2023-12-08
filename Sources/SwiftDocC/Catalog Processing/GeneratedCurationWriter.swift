@@ -93,12 +93,11 @@ public struct GeneratedCurationWriter {
         
         guard !text.isEmpty else { return nil }
         
-        return """
-            <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
-            
-            ## Topics\(text)
-            
-            """
+        var prefix = "<!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->"
+        if alreadyCurated.isEmpty {
+            prefix.append("\n\n## Topics")
+        }
+        return "\(prefix)\(text)\n"
     }
     
     enum Error: DescribedError {
