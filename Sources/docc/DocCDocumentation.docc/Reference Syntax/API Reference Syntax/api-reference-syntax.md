@@ -1,6 +1,6 @@
 # API Documentation
 
-Teach developers your Swift APIs through reference documentation you create from comments in source code and documentation extension files.
+Teach your APIs through reference documentation you create from code comments and extension files, or create detailed articles and conceptual guides.
 
 ## Overview
 
@@ -14,6 +14,7 @@ Use documentation markup, a custom variant of Markdown, to add in-source documen
 
 - ``Options``
 - ``Metadata``
+- ``TechnologyRoot``
 
 ### Creating Custom Page Layouts
 
@@ -22,4 +23,4 @@ Use documentation markup, a custom variant of Markdown, to add in-source documen
 - ``Links``
 - ``Small``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
