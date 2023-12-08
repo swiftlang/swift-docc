@@ -23,7 +23,7 @@ extension Docc.ProcessCatalog {
             
             If you're getting started with arranging your symbols into topic groups you can pass '--depth 0' to only write topic sections for top-level symbols to a documentation extension file for your module.
             
-            If you want to arrange specific sub-hierarchy of your project into topic groups you can pass '--from-symbol <symbol-link>' to only write documentation extension files with topic sections for that symbol and its descendants. \
+            If you want to arrange a specific sub-hierarchy of your project into topic groups you can pass '--from-symbol <symbol-link>' to only write documentation extension files for that symbol and its descendants. \
             This can be combined with '--depth <limit>' to control how far to descend from the specified symbol.
             
             For more information on arranging symbols into topic groups, see https://www.swift.org/documentation/docc/adding-structure-to-your-documentation-pages.
