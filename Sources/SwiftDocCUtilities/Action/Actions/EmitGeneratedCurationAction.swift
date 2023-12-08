@@ -63,8 +63,8 @@ struct EmitGeneratedCurationAction: Action {
         let curation = try writer.generateDefaultCurationContents(fromSymbol: startingPointSymbolLink, depthLimit: depthLimit)
         for (url, updatedContent) in curation {
             guard let data = updatedContent.data(using: .utf8) else { continue }
-            try? fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
-            try? fileManager.createFile(at: url, contents: data, options: .atomic)
+            try fileManager.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+            try fileManager.createFile(at: url, contents: data, options: .atomic)
         }
         
         return ActionResult(didEncounterError: false, outputs: [outputURL])
