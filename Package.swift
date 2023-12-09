@@ -136,9 +136,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-markdown.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.2"),
-        // to be restored when the SymbolKit PR is merged
-//        .package(url: "https://github.com/apple/swift-docc-symbolkit", branch: "main"),
-        .package(url: "https://github.com/QuietMisdreavus/swift-docc-symbolkit", branch: "namespace-kind"),
+        .package(url: "https://github.com/apple/swift-docc-symbolkit", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "2.5.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
     ]
