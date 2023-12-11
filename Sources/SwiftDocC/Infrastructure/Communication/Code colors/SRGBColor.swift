@@ -10,12 +10,6 @@
 
 import Foundation
 
-#if canImport(UIKit)
-import UIKit
-#elseif canImport(AppKit)
-import AppKit
-#endif
-
 /// A color in the sRGB color space, with normalized components.
 public struct SRGBColor: Codable, Equatable {
     /// The normalized red component of the color.
@@ -39,34 +33,4 @@ public struct SRGBColor: Codable, Equatable {
         self.blue = blue
         self.alpha = alpha
     }
-    
-    #if canImport(UIKit)
-    
-    /// Creates a new instance from the given `UIColor`.
-    public init?(from uiColor: UIColor) {
-        guard let components = uiColor.cgColor.components, components.count >= 4 else { return nil }
-        
-        self.red = UInt8(Double(components[0]) * 255.0)
-        self.green = UInt8(Double(components[1]) * 255.0)
-        self.blue = UInt8(Double(components[2]) * 255.0)
-        self.alpha = Double(components[3])
-    }
-    
-    #elseif canImport(AppKit)
-    
-    /// Creates a new instance from the given `NSColor`.
-    public init?(from nsColor: NSColor) {
-        // The normalization factor this initializer uses to convert between NSColor and sRGB
-        // color spaces as described by
-        // <https://developer.apple.com/library/content/qa/qa1576/_index.html>.
-        let normalizationFactor = 255.99999
-        
-        guard let color = nsColor.usingColorSpace(.sRGB) else { return nil }
-        
-        self.red = UInt8(Double(color.redComponent) * normalizationFactor)
-        self.green = UInt8(Double(color.greenComponent) * normalizationFactor)
-        self.blue = UInt8(Double(color.blueComponent) * normalizationFactor)
-        self.alpha = Double(color.alphaComponent)
-    }
-    #endif
 }
