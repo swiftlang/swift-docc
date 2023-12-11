@@ -87,6 +87,7 @@ EOF
 EOF
       ;;
       html)
+        exceptions=( -path "*/.docc-build/*" )
         matching_files=( -name '*.html' )
         cat > "$tmp" <<"EOF"
 <!--
