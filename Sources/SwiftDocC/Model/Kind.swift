@@ -95,7 +95,9 @@ extension DocumentationNode.Kind {
     public static let dictionary = DocumentationNode.Kind(name: "Dictionary", id: "org.swift.docc.kind.dictionary", isSymbol: true)
     /// Documentation about an HTTP request.
     public static let httpRequest = DocumentationNode.Kind(name: "HTTP Request", id: "org.swift.docc.kind.httpRequest", isSymbol: true)
-    
+    /// Documentation about a namespace.
+    public static let namespace = DocumentationNode.Kind(name: "Namespace", id: "org.swift.docc.kind.namespace", isSymbol: true)
+
     // Leaves
     
     /// Documentation about a local variable.
@@ -192,7 +194,7 @@ extension DocumentationNode.Kind {
         // Conceptual
         .root, .module, .article, .sampleCode, .technologyOverview, .volume, .chapter, .tutorial, .tutorialArticle, .onPageLandmark,
         // Containers
-        .class, .structure, .enumeration, .protocol, .technology, .extension, .dictionary, .httpRequest,
+        .class, .structure, .enumeration, .protocol, .technology, .extension, .dictionary, .httpRequest, .namespace,
         // Leaves
         .localVariable, .globalVariable, .typeAlias, .typeDef, .typeConstant, .associatedType, .function, .operator, .macro, .union,
         // Member-only leaves
