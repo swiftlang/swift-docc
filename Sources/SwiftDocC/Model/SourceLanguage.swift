@@ -31,29 +31,6 @@ public struct SourceLanguage: Hashable, Codable {
         self.idAliases = idAliases
         self.linkDisambiguationID = linkDisambiguationID ?? id
     }
-    
-    /// Finds the programming language that matches a given query identifier.
-    ///
-    /// If the query identifier doesn't match any known language, this initializer returns `nil`.
-    ///
-    /// - Parameter queryID: The query identifier of the programming language.
-    @available(*, deprecated, renamed: "init(id:)")
-    public init?(queryID: String) {
-        switch queryID {
-        case "swift":
-            self = .swift
-        case "occ", "objc", "objective-c", "c":
-            self = .objectiveC
-        case "javascript":
-            self = .javaScript
-        case "data":
-            self = .data
-        case "metal":
-            self = .metal
-        default:
-            return nil
-        }
-    }
 
     /// Finds the programming language that matches a given identifier, or creates a new one if it finds no existing language.
     /// - Parameter id: The identifier of the programming language.

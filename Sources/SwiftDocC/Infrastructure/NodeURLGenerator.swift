@@ -222,9 +222,4 @@ public struct NodeURLGenerator {
         components.path = newPath
         return components.url!
     }
-    
-    @available(*, deprecated, message: "Use the static version of 'NodeURLGenerator.fileSafeURL(_:)' instead")
-    public func fileSafeURL(_ url: URL) -> URL {
-        return Self.fileSafeURL(url)
-    }
 }
