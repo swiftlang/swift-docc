@@ -517,6 +517,7 @@ public struct DocumentationNode {
         case .ivar: return .instanceVariable
         case .macro: return .macro
         case .`method`: return .instanceMethod
+        case .namespace: return .namespace
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
         case .snippet: return .snippet

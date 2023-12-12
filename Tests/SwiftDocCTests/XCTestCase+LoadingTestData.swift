@@ -133,24 +133,28 @@ extension XCTestCase {
     
     func parseDirective<Directive: DirectiveConvertible>(
         _ directive: Directive.Type,
-        source: () -> String
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
     ) throws -> (problemIdentifiers: [String], directive: Directive?) {
         let (bundle, context) = try testBundleAndContext()
         
-        let document = Document(parsing: source(), options: .parseBlockDirectives)
+        let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
+        let document = Document(parsing: content(), source: source, options: .parseBlockDirectives)
         
-        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
         var problems = [Problem]()
         let directive = directive.init(
             from: blockDirectiveContainer,
-            source: nil,
+            source: source,
             for: bundle,
             in: context,
             problems: &problems
         )
         
         let problemIDs = problems.map { problem -> String in
+            XCTAssertNotNil(problem.diagnostic.source, "Problem \(problem.diagnostic.identifier) is missing a source URL.", file: file, line: line)
             let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
             
             return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
@@ -162,12 +166,16 @@ extension XCTestCase {
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         in bundleName: String? = nil,
-        source: () -> String
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
     ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
         let (renderedContent, problems, directive, _) = try parseDirective(
             directive,
             in: bundleName,
-            source: source
+            content: content,
+            file: file,
+            line: line
         )
         
         return (renderedContent, problems, directive)
@@ -176,7 +184,9 @@ extension XCTestCase {
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         in bundleName: String? = nil,
-        source: () -> String
+        content: () -> String,
+        file: StaticString = #file,
+        line: UInt = #line
     ) throws -> (
         renderBlockContent: [RenderBlockContent],
         problemIdentifiers: [String],
@@ -193,18 +203,19 @@ extension XCTestCase {
         }
         context.diagnosticEngine.clearDiagnostics()
         
-        let document = Document(parsing: source(), options: [.parseBlockDirectives, .parseSymbolLinks])
+        let source = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
+        let document = Document(parsing: content(), source: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         
-        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective, file: file, line: line)
         
-        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: source, context: context, bundle: bundle)
         let result = analyzer.visit(blockDirectiveContainer)
         context.diagnosticEngine.emit(analyzer.problems)
         
         var referenceResolver = MarkupReferenceResolver(
             context: context,
             bundle: bundle,
-            source: nil,
+            source: source,
             rootReference: bundle.rootReference
         )
         
@@ -213,7 +224,8 @@ extension XCTestCase {
         
         func problemIDs() throws -> [String] {
             try context.problems.map { problem -> (line: Int, severity: String, id: String) in
-                let line = try XCTUnwrap(problem.diagnostic.range).lowerBound.line
+                XCTAssertNotNil(problem.diagnostic.source, "Problem \(problem.diagnostic.identifier) is missing a source URL.", file: file, line: line)
+                let line = try XCTUnwrap(problem.diagnostic.range, file: file, line: line).lowerBound.line
                 return (line, problem.diagnostic.severity.description, problem.diagnostic.identifier)
             }
             .sorted { lhs, rhs in
@@ -246,7 +258,8 @@ extension XCTestCase {
         )
         
         let renderedContent = try XCTUnwrap(
-            directive.render(with: &contentCompiler) as? [RenderBlockContent]
+            directive.render(with: &contentCompiler) as? [RenderBlockContent],
+            file: file, line: line
         )
         
         let collectedReferences = contentCompiler.videoReferences
@@ -254,7 +267,7 @@ extension XCTestCase {
             .merging(
                 contentCompiler.imageReferences,
                 uniquingKeysWith: { videoReference, _ in
-                    XCTFail("Non-unique references.")
+                    XCTFail("Non-unique references.", file: file, line: line)
                     return videoReference
                 }
             )

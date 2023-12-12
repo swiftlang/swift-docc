@@ -144,7 +144,10 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     public var declarationVariants = DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]>(
         defaultVariantValue: [:]
     )
-    
+
+    /// The symbols alternate declarations in each language variant the symbol is available in.
+    public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
+
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
 
     /// The symbol's availability or conformance constraints, in each language variant the symbol is available in.
@@ -301,6 +304,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                     self.locationVariants[trait] = location
                 case let spi as SymbolGraph.Symbol.SPI:
                     self.isSPIVariants[trait] = spi.isSPI
+                case let alternateDeclarations as SymbolGraph.Symbol.AlternateDeclarations:
+                    self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
                 default: break;
                 }
             }

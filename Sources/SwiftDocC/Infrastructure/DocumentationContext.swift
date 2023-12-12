@@ -2524,24 +2524,45 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         throw ContextError.notFound(reference.url)
     }
     
-    /// Returns the set of languages the entity corresponding to the given reference is available in.
-    ///
-    /// - Precondition: The entity associated with the given reference must be registered in the context.
-    public func sourceLanguages(for reference: ResolvedTopicReference) -> Set<SourceLanguage> {
+    private func knownEntityValue<Result>(
+        reference: ResolvedTopicReference,
+        valueInLocalEntity: (DocumentationNode) -> Result,
+        valueInExternalEntity: (LinkResolver.ExternalEntity) -> Result
+    ) -> Result {
         do {
             // Look up the entity without its fragment. The documentation context does not keep track of page sections
             // as nodes, and page sections are considered to be available in the same languages as the page they're
             // defined in.
             let referenceWithoutFragment = reference.withFragment(nil)
-            return try entity(with: referenceWithoutFragment).availableSourceLanguages
+            return try valueInLocalEntity(entity(with: referenceWithoutFragment))
         } catch ContextError.notFound {
             if let externalEntity = externalCache[reference] {
-                return externalEntity.sourceLanguages
+                return valueInExternalEntity(externalEntity)
             }
             preconditionFailure("Reference does not have an associated documentation node.")
         } catch {
-            fatalError("Unexpected error when retrieving source languages: \(error)")
+            fatalError("Unexpected error when retrieving entity: \(error)")
         }
+    }
+    
+    /// Returns the set of languages the entity corresponding to the given reference is available in.
+    ///
+    /// - Precondition: The entity associated with the given reference must be registered in the context.
+    public func sourceLanguages(for reference: ResolvedTopicReference) -> Set<SourceLanguage> {
+        knownEntityValue(
+            reference: reference,
+            valueInLocalEntity: \.availableSourceLanguages,
+            valueInExternalEntity: \.sourceLanguages
+        )
+    }
+    
+    /// Returns whether the given reference corresponds to a symbol.
+    func isSymbol(reference: ResolvedTopicReference) -> Bool {
+        knownEntityValue(
+            reference: reference,
+            valueInLocalEntity: { node in node.kind.isSymbol },
+            valueInExternalEntity: { entity in entity.topicRenderReference.kind == .symbol }
+        )
     }
 
     // MARK: - Relationship queries
