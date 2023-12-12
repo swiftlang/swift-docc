@@ -155,17 +155,6 @@ public struct SymbolReference {
     
     /// The interface language for the reference.
     public let interfaceLanguages: Set<SourceLanguage>
-    
-    @available(*, deprecated, message: "Use 'interfaceLanguages' instead.")
-    public var interfaceLanguage: SourceLanguage {
-        if interfaceLanguages.contains(.swift) {
-            return .swift
-        } else if let firstInterfaceLanguage = interfaceLanguages.first {
-            return firstInterfaceLanguage
-        } else {
-            return .swift
-        }
-    }
 }
 
 private extension Array where Element == String {
