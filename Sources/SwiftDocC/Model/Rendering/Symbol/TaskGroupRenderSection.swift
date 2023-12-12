@@ -90,7 +90,7 @@ extension TaskGroupRenderSection {
         self.title = group.title
         self.abstract = nil
         self.identifiers = group.references.map({ $0.absoluteString })
-        self.generated = false
+        self.generated = true
         self.discussion = nil
     }
 }
