@@ -127,12 +127,6 @@ public struct DeclarationRenderSection: Codable, Equatable {
             self.identifier = identifier
             self.preciseIdentifier = preciseIdentifier
         }
-      
-        /// The token's identifier, if that token is a known symbol.
-        @available(*, deprecated, renamed: "identifier", message: "Please use identifier instead")
-        public var reference: String? {
-            return identifier
-        }
         
         // MARK: - Codable
         

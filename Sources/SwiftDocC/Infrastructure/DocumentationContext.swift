@@ -316,29 +316,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             try register(bundle)
         }
     }
-
-    /// Initializes a documentation context with a given `dataProvider` and `diagnosticConsumers`
-    /// and registers all the documentation bundles that `dataProvider` provides.
-    ///
-    /// - Parameters:
-    ///     - dataProvider: The data provider to register bundles from.
-    ///     - diagnosticEngine: The engine that will collect problems encountered during compilation.
-    ///     - diagnosticConsumers: A collection of types that can consume diagnostics. These will be registered with `diagnosticEngine`.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
-    @available(*, deprecated, message: "Use init(dataProvider:diagnosticEngine:) instead")
-    public init(dataProvider: DocumentationContextDataProvider, diagnosticEngine: DiagnosticEngine = .init(), diagnosticConsumers: [DiagnosticConsumer]) throws {
-        self.dataProvider = dataProvider
-        self.diagnosticEngine = diagnosticEngine
-        self.dataProvider.delegate = self
-
-        for consumer in diagnosticConsumers {
-            self.diagnosticEngine.add(consumer)
-        }
-
-        for bundle in dataProvider.bundles.values {
-            try register(bundle)
-        }
-    }
     
     /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
     ///
@@ -2617,15 +2594,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: A list of the reference for the given node's parent nodes.
     public func parents(of reference: ResolvedTopicReference) -> [ResolvedTopicReference] {
         return topicGraph.reverseEdges[reference] ?? []
-    }
-    
-    /// Returns the document URL for the given article or tutorial reference.
-    ///
-    /// - Parameter reference: The identifier for the topic whose file URL to locate.
-    /// - Returns: If the reference is a reference to a known Markdown document, this function returns the article's URL, otherwise `nil`.
-    @available(*, deprecated, renamed: "documentURL(for:)")
-    public func fileURL(for reference: ResolvedTopicReference) -> URL? {
-        documentURL(for: reference)
     }
     
     /// Returns the document URL for the given article or tutorial reference.

@@ -31,7 +31,3 @@ extension RenderNodeTransforming {
         return RenderNodeTransformationComposition(first: self, second: otherTransformation)
     }
 }
-
-/// A type that modifies a render node.
-@available(*, deprecated, message: "Please use RenderNodeTransforming instead.")
-public typealias RenderNodeTransformation = RenderNodeTransforming

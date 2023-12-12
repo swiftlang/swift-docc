@@ -105,24 +105,6 @@ public final class PreviewAction: Action, RecreatingContext {
         self.printHTMLTemplatePath = printTemplatePath
     }
     
-    @available(*, deprecated, message: "TLS support has been removed.")
-    public convenience init(
-        tlsCertificateKey: URL?, tlsCertificateChain: URL?, serverUsername: String?,
-        serverPassword: String?, port: Int,
-        createConvertAction: @escaping () throws -> ConvertAction,
-        workspace: DocumentationWorkspace = DocumentationWorkspace(),
-        context: DocumentationContext? = nil,
-        printTemplatePath: Bool = true) throws
-    {
-        try self.init(
-            port: port,
-            createConvertAction: createConvertAction,
-            workspace: workspace,
-            context: context,
-            printTemplatePath: printTemplatePath
-        )
-    }
-
     /// Converts a documentation bundle and starts a preview server to render the result of that conversion.
     ///
     /// > Important: On macOS, the bundle will be converted each time the source is modified.
