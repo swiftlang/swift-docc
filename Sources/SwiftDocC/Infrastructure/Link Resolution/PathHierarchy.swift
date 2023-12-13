@@ -377,7 +377,7 @@ extension PathHierarchy {
         
         fileprivate(set) unowned var parent: Node?
         /// The symbol, if a node has one.
-        private(set) var symbol: SymbolGraph.Symbol?
+        fileprivate(set) var symbol: SymbolGraph.Symbol?
         
         /// If the path hierarchy should disfavor this node in a link collision.
         ///
@@ -584,11 +584,18 @@ extension PathHierarchy {
                 let childNode = lookup[identifiers[child.nodeID]]!
                 // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
                 node.add(child: childNode, kind: child.kind, hash: child.hash)
+                if let kind = child.kind {
+                    childNode.symbol?.kind.identifier = .init(identifier: kind)
+                }
             }
         }
         
         self.lookup = lookup
-        self.modules = fileRepresentation.modules.mapValues({ lookup[identifiers[$0]]! })
+        let modules = fileRepresentation.modules.map({ lookup[identifiers[$0]]! })
+        for node in modules {
+            node.symbol?.kind.identifier = .module
+        }
+        self.modules = modules
         self.articlesContainer = lookup[identifiers[fileRepresentation.articlesContainer]]!
         self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
         self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!
