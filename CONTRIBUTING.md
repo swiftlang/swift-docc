@@ -168,6 +168,26 @@ If you do not have commit access, please ask one of the code owners to trigger t
 For more details on Swift-DocC's continuous integration, see the
 [Continous Integration](#continuous-integration) section below.
 
+### Introducing source breaking changes
+
+We try to avoid source breaking changes, for example:
+
+- removing or renaming public API
+- adding protocol requirements to public API
+- renaming Render JSON keys or adding new required Render JSON keys
+
+That said, sometimes there are good reasons to make these changes. In those cases we make an effort to offer
+a backwards compatible transition by deprecating the old API, alongside the new API, and keeping the deprecated
+API for at least one full minor release. For example, if we deprecate an API sometime after the 5.5 release we
+keep the deprecated API for the remainder of the upcoming release (5.6) and the entirety of the next release (5.7).   
+
+To indicate to API consumers how long the deprecated API will be available, include the version when we'll remove
+that API in the deprecation message. For example:
+
+```swift
+@available(*, deprecated, message: "Use 'UpdatedSymbolName' instead. This deprecated API will be removed after 5.7 is released")
+```
+
 ## Testing Swift-DocC
 
 Swift-DocC is committed to maintaining a high level of code quality.

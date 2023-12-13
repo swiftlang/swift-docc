@@ -122,14 +122,18 @@ struct PathHierarchy {
             
             var topLevelCandidates = nodes
             for relationship in graph.relationships where relationship.kind.formsHierarchy {
-                guard let sourceNode = nodes[relationship.source] else {
+                guard let sourceNode = nodes[relationship.source], let expectedContainerName = sourceNode.symbol?.pathComponents.dropLast().last else {
                     continue
                 }
-                if let targetNode = nodes[relationship.target] {
+                // The relationship only specify the target symbol's USR but if the target symbol has different representations in different source languages the relationship
+                // alone doesn't specify which language representation the source symbol belongs to. We could check the source and target symbol's interface language but that
+                // would require that we redundantly create multiple nodes for the same symbol in many common cases and then merge them. To avoid doing that, we instead check
+                // the source symbol's path components to find the correct target symbol by matching its name.
+                if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
                     targetNode.add(symbolChild: sourceNode)
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else if let targetNodes = allNodes[relationship.target] {
-                    for targetNode in targetNodes {
+                    for targetNode in targetNodes where targetNode.name == expectedContainerName {
                         targetNode.add(symbolChild: sourceNode)
                     }
                     topLevelCandidates.removeValue(forKey: relationship.source)

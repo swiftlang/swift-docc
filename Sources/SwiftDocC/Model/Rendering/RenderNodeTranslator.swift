@@ -795,13 +795,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderer: contentRenderer
             ) {
                 contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-                seeAlsoSections.append(TaskGroupRenderSection(
-                    title: seeAlso.title,
-                    abstract: nil,
-                    discussion: nil,
-                    identifiers: seeAlso.references.map { $0.absoluteString },
-                    generated: true
-                ))
+                seeAlsoSections.append(TaskGroupRenderSection(taskGroup: seeAlso))
             }
             
             return seeAlsoSections
@@ -1531,12 +1525,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 guard !newReferences.isEmpty else { return nil }
                 
                 contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
-                return TaskGroupRenderSection(
-                    title: group.title,
-                    abstract: nil,
-                    discussion: nil,
-                    identifiers: newReferences.map { $0.absoluteString }
-                )
+                return TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences))
             })
             
             // Place "bottom" rendering preference automatic task groups
@@ -1628,13 +1617,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             ), !seeAlso.references.isEmpty {
                 contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
                 seeAlsoSections.append(
-                    TaskGroupRenderSection(
-                        title: seeAlso.title,
-                        abstract: nil,
-                        discussion: nil,
-                        identifiers: seeAlso.references.map { $0.absoluteString },
-                        generated: true
-                    )
+                    TaskGroupRenderSection(taskGroup: seeAlso)
                 )
             }
             

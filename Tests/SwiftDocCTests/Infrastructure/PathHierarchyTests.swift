@@ -1575,7 +1575,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths["X.Y2.Z.W"], "/Module/X/Y2/Z/W")
     }
     
-    func testMixedLanguageSymbolWithItsExtendingModule() throws {
+    func testMixedLanguageSymbolAndItsExtendingModule() throws {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"
         
@@ -1616,6 +1616,49 @@ class PathHierarchyTests: XCTestCase {
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
         XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/MemberName")
+    }
+    
+    func testMixedLanguageSymbolAndItsExtendingModuleWithDifferentContainerNames() throws {
+        let containerID = "some-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        (containerID, .objectiveC, ["ObjectiveCContainerName"])
+                    ]
+                )),
+            ]),
+            
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        (containerID, .swift, ["SwiftContainerName"])
+                    ]
+                )),
+                
+                JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ExtendingModule",
+                    symbols: [
+                        (memberID, .swift, ["SwiftContainerName", "MemberName"])
+                    ],
+                    relationships: [
+                        .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                    ]
+                )),
+            ])
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[containerID], "/ModuleName/SwiftContainerName")
+        XCTAssertEqual(paths[memberID], "/ModuleName/SwiftContainerName/MemberName")
     }
     
     func testOptionalMemberUnderCorrectContainer() throws {
