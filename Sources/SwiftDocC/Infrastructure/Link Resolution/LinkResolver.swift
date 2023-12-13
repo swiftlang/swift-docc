@@ -32,8 +32,8 @@ public class LinkResolver {
             try ExternalPathHierarchyResolver(dependencyArchive: $0)
         }
         for resolver in resolvers {
-            for moduleName in resolver.pathHierarchy.modules.keys {
-                self.externalResolvers[moduleName] = resolver
+            for moduleNode in resolver.pathHierarchy.modules {
+                self.externalResolvers[moduleNode.name] = resolver
             }
         }
     }

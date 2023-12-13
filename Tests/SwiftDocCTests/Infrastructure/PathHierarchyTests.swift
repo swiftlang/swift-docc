@@ -1690,6 +1690,37 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName-qwwf/MemberName1")
     }
     
+    func testModuleAndCollidingTechnologyRootHasPathsForItsSymbols() throws {
+        let symbolID = "some-symbol-id"
+        
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    (symbolID, .swift, ["SymbolName"]),
+                ],
+                relationships: []
+            )),
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # Manual Technology Root
+            
+            @Metadata {
+              @TechnologyRoot
+            }
+            
+            A technology root with the same file name as the module name.
+            """)
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
+        XCTAssertEqual(paths[symbolID], "/ModuleName/SymbolName")
+    }
+    
     func testMultiPlatformModuleWithExtension() throws {
         let (_, context) = try testBundleAndContext(named: "MultiPlatformModuleWithExtension")
         let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)

@@ -37,8 +37,8 @@ struct ResolvedIdentifier: Equatable, Hashable {
 /// After a path hierarchy has been fully created — with both symbols and non-symbols — it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
     
-    /// A map of module names to module nodes.
-    private(set) var modules: [String: Node]
+    /// The list of module nodes.
+    private(set) var modules: [Node]
     /// The container of top-level articles in the documentation hierarchy.
     let articlesContainer: Node
     /// The container of tutorials in the documentation hierarchy.
@@ -295,7 +295,7 @@ struct PathHierarchy {
             """
         )
         
-        self.modules = roots
+        self.modules = Array(roots.values)
         self.lookup = lookup
         
         assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil }))
@@ -352,7 +352,7 @@ struct PathHierarchy {
         newNode.identifier = newReference
         self.lookup[newReference] = newNode
         
-        modules[name] = newNode
+        modules.append(newNode)
         
         return newReference
     }
@@ -452,7 +452,7 @@ extension PathHierarchy {
     func topLevelSymbols() -> [ResolvedIdentifier] {
         var result: Set<ResolvedIdentifier> = []
         // Roots represent modules and only have direct symbol descendants.
-        for root in modules.values {
+        for root in modules {
             for (_, tree) in root.children {
                 for subtree in tree.storage.values {
                     for node in subtree.values where node.symbol != nil {
@@ -461,7 +461,7 @@ extension PathHierarchy {
                 }
             }
         }
-        return Array(result) + modules.values.map { $0.identifier }
+        return Array(result) + modules.map { $0.identifier }
     }
 }
 
