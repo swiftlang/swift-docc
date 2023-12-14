@@ -16,10 +16,10 @@ extension Docc {
     /// Converts documentation markup, assets, and symbol information into a documentation archive.
     public struct Convert: ParsableCommand {
         public init() {}
-        
+
         /// The name of the directory docc will write its build artifacts to.
         private static let buildDirectory = ".docc-build"
-        
+
         /// The file handle that should be used for emitting warnings during argument validation.
         ///
         /// Provided as a static variable to allow for redirecting output in unit tests.
@@ -46,9 +46,9 @@ extension Docc {
         //
         // The flags and options in this file is defined as internal with public accessors. This allows us to reorganize flags and options
         // in the `docc` command line interface without source breaking changes.
-        
+
         // MARK: - Inputs & outputs
-        
+
         @OptionGroup(title: "Inputs & outputs")
         var inputsAndOutputs: InputAndOutputOptions
         struct InputAndOutputOptions: ParsableArguments {
@@ -95,7 +95,7 @@ extension Docc {
             get { inputsAndOutputs.documentationCatalog }
             set { inputsAndOutputs.documentationCatalog = newValue }
         }
-        @available(*, deprecated, renamed: "documentationCatalog")
+        @available(*, deprecated, renamed: "documentationCatalog", message: "Use 'documentationCatalog' instead. This deprecated API will be removed after 5.12 is released")
         public var documentationBundle: DocumentationBundleOption {
             get { inputsAndOutputs.documentationCatalog }
             set { inputsAndOutputs.documentationCatalog = newValue }
@@ -151,7 +151,7 @@ extension Docc {
             )
             var platforms: [String] = []
         }
-        
+
         /// User-provided platform name/version pairs.
         ///
         /// Used to set the current release version of a platform. Contains an array of strings in the following format:
@@ -170,13 +170,13 @@ extension Docc {
             get { availabilityOptions.platforms }
             set { availabilityOptions.platforms = newValue }
         }
-        
+
         /// The user-provided path to an executable that can be used to resolve links.
         ///
         /// This is an optional value and an internal link resolver is used by default.
         @OptionGroup() // This is only configured via environmental variables, so it doesn't display in the help text.
         public var outOfProcessLinkResolverOption: OutOfProcessLinkResolverOption
-        
+
         // MARK: - Source repository options
         
         /// Arguments for specifying information about the source code repository that hosts the documented project's code.
@@ -195,7 +195,7 @@ extension Docc {
                 """)
             )
             var hostingBasePath: String?
-            
+
             @Flag(
                 inversion: .prefixedNo,
                 exclusivity: .exclusive,
@@ -258,7 +258,7 @@ extension Docc {
             
             @Flag(help: "Treat warnings as errors")
             var warningsAsErrors = false
-            
+
             func validate() throws {
                 if analyze && diagnosticLevel != nil {
                     warnAboutDiagnostic(.init(
@@ -267,7 +267,7 @@ extension Docc {
                         summary: "'--diagnostic-filter' is ignored when '--analyze' is set."
                     ))
                 }
-                
+        
                 if let level = diagnosticLevel, DiagnosticSeverity(level) == nil {
                     warnAboutDiagnostic(.init(
                         severity: .information,
@@ -279,7 +279,7 @@ extension Docc {
                     ))
                 }
             }
-            
+        
             private static let supportedDiagnosticLevelsMessage = """
                 The supported diagnostic filter levels are:
                  - error
@@ -294,14 +294,14 @@ extension Docc {
             get { diagnosticOptions.warningsAsErrors }
             set { diagnosticOptions.warningsAsErrors = newValue }
         }
-        
+
         /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
         public var formatConsoleOutputForTools: Bool {
             get { diagnosticOptions.formatConsoleOutputForTools }
             set { diagnosticOptions.formatConsoleOutputForTools = newValue }
         }
         
-        @available(*, deprecated, renamed: "formatConsoleOutputForTools")
+        @available(*, deprecated, renamed: "formatConsoleOutputForTools", message: "Use 'formatConsoleOutputForTools' instead. This deprecated API will be removed after 5.10 is released")
         public var emitFixits: Bool {
             formatConsoleOutputForTools
         }
@@ -317,7 +317,7 @@ extension Docc {
             get { diagnosticOptions.diagnosticLevel }
             set { diagnosticOptions.diagnosticLevel = newValue }
         }
-        
+
         /// A user-provided value that is true if additional analyzer style warnings should be outputted to the terminal.
         ///
         /// Defaults to false.
@@ -325,9 +325,9 @@ extension Docc {
             get { diagnosticOptions.analyze }
             set { diagnosticOptions.analyze = newValue }
         }
-        
+
         // MARK: - Info.plist fallback options
-        
+
         @OptionGroup(title: "Info.plist fallbacks")
         var infoPlistFallbacks: InfoPlistFallbackOptions
         struct InfoPlistFallbackOptions: ParsableArguments {
@@ -336,7 +336,7 @@ extension Docc {
                 help: "A fallback default language for code listings if no value is provided in the documentation catalogs's Info.plist file."
             )
             var defaultCodeListingLanguage: String?
-            
+        
             @Option(
                 name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback display name if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -346,7 +346,7 @@ extension Docc {
                 """)
             )
             var fallbackBundleDisplayName: String?
-            
+        
             @Option(
                 name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: ArgumentHelp("A fallback bundle identifier if no value is provided in the documentation catalogs's Info.plist file.", discussion: """
@@ -355,12 +355,12 @@ extension Docc {
                 """)
             )
             var fallbackBundleIdentifier: String?
-            
+        
             @Option(
                 name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
                 help: .hidden
             )
-            @available(*, deprecated, message: "The bundle version isn't used for anything.")
+            @available(*, deprecated, message: "The bundle version isn't used for anything. This deprecated API will be removed after 5.12 is released")
             var fallbackBundleVersion: String?
             
             @Option(
@@ -397,7 +397,7 @@ extension Docc {
         /// A user-provided fallback version for the documentation bundle.
         ///
         /// If the documentation catalogs's Info.plist file contains a bundle version, the documentation catalog ignores this fallback version.
-        @available(*, deprecated, message: "The bundle version isn't used for anything.")
+        @available(*, deprecated, message: "The bundle version isn't used for anything. This deprecated API will be removed after 5.12 is released")
         public var fallbackBundleVersion: String? {
             get { infoPlistFallbacks.fallbackBundleVersion }
             set { infoPlistFallbacks.fallbackBundleVersion = newValue }
@@ -509,23 +509,15 @@ extension Docc {
             var experimentalEnableCustomTemplates = false
             
             @Flag(help: .hidden)
-            @available(*, deprecated, message: "Objective-C support is enabled by default.")
-            var enableExperimentalObjectiveCSupport = false
-            
-            @Flag(help: .hidden)
-            @available(*, deprecated, message: "Render Index JSON is emitted by default.")
-            var enableExperimentalJSONIndex = false
-            
-            @Flag(help: .hidden)
             var enableExperimentalDeviceFrameSupport = false
             
             @Flag(help: "Inherit documentation for inherited symbols")
             var enableInheritedDocs = false
-            
+
             @Flag(help: .hidden)
-            @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+            @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
             var experimentalParseDoxygenCommands = false
-            
+        
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
             
@@ -539,7 +531,7 @@ extension Docc {
             
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
-            
+        
             @Flag(
                 help: ArgumentHelp(
                     "Writes an LMDB representation of the navigator index to the output directory.",
@@ -547,11 +539,11 @@ extension Docc {
                 )
             )
             var emitLMDBIndex = false
-            
+
             @Flag(help: .hidden)
-            @available(*, deprecated, renamed: "emitLMDBIndex")
+            @available(*, deprecated, renamed: "emitLMDBIndex", message: "Use 'emitLMDBIndex' instead. This deprecated API will be removed after 5.12 is released")
             var index = false
-            
+        
             @available(*, deprecated) // This deprecation silences the access of the deprecated `index` flag.
             mutating func validate() throws {
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-objective-c-support", message: "This flag has no effect. Objective-C support is enabled by default.")
@@ -561,35 +553,16 @@ extension Docc {
                 emitLMDBIndex = emitLMDBIndex || index
             }
         }
-        
+
         /// A user-provided value that is true if the user wants to provide a custom template for rendered output.
         ///
         /// Defaults to false
         public var experimentalEnableCustomTemplates: Bool {
             get { featureFlags.experimentalEnableCustomTemplates }
             set { featureFlags.experimentalEnableCustomTemplates = newValue }
+            
         }
-        
-        /// A user-provided value that is true if the user enables experimental Objective-C language support.
-        ///
-        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @available(*, deprecated, message: "Objective-C support is enabled by default.")
-        public var enableExperimentalObjectiveCSupport: Bool {
-            get { featureFlags.enableExperimentalObjectiveCSupport }
-            set { featureFlags.enableExperimentalObjectiveCSupport = newValue }
-        }
-        
-        /// A user-provided value that is true if the user enables experimental support for emitting
-        /// a JSON index.
-        ///
-        /// This property exists for backwards compatibility with existing clients but is
-        /// deprecated and will be removed soon.
-        @available(*, deprecated, message: "Render Index JSON is emitted by default.")
-        public var enableExperimentalJSONIndex: Bool {
-            get { featureFlags.enableExperimentalJSONIndex }
-            set { featureFlags.enableExperimentalJSONIndex = newValue }
-        }
-        
+
         /// A user-provided value that is true if the user enables experimental support for device frames.
         ///
         /// Defaults to false.
@@ -605,11 +578,11 @@ extension Docc {
             get { featureFlags.enableInheritedDocs }
             set { featureFlags.enableInheritedDocs = newValue }
         }
-        
+
         /// A user-provided value that is true if experimental Doxygen support should be enabled.
         ///
         /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+        @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
         public var experimentalParseDoxygenCommands: Bool {
             get { featureFlags.experimentalParseDoxygenCommands }
             set { featureFlags.experimentalParseDoxygenCommands = newValue }
@@ -628,7 +601,7 @@ extension Docc {
             get { featureFlags.enableExperimentalLinkHierarchySerialization }
             set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
         }
-        
+
         /// A user-provided value that is true if additional metadata files should be produced.
         ///
         /// Defaults to false.
@@ -636,35 +609,35 @@ extension Docc {
             get { featureFlags.emitDigest }
             set { featureFlags.emitDigest = newValue }
         }
-        
+
         /// A user-provided value that is true if the LMDB representation of the navigator index should be produced.
         ///
         /// Defaults to false.
         public var emitLMDBIndex: Bool {
             get { featureFlags.emitLMDBIndex }
             set { featureFlags.emitLMDBIndex = newValue }
+            
         }
-        
         /// This value is provided for backwards compatibility with existing clients but will be removed soon. Renamed to '--emit-lmdb-index'.
-        @available(*, deprecated, renamed: "emitLMDBIndex")
+        @available(*, deprecated, renamed: "emitLMDBIndex", message: "Use 'emitLMDBIndex' instead. This deprecated API will be removed after 5.12 is released")
         public var index: Bool {
             get { featureFlags.emitLMDBIndex }
             set { featureFlags.emitLMDBIndex = newValue }
         }
         
         // MARK: - ParsableCommand conformance
-        
+
         public mutating func validate() throws {
             if transformForStaticHosting {
                 if let templateURL = templateOption.templateURL {
                     let neededFileName: String
-                    
+
                     if hostingBasePath != nil {
                         neededFileName = HTMLTemplate.templateFileName.rawValue
                     }else {
                         neededFileName = HTMLTemplate.indexFileName.rawValue
                     }
-                    
+
                     let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
                     if !FileManager.default.fileExists(atPath: indexTemplate.path) {
                         throw TemplateOption.invalidHTMLTemplateError(
@@ -672,7 +645,7 @@ extension Docc {
                             expectedFile: neededFileName
                         )
                     }
-                    
+
                 } else {
                     let invalidOrMissingTemplateDiagnostic = Diagnostic(
                         severity: .warning,
@@ -700,11 +673,11 @@ extension Docc {
                 }
             }
         }
-        
+
         public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
             var convertAction = try ConvertAction(fromConvertCommand: self)
-            
+
             // Perform the conversion and print any warnings or errors found
             try convertAction.performAndHandleResult()
         }

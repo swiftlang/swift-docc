@@ -32,7 +32,7 @@ extension PathHierarchy {
 
 // MARK: Parsing links
 
-extension PathHierarchy {
+extension PathHierarchy.PathParser {
     
     /// Attempts to parse a path component with type signature disambiguation from a substring.
     ///
@@ -63,7 +63,7 @@ extension PathHierarchy {
         
         // Look for the start of the parameter disambiguation.
         if let parameterStartRange = original.range(of: "-(") {
-            let name = String(original[..<parameterStartRange.lowerBound])
+            let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
             
             let parameterTypes = scanner.scanArguments()
@@ -75,15 +75,15 @@ extension PathHierarchy {
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: returnTypes))
             }
         } else if let parameterStartRange = original.range(of: "->") {
-            let name = String(original[..<parameterStartRange.lowerBound])
+            let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
             
-            let returnTypes: [String]
+            let returnTypes: [Substring]
             if scanner.peek() == "(" {
                 _ = scanner.take() // the leading parenthesis
                 returnTypes = scanner.scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
             } else {
-                returnTypes = [String(scanner.takeAll())]
+                returnTypes = [scanner.takeAll()]
             }
             return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: nil, returnTypes: returnTypes))
         }
@@ -138,13 +138,13 @@ private struct StringScanner {
 
     // MARK: Parsing argument types by scanning
     
-    mutating func scanArguments() -> [String] {
-        var arguments = [String]()
+    mutating func scanArguments() -> [Substring] {
+        var arguments = [Substring]()
         repeat {
             guard let argument = scanArgument() else {
                 break
             }
-            arguments.append(String(argument))
+            arguments.append(argument)
         } while !isAtEnd && take() == ","
         
         return arguments

@@ -795,13 +795,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderer: contentRenderer
             ) {
                 contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-                seeAlsoSections.append(TaskGroupRenderSection(
-                    title: seeAlso.title,
-                    abstract: nil,
-                    discussion: nil,
-                    identifiers: seeAlso.references.map { $0.absoluteString },
-                    generated: true
-                ))
+                seeAlsoSections.append(TaskGroupRenderSection(taskGroup: seeAlso))
             }
             
             return seeAlsoSections
@@ -1022,12 +1016,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         contentCompiler: inout RenderContentCompiler
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
-            let supportedLanguages = Set(group.directives.compactMap {
+            let supportedLanguages = group.directives[SupportedLanguage.directiveName]?.compactMap {
                 SupportedLanguage(from: $0, source: nil, for: bundle, in: context)?.language
-            })
+            }
             
             // If the task group has a set of supported languages, see if it should render for the allowed traits.
-            guard supportedLanguages.isEmpty || supportedLanguages.matchesOneOf(traits: allowedTraits) else {
+            if supportedLanguages?.matchesOneOf(traits: allowedTraits) == false {
                 return nil
             }
             
@@ -1045,6 +1039,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 guard let reference = contentCompiler.collectedTopicReferences[topicIdentifier] else {
                     // If there's no reference in `contentCompiler.collectedTopicReferences`, the reference refers to
                     // a non-documentation URL (e.g., 'https://' URL), in which case it is available in all traits.
+                    return true
+                }
+                
+                guard context.isSymbol(reference: reference) else {
+                    // If the reference corresponds to any kind except Symbol
+                    // (e.g., Article, Tutorial, SampleCode...), allow the topic
+                    // to appear independently of the source language it belongs to.
                     return true
                 }
                 
@@ -1491,7 +1492,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
-                // Allowed traits should be all traits except the reverse of the objc/swift pairing
+                // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
                         topics,
@@ -1524,12 +1525,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 guard !newReferences.isEmpty else { return nil }
                 
                 contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
-                return TaskGroupRenderSection(
-                    title: group.title,
-                    abstract: nil,
-                    discussion: nil,
-                    identifiers: newReferences.map { $0.absoluteString }
-                )
+                return TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences))
             })
             
             // Place "bottom" rendering preference automatic task groups
@@ -1621,13 +1617,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             ), !seeAlso.references.isEmpty {
                 contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
                 seeAlsoSections.append(
-                    TaskGroupRenderSection(
-                        title: seeAlso.title,
-                        abstract: nil,
-                        discussion: nil,
-                        identifiers: seeAlso.references.map { $0.absoluteString },
-                        generated: true
-                    )
+                    TaskGroupRenderSection(taskGroup: seeAlso)
                 )
             }
             
@@ -1978,7 +1968,7 @@ extension ContentLayout: RenderTree {}
 
 extension ContentRenderSection: RenderTree {}
 
-private extension Set where Element == SourceLanguage {
+private extension Sequence where Element == SourceLanguage {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
         traits.contains(where: {
             guard let languageID = $0.interfaceLanguage,

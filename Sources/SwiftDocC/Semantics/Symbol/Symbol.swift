@@ -124,12 +124,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         }
         return variants
     }
-
-    /// The names of any "bystander" modules required for this symbol, if it came from a cross-import overlay.
-    @available(*, deprecated, message: "Use crossImportOverlayModule instead")
-    public var bystanderModuleNames: [String]? {
-        self.crossImportOverlayModule?.bystanderModules
-    }
     
     /// Optional cross-import module names of the symbol.
     internal(set) public var crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])?
@@ -150,7 +144,10 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     public var declarationVariants = DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]>(
         defaultVariantValue: [:]
     )
-    
+
+    /// The symbols alternate declarations in each language variant the symbol is available in.
+    public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
+
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
 
     /// The symbol's availability or conformance constraints, in each language variant the symbol is available in.
@@ -307,6 +304,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                     self.locationVariants[trait] = location
                 case let spi as SymbolGraph.Symbol.SPI:
                     self.isSPIVariants[trait] = spi.isSPI
+                case let alternateDeclarations as SymbolGraph.Symbol.AlternateDeclarations:
+                    self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
                 default: break;
                 }
             }
@@ -499,7 +498,7 @@ extension Symbol {
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
     /// The first variant of the symbol's extended module, if available
-    @available(*, deprecated, message: "Please use extendedModuleVariants instead.")
+    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 5.12 is released")
     public var extendedModule: String? { extendedModuleVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.
