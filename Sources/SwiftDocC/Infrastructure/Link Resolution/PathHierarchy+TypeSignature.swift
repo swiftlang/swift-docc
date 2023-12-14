@@ -61,8 +61,15 @@ extension PathHierarchy.PathParser {
         //                                                                │
         //    return type(s)                                            Result
         
+        let possibleDisambiguationText: Substring
+        if let name = parseOperatorName(original) {
+            possibleDisambiguationText = original[name.endIndex...]
+        } else {
+            possibleDisambiguationText = original
+        }
+        
         // Look for the start of the parameter disambiguation.
-        if let parameterStartRange = original.range(of: "-(") {
+        if let parameterStartRange = possibleDisambiguationText.range(of: "-(") {
             let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
             
@@ -74,7 +81,7 @@ extension PathHierarchy.PathParser {
                 let returnTypes = scanner.scanArguments() // The return types (tuple or not) can be parsed the same as the arguments
                 return PathComponent(full: String(original), name: name, disambiguation: .typeSignature(parameterTypes: parameterTypes, returnTypes: returnTypes))
             }
-        } else if let parameterStartRange = original.range(of: "->") {
+        } else if let parameterStartRange = possibleDisambiguationText.range(of: "->") {
             let name = original[..<parameterStartRange.lowerBound]
             var scanner = StringScanner(original[parameterStartRange.upperBound...])
             

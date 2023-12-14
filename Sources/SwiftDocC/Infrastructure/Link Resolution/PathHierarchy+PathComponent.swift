@@ -14,7 +14,7 @@ import SymbolKit
 /// All known symbol kind identifiers.
 ///
 /// This is used to identify parsed path components as kind information.
-private let knownSymbolKinds: Set<String> = {
+private let knownSymbolKinds: Set<Substring> = {
     // We don't want to register these extended symbol kinds because that makes them available for decoding from symbol graphs which isn't expected.
     return Set(
         (SymbolGraph.Symbol.KindIdentifier.allCases + [
@@ -24,7 +24,7 @@ private let knownSymbolKinds: Set<String> = {
             .extendedEnumeration,
             .unknownExtendedType,
             .extendedModule
-        ]).map(\.identifier)
+        ]).map { $0.identifier[...] }
     )
 }()
 
@@ -89,7 +89,7 @@ extension PathHierarchy.PathParser {
             return index > 0
         }
         
-        if knownSymbolKinds.contains(String(disambiguation)) {
+        if knownSymbolKinds.contains(disambiguation) {
             // The parsed hash value is a symbol kind. If the last disambiguation is a kind, then the path component doesn't contain a hash disambiguation.
             return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: disambiguation, hash: nil))
         }
@@ -101,7 +101,7 @@ extension PathHierarchy.PathParser {
             if let dashIndex = name.lastIndex(of: "-") {
                 let kind = name[dashIndex...].dropFirst()
                 let name = name[..<dashIndex]
-                if knownSymbolKinds.contains(String(kind)) {
+                if knownSymbolKinds.contains(kind) {
                     return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kind, hash: disambiguation))
                 } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
                     let kindWithoutLanguage = kind.dropFirst(languagePrefix.count)
@@ -162,6 +162,24 @@ extension PathHierarchy.PathParser {
 
         return result
     }
+    
+    static func parseOperatorName(_ component: Substring) -> Substring? {
+        guard
+            // Operators start with at least one operator head character
+            let first = component.unicodeScalars.first,
+            first.isValidOperatorHead,
+            // Followed by either a list of parameters or additional operator head characters
+            let second = component.unicodeScalars.dropFirst().first,
+            second == "(" || second.isValidOperatorHead
+        else {
+            return nil
+        }
+        
+        guard let operatorEndIndex = component.firstIndex(of: PathComponentScanner.operatorEnd) else {
+            return component
+        }
+        return component[...operatorEndIndex]
+    }
 }
 
 private struct PathComponentScanner {
@@ -169,7 +187,7 @@ private struct PathComponentScanner {
     
     static let separator: Character = "/"
     private static let anchorSeparator: Character = "#"
-    private static let operatorEnd: Character = ")"
+    static let operatorEnd: Character = ")"
     
     init(_ original: Substring) {
         remaining = original
@@ -181,14 +199,9 @@ private struct PathComponentScanner {
     
     mutating func scanPathComponent() -> Substring {
         // If the next component is an operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidOperatorHead) {
-            guard let operatorEndIndex = remaining.firstIndex(of: Self.operatorEnd) else {
-                defer { remaining.removeAll() }
-                return remaining
-            }
-            
-            var component = remaining[..<operatorEndIndex]
-            remaining = remaining[operatorEndIndex...]
+        if let operatorName = PathHierarchy.PathParser.parseOperatorName(remaining) {
+            var component = operatorName
+            remaining = remaining[operatorName.endIndex...]
             
             guard let index = remaining.firstIndex(of: Self.separator) else {
                 defer { remaining.removeAll() }
