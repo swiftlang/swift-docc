@@ -1456,7 +1456,7 @@ let expected = """
         // Get a node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
-        // Get the breacrumbs as paths
+        // Get the breadcrumbs as paths
         let paths = context.pathsTo(node.reference).sorted { (path1, path2) -> Bool in
             return path1.count < path2.count
         }
@@ -1670,7 +1670,9 @@ let expected = """
             A documentation extension that curates symbols with characters not allowed in a resolved reference URL.
 
             ## Topics
-
+            
+            ### Operator name only
+            
             - ``<(_:_:)``
             - ``>(_:_:)``
             - ``<=(_:_:)``
@@ -1678,11 +1680,60 @@ let expected = """
             - ``-(_:_:)-22pw2``
             - ``-(_:)-9xdx0``
             - ``-=(_:_:)-7w3vn``
+            - ``/(_:_:)``
+            - ``/=(_:_:)``
+            
+            ### Prefixes with containing type name
+            
+            - ``MyNumber/<(_:_:)``
+            - ``MyNumber/>(_:_:)``
+            - ``MyNumber/<=(_:_:)``
+            - ``MyNumber/>=(_:_:)``
+            - ``MyNumber/-(_:_:)-22pw2``
+            - ``MyNumber/-(_:)-9xdx0``
+            - ``MyNumber/-=(_:_:)-7w3vn``
+            - ``MyNumber//(_:_:)``
+            - ``MyNumber//=(_:_:)``
             """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
         }
         
         let unresolvedTopicProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
         XCTAssertEqual(unresolvedTopicProblems.map(\.diagnostic.summary), [], "All links should resolve without warnings")
+    }
+    
+    func testOperatorReferences() throws {
+        let (_, context) = try testBundleAndContext(named: "InheritedOperators")
+        
+        let pageIdentifiersAndNames = Dictionary(uniqueKeysWithValues: try context.knownPages.map { reference in
+            (key: reference.path, value: try context.entity(with: reference).name.description)
+        })
+        
+        // Operators where all characters in the operator name are also allowed in URL paths
+        XCTAssertEqual("!=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/!=(_:_:)"])
+        XCTAssertEqual("*(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/*(_:_:)"])
+        XCTAssertEqual("*=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/*=(_:_:)"])
+        XCTAssertEqual("+(_:)",     pageIdentifiersAndNames["/documentation/Operators/MyNumber/+(_:)"])
+        XCTAssertEqual("+(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/+(_:_:)"])
+        XCTAssertEqual("+=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/+=(_:_:)"])
+        XCTAssertEqual("-(_:)",     pageIdentifiersAndNames["/documentation/Operators/MyNumber/-(_:)"])
+        XCTAssertEqual("-(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/-(_:_:)"])
+        XCTAssertEqual("-=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/-=(_:_:)"])
+        XCTAssertEqual("...(_:_:)", pageIdentifiersAndNames["/documentation/Operators/MyNumber/...(_:_:)"])
+        XCTAssertEqual("..<(_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/.._(_:)"])
+        XCTAssertEqual("..<(_:_:)", pageIdentifiersAndNames["/documentation/Operators/MyNumber/.._(_:_:)"])
+        // Operators with the same name have disambiguation in their paths
+        XCTAssertEqual("...(_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/...(_:)-28faz"])
+        XCTAssertEqual("...(_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/...(_:)-8ooeh"])
+        
+        // Characters that are not allowed in URL paths are replaced with "_" (adding disambiguation if the replacement introduces conflicts)
+        XCTAssertEqual("<(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-736gk"])
+        XCTAssertEqual("<=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-9uewk"])
+        XCTAssertEqual(">(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-21jxf"])
+        XCTAssertEqual(">=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-70j0d"])
+        
+        // "/" is a separator in URL paths so it's replaced with with "_" (adding disambiguation if the replacement introduces conflicts)
+        XCTAssertEqual("/(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-7am4"])
+        XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-3m4ko"])
     }
     
     func testSpecialCharactersInLinks() throws {
