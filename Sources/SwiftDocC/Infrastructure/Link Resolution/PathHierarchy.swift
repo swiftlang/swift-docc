@@ -194,10 +194,10 @@ struct PathHierarchy {
                         parent.children[components.first!] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
-                    let component = Self.parse(pathComponent: component[...])
-                    let nodeWithoutSymbol = Node(name: component.name)
+                    let component = PathParser.parse(pathComponent: component[...])
+                    let nodeWithoutSymbol = Node(name: String(component.name))
                     nodeWithoutSymbol.isDisfavoredInCollision = true
-                    parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
+                    parent.add(child: nodeWithoutSymbol, kind: component.kind.map(String.init), hash: component.hash.map(String.init))
                     parent = nodeWithoutSymbol
                 }
                 parent.add(symbolChild: node)
@@ -220,6 +220,10 @@ struct PathHierarchy {
             """
         )
         
+        assert(
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
+            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+        )
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node

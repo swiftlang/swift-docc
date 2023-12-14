@@ -237,7 +237,7 @@ final class PathHierarchyBasedLinkResolver {
                     originalReferenceString += "#" + fragment
                 }
                 
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(context: context, originalReference: originalReferenceString))
+                return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo(fullNameOfNode: { fullName(of: $0, in: context) }))
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
@@ -245,6 +245,22 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     private let fallbackResolver = FallbackResolverBasedLinkResolver()
+                                
+    func fullName(of node: PathHierarchy.Node, in context: DocumentationContext) -> String {
+        guard let identifier = node.identifier else { return node.name }
+        if let symbol = node.symbol {
+            if let fragments = symbol.declarationFragments {
+                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+            }
+            return symbol.names.title
+        }
+        let reference = resolvedReferenceMap[identifier]!
+        if reference.fragment != nil {
+            return context.nodeAnchorSections[reference]!.title
+        } else {
+            return context.documentationCache[reference]!.name.description
+        }
+    }
     
     // MARK: Symbol reference creation
     
@@ -285,7 +301,7 @@ final class PathHierarchyBasedLinkResolver {
                 guard let reference = reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
-         }
+        }
         return result
     }
 }
