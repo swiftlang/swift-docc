@@ -10,7 +10,7 @@
 
 import Foundation
 
-private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted
+private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted.union(["/"])
 
 private func symbolFileName(_ symbolName: String) -> String {
     return symbolName.components(separatedBy: nonAllowedPathCharacters).joined(separator: "_")
