@@ -623,7 +623,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                     var problems = resolver.problems
 
-                    if case .sourceCode(_, let offset) = doc.source {
+                    if case .sourceCode(_, let offset) = doc.source, documentationNode.kind.isSymbol {
                         // Offset all problem ranges by the start location of the
                         // source comment in the context of the complete file.
                         if let docRange = offset {
