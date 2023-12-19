@@ -461,7 +461,7 @@ public struct DocumentationNode {
                 }
             }
 
-            func location() -> SymbolGraph.Symbol.Location? {
+            func docCommentLocation() -> SymbolGraph.Symbol.Location? {
                 if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
                     return .init(uri: uri, position: position)
                 }
@@ -470,7 +470,7 @@ public struct DocumentationNode {
             documentationChunks = [
                 DocumentationChunk(
                     source: .sourceCode(
-                        location: location(),
+                        location: docCommentLocation(), // The documentation chunk represents the doc comment's location, which isn't necessarily the symbol's location.
                         offset: offset
                     ),
                     markup: docCommentMarkup
@@ -521,7 +521,7 @@ public struct DocumentationNode {
         case .ivar: return .instanceVariable
         case .macro: return .macro
         case .`method`: return .instanceMethod
-//        case .namespace: return .namespace
+        case .namespace: return .namespace
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
         case .snippet: return .snippet

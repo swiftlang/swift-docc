@@ -79,9 +79,12 @@ struct ParametersAndReturnValidator {
                 return DocumentationDataVariants(defaultVariantValue: nil)
             }
             // Since the symbol documented its return value synthesize an "error" parameter for it.
-            return DocumentationDataVariants(values: [
-                .objectiveC: ParametersSection(parameters: [Parameter(name: "error", contents: Self.objcErrorDescription)]) // This parameter is synthesized and doesn't have a source range.
-            ])
+            var variants = DocumentationDataVariants<ParametersSection>()
+            for trait in signatures.keys {
+                variants[trait] = ParametersSection(parameters: []) // Add an empty section so that this language doesn't fallback to the Objective-C content.
+            }
+            variants[.objectiveC] = ParametersSection(parameters: [Parameter(name: "error", contents: Self.objcErrorDescription)]) // This parameter is synthesized and doesn't have a source range.
+            return variants
         }
         
         var variants = DocumentationDataVariants<ParametersSection>()
@@ -102,7 +105,11 @@ struct ParametersAndReturnValidator {
             
             // Remove documented parameters that don't apply to this language representation's function signature.
             var languageApplicableParameters = parametersByName.filter { knownParameterNames.contains($0.key) }
-            guard !languageApplicableParameters.isEmpty else { continue }
+            guard !languageApplicableParameters.isEmpty else { 
+                // Add an empty section so that this language doesn't fallback to another language's content.
+                variants[trait] = ParametersSection(parameters: [])
+                continue
+            }
             
             // Add a missing error parameter documentation if needed.
             if trait == .objectiveC, Self.shouldAddObjectiveCErrorParameter(signatures, parameters) {
@@ -181,13 +188,15 @@ struct ParametersAndReturnValidator {
                signature.returns.allSatisfy({ voidReturnValues.contains($0) })
             {
                 traitsWithNonVoidReturnValues.remove(trait)
+                // Add an empty section so that this language doesn't fallback to another language's content.
+                variants[trait] = ReturnsSection(content: [])
                 continue
             }
             
             variants[trait] = returnsSection
         }
         
-        //
+        // Check if there's new or updated return value content that we should add for Objective-C
         if returns != nil || hasDocumentedParameters, let newContent = Self.newObjectiveCReturnsContent(signatures, returns: returns) {
             variants[.objectiveC] = ReturnsSection(content: newContent)
         }
@@ -266,7 +275,12 @@ struct ParametersAndReturnValidator {
             return nil
         }
         
-        return returns.contents + objcObjectErrorAddition(endPreviousSentence: returns.contents.last?.format().removingTrailingWhitespace().last != ".")
+        let contentToAdd = objcObjectErrorAddition(endPreviousSentence: returns.contents.last?.format().removingTrailingWhitespace().last != ".")
+        if let inlineContents = returns.contents as? [InlineMarkup] {
+            return [Paragraph(inlineContents + contentToAdd)]
+        } else {
+            return returns.contents + [Paragraph(contentToAdd)]
+        }
     }
     
     private static var knownVoidReturnValues: [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] = [
@@ -440,12 +454,16 @@ struct ParametersAndReturnValidator {
     // MARK: Generated content
     
     private static let objcErrorDescription: [Markup] = [
-        Text("On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+        Paragraph([
+            Text("On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+        ])
     ]
     private static let objcBoolErrorDescription: [Markup] = [
-        InlineCode("YES"), Text(" if successful, or "), InlineCode("NO"), Text(" if an error occurred.")
+        Paragraph([
+            InlineCode("YES") as InlineMarkup, Text(" if successful, or "), InlineCode("NO"), Text(" if an error occurred.")
+        ])
     ]
-    private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [Markup] {
+    private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [InlineMarkup] {
         [Text("\(endPreviousSentence ? "." : "") If an error occurs, this method returns "), InlineCode("nil"), Text(" and assigns an appropriate error object to the "), InlineCode("error"), Text(" parameter.")]
     }
     

@@ -66,170 +66,6 @@
       "declarationFragments": [
         {
           "kind": "keyword",
-          "spelling": "extern"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "typeIdentifier",
-          "preciseIdentifier": "c:d",
-          "spelling": "double"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "ErrorParametersVersionNumber"
-        }
-      ],
-      "docComment": {
-        "lines": [
-          {
-            "range": {
-              "end": {
-                "character": 48,
-                "line": 10
-              },
-              "start": {
-                "character": 5,
-                "line": 10
-              }
-            },
-            "text": "Project version number for ErrorParameters."
-          }
-        ]
-      },
-      "identifier": {
-        "interfaceLanguage": "objective-c",
-        "precise": "c:@ErrorParametersVersionNumber"
-      },
-      "kind": {
-        "displayName": "Global Variable",
-        "identifier": "objective-c.var"
-      },
-      "location": {
-        "position": {
-          "character": 26,
-          "line": 11
-        },
-        "uri": "file:///Users/username/path/to/ErrorParameters/ErrorParameters.h"
-      },
-      "names": {
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "ErrorParametersVersionNumber"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "identifier",
-            "spelling": "ErrorParametersVersionNumber"
-          }
-        ],
-        "title": "ErrorParametersVersionNumber"
-      },
-      "pathComponents": [
-        "ErrorParametersVersionNumber"
-      ]
-    },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "keyword",
-          "spelling": "extern"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "keyword",
-          "spelling": "const"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "typeIdentifier",
-          "preciseIdentifier": "c:c",
-          "spelling": "unsigned char"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "ErrorParametersVersionString"
-        },
-        {
-          "kind": "text",
-          "spelling": "[]"
-        }
-      ],
-      "docComment": {
-        "lines": [
-          {
-            "range": {
-              "end": {
-                "character": 48,
-                "line": 13
-              },
-              "start": {
-                "character": 5,
-                "line": 13
-              }
-            },
-            "text": "Project version string for ErrorParameters."
-          }
-        ]
-      },
-      "identifier": {
-        "interfaceLanguage": "objective-c",
-        "precise": "c:@ErrorParametersVersionString"
-      },
-      "kind": {
-        "displayName": "Global Variable",
-        "identifier": "objective-c.var"
-      },
-      "location": {
-        "position": {
-          "character": 39,
-          "line": 14
-        },
-        "uri": "file:///Users/username/path/to/ErrorParameters/ErrorParameters.h"
-      },
-      "names": {
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "ErrorParametersVersionString"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "identifier",
-            "spelling": "ErrorParametersVersionString"
-          }
-        ],
-        "title": "ErrorParametersVersionString"
-      },
-      "pathComponents": [
-        "ErrorParametersVersionString"
-      ]
-    },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "keyword",
           "spelling": "@interface"
         },
         {
@@ -280,7 +116,7 @@
           "character": 12,
           "line": 13
         },
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInObjectiveC.h"
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInObjectiveC.h"
       },
       "names": {
         "navigator": [
@@ -505,7 +341,7 @@
           "character": 1,
           "line": 20
         },
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInObjectiveC.h"
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInObjectiveC.h"
       },
       "names": {
         "navigator": [
@@ -666,7 +502,7 @@
           "character": 1,
           "line": 26
         },
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInObjectiveC.h"
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInObjectiveC.h"
       },
       "names": {
         "navigator": [
@@ -747,7 +583,7 @@
           "character": 12,
           "line": 305
         },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters.framework\/Headers\/ErrorParameters-Swift.h"
       },
       "names": {
         "navigator": [
@@ -985,7 +821,7 @@
           "character": 1,
           "line": 314
         },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters.framework\/Headers\/ErrorParameters-Swift.h"
       },
       "names": {
         "navigator": [
@@ -1198,7 +1034,7 @@
           "character": 1,
           "line": 322
         },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters.framework\/Headers\/ErrorParameters-Swift.h"
       },
       "names": {
         "navigator": [
@@ -1224,269 +1060,5 @@
         "returnSomethingAndReturnError:"
       ]
     },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "keyword",
-          "spelling": "#define"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "ERRORPARAMETERS_SWIFT_H"
-        }
-      ],
-      "identifier": {
-        "interfaceLanguage": "objective-c",
-        "precise": "c:ErrorParameters-Swift.h@168@macro@ERRORPARAMETERS_SWIFT_H"
-      },
-      "kind": {
-        "displayName": "Macro",
-        "identifier": "objective-c.macro"
-      },
-      "location": {
-        "position": {
-          "character": 9,
-          "line": 5
-        },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
-      },
-      "names": {
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "ERRORPARAMETERS_SWIFT_H"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "identifier",
-            "spelling": "ERRORPARAMETERS_SWIFT_H"
-          }
-        ],
-        "title": "ERRORPARAMETERS_SWIFT_H"
-      },
-      "pathComponents": [
-        "ERRORPARAMETERS_SWIFT_H"
-      ]
-    },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "keyword",
-          "spelling": "#define"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "SWIFT_ENUM_NAMED"
-        },
-        {
-          "kind": "text",
-          "spelling": "("
-        },
-        {
-          "kind": "internalParam",
-          "spelling": "_type"
-        },
-        {
-          "kind": "text",
-          "spelling": ", "
-        },
-        {
-          "kind": "internalParam",
-          "spelling": "_name"
-        },
-        {
-          "kind": "text",
-          "spelling": ", "
-        },
-        {
-          "kind": "internalParam",
-          "spelling": "SWIFT_NAME"
-        },
-        {
-          "kind": "text",
-          "spelling": ", "
-        },
-        {
-          "kind": "internalParam",
-          "spelling": "_extensibility"
-        },
-        {
-          "kind": "text",
-          "spelling": ")"
-        }
-      ],
-      "identifier": {
-        "interfaceLanguage": "objective-c",
-        "precise": "c:ErrorParameters-Swift.h@6388@macro@SWIFT_ENUM_NAMED"
-      },
-      "kind": {
-        "displayName": "Macro",
-        "identifier": "objective-c.macro"
-      },
-      "location": {
-        "position": {
-          "character": 11,
-          "line": 196
-        },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
-      },
-      "names": {
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "SWIFT_ENUM_NAMED"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "identifier",
-            "spelling": "SWIFT_ENUM_NAMED"
-          }
-        ],
-        "title": "SWIFT_ENUM_NAMED"
-      },
-      "pathComponents": [
-        "SWIFT_ENUM_NAMED"
-      ]
-    },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "keyword",
-          "spelling": "typedef"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "typeIdentifier",
-          "preciseIdentifier": "c:@T@uint_least16_t",
-          "spelling": "uint_least16_t"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "char16_t"
-        },
-        {
-          "kind": "text",
-          "spelling": ";"
-        }
-      ],
-      "identifier": {
-        "interfaceLanguage": "objective-c",
-        "precise": "c:ErrorParameters-Swift.h@T@char16_t"
-      },
-      "kind": {
-        "displayName": "Type Alias",
-        "identifier": "objective-c.typealias"
-      },
-      "location": {
-        "position": {
-          "character": 24,
-          "line": 65
-        },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
-      },
-      "names": {
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "char16_t"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "identifier",
-            "spelling": "char16_t"
-          }
-        ],
-        "title": "char16_t"
-      },
-      "pathComponents": [
-        "char16_t"
-      ],
-      "type": "c:@T@uint_least16_t"
-    },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "keyword",
-          "spelling": "typedef"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "typeIdentifier",
-          "preciseIdentifier": "c:@T@uint_least32_t",
-          "spelling": "uint_least32_t"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "char32_t"
-        },
-        {
-          "kind": "text",
-          "spelling": ";"
-        }
-      ],
-      "identifier": {
-        "interfaceLanguage": "objective-c",
-        "precise": "c:ErrorParameters-Swift.h@T@char32_t"
-      },
-      "kind": {
-        "displayName": "Type Alias",
-        "identifier": "objective-c.typealias"
-      },
-      "location": {
-        "position": {
-          "character": 24,
-          "line": 66
-        },
-        "uri": "file:///Users/droennqvist/Library/Developer/Xcode/DerivedData/ErrorParameters-gazxganyiilhgcducsyxdoxeciia/Build/Products/Debug/ErrorParameters.framework/Headers/ErrorParameters-Swift.h"
-      },
-      "names": {
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "char32_t"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "identifier",
-            "spelling": "char32_t"
-          }
-        ],
-        "title": "char32_t"
-      },
-      "pathComponents": [
-        "char32_t"
-      ],
-      "type": "c:@T@uint_least32_t"
-    }
   ]
 }

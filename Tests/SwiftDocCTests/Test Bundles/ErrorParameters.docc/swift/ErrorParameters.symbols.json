@@ -121,7 +121,7 @@
         ]
       },
       "docComment": {
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInSwift.swift",
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
         "module": "ErrorParameters",
         "lines": [
           {
@@ -215,7 +215,7 @@
       ],
       "accessLevel": "public",
       "location": {
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInSwift.swift",
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
         "position": {
           "line": 25,
           "character": 22
@@ -391,7 +391,7 @@
         ]
       },
       "docComment": {
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInSwift.swift",
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
         "module": "ErrorParameters",
         "lines": [
           {
@@ -433,7 +433,7 @@
       ],
       "accessLevel": "public",
       "location": {
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInSwift.swift",
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
         "position": {
           "line": 10,
           "character": 19
@@ -585,7 +585,7 @@
         ]
       },
       "docComment": {
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInSwift.swift",
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
         "module": "ErrorParameters",
         "lines": [
           {
@@ -715,7 +715,7 @@
       ],
       "accessLevel": "public",
       "location": {
-        "uri": "file:///Users/username/path/to/ErrorParameters/MyClassInSwift.swift",
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
         "position": {
           "line": 19,
           "character": 22
