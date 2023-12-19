@@ -529,6 +529,14 @@ extension Docc {
             )
             var enableExperimentalLinkHierarchySerialization = false
             
+            @Flag(
+                name: .customLong("enable-experimental-parameters-and-returns-validation"),
+                help: ArgumentHelp("Validate parameter and return value documentation", discussion: """
+                Validates and filters symbols' parameter and return value documentation based on the symbol's function signature in each language representation.
+                """)
+            )
+            var enableExperimentalParametersAndReturnsValidation = false
+            
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
@@ -600,6 +608,12 @@ extension Docc {
         public var enableExperimentalLinkHierarchySerialization: Bool {
             get { featureFlags.enableExperimentalLinkHierarchySerialization }
             set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.
+        public var enableExperimentalParametersAndReturnsValidation: Bool {
+            get { featureFlags.enableExperimentalParametersAndReturnsValidation }
+            set { featureFlags.enableExperimentalParametersAndReturnsValidation = newValue }
         }
 
         /// A user-provided value that is true if additional metadata files should be produced.

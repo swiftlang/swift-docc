@@ -352,17 +352,15 @@ public struct DocumentationNode {
             defaultVariantValue: documentationExtension?.redirects
         )
         
-        if let returns = markupModel.discussionTags?.returns, !returns.isEmpty {
-            semantic.returnsSectionVariants = DocumentationDataVariants(
-                defaultVariantValue: ReturnsSection(content: returns[0].contents)
-            )
-        }
+        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source))
+        let (parametersSectionVariants, returnsSectionVariants) = filter.makeParametersAndReturnsSections(
+            markupModel.discussionTags?.parameters,
+            markupModel.discussionTags?.returns,
+            unifiedSymbol
+        )
         
-        if let parameters = markupModel.discussionTags?.parameters, !parameters.isEmpty {
-            semantic.parametersSectionVariants = DocumentationDataVariants(
-                defaultVariantValue: ParametersSection(parameters: parameters)
-            )
-        }
+        semantic.parametersSectionVariants = parametersSectionVariants
+        semantic.returnsSectionVariants = returnsSectionVariants
         
         if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
             // Record the keys extracted from the markdown
@@ -418,7 +416,7 @@ public struct DocumentationNode {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
 
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
-            let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
+            let docCommentMarkup = Document(parsing: docCommentString, source: docComment.url, options: documentOptions)
             let offset = symbol.offsetAdjustedForInterfaceLanguage()
 
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
@@ -463,10 +461,16 @@ public struct DocumentationNode {
                 }
             }
 
+            func location() -> SymbolGraph.Symbol.Location? {
+                if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
+                    return .init(uri: uri, position: position)
+                }
+                return symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)
+            }
             documentationChunks = [
                 DocumentationChunk(
                     source: .sourceCode(
-                        location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self),
+                        location: location(),
                         offset: offset
                     ),
                     markup: docCommentMarkup
@@ -517,7 +521,7 @@ public struct DocumentationNode {
         case .ivar: return .instanceVariable
         case .macro: return .macro
         case .`method`: return .instanceMethod
-        case .namespace: return .namespace
+//        case .namespace: return .namespace
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
         case .snippet: return .snippet
