@@ -566,6 +566,8 @@ extension PathHierarchy {
                     pathComponents: [],
                     docComment: nil,
                     accessLevel: .public,
+                    // To make the file format smaller we don't store the symbol kind identifiers with each node. Instead, the kind identifier is stored
+                    // as disambiguation and is filled in while building up the hierarchy below.
                     kind: SymbolGraph.Symbol.Kind(rawIdentifier: "", displayName: ""),
                     mixins: [:]
                 )
@@ -585,6 +587,7 @@ extension PathHierarchy {
                 // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
                 node.add(child: childNode, kind: child.kind, hash: child.hash)
                 if let kind = child.kind {
+                    // Since the symbol was created with an empty symbol kind, fill in its kind identifier here.
                     childNode.symbol?.kind.identifier = .init(identifier: kind)
                 }
             }
@@ -592,6 +595,8 @@ extension PathHierarchy {
         
         self.lookup = lookup
         let modules = fileRepresentation.modules.map({ lookup[identifiers[$0]]! })
+        // Fill in the symbol kind of all modules. This is needed since the modules were created with empty symbol kinds and since no other symbol has a 
+        // module as its child, so the modules didn't get their symbol kind set when building up the hierarchy above.
         for node in modules {
             node.symbol?.kind.identifier = .module
         }
