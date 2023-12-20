@@ -60,7 +60,7 @@ extension PathHierarchy.FileRepresentation {
         }
         
         self.nodes = nodes
-        self.modules = pathHierarchy.modules.mapValues({ identifierMap[$0.identifier]! })
+        self.modules = pathHierarchy.modules.map({ identifierMap[$0.identifier]! })
         self.articlesContainer = identifierMap[pathHierarchy.articlesContainer.identifier]!
         self.tutorialContainer = identifierMap[pathHierarchy.tutorialContainer.identifier]!
         self.tutorialOverviewContainer = identifierMap[pathHierarchy.tutorialOverviewContainer.identifier]!
@@ -93,7 +93,7 @@ extension PathHierarchy {
         var nodes: [Node]
         
         /// The module nodes in this hierarchy.
-        var modules: [String: Int]
+        var modules: [Int]
         /// The container for articles and reference documentation.
         var articlesContainer: Int
         /// The container of tutorials.
@@ -174,7 +174,7 @@ extension PathHierarchyBasedLinkResolver {
         }
         
         return SerializableLinkResolutionInformation(
-            version: .init(major: 0, minor: 0, patch: 1), // This is still in development
+            version: .init(major: 0, minor: 1, patch: 0), // This is still in development
             bundleID: bundleID,
             pathHierarchy: hierarchyFileRepresentation,
             nonSymbolPaths: nonSymbolPaths
