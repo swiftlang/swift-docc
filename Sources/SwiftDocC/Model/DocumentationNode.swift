@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -79,7 +79,7 @@ public struct DocumentationNode {
             /// The documentation comes from a documentation extension file.
             case documentationExtension
             /// The documentation comes from an in-source documentation comment.
-            case sourceCode(location: SymbolGraph.Symbol.Location?)
+            case sourceCode(location: SymbolGraph.Symbol.Location?, offset: SymbolGraph.LineList.SourceRange?)
         }
 
         let source: Source
@@ -145,7 +145,7 @@ public struct DocumentationNode {
         self.semantic = semantic
         self.symbol = nil
         self.platformNames = platformNames
-        self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
+        self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil, offset: nil), markup: markup)]
         self.isVirtual = isVirtual
         
         if let article = semantic as? Article {
@@ -157,22 +157,6 @@ public struct DocumentationNode {
         }
         
         updateAnchorSections()
-    }
-
-    /// Initializes a documentation node to represent a symbol from a symbol graph.
-    ///
-    /// - Parameters:
-    ///   - reference: The unique reference to the node.
-    ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformNames: The names of the platforms for which the node is available.
-    ///   - moduleName: The name of the module that the symbol belongs to.
-    ///   - article: The documentation extension content for this symbol.
-    ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the node.
-    /// > Warning: Using this initializer will not report any diagnostics raised during the initialization of `DocumentationNode`.
-    @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleName:article:engine:) instead")
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, problems: inout [Problem]) {
-        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
-        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: DiagnosticEngine())
     }
 
     /// Initializes a node without parsing its documentation source.
@@ -239,10 +223,6 @@ public struct DocumentationNode {
         
         self.availableSourceLanguages = reference.sourceLanguages
         
-        let extendedModule: String? = unifiedSymbol.mixins
-            .first(where: { $0.0.platform == platformName })?.value
-            .getValueIfPresent(for: SymbolGraph.Symbol.Swift.Extension.self)?.extendedModule
-        
         let semanticSymbol = Symbol(
             kindVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.kind,
@@ -272,7 +252,6 @@ public struct DocumentationNode {
                 defaultVariantValue: platformName.map(PlatformName.init(operatingSystemName:))
             ),
             moduleReference: moduleReference,
-            extendedModule: extendedModule,
             externalIDVariants: DocumentationDataVariants(defaultVariantValue: unifiedSymbol.uniqueIdentifier),
             accessLevelVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.accessLevel,
@@ -440,7 +419,8 @@ public struct DocumentationNode {
 
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
             let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
-            
+            let offset = symbol.offsetAdjustedForInterfaceLanguage()
+
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
                 let location = symbol.mixins.getValueIfPresent(
@@ -475,7 +455,7 @@ public struct DocumentationNode {
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
                     
-                    if let offset = docComment.lines.first?.range {
+                    if let offset = offset {
                         problem.offsetWithRange(offset)
                     }
                     
@@ -485,7 +465,10 @@ public struct DocumentationNode {
 
             documentationChunks = [
                 DocumentationChunk(
-                    source: .sourceCode(location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)),
+                    source: .sourceCode(
+                        location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self),
+                        offset: offset
+                    ),
                     markup: docCommentMarkup
                 )
             ]
@@ -502,7 +485,7 @@ public struct DocumentationNode {
             }
         } else {
             markup = Document()
-            documentationChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
+            documentationChunks = [DocumentationChunk(source: .sourceCode(location: nil, offset: nil), markup: markup)]
         }
         
         return (markup: markup, docChunks: documentationChunks)
@@ -534,6 +517,7 @@ public struct DocumentationNode {
         case .ivar: return .instanceVariable
         case .macro: return .macro
         case .`method`: return .instanceMethod
+        case .namespace: return .namespace
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
         case .snippet: return .snippet
@@ -553,12 +537,6 @@ public struct DocumentationNode {
         case .unknownExtendedType: return .unknownExtendedType
         default: return .unknown
         }
-    }
-
-    @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:) instead")
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, engine: DiagnosticEngine) {
-        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
-        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: engine)
     }
     
     /// Initializes a documentation node to represent a symbol from a symbol graph.

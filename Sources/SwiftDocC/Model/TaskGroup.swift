@@ -26,6 +26,7 @@ struct ExtractLinks: MarkupRewriter {
         
     /// Creates a warning with a suggestion to remove all paragraph elements but the first.
     private func problemForTrailingContent(_ paragraph: Paragraph) -> Problem {
+        let range = paragraph.range ?? paragraph.firstChildRange()
         // An unexpected non-link list item found, suggest to remove it
         let trailingContent = Document(Paragraph(paragraph.inlineChildren.dropFirst()))
         let replacements = trailingContent.children.range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
@@ -34,17 +35,17 @@ struct ExtractLinks: MarkupRewriter {
         switch mode {
         case .taskGroup:
             diagnostic = Diagnostic(
-                source: nil,
+                source: range?.source,
                 severity: .warning,
-                range: paragraph.range,
+                range: range,
                 identifier: "org.swift.docc.ExtraneousTaskGroupItemContent",
                 summary: "Extraneous content found after a link in task group list item"
             )
         case .linksDirective:
             diagnostic = Diagnostic(
-                source: nil,
+                source: range?.source,
                 severity: .warning,
-                range: paragraph.range,
+                range: range,
                 identifier: "org.swift.docc.ExtraneousLinksDirectiveItemContent",
                 summary: "Extraneous content found after a link",
                 explanation: "\(Links.directiveName.singleQuoted) can only contain a bulleted list of documentation links"
@@ -64,7 +65,7 @@ struct ExtractLinks: MarkupRewriter {
         switch mode {
         case .taskGroup:
             diagnostic = Diagnostic(
-                source: nil,
+                source: range?.source,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.UnexpectedTaskGroupItem",
@@ -72,7 +73,7 @@ struct ExtractLinks: MarkupRewriter {
             )
         case .linksDirective:
             diagnostic = Diagnostic(
-                source: nil,
+                source: range?.source,
                 severity: .warning,
                 range: range,
                 identifier: "org.swift.docc.UnexpectedLinksDirectiveListItem",
@@ -125,6 +126,7 @@ struct ExtractLinks: MarkupRewriter {
                         
                         // Warn if there is a trailing content after the link
                         if containsInvalidContent {
+                            
                             problems.append(problemForTrailingContent(paragraph))
                         }
                         return false
@@ -187,7 +189,7 @@ public struct TaskGroup {
     
     /// An optional abstract for the task group.
     public var abstract: AbstractSection? {
-        if let firstParagraph = originalContent.first as? Paragraph {
+        if let firstParagraph = originalContent.mapFirst(where: { $0 as? Paragraph }) {
             return AbstractSection(paragraph: firstParagraph)
         }
         return nil
@@ -200,18 +202,15 @@ public struct TaskGroup {
             return nil
         }
         
-        let startIndex: Int
-        if originalContent.first is Paragraph {
-            startIndex = 1
-        } else {
-            startIndex = 0
+        var discussionChildren = originalContent
+            .prefix(while: { !($0 is UnorderedList) })
+            .filter({ !($0 is BlockDirective) })
+        
+        // Drop the abstract
+        if discussionChildren.first is Paragraph {
+            discussionChildren.removeFirst()
         }
         
-        let endIndex = originalContent.firstIndex(where: {
-            $0 is UnorderedList
-        }) ?? originalContent.endIndex
-        
-        let discussionChildren = originalContent[startIndex..<endIndex]
         guard !discussionChildren.isEmpty else { return nil }
 
         return DiscussionSection(content: Array(discussionChildren))
@@ -224,6 +223,10 @@ public struct TaskGroup {
     public init(heading: Heading?, content: [Markup]) {
         self.heading = heading
         self.originalContent = content
+    }
+    
+    var directives: [String: [BlockDirective]] {
+        .init(grouping: originalContent.compactMap { $0 as? BlockDirective }, by: \.name)
     }
 }
 
@@ -238,3 +241,8 @@ extension TaskGroup {
     }
 }
 
+private extension SourceRange {
+    var source: URL? {
+        lowerBound.source ?? upperBound.source
+    }
+}

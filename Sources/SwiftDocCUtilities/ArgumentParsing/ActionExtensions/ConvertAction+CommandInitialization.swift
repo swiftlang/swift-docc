@@ -21,6 +21,7 @@ extension ConvertAction {
         let outOfProcessResolver: OutOfProcessReferenceResolver?
         
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
+        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -86,7 +87,8 @@ extension ConvertAction {
             transformForStaticHosting: convert.transformForStaticHosting,
             allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
-            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
+            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
+            dependencies: convert.dependencies
         )
     }
 }
