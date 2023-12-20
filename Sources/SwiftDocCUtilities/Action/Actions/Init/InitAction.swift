@@ -31,9 +31,9 @@ public struct InitAction: Action {
     private var resourceDocumentationLink: String {
         switch catalogTemplateKind {
         case .articleOnly:
-            "https://www.swift.org/documentation/docc/"
+            return "https://www.swift.org/documentation/docc/"
         case .tutorial:
-            "https://www.swift.org/documentation/docc/tutorial-syntax"
+            return "https://www.swift.org/documentation/docc/tutorial-syntax"
         }
     }
     
