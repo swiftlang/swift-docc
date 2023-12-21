@@ -85,12 +85,12 @@ extension PathHierarchy {
         // A function to avoid repeating the
         func searchForNodeInModules() throws -> Node {
             // Note: This captures `parentID`, `remaining`, and `rawPathForError`.
-            if let moduleMatch = modules[firstComponent.full]  ?? modules[String(firstComponent.name)] {
+            if let moduleMatch = modules.first(where: { $0.matches(firstComponent) }) {
                 return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
             }
             if modules.count == 1 {
                 do {
-                    return try searchForNode(descendingFrom: modules.first!.value, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: modules.first!, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } catch let error as PathHierarchy.Error {
                     switch error {
                     case .notFound:
@@ -115,13 +115,13 @@ extension PathHierarchy {
                     }
                 }
             }
-            let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
+            let topLevelNames = Set(modules.map(\.name) + [articlesContainer.name, tutorialContainer.name])
             
             if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
                 throw Error.moduleNotFound(
                     pathPrefix: pathForError(of: rawPath, droppingLast: remaining.count),
                     remaining: Array(remaining),
-                    availableChildren: Set(modules.keys)
+                    availableChildren: Set(modules.map(\.name))
                 )
             } else {
                 throw Error.notFound(
@@ -475,7 +475,12 @@ private extension Sequence {
 
 private extension PathHierarchy.Node {
     func matches(_ component: PathHierarchy.PathComponent) -> Bool {
-        if let symbol = symbol {
+        // Check the full path component first in case the node's name has a suffix that could be mistaken for a hash disambiguation.
+        if name == component.full {
+            return true
+        }
+        // Otherwise, check if the node's symbol matches the provided disambiguation
+        else if let symbol = symbol {
             guard name == component.name else {
                 return false
             }
@@ -486,9 +491,9 @@ private extension PathHierarchy.Node {
                 return false
             }
             return true
-        } else {
-            return name == component.full
         }
+        
+        return false
     }
     
     func anyChildMatches(_ component: PathHierarchy.PathComponent) -> Bool {
