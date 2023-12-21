@@ -205,6 +205,7 @@ extension AutomaticCuration {
             case .ivar: return "Instance Variables"
             case .macro: return "Macros"
             case .`method`: return "Instance Methods"
+            case .namespace: return "Namespaces"
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
             case .`struct`: return "Structures"
@@ -230,6 +231,8 @@ extension AutomaticCuration {
     /// Add a symbol kind to `KindIdentifier.noPageKinds` if it should not generate a page in the
     /// documentation hierarchy.
     static let groupKindOrder: [SymbolGraph.Symbol.KindIdentifier] = [
+        .namespace,
+
         .`class`,
         .`protocol`,
         .`struct`,

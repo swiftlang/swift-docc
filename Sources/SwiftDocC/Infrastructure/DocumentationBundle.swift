@@ -89,17 +89,6 @@ public struct DocumentationBundle {
 
     /// JSON settings file used to theme renderer output.
     public let themeSettings: URL?
-
-    /// Default syntax highlighting to use for code samples in this bundle.
-    @available(*, deprecated, message: "Use 'info.defaultCodeListingLanguage' instead.")
-    public var defaultCodeListingLanguage: String? {
-        return info.defaultCodeListingLanguage
-    }
-    
-    @available(*, deprecated, message: "Use 'info.defaultAvailability' instead.")
-    public var defaultAvailability: DefaultAvailability? {
-        return info.defaultAvailability
-    }
     
     /**
     A URL prefix to be appended to the relative presentation URL.
@@ -107,38 +96,6 @@ public struct DocumentationBundle {
     This is used when a bundle's documentation is hosted in a known location.
     */
     public let baseURL: URL
-    
-    /**
-     Creates a documentation bundle.
-     
-     - Parameters:
-       - displayName: The display name of the documentation bundle.
-       - identifier: A reverse-DNS style identifier indicating the documentation bundle.
-       - version: The version of the documentation bundle.
-       - attributedCodeListings: Code listings extracted from the documented modules' source, indexed by their identifier.
-       - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
-       - markupURLs: DocC Markup files of the bundle.
-       - miscResourceURLs: Miscellaneous resources of the bundle.
-       - defaultCodeListingLanguage: The default language for code blocks.
-       - defaultAvailability: Default availability information for modules in this bundle.
-     */
-    @available(*, deprecated, message: "Use 'init(info:baseURL:...)' instead.")
-    public init(displayName: String, identifier: String, version: Version, baseURL: URL = URL(string: "/")!, attributedCodeListings: [String: AttributedCodeListing] = [:], symbolGraphURLs: [URL], markupURLs: [URL], miscResourceURLs: [URL], customHeader: URL? = nil, customFooter: URL? = nil, defaultCodeListingLanguage: String? = nil, defaultAvailability: DefaultAvailability? = nil) {
-        self.init(
-            info: Info(
-                displayName: displayName,
-                identifier: identifier,
-                version: version.description,
-                defaultCodeListingLanguage: defaultCodeListingLanguage,
-                defaultAvailability: defaultAvailability
-            ),
-            symbolGraphURLs: symbolGraphURLs,
-            markupURLs: markupURLs,
-            miscResourceURLs: miscResourceURLs,
-            customHeader: customHeader,
-            customFooter: customFooter
-        )
-    }
     
     /// Creates a documentation bundle.
     ///

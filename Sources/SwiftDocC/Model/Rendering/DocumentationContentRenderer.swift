@@ -126,7 +126,7 @@ public class DocumentationContentRenderer {
     }
 
     /// Returns a metadata role for an article, depending if it's a collection, technology, or a free form article.
-    func roleForArticle(_ article: Article, nodeKind: DocumentationNode.Kind) -> RenderMetadata.Role {
+    static func roleForArticle(_ article: Article, nodeKind: DocumentationNode.Kind) -> RenderMetadata.Role {
         // If the article has a `@PageKind` directive, use the kind from there
         // before checking anything else.
         if let pageKind = article.metadata?.pageKind {
@@ -141,9 +141,9 @@ public class DocumentationContentRenderer {
         default: break
         }
 
-        if article.topics?.taskGroups.isEmpty == false {
+        let isTechnologyRoot = article.metadata?.technologyRoot != nil
+        if article.topics?.taskGroups.isEmpty == false || isTechnologyRoot {
             // The documentation includes a "Topics" section, it's a collection or a group
-            let isTechnologyRoot = article.metadata?.technologyRoot != nil
             return role(for: (isTechnologyRoot) ? .collection : .collectionGroup)
         } else {
             // The documentation is a plain article
@@ -152,7 +152,7 @@ public class DocumentationContentRenderer {
     }
 
     /// Returns a metadata role for the given documentation node kind.
-    func role(for kind: DocumentationNode.Kind) -> RenderMetadata.Role {
+    static func role(for kind: DocumentationNode.Kind) -> RenderMetadata.Role {
         switch kind {
         // A list of special node kinds to map to predefined roles
         case .article: return .article
@@ -245,6 +245,35 @@ public class DocumentationContentRenderer {
         return true
     }
 
+    static func renderKindAndRole(_ kind: DocumentationNode.Kind?, semantic: Semantic?) -> (RenderNode.Kind, String) {
+        guard let kind = kind else {
+            return (.article, role(for: .article).rawValue)
+        }
+        let role = role(for: kind).rawValue
+        
+        switch kind {
+        case .tutorial:
+            return (.tutorial, role)
+        case .tutorialArticle:
+            return (.article, role)
+        case .technology:
+            return (.overview, role)
+        case .onPageLandmark:
+            return (.section, role)
+        case .sampleCode:
+            return (.article, role)
+        case _ where kind.isSymbol:
+            return (.symbol, role)
+            
+        default:
+            if let article = semantic as? Article {
+                return (.article, roleForArticle(article, nodeKind: kind).rawValue)
+            } else {
+                return (.article, role)
+            }
+        }
+    }
+    
     /// Creates a render reference for the given topic reference.
     /// - Parameters:
     ///     - reference: A documentation node topic reference.
@@ -261,8 +290,6 @@ public class DocumentationContentRenderer {
         let resolver = LinkTitleResolver(context: documentationContext, source: reference.url)
         
         let titleVariants: DocumentationDataVariants<String>
-        let kind: RenderNode.Kind
-        var referenceRole: String?
         let node = try? overridingDocumentationNode ?? documentationContext.entity(with: reference)
         
         if let node = node, let resolvedTitle = resolver.title(for: node) {
@@ -281,37 +308,17 @@ public class DocumentationContentRenderer {
             // Some nodes are artificially inserted into the topic graph,
             // try resolving that way as a fallback after looking up `documentationCache`.
             titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
+        } else if let external = documentationContext.externalCache[reference] {
+            dependencies.topicReferences.append(contentsOf: external.renderReferenceDependencies.topicReferences)
+            dependencies.linkReferences.append(contentsOf: external.renderReferenceDependencies.linkReferences)
+            dependencies.imageReferences.append(contentsOf: external.renderReferenceDependencies.imageReferences)
+            
+            return external.topicRenderReference
         } else {
             titleVariants = .init(defaultVariantValue: reference.absoluteString)
         }
         
-        switch node?.kind {
-        case .some(.tutorial):
-            kind = .tutorial
-            referenceRole = role(for: .tutorial).rawValue
-        case .some(.tutorialArticle):
-            kind = .article
-            referenceRole = role(for: .tutorialArticle).rawValue
-        case .some(.technology):
-            kind = .overview
-            referenceRole = role(for: .technology).rawValue
-        case .some(.onPageLandmark):
-            kind = .section
-            referenceRole = role(for: .onPageLandmark).rawValue
-        case .some(.sampleCode):
-            kind = .article
-            referenceRole = role(for: .sampleCode).rawValue
-        case let nodeKind? where nodeKind.isSymbol:
-            kind = .symbol
-            referenceRole = role(for: nodeKind).rawValue
-        case _ where node?.semantic is Article:
-            kind = .article
-            referenceRole = roleForArticle(node!.semantic as! Article, nodeKind: node!.kind).rawValue
-        default:
-            kind = .article
-            referenceRole = role(for: .article).rawValue
-        }
-        
+        let (kind, referenceRole) = Self.renderKindAndRole(node?.kind, semantic: node?.semantic)
         let referenceURL = reference.absoluteString
         
         // Topic render references require the URLs to be relative, even if they're external.
