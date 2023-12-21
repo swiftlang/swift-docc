@@ -83,7 +83,7 @@ public struct InitAction: Action {
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
     public mutating func perform(logHandle: SwiftDocC.LogHandle) throws -> ActionResult {
         
-        var logHandle: LogHandle = .standardError
+        var logHandle = logHandle
         diagnosticEngine.filterLevel = .warning
         diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
         
