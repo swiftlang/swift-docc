@@ -65,7 +65,7 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Returns a list of all module symbols.
     func modules() -> [ResolvedTopicReference] {
-        return pathHierarchy.modules.values.map { resolvedReferenceMap[$0.identifier]! }
+        return pathHierarchy.modules.map { resolvedReferenceMap[$0.identifier]! }
     }
     
     // MARK: - Adding non-symbols

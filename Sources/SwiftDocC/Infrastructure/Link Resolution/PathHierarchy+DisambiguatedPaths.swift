@@ -68,10 +68,10 @@ extension PathHierarchy {
         
         var gathered: [(String, (String, Bool))] = []
         
-        for (moduleName, node) in modules {
-            let path = "/" + moduleName
+        for node in modules {
+            let path = "/" + node.name
             gathered.append(
-                (moduleName, (path, node.symbol == nil || node.symbol!.identifier.interfaceLanguage == "swift"))
+                (node.name, (path, node.symbol == nil || node.symbol!.identifier.interfaceLanguage == "swift"))
             )
             gathered += descend(node, accumulatedPath: path)
         }
