@@ -53,9 +53,8 @@ public struct InitOptions: ParsableArguments {
     @Option(
         name: .customLong("template"),
         help: ArgumentHelp(
-            """
-            The catalog template to initialize.
-            
+            "The catalog template to initialize.",
+            discussion: """
             The provided templates are:
             
             - articleOnly: This template contains the minimal needed for creating article-only reference documentation not tied to symbols. It includes a catalog with just one markdown file and a references folder.

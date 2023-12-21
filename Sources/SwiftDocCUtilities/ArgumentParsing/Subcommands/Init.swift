@@ -31,13 +31,7 @@ extension Docc {
         @OptionGroup
         public var initOptions: InitOptions
         
-        // MARK: - Property Validation
-        
         // MARK: - Execution
-        
-        /// The file handle that should be used for emitting warnings during execution outside
-        /// the perform init action.
-        static var _errorLogHandle: LogHandle = .standardError
         
         public mutating func run() throws {
             

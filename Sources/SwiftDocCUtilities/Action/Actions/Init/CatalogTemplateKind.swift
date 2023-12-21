@@ -20,91 +20,70 @@ public enum CatalogTemplateKind: String {
     
     /// A template designed for authoring tutorials, consisting of a catalog that contains a table of contents and a chapter.
     case tutorial
-    
-    /// Generates the catalog template using the provided template kind.
-    static func generate(
-        _ catalogTemplateKind: CatalogTemplateKind,
-        catalogTitle: String
-    ) throws -> CatalogTemplate {
-        switch catalogTemplateKind {
-        case .articleOnly:
-            return try CatalogTemplate(
-                title: catalogTitle,
-                files: minimalTemplateArticles(catalogTitle),
-                additionalDirectories: ["Resources/"]
-            )
-        case .tutorial:
-            return try CatalogTemplate(
-                title: catalogTitle,
-                files: tutorialTemplateFiles,
-                additionalDirectories: ["Resources/", "Chapter01/Resources/"]
-            )
-        }
-    }
+
 }
 
 /// Content of the different templates
 extension CatalogTemplateKind {
     
     /// Content of the 'articleOnly' template
-    static private let minimalTemplateArticles = { (_ title: String) -> [String: CatalogFileTemplate] in
+    static func articleOnlyTemplateFiles(_ title: String) -> [String: String] {
         return (
             [
-                "\(title).md": CatalogFileTemplate(
-                    title: title,
-                    content: """
+                "\(title).md": """
+                    # \(title)
+                    
+                    <!--- Metadata configuration to make appear this documentation page as a top-level page -->
+                    
+                    @Metadata {
+                      @TechnologyRoot
+                    }
                     
                     Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
                     
                     ## Overview
 
                     Add one or more paragraphs that introduce your content overview.
-                    """,
-                    isTechnologyRoot: true
-                )
+                    """
             ]
         )
     }
     
     /// Content of the 'tutorial' template
-    static let tutorialTemplateFiles: [String: CatalogFileTemplate] = [
-        "table-of-contents.tutorial": CatalogFileTemplate(
-            content: """
-            @Tutorials(name: "Tutorial Name") {
-                @Intro(title: "Tutorial Introduction") {
-                    Add one or more paragraphs that introduce your tutorial.
-                }
-                @Chapter(name: "Chapter Name") {
-                    @Image(source: "add-your-chapter-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
-                    @TutorialReference(tutorial: "doc:page-01")
-                }
+    static let tutorialTemplateFiles: [String: String] = [
+        "table-of-contents.tutorial": """
+        @Tutorials(name: "Tutorial Name") {
+            @Intro(title: "Tutorial Introduction") {
+                Add one or more paragraphs that introduce your tutorial.
             }
-            """
-        ),
-        "Chapter01/page-01.tutorial": CatalogFileTemplate(
-            content: """
-            @Tutorial() {
-                @Intro(title: "Tutorial Page Title") {
-                    Add one paragraph that introduce your tutorial.
+            @Chapter(name: "Chapter Name") {
+                @Image(source: "add-your-chapter-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+                @TutorialReference(tutorial: "doc:page-01")
+            }
+        }
+        """,
+        "Chapter01/page-01.tutorial": """
+        @Tutorial() {
+            @Intro(title: "Tutorial Page Title") {
+                Add one paragraph that introduce your tutorial.
+            }
+            @Section(title: "Section Name") {
+                @ContentAndMedia {
+                    Add text that introduces the tasks that the reader needs to follow.
+                    @Image(source: "add-your-section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
                 }
-                @Section(title: "Section Name") {
-                    @ContentAndMedia {
-                        Add text that introduces the tasks that the reader needs to follow.
-                        @Image(source: "add-your-section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+                @Steps {
+                    @Step {
+                        This is a step with code.
+                        @Code(name: "", file: "")
                     }
-                    @Steps {
-                        @Step {
-                            This is a step with code.
-                            @Code(name: "", file: "")
-                        }
-                        @Step {
-                            This is a step with an image.
-                            @Image(source: "", alt: "")
-                        }
+                    @Step {
+                        This is a step with an image.
+                        @Image(source: "", alt: "")
                     }
                 }
             }
-            """
-        )
+        }
+        """
     ]
 }

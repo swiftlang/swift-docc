@@ -12,19 +12,8 @@ import Foundation
 import SwiftDocC
 
 struct CatalogTemplate {
-  
-    enum Error: DescribedError, Equatable {
-        case malformedCatalogFileURL(_: String)
-        case malformedCatalogDirectoryURL(_: String)
-        var errorDescription: String {
-            switch self {
-            case .malformedCatalogFileURL(let URL): return "Invalid structure of the catalog file with URL \(URL)."
-            case .malformedCatalogDirectoryURL(let URL): return "Invalid structure of the catalog directory with URL \(URL)."
-            }
-        }
-    }
     
-    let files: [URL: CatalogFileTemplate]
+    let files: [URL: String]
     let additionalDirectories: [URL]
     let title: String
     
@@ -32,65 +21,40 @@ struct CatalogTemplate {
     /// that the paths conforms to valid URLs.
     init(
         title: String,
-        files: [String: CatalogFileTemplate],
+        files: [String: String],
         additionalDirectories: [String] = []
     ) throws {
         self.title = title
         // Converts every key of the articles dictionary into
         // a valid URL.
         self.files = Dictionary(uniqueKeysWithValues:
-            try files.map { (rawURL, article) in
-                guard
-                    let articleURL = URL(string: rawURL),
-                    !articleURL.hasDirectoryPath
-                else {
-                    throw Error.malformedCatalogFileURL(rawURL)
-                }
-                return (articleURL, article)
+            files.map { (rawURL, article) in
+                assert(URL(string: rawURL) != nil, "Invalid structure of the catalog file with URL \(rawURL).")
+                return (URL(string: rawURL)!, article)
             }
         )
         // Creates the additional directories URLs.
-        self.additionalDirectories = try additionalDirectories.map {
-            guard
-                let directoryURL = URL(string: $0),
-                directoryURL.hasDirectoryPath
-            else {
-                throw Error.malformedCatalogDirectoryURL($0)
-            }
-            return directoryURL
+        self.additionalDirectories = additionalDirectories.map {
+            assert(URL(string:  $0) != nil, "Invalid structure of the catalog directory with URL \($0).")
+            return URL(string:  $0)!
         }
     }
     
-    /// Writes the catalog template to the specified output URL location on disk.
-    @discardableResult
-    func write(
-        to outputURL: URL
-    ) throws -> URL {
-        let fileManager: FileManager = .default
-        // We begin by creating the directory for each article in the template,
-        // where it should be stored, and then proceed to create the file.
-        try self.files.forEach { (articleURL, articleContent) in
-            // Generate the directories for file storage
-            // by adding the article path to the output URL and
-            // excluding the file name.
-            try fileManager.createDirectory(
-                at: outputURL.appendingPathComponent(articleURL.path).deletingLastPathComponent(),
-                withIntermediateDirectories: true
+    /// Creates a Catalog Template using one of the provided template kinds.
+    init(_ templateKind: CatalogTemplateKind, title: String) throws {
+        switch templateKind {
+        case .articleOnly:
+            try self.init(
+                title: title,
+                files: CatalogTemplateKind.articleOnlyTemplateFiles(title),
+                additionalDirectories: ["Resources"]
             )
-            // Generate the article file at the specified URL path.
-            try fileManager.createFile(
-                at: outputURL.appendingPathComponent(articleURL.path),
-                contents: Data(articleContent.content.utf8)
+        case .tutorial:
+            try self.init(
+                title: title,
+                files: CatalogTemplateKind.tutorialTemplateFiles,
+                additionalDirectories: ["Resources", "Chapter01/Resources"]
             )
         }
-        // Writes additional directiories defined in the catalog.
-        // Ex. `Resources`
-        try self.additionalDirectories.forEach {
-            try fileManager.createDirectory(
-                at: outputURL.appendingPathComponent($0.path),
-                withIntermediateDirectories: true
-            )
-        }
-        return outputURL
     }
 }

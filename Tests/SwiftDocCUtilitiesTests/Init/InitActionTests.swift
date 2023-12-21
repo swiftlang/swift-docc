@@ -24,7 +24,7 @@ final class InitActionTests: XCTestCase {
             catalogTemplate: .articleOnly
         )
         var isDirectory: ObjCBool = false
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         // Test an output folder exists
         guard fileManager.fileExists(atPath: "\(outputURL.path)/\(documentationTitle).docc", isDirectory: &isDirectory) else {
             XCTFail("InitAction failed to create output folder")
