@@ -68,6 +68,7 @@ extension Docc {
                 help: .hidden,
                 transform: URL.init(fileURLWithPath:)
             )
+            @available(*, deprecated, renamed: "additionalSymbolGraphDirectory", message: "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 5.12 is released")
             var additionalSymbolGraphFiles: [URL] = [] // Remove when other tools no longer use it. (rdar://72449411)
             
             @Option(
@@ -107,7 +108,7 @@ extension Docc {
             set { inputsAndOutputs.additionalSymbolGraphDirectory = newValue }
         }
         
-        /// A user-provided list o path to additional symbol graph files that the convert action will process.
+        @available(*, deprecated, renamed: "additionalSymbolGraphDirectory", message: "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 5.12 is released")
         public var additionalSymbolGraphFiles: [URL] { // Remove when other tools no longer use it. (rdar://72449411)
             get { inputsAndOutputs.additionalSymbolGraphFiles }
             set { inputsAndOutputs.additionalSymbolGraphFiles = newValue }
