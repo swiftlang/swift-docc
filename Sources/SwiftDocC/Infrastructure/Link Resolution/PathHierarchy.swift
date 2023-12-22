@@ -37,8 +37,8 @@ struct ResolvedIdentifier: Equatable, Hashable {
 /// After a path hierarchy has been fully created — with both symbols and non-symbols — it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
     
-    /// A map of module names to module nodes.
-    private(set) var modules: [String: Node]
+    /// The list of module nodes.
+    private(set) var modules: [Node]
     /// The container of top-level articles in the documentation hierarchy.
     let articlesContainer: Node
     /// The container of tutorials in the documentation hierarchy.
@@ -295,7 +295,7 @@ struct PathHierarchy {
             """
         )
         
-        self.modules = roots
+        self.modules = Array(roots.values)
         self.lookup = lookup
         
         assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil }))
@@ -352,7 +352,7 @@ struct PathHierarchy {
         newNode.identifier = newReference
         self.lookup[newReference] = newNode
         
-        modules[name] = newNode
+        modules.append(newNode)
         
         return newReference
     }
@@ -377,7 +377,7 @@ extension PathHierarchy {
         
         fileprivate(set) unowned var parent: Node?
         /// The symbol, if a node has one.
-        private(set) var symbol: SymbolGraph.Symbol?
+        fileprivate(set) var symbol: SymbolGraph.Symbol?
         
         /// If the path hierarchy should disfavor this node in a link collision.
         ///
@@ -452,7 +452,7 @@ extension PathHierarchy {
     func topLevelSymbols() -> [ResolvedIdentifier] {
         var result: Set<ResolvedIdentifier> = []
         // Roots represent modules and only have direct symbol descendants.
-        for root in modules.values {
+        for root in modules {
             for (_, tree) in root.children {
                 for subtree in tree.storage.values {
                     for node in subtree.values where node.symbol != nil {
@@ -461,7 +461,7 @@ extension PathHierarchy {
                 }
             }
         }
-        return Array(result) + modules.values.map { $0.identifier }
+        return Array(result) + modules.map { $0.identifier }
     }
 }
 
@@ -566,6 +566,8 @@ extension PathHierarchy {
                     pathComponents: [],
                     docComment: nil,
                     accessLevel: .public,
+                    // To make the file format smaller we don't store the symbol kind identifiers with each node. Instead, the kind identifier is stored
+                    // as disambiguation and is filled in while building up the hierarchy below.
                     kind: SymbolGraph.Symbol.Kind(rawIdentifier: "", displayName: ""),
                     mixins: [:]
                 )
@@ -584,11 +586,21 @@ extension PathHierarchy {
                 let childNode = lookup[identifiers[child.nodeID]]!
                 // Even if this is a symbol node, explicitly pass the kind and hash disambiguation.
                 node.add(child: childNode, kind: child.kind, hash: child.hash)
+                if let kind = child.kind {
+                    // Since the symbol was created with an empty symbol kind, fill in its kind identifier here.
+                    childNode.symbol?.kind.identifier = .init(identifier: kind)
+                }
             }
         }
         
         self.lookup = lookup
-        self.modules = fileRepresentation.modules.mapValues({ lookup[identifiers[$0]]! })
+        let modules = fileRepresentation.modules.map({ lookup[identifiers[$0]]! })
+        // Fill in the symbol kind of all modules. This is needed since the modules were created with empty symbol kinds and since no other symbol has a 
+        // module as its child, so the modules didn't get their symbol kind set when building up the hierarchy above.
+        for node in modules {
+            node.symbol?.kind.identifier = .module
+        }
+        self.modules = modules
         self.articlesContainer = lookup[identifiers[fileRepresentation.articlesContainer]]!
         self.tutorialContainer = lookup[identifiers[fileRepresentation.tutorialContainer]]!
         self.tutorialOverviewContainer = lookup[identifiers[fileRepresentation.tutorialOverviewContainer]]!

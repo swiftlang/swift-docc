@@ -4063,6 +4063,55 @@ let expected = """
         let range = try XCTUnwrap(problem.diagnostic.range)
         XCTAssertEqual(start..<end, range)
     }
+    
+    func testUnresolvedLinkWarnings() throws {
+        var (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            let extensionFile = """
+            # ``SideKit``
+
+            myFunction abstract
+
+            ## Overview
+
+            This is unresolvable: <doc:Does-Not-Exist>.
+            
+            ## Topics
+            
+            - <doc:NonExistingDoc>
+
+            """
+            let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
+            try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
+        }
+        var problems = context.diagnosticEngine.problems
+        var linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("myFunction.md") == true }
+        XCTAssertEqual(linkResolutionProblems.count, 3)
+        var problem = try XCTUnwrap(linkResolutionProblems.last)
+        XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/SideKit\'")
+        (_, _, context) = try testBundleAndContext(copying: "BookLikeContent") { url in
+            let extensionFile = """
+            # My Article
+
+            Abstract
+
+            ## Overview
+
+            Overview
+            
+            ## Topics
+            
+            - <doc:NonExistingDoc>
+
+            """
+            let fileURL = url.appendingPathComponent("MyArticle.md")
+            try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
+        }
+        problems = context.diagnosticEngine.problems
+        linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("MyArticle.md") == true }
+        XCTAssertEqual(linkResolutionProblems.count, 1)
+        problem = try XCTUnwrap(linkResolutionProblems.last)
+        XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
