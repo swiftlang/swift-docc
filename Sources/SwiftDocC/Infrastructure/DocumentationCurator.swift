@@ -232,11 +232,13 @@ struct DocumentationCurator {
 
 
                 // If a module has a path with a manual technology root there shouldn't
-                // be an error messsage. Using an if statement allows fallthrough behavior 
-                // in that specific case
+                // be an error messsage. This is an if statement instead of a guard because
+                // when there's no warning we still curate the node
                 if childDocumentationNode.kind == .module {
 
-                    let hasTechnologyRoot = context.pathsTo(nodeReference).contains { path in
+                    var hasTechnologyRoot = documentationNode.kind.isSymbol == false
+
+                    hasTechnologyRoot = hasTechnologyRoot || context.pathsTo(nodeReference).contains { path in
                         if path.count == 0 {
                             return false
                         }
@@ -246,7 +248,7 @@ struct DocumentationCurator {
                     }
 
                     if !hasTechnologyRoot {
-                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
+                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module test, and modules only exist at the root"), possibleSolutions: []))
                     continue
                     }
                     

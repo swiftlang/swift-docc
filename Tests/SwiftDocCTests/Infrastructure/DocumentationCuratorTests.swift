@@ -145,6 +145,96 @@ class DocumentationCuratorTests: XCTestCase {
         )
     }
     
+    func testModuleUnderTechnologyRoot() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleUnderTechnologyRoot") { url in
+            try """
+            # Another Awesome Project
+            
+            Technology Root
+            
+            @Metadata {
+               @TechnologyRoot
+            }
+            
+            ## Overview
+            
+            This shouldn't create a warning because it's a technologyRoot
+            
+            ## Topics
+            
+            ### Code Reference
+            - ``MyAwesomeApp``
+            
+            """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
+        }
+        
+        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
+        
+        for node in context.rootModules {
+            XCTAssertNoThrow(try crawler.crawlChildren(of: node, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
+        }
+        
+        XCTAssertEqual(crawler.problems.count, 0)
+            
+    }
+        
+    func testModuleUnderAncestorOfTechnologyRoot() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleUnderTechnologyRoot") { url in
+            try """
+            # Another Awesome Project
+            
+            Technology Root
+            
+            @Metadata {
+               @TechnologyRoot
+            }
+            
+            ## Overview
+            
+            This shouldn't create a warning because it's a technologyRoot
+            
+            ## Topics
+            - <doc:Ancestor>
+            
+            ### Code Reference
+            
+            """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # MyAwesomeApp Project
+            
+            Random summary
+
+            ## Overview
+
+            This is a project to test that no errors are created when a technology root refers to a
+            module.
+            
+            This should create a warning because it links to a module without being a technology root
+
+            ## Topics
+
+
+            ### Code Reference
+
+            - ``MyAwesomeApp``
+
+            """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
+        }
+        
+        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
+        
+        for node in context.rootModules {
+            XCTAssertNoThrow(try crawler.crawlChildren(of: node, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
+        }
+        
+       
+        XCTAssertEqual(crawler.problems.count, 0)
+    }
+
+
     func testSymbolLinkResolving() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
