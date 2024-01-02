@@ -96,9 +96,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         /// The bundle registration operation is cancelled externally.
         case registrationDisabled
         
-        /// The bundle registration failed to synthesize a root page for a catalog with only articles.
-        case unableToSynthesizeRootPage
-        
         public var errorDescription: String {
             switch self {
                 case .notFound(let url):
@@ -109,8 +106,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     return "Declaration without operating system name for symbol \(symbolIdentifier) cannot be merged with more declarations with operating system name for the same symbol"
                 case .registrationDisabled:
                     return "The bundle registration operation is cancelled externally."
-                case .unableToSynthesizeRootPage:
-                    return "Couldn't synthesize a root page for this article-only catalog."
             }
         }
     }
@@ -1879,33 +1874,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) throws {
+    private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) {
         let title = bundle.displayName
-        let markup = Document(
-            parsing: """
-                # \(title)
-                
-                @Metadata {
-                  @TechnologyRoot
-                }
-                """,
-            source: nil,
-            options: .parseBlockDirectives
-        )
+        let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
+            BlockDirective(name: "TechnologyRoot", children: [])
+        ])
+        let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
         
-        guard markup.childCount == 2,
-              let blockDirective = markup.child(at: 1) as? BlockDirective,
-              let metadata = Metadata(from: blockDirective, for: bundle, in: self)
-        else {
-            throw ContextError.unableToSynthesizeRootPage
-        }
         if articles.count == 1 {
             // This catalog only has one article, so we make that the root.
             var onlyArticle = articles.removeFirst()
             onlyArticle.value = Article(markup: onlyArticle.value.markup, metadata: metadata, redirects: onlyArticle.value.redirects, options: onlyArticle.value.options)
             registerRootPages(from: [onlyArticle], in: bundle)
         } else if let nameMatchIndex = articles.firstIndex(where: { $0.source.deletingPathExtension().lastPathComponent == title }) {
-            // This catalog has an article with the same name as the catalog itself,  so we make that the root.
+            // This catalog has an article with the same name as the catalog itself, so we make that the root.
             var nameMatch = articles.remove(at: nameMatchIndex)
             nameMatch.value = Article(markup: nameMatch.value.markup, metadata: metadata, redirects: nameMatch.value.redirects, options: nameMatch.value.options)
             registerRootPages(from: [nameMatch], in: bundle)
@@ -1917,6 +1899,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
+            
+            // Build up the "full" markup for an empty technology root article 
+            let markup = Document(
+                Heading(level: 1, Text(title)),
+                metadataDirectiveMarkup
+            )
             
             let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
@@ -2206,7 +2194,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         try shouldContinueRegistration()
         
         if topicGraph.nodes.isEmpty, !otherArticles.isEmpty, !allowsRegisteringArticlesWithoutTechnologyRoot {
-            try synthesizeArticleOnlyRootPage(articles: &otherArticles, bundle: bundle)
+            synthesizeArticleOnlyRootPage(articles: &otherArticles, bundle: bundle)
         }
             
         // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
