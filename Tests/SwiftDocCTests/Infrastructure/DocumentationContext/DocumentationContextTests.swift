@@ -2015,9 +2015,14 @@ let expected = """
         ])
         
         let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, _, context) = try loadBundle(from: tempURL)
+        let (_, bundle, context) = try loadBundle(from: tempURL)
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/Symbol_Name", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        
+        XCTAssertEqual((node.semantic as? Symbol)?.abstract?.plainText, "Extend a symbol with a space in its name.")
     }
     
     func testUncuratedArticleDiagnostics() throws {
