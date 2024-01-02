@@ -1263,7 +1263,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 guard let url = ValidatedURL(parsingExact: destination) else {
                     let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
-                        \(destination.singleQuoted) is
+                        \(destination.singleQuoted) is not a valid RFC 3986 URL.
                         """, explanation: nil, notes: [])
                     diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
