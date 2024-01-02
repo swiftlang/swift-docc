@@ -1261,7 +1261,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
                 }
-                guard let url = ValidatedURL(parsingExact: destination) else {
+                guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
                     let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
                         \(destination.singleQuoted) is not a valid RFC 3986 URL.
                         """, explanation: nil, notes: [])
