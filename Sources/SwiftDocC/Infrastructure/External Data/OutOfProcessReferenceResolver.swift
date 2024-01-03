@@ -276,7 +276,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         // with a render node.
         
         if let topicImages = resolvedInformation.topicImages, !topicImages.isEmpty {
-            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
+            let metadata = node.metadata ?? Metadata._make(originalMarkup: BlockDirective(name: "Metadata", children: []))
             
             metadata.pageImages = topicImages.map { topicImage in
                 let purpose: PageImage.Purpose

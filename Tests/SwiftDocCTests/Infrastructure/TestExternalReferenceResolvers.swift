@@ -159,7 +159,7 @@ class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, Fallb
         // This is a workaround for how external content is processed. See details in OutOfProcessReferenceResolver.addImagesAndCacheMediaReferences(to:from:)
         
         if let topicImages = entityInfo.topicImages {
-            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
+            let metadata = node.metadata ?? Metadata._make(originalMarkup: BlockDirective(name: "Metadata", children: []))
             
             metadata.pageImages = topicImages.map { topicImage, alt in
                 let purpose: PageImage.Purpose
