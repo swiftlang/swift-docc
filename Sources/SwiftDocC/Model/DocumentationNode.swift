@@ -527,6 +527,7 @@ public struct DocumentationNode {
         case .`typeProperty`: return .typeProperty
         case .`typeSubscript`: return .typeSubscript
         case .`typealias`: return .typeAlias
+        case .union: return .union
         case .`var`: return .globalVariable
         case .module: return .module
         case .extendedModule: return .extendedModule

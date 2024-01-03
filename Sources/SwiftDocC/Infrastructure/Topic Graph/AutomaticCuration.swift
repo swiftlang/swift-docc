@@ -214,6 +214,7 @@ extension AutomaticCuration {
             case .`typeProperty`: return "Type Properties"
             case .`typeSubscript`: return "Type Subscripts"
             case .`typealias`: return "Type Aliases"
+            case .union: return "Unions"
             case .`var`: return "Variables"
             case .module: return "Modules"
             case .extendedModule: return "Extended Modules"
@@ -236,6 +237,7 @@ extension AutomaticCuration {
         .`class`,
         .`protocol`,
         .`struct`,
+        .`union`,
         .`httpRequest`,
         .`dictionary`,
         .`var`,

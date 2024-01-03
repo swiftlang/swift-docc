@@ -551,13 +551,13 @@ class AutomaticCurationTests: XCTestCase {
         )
     }
 
-    func testNamespacesAreCuratedProperly() throws {
-        let (bundle, context) = try testBundleAndContext(named: "CxxNamespaces")
+    func testCPlusPlusSymbolsAreCuratedProperly() throws {
+        let (bundle, context) = try testBundleAndContext(named: "CxxSymbols")
 
         let rootDocumentationNode = try context.entity(
             with: .init(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/CxxNamespaces",
+                path: "/documentation/CxxSymbols",
                 sourceLanguage: .objectiveC
             )
         )
@@ -573,7 +573,10 @@ class AutomaticCurationTests: XCTestCase {
             },
             [
                 "Namespaces",
-                "/documentation/CxxNamespaces/Foo",
+                "/documentation/CxxSymbols/Foo",
+
+                "Unions",
+                "/documentation/CxxSymbols/MyUnion",
             ]
         )
     }
