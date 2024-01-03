@@ -208,4 +208,45 @@ class ArticleTests: XCTestCase {
         
         XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoEnabled, false)
     }
+    
+    func testDisplayNameDirectiveIsRemoved() throws {
+        let source = """
+        # Root
+        
+        @Metadata {
+          @TechnologyRoot
+          @PageColor(purple)
+          @DisplayName("Example")
+        }
+        
+        Adding @DisplayName to an article will result in a warning.
+        """
+        let document = Document(parsing: source, options: [.parseBlockDirectives])
+        let (bundle, context) = try testBundleAndContext()
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        
+        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+            "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading."
+        ])
+        
+        let semantic = try XCTUnwrap(article)
+        XCTAssertNotNil(semantic.metadata, "Article has a @Metadata directive")
+        XCTAssertNotNil(semantic.metadata?.technologyRoot, "Article has a @TechnologyRoot configuration")
+        XCTAssertNotNil(semantic.metadata?.pageColor, "Article has a @PageColor configuration")
+        
+        XCTAssertNil(semantic.metadata?.displayName, "Articles configure their name in the level-1 header instead of using @DisplayName")
+        
+        // Non-optional child directives should be initialized.
+        XCTAssertEqual(semantic.metadata?.pageImages, [])
+        XCTAssertEqual(semantic.metadata?.customMetadata, [])
+        XCTAssertEqual(semantic.metadata?.availability, [])
+        XCTAssertEqual(semantic.metadata?.supportedLanguages, [])
+        
+        // Optional child directives should default to nil
+        XCTAssertNil(semantic.metadata?.documentationOptions)
+        XCTAssertNil(semantic.metadata?.callToAction)
+        XCTAssertNil(semantic.metadata?.pageKind)
+        XCTAssertNil(semantic.metadata?.titleHeading)
+    }
 }
