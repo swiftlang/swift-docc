@@ -442,6 +442,9 @@ struct ReferenceResolver: SemanticVisitor {
             }
             return ParametersSection(parameters: parameters)
         }
+        let newDeprecatedSummaryVariants = symbol.deprecatedSummaryVariants.map {
+            return DeprecatedSection(content: $0.content.map { visitMarkup($0) })
+        }
         let newDictionaryKeysVariants = symbol.dictionaryKeysSectionVariants.map { dictionaryKeysSection -> DictionaryKeysSection in
             let keys = dictionaryKeysSection.dictionaryKeys.map {
                 DictionaryKey(name: $0.name, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
@@ -484,7 +487,7 @@ struct ReferenceResolver: SemanticVisitor {
             externalIDVariants: symbol.externalIDVariants,
             accessLevelVariants: symbol.accessLevelVariants,
             availabilityVariants: symbol.availabilityVariants,
-            deprecatedSummaryVariants: symbol.deprecatedSummaryVariants,
+            deprecatedSummaryVariants: newDeprecatedSummaryVariants,
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,
             defaultImplementationsVariants: symbol.defaultImplementationsVariants,
