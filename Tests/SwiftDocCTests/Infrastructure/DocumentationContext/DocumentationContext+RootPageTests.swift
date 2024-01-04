@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -96,4 +96,104 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(solution.replacements.first?.range.upperBound.line, 3)
     }
     
+    func testSingleArticleWithoutTechnologyRootDirective() throws {
+        let tempFolderURL = try createTempFolder(content: [
+            Folder(name: "Something.docc", content: [
+                TextFile(name: "Article.md", utf8Content: """
+                # My article
+                
+                A regular article without an explicit `@TechnologyRoot` directive.
+                """)
+            ]),
+        ])
+        
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL)
+        try workspace.registerProvider(dataProvider)
+        
+        XCTAssertEqual(context.knownPages.map(\.absoluteString), ["doc://Something/documentation/Article"])
+        XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Article"])
+        
+        XCTAssertEqual(context.problems.count, 0)
+    }
+    
+    func testMultipleArticlesWithoutTechnologyRootDirective() throws {
+        let tempFolderURL = try createTempFolder(content: [
+            Folder(name: "Something.docc", content: [
+                TextFile(name: "First.md", utf8Content: """
+                # My first article
+                
+                A regular article without an explicit `@TechnologyRoot` directive.
+                """),
+                
+                TextFile(name: "Second.md", utf8Content: """
+                # My second article
+                
+                Another regular article without an explicit `@TechnologyRoot` directive.
+                """),
+                
+                TextFile(name: "Third.md", utf8Content: """
+                # My third article
+                
+                Yet another regular article without an explicit `@TechnologyRoot` directive.
+                """),
+            ]),
+        ])
+        
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL)
+        try workspace.registerProvider(dataProvider)
+        
+        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+            "doc://Something/documentation/Something", // A synthesized root
+            "doc://Something/documentation/Something/First",
+            "doc://Something/documentation/Something/Second",
+            "doc://Something/documentation/Something/Third",
+        ])
+        XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Something"], "If no single article is a clear root, the root page is synthesized")
+        
+        XCTAssertEqual(context.problems.count, 0)
+    }
+    
+    func testMultipleArticlesWithoutTechnologyRootDirectiveWithOneMatchingTheCatalogName() throws {
+        let tempFolderURL = try createTempFolder(content: [
+            Folder(name: "Something.docc", content: [
+                TextFile(name: "Something.md", utf8Content: """
+                # Some article
+                
+                A regular article without an explicit `@TechnologyRoot` directive.
+                
+                The name of this article file matches the name of the catalog.
+                """),
+                
+                TextFile(name: "Second.md", utf8Content: """
+                # My second article
+                
+                Another regular article without an explicit `@TechnologyRoot` directive.
+                """),
+                
+                TextFile(name: "Third.md", utf8Content: """
+                # My third article
+                
+                Yet another regular article without an explicit `@TechnologyRoot` directive.
+                """),
+            ]),
+        ])
+        
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL)
+        try workspace.registerProvider(dataProvider)
+        
+        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+            "doc://Something/documentation/Something", // This article became the root
+            "doc://Something/documentation/Something/Second",
+            "doc://Something/documentation/Something/Third",
+        ])
+        XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Something"])
+        
+        XCTAssertEqual(context.problems.count, 0)
+    }
 }
