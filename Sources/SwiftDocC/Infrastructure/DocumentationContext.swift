@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1874,6 +1874,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
+    /// Registers a synthesized root page for a catalog with only non-root articles.
+    ///
+    /// If the catalog only has one article or has an article with the same name as the catalog itself, that article is turned into the root page instead of creating a new article.
+    ///
+    /// - Parameters:
+    ///   - articles: On input, a list of articles. If an article is used as a root it is removed from this list.
+    ///   - bundle: The bundle containing the articles.
     private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) {
         let title = bundle.displayName
         let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
@@ -1892,6 +1899,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             nameMatch.value = Article(markup: nameMatch.value.markup, metadata: metadata, redirects: nameMatch.value.redirects, options: nameMatch.value.options)
             registerRootPages(from: [nameMatch], in: bundle)
         } else {
+            // There's no particular article to make into the root. Instead, create a new minimal root page.
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
             let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
             
