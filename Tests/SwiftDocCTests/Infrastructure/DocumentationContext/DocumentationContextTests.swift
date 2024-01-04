@@ -2064,6 +2064,68 @@ let expected = """
         XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
     }
     
+    func testDeprecationSummaryWithLocalLink() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: ["Old", "New"].map {
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "\($0.lowercased())-symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "\($0)Symbol", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["\($0)Symbol"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                }
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``OldSymbol``
+            
+            @DeprecationSummary {
+              Use ``NewSymbol`` instead.
+            }
+            
+            Deprecate a symbol and link to its replacement in the deprecation message.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @DeprecationSummary {
+              Use ``NewSymbol`` instead.
+            }
+            
+            Link to external content in an article deprecation message.
+            """),
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/OldSymbol", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
+            XCTAssertEqual(deprecatedSection.content.count, 1)
+            XCTAssertEqual(deprecatedSection.content.first?.format().trimmingCharacters(in: .whitespaces), "Use ``doc://unit-test/documentation/ModuleName/NewSymbol`` instead.", "The link should have been resolved")
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
+            XCTAssertEqual(deprecatedSection.count, 1)
+            XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use ``doc://unit-test/documentation/ModuleName/NewSymbol`` instead.", "The link should have been resolved")
+        }
+    }
+    
     func testUncuratedArticleDiagnostics() throws {
         var unknownSymbolSidecarURL: URL!
         
