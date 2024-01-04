@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1734,6 +1734,53 @@ let expected = """
         // "/" is a separator in URL paths so it's replaced with with "_" (adding disambiguation if the replacement introduces conflicts)
         XCTAssertEqual("/(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-7am4"])
         XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-3m4ko"])
+    }
+    
+    func testFileNamesWithDifferentPunctuation() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "Hello-world.md", utf8Content: """
+                # Dash
+                
+                No whitespace in the file name
+                """),
+                
+                TextFile(name: "Hello world.md", utf8Content: """
+                # Only space
+                
+                This has the same reference as "Hello-world.md" and will raise a warning.
+                """),
+                
+                TextFile(name: "Hello  world.md", utf8Content: """
+                # Multiple spaces
+                
+                Each space is replaced with a dash in the reference, so this has a unique reference.
+                """),
+                
+                TextFile(name: "Hello, world!.md", utf8Content: """
+                # Space and punctuation
+                
+                The punctuation is not removed from the reference, so this has a unique reference.
+                """),
+                
+                TextFile(name: "Hello; world?.md", utf8Content: """
+                # Space and different punctuation
+                
+                The punctuation is not removed from the reference, so this has a unique reference.
+                """),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
+        
+        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+            "doc://unit-test/documentation/unit-test",
+            "doc://unit-test/documentation/unit-test/Hello,-world!",
+            "doc://unit-test/documentation/unit-test/Hello--world",
+            "doc://unit-test/documentation/unit-test/Hello-world",
+            "doc://unit-test/documentation/unit-test/Hello;-world-",
+        ])
     }
     
     func testSpecialCharactersInLinks() throws {
