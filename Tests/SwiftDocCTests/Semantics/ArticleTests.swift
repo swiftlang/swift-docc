@@ -231,11 +231,11 @@ class ArticleTests: XCTestCase {
         ])
         
         let semantic = try XCTUnwrap(article)
-        XCTAssertNotNil(semantic.metadata, "Article has a @Metadata directive")
-        XCTAssertNotNil(semantic.metadata?.technologyRoot, "Article has a @TechnologyRoot configuration")
-        XCTAssertNotNil(semantic.metadata?.pageColor, "Article has a @PageColor configuration")
+        XCTAssertNotNil(semantic.metadata, "Article should have a metadata container since the markup has a @Metadata directive")
+        XCTAssertNotNil(semantic.metadata?.technologyRoot, "Article should have a technology root configuration since the markup has a @TechnologyRoot directive")
+        XCTAssertNotNil(semantic.metadata?.pageColor, "Article should have a page color configuration since the markup has a @PageColor directive")
         
-        XCTAssertNil(semantic.metadata?.displayName, "Articles configure their name in the level-1 header instead of using @DisplayName")
+        XCTAssertNil(semantic.metadata?.displayName, "Articles shouldn't have a display name metadata configuration, even though the markup has a @DisplayName directive. Article names are specified by the level-1 header instead of a metadata directive.")
         
         // Non-optional child directives should be initialized.
         XCTAssertEqual(semantic.metadata?.pageImages, [])
