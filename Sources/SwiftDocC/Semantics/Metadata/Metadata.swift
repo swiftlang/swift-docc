@@ -194,7 +194,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     /// Don't use this outside of ``OutOfProcessReferenceResolver/entity(with:)`` .
     ///
     /// Directives aren't meant to be created from non-markup but the out-of-process resolver needs to create a ``Metadata`` to hold the ``PageImage``
-    /// values that it creates to associate topic images with external pages. This is because DocC renderers external content in the local context. (rdar://78718811)
+    /// values that it creates to associate topic images with external pages. This is because DocC renders external content in the local context. (rdar://78718811)
     /// https://github.com/apple/swift-docc/issues/468
     ///
     /// This is intentionally defined as an underscore prefixed static function instead of an initializer to make it less likely that it's used in other places.
@@ -229,7 +229,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         )
     }
     
-    // This initializer only exist to be called by `_make` above.
+    // This initializer only exists to be called by `_make` above.
     private init(
         originalMarkup: BlockDirective,
         documentationOptions: DocumentationExtension?,
