@@ -1763,14 +1763,14 @@ let expected = """
                 The punctuation is not removed from the reference, so this has a unique reference.
                 """),
                 
-                TextFile(name: "Hello; world?.md", utf8Content: """
+                TextFile(name: "Hello. world?.md", utf8Content: """
                 # Space and different punctuation
                 
                 The punctuation is not removed from the reference, so this has a unique reference.
                 """),
             ])
         ])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let (_, _, context) = try loadBundle(from: tempURL)
 
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
         
@@ -1779,7 +1779,7 @@ let expected = """
             "doc://unit-test/documentation/unit-test/Hello,-world!",
             "doc://unit-test/documentation/unit-test/Hello--world",
             "doc://unit-test/documentation/unit-test/Hello-world",
-            "doc://unit-test/documentation/unit-test/Hello;-world-",
+            "doc://unit-test/documentation/unit-test/Hello.-world-",
         ])
     }
     
