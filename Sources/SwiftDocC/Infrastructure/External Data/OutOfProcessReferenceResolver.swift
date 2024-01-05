@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -276,7 +276,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         // with a render node.
         
         if let topicImages = resolvedInformation.topicImages, !topicImages.isEmpty {
-            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
+            let metadata = node.metadata ?? Metadata._make(originalMarkup: BlockDirective(name: "Metadata", children: []))
             
             metadata.pageImages = topicImages.map { topicImage in
                 let purpose: PageImage.Purpose
