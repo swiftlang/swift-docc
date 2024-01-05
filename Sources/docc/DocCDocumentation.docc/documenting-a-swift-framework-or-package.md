@@ -28,8 +28,8 @@ To build documentation for your Swift framework or package, use the DocC command
 
 ![A screenshot showing the Sloth structure documentation in its rendered form.](1_sloth)
 
-> Tip: You can also use the Swift-DocC Plugin to 
-[build a documentation archive for a Swift package][plugin-docs].
+> Tip: You can also use the Swift-DocC Plugin to [build a documentation archive for a Swift package][plugin-docs].
+
 [plugin-docs]: https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
 
 DocC uses the comments you write in your source code as the content for the 
@@ -85,4 +85,4 @@ You can also use the DocC command-line interface, as described in <doc:distribut
 
 - <doc:writing-symbol-documentation-in-your-source-files>
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
