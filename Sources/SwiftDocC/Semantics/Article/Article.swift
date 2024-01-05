@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -217,8 +217,8 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
             
-            // Remove the display name customization from the article's metadata.
-            optionalMetadata = Metadata(originalMarkup: metadata.originalMarkup, documentationExtension: metadata.documentationOptions, technologyRoot: metadata.technologyRoot, displayName: nil, titleHeading: metadata.titleHeading)
+            metadata.displayName = nil
+            optionalMetadata = metadata
         }
         
         self.init(

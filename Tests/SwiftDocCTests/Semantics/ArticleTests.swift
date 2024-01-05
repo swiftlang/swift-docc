@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -207,5 +207,46 @@ class ArticleTests: XCTestCase {
         )
         
         XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoEnabled, false)
+    }
+    
+    func testDisplayNameDirectiveIsRemoved() throws {
+        let source = """
+        # Root
+        
+        @Metadata {
+          @TechnologyRoot
+          @PageColor(purple)
+          @DisplayName("Example")
+        }
+        
+        Adding @DisplayName to an article will result in a warning.
+        """
+        let document = Document(parsing: source, options: [.parseBlockDirectives])
+        let (bundle, context) = try testBundleAndContext()
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        
+        XCTAssertEqual(problems.map(\.diagnostic.summary), [
+            "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading."
+        ])
+        
+        let semantic = try XCTUnwrap(article)
+        XCTAssertNotNil(semantic.metadata, "Article should have a metadata container since the markup has a @Metadata directive")
+        XCTAssertNotNil(semantic.metadata?.technologyRoot, "Article should have a technology root configuration since the markup has a @TechnologyRoot directive")
+        XCTAssertNotNil(semantic.metadata?.pageColor, "Article should have a page color configuration since the markup has a @PageColor directive")
+        
+        XCTAssertNil(semantic.metadata?.displayName, "Articles shouldn't have a display name metadata configuration, even though the markup has a @DisplayName directive. Article names are specified by the level-1 header instead of a metadata directive.")
+        
+        // Non-optional child directives should be initialized.
+        XCTAssertEqual(semantic.metadata?.pageImages, [])
+        XCTAssertEqual(semantic.metadata?.customMetadata, [])
+        XCTAssertEqual(semantic.metadata?.availability, [])
+        XCTAssertEqual(semantic.metadata?.supportedLanguages, [])
+        
+        // Optional child directives should default to nil
+        XCTAssertNil(semantic.metadata?.documentationOptions)
+        XCTAssertNil(semantic.metadata?.callToAction)
+        XCTAssertNil(semantic.metadata?.pageKind)
+        XCTAssertNil(semantic.metadata?.titleHeading)
     }
 }
