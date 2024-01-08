@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1456,7 +1456,7 @@ let expected = """
         // Get a node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
-        // Get the breacrumbs as paths
+        // Get the breadcrumbs as paths
         let paths = context.pathsTo(node.reference).sorted { (path1, path2) -> Bool in
             return path1.count < path2.count
         }
@@ -1670,7 +1670,9 @@ let expected = """
             A documentation extension that curates symbols with characters not allowed in a resolved reference URL.
 
             ## Topics
-
+            
+            ### Operator name only
+            
             - ``<(_:_:)``
             - ``>(_:_:)``
             - ``<=(_:_:)``
@@ -1678,11 +1680,60 @@ let expected = """
             - ``-(_:_:)-22pw2``
             - ``-(_:)-9xdx0``
             - ``-=(_:_:)-7w3vn``
+            - ``/(_:_:)``
+            - ``/=(_:_:)``
+            
+            ### Prefixes with containing type name
+            
+            - ``MyNumber/<(_:_:)``
+            - ``MyNumber/>(_:_:)``
+            - ``MyNumber/<=(_:_:)``
+            - ``MyNumber/>=(_:_:)``
+            - ``MyNumber/-(_:_:)-22pw2``
+            - ``MyNumber/-(_:)-9xdx0``
+            - ``MyNumber/-=(_:_:)-7w3vn``
+            - ``MyNumber//(_:_:)``
+            - ``MyNumber//=(_:_:)``
             """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
         }
         
         let unresolvedTopicProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
         XCTAssertEqual(unresolvedTopicProblems.map(\.diagnostic.summary), [], "All links should resolve without warnings")
+    }
+    
+    func testOperatorReferences() throws {
+        let (_, context) = try testBundleAndContext(named: "InheritedOperators")
+        
+        let pageIdentifiersAndNames = Dictionary(uniqueKeysWithValues: try context.knownPages.map { reference in
+            (key: reference.path, value: try context.entity(with: reference).name.description)
+        })
+        
+        // Operators where all characters in the operator name are also allowed in URL paths
+        XCTAssertEqual("!=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/!=(_:_:)"])
+        XCTAssertEqual("*(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/*(_:_:)"])
+        XCTAssertEqual("*=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/*=(_:_:)"])
+        XCTAssertEqual("+(_:)",     pageIdentifiersAndNames["/documentation/Operators/MyNumber/+(_:)"])
+        XCTAssertEqual("+(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/+(_:_:)"])
+        XCTAssertEqual("+=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/+=(_:_:)"])
+        XCTAssertEqual("-(_:)",     pageIdentifiersAndNames["/documentation/Operators/MyNumber/-(_:)"])
+        XCTAssertEqual("-(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/-(_:_:)"])
+        XCTAssertEqual("-=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/-=(_:_:)"])
+        XCTAssertEqual("...(_:_:)", pageIdentifiersAndNames["/documentation/Operators/MyNumber/...(_:_:)"])
+        XCTAssertEqual("..<(_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/.._(_:)"])
+        XCTAssertEqual("..<(_:_:)", pageIdentifiersAndNames["/documentation/Operators/MyNumber/.._(_:_:)"])
+        // Operators with the same name have disambiguation in their paths
+        XCTAssertEqual("...(_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/...(_:)-28faz"])
+        XCTAssertEqual("...(_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/...(_:)-8ooeh"])
+        
+        // Characters that are not allowed in URL paths are replaced with "_" (adding disambiguation if the replacement introduces conflicts)
+        XCTAssertEqual("<(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-736gk"])
+        XCTAssertEqual("<=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-9uewk"])
+        XCTAssertEqual(">(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-21jxf"])
+        XCTAssertEqual(">=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-70j0d"])
+        
+        // "/" is a separator in URL paths so it's replaced with with "_" (adding disambiguation if the replacement introduces conflicts)
+        XCTAssertEqual("/(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-7am4"])
+        XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-3m4ko"])
     }
     
     func testSpecialCharactersInLinks() throws {
@@ -1931,6 +1982,68 @@ let expected = """
         
         XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
         XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
+    }
+    
+    func testDeprecationSummaryWithLocalLink() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: ["Old", "New"].map {
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "\($0.lowercased())-symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "\($0)Symbol", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["\($0)Symbol"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                }
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``OldSymbol``
+            
+            @DeprecationSummary {
+              Use ``NewSymbol`` instead.
+            }
+            
+            Deprecate a symbol and link to its replacement in the deprecation message.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @DeprecationSummary {
+              Use ``NewSymbol`` instead.
+            }
+            
+            Link to external content in an article deprecation message.
+            """),
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/OldSymbol", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
+            XCTAssertEqual(deprecatedSection.content.count, 1)
+            XCTAssertEqual(deprecatedSection.content.first?.format().trimmingCharacters(in: .whitespaces), "Use ``doc://unit-test/documentation/ModuleName/NewSymbol`` instead.", "The link should have been resolved")
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
+            XCTAssertEqual(deprecatedSection.count, 1)
+            XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use ``doc://unit-test/documentation/ModuleName/NewSymbol`` instead.", "The link should have been resolved")
+        }
     }
     
     func testUncuratedArticleDiagnostics() throws {
@@ -3978,6 +4091,55 @@ let expected = """
         let end = Markdown.SourceLocation(line: 24, column: 63, source: nil)
         let range = try XCTUnwrap(problem.diagnostic.range)
         XCTAssertEqual(start..<end, range)
+    }
+    
+    func testUnresolvedLinkWarnings() throws {
+        var (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            let extensionFile = """
+            # ``SideKit``
+
+            myFunction abstract
+
+            ## Overview
+
+            This is unresolvable: <doc:Does-Not-Exist>.
+            
+            ## Topics
+            
+            - <doc:NonExistingDoc>
+
+            """
+            let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
+            try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
+        }
+        var problems = context.diagnosticEngine.problems
+        var linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("myFunction.md") == true }
+        XCTAssertEqual(linkResolutionProblems.count, 3)
+        var problem = try XCTUnwrap(linkResolutionProblems.last)
+        XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/SideKit\'")
+        (_, _, context) = try testBundleAndContext(copying: "BookLikeContent") { url in
+            let extensionFile = """
+            # My Article
+
+            Abstract
+
+            ## Overview
+
+            Overview
+            
+            ## Topics
+            
+            - <doc:NonExistingDoc>
+
+            """
+            let fileURL = url.appendingPathComponent("MyArticle.md")
+            try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
+        }
+        problems = context.diagnosticEngine.problems
+        linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("MyArticle.md") == true }
+        XCTAssertEqual(linkResolutionProblems.count, 1)
+        problem = try XCTUnwrap(linkResolutionProblems.last)
+        XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
     }
 }
 

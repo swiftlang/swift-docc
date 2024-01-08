@@ -47,7 +47,7 @@ private extension PathHierarchy.Node {
 extension PathHierarchy {
     /// Creates a visual representation or the path hierarchy for debugging.
     func dump() -> String {
-        var children = modules.sorted(by: \.key).map { $0.value.dumpableNode() }
+        var children = modules.sorted(by: \.name).map { $0.dumpableNode() }
         if articlesContainer.symbol == nil {
             children.append(articlesContainer.dumpableNode()) // The article parent can be the same node as the module
         }

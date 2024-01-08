@@ -10,7 +10,7 @@
 
 import Foundation
 
-private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted
+private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted.union(["/"])
 
 private func symbolFileName(_ symbolName: String) -> String {
     return symbolName.components(separatedBy: nonAllowedPathCharacters).joined(separator: "_")
@@ -140,10 +140,10 @@ extension PathHierarchy {
         
         var gathered: [(String, (String, Bool))] = []
         
-        for (moduleName, node) in modules {
-            let path = "/" + moduleName
+        for node in modules {
+            let path = "/" + node.name
             gathered.append(
-                (moduleName, (path, node.symbol == nil || node.symbol!.identifier.interfaceLanguage == "swift"))
+                (node.name, (path, node.symbol == nil || node.symbol!.identifier.interfaceLanguage == "swift"))
             )
             gathered += descend(node, accumulatedPath: path)
         }
