@@ -1805,7 +1805,7 @@ let expected = """
             ### Hello world
             """),
             
-            TextFile(name: "Article: with - various! whitespace & punctuation; in, filename.md", utf8Content: """
+            TextFile(name: "Article: with - various! whitespace & punctuation. in, filename.md", utf8Content: """
             # Article with various whitespace and punctuation in its filename
             
             Abstract
@@ -1852,7 +1852,7 @@ let expected = """
         XCTAssertEqual(topicSection.links.map(\.destination), [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
-            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation;-in,-filename",
+            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename",
         ])
         
         // Verify that all resolved link exist in the context.
@@ -1871,7 +1871,7 @@ let expected = """
         XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
-            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation;-in,-filename",
+            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename",
         ])
         
         
@@ -1927,13 +1927,13 @@ let expected = """
             XCTAssertEqual(overridingTitleInlineContent, nil)
         }
         withContentAsReference(list.items.dropFirst(4).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
-            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation;-in,-filename")
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename")
             XCTAssertEqual(isActive, true)
             XCTAssertEqual(overridingTitle, nil)
             XCTAssertEqual(overridingTitleInlineContent, nil)
         }
         withContentAsReference(list.items.dropFirst(5).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
-            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation;-in,-filename#Hello-world")
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename#Hello-world")
             XCTAssertEqual(isActive, true)
             XCTAssertEqual(overridingTitle, nil)
             XCTAssertEqual(overridingTitleInlineContent, nil)
@@ -1957,11 +1957,11 @@ let expected = """
             "Hello world"
         )
         XCTAssertEqual(
-            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation;-in,-filename"] as? TopicRenderReference)?.title,
+            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename"] as? TopicRenderReference)?.title,
             "Article with various whitespace and punctuation in its filename"
         )
         XCTAssertEqual(
-            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation;-in,-filename#Hello-world"] as? TopicRenderReference)?.title,
+            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename#Hello-world"] as? TopicRenderReference)?.title,
             "Hello world"
         )
     }
