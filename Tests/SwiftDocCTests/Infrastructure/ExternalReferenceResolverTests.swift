@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1004,5 +1004,69 @@ Document @1:1-1:35
         XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
         XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/objCSymbol"))
         XCTAssertFalse(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
+    }
+    
+    func testDeprecationSummaryWithExternalLink() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["SymbolName"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                ]
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``SymbolName``
+            
+            @DeprecationSummary {
+              Use <doc://com.external.testbundle/something> instead.
+            }
+            
+            Link to external content in a symbol deprecation message.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @DeprecationSummary {
+              Use <doc://com.external.testbundle/something> instead.
+            }
+            
+            Link to external content in an article deprecation message.
+            """),
+        ])
+        
+        let resolver = TestExternalReferenceResolver()
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleIdentifier: resolver])
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
+            XCTAssertEqual(deprecatedSection.content.count, 1)
+            XCTAssertEqual(deprecatedSection.content.first?.format().trimmingCharacters(in: .whitespaces), "Use <doc://com.external.testbundle/externally/resolved/path> instead.", "The link should have been resolved")
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
+            XCTAssertEqual(deprecatedSection.count, 1)
+            XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use <doc://com.external.testbundle/externally/resolved/path> instead.", "The link should have been resolved")
+        }
     }
 }
