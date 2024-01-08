@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -159,7 +159,7 @@ class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, Fallb
         // This is a workaround for how external content is processed. See details in OutOfProcessReferenceResolver.addImagesAndCacheMediaReferences(to:from:)
         
         if let topicImages = entityInfo.topicImages {
-            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
+            let metadata = node.metadata ?? Metadata._make(originalMarkup: BlockDirective(name: "Metadata", children: []))
             
             metadata.pageImages = topicImages.map { topicImage, alt in
                 let purpose: PageImage.Purpose
