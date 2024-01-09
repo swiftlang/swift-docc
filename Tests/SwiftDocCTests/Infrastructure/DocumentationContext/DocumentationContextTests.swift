@@ -2592,41 +2592,35 @@ let expected = """
     }
     
     func testContextCachesReferences() throws {
+        let bundleID = #function
         // Verify there is no pool bucket for the bundle we're about to test
-        XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
-                .replacingOccurrences(of: "org.swift.docc.example", with: #function)
+                .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
                 .write(to: infoPlistURL, atomically: true, encoding: .utf8)
         })
 
         // Verify there is a pool bucket for the bundle we've loaded
-        XCTAssertNotNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        XCTAssertNotNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        guard let references = ResolvedTopicReference.sharedPool.sync({ $0[#function] }) else {
-            return
-        }
-        
-        let beforeCount = references.count
+        let beforeCount = try XCTUnwrap(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Verify a given identifier exists in the pool by creating it and verifying it wasn't added to the pool
-        let identifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
-        _ = identifier
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
         // Verify create the reference above did not add to the cache
-        XCTAssertEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        XCTAssertEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Create a new reference for the same bundle that was not loaded with the context
-        let newIdentifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
-        _ = newIdentifier
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
         
         // Verify creating a new reference added to the ones loaded with the context
-        XCTAssertNotEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        XCTAssertNotEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        // Purge the pool
-        ResolvedTopicReference.purgePool(for: #function)
+        ResolvedTopicReference.purgePool(for: bundleID)
     }
     
     func testAbstractAfterMetadataDirective() throws {
