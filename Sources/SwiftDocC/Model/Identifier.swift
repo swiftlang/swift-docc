@@ -649,10 +649,6 @@ private extension CharacterSet {
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
     static let whitespaceAndDashes = CharacterSet.whitespaces
         .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
-    
-    // For article link names
-    static let charactersToRemoveFromArticleLinkNames = CharacterSet.whitespacesAndPunctuation
-        .union(CharacterSet(charactersIn: "`")) // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
 }
 
 /// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.
@@ -680,9 +676,11 @@ func urlReadableFragment<S: StringProtocol>(_ fragment: S) -> String {
 /// Compared to `urlReadablePath(_:)` this also removes most punctuation characters.
 /// For example, a filename like `"One, two, & three!"` is converted to `"One-two-three"` instead of `"One,-two-&-three!"`.
 func linkName<S: StringProtocol>(filename: S) -> String {
+    // It would be a nice enhancement to also remove punctuation from the filename to allow an article in a file named "One, two, & three!"
+    // to be referenced with a link as `"One-two-three"` instead of `"One,-two-&-three!"` (rdar://120722917)
     return filename
         // Replace continuous whitespace and dashes
-        .components(separatedBy: .charactersToRemoveFromArticleLinkNames)
+        .components(separatedBy: .whitespaceAndDashes)
         .filter({ !$0.isEmpty })
         .joined(separator: "-")
 }

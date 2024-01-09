@@ -1822,8 +1822,8 @@ let expected = """
             - <doc:article-with-emoji-in-heading#Hello-🌍>
             - <doc:article-with-😃-in-filename>
             - <doc:article-with-😃-in-filename#Hello-world>
-            - <doc:Article-with-various-whitespace-punctuation-in-filename>
-            - <doc:Article-with-various-whitespace-punctuation-in-filename#Hello-world>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename#Hello-world>
             
             Now test the same links in topic curation.
             
@@ -1833,7 +1833,7 @@ let expected = """
             
             - ``MyClass/myFunc🙂()``
             - <doc:article-with-😃-in-filename>
-            - <doc:Article-with-various-whitespace-punctuation-in-filename>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename>
             """),
         ])
         let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
