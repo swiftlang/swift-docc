@@ -65,7 +65,7 @@ public class NavigatorIndex {
         /// Missing bundle identifier.
         case missingBundleIdentifier
         
-        @available(*, deprecated, renamed: "missingBundleIdentifier")
+        @available(*, deprecated, renamed: "missingBundleIdentifier", message: "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 5.11 is released")
         case missingBundleIndentifier
         
         /// A RenderNode has no title and won't be indexed.
@@ -233,41 +233,6 @@ public class NavigatorIndex {
         self.pathHasher = pathHasher
         self.navigatorTree = navigatorTree
     }
-    /**
-     Initialize an `NavigatorIndex` from a given path.
-     
-     - Parameters:
-        - url: The URL pointing to the path from which the index should be read.
-        - bundleIdentifier: The name of the bundle the index is referring to.
-        - readNavigatorTree: Indicates if the init needs to read the navigator tree from the disk, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
-        - presentationIdentifier: Indicates if the index has an identifier useful for presentation contexts.
-     
-     - Throws: A `NavigatorIndex.Error` describing the nature of the problem.
-     
-     - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
-     */
-    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead")
-    public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
-        let navigator = try NavigatorIndex.readNavigatorIndex(
-            url: url,
-            bundleIdentifier: bundleIdentifier,
-            readNavigatorTree: readNavigatorTree,
-            presentationIdentifier: presentationIdentifier
-        )
-        
-        self.init(
-            url: navigator.url,
-            presentationIdentifier: navigator.presentationIdentifier,
-            bundleIdentifier: navigator.bundleIdentifier,
-            environment: navigator.environment!,
-            database: navigator.database!,
-            availability: navigator.availability!,
-            information: navigator.information!,
-            availabilityIndex: navigator.availabilityIndex,
-            pathHasher: navigator.pathHasher,
-            navigatorTree: navigator.navigatorTree
-        )
-    }
     
     /**
      Initialize an `NavigatorIndex` from a given path with an empty tree.
@@ -344,50 +309,6 @@ public class NavigatorIndex {
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
-        
-        @available(*, deprecated, message: "Please use instanceProperty.")
-        public static let property = PageType.instanceProperty
-        
-        @available(*, deprecated, message: "Please use tutorial.")
-        public static let project = PageType.tutorial
-        
-        /// Initialize a page type from a `roleHeading` returning the Symbol type.
-        /// - Note: This initializer works only for symbol pages.
-        @available(*, deprecated, message: "Please use init(role:) or init(symbolKind:)")
-        init(roleHeading: String) {
-            switch roleHeading.lowercased() {
-            case "framework": self = .framework
-            case "class": self = .class
-            case "structure": self = .structure
-            case "protocol": self = .protocol
-            case "enumeration": self = .enumeration
-            case "function": self = .function
-            case "extension": self = .extension
-            case "local variable": self = .localVariable
-            case "global variable": self = .globalVariable
-            case "type alias": self = .typeAlias
-            case "associated type": self = .associatedType
-            case "operator": self = .operator
-            case "macro": self = .macro
-            case "union": self = .union
-            case "enumeration case": self = .enumerationCase
-            case "initializer", "init": self = .initializer
-            case "instance method": self = .instanceMethod
-            case "instance property": self = .instanceProperty
-            case "instance variable": self = .instanceVariable
-            case "subscript": self = .subscript
-            case "type method": self = .typeMethod
-            case "type property": self = .typeProperty
-            case "property": self = .instanceProperty
-            case "sample code": self = .sampleCode
-            case "build setting": self = .buildSetting
-            case "property list key": self = .propertyListKey
-            case "property list key reference": self = .propertyListKeyReference
-            case "web service endpoint": self = .httpRequest
-            case "dictionary symbol": self = .dictionarySymbol
-            default:self = .symbol // Generic Symbol.
-            }
-        }
                 
         /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
         init(symbolKind: String) {

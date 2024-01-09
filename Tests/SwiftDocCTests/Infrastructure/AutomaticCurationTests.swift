@@ -41,6 +41,10 @@ class AutomaticCurationTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = translator.visit(symbol) as! RenderNode
             
+            for section in renderNode.topicSections {
+                XCTAssert(section.generated, "\((section.title ?? "").singleQuoted) was not marked as generated.")
+            }
+            
             XCTAssertNotNil(renderNode.topicSections.first(where: { group -> Bool in
                 return group.title == AutomaticCuration.groupTitle(for: kind)
             }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group. Please add it to either AutomaticCuration.groupKindOrder or KindIdentifier.noPageKinds." )
@@ -123,6 +127,13 @@ class AutomaticCurationTests: XCTestCase {
             
             // The manual topic section is listed before any automatic topic sections
             XCTAssertEqual(renderNode.topicSections.first?.title, "Manually curated")
+            
+            if let firstSection = renderNode.topicSections.first {
+                XCTAssertFalse(firstSection.generated, "The first topic section is manually authored.")
+            }
+            for section in renderNode.topicSections.dropFirst() {
+                XCTAssert(section.generated, "The other topic sections are generated")
+            }
             
             // Check that the automatic topic sections only exist if its elements weren't manually curated
             XCTAssertEqual(
@@ -539,7 +550,34 @@ class AutomaticCurationTests: XCTestCase {
             ]
         )
     }
-    
+
+    func testNamespacesAreCuratedProperly() throws {
+        let (bundle, context) = try testBundleAndContext(named: "CxxNamespaces")
+
+        let rootDocumentationNode = try context.entity(
+            with: .init(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/CxxNamespaces",
+                sourceLanguage: .objectiveC
+            )
+        )
+        let topics = try AutomaticCuration.topics(
+            for: rootDocumentationNode,
+            withTraits: [.objectiveC],
+            context: context
+        )
+
+        XCTAssertEqual(
+            topics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Namespaces",
+                "/documentation/CxxNamespaces/Foo",
+            ]
+        )
+    }
+
     // Ensures that manually curated sample code articles are not also
     // automatically curated.
     func testSampleCodeArticlesRespectManualCuration() throws {

@@ -28,8 +28,8 @@ To build documentation for your Swift framework or package, use the DocC command
 
 ![A screenshot showing the Sloth structure documentation in its rendered form.](1_sloth)
 
-> Tip: You can also use the Swift-DocC Plugin to 
-[build a documentation archive for a Swift package][plugin-docs].
+> Tip: You can also use the Swift-DocC Plugin to [build a documentation archive for a Swift package][plugin-docs].
+
 [plugin-docs]: https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
 
 DocC uses the comments you write in your source code as the content for the 
@@ -71,7 +71,7 @@ step-by-step, interactive content. For more information, see
 > Important: To use a documentation catalog in a Swift package, make sure the 
 manifest's Swift tools version is set to `5.5` or later. 
 
-## Building, publishing, and previewing documentation
+## Building, Publishing, and Previewing Documentation with the DocC Plug-in
 
 The preferred way of building documentation for your Swift package is by using
 the Swift-DocC Plugin. Refer to instructions in the plugin's 
@@ -79,8 +79,10 @@ the Swift-DocC Plugin. Refer to instructions in the plugin's
 to get started with [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
 and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
 
+You can also use the DocC command-line interface, as described in <doc:distributing-documentation-to-other-developers>.
+
 ## See Also
 
 - <doc:writing-symbol-documentation-in-your-source-files>
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

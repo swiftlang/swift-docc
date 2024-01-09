@@ -32,8 +32,8 @@ public class LinkResolver {
             try ExternalPathHierarchyResolver(dependencyArchive: $0)
         }
         for resolver in resolvers {
-            for moduleName in resolver.pathHierarchy.modules.keys {
-                self.externalResolvers[moduleName] = resolver
+            for moduleNode in resolver.pathHierarchy.modules {
+                self.externalResolvers[moduleNode.name] = resolver
             }
         }
     }
@@ -73,7 +73,7 @@ public class LinkResolver {
             return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context)
         } catch let error as PathHierarchy.Error {
             // Check if there's a known external resolver for this module.
-            if case .moduleNotFound(let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
+            if case .moduleNotFound(_, let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
                 let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
                 context.externallyResolvedLinks[unresolvedReference.topicURL] = result
                 if case .success(let resolved) = result {
@@ -87,12 +87,7 @@ public class LinkResolver {
             if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
                 return .success(resolvedFallbackReference)
             } else {
-                var originalReferenceString = unresolvedReference.path
-                if let fragment = unresolvedReference.topicURL.components.fragment {
-                    originalReferenceString += "#" + fragment
-                }
-                
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { localResolver.fullName(of: $0, in: context) })
+                return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { localResolver.fullName(of: $0, in: context) })
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")

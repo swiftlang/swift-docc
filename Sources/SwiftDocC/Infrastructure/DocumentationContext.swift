@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -316,29 +316,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             try register(bundle)
         }
     }
-
-    /// Initializes a documentation context with a given `dataProvider` and `diagnosticConsumers`
-    /// and registers all the documentation bundles that `dataProvider` provides.
-    ///
-    /// - Parameters:
-    ///     - dataProvider: The data provider to register bundles from.
-    ///     - diagnosticEngine: The engine that will collect problems encountered during compilation.
-    ///     - diagnosticConsumers: A collection of types that can consume diagnostics. These will be registered with `diagnosticEngine`.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
-    @available(*, deprecated, message: "Use init(dataProvider:diagnosticEngine:) instead")
-    public init(dataProvider: DocumentationContextDataProvider, diagnosticEngine: DiagnosticEngine = .init(), diagnosticConsumers: [DiagnosticConsumer]) throws {
-        self.dataProvider = dataProvider
-        self.diagnosticEngine = diagnosticEngine
-        self.dataProvider.delegate = self
-
-        for consumer in diagnosticConsumers {
-            self.diagnosticEngine.add(consumer)
-        }
-
-        for bundle in dataProvider.bundles.values {
-            try register(bundle)
-        }
-    }
     
     /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
     ///
@@ -622,7 +599,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                     var problems = resolver.problems
 
-                    if case .sourceCode(_, let offset) = doc.source {
+                    if case .sourceCode(_, let offset) = doc.source, documentationNode.kind.isSymbol {
                         // Offset all problem ranges by the start location of the
                         // source comment in the context of the complete file.
                         if let docRange = offset {
@@ -1897,6 +1874,60 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
+    /// Registers a synthesized root page for a catalog with only non-root articles.
+    ///
+    /// If the catalog only has one article or has an article with the same name as the catalog itself, that article is turned into the root page instead of creating a new article.
+    ///
+    /// - Parameters:
+    ///   - articles: On input, a list of articles. If an article is used as a root it is removed from this list.
+    ///   - bundle: The bundle containing the articles.
+    private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) {
+        let title = bundle.displayName
+        let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
+            BlockDirective(name: "TechnologyRoot", children: [])
+        ])
+        let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
+        
+        if articles.count == 1 {
+            // This catalog only has one article, so we make that the root.
+            var onlyArticle = articles.removeFirst()
+            onlyArticle.value = Article(markup: onlyArticle.value.markup, metadata: metadata, redirects: onlyArticle.value.redirects, options: onlyArticle.value.options)
+            registerRootPages(from: [onlyArticle], in: bundle)
+        } else if let nameMatchIndex = articles.firstIndex(where: { $0.source.deletingPathExtension().lastPathComponent == title }) {
+            // This catalog has an article with the same name as the catalog itself, so we make that the root.
+            var nameMatch = articles.remove(at: nameMatchIndex)
+            nameMatch.value = Article(markup: nameMatch.value.markup, metadata: metadata, redirects: nameMatch.value.redirects, options: nameMatch.value.options)
+            registerRootPages(from: [nameMatch], in: bundle)
+        } else {
+            // There's no particular article to make into the root. Instead, create a new minimal root page.
+            let path = NodeURLGenerator.Path.documentation(path: title).stringValue
+            let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
+            
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguages: [sourceLanguage])
+            
+            let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
+            topicGraph.addNode(graphNode)
+            
+            // Build up the "full" markup for an empty technology root article 
+            let markup = Document(
+                Heading(level: 1, Text(title)),
+                metadataDirectiveMarkup
+            )
+            
+            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
+            let documentationNode = DocumentationNode(
+                reference: reference,
+                kind: .collection,
+                sourceLanguage: sourceLanguage,
+                availableSourceLanguages: [sourceLanguage],
+                name: .conceptual(title: title),
+                markup: markup,
+                semantic: article
+            )
+            documentationCache[reference] = documentationNode
+        }
+    }
+    
     /// Creates a documentation node and title for the given article semantic result.
     ///
     /// - Parameters:
@@ -2170,6 +2201,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         try shouldContinueRegistration()
         
+        if topicGraph.nodes.isEmpty, !otherArticles.isEmpty, !allowsRegisteringArticlesWithoutTechnologyRoot {
+            synthesizeArticleOnlyRootPage(articles: &otherArticles, bundle: bundle)
+        }
+            
         // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
         // curate articles.
         rootModules = topicGraph.nodes.values.compactMap { node in
@@ -2547,24 +2582,45 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         throw ContextError.notFound(reference.url)
     }
     
-    /// Returns the set of languages the entity corresponding to the given reference is available in.
-    ///
-    /// - Precondition: The entity associated with the given reference must be registered in the context.
-    public func sourceLanguages(for reference: ResolvedTopicReference) -> Set<SourceLanguage> {
+    private func knownEntityValue<Result>(
+        reference: ResolvedTopicReference,
+        valueInLocalEntity: (DocumentationNode) -> Result,
+        valueInExternalEntity: (LinkResolver.ExternalEntity) -> Result
+    ) -> Result {
         do {
             // Look up the entity without its fragment. The documentation context does not keep track of page sections
             // as nodes, and page sections are considered to be available in the same languages as the page they're
             // defined in.
             let referenceWithoutFragment = reference.withFragment(nil)
-            return try entity(with: referenceWithoutFragment).availableSourceLanguages
+            return try valueInLocalEntity(entity(with: referenceWithoutFragment))
         } catch ContextError.notFound {
             if let externalEntity = externalCache[reference] {
-                return externalEntity.sourceLanguages
+                return valueInExternalEntity(externalEntity)
             }
             preconditionFailure("Reference does not have an associated documentation node.")
         } catch {
-            fatalError("Unexpected error when retrieving source languages: \(error)")
+            fatalError("Unexpected error when retrieving entity: \(error)")
         }
+    }
+    
+    /// Returns the set of languages the entity corresponding to the given reference is available in.
+    ///
+    /// - Precondition: The entity associated with the given reference must be registered in the context.
+    public func sourceLanguages(for reference: ResolvedTopicReference) -> Set<SourceLanguage> {
+        knownEntityValue(
+            reference: reference,
+            valueInLocalEntity: \.availableSourceLanguages,
+            valueInExternalEntity: \.sourceLanguages
+        )
+    }
+    
+    /// Returns whether the given reference corresponds to a symbol.
+    func isSymbol(reference: ResolvedTopicReference) -> Bool {
+        knownEntityValue(
+            reference: reference,
+            valueInLocalEntity: { node in node.kind.isSymbol },
+            valueInExternalEntity: { entity in entity.topicRenderReference.kind == .symbol }
+        )
     }
 
     // MARK: - Relationship queries
@@ -2596,15 +2652,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: A list of the reference for the given node's parent nodes.
     public func parents(of reference: ResolvedTopicReference) -> [ResolvedTopicReference] {
         return topicGraph.reverseEdges[reference] ?? []
-    }
-    
-    /// Returns the document URL for the given article or tutorial reference.
-    ///
-    /// - Parameter reference: The identifier for the topic whose file URL to locate.
-    /// - Returns: If the reference is a reference to a known Markdown document, this function returns the article's URL, otherwise `nil`.
-    @available(*, deprecated, renamed: "documentURL(for:)")
-    public func fileURL(for reference: ResolvedTopicReference) -> URL? {
-        documentURL(for: reference)
     }
     
     /// Returns the document URL for the given article or tutorial reference.

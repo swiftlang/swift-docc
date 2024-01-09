@@ -669,7 +669,7 @@
             "text" : ""
           },
           {
-            "text" : "`@Available` is analagous to the `@available` attribute in Swift: It allows you to specify a"
+            "text" : "`@Available` is analogous to the `@available` attribute in Swift: It allows you to specify a"
           },
           {
             "text" : "platform version that the page relates to. To specify a platform and version, list the platform"
@@ -3183,6 +3183,9 @@
             "text" : "- ``PageImage``"
           },
           {
+            "text" : "- ``PageColor``"
+          },
+          {
             "text" : "- ``CallToAction``"
           },
           {
@@ -5112,7 +5115,7 @@
             "text" : ""
           },
           {
-            "text" : " To add a new tab to a ``TabNavigator``, add  a `@Tab` directive within the content of the `@TabNavigator` directive."
+            "text" : "To add a new tab to a ``TabNavigator``, add a `@Tab` directive within the content of the `@TabNavigator` directive."
           },
           {
             "text" : "- Parameters:"
@@ -5296,7 +5299,7 @@
             "text" : ""
           },
           {
-            "text" : "   @Tab(\"Excerise routines\") {"
+            "text" : "   @Tab(\"Exercise routines\") {"
           },
           {
             "text" : "      ![A sloth relaxing and enjoying a good book.](sloth-exercise)"

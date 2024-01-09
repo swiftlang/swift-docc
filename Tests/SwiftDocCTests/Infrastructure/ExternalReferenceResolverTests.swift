@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -911,5 +911,162 @@ Document @1:1-1:35
         let urlGenerator = PresentationURLGenerator(context: context, baseURL: URL(fileURLWithPath: "/"))
         let finalURL = urlGenerator.presentationURLForReference(linkReference)
         XCTAssertEqual(finalURL.absoluteString, "https://example.com/example/externally/resolved/path#67890")
+    }
+    
+    func testExternalArticlesAreIncludedInAllVariantsTopicsSection() throws {
+        let externalResolver = TestMultiResultExternalReferenceResolver()
+        externalResolver.bundleIdentifier = "com.test.external"
+        
+        externalResolver.entitiesToReturn["/path/to/external/swiftArticle"] = .success(
+            .init(
+                    referencePath: "/path/to/external/swiftArticle",
+                    title: "SwiftArticle",
+                    kind: .article,
+                    language: .swift
+                )
+        )
+        
+        externalResolver.entitiesToReturn["/path/to/external/objCArticle"] = .success(
+            .init(
+                    referencePath: "/path/to/external/objCArticle",
+                    title: "ObjCArticle",
+                    kind: .article,
+                    language: .objectiveC
+                )
+        )
+        
+        externalResolver.entitiesToReturn["/path/to/external/swiftSymbol"] = .success(
+            .init(
+                referencePath: "/path/to/external/swiftSymbol",
+                title: "SwiftSymbol",
+                kind: .class,
+                language: .swift
+            )
+        )
+                
+        externalResolver.entitiesToReturn["/path/to/external/objCSymbol"] = .success(
+            .init(
+                referencePath: "/path/to/external/objCSymbol",
+                title: "ObjCSymbol",
+                kind: .class,
+                language: .objectiveC
+            )
+        )
+        
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "MixedLanguageFramework",
+            externalResolvers: [externalResolver.bundleIdentifier: externalResolver]
+        ) { url in
+            let mixedLanguageFrameworkExtension = """
+                # ``MixedLanguageFramework``
+                
+                This symbol has a Swift and Objective-C variant.
+
+                ## Topics
+                
+                ### External Reference
+
+                - <doc://com.test.external/path/to/external/swiftArticle>
+                - <doc://com.test.external/path/to/external/swiftSymbol>
+                - <doc://com.test.external/path/to/external/objCArticle>
+                - <doc://com.test.external/path/to/external/objCSymbol>
+                """
+            try mixedLanguageFrameworkExtension.write(to: url.appendingPathComponent("/MixedLanguageFramework.md"), atomically: true, encoding: .utf8)
+        }
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let mixedLanguageFrameworkReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/MixedLanguageFramework",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: mixedLanguageFrameworkReference)
+        let fileURL = try XCTUnwrap(context.documentURL(for: node.reference))
+        let renderNode = try converter.convert(node, at: fileURL)
+        // Topic identifiers in the Swift variant of the `MixedLanguageFramework` symbol
+        let swiftTopicIDs = renderNode.topicSections.flatMap(\.identifiers)
+        
+        let data = try renderNode.encodeToJSON()
+        let variantRenderNode = try RenderNodeVariantOverridesApplier()
+            .applyVariantOverrides(in: data, for: [.interfaceLanguage("occ")])
+        let objCRenderNode = try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: variantRenderNode)
+        // Topic identifiers in the ObjC variant of the `MixedLanguageFramework` symbol
+        let objCTopicIDs = objCRenderNode.topicSections.flatMap(\.identifiers)
+        
+        // Verify that external articles are included in the Topics section of both symbol
+        // variants regardless of their perceived language.
+        XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/swiftArticle"))
+        XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/objCArticle"))
+        XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftArticle"))
+        XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/objCArticle"))
+        // Verify that external language specific symbols are dropped from the Topics section in the
+        // variants for languages where the symbol isn't available.
+        XCTAssertFalse(swiftTopicIDs.contains("doc://com.test.external/path/to/external/objCSymbol"))
+        XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
+        XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/objCSymbol"))
+        XCTAssertFalse(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
+    }
+    
+    func testDeprecationSummaryWithExternalLink() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["SymbolName"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                ]
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``SymbolName``
+            
+            @DeprecationSummary {
+              Use <doc://com.external.testbundle/something> instead.
+            }
+            
+            Link to external content in a symbol deprecation message.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @DeprecationSummary {
+              Use <doc://com.external.testbundle/something> instead.
+            }
+            
+            Link to external content in an article deprecation message.
+            """),
+        ])
+        
+        let resolver = TestExternalReferenceResolver()
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleIdentifier: resolver])
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
+            XCTAssertEqual(deprecatedSection.content.count, 1)
+            XCTAssertEqual(deprecatedSection.content.first?.format().trimmingCharacters(in: .whitespaces), "Use <doc://com.external.testbundle/externally/resolved/path> instead.", "The link should have been resolved")
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
+            XCTAssertEqual(deprecatedSection.count, 1)
+            XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use <doc://com.external.testbundle/externally/resolved/path> instead.", "The link should have been resolved")
+        }
     }
 }
