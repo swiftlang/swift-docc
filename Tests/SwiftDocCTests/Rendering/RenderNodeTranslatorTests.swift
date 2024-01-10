@@ -1366,11 +1366,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                 - <doc:article>
                 """),
                 JSONFile(
-                    name: "ModuleName.symbols.json",
+                    name: "unit-test.symbols.json",
                     content: makeSymbolGraph(
-                       moduleName: "ModuleName",
-                       symbols: [
-                        SymbolGraph.Symbol(
+                       moduleName: "unit-test",
+                       symbols: [SymbolGraph.Symbol(
                             identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
                             names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
                             pathComponents: ["Symbol"],
@@ -1378,8 +1377,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             accessLevel: .public,
                             kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
                             mixins: [:]
-                        )
-                       ]
+                       )]
                    )
                 ),
             ]
