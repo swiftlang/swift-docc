@@ -1739,6 +1739,16 @@ let expected = """
     func testFileNamesWithDifferentPunctuation() throws {
         let tempURL = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [
+                TextFile(name: "Root.md", utf8Content: """
+                # Root
+                
+                @Metadata {
+                  @TechnologyRoot
+                }
+                
+                This test needs an explicit root on 'release/5.10' but not on 'main'.
+                """),
+                
                 TextFile(name: "Hello-world.md", utf8Content: """
                 # Dash
                 
@@ -1775,7 +1785,7 @@ let expected = """
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
         
         XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
-            "doc://unit-test/documentation/unit-test",
+            "doc://unit-test/documentation/Root", // since this catalog has an explicit technology root on the 'release/5.10' branch
             "doc://unit-test/documentation/unit-test/Hello,-world!",
             "doc://unit-test/documentation/unit-test/Hello--world",
             "doc://unit-test/documentation/unit-test/Hello-world",
