@@ -260,9 +260,7 @@ Root
             atomically: true
         )
         
-        ResolvedTopicReference.sharedPool.sync { sharedPool in
-            XCTAssertNil(sharedPool[uniqueTestBundleIdentifier])
-        }
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: uniqueTestBundleIdentifier))
     }
     
   
