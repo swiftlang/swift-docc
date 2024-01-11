@@ -671,16 +671,3 @@ func urlReadableFragment<S: StringProtocol>(_ fragment: S) -> String {
     return fragment
 }
 
-/// Creates a more writable version of an articles file name for use in documentation links.
-///
-/// Compared to `urlReadablePath(_:)` this also removes most punctuation characters.
-/// For example, a filename like `"One, two, & three!"` is converted to `"One-two-three"` instead of `"One,-two-&-three!"`.
-func linkName<S: StringProtocol>(filename: S) -> String {
-    // It would be a nice enhancement to also remove punctuation from the filename to allow an article in a file named "One, two, & three!"
-    // to be referenced with a link as `"One-two-three"` instead of `"One,-two-&-three!"` (rdar://120722917)
-    return filename
-        // Replace continuous whitespace and dashes
-        .components(separatedBy: .whitespaceAndDashes)
-        .filter({ !$0.isEmpty })
-        .joined(separator: "-")
-}
