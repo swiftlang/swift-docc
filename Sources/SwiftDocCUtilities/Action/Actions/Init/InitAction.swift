@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -53,7 +53,7 @@ public struct InitAction: Action {
         self.documentationTitle = documentationTitle
         self.catalogTemplateKind = catalogTemplate
         self.fileManager = fileManager
-        catalogOutputURL = catalogOutputDirectory
+        self.catalogOutputURL = catalogOutputDirectory
     }
     
     /// Creates a new Init action from the given parameters.
@@ -86,6 +86,7 @@ public struct InitAction: Action {
         var logHandle = logHandle
         diagnosticEngine.filterLevel = .warning
         diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
+        var directoryURLsList = [URL]()
         
         defer {
             diagnosticEngine.flush()
@@ -93,7 +94,11 @@ public struct InitAction: Action {
         
         do {
             // Create the directory where the catalog will be initialized.
-            try fileManager.createDirectory(at: catalogOutputURL, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectory(
+                at: catalogOutputURL,
+                withIntermediateDirectories: false,
+                attributes: nil
+            )
         } catch CocoaError.fileWriteFileExists {
             diagnosticEngine.emit(
                 Problem(
@@ -122,12 +127,14 @@ public struct InitAction: Action {
                 try fileManager.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
                 // Generate the article file at the specified URL path.
                 try fileManager.createFile(at: fileURL, contents: Data(content.utf8))
+                directoryURLsList.append(fileURL.relative(to: catalogOutputURL)!)
             }
             // Write additional directiories defined in the catalog.
             // Ex. `Resources`
             for relativePath in catalogTemplate.additionalDirectories {
                 let directoryURL = catalogOutputURL.appendingPathComponent(relativePath.path)
                 try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                directoryURLsList.append(directoryURL.relative(to: catalogOutputURL)!)
             }
             print(
                 """
@@ -138,17 +145,11 @@ public struct InitAction: Action {
                 to: &logHandle
             )
             
-            // Recursevely print the content of the generated documentation catalog.
-            let resourceKeys = Set<URLResourceKey>([.nameKey, .isDirectoryKey])
-            let directoryEnumerator = FileManager.default.enumerator(at: catalogOutputURL, includingPropertiesForKeys: Array(resourceKeys), options: .skipsHiddenFiles)!
-            var fileURLs: [URL] = []
-            for case let fileURL as URL in directoryEnumerator {
-                fileURLs.append(fileURL.relative(to: catalogOutputURL)!)
-            }
-            fileURLs.forEach {
+            // Print the content of the generated documentation catalog.
+            directoryURLsList.forEach {
                 print(
                     """
-                    - \($0.path)
+                    - \($0)
                     """,
                     to: &logHandle
                 )

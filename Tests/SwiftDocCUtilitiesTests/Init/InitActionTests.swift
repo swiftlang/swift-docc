@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,6 +9,8 @@
 */
 
 import XCTest
+import Foundation
+import SwiftDocCTestUtilities
 @testable import SwiftDocCUtilities
 
 final class InitActionTests: XCTestCase {
@@ -17,62 +19,48 @@ final class InitActionTests: XCTestCase {
     let documentationTitle = "MyTestDocumentation"
     
     func testInitActionCreatesArticleOnlyCatalog() throws {
-        let outputURL = try createTemporaryDirectory()
+        let outputLocation = Folder(name: "output", content: [])
+        let fileManager = try TestFileSystem(folders: [outputLocation])
         var action = try InitAction(
-            catalogOutputDirectory: outputURL,
+            catalogOutputDirectory: outputLocation.absoluteURL.appendingPathComponent("\(documentationTitle).docc"),
             documentationTitle: documentationTitle,
-            catalogTemplate: .articleOnly
+            catalogTemplate: .articleOnly,
+            fileManager: fileManager
         )
-        var isDirectory: ObjCBool = false
-        _ = try action.perform(logHandle: .none)
-        // Test an output folder exists
-        guard fileManager.fileExists(atPath: "\(outputURL.path)/\(documentationTitle).docc", isDirectory: &isDirectory) else {
-            XCTFail("InitAction failed to create output folder")
-            return
-        }
-        // Test the output folder really is a folder.
-        XCTAssert(isDirectory.boolValue)
-        // Test the top-level content of the output folder is the expected one.
-        let expectedContent = ["\(documentationTitle).md", "Resources"]
-        let outputCatalogContent = try fileManager.contentsOfDirectory(
-            atPath: outputURL.appendingPathComponent("\(documentationTitle).docc").path
-        ).sorted()
-        XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
+        let result = try action.perform(logHandle: .none)
+        // Test the content of the output folder is the expected one.
+        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path()) }
+        XCTAssertEqual(outputCatalogContent.keys.sorted(), [
+            "/output/\(documentationTitle).docc",
+            "/output/\(documentationTitle).docc/MyTestDocumentation2.md",
+            "/output/\(documentationTitle).docc/Resources"
+        ], "Unexpected output")
     }
     
     func testInitActionCreatesTutorialCatalog() throws {
-        let outputURL = try createTemporaryDirectory()
+        let outputLocation = Folder(name: "output", content: [])
+        let fileManager = try TestFileSystem(folders: [outputLocation])
         var action = try InitAction(
-            catalogOutputDirectory: outputURL,
+            catalogOutputDirectory: outputLocation.absoluteURL.appendingPathComponent(
+                "\(documentationTitle).docc"
+            ),
             documentationTitle: documentationTitle,
-            catalogTemplate: .tutorial
+            catalogTemplate: .tutorial,
+            fileManager: fileManager
         )
-        var isDirectory: ObjCBool = false
-        _ = try action.perform(logHandle: .standardOutput)
-        // Test an output folder exists
-        guard fileManager.fileExists(atPath: "\(outputURL.path)/\(documentationTitle).docc", isDirectory: &isDirectory) else {
-            XCTFail("InitAction failed to create output folder")
-            return
-        }
-        // Test the output folder really is a folder.
-        XCTAssert(isDirectory.boolValue)
-        // Test the top-level content of the output folder is the expected one.
-        var expectedContent = ["Chapter01", "Resources", "table-of-contents.tutorial"]
-        var outputCatalogContent = try fileManager.contentsOfDirectory(
-            atPath: outputURL.appendingPathComponent("\(documentationTitle).docc").path
-        ).sorted()
-        XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
-        for item in outputCatalogContent {
-            // Test the content of generated catalog matches the expected content from the template catalog.
-            switch item {
-            case "Chapter01":
-                expectedContent = ["Resources", "page-01.tutorial"]
-                outputCatalogContent = try fileManager.contentsOfDirectory(atPath: "\(outputURL.path)/\(documentationTitle).docc/Chapter01/").sorted()
-                XCTAssertEqual(outputCatalogContent, expectedContent, "Unexpected output")
-            default:
-                continue
-            }
-        }
+        let result = try action.perform(logHandle: .standardOutput)
+        // Test the content of the output folder is the expected one.
+        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path()) }
+        XCTAssertEqual(outputCatalogContent.keys.sorted(), [
+            "/output/\(documentationTitle).docc",
+            "/output/\(documentationTitle).docc/table-of-contents.tutorial",
+            "/output/\(documentationTitle).docc/Chapter01",
+            "/output/\(documentationTitle).docc/Chapter01/page-01.tutorial",
+            "/output/\(documentationTitle).docc/Chapter01/Resources",
+            "/output/\(documentationTitle).docc/Resources"
+        ].sorted(), "Unexpected output")
     }
 
 }
+
+
