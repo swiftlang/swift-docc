@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,21 +86,6 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "_pageColor"            : \Metadata.__pageColor,
         "titleHeading"          : \Metadata._titleHeading,
     ]
-    
-    /// Creates a metadata object with a given markup, documentation extension, and technology root.
-    /// - Parameters:
-    ///   - originalMarkup: The original markup for this metadata directive.
-    ///   - documentationExtension: Optional configuration that describes how this documentation extension file merges or overrides the in-source documentation.
-    ///   - technologyRoot: Optional configuration to make this page root-level documentation.
-    ///   - displayName: Optional configuration to customize this page's symbol's display name.
-    ///   - titleHeading: Optional configuration to customize the text of this page's title heading.
-    init(originalMarkup: BlockDirective, documentationExtension: DocumentationExtension?, technologyRoot: TechnologyRoot?, displayName: DisplayName?, titleHeading: TitleHeading?) {
-        self.originalMarkup = originalMarkup
-        self.documentationOptions = documentationExtension
-        self.technologyRoot = technologyRoot
-        self.displayName = displayName
-        self.titleHeading = titleHeading
-    }
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
@@ -200,6 +185,77 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         }
         
         return true
+    }
+    
+    // MARK: Private API for OutOfProcessReferenceResolver
+    
+    /// Don't use this outside of ``OutOfProcessReferenceResolver/entity(with:)`` .
+    ///
+    /// Directives aren't meant to be created from non-markup but the out-of-process resolver needs to create a ``Metadata`` to hold the ``PageImage``
+    /// values that it creates to associate topic images with external pages. This is because DocC renders external content in the local context. (rdar://78718811)
+    /// https://github.com/apple/swift-docc/issues/468
+    ///
+    /// This is intentionally defined as an underscore prefixed static function instead of an initializer to make it less likely that it's used in other places.
+    static func _make(
+        originalMarkup: BlockDirective,
+        documentationOptions: DocumentationExtension? = nil,
+        technologyRoot: TechnologyRoot? = nil,
+        displayName: DisplayName? = nil,
+        pageImages: [PageImage] = [],
+        customMetadata: [CustomMetadata] = [],
+        callToAction: CallToAction? = nil,
+        availability: [Metadata.Availability] = [],
+        pageKind: Metadata.PageKind? = nil,
+        supportedLanguages: [SupportedLanguage] = [],
+        _pageColor: PageColor? = nil,
+        titleHeading: TitleHeading? = nil
+    ) -> Metadata {
+        // FIXME: https://github.com/apple/swift-docc/issues/468
+        return Metadata(
+            originalMarkup: originalMarkup,
+            documentationOptions: documentationOptions,
+            technologyRoot: technologyRoot,
+            displayName: displayName,
+            pageImages: pageImages,
+            customMetadata: customMetadata,
+            callToAction: callToAction,
+            availability: availability,
+            pageKind: pageKind,
+            supportedLanguages: supportedLanguages,
+            _pageColor: _pageColor,
+            titleHeading: titleHeading
+        )
+    }
+    
+    // This initializer only exists to be called by `_make` above.
+    private init(
+        originalMarkup: BlockDirective,
+        documentationOptions: DocumentationExtension?,
+        technologyRoot: TechnologyRoot?,
+        displayName: DisplayName?,
+        pageImages: [PageImage],
+        customMetadata: [CustomMetadata],
+        callToAction: CallToAction?,
+        availability: [Metadata.Availability],
+        pageKind: Metadata.PageKind?,
+        supportedLanguages: [SupportedLanguage],
+        _pageColor: PageColor?,
+        titleHeading: TitleHeading?
+    ) {
+        self.originalMarkup = originalMarkup
+        self.documentationOptions = documentationOptions
+        self.technologyRoot = technologyRoot
+        self.displayName = displayName
+        self.callToAction = callToAction
+        self._pageColor = _pageColor
+        self.pageKind = pageKind
+        self.titleHeading = titleHeading
+        // Non-optional child directives need to be set after `super.init()`.
+        super.init()
+        self.customMetadata = customMetadata
+        self.pageImages = pageImages
+        self.availability = availability
+        self.supportedLanguages = supportedLanguages
     }
 }
 
