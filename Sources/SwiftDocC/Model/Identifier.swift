@@ -617,6 +617,7 @@ func urlReadablePath<S: StringProtocol>(_ path: S) -> String {
 }
 
 private extension CharacterSet {
+    // For fragments
     static let fragmentCharactersToRemove = CharacterSet.punctuationCharacters // Remove punctuation from fragments
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
@@ -643,3 +644,4 @@ func urlReadableFragment<S: StringProtocol>(_ fragment: S) -> String {
     
     return fragment
 }
+

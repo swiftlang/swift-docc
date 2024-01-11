@@ -598,7 +598,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     public mutating func visitArticle(_ article: Article) -> RenderTree? {
         var node = RenderNode(identifier: identifier, kind: .article)
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        // Contains symbol references declared in the Topics section.
+        var topicSectionContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
         
         node.metadata.title = article.title!.plainText
         
@@ -674,7 +675,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         allowExternalLinks: false,
                         allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -685,7 +686,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -714,7 +715,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 
                 // Collect all child topic references.
-                contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
+                topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
                 // Add the final groups to the node.
                 sections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
             }
@@ -725,7 +726,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -736,11 +737,30 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
-            if node.topicSections.isEmpty {
-                // Set an eyebrow for articles
+            
+            let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
+            node.metadata.role = role.rawValue
+            
+            switch role {
+            case .article:
+                // If there are no links to other nodes from the article,
+                // set the eyebrow for articles.
                 node.metadata.roleHeading = "Article"
+            case .collectionGroup:
+                // If the article links to other nodes, set the eyebrow for
+                // API Collections if any linked node is a symbol.
+                //
+                // If none of the linked nodes are symbols (it's a plain collection),
+                // don't display anything as the eyebrow title.
+                let curatesSymbols = topicSectionContentCompiler.collectedTopicReferences.contains { topicReference in
+                    context.topicGraph.nodeWithReference(topicReference)?.kind.isSymbol ?? false
+                }
+                if curatesSymbols {
+                    node.metadata.roleHeading = "API Collection"
+                }
+            default:
+                break
             }
-            node.metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         }
        
         if let pageImages = documentationNode.metadata?.pageImages {
@@ -780,7 +800,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         allowExternalLinks: true,
                         allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -794,7 +814,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
-                contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
+                topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
                 seeAlsoSections.append(TaskGroupRenderSection(taskGroup: seeAlso))
             }
             
@@ -845,7 +865,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.metadata.roleHeading = titleHeading.heading
         } 
         
-        collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
+        collectedTopicReferences.append(contentsOf: topicSectionContentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
 
         addReferences(imageReferences, to: &node)
@@ -854,7 +874,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(downloadReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
-        addReferences(contentCompiler.linkReferences, to: &node)
+        addReferences(topicSectionContentCompiler.linkReferences, to: &node)
 
         return node
     }
