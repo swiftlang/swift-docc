@@ -494,12 +494,7 @@ public class DocumentationContentRenderer {
                 
                 // For external links, verify they've resolved successfully and return `nil` otherwise.
                 if linkHost != reference.bundleIdentifier {
-                    let externalReference = ResolvedTopicReference(
-                        bundleIdentifier: linkHost,
-                        path: destination.path,
-                        sourceLanguages: node.availableSourceLanguages
-                    )
-                    if documentationContext.externallyResolvedSymbols.contains(externalReference) {
+                    if let url = ValidatedURL(destination), case .success(let externalReference) = documentationContext.externallyResolvedLinks[url] {
                         return externalReference
                     }
                     return nil

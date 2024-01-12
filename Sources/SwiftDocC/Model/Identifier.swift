@@ -141,10 +141,14 @@ extension TopicReferenceResolutionErrorInfo {
 /// > its data.
 public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomStringConvertible {
     typealias ReferenceBundleIdentifier = String
-    typealias ReferenceKey = String
+    private struct ReferenceKey: Hashable {
+        var path: String
+        var fragment: String?
+        var sourceLanguages: Set<SourceLanguage>
+    }
     
     /// A synchronized reference cache to store resolved references.
-    static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
+    private static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
     
     /// Clears cached references belonging to the bundle with the given identifier.
     /// - Parameter bundleIdentifier: The identifier of the bundle to which the method should clear belonging references.
@@ -219,11 +223,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     private init(bundleIdentifier: String, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
         precondition(!sourceLanguages.isEmpty, "ResolvedTopicReference.sourceLanguages cannot be empty")
         // Check for a cached instance of the reference
-        let key = Self.cacheKey(
-            urlReadablePath: urlReadablePath,
-            urlReadableFragment: urlReadableFragment,
-            sourceLanguages: sourceLanguages
-        )
+        let key = ReferenceKey(path: urlReadablePath, fragment: urlReadableFragment, sourceLanguages: sourceLanguages)
         let cached = Self.sharedPool.sync { $0[bundleIdentifier]?[key] }
         if let resolved = cached {
             self = resolved
@@ -241,20 +241,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         Self.sharedPool.sync { sharedPool in
             // If we have a shared pool for this bundle identifier, cache the reference
             sharedPool[bundleIdentifier]?[key] = self
-        }
-    }
-    
-    private static func cacheKey(
-        urlReadablePath path: String,
-        urlReadableFragment fragment: String?,
-        sourceLanguages: Set<SourceLanguage>
-    ) -> String {
-        let sourceLanguagesString = sourceLanguages.map(\.id).sorted().joined(separator: "-")
-        
-        if let fragment = fragment {
-            return "\(path):\(fragment):\(sourceLanguagesString)"
-        } else {
-            return "\(path):\(sourceLanguagesString)"
         }
     }
     
@@ -495,22 +481,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             self.absoluteString = self.url.absoluteString
         }
     }
-}
-
-typealias ResolvedTopicReferenceCacheKey = String
-
-extension ResolvedTopicReference {
-    /// Returns a unique cache ID for a pair of unresolved and parent references.
-    static func cacheIdentifier(_ reference: UnresolvedTopicReference, fromSymbolLink: Bool, in parent: ResolvedTopicReference?) -> ResolvedTopicReferenceCacheKey {
-        let isSymbolLink = fromSymbolLink ? ":symbol" : ""
-        if let parent = parent {
-            // Create a cache id in the parent context
-            return "\(reference.topicURL.absoluteString):\(parent.bundleIdentifier):\(parent.path):\(parent.sourceLanguage.id)\(isSymbolLink)"
-        } else {
-            // A cache ID for an external reference
-            assert(reference.topicURL.components.host != nil)
-            return reference.topicURL.absoluteString.appending(isSymbolLink)
-        }
+    
+    // For testing the caching
+    static func _numberOfCachedReferences(bundleID: ReferenceBundleIdentifier) -> Int? {
+        return Self.sharedPool.sync { $0[bundleID]?.count }
     }
 }
 
@@ -643,6 +617,7 @@ func urlReadablePath<S: StringProtocol>(_ path: S) -> String {
 }
 
 private extension CharacterSet {
+    // For fragments
     static let fragmentCharactersToRemove = CharacterSet.punctuationCharacters // Remove punctuation from fragments
         .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
         .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
@@ -669,3 +644,4 @@ func urlReadableFragment<S: StringProtocol>(_ fragment: S) -> String {
     
     return fragment
 }
+

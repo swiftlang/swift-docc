@@ -1736,6 +1736,53 @@ let expected = """
         XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-3m4ko"])
     }
     
+    func testFileNamesWithDifferentPunctuation() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "Hello-world.md", utf8Content: """
+                # Dash
+                
+                No whitespace in the file name
+                """),
+                
+                TextFile(name: "Hello world.md", utf8Content: """
+                # Only space
+                
+                This has the same reference as "Hello-world.md" and will raise a warning.
+                """),
+                
+                TextFile(name: "Hello  world.md", utf8Content: """
+                # Multiple spaces
+                
+                Each space is replaced with a dash in the reference, so this has a unique reference.
+                """),
+                
+                TextFile(name: "Hello, world!.md", utf8Content: """
+                # Space and punctuation
+                
+                The punctuation is not removed from the reference, so this has a unique reference.
+                """),
+                
+                TextFile(name: "Hello. world?.md", utf8Content: """
+                # Space and different punctuation
+                
+                The punctuation is not removed from the reference, so this has a unique reference.
+                """),
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
+        
+        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+            "doc://unit-test/documentation/unit-test",
+            "doc://unit-test/documentation/unit-test/Hello,-world!",
+            "doc://unit-test/documentation/unit-test/Hello--world",
+            "doc://unit-test/documentation/unit-test/Hello-world",
+            "doc://unit-test/documentation/unit-test/Hello.-world-",
+        ])
+    }
+    
     func testSpecialCharactersInLinks() throws {
         let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
         
@@ -1751,7 +1798,15 @@ let expected = """
             """),
             
             TextFile(name: "article-with-😃-in-filename.md", utf8Content: """
-            # Article with 😃 emoji in file name
+            # Article with 😃 emoji in its filename
+            
+            Abstract
+            
+            ### Hello world
+            """),
+            
+            TextFile(name: "Article: with - various! whitespace & punctuation. in, filename.md", utf8Content: """
+            # Article with various whitespace and punctuation in its filename
             
             Abstract
             
@@ -1767,6 +1822,8 @@ let expected = """
             - <doc:article-with-emoji-in-heading#Hello-🌍>
             - <doc:article-with-😃-in-filename>
             - <doc:article-with-😃-in-filename#Hello-world>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename#Hello-world>
             
             Now test the same links in topic curation.
             
@@ -1776,6 +1833,7 @@ let expected = """
             
             - ``MyClass/myFunc🙂()``
             - <doc:article-with-😃-in-filename>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename>
             """),
         ])
         let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
@@ -1789,11 +1847,12 @@ let expected = """
         
         let moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
         let topicSection = try XCTUnwrap(moduleSymbol.topics?.taskGroups.first)
-        
+
         // Verify that all the links in the topic section resolved
         XCTAssertEqual(topicSection.links.map(\.destination), [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename",
         ])
         
         // Verify that all resolved link exist in the context.
@@ -1808,10 +1867,11 @@ let expected = """
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
-        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 2)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 3)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename",
         ])
         
         
@@ -1826,7 +1886,7 @@ let expected = """
         
         XCTAssertEqual(lists.count, 1)
         let list = try XCTUnwrap(lists.first)
-        XCTAssertEqual(list.items.count, 4, "Unexpected list items: \(list.items.map(\.content))")
+        XCTAssertEqual(list.items.count, 6, "Unexpected list items: \(list.items.map(\.content))")
         
         func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
             guard let listItem = listItem else {
@@ -1866,7 +1926,19 @@ let expected = """
             XCTAssertEqual(overridingTitle, nil)
             XCTAssertEqual(overridingTitleInlineContent, nil)
         }
-        
+        withContentAsReference(list.items.dropFirst(4).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst(5).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename#Hello-world")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+    
         // Verify that the topic render references have titles with special characters when the original content contained special characters
         XCTAssertEqual(
             (renderNode.references["doc://special-characters/documentation/MyKit/MyClass/myFunc_()"] as? TopicRenderReference)?.title,
@@ -1878,10 +1950,18 @@ let expected = """
         )
         XCTAssertEqual(
             (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename"] as? TopicRenderReference)?.title,
-            "Article with 😃 emoji in file name"
+            "Article with 😃 emoji in its filename"
         )
         XCTAssertEqual(
             (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world"] as? TopicRenderReference)?.title,
+            "Hello world"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename"] as? TopicRenderReference)?.title,
+            "Article with various whitespace and punctuation in its filename"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename#Hello-world"] as? TopicRenderReference)?.title,
             "Hello world"
         )
     }
@@ -2633,41 +2713,35 @@ let expected = """
     }
     
     func testContextCachesReferences() throws {
+        let bundleID = #function
         // Verify there is no pool bucket for the bundle we're about to test
-        XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
-                .replacingOccurrences(of: "org.swift.docc.example", with: #function)
+                .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
                 .write(to: infoPlistURL, atomically: true, encoding: .utf8)
         })
 
         // Verify there is a pool bucket for the bundle we've loaded
-        XCTAssertNotNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        XCTAssertNotNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        guard let references = ResolvedTopicReference.sharedPool.sync({ $0[#function] }) else {
-            return
-        }
-        
-        let beforeCount = references.count
+        let beforeCount = try XCTUnwrap(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Verify a given identifier exists in the pool by creating it and verifying it wasn't added to the pool
-        let identifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
-        _ = identifier
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
         // Verify create the reference above did not add to the cache
-        XCTAssertEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        XCTAssertEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Create a new reference for the same bundle that was not loaded with the context
-        let newIdentifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
-        _ = newIdentifier
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
         
         // Verify creating a new reference added to the ones loaded with the context
-        XCTAssertNotEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        XCTAssertNotEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        // Purge the pool
-        ResolvedTopicReference.purgePool(for: #function)
+        ResolvedTopicReference.purgePool(for: bundleID)
     }
     
     func testAbstractAfterMetadataDirective() throws {
