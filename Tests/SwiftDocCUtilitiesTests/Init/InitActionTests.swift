@@ -112,7 +112,7 @@ final class InitActionTests: XCTestCase {
             return
         }
         XCTAssertEqual(String(decoding: tableOfContentFile.value, as: UTF8.self), """
-        @Tutorials(name: "\(documentationTitle)" {
+        @Tutorials(name: "\(documentationTitle)") {
             @Intro(title: "Tutorial Introduction") {
                 Add one or more paragraphs that introduce your tutorial.
             }

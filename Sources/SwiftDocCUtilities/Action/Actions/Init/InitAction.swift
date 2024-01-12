@@ -154,6 +154,9 @@ public struct InitAction: Action {
                     """
                 }.joined(separator: "\n"))
                 
+                To preview it, run the command:
+                    docc preview \(catalogOutputURL.path)
+                
                 For additional resources on how to get started with DocC, please refer to \(resourceDocumentationLink).
                 """,
                 to: &logHandle
