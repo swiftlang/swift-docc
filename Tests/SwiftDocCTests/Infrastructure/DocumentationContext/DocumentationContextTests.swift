@@ -2064,6 +2064,47 @@ let expected = """
         XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
     }
     
+    func testExtendingSymbolWithSpaceInName() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "Symbol Name", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["Symbol Name"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                ]
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``Symbol Name``
+            
+            Extend a symbol with a space in its name.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            Link in content to a symbol with a space in its name: ``Symbol Name``.
+            """),
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/Symbol_Name", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        
+        XCTAssertEqual((node.semantic as? Symbol)?.abstract?.plainText, "Extend a symbol with a space in its name.")
+    }
+
     func testDeprecationSummaryWithLocalLink() throws {
         let exampleDocumentation = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
