@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,62 +28,62 @@ extension CatalogTemplateKind {
     
     /// Content of the 'articleOnly' template
     static func articleOnlyTemplateFiles(_ title: String) -> [String: String] {
-        return (
-            [
-                "\(title).md": """
-                    # \(title)
-                    
-                    <!--- Metadata configuration to make appear this documentation page as a top-level page -->
-                    
-                    @Metadata {
-                      @TechnologyRoot
-                    }
-                    
-                    Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
-                    
-                    ## Overview
+        [
+            "\(title).md": """
+                # \(title)
+                
+                <!--- Metadata configuration to make appear this documentation page as a top-level page -->
+                
+                @Metadata {
+                  @TechnologyRoot
+                }
+                
+                Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.
+                
+                ## Overview
 
-                    Add one or more paragraphs that introduce your content overview.
-                    """
-            ]
-        )
+                Add one or more paragraphs that introduce your content overview.
+                """
+        ]
     }
     
     /// Content of the 'tutorial' template
-    static let tutorialTemplateFiles: [String: String] = [
-        "table-of-contents.tutorial": """
-        @Tutorials(name: "Tutorial Name") {
-            @Intro(title: "Tutorial Introduction") {
-                Add one or more paragraphs that introduce your tutorial.
-            }
-            @Chapter(name: "Chapter Name") {
-                @Image(source: "add-your-chapter-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
-                @TutorialReference(tutorial: "doc:page-01")
-            }
-        }
-        """,
-        "Chapter01/page-01.tutorial": """
-        @Tutorial() {
-            @Intro(title: "Tutorial Page Title") {
-                Add one paragraph that introduce your tutorial.
-            }
-            @Section(title: "Section Name") {
-                @ContentAndMedia {
-                    Add text that introduces the tasks that the reader needs to follow.
-                    @Image(source: "add-your-section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+    static func tutorialTemplateFiles(_ title: String) -> [String: String] {
+        [
+            "table-of-contents.tutorial": """
+            @Tutorials(name: "\(title)" {
+                @Intro(title: "Tutorial Introduction") {
+                    Add one or more paragraphs that introduce your tutorial.
                 }
-                @Steps {
-                    @Step {
-                        This is a step with code.
-                        @Code(name: "", file: "")
-                    }
-                    @Step {
-                        This is a step with an image.
-                        @Image(source: "", alt: "")
-                    }
+                @Chapter(name: "Chapter Name") {
+                    @Image(source: "add-your-chapter-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+                    @TutorialReference(tutorial: "doc:page-01")
                 }
             }
-        }
-        """
-    ]
+            """,
+                "Chapter01/page-01.tutorial": """
+            @Tutorial() {
+                @Intro(title: "Tutorial Page Title") {
+                    Add one paragraph that introduce your tutorial.
+                }
+                @Section(title: "Section Name") {
+                    @ContentAndMedia {
+                        Add text that introduces the tasks that the reader needs to follow.
+                        @Image(source: "add-your-section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")
+                    }
+                    @Steps {
+                        @Step {
+                            This is a step with code.
+                            @Code(name: "", file: "")
+                        }
+                        @Step {
+                            This is a step with an image.
+                            @Image(source: "", alt: "")
+                        }
+                    }
+                }
+            }
+            """
+        ]
+    }
 }

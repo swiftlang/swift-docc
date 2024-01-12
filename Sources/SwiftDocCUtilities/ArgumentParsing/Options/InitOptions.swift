@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,11 +19,11 @@ public struct InitOptions: ParsableArguments {
     
     public init() { }
     
-    /// The catalog directory name and top level article title and file name.
+    /// The catalog directory name.
     @Option(
         name: .long,
         help: ArgumentHelp(
-            "Name to use as the catalog directory name, the top level article title and file name",
+            "Name to use as the catalog directory name",
             valueName: "name"
         )
     )
@@ -38,7 +38,7 @@ public struct InitOptions: ParsableArguments {
         ),
         transform: URL.init(fileURLWithPath:)
     )
-    var providedCatalogOutputDirURL: URL
+    public var providedCatalogOutputDirURL: URL
     
     public func validate() throws {
         // Verify that the directory exist for the output location.
@@ -46,7 +46,6 @@ public struct InitOptions: ParsableArguments {
         guard FileManager.default.fileExists(atPath: providedCatalogOutputDirURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
             throw ValidationError("No directory exists at '\(providedCatalogOutputDirURL.path)'.")
         }
-        
     }
     
     /// The catalog template to initialize.

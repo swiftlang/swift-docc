@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,16 +15,13 @@ struct CatalogTemplate {
     
     let files: [URL: String]
     let additionalDirectories: [URL]
-    let title: String
     
     /// Creates a catalog from the given articles and additional directories validating
     /// that the paths conforms to valid URLs.
     init(
-        title: String,
         files: [String: String],
         additionalDirectories: [String] = []
     ) throws {
-        self.title = title
         // Converts every key of the articles dictionary into
         // a valid URL.
         self.files = Dictionary(uniqueKeysWithValues:
@@ -45,14 +42,12 @@ struct CatalogTemplate {
         switch templateKind {
         case .articleOnly:
             try self.init(
-                title: title,
                 files: CatalogTemplateKind.articleOnlyTemplateFiles(title),
                 additionalDirectories: ["Resources"]
             )
         case .tutorial:
             try self.init(
-                title: title,
-                files: CatalogTemplateKind.tutorialTemplateFiles,
+                files: CatalogTemplateKind.tutorialTemplateFiles(title),
                 additionalDirectories: ["Resources", "Chapter01/Resources"]
             )
         }

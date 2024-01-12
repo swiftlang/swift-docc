@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,16 +26,7 @@ public struct InitAction: Action {
     private var fileManager: FileManagerProtocol
     private let catalogOutputURL: URL
     private let catalogTemplateKind: CatalogTemplateKind
-    private let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
     private let documentationTitle: String
-    private var resourceDocumentationLink: String {
-        switch catalogTemplateKind {
-        case .articleOnly:
-            return "https://www.swift.org/documentation/docc/"
-        case .tutorial:
-            return "https://www.swift.org/documentation/docc/tutorial-syntax"
-        }
-    }
     
     /// Creates a new Init action from the given parameters.
     ///
@@ -48,12 +39,12 @@ public struct InitAction: Action {
         catalogOutputDirectory: URL,
         documentationTitle: String,
         catalogTemplate: CatalogTemplateKind,
-        fileManager: FileManagerProtocol = FileManager.default
+        fileManager: FileManagerProtocol
     ) throws {
+        self.catalogOutputURL = catalogOutputDirectory
         self.documentationTitle = documentationTitle
         self.catalogTemplateKind = catalogTemplate
         self.fileManager = fileManager
-        self.catalogOutputURL = catalogOutputDirectory
     }
     
     /// Creates a new Init action from the given parameters.
@@ -83,10 +74,19 @@ public struct InitAction: Action {
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
     public mutating func perform(logHandle: SwiftDocC.LogHandle) throws -> ActionResult {
         
-        var logHandle = logHandle
+        let diagnosticEngine: DiagnosticEngine = DiagnosticEngine(treatWarningsAsErrors: false)
         diagnosticEngine.filterLevel = .warning
         diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
+        var logHandle = logHandle
         var directoryURLsList = [URL]()
+        var resourceDocumentationLink: String {
+            switch catalogTemplateKind {
+            case .articleOnly:
+                return "https://www.swift.org/documentation/docc/"
+            case .tutorial:
+                return "https://www.swift.org/documentation/docc/tutorial-syntax"
+            }
+        }
         
         defer {
             diagnosticEngine.flush()
@@ -124,7 +124,11 @@ public struct InitAction: Action {
                 // by adding the article path to the output URL and
                 // excluding the file name.
                 let fileURL = catalogOutputURL.appendingPathComponent(relativePath.path)
-                try fileManager.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: fileURL.deletingLastPathComponent(),
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 // Generate the article file at the specified URL path.
                 try fileManager.createFile(at: fileURL, contents: Data(content.utf8))
                 directoryURLsList.append(fileURL.relative(to: catalogOutputURL)!)
@@ -133,30 +137,22 @@ public struct InitAction: Action {
             // Ex. `Resources`
             for relativePath in catalogTemplate.additionalDirectories {
                 let directoryURL = catalogOutputURL.appendingPathComponent(relativePath.path)
-                try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                try fileManager.createDirectory(
+                    at: directoryURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 directoryURLsList.append(directoryURL.relative(to: catalogOutputURL)!)
             }
             print(
                 """
-                A new documentation catalog has been generated at \(catalogOutputURL.path)
-                whith the following structure:
+                A new documentation catalog has been generated at \(catalogOutputURL.path) with the following structure:
                 
-                """,
-                to: &logHandle
-            )
-            
-            // Print the content of the generated documentation catalog.
-            directoryURLsList.forEach {
-                print(
+                \(directoryURLsList.map {
                     """
                     - \($0)
-                    """,
-                    to: &logHandle
-                )
-            }
-            
-            print(
-                """
+                    """
+                }.joined(separator: "\n"))
                 
                 For additional resources on how to get started with DocC, please refer to \(resourceDocumentationLink).
                 """,
