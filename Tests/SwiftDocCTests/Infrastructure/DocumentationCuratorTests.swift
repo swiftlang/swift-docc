@@ -146,24 +146,19 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testModuleUnderTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleUnderTechnologyRoot") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
             try """
-            # Another Awesome Project
-            
-            Technology Root
-            
+            # Root curating a module
+
             @Metadata {
                @TechnologyRoot
             }
             
-            ## Overview
-            
-            This shouldn't create a warning because it's a technologyRoot
+            Curating a module from a technology root should not generated any warnings.
             
             ## Topics
             
-            ### Code Reference
-            - ``MyAwesomeApp``
+            - ``SourceLocations``
             
             """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
         }
@@ -180,58 +175,48 @@ class DocumentationCuratorTests: XCTestCase {
     }
         
     func testModuleUnderAncestorOfTechnologyRoot() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleUnderTechnologyRoot") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
             try """
-            # Another Awesome Project
+            # Root with ancestor curatings a module
             
-            Technology Root
+            This is a root article that enables testing the behavior of it's ancestors.
             
             @Metadata {
                @TechnologyRoot
             }
             
-            ## Overview
-            
-            This shouldn't create a warning because it's a technologyRoot
-            
             ## Topics
             - <doc:Ancestor>
             
-            ### Code Reference
             
             """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
             
             try """
-            # MyAwesomeApp Project
+            # Ancestor of root
             
-            Random summary
-
-            ## Overview
-
-            This is a project to test that no errors are created when a technology root refers to a
-            module.
-            
-            This should create a warning because it links to a module without being a technology root
+            Linking to a module shouldn't raise errors due to this article being an ancestor of a technology root.
 
             ## Topics
-
-
-            ### Code Reference
-
-            - ``MyAwesomeApp``
+            - ``SourceLocations``
 
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
-        for node in context.rootModules {
-            XCTAssertNoThrow(try crawler.crawlChildren(of: node, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
+        
+
+        
+        guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
+              let pathToRoot = context.pathsTo(moduleNode.reference).first,
+              let root = pathToRoot.first else {
+            
+            XCTFail("Module doesn't have technology root as a predecessor in its path")
+            return
         }
         
-       
-        XCTAssertEqual(crawler.problems.count, 0)
+        XCTAssertEqual(root.path, "/documentation/Root")
     }
 
 

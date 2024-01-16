@@ -235,20 +235,20 @@ struct DocumentationCurator {
                 // be an error messsage. This is an if statement instead of a guard because
                 // when there's no warning we still curate the node
                 if childDocumentationNode.kind == .module {
-
-                    var hasTechnologyRoot = documentationNode.kind.isSymbol == false
-
-                    hasTechnologyRoot = hasTechnologyRoot || context.pathsTo(nodeReference).contains { path in
-                        if path.count == 0 {
-                            return false
-                        }
-
-                        let node = context.topicGraph.nodeWithReference(path[0])
-                        return node?.kind == .module && node?.kind.isSymbol == false
+                    
+                    func isTechnologyRoot(_ reference: ResolvedTopicReference) -> Bool {
+                        guard let node = context.topicGraph.nodeWithReference(reference) else {return false}
+                        return node.kind == .module && documentationNode.kind.isSymbol == false
+                    }
+        
+                    
+                    let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.pathsTo(nodeReference).contains { path in
+                        guard let root = path.first else {return false}
+                        return isTechnologyRoot(root)
                     }
 
                     if !hasTechnologyRoot {
-                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module test, and modules only exist at the root"), possibleSolutions: []))
+                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
                     continue
                     }
                     
