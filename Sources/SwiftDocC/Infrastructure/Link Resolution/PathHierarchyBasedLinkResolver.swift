@@ -106,7 +106,7 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     private func addTutorial(reference: ResolvedTopicReference, source: URL, landmarks: [Landmark]) {
-        let tutorialID = pathHierarchy.addTutorial(name: urlReadablePath(source.deletingPathExtension().lastPathComponent))
+        let tutorialID = pathHierarchy.addTutorial(name: linkName(filename: source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[tutorialID] = reference
         
         for landmark in landmarks {
@@ -119,7 +119,7 @@ final class PathHierarchyBasedLinkResolver {
     func addTechnology(_ technology: DocumentationContext.SemanticResult<Technology>) {
         let reference = technology.topicGraphNode.reference
 
-        let technologyID = pathHierarchy.addTutorialOverview(name: urlReadablePath(technology.source.deletingPathExtension().lastPathComponent))
+        let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: technology.source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[technologyID] = reference
         
         var anonymousVolumeID: ResolvedIdentifier?
@@ -149,21 +149,20 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Adds a technology root article and its headings to the path hierarchy.
     func addRootArticle(_ article: DocumentationContext.SemanticResult<Article>, anchorSections: [AnchorSection]) {
-        let articleID = pathHierarchy.addTechnologyRoot(name: article.source.deletingPathExtension().lastPathComponent)
+        let linkName = linkName(filename: article.source.deletingPathExtension().lastPathComponent)
+        let articleID = pathHierarchy.addTechnologyRoot(name: linkName)
         resolvedReferenceMap[articleID] = article.topicGraphNode.reference
         addAnchors(anchorSections, to: articleID)
     }
     
     /// Adds an article and its headings to the path hierarchy.
     func addArticle(_ article: DocumentationContext.SemanticResult<Article>, anchorSections: [AnchorSection]) {
-        let articleID = pathHierarchy.addArticle(name: article.source.deletingPathExtension().lastPathComponent)
-        resolvedReferenceMap[articleID] = article.topicGraphNode.reference
-        addAnchors(anchorSections, to: articleID)
+        addArticle(filename: article.source.deletingPathExtension().lastPathComponent, reference: article.topicGraphNode.reference, anchorSections: anchorSections)
     }
     
     /// Adds an article and its headings to the path hierarchy.
     func addArticle(filename: String, reference: ResolvedTopicReference, anchorSections: [AnchorSection]) {
-        let articleID = pathHierarchy.addArticle(name: filename)
+        let articleID = pathHierarchy.addArticle(name: linkName(filename: filename))
         resolvedReferenceMap[articleID] = reference
         addAnchors(anchorSections, to: articleID)
     }
@@ -186,7 +185,7 @@ final class PathHierarchyBasedLinkResolver {
     /// Adds a task group on a given page to the documentation hierarchy.
     func addTaskGroup(named name: String, reference: ResolvedTopicReference, to parent: ResolvedTopicReference) {
         let parentID = resolvedReferenceMap[parent]!
-        let taskGroupID = pathHierarchy.addNonSymbolChild(parent: parentID, name: urlReadablePath(name), kind: "taskGroup")
+        let taskGroupID = pathHierarchy.addNonSymbolChild(parent: parentID, name: urlReadableFragment(name), kind: "taskGroup")
         resolvedReferenceMap[taskGroupID] = reference
     }
     
@@ -292,3 +291,19 @@ final class PathHierarchyBasedLinkResolver {
         return result
     }
 }
+
+/// Creates a more writable version of an articles file name for use in documentation links.
+///
+/// Compared to `urlReadablePath(_:)` this preserves letters in other written languages.
+private func linkName<S: StringProtocol>(filename: S) -> String {
+    // It would be a nice enhancement to also remove punctuation from the filename to allow an article in a file named "One, two, & three!"
+    // to be referenced with a link as `"One-two-three"` instead of `"One,-two-&-three!"` (rdar://120722917)
+    return filename
+        // Replace continuous whitespace and dashes
+        .components(separatedBy: whitespaceAndDashes)
+        .filter({ !$0.isEmpty })
+        .joined(separator: "-")
+}
+
+private let whitespaceAndDashes = CharacterSet.whitespaces
+    .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
