@@ -163,13 +163,18 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
         }
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
-        for node in context.rootModules {
-            XCTAssertNoThrow(try crawler.crawlChildren(of: node, prepareForCuration: { _ in }, relateNodes: { _, _ in }))
+        guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
+              let pathToRoot = context.pathsTo(moduleNode.reference).first,
+              let root = pathToRoot.first else {
+            
+            XCTFail("Module doesn't have technology root as a predecessor in its path")
+            return
         }
         
+        XCTAssertEqual(root.path, "/documentation/Root")
         XCTAssertEqual(crawler.problems.count, 0)
             
     }
@@ -202,11 +207,8 @@ class DocumentationCuratorTests: XCTestCase {
             """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
         }
         
-        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        let _ = DocumentationCurator.init(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
-        
-        
-
         
         guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
               let pathToRoot = context.pathsTo(moduleNode.reference).first,
