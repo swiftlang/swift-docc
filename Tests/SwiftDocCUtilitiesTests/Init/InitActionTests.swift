@@ -29,7 +29,7 @@ final class InitActionTests: XCTestCase {
         )
         let result = try action.perform(logHandle: .none)
         // Test the content of the output folder is the expected one.
-        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path()) }
+        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path) }
         XCTAssertEqual(outputCatalogContent.keys.sorted(), [
             "/output/\(documentationTitle).docc",
             "/output/\(documentationTitle).docc/\(documentationTitle).md",
@@ -50,7 +50,7 @@ final class InitActionTests: XCTestCase {
         )
         let result = try action.perform(logHandle: .standardOutput)
         // Test the content of the output folder is the expected one.
-        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path()) }
+        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path) }
         XCTAssertEqual(outputCatalogContent.keys.sorted(), [
             "/output/\(documentationTitle).docc",
             "/output/\(documentationTitle).docc/table-of-contents.tutorial",
