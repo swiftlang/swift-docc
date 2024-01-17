@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,18 +16,6 @@ import _Common
 ///
 /// The render node writer writes the JSON files into a hierarchy of folders and subfolders based on the relative URL for each node.
 class JSONEncodingRenderNodeWriter {
-    /// Errors that may occur while writing render node JSON files.
-    enum Error: DescribedError {
-        /// A file already exist at this path.
-        case fileExists(String)
-        /// The absolute path to the file is too long.
-        public var errorDescription: String {
-            switch self {
-            case .fileExists(let path): return "File already exists at: '\(path)'"
-            }
-        }
-    }
-    
     private let renderNodeURLGenerator: NodeURLGenerator
     private let targetFolder: URL
     private let transformForStaticHostingIndexHTML: URL?
@@ -57,7 +45,6 @@ class JSONEncodingRenderNodeWriter {
     /// create those intermediate folders before writing the JSON file.
     ///
     /// - Parameter renderNode: The node which the writer object writes to a JSON file.
-    /// - Throws: A ``Error/fileExists`` error if a file already exists at the location for this node's JSON file.
     func write(_ renderNode: RenderNode) throws {
         let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
             renderNode.identifier,

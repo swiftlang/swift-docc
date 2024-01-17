@@ -1770,9 +1770,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        ResolvedTopicReference.sharedPool.sync { sharedPool in
-            XCTAssertEqual(sharedPool[#function]?.count, 8)
-        }
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 8)
     }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
