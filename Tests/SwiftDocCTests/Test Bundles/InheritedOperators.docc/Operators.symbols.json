@@ -271,6 +271,18 @@
                 "identifier": "s:s18AdditiveArithmeticP1soiyxx_xtFZ"
             },
             "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind" : "memberOf",
+            "source" : "s:9Operators8MyNumberV1doiyA2C_ACtFZ",
+            "target" : "s:9Operators8MyNumberV",
+            "targetFallback" : null
+        },
+        {
+            "kind" : "memberOf",
+            "source" : "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ",
+            "target" : "s:9Operators8MyNumberV",
+            "targetFallback" : null
         }
     ],
     "symbols": [
@@ -5241,6 +5253,430 @@
             "swiftExtension": {
                 "extendedModule": "Swift"
             }
+        },
+        {
+            "accessLevel" : "public",
+            "declarationFragments" : [
+                {
+                    "kind" : "keyword",
+                    "spelling" : "static"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "keyword",
+                    "spelling" : "func"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "identifier",
+                    "spelling" : "\/"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : "("
+                },
+                {
+                    "kind" : "internalParam",
+                    "spelling" : "lhs"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ": "
+                },
+                {
+                    "kind" : "typeIdentifier",
+                    "preciseIdentifier" : "s:9Operators8MyNumberV",
+                    "spelling" : "MyNumber"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ", "
+                },
+                {
+                    "kind" : "internalParam",
+                    "spelling" : "rhs"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ": "
+                },
+                {
+                    "kind" : "typeIdentifier",
+                    "preciseIdentifier" : "s:9Operators8MyNumberV",
+                    "spelling" : "MyNumber"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ") -> "
+                },
+                {
+                    "kind" : "typeIdentifier",
+                    "preciseIdentifier" : "s:9Operators8MyNumberV",
+                    "spelling" : "MyNumber"
+                }
+            ],
+            "functionSignature" : {
+                "parameters" : [
+                    {
+                        "children" : [
+                            
+                        ],
+                        "declarationFragments" : [
+                            {
+                                "kind" : "identifier",
+                                "spelling" : "lhs"
+                            },
+                            {
+                                "kind" : "text",
+                                "spelling" : ": "
+                            },
+                            {
+                                "kind" : "typeIdentifier",
+                                "preciseIdentifier" : "s:9Operators8MyNumberV",
+                                "spelling" : "MyNumber"
+                            }
+                        ],
+                        "name" : "lhs"
+                    },
+                    {
+                        "children" : [
+                            
+                        ],
+                        "declarationFragments" : [
+                            {
+                                "kind" : "identifier",
+                                "spelling" : "rhs"
+                            },
+                            {
+                                "kind" : "text",
+                                "spelling" : ": "
+                            },
+                            {
+                                "kind" : "typeIdentifier",
+                                "preciseIdentifier" : "s:9Operators8MyNumberV",
+                                "spelling" : "MyNumber"
+                            }
+                        ],
+                        "name" : "rhs"
+                    }
+                ],
+                "returns" : [
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    }
+                ]
+            },
+            "identifier" : {
+                "interfaceLanguage" : "swift",
+                "precise" : "s:9Operators8MyNumberV1doiyA2C_ACtFZ"
+            },
+            "kind" : {
+                "displayName" : "Operator",
+                "identifier" : "func.op"
+            },
+            "location" : {
+                "position" : {
+                    "character" : 23,
+                    "line" : 10
+                },
+                "uri" : "file:\/\/\/Users\/droennqvist\/Desktop\/Operators\/Operators\/MyNumber.swift"
+            },
+            "names" : {
+                "subHeading" : [
+                    {
+                        "kind" : "keyword",
+                        "spelling" : "static"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "keyword",
+                        "spelling" : "func"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "identifier",
+                        "spelling" : "\/"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : "("
+                    },
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : ", "
+                    },
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : ") -> "
+                    },
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    }
+                ],
+                "title" : "\/(_:_:)"
+            },
+            "pathComponents" : [
+                "MyNumber",
+                "\/(_:_:)"
+            ]
+        },
+        {
+            "accessLevel" : "public",
+            "declarationFragments" : [
+                {
+                    "kind" : "keyword",
+                    "spelling" : "static"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "keyword",
+                    "spelling" : "func"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "identifier",
+                    "spelling" : "\/="
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : "("
+                },
+                {
+                    "kind" : "internalParam",
+                    "spelling" : "lhs"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ": "
+                },
+                {
+                    "kind" : "keyword",
+                    "spelling" : "inout"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : " "
+                },
+                {
+                    "kind" : "typeIdentifier",
+                    "preciseIdentifier" : "s:9Operators8MyNumberV",
+                    "spelling" : "MyNumber"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ", "
+                },
+                {
+                    "kind" : "internalParam",
+                    "spelling" : "rhs"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ": "
+                },
+                {
+                    "kind" : "typeIdentifier",
+                    "preciseIdentifier" : "s:9Operators8MyNumberV",
+                    "spelling" : "MyNumber"
+                },
+                {
+                    "kind" : "text",
+                    "spelling" : ") -> "
+                },
+                {
+                    "kind" : "typeIdentifier",
+                    "preciseIdentifier" : "s:9Operators8MyNumberV",
+                    "spelling" : "MyNumber"
+                }
+            ],
+            "functionSignature" : {
+                "parameters" : [
+                    {
+                        "children" : [
+                            
+                        ],
+                        "declarationFragments" : [
+                            {
+                                "kind" : "identifier",
+                                "spelling" : "lhs"
+                            },
+                            {
+                                "kind" : "text",
+                                "spelling" : ": "
+                            },
+                            {
+                                "kind" : "keyword",
+                                "spelling" : "inout"
+                            },
+                            {
+                                "kind" : "text",
+                                "spelling" : " "
+                            },
+                            {
+                                "kind" : "typeIdentifier",
+                                "preciseIdentifier" : "s:9Operators8MyNumberV",
+                                "spelling" : "MyNumber"
+                            }
+                        ],
+                        "name" : "lhs"
+                    },
+                    {
+                        "children" : [
+                            
+                        ],
+                        "declarationFragments" : [
+                            {
+                                "kind" : "identifier",
+                                "spelling" : "rhs"
+                            },
+                            {
+                                "kind" : "text",
+                                "spelling" : ": "
+                            },
+                            {
+                                "kind" : "typeIdentifier",
+                                "preciseIdentifier" : "s:9Operators8MyNumberV",
+                                "spelling" : "MyNumber"
+                            }
+                        ],
+                        "name" : "rhs"
+                    }
+                ],
+                "returns" : [
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    }
+                ]
+            },
+            "identifier" : {
+                "interfaceLanguage" : "swift",
+                "precise" : "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"
+            },
+            "kind" : {
+                "displayName" : "Operator",
+                "identifier" : "func.op"
+            },
+            "location" : {
+                "position" : {
+                    "character" : 23,
+                    "line" : 14
+                },
+                "uri" : "file:\/\/\/Users\/droennqvist\/Desktop\/Operators\/Operators\/MyNumber.swift"
+            },
+            "names" : {
+                "subHeading" : [
+                    {
+                        "kind" : "keyword",
+                        "spelling" : "static"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "keyword",
+                        "spelling" : "func"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "identifier",
+                        "spelling" : "\/="
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : "("
+                    },
+                    {
+                        "kind" : "keyword",
+                        "spelling" : "inout"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : " "
+                    },
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : ", "
+                    },
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    },
+                    {
+                        "kind" : "text",
+                        "spelling" : ") -> "
+                    },
+                    {
+                        "kind" : "typeIdentifier",
+                        "preciseIdentifier" : "s:9Operators8MyNumberV",
+                        "spelling" : "MyNumber"
+                    }
+                ],
+                "title" : "\/=(_:_:)"
+            },
+            "pathComponents" : [
+                "MyNumber",
+                "\/=(_:_:)"
+            ]
         }
     ]
 }

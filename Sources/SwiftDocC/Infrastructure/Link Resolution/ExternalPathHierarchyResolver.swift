@@ -45,12 +45,7 @@ final class ExternalPathHierarchyResolver {
             
             return .success(foundReference)
         } catch let error as PathHierarchy.Error {
-            var originalReferenceString = unresolvedReference.path
-            if let fragment = unresolvedReference.topicURL.components.fragment {
-                originalReferenceString += "#" + fragment
-            }
-            
-            return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(originalReference: originalReferenceString) { collidingNode in
+            return .failure(unresolvedReference, error.makeTopicReferenceResolutionErrorInfo() { collidingNode in
                 self.fullName(of: collidingNode) // If the link was ambiguous, determine the full name of each colliding node to be presented in the link diagnostic.
             })
         } catch {
