@@ -65,67 +65,42 @@ class IdentifierTests: XCTestCase {
     }
     
     func testReusingReferences() {
-        // Verify the bundle doesn't exist in the pool
-        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        let bundleID = #function
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't exist because caching is not enabled by default")
         
-        // Enable caching for our test bundle identifier
-        ResolvedTopicReference.enableReferenceCaching(for: #function)
+        // Add one reference
+        ResolvedTopicReference.enableReferenceCaching(for: bundleID)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
         
-        // Create a resolved reference
-        let ref = ResolvedTopicReference(bundleIdentifier: #function, path: "/path/child", sourceLanguage: .swift)
-        _ = ref // to suppress the warning above
+        // Add the same reference repeatedly
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
         
-        // Verify the bundle was added to the pool
-        guard let references = ResolvedTopicReference.sharedPool.sync({ $0[#function] }) else {
-            XCTFail("Reference bundle was not added to reference cache")
-            return
-        }
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should still only have one cached reference because the same reference was created repeatedly")
         
-        // Verify the child is now in the pool
-        XCTAssertEqual(references.contains(where: { pair -> Bool in
-            return pair.key.contains("/path/child")
-        }), true)
+        // Add another reference
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/other-page", sourceLanguage: .swift)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 2, "Should have cached another reference because two different references with this bundle identifier has been created")
         
-        // Clear the cache
-        ResolvedTopicReference.purgePool(for: #function)
+        // Purge and repeat
+        ResolvedTopicReference.purgePool(for: bundleID)
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't have been deleted because the pool was purged")
         
-        // Verify there are no references in the pool for that bundle
-        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        ResolvedTopicReference.enableReferenceCaching(for: bundleID)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
         
-        // Re-enable caching for our test bundle identifier
-        ResolvedTopicReference.enableReferenceCaching(for: #function)
-        
-        let ref1 = ResolvedTopicReference(bundleIdentifier: #function, path: "/path/child", sourceLanguage: .swift)
-        _ = ref1
-        
-        // Verify the bundle was added to the pool
-        guard let references1 = ResolvedTopicReference.sharedPool.sync({ $0[#function] }) else {
-            XCTFail("Reference bundle was not added to reference cache")
-            return
-        }
-
-        // Verify the pool bucket was re-created and the reference is in the pool
-        XCTAssertEqual(references1.contains(where: { pair -> Bool in
-            return pair.key.contains("/path/child")
-        }), true)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
     }
     
     func testReferencesAreNotCachedByDefault() {
-        // Verify the bundle doesn't exist in the pool
-        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        let bundleID = #function
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "References for this bundle shouldn't exist because caching is not enabled by default")
         
-        // Create a resolved reference
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: #function,
-            path: "/path/child",
-            sourceLanguage: .swift
-        )
-        
-        // Verify the bundle still doesn't exist in the pool
-        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
-        
-        // Add a use of 'reference' to suppress Swift's 'reference' was never used warning
-        XCTAssertNotNil(reference)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "After creating a reference in this bundle, references still shouldn't exist because caching is not enabled by default")
     }
     
     func testReferenceInitialPathComponents() {

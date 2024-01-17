@@ -146,21 +146,14 @@ class RenderNodeCodableTests: XCTestCase {
             subdirectory: "Test Resources"
         )!
         
-        let uniqueBundleIdentifier = #function
+        let bundleID = #function
         
-        let renderNodeWithUniqueBundleID = try String(
-            contentsOf: exampleRenderNodeJSON
-        )
-        .replacingOccurrences(
-            of: "org.swift.docc.example",
-            with: uniqueBundleIdentifier
-        )
+        let renderNodeWithUniqueBundleID = try String(contentsOf: exampleRenderNodeJSON)
+        .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
         
         _ = try JSONDecoder().decode(RenderNode.self, from: Data(renderNodeWithUniqueBundleID.utf8))
         
-        ResolvedTopicReference.sharedPool.sync { sharedPool in
-            XCTAssertNil(sharedPool[uniqueBundleIdentifier])
-        }
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
     }
     
     func testDecodeRenderNodeWithoutTopicSectionStyle() throws {

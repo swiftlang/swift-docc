@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1261,9 +1261,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
                 }
-                guard let url = ValidatedURL(parsingExact: destination) else {
+                guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
                     let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
-                        \(destination.singleQuoted) is
+                        \(destination.singleQuoted) is not a valid RFC 3986 URL.
                         """, explanation: nil, notes: [])
                     diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
@@ -1874,6 +1874,60 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
+    /// Registers a synthesized root page for a catalog with only non-root articles.
+    ///
+    /// If the catalog only has one article or has an article with the same name as the catalog itself, that article is turned into the root page instead of creating a new article.
+    ///
+    /// - Parameters:
+    ///   - articles: On input, a list of articles. If an article is used as a root it is removed from this list.
+    ///   - bundle: The bundle containing the articles.
+    private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) {
+        let title = bundle.displayName
+        let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
+            BlockDirective(name: "TechnologyRoot", children: [])
+        ])
+        let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
+        
+        if articles.count == 1 {
+            // This catalog only has one article, so we make that the root.
+            var onlyArticle = articles.removeFirst()
+            onlyArticle.value = Article(markup: onlyArticle.value.markup, metadata: metadata, redirects: onlyArticle.value.redirects, options: onlyArticle.value.options)
+            registerRootPages(from: [onlyArticle], in: bundle)
+        } else if let nameMatchIndex = articles.firstIndex(where: { $0.source.deletingPathExtension().lastPathComponent == title }) {
+            // This catalog has an article with the same name as the catalog itself, so we make that the root.
+            var nameMatch = articles.remove(at: nameMatchIndex)
+            nameMatch.value = Article(markup: nameMatch.value.markup, metadata: metadata, redirects: nameMatch.value.redirects, options: nameMatch.value.options)
+            registerRootPages(from: [nameMatch], in: bundle)
+        } else {
+            // There's no particular article to make into the root. Instead, create a new minimal root page.
+            let path = NodeURLGenerator.Path.documentation(path: title).stringValue
+            let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
+            
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguages: [sourceLanguage])
+            
+            let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
+            topicGraph.addNode(graphNode)
+            
+            // Build up the "full" markup for an empty technology root article 
+            let markup = Document(
+                Heading(level: 1, Text(title)),
+                metadataDirectiveMarkup
+            )
+            
+            let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
+            let documentationNode = DocumentationNode(
+                reference: reference,
+                kind: .collection,
+                sourceLanguage: sourceLanguage,
+                availableSourceLanguages: [sourceLanguage],
+                name: .conceptual(title: title),
+                markup: markup,
+                semantic: article
+            )
+            documentationCache[reference] = documentationNode
+        }
+    }
+    
     /// Creates a documentation node and title for the given article semantic result.
     ///
     /// - Parameters:
@@ -2147,6 +2201,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         try shouldContinueRegistration()
         
+        if topicGraph.nodes.isEmpty, !otherArticles.isEmpty, !allowsRegisteringArticlesWithoutTechnologyRoot {
+            synthesizeArticleOnlyRootPage(articles: &otherArticles, bundle: bundle)
+        }
+            
         // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
         // curate articles.
         rootModules = topicGraph.nodes.values.compactMap { node in

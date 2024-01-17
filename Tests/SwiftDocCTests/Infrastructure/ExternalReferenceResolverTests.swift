@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1004,5 +1004,188 @@ Document @1:1-1:35
         XCTAssertTrue(swiftTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
         XCTAssertTrue(objCTopicIDs.contains("doc://com.test.external/path/to/external/objCSymbol"))
         XCTAssertFalse(objCTopicIDs.contains("doc://com.test.external/path/to/external/swiftSymbol"))
+    }
+    
+    func testDeprecationSummaryWithExternalLink() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["SymbolName"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                ]
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``SymbolName``
+            
+            @DeprecationSummary {
+              Use <doc://com.external.testbundle/something> instead.
+            }
+            
+            Link to external content in a symbol deprecation message.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            @DeprecationSummary {
+              Use <doc://com.external.testbundle/something> instead.
+            }
+            
+            Link to external content in an article deprecation message.
+            """),
+        ])
+        
+        let resolver = TestExternalReferenceResolver()
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleIdentifier: resolver])
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
+            XCTAssertEqual(deprecatedSection.content.count, 1)
+            XCTAssertEqual(deprecatedSection.content.first?.format().trimmingCharacters(in: .whitespaces), "Use <doc://com.external.testbundle/externally/resolved/path> instead.", "The link should have been resolved")
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
+            XCTAssertEqual(deprecatedSection.count, 1)
+            XCTAssertEqual(deprecatedSection.first?.format().trimmingCharacters(in: .whitespaces), "Use <doc://com.external.testbundle/externally/resolved/path> instead.", "The link should have been resolved")
+        }
+    }
+    
+    func testExternalLinkInGeneratedSeeAlso() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+            
+            @Metadata {
+              @TechnologyRoot
+            }
+            
+            Curate two local articles and one external link
+            
+            ## Topics
+            
+            - <doc:First>
+            - <doc://com.external.testbundle/something>
+            - <doc:Second>
+            """),
+            
+            TextFile(name: "First.md", utf8Content: """
+            # First
+            
+            One article.
+            """),
+            TextFile(name: "Second.md", utf8Content: """
+            # Second
+            
+            Another article.
+            """),
+        ])
+        
+        let resolver = TestExternalReferenceResolver()
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleIdentifier: resolver])
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        // Check the curation on the root page
+        let rootNode = try context.entity(with: XCTUnwrap(context.soleRootModuleReference))
+        let topics = try XCTUnwrap((rootNode.semantic as? Article)?.topics)
+        XCTAssertEqual(topics.taskGroups.count, 1, "The Root page should only have one task group because all the other pages are curated in one group so there are no automatic groups.")
+        let taskGroup = try XCTUnwrap(topics.taskGroups.first)
+        XCTAssertEqual(taskGroup.links.map(\.destination), [
+            "doc://unit-test/documentation/unit-test/First",
+            "doc://com.external.testbundle/externally/resolved/path",
+            "doc://unit-test/documentation/unit-test/Second",
+        ])
+        
+        // Check the rendered SeeAlso sections for the two curated articles.
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/First", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            let rendered = try converter.convert(node, at: nil)
+            
+            XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the automatic See Also section created based on the curation on the Root page.")
+            let seeAlso = try XCTUnwrap(rendered.seeAlsoSections.first)
+            
+            XCTAssertEqual(seeAlso.identifiers, [
+                "doc://com.external.testbundle/externally/resolved/path",
+                "doc://unit-test/documentation/unit-test/Second",
+            ])
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Second", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            let rendered = try converter.convert(node, at: nil)
+            
+            XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the automatic See Also section created based on the curation on the Root page.")
+            let seeAlso = try XCTUnwrap(rendered.seeAlsoSections.first)
+            
+            XCTAssertEqual(seeAlso.identifiers, [
+                "doc://unit-test/documentation/unit-test/First",
+                "doc://com.external.testbundle/externally/resolved/path",
+            ])
+        }
+    }
+    
+    func testExternalLinkInAuthoredSeeAlso() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Root
+            
+            @Metadata {
+              @TechnologyRoot
+            }
+            
+            An external link in an authored SeeAlso section
+            
+            ## See Also
+            
+            - <doc://com.external.testbundle/something>
+            """),
+        ])
+        
+        let resolver = TestExternalReferenceResolver()
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleIdentifier: resolver])
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        
+        // Check the curation on the root page
+        let reference = try XCTUnwrap(context.soleRootModuleReference)
+        let node = try context.entity(with: reference)
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let rendered = try converter.convert(node, at: nil)
+        
+        XCTAssertEqual(rendered.seeAlsoSections.count, 1, "The page should only have the authored See Also section.")
+        let seeAlso = try XCTUnwrap(rendered.seeAlsoSections.first)
+        
+        XCTAssertEqual(seeAlso.identifiers, [
+            "doc://com.external.testbundle/externally/resolved/path",
+        ])
     }
 }
