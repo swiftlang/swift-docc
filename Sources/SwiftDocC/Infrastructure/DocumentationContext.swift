@@ -429,17 +429,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// The link resolution results are collected in ``externallyResolvedLinks``.
     ///
     /// - Parameters:
-    ///   - references: The local references of the nodes to walk.
-    ///   - bundle: The documentation bundle to resolve links against.
-    private func preResolveExternalLinks(references: [ResolvedTopicReference], bundle: DocumentationBundle) {
+    ///   - references: A list of references to local nodes to visit to collect links.
+    ///   - localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
+    private func preResolveExternalLinks(references: [ResolvedTopicReference], localBundleID: BundleIdentifier) {
         preResolveExternalLinks(semanticObjects: references.compactMap({ reference -> ReferencedSemanticObject? in
             guard let node = try? entity(with: reference), let semantic = node.semantic else { return nil }
             return (reference: reference, semantic: semantic)
-        }), bundle: bundle)
+        }), localBundleID: localBundleID)
     }
     
     /// A tuple of a semantic object and its reference in the topic graph.
-    typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
+    private typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
     
     /// Converts a semantic result to a referenced semantic object by removing the generic constraint.
     private func referencedSemanticObject<S: Semantic>(from: SemanticResult<S>) -> ReferencedSemanticObject {
@@ -448,52 +448,53 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Attempts to resolve links external to the given bundle by visiting the given list of semantic objects.
     ///
-    /// The resolved references are collected in `externallyResolvedLinks`.
+    /// The resolved references are collected in ``externallyResolvedLinks``.
     ///
     /// - Parameters:
     ///   - semanticObjects: A list of semantic objects to visit to collect links.
-    ///   - bundle: The documentation bundle to resolve links against.
-    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], bundle: DocumentationBundle) {
+    ///   - localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
+    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], localBundleID: BundleIdentifier) {
         // If there are no external resolvers added we will not resolve any links.
         guard !externalDocumentationSources.isEmpty else { return }
         
-        let collectedExternalLinks: [ExternalLinkResult] = semanticObjects.concurrentPerform { object, results in
+        let collectedExternalLinks = Synchronized([String: Set<UnresolvedTopicReference>]())
+        semanticObjects.concurrentPerform { _, semantic in
             autoreleasepool {
                 // Walk the node and extract external link references.
-                var externalLinksCollector = ExternalReferenceWalker(bundle: bundle)
-                externalLinksCollector.visit(object.semantic)
+                var externalLinksCollector = ExternalReferenceWalker(localBundleID: localBundleID)
+                externalLinksCollector.visit(semantic)
+
+                // Avoid any synchronization overhead if there are no references to add.
+                guard !externalLinksCollector.collectedExternalReferences.isEmpty else { return }
                 
                 // Add the link pairs to `collectedExternalLinks`.
-                results.append(contentsOf:
-                    externalLinksCollector.collectedExternalReferences.map { unresolved -> ExternalLinkResult in
-                        return ExternalLinkResult(unresolved: unresolved, targetLanguage: object.reference.sourceLanguage)
+                collectedExternalLinks.sync {
+                    for (bundleID, collectedLinks) in externalLinksCollector.collectedExternalReferences {
+                        $0[bundleID, default: []].formUnion(collectedLinks)
                     }
-                )
+                }
             }
         }
         
-        for externalLink in Set(collectedExternalLinks) {
-            guard let bundleID = externalLink.unresolved.topicURL.components.host else {
-                assertionFailure("Should not hit this code path, url is verified to have an external bundle id.")
-                continue
-            }
+        for (bundleID, collectedLinks) in collectedExternalLinks.sync({ $0 }) {
             guard let externalResolver = externalDocumentationSources[bundleID] else {
                 continue
             }
-            
-            let unresolvedURL = externalLink.unresolved.topicURL
-            let result = externalResolver.resolve(.unresolved(externalLink.unresolved))
-            externallyResolvedLinks[unresolvedURL] = result
-            
-            if case .success(let resolvedReference) = result {
-                // Add the resolved entity to the documentation cache.
-                if let externallyResolvedNode = externalEntity(with: resolvedReference) {
-                    externalCache[resolvedReference] = externallyResolvedNode
-                }
-                if unresolvedURL.absoluteString != resolvedReference.absoluteString,
-                   let resolvedURL = ValidatedURL(resolvedReference.url) {
-                    // If the resolved reference has a different URL than the authored link, cache both URLs so we can resolve both unresolved and resolved references.
-                    externallyResolvedLinks[resolvedURL] = result
+            for externalLink in collectedLinks {
+                let unresolvedURL = externalLink.topicURL
+                let result = externalResolver.resolve(.unresolved(externalLink))
+                externallyResolvedLinks[unresolvedURL] = result
+                
+                if case .success(let resolvedReference) = result {
+                    // Add the resolved entity to the documentation cache.
+                    if let externallyResolvedNode = externalEntity(with: resolvedReference) {
+                        externalCache[resolvedReference] = externallyResolvedNode
+                    }
+                    if unresolvedURL.absoluteString != resolvedReference.absoluteString,
+                       let resolvedURL = ValidatedURL(resolvedReference.url) {
+                        // If the resolved reference has a different URL than the authored link, cache both URLs so we can resolve both unresolved and resolved references.
+                        externallyResolvedLinks[resolvedURL] = result
+                    }
                 }
             }
         }
@@ -1316,7 +1317,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
 
             // Resolve any external references first
-            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ symbolIndex[$0] }), bundle: bundle)
+            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ symbolIndex[$0] }), localBundleID: bundle.identifier)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationships)
@@ -2154,7 +2155,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             technologies.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
-            bundle: bundle)
+            localBundleID: bundle.identifier)
         
         resolveLinks(
             technologies: technologies,
@@ -2196,7 +2197,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            preResolveExternalLinks(references: articleReferences, bundle: bundle)
+            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.identifier)
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
         }
 
@@ -2211,7 +2212,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         linkResolver.localResolver.addAnchorForSymbols(symbolIndex: symbolIndex, documentationCache: documentationCache)
         
         // Fifth, resolve links in nodes that are added solely via curation
-        preResolveExternalLinks(references: Array(allCuratedReferences), bundle: bundle)
+        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.identifier)
         resolveLinks(curatedReferences: allCuratedReferences, bundle: bundle)
 
         if convertServiceFallbackResolver != nil {
