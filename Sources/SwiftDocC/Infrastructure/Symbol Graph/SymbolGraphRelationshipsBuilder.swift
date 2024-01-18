@@ -124,6 +124,7 @@ struct SymbolGraphRelationshipsBuilder {
         in bundle: DocumentationBundle,
         symbolIndex: inout [String: ResolvedTopicReference],
         documentationCache: [ResolvedTopicReference: DocumentationNode],
+        externalCache: DocumentationContext.ContentCache<LinkResolver.ExternalEntity>,
         engine: DiagnosticEngine
     ) {
         // Resolve source symbol
@@ -141,6 +142,8 @@ struct SymbolGraphRelationshipsBuilder {
         
         if let conformanceNode = optionalConformanceNode {
             conformanceNodeReference = .successfullyResolved(conformanceNode.reference)
+        } else if let resolved = externalCache.reference(symbolID: edge.target) {
+            conformanceNodeReference = .successfullyResolved(resolved)
         } else {
             // Take the interface language of the target symbol
             // or if external - default to the language of the current symbol.
@@ -210,6 +213,7 @@ struct SymbolGraphRelationshipsBuilder {
         in bundle: DocumentationBundle,
         symbolIndex: inout [String: ResolvedTopicReference],
         documentationCache: [ResolvedTopicReference: DocumentationNode],
+        externalCache: DocumentationContext.ContentCache<LinkResolver.ExternalEntity>,
         engine: DiagnosticEngine
     ) {
         // Resolve source symbol
@@ -227,6 +231,8 @@ struct SymbolGraphRelationshipsBuilder {
         
         if let parentNode = optionalParentNode {
             parentNodeReference = .successfullyResolved(parentNode.reference)
+        } else if let resolved = externalCache.reference(symbolID: edge.target) {
+            parentNodeReference = .successfullyResolved(resolved)
         } else {
             // Use the target symbol language, if external - fallback on child symbol's language
             let language: SourceLanguage = symbolIndex[edge.target].flatMap {

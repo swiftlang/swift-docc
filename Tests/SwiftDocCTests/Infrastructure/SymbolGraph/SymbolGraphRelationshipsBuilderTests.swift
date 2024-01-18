@@ -69,7 +69,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, documentationCache: &documentationCache, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, documentationCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, documentationCache: documentationCache, externalCache: .init(), engine: engine)
         
         // Test default conforms to was added
         guard let conformsTo = (documentationCache[symbolIndex["A"]!]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -99,7 +99,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, documentationCache: &documentationCache,bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, documentationCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, documentationCache: documentationCache, externalCache: .init(), engine: engine)
         
         // Test inherits was added
         guard let inherits = (documentationCache[symbolIndex["A"]!]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -140,7 +140,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")
         
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, documentationCache: documentationCache, engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, documentationCache: documentationCache, externalCache: .init(), engine: engine)
         
         let relationships = (documentationCache[symbolIndex["A"]!]!.semantic as! Symbol).relationships
         guard let inheritsShouldHaveFallback = relationships.groups.first(where: { group -> Bool in

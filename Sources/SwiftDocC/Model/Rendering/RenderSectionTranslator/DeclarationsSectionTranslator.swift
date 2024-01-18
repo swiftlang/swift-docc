@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,26 +18,24 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
         renderNode: inout RenderNode,
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
-        translateSectionToVariantCollection(
-            documentationDataVariants: symbol.declarationVariants
-        ) { trait, declaration -> RenderSection? in
+        translateSectionToVariantCollection(documentationDataVariants: symbol.declarationVariants) { trait, declaration -> RenderSection? in
             guard !declaration.isEmpty else {
                 return nil
             }
 
-            func translateFragment(_ token: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
-                // Create a reference if one found
-                var reference: ResolvedTopicReference?
-                if let preciseIdentifier = token.preciseIdentifier,
-                   let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
+            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
+                let reference: ResolvedTopicReference?
+                if let preciseIdentifier = fragment.preciseIdentifier,
+                   let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                {
                     reference = resolved
-
-                    // Add relationship to render references
                     renderNodeTranslator.collectedTopicReferences.append(resolved)
+                } else {
+                    reference = nil
                 }
 
                 // Add the declaration token
-                return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
+                return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString)
             }
 
             var declarations = [DeclarationRenderSection]()

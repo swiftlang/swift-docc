@@ -126,44 +126,39 @@ public struct AutomaticCuration {
         bundle: DocumentationBundle,
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
-    ) throws -> TaskGroup? {
-        if (node.options?.automaticSeeAlsoEnabled ?? context.options?.automaticSeeAlsoEnabled) == false
-        {
+    ) -> TaskGroup? {
+        if (node.options?.automaticSeeAlsoEnabled ?? context.options?.automaticSeeAlsoEnabled) == false {
             return nil
         }
         
         // First try getting the canonical path from a render context, default to the documentation context
         guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.pathsTo(node.reference).first,
-            !canonicalPath.isEmpty else {
+              let parentReference = canonicalPath.last
+        else {
             // If the symbol is not curated or is a root symbol, no See Also please.
             return nil
         }
         
-        let parentReference = canonicalPath.last!
-        
-        func filterReferences(_ references: [ResolvedTopicReference]) throws -> [ResolvedTopicReference] {
-            try references
+        func filterReferences(_ references: [ResolvedTopicReference]) -> [ResolvedTopicReference] {
+            references
                 // Don't include the current node.
                 .filter { $0 != node.reference }
             
                 // Filter out nodes that aren't available in any of the given traits.
                 .filter { reference in
-                    try !context.entity(with: reference)
-                        .availableVariantTraits
-                        .isDisjoint(with: variantsTraits)
+                    context.sourceLanguages(for: reference).contains(where: { language in
+                        variantsTraits.contains(where: { $0.interfaceLanguage == language.id})
+                    })
                 }
         }
         
         // Look up the render context first
         if let taskGroups = renderContext?.store.content(for: parentReference)?.taskGroups,
-            let linkingGroup = taskGroups
-                .mapFirst(where: { group -> DocumentationContentRenderer.ReferenceGroup? in
-                    group.references.contains(node.reference) ? group : nil
-                })
+           let linkingGroup = taskGroups.first(where: { $0.references.contains(node.reference) })
         {
             // Group match in render context, verify if there are any other references besides the current one.
             guard linkingGroup.references.count > 1 else { return nil }
-            return (title: linkingGroup.title, references: try filterReferences(linkingGroup.references))
+            return (title: linkingGroup.title, references: filterReferences(linkingGroup.references))
         }
         
         // Get the parent's task groups
@@ -181,7 +176,7 @@ public struct AutomaticCuration {
             return nil
         }
         
-        return (title: group.title, references: try filterReferences(group.references))
+        return (title: group.title, references: filterReferences(group.references))
     }
 }
 

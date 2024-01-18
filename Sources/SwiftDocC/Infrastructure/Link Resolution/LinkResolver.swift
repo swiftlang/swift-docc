@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -38,8 +38,42 @@ public class LinkResolver {
         }
     }
     
-    // ???: Should this be aliased the other way around?
-    typealias ExternalEntity = ExternalPathHierarchyResolver.ExternalEntity
+    /// The minimal information about an external entity necessary to render links to it on another page.
+    @_spi(ExternalLinks) // This isn't stable API yet.
+    public struct ExternalEntity {
+        /// Creates a new external entity.
+        /// - Parameters:
+        ///   - topicRenderReference: The render reference for this external topic.
+        ///   - renderReferenceDependencies: Any dependencies for the render reference.
+        ///   - sourceLanguages: The different source languages for which this page is available.
+        @_spi(ExternalLinks)
+        public init(topicRenderReference: TopicRenderReference, renderReferenceDependencies: RenderReferenceDependencies, sourceLanguages: Set<SourceLanguage>) {
+            self.topicRenderReference = topicRenderReference
+            self.renderReferenceDependencies = renderReferenceDependencies
+            self.sourceLanguages = sourceLanguages
+        }
+        
+        /// The render reference for this external topic.
+        var topicRenderReference: TopicRenderReference
+        /// Any dependencies for the render reference.
+        ///
+        /// For example, if the external content contains links or images, those are included here.
+        var renderReferenceDependencies: RenderReferenceDependencies
+        /// The different source languages for which this page is available.
+        var sourceLanguages: Set<SourceLanguage>
+        
+        /// Create a topic content for be cached in a render reference store.
+        func topicContent() -> RenderReferenceStore.TopicContent {
+            return .init(
+                renderReference: topicRenderReference,
+                canonicalPath: nil,
+                taskGroups: nil,
+                source: nil,
+                isDocumentationExtensionContent: false,
+                renderReferenceDependencies: renderReferenceDependencies
+            )
+        }
+    }
     
     /// Attempts to resolve an unresolved reference.
     ///
@@ -55,8 +89,7 @@ public class LinkResolver {
            !context.registeredBundles.contains(where: { bundle in
                bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
            }) {
-            
-            if context.externalReferenceResolvers[bundleID] != nil,
+            if context.externalDocumentationSources[bundleID] != nil,
                let resolvedExternalReference = context.externallyResolvedLinks[unresolvedReference.topicURL] {
                 // Return the successful or failed externally resolved reference.
                 return resolvedExternalReference
@@ -70,14 +103,13 @@ public class LinkResolver {
         }
         
         do {
-            return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context)
+            return try localResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink)
         } catch let error as PathHierarchy.Error {
             // Check if there's a known external resolver for this module.
             if case .moduleNotFound(_, let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
                 let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
                 context.externallyResolvedLinks[unresolvedReference.topicURL] = result
                 if case .success(let resolved) = result {
-                    
                     context.externalCache[resolved] = resolver.entity(resolved)
                 }
                 return result
@@ -97,21 +129,47 @@ public class LinkResolver {
 
 // MARK: Fallback resolver
 
+extension DocumentationContext {
+    /// Merge links to local pages resolved via the fallback resolver with the context.
+    func mergeFallbackLinkResolutionResults() {
+        linkResolver.mergeFallbackLinkResolutionResults(context: self)
+    }
+}
+
+private extension LinkResolver {
+    func mergeFallbackLinkResolutionResults(context: DocumentationContext) {
+        let resolvedFallbackReferences = fallbackResolver.cachedResolvedFallbackResults.sync({ $0 })
+        for (linkText, result) in resolvedFallbackReferences {
+            // Even though the links resolved via the fallback resolver represent "local" pages they are considered "external" content
+            // because their markup or symbol information wasn't passed as catalog or symbol graph input to DocC. 
+            context.externallyResolvedLinks[linkText] = result
+            if case .success(let reference) = result {
+                context.externalCache[reference] = context.convertServiceFallbackResolver?.entityIfPreviouslyResolved(with: reference)
+            }
+        }
+    }
+}
+
 /// A fallback resolver that replicates the exact order of resolved topic references that are attempted to resolve via a fallback resolver when the path hierarchy doesn't have a match.
 private final class FallbackResolverBasedLinkResolver {
-    var cachedResolvedFallbackReferences = Synchronized<[String: ResolvedTopicReference]>([:])
+    var cachedResolvedFallbackResults = Synchronized<[ValidatedURL: TopicReferenceResolutionResult]>([:])
     
     func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> ResolvedTopicReference? {
+        let result: TopicReferenceResolutionResult? = resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context)
+        guard case .success(let resolved) = result else { return nil }
+        return resolved
+    }
+    
+    private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
-        guard !context.fallbackReferenceResolvers.isEmpty,
-              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
-              let fallbackResolver = context.fallbackReferenceResolvers[knownBundleIdentifier]
+        guard let fallbackResolver = context.convertServiceFallbackResolver,
+              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier
         else {
             return nil
         }
         
-        if let cached = cachedResolvedFallbackReferences.sync({ $0[unresolvedReference.topicURL.absoluteString] }) {
+        if let cached = cachedResolvedFallbackResults.sync({ $0[unresolvedReference.topicURL] }) {
             return cached
         }
         var allCandidateURLs = [URL]()
@@ -162,15 +220,26 @@ private final class FallbackResolverBasedLinkResolver {
         allCandidateURLs.append(currentBundle.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
         
         for candidateURL in allCandidateURLs {
-            if let cached = cachedResolvedFallbackReferences.sync({ $0[candidateURL.absoluteString] }) {
+            guard let candidateReference = ValidatedURL(candidateURL).map({ UnresolvedTopicReference(topicURL: $0) }) else {
+                continue
+            }
+            if let cached = cachedResolvedFallbackResults.sync({ $0[candidateReference.topicURL] }) {
                 return cached
             }
-            let unresolvedReference = UnresolvedTopicReference(topicURL: ValidatedURL(candidateURL)!)
-            let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
+            let fallbackResult = fallbackResolver.resolve(.unresolved(candidateReference))
+            // Regardless of the outcome, cache the result of each candidate so that they're not resolved more than once.
+            cachedResolvedFallbackResults.sync({ $0[candidateReference.topicURL] = fallbackResult })
             
-            if case .success(let resolvedReference) = reference {
-                cachedResolvedFallbackReferences.sync({ $0[resolvedReference.absoluteString] = resolvedReference })
-                return resolvedReference
+            if case .success(let resolvedReference) = fallbackResult {
+                // Cache the resolved reference's URL as well in case it's different from the unresolved reference.
+                cachedResolvedFallbackResults.sync({
+                    // Cache both the original unresolved reference and the resolved reference.
+                    $0[unresolvedReference.topicURL] = fallbackResult
+                    if let url = ValidatedURL(resolvedReference.url) {
+                        $0[url] = fallbackResult
+                    }
+                })
+                return fallbackResult
             }
         }
         // Give up: there is no local or external document for this reference.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
@@ -1823,28 +1823,13 @@ class ConvertActionTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         let bundle = try Folder.createFromDisk(url: testBundleURL)
 
-        struct TestReferenceResolver: ExternalReferenceResolver {
-            let customResolvedURL = URL(string: "https://resolved.com/resolved/path?query=item")!
-
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+        struct TestReferenceResolver: ExternalDocumentationSource {
+            func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
                 return .success(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: reference.url!.path, sourceLanguage: .swift))
             }
 
-            func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
-                return DocumentationNode(
-                    reference: reference,
-                    kind: .article,
-                    sourceLanguage: .swift,
-                    availableSourceLanguages: nil,
-                    name: .conceptual(title: reference.url.pathComponents.last!.capitalized),
-                    markup: Paragraph(),
-                    semantic: nil,
-                    platformNames: nil
-                )
-            }
-
-            func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-                return URL(string: "https://resolved.com\(reference.path)")!
+            func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+                fatalError("This test never asks for the external entity.")
             }
         }
         
@@ -1864,7 +1849,7 @@ class ConvertActionTests: XCTestCase {
             
             action.converter.batchNodeCount = batchSize
             
-            action.context.externalReferenceResolvers["com.example.test"] = TestReferenceResolver()
+            action.context.externalDocumentationSources["com.example.test"] = TestReferenceResolver()
             
             return try action.perform(logHandle: .standardOutput)
         }

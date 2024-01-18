@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 
 class ReferenceResolverTests: XCTestCase {
@@ -548,32 +548,19 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(renderNode.topicSections.count, 0)
     }
 
-    struct TestExternalReferenceResolver: ExternalReferenceResolver {
+    private struct TestExternalReferenceResolver: ExternalDocumentationSource {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
         var resolvedEntityTitle = "Externally Resolved Title"
         var resolvedEntityKind = DocumentationNode.Kind.article
         var expectedAvailableSourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
         
-        func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+        func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
             return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, sourceLanguage: .swift))
         }
         
-        func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
-            return DocumentationNode(
-                reference: reference,
-                kind: resolvedEntityKind,
-                sourceLanguage: .swift,
-                availableSourceLanguages: expectedAvailableSourceLanguages,
-                name: .conceptual(title: resolvedEntityTitle),
-                markup: Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks]),
-                semantic: Semantic(),
-                platformNames: ["fooOS", "barOS"]
-            )
-        }
-        
-        func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-            fatalError("Unimplemented")
+        func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+            fatalError("These tests never ask for the external entity.")
         }
     }
     
