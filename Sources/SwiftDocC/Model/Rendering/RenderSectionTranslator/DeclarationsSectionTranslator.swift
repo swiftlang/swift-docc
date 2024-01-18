@@ -104,6 +104,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     identifier: overloadReference.absoluteString
                 )
             )
+            
+            // add other declarations to render references
+            renderNodeTranslator.collectedTopicReferences.append(overloadReference)
         }
         return .init(declarations: otherDeclarations, displayIndex: overloads.displayIndex)
     }
