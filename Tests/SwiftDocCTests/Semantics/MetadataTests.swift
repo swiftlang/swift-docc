@@ -164,7 +164,23 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.customMetadata.count, 2)
         XCTAssertEqual(problems.count, 0)
     }
-    
+
+    func testRedirectSupport() throws {
+        let source = """
+        @Metadata {
+           @Redirected(from: "some/other/path")
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(metadata)
+        XCTAssertEqual(0, problems.count)
+        XCTAssertEqual(metadata?.redirects?.first?.oldPath.relativePath, "some/other/path")
+    }
+
     // MARK: - Metadata Support
     
     func testArticleSupportsMetadata() throws {
