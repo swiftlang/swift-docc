@@ -172,7 +172,6 @@ have one or more aliases.
 | json       |                                                        |
 | llvm       |                                                        |
 | markdown   | md, mkdown, mkd                                        |
-| objectivec | mm, objc, obj-c                                        |
 | perl       | pl, pm                                                 |
 | php        |                                                        |
 | python     | py, gyp, ipython                                       |
@@ -181,6 +180,7 @@ have one or more aliases.
 | shell      | console, shellsession                                  |
 | swift      |                                                        |
 | xml        | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
+| objective-c | mm, objc, obj-c, objectivec                            |
 
 ### Add Bulleted, Numbered, and Term Lists
 
@@ -228,4 +228,4 @@ A list item's text, including terms and their definitions, can use the same
 style attributes as other text, and include links to other content, including 
 symbols.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
