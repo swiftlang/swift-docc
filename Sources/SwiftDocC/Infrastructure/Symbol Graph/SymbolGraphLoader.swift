@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -232,14 +232,24 @@ struct SymbolGraphLoader {
                         newAvailabilityItems.append(macCatalystAvailability)
                     }
 
-                    // If a symbol doesn't have any availability annotation at all
-                    // for a given platform, create a new one just with the
-                    // introduced version so that it shows up in the sidebar.
+                    // If a symbol doesn't have any availability version
+                    // annotation at all for a given platform, create a new
+                    // one just with the introduced version so that it shows
+                    // up in the sidebar.
                     for defaultAvailability in defaultAvailabilities {
+                        // If the symbol does not exists for the given platform
+                        // don't add any default availability.
+                        guard newAvailabilityItems.contains(where: {
+                            $0.domain?.rawValue == defaultAvailability.platformName.rawValue
+                        }) else { continue }
+                        // If the symbol exists for the platform check if it also defines the availability
+                        // version information.
                         let hasAvailabilityForThisPlatform = newAvailabilityItems.contains {
-                            guard let domain = $0.domain else { return false }
-                            return PlatformName(operatingSystemName: domain.rawValue) == defaultAvailability.platformName
+                            // Safe to force unwrap below, we already checked that the domain does exists at this point.
+                            return PlatformName(operatingSystemName: $0.domain!.rawValue) == defaultAvailability.platformName
                         }
+                        // If the symbol exists in a given platform but does not defines version
+                        // information add the defualt one.
                         if !hasAvailabilityForThisPlatform {
                             // Safe to force unwrap below, the index contains all the avaialbility keys.
                             newAvailabilityItems.append(defaultAvailabilityIndex[defaultAvailability]!)
