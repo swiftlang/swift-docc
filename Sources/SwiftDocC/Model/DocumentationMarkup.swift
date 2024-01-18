@@ -73,6 +73,14 @@ struct DocumentationMarkup {
         case end
     }
     
+    /// Directives which are removed from the markdown content after being parsed.
+    private static let directivesRemovedFromContent = [
+        Comment.directiveName,
+        Metadata.directiveName,
+        Options.directiveName,
+        Redirect.directiveName,
+    ]
+
     // MARK: - Parsed Data
     
     /// The documentation title, if found.
@@ -146,7 +154,7 @@ struct DocumentationMarkup {
                         // Found deprecation notice in the abstract.
                         deprecation = MarkupContainer(directive.children)
                         return
-                    } else if directive.name == Comment.directiveName || directive.name == Metadata.directiveName || directive.name == Options.directiveName {
+                    } else if Self.directivesRemovedFromContent.contains(directive.name) {
                         // These directives don't affect content so they shouldn't break us out of
                         // the automatic abstract section.
                         return

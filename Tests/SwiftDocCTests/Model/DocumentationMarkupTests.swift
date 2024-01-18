@@ -181,7 +181,108 @@ class DocumentationMarkupTests: XCTestCase {
             XCTAssertEqual(expected, model.abstractSection?.content.map{ $0.detachedFromParent.debugDescription() }.joined(separator: "\n"))
         }
     }
-    
+
+    func testCertainDirectivesAreRemovedFromContent() throws {
+
+        func checkSectionContent(expectedContent: String?, section: Section?) {
+            if let desc = section?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n") {
+                XCTAssertEqual(expectedContent, desc, "Found unexpected content: \n\(desc)")
+            }
+        }
+
+
+        func checkAbstractAndDiscussion(source: String, expectedAbstract: String, expectedDiscussion: String) {
+            let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
+            checkSectionContent(expectedContent: expectedAbstract, section: model.abstractSection)
+            checkSectionContent(expectedContent: expectedDiscussion, section: model.discussionSection)
+        }
+
+        func checkDirectiveIsRemoved(_ directiveSource: String) {
+            let expectedAbstract = """
+                                   Text "My abstract "
+                                   Strong
+                                   └─ Text "content"
+                                   Text "."
+                                   """
+
+            let expectedDiscussion = """
+                                     Paragraph
+                                     └─ Text "My discussion."
+                                     """
+
+            let sourceWithDirectiveBeforeAbstract = """
+                                    # Title
+                                    \(directiveSource)
+                                    My abstract __content__.
+
+                                    My discussion.
+                                    """
+            checkAbstractAndDiscussion(source: sourceWithDirectiveBeforeAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion)
+
+            let sourceWithDirectiveAfterAbstract = """
+                                    # Title
+                                    My abstract __content__.
+                                    \(directiveSource)
+
+                                    My discussion.
+                                    """
+            checkAbstractAndDiscussion(source: sourceWithDirectiveAfterAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion)
+        }
+
+        // @Comment, @Metadata, @Options and @Redirected should be removed from the content.
+        checkDirectiveIsRemoved("@Comment(\"this is a comment\")")
+        checkDirectiveIsRemoved("@Metadata { @DocumentationExtension(mergeBehavior: override) }")
+        checkDirectiveIsRemoved("@Options { @TopicsVisualStyle(hidden) }")
+        checkDirectiveIsRemoved("@Redirected(from: \"some/other/path\")")
+
+        // @Image should not be removed: abstract converted to discussion since images aren't
+        // allowed in abstracts.
+        let sourceWithImageBeforeAbstract = """
+                                            # Title
+                                            @Image(source: "some.png", alt: "Used in a unit test")
+                                            My abstract __content__.
+
+                                            My discussion.
+                                            """
+        var expectedAbstract = ""
+        var expectedDiscussion = """
+                                 BlockDirective name: "Image"
+                                 ├─ Argument text segments:
+                                 |    "source: \\"some.png\\", alt: \\"Used in a unit test\\""
+                                 Paragraph
+                                 ├─ Text "My abstract "
+                                 ├─ Strong
+                                 │  └─ Text "content"
+                                 └─ Text "."
+                                 Paragraph
+                                 └─ Text "My discussion."
+                                 """
+        checkAbstractAndDiscussion( source: sourceWithImageBeforeAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion )
+
+        // @Image should not be removed; image falls through to discussion
+        let sourceWithImageAfterAbstract = """
+                                           # Title
+                                           My abstract __content__.
+                                           @Image(source: "some.png", alt: "Used in a unit test")
+
+                                           My discussion.
+                                           """
+        expectedAbstract = """
+                           Text "My abstract "
+                           Strong
+                           └─ Text "content"
+                           Text "."
+                           """
+        expectedDiscussion = """
+                             BlockDirective name: "Image"
+                             ├─ Argument text segments:
+                             |    "source: \\"some.png\\", alt: \\"Used in a unit test\\""
+                             Paragraph
+                             └─ Text "My discussion."
+                             """
+        checkAbstractAndDiscussion(source: sourceWithImageAfterAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion)
+    }
+
     func testDeprecation() throws {
         // Deprecation before the abstract content.
         do {
