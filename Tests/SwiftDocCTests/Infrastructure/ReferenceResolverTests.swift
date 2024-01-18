@@ -631,7 +631,7 @@ class ReferenceResolverTests: XCTestCase {
         
         var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
         
-        let symbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)
+        let symbol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
         
         /// Verifies the given assertion on a variants property of the given symbols.
         func assertSymbolVariants<Variant>(

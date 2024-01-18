@@ -78,11 +78,12 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
-    func addMappingForSymbols(symbolIndex: [String: ResolvedTopicReference]) {
+    func addMappingForSymbols(localCache: DocumentationContext.LocalCache) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise] else {
+            guard let symbol = node.symbol, let reference = localCache.reference(symbolID: symbol.identifier.precise) else {
                 continue
             }
+            // Our bidirectional dictionary doesn't support nil values.
             resolvedReferenceMap[id] = reference
         }
     }
@@ -168,9 +169,9 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Adds the headings for all symbols in the symbol index to the path hierarchy.
-    func addAnchorForSymbols(symbolIndex: [String: ResolvedTopicReference], documentationCache: [ResolvedTopicReference: DocumentationNode]) {
+    func addAnchorForSymbols(localCache: DocumentationContext.LocalCache) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise], let node = documentationCache[reference] else { continue }
+            guard let symbol = node.symbol, let node = localCache[symbol.identifier.precise] else { continue }
             addAnchors(node.anchorSections, to: id)
         }
     }

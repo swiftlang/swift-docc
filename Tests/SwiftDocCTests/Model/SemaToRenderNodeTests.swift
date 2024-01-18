@@ -1240,11 +1240,8 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(context.documentationCache.isEmpty)
         
         // MyProtocol is loaded
-        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
-              let myProtocolSymbol = myProtocol.semantic as? Symbol else {
-            XCTFail("`MyProtocol` not found in symbol graph")
-            return
-        }
+        let myProtocol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ProtocolP"], "`MyProtocol` not found in symbol graph")
+        let myProtocolSymbol = try XCTUnwrap(myProtocol.semantic as? Symbol)
         
         // Verify that various symbols that exist are referenced in the symbol graph file have been resolved and added to the symbol index
         XCTAssertNotNil(context.externalCache["p:hPP"])

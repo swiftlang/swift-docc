@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1517,7 +1517,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass/myFunction()")
             
-            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.path,
+            XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5ClassC10myFunctionyyF")?.path,
                            "/documentation/MyKit/MyClass/myFunction()")
         }
         
@@ -1536,7 +1536,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass-class/myFunction()")
             
-            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.path,
+            XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5ClassC10myFunctionyyF")?.path,
                            "/documentation/MyKit/MyClass-swift.class/myFunction()")
         }
         
@@ -1557,7 +1557,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass-class-hash/myFunction()")
             
-            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.path,
+            XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5ClassC10myFunctionyyF")?.path,
                            "/documentation/MyKit/MyClass-swift.class-hash/myFunction()")
         }
     }
