@@ -159,38 +159,38 @@ The following table lists the names of the programming languages you can specify
 to enable syntax highlighting for a particular code listing. Each language may
 have one or more aliases.
 
-| Name       | Aliases                                                |
-| ---------- | ------------------------------------------------------ |
-| bash       | sh, zsh                                                |
-| c          | h                                                      |
-| cpp        | cc, c++, h++, hpp, hh, hxx, cxx                        |
-| css        |                                                        |
-| diff       | patch                                                  |
-| http       | https                                                  |
-| java       | jsp                                                    |
-| javascript | js, jsx, mjs, cjs                                      |
-| json       |                                                        |
-| llvm       |                                                        |
-| markdown   | md, mkdown, mkd                                        |
-| perl       | pl, pm                                                 |
-| php        |                                                        |
-| python     | py, gyp, ipython                                       |
-| ruby       | rb, gemspec, podspec, thor, irb                        |
-| scss       |                                                        |
-| shell      | console, shellsession                                  |
-| swift      |                                                        |
-| xml        | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
+| Name        | Aliases                                                |
+| ----------  | ------------------------------------------------------ |
+| bash        | sh, zsh                                                |
+| c           | h                                                      |
+| cpp         | cc, c++, h++, hpp, hh, hxx, cxx                        |
+| css         |                                                        |
+| diff        | patch                                                  |
+| http        | https                                                  |
+| java        | jsp                                                    |
+| javascript  | js, jsx, mjs, cjs                                      |
+| json        |                                                        |
+| llvm        |                                                        |
+| markdown    | md, mkdown, mkd                                        |
 | objective-c | mm, objc, obj-c, objectivec                            |
+| perl        | pl, pm                                                 |
+| php         |                                                        |
+| python      | py, gyp, ipython                                       |
+| ruby        | rb, gemspec, podspec, thor, irb                        |
+| scss        |                                                        |
+| shell       | console, shellsession                                  |
+| swift       |                                                        |
+| xml         | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
 
 ### Add Bulleted, Numbered, and Term Lists
 
 DocC supports the following list types:
 
-| Type | Usage |
-| --------- | ----------- |
-| Bulleted list | Groups items that can appear in any order. |
+| Type          | Usage                                                  |
+| ------------- | ------------------------------------------------------ |
+| Bulleted list | Groups items that can appear in any order.             |
 | Numbered list | Delineates a sequence of events in a particular order. |
-| Term list | Defines a series of term-definition pairs. | 
+| Term list     | Defines a series of term-definition pairs.             | 
 
 > Important: Don't add images or code listings between list items. Bulleted and 
 numbered lists must contain two or more items.
