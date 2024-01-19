@@ -102,7 +102,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             return resolved
             
         case let .unresolved(unresolvedReference):
-            guard let bundleIdentifier = unresolvedReference.bundleIdentifier else {
+            guard unresolvedReference.bundleIdentifier == bundleIdentifier else {
                 fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
                     DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
@@ -114,14 +114,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
                     return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
                 }
                 let resolvedInformation = try resolveInformationForTopicURL(unresolvedTopicURL)
-                return .success(
-                    ResolvedTopicReference(
-                        bundleIdentifier: bundleIdentifier,
-                        path: resolvedInformation.url.path,
-                        fragment: resolvedInformation.url.fragment,
-                        sourceLanguages: sourceLanguages(for: resolvedInformation)
-                    )
-                )
+                return .success( resolvedReference(for: resolvedInformation) )
             } catch let error {
                 return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo(error))
             }
@@ -145,7 +138,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             path: "/\(preciseIdentifier)",
             sourceLanguages: sourceLanguages(for: resolvedInformation)
         )
-        let entity =  makeEntity(with: resolvedInformation, reference: resolvedInformation.url.path)
+        let entity =  makeEntity(with: resolvedInformation, reference: reference.absoluteString)
         return (reference, entity)
     }
     
@@ -157,7 +150,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             title: resolvedInformation.title,
             // The resolved information only stores the plain text abstract https://github.com/apple/swift-docc/issues/802
             abstract: [.text(resolvedInformation.abstract)],
-            url: reference,
+            url: resolvedInformation.url.path,
             kind: kind,
             role: role,
             fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
@@ -214,8 +207,10 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
             
         case .resolvedInformation(let resolvedInformation):
-             referenceCache[topicURL] = resolvedInformation
-             return resolvedInformation
+            // Cache the information for the resolved reference, that's what's will be used when returning the entity later.
+            let resolvedReference = resolvedReference(for: resolvedInformation)
+            referenceCache[resolvedReference.url] = resolvedInformation
+            return resolvedInformation
             
         default:
             throw Error.unexpectedResponse(response: response, requestDescription: "topic URL")
@@ -244,6 +239,15 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         default:
             throw Error.unexpectedResponse(response: response, requestDescription: "symbol ID")
         }
+    }
+    
+    private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
+        return ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: resolvedInformation.url.path,
+            fragment: resolvedInformation.url.fragment,
+            sourceLanguages: sourceLanguages(for: resolvedInformation)
+        )
     }
     
     private func sourceLanguages(for resolvedInformation: ResolvedInformation) -> Set<SourceLanguage> {
