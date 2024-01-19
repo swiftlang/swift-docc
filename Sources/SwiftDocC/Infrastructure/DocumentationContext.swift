@@ -137,12 +137,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// for example when using ``ConvertService``.
     var allowsRegisteringArticlesWithoutTechnologyRoot: Bool = false
     
-    /// Controls whether tutorials that aren't curated in a tutorials overview page are registered and translated.
-    ///
-    /// Set this property to `true` to enable registering documentation for standalone tutorials,
-    /// for example when using ``ConvertService``.
-    var allowsRegisteringUncuratedTutorials: Bool = false
-    
     /// Controls whether documentation extension files are considered resolved even when they don't match a symbol.
     ///
     /// Set this property to `true` to always consider documentation extensions as "resolved", for example when using  ``ConvertService``.
