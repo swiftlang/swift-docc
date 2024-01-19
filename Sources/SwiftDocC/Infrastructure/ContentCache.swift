@@ -17,8 +17,9 @@ extension DocumentationContext {
         /// Accesses the value for a given reference.
         /// - Parameter reference: The reference to find in the cache.
         subscript(reference: ResolvedTopicReference) -> Value? {
-            get { storage[reference] }
-            set { storage[reference] = newValue }
+            // Avoid copying the values if possible
+            _read { yield storage[reference] }
+            _modify { yield &storage[reference] }
         }
         
         /// Adds a value to the cache for a given reference _and_ symbol ID.
@@ -40,7 +41,8 @@ extension DocumentationContext {
         /// Accesses the value for a given symbol ID.
         /// - Parameter symbolID: The symbol ID to find in the cache.
         subscript(symbolID: String) -> Value? {
-            symbolIndex[symbolID].map { storage[$0]! }
+            // Avoid copying the values if possible
+            _read { yield symbolIndex[symbolID].map { storage[$0]! } }
         }
         
         /// Reserves enough space to store the specified number of values.

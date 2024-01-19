@@ -327,51 +327,40 @@ struct SymbolGraphRelationshipsBuilder {
         requiredSymbol.isRequired = required
     }
     
-    /// Sets a node in the context as an inherited symbol if the origin symbol is provided in the given relationship.
+    /// Sets a node in the context as an inherited symbol.
     ///
     /// - Parameters:
-    ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - sourceOrigin: The symbol's source origin.
+    ///   - inheritedSymbolID: The precise identifier of the inherited symbol.
     ///   - context: A documentation context.
     ///   - localCache: A cache of local documentation content.
     ///   - moduleName: The symbol name of the current module.
     static func addInheritedDefaultImplementation(
-        edge: SymbolGraph.Relationship,
-        context: DocumentationContext, 
+        sourceOrigin: SymbolGraph.Relationship.SourceOrigin,
+        inheritedSymbolID: String,
+        context: DocumentationContext,
         localCache: DocumentationContext.LocalCache,
         moduleName: String
     ) {
-        func setAsInheritedSymbol(origin: SymbolGraph.Relationship.SourceOrigin, for node: inout DocumentationNode, originNode: DocumentationNode?) {
-            (node.semantic as! Symbol).origin = origin
-            
-            // Check if the origin symbol is present.
-            if let parent = originNode,
-                let parentModule = (parent.semantic as? Symbol)?.moduleReference,
-                let nodeModule = (node.semantic as? Symbol)?.moduleReference,
-                parentModule == nodeModule {
-                // If the origin is in the same bundle - always inherit the docs.
-                return
-            }
-            
-            // Remove any inherited docs from the original symbol if the feature is disabled.
-            // However, when the docs are inherited from within the same module, its content can be resolved in
-            // the local context, so keeping those inherited docs provide a better user experience.
-            if !context.externalMetadata.inheritDocs && node.unifiedSymbol?.documentedSymbol?.isDocCommentFromSameModule(symbolModuleName: moduleName) == false {
-                node.unifiedSymbol?.docComment.removeAll()
-            }
+        guard let inherited = localCache[inheritedSymbolID], let inheritedSymbolSemantic = inherited.semantic as? Symbol else {
+            return
         }
         
-        switch edge.kind {
-            case .memberOf, .defaultImplementationOf: break
-            default: return // Ignore source origin for other relationships.
-        }
+        // If this a local inherited symbol, update the origin data of that symbol.
+        inheritedSymbolSemantic.origin = sourceOrigin
         
-        // If this is a relationship for an inherited symbol that's available in the local cache, update the origin data of that symbol.
-        if let origin = edge[mixin: SymbolGraph.Relationship.SourceOrigin.self],
-           let node = localCache[edge.source],
-           node.semantic is Symbol
+        // Check if the origin symbol is also local. Always inherit the documentation from other local symbols.
+        if let parentSymbolSemantic = localCache[sourceOrigin.identifier]?.semantic as? Symbol,
+           inheritedSymbolSemantic.moduleReference == parentSymbolSemantic.moduleReference
         {
-            // OK to unwrap - we've verified the existence of the key above.
-            setAsInheritedSymbol(origin: origin, for: &context.documentationCache[node.reference]!, originNode: localCache[origin.identifier])
+            return
+        }
+        
+        // Remove any inherited docs from the original symbol if the feature is disabled.
+        // However, when the docs are inherited from within the same module, its content can be resolved in
+        // the local context, so keeping those inherited docs provide a better user experience.
+        if !context.externalMetadata.inheritDocs, let unifiedSymbol = inherited.unifiedSymbol, unifiedSymbol.documentedSymbol?.isDocCommentFromSameModule(symbolModuleName: moduleName) == false {
+            unifiedSymbol.docComment.removeAll()
         }
     }
 

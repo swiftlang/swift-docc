@@ -1122,12 +1122,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
                         for relationship in relationships {
                             // Check for an origin key.
-                            if relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self] != nil
+                            if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
                                 // Check if it's a memberOf or implementation relationship.
-                                && (relationship.kind == .memberOf || relationship.kind == .defaultImplementationOf) {
-                                
+                                (relationship.kind == .memberOf || relationship.kind == .defaultImplementationOf)
+                            {    
                                 SymbolGraphRelationshipsBuilder.addInheritedDefaultImplementation(
-                                    edge: relationship,
+                                    sourceOrigin: sourceOrigin,
+                                    inheritedSymbolID: relationship.source,
                                     context: self,
                                     localCache: documentationCache,
                                     moduleName: moduleName
