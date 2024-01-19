@@ -547,22 +547,6 @@ class ReferenceResolverTests: XCTestCase {
         // the resulting documentation should be empty
         XCTAssertEqual(renderNode.topicSections.count, 0)
     }
-
-    private struct TestExternalReferenceResolver: ExternalDocumentationSource {
-        var bundleIdentifier = "com.external.testbundle"
-        var expectedReferencePath = "/externally/resolved/path"
-        var resolvedEntityTitle = "Externally Resolved Title"
-        var resolvedEntityKind = DocumentationNode.Kind.article
-        var expectedAvailableSourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
-        
-        func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
-            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, sourceLanguage: .swift))
-        }
-        
-        func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-            fatalError("These tests never ask for the external entity.")
-        }
-    }
     
     func testUnresolvedTutorialReferenceIsWarning() throws {
         let source = """
