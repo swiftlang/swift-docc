@@ -411,16 +411,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
     }
-    
-    /// A documentation node with resolved content and any relevant problems.
-    private typealias ResolvedSymbolResultWithProblems = (node: DocumentationNode, preciseIdentifier: String, problems: [Problem])
 
-    /// A temporary storage type for an external link.
-    private struct ExternalLinkResult: Hashable {
-        let unresolved: UnresolvedTopicReference
-        let targetLanguage: SourceLanguage
-    }
-    
     /// Attempts to resolve links external to the given bundle.
     ///
     /// The link resolution results are collected in ``externallyResolvedLinks``.
