@@ -1236,7 +1236,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     }
                     
                     // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
-                    let unresolvedLinkProblem = unresolvedReferenceProblem(reference: reference, source: documentationExtension.source, range: link.range, severity: .warning, uncuratedArticleMatch: nil, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
+                    let unresolvedLinkProblem = unresolvedReferenceProblem(source: documentationExtension.source, range: link.range, severity: .warning, uncuratedArticleMatch: nil, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
                     
                     diagnosticEngine.emit(
                         Problem(
