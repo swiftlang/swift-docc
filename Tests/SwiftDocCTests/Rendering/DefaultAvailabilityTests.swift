@@ -138,15 +138,14 @@ class DefaultAvailabilityTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), expected, file: (file), line: line)
     }
     
-    // Test whether when Mac Catalyst availability is missing we fall back on iOS availability
+    // Test whether when Mac Catalyst availability is missing we fall back on
+    // Mac Catalyst info.plist availability and not on iOS availability.
     func testBundleWithMissingCatalystAvailability() throws {
         // Copy an Info.plist with default availability
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
             do {
                 try FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
-                let infoPlist = try String(contentsOf: self.infoPlistAvailabilityURL)
-                try infoPlist.replacingOccurrences(of: "Mac Catalyst", with: "iOS")
-                    .write(to: url.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
+                try String(contentsOf: self.infoPlistAvailabilityURL).write(to: url.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
             } catch {
                 XCTFail("Could not copy Info.plist with custom availability in the test bundle")
             }
@@ -162,19 +161,16 @@ class DefaultAvailabilityTests: XCTestCase {
         
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5(beta)",
-            "iOS 13.5(beta)",
             "macOS 10.15.1",
         ], bundle: bundle, context: context)
         
-        // Set a public status for both iOS and Mac Catalyst
+        // Set a public status for Mac Catalyst
         context.externalMetadata.currentPlatforms = [
-            "iOS": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
         ]
         
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5",
-            "iOS 13.5",
             "macOS 10.15.1",
         ], bundle: bundle, context: context)
 
@@ -183,7 +179,6 @@ class DefaultAvailabilityTests: XCTestCase {
         context.externalMetadata.currentPlatforms = [:]
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5",
-            "iOS 13.5",
             "macOS 10.15.1",
         ], bundle: bundle, context: context)
     }

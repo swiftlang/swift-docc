@@ -200,11 +200,8 @@ struct SymbolGraphLoader {
                     }
                 })
             
-            // In the case of Mac Catalyst use default availability for the iOS platform if annotated
-            let fallbackPlatform = (platformName == .catalyst) ? PlatformName.iOS.displayName : nil
-            
-            // `true` if this module has Mac Catalyst availability.
-            let isDefaultCatalystAvailabilitySet = defaultAvailabilities.contains(where: { $0.platformName == .catalyst })
+            // Defines a fallback for those platforms we don't emit SGFs for.
+            let fallbackPlatforms: [PlatformName:PlatformName] = [:]
 
             // Map all symbols and add default availability for any missing platforms
             let symbolsWithFilledIntroducedVersions = symbolGraph.symbols.mapValues { symbol -> SymbolGraph.Symbol in
@@ -215,21 +212,10 @@ struct SymbolGraphLoader {
 
                     // Fill introduced versions when missing.
                     var newAvailabilityItems = availability.availability.map {
-                        $0.fillingMissingIntroducedVersion(from: defaultAvailabilityVersionByPlatform, fallbackPlatform: fallbackPlatform)
-                    }
-                    
-                    // When Catalyst is missing, fall back on iOS availability.
-
-                    // First check if we're targeting the Mac Catalyst platform
-                    if isDefaultCatalystAvailabilitySet,
-                        // Then verify annotated availability from source for Mac Catalyst is missing
-                       !newAvailabilityItems.contains(where: { $0.domain?.rawValue == SymbolGraph.Symbol.Availability.Domain.macCatalyst }),
-                        // And finally fetch the symbol's iOS availability if there is one
-                        let iOSAvailability = newAvailabilityItems.first(where: { $0.domain?.rawValue == SymbolGraph.Symbol.Availability.Domain.iOS }) {
-                        
-                        var macCatalystAvailability = iOSAvailability
-                        macCatalystAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: SymbolGraph.Symbol.Availability.Domain.macCatalyst)
-                        newAvailabilityItems.append(macCatalystAvailability)
+                        $0.fillingMissingIntroducedVersion(
+                            from: defaultAvailabilityVersionByPlatform,
+                            fallbackPlatform: fallbackPlatforms[platformName]?.rawValue
+                        )
                     }
 
                     // If a symbol doesn't have any availability annotation at all
@@ -356,7 +342,6 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
 
      - parameter defaults: Default module availabilities for each platform mentioned in a documentation bundle's `Info.plist`
      - parameter fallbackPlatform: An optional fallback platform name if this item's domain isn't found in the `defaults`.
-     For example, `macCatalyst` should fall back to `iOS` because `macCatalyst` symbols are originally `iOS` symbols.
      */
     func fillingMissingIntroducedVersion(from defaults: [PlatformName: SymbolGraph.SemanticVersion],
                                          fallbackPlatform: String?) -> SymbolGraph.Symbol.Availability.AvailabilityItem {

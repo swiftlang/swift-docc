@@ -74,16 +74,7 @@ public struct DefaultAvailability: Codable, Equatable {
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
     public init(with modules: [String: [ModuleAvailability]]) {
         self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
-            // If a module doesn't contain default introduced availability for macCatalyst,
-            // infer it from iOS. Their platform versions are always the same.
-            if !platformAvailabilities.contains(where: { $0.platformName == .catalyst }),
-                let iOSAvailability = platformAvailabilities.first(where: { $0.platformName == .iOS } ) {
-                return platformAvailabilities + [
-                    DefaultAvailability.ModuleAvailability(platformName: .catalyst, platformVersion: iOSAvailability.platformVersion)
-                ]
-            } else {
-                return platformAvailabilities
-            }
+            platformAvailabilities
         }
     }
     
