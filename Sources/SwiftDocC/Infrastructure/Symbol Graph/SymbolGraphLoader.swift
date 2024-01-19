@@ -199,9 +199,6 @@ struct SymbolGraphLoader {
                         result[defaultAvailability.platformName] = version
                     }
                 })
-            
-            // Defines a fallback for those platforms we don't emit SGFs for.
-            let fallbackPlatforms: [PlatformName:PlatformName] = [:]
 
             // Map all symbols and add default availability for any missing platforms
             let symbolsWithFilledIntroducedVersions = symbolGraph.symbols.mapValues { symbol -> SymbolGraph.Symbol in
@@ -214,7 +211,7 @@ struct SymbolGraphLoader {
                     var newAvailabilityItems = availability.availability.map {
                         $0.fillingMissingIntroducedVersion(
                             from: defaultAvailabilityVersionByPlatform,
-                            fallbackPlatform: fallbackPlatforms[platformName]?.rawValue
+                            fallbackPlatform: nil
                         )
                     }
 

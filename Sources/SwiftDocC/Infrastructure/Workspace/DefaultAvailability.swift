@@ -73,9 +73,7 @@ public struct DefaultAvailability: Codable, Equatable {
     /// Creates a default availability module.
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
     public init(with modules: [String: [ModuleAvailability]]) {
-        self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
-            platformAvailabilities
-        }
+        self.modules = modules
     }
     
     public init(from decoder: Decoder) throws {
