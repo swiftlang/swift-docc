@@ -33,6 +33,7 @@ Adding a new sub-command automatically adds routing and execution of its code, a
 - ``ConvertAction``
 - ``PreviewAction``
 - ``IndexAction``
+- ``InitAction``
 
 ### Actions Design
 - ``Action``
