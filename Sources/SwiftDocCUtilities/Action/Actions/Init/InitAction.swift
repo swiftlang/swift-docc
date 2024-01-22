@@ -123,7 +123,7 @@ public struct InitAction: Action {
                 // Generate the directories for file storage
                 // by adding the article path to the output URL and
                 // excluding the file name.
-                let fileURL = catalogOutputURL.appendingPathComponent(relativePath.path)
+                let fileURL = catalogOutputURL.appendingPathComponent(relativePath)
                 try fileManager.createDirectory(
                     at: fileURL.deletingLastPathComponent(),
                     withIntermediateDirectories: true,
@@ -136,7 +136,7 @@ public struct InitAction: Action {
             // Write additional directiories defined in the catalog.
             // Ex. `Resources`
             for relativePath in catalogTemplate.additionalDirectories {
-                let directoryURL = catalogOutputURL.appendingPathComponent(relativePath.path)
+                let directoryURL = catalogOutputURL.appendingPathComponent(relativePath)
                 try fileManager.createDirectory(
                     at: directoryURL,
                     withIntermediateDirectories: true,

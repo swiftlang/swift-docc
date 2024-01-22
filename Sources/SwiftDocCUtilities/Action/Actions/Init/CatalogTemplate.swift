@@ -13,43 +13,19 @@ import SwiftDocC
 
 struct CatalogTemplate {
     
-    let files: [URL: String]
-    let additionalDirectories: [URL]
-    
-    /// Creates a catalog from the given articles and additional directories validating
-    /// that the paths conforms to valid URLs.
-    init(
-        files: [String: String],
-        additionalDirectories: [String] = []
-    ) throws {
-        // Converts every key of the articles dictionary into
-        // a valid URL.
-        self.files = Dictionary(uniqueKeysWithValues:
-            files.map { (rawURL, article) in
-                assert(URL(string: rawURL) != nil, "Invalid structure of the catalog file with URL \(rawURL).")
-                return (URL(string: rawURL)!, article)
-            }
-        )
-        // Creates the additional directories URLs.
-        self.additionalDirectories = additionalDirectories.map {
-            assert(URL(string:  $0) != nil, "Invalid structure of the catalog directory with URL \($0).")
-            return URL(string:  $0)!
-        }
-    }
+    let files: [String: String]
+    let additionalDirectories: [String]
     
     /// Creates a Catalog Template using one of the provided template kinds.
     init(_ templateKind: CatalogTemplateKind, title: String) throws {
         switch templateKind {
         case .articleOnly:
-            try self.init(
-                files: CatalogTemplateKind.articleOnlyTemplateFiles(title),
-                additionalDirectories: ["Resources"]
-            )
+            self.files = CatalogTemplateKind.articleOnlyTemplateFiles(title)
+            self.additionalDirectories = ["Resources"]
         case .tutorial:
-            try self.init(
-                files: CatalogTemplateKind.tutorialTemplateFiles(title),
-                additionalDirectories: ["Resources", "Chapter01/Resources"]
-            )
+            self.files = CatalogTemplateKind.tutorialTemplateFiles(title)
+            self.additionalDirectories = ["Resources", "Chapter01/Resources"]
+            
         }
     }
 }
