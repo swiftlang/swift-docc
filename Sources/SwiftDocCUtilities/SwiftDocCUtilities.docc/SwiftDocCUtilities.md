@@ -44,4 +44,4 @@ Adding a new sub-command automatically adds routing and execution of its code, a
 - ``Throttle``
 - ``Signal``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
