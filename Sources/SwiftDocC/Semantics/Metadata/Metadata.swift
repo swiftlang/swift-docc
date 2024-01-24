@@ -90,7 +90,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "supportedLanguages"    : \Metadata._supportedLanguages,
         "_pageColor"            : \Metadata.__pageColor,
         "titleHeading"          : \Metadata._titleHeading,
-        "redirects"              : \Metadata._redirects,
+        "redirects"             : \Metadata._redirects,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
