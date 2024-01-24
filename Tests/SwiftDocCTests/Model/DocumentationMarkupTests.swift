@@ -184,20 +184,20 @@ class DocumentationMarkupTests: XCTestCase {
 
     func testCertainDirectivesAreRemovedFromContent() throws {
 
-        func checkSectionContent(expectedContent: String?, section: Section?) {
+        func checkSectionContent(expectedContent: String?, section: Section?, file: StaticString = #file, line: UInt = #line) {
             if let desc = section?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n") {
-                XCTAssertEqual(expectedContent, desc, "Found unexpected content: \n\(desc)")
+                XCTAssertEqual(expectedContent, desc, "Found unexpected content: \n\(desc)", file: file, line: line)
             }
         }
 
 
-        func checkAbstractAndDiscussion(source: String, expectedAbstract: String, expectedDiscussion: String) {
+        func checkAbstractAndDiscussion(source: String, expectedAbstract: String, expectedDiscussion: String, file: StaticString = #file, line: UInt = #line) {
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
-            checkSectionContent(expectedContent: expectedAbstract, section: model.abstractSection)
-            checkSectionContent(expectedContent: expectedDiscussion, section: model.discussionSection)
+            checkSectionContent(expectedContent: expectedAbstract, section: model.abstractSection, file: file, line: line)
+            checkSectionContent(expectedContent: expectedDiscussion, section: model.discussionSection, file: file, line: line)
         }
 
-        func checkDirectiveIsRemoved(_ directiveSource: String) {
+        func checkDirectiveIsRemoved(_ directiveSource: String, file: StaticString = #file, line: UInt = #line) {
             let expectedAbstract = """
                                    Text "My abstract "
                                    Strong
@@ -217,7 +217,7 @@ class DocumentationMarkupTests: XCTestCase {
 
                                     My discussion.
                                     """
-            checkAbstractAndDiscussion(source: sourceWithDirectiveBeforeAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion)
+            checkAbstractAndDiscussion(source: sourceWithDirectiveBeforeAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion, file: file, line: line)
 
             let sourceWithDirectiveAfterAbstract = """
                                     # Title
@@ -226,7 +226,7 @@ class DocumentationMarkupTests: XCTestCase {
 
                                     My discussion.
                                     """
-            checkAbstractAndDiscussion(source: sourceWithDirectiveAfterAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion)
+            checkAbstractAndDiscussion(source: sourceWithDirectiveAfterAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion, file: file, line: line)
         }
 
         // @Comment, @Metadata, @Options and @Redirected should be removed from the content.
@@ -257,7 +257,7 @@ class DocumentationMarkupTests: XCTestCase {
                                  Paragraph
                                  └─ Text "My discussion."
                                  """
-        checkAbstractAndDiscussion( source: sourceWithImageBeforeAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion )
+        checkAbstractAndDiscussion(source: sourceWithImageBeforeAbstract, expectedAbstract: expectedAbstract, expectedDiscussion: expectedDiscussion)
 
         // @Image should not be removed; image falls through to discussion
         let sourceWithImageAfterAbstract = """
