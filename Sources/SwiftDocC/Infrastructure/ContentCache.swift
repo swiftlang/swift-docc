@@ -10,16 +10,25 @@
 
 extension DocumentationContext {
     /// A cache for symbol and page content.
+    ///
+    /// The context uses this cache type with different values for both local content (``DocumentationContext/LocalCache``) and external content (``DocumentationContext/ExternalCache``).
+    ///
+    /// > Note:
+    /// > The cache is not thread-safe. It's safe to read from the cache concurrently but writing needs to happen with exclusive access. It is the callers responsibility to synchronize write access.
     struct ContentCache<Value> {
-        private var storage = [ResolvedTopicReference: Value]()
-        private var symbolIndex = [String: ResolvedTopicReference]()
+        /// The main storage of cached values.
+        private var valuesByReference = [ResolvedTopicReference: Value]()
+        /// A supplementary lookup of references by their symbol ID.
+        ///
+        /// If a reference is found, ``valuesByReference``  will also have a value for that reference because ``add(value:reference:symbolID:)`` is the only place that writes to this lookup and it always adds the reference-value pair to ``valuesByReference``.
+        private var referencesBySymbolID = [String: ResolvedTopicReference]()
         
         /// Accesses the value for a given reference.
         /// - Parameter reference: The reference to find in the cache.
         subscript(reference: ResolvedTopicReference) -> Value? {
             // Avoid copying the values if possible
-            _read { yield storage[reference] }
-            _modify { yield &storage[reference] }
+            _read { yield valuesByReference[reference] }
+            _modify { yield &valuesByReference[reference] }
         }
         
         /// Adds a value to the cache for a given reference _and_ symbol ID.
@@ -28,21 +37,21 @@ extension DocumentationContext {
         ///   - reference: The reference associated with that value.
         ///   - symbolID: The symbol ID associated with that value.
         mutating func add(value: Value, reference: ResolvedTopicReference, symbolID: String) {
-            symbolIndex[symbolID] = reference
-            storage[reference] = value
+            referencesBySymbolID[symbolID] = reference
+            valuesByReference[reference] = value
         }
         
         /// Accesses the reference for a given symbol ID.
         /// - Parameter symbolID: The symbol ID to find in the cache.
         func reference(symbolID: String) -> ResolvedTopicReference? {
-            symbolIndex[symbolID]
+            referencesBySymbolID[symbolID]
         }
         
         /// Accesses the value for a given symbol ID.
         /// - Parameter symbolID: The symbol ID to find in the cache.
         subscript(symbolID: String) -> Value? {
             // Avoid copying the values if possible
-            _read { yield symbolIndex[symbolID].map { storage[$0]! } }
+            _read { yield referencesBySymbolID[symbolID].map { valuesByReference[$0]! } }
         }
         
         /// Reserves enough space to store the specified number of values.
@@ -55,39 +64,39 @@ extension DocumentationContext {
         
         /// Returns a list of all the references in the cache.
         var references: [ResolvedTopicReference] {
-            return Array(storage.keys)
+            return Array(valuesByReference.keys)
         }
         
         /// Returns a list of all the references in the cache.
         var symbolReferences: [ResolvedTopicReference] {
-            return Array(symbolIndex.values)
+            return Array(referencesBySymbolID.values)
         }
     }
 }
 
-// Support iterating over the cached values.
+// Support iterating over the cached values, checking the number of cached values, and other collection operations.
 extension DocumentationContext.ContentCache: Collection {
     typealias Wrapped = [ResolvedTopicReference: Value]
     typealias Index = Wrapped.Index
     typealias Element = Wrapped.Element
     
     func makeIterator() -> Wrapped.Iterator {
-        storage.makeIterator()
+        valuesByReference.makeIterator()
     }
     
     var startIndex: Wrapped.Index {
-        storage.startIndex
+        valuesByReference.startIndex
     }
     
     var endIndex: Wrapped.Index {
-        storage.endIndex
+        valuesByReference.endIndex
     }
     
     func index(after i: Wrapped.Index) -> Wrapped.Index {
-        storage.index(after: i)
+        valuesByReference.index(after: i)
     }
     
     subscript(position: Wrapped.Index) -> Wrapped.Element {
-        _read { yield storage[position] }
+        _read { yield valuesByReference[position] }
     }
 }
