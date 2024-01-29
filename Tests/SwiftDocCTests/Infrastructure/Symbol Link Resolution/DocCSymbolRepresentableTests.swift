@@ -127,7 +127,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
         
         // Find the documentation node based on what we expect the correct link to be
         let correctReferenceToSelect = try XCTUnwrap(
-            context.documentationCache.references.first(where: { $0.absoluteString == correctLink })
+            context.documentationCache.allReferences.first(where: { $0.absoluteString == correctLink })
         )
         let correctSymbolToSelect = try XCTUnwrap(
             context.documentationCache[correctReferenceToSelect]?.symbol

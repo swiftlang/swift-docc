@@ -69,7 +69,7 @@ extension DocumentationContext {
         }
         
         /// Returns a list of all the references in the cache.
-        var references: [ResolvedTopicReference] {
+        var allReferences: [ResolvedTopicReference] {
             return Array(valuesByReference.keys)
         }
         

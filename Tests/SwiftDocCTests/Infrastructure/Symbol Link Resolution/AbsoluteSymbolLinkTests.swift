@@ -846,7 +846,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         
         XCTAssertEqual(expectedDescriptions.count, context.documentationCache.count)
         
-        let validatedSymbolLinkDescriptions = context.documentationCache.references
+        let validatedSymbolLinkDescriptions = context.documentationCache.allReferences
             .map(\.url.absoluteString)
             .sorted()
             .compactMap(AbsoluteSymbolLink.init(string:))
@@ -865,7 +865,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             codeListings: [:]
         )
         
-        let bundlePathComponents = context.documentationCache.references
+        let bundlePathComponents = context.documentationCache.allReferences
             .flatMap(\.pathComponents)
         
         
