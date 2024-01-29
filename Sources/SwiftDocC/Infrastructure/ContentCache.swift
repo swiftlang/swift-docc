@@ -54,12 +54,18 @@ extension DocumentationContext {
             _read { yield referencesBySymbolID[symbolID].map { valuesByReference[$0]! } }
         }
         
-        /// Reserves enough space to store the specified number of values.
-        mutating func reserveCapacity(_ minimumCapacity: Int, reserveSymbolIDCapacity: Bool) {
-            storage.reserveCapacity(minimumCapacity)
-            if reserveSymbolIDCapacity {
-                symbolIndex.reserveCapacity(minimumCapacity)
-            }
+        /// Reserves enough space to store the specified number of values and symbol IDs.
+        ///
+        /// If you are adding a known number of values pairs to a cache, use this method to avoid multiple reallocations.
+        ///
+        /// > Note: The cache reserves the specified capacity for both values and symbol IDs.
+        ///
+        /// - Parameter minimumCapacity: The requested number of key-value pairs to store.
+        mutating func reserveCapacity(_ minimumCapacity: Int) {
+            valuesByReference.reserveCapacity(minimumCapacity)
+            // The only place that currently calls expects reserve the same capacity for both stored properties.
+            // This is because symbols are 
+            referencesBySymbolID.reserveCapacity(minimumCapacity)
         }
         
         /// Returns a list of all the references in the cache.

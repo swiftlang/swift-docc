@@ -1054,7 +1054,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let symbolReferences = linkResolver.localResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
-            documentationCache.reserveCapacity(symbolReferences.count, reserveSymbolIDCapacity: true)
+            documentationCache.reserveCapacity(symbolReferences.count)
             documentLocationMap.reserveCapacity(symbolReferences.count)
             topicGraph.nodes.reserveCapacity(symbolReferences.count)
             topicGraph.edges.reserveCapacity(symbolReferences.count)
