@@ -493,7 +493,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> RenderTree? {
-        return createAndRegisterRenderReference(forMedia: videoMedia.source, poster: videoMedia.poster)
+        return createAndRegisterRenderReference(
+            forMedia: videoMedia.source,
+            poster: videoMedia.poster,
+            altText: videoMedia.altText
+        )
     }
     
     public mutating func visitChapter(_ chapter: Chapter) -> RenderTree? {
