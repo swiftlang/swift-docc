@@ -481,6 +481,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     if unresolvedURL.absoluteString != resolvedReference.absoluteString,
                        let resolvedURL = ValidatedURL(resolvedReference.url) {
                         // If the resolved reference has a different URL than the authored link, cache both URLs so we can resolve both unresolved and resolved references.
+                        //
+                        // The two main examples when this would happen are:
+                        // - when resolving a redirected article and the authored link was the old URL
+                        // - when resolving a symbol with multiple language representations and the authored link wasn't the canonical URL
                         externallyResolvedLinks[resolvedURL] = result
                     }
                 }
