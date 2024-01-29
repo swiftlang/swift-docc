@@ -104,7 +104,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         // Resolve the symbol
         let entity = resolver.entity(with: resolvedReference)
         
-        XCTAssertEqual(entity.topicRenderReference.url, testMetadata.url.absoluteString)
+        XCTAssertEqual(entity.topicRenderReference.url, testMetadata.url.withoutHostAndPortAndScheme().absoluteString)
         
         XCTAssertEqual(entity.topicRenderReference.kind.rawValue, "symbol")
         XCTAssertEqual(entity.topicRenderReference.role, "symbol")
