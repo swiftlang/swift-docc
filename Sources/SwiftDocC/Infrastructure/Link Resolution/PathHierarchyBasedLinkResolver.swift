@@ -37,7 +37,7 @@ final class PathHierarchyBasedLinkResolver {
         resolvedReferenceMap = newMap
     }
     
-    /// Creates a path string—that can be used to find documentation in the path hierarchy—from an unresolved topic reference,
+    /// Creates a path string---that can be used to find documentation in the path hierarchy---from an unresolved topic reference,
     private static func path(for unresolved: UnresolvedTopicReference) -> String {
         guard let fragment = unresolved.fragment else {
             return unresolved.path

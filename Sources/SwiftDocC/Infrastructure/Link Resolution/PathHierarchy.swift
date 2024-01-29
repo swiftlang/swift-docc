@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -34,7 +34,7 @@ struct ResolvedIdentifier: Equatable, Hashable {
 ///
 /// ### Usage
 ///
-/// After a path hierarchy has been fully created — with both symbols and non-symbols — it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
+/// After a path hierarchy has been fully created---with both symbols and non-symbols---it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
     
     /// The list of module nodes.

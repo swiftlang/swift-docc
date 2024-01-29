@@ -15,8 +15,8 @@ import Foundation
 /// Use this protocol to integrate symbol documentation content from other sources. Your implementation needs to be able to:
 ///  * Resolve symbols by their precise identifier  and return the symbols reference and external entity.
 ///
-/// If a symbol in a symbol graph file references a symbol in another module—for example, when the symbol conforms to a protocol from another module, when the
-/// symbol inherits from a class in another module, or the symbol has arguments or return values that are types from other modules—then this resolver is used to
+/// If a symbol in a symbol graph file references a symbol in another module---for example, when the symbol conforms to a protocol from another module, when the
+/// symbol inherits from a class in another module, or the symbol has arguments or return values that are types from other modules---then this resolver is used to
 /// look up those symbols by their unique identifier. This allows references in symbol declarations to be turned into links for external symbols, just like in-bundle
 /// symbol references.
 ///
