@@ -62,7 +62,7 @@ public class LinkResolver {
         /// The different source languages for which this page is available.
         var sourceLanguages: Set<SourceLanguage>
         
-        /// Create a topic content for be cached in a render reference store.
+        /// Creates a pre-render new topic content value to be added to a render context's reference store.
         func topicContent() -> RenderReferenceStore.TopicContent {
             return .init(
                 renderReference: topicRenderReference,

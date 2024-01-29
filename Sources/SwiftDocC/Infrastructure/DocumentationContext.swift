@@ -187,14 +187,26 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Map of document URLs to topic references.
     var documentLocationMap = BidirectionalMap<URL, ResolvedTopicReference>()
-    /// A cache of already created documentation nodes.
+    /// A storage of already created documentation nodes for the local documentation content.
+    ///
+    /// The documentation cache is built up incrementally as local content is registered with the documentation context. 
+    ///
+    /// First, the context adds all symbols, with both their references and symbol IDs for lookup. The ``SymbolGraphRelationshipsBuilder`` looks up documentation
+    /// nodes by their symbol's ID when it builds up in-memory relationships between symbols. Later, the context adds articles and other conceptual content with only their
+    /// references for lookup.
     var documentationCache = LocalCache()
     /// The asset managers for each documentation bundle, keyed by the bundle's identifier.
     var assetManagers = [BundleIdentifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     
-    /// A cache of externally resolved content.
+    /// A storage of externally resolved content.
+    ///
+    /// The external cache is built up in two steps;
+    /// - While the context processes the local symbols, a ``GlobalExternalSymbolResolver`` or ``ExternalPathHierarchyResolver`` may add entities
+    ///   for any external symbols that are referenced by a relationship or by a declaration token identifier in the local symbol graph files.
+    /// - Before the context finishes registering content, a ``ExternalDocumentationSource`` or ``ExternalPathHierarchyResolver`` may add entities
+    ///   for any external links in the local content that the external source or external resolver could successfully resolve.
     var externalCache = ExternalCache()
 
     /// Returns the local or external reference for a known symbol ID.
@@ -223,6 +235,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public var globalExternalSymbolResolver: GlobalExternalSymbolResolver?
     
     /// All the link references that have been resolved from external sources, either successfully or not.
+    ///
+    /// The unsuccessful links are tracked so that the context doesn't attempt to re-resolve the unsuccessful links during rendering which runs concurrently for each page.
     var externallyResolvedLinks = [ValidatedURL: TopicReferenceResolutionResult]()
     
     /// The mapping of external symbol identifiers to known disambiguated symbol path components.
