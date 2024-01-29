@@ -10,12 +10,16 @@
 
 import Foundation
 
-/// A resolver that attempts to resolve local references that wasn't included in the catalog or symbol input.
+/// A resolver that attempts to resolve local references to content that wasn't included in the catalog or symbol input.
 ///
-/// The ``ConvertService`` builds documentation for a single page at a time. If this page's content contains references to other local symbols, pages, or
-/// assets that aren't included in the original ``ConvertRequest``, this fallback resolver resolves those references.
+/// The ``ConvertService`` builds documentation for a single page, which doesn't have to be a top-level page. If this page's content contains references to other local
+/// symbols, pages, or assets that aren't included in the ``ConvertRequest``, this fallback resolver resolves those references to on-demand fill in the missing local content.
 ///
-/// The ``ConvertService`` only renders the one page that it provided inputs for. Because of this, the content that this fallback resolver returns is considered
+/// For example, when building documentation for `someFunction()` that's a member of `SomeClass` in `SomeModule`, the ``ConvertService`` can pass a
+/// "partial" symbol graph file that only contains `someFunction()` and its relationships but not `SomeClass` or any other symbols. If `someFunction()` has a local
+/// documentation link or symbol link to another symbol or page, DocC won't be able to find the page that the link refers to and will ask the fallback resolver to attempt to resolve it.
+///
+/// > Note: The ``ConvertService`` only renders the one page that it provided inputs for. Because of this, the content that this fallback resolver returns is considered
 /// "external" content, even if it represents pages that would be "local" if the full project was built together.
 protocol ConvertServiceFallbackResolver {
     
@@ -27,11 +31,10 @@ protocol ConvertServiceFallbackResolver {
     /// - Returns: The resolved reference, or information about why the resolver failed to resolve the reference.
     func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult
     
-    /// Returns a  Creates a new documentation node with the documentation content for the external reference, if the given reference was
-    /// resolved by this resolver.
+    /// Returns an external entity with the documentation content for a local resolved reference if the reference was previously resolved by this resolver.
     ///
     /// - Parameter reference: The local reference that this resolver may have previously resolved.
-    /// - Returns: A node with the documentation content for the referenced topic, or `nil` if the reference wasn't previously resolved by this resolver.
+    /// - Returns: An entity with the documentation content for the referenced page or landmark, or `nil` if the reference wasn't previously resolved by this resolver.
     func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity?
     
     // MARK:  Assets

@@ -213,10 +213,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// The lookup of external documentation sources by their bundle identifiers.
     public var externalDocumentationSources = [BundleIdentifier: ExternalDocumentationSource]()
     
-    /// A resolver that attempts to resolve local references that wasn't included in the catalog or symbol input.
+    /// A resolver that attempts to resolve local references to content that wasn't included in the catalog or symbol input.
     ///
-    /// - Warning: Setting fallback reference resolver makes accesses to the context non-thread-safe. This is because performing
-    /// external link resolution _after_ bundle registration mutates the context.``
+    /// - Warning: Setting a fallback reference resolver makes accesses to the context non-thread-safe. This is because the fallback resolver can run during both local link
+    /// resolution and during rendering, which both happen concurrently for each page. In practice this shouldn't matter because the convert service only builds documentation for one page.
     var convertServiceFallbackResolver: ConvertServiceFallbackResolver?
     
     /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
