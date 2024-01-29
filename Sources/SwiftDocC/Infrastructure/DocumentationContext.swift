@@ -1023,7 +1023,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private func addPreparedSymbolToContext(_ result: AddSymbolResultWithProblems) {
         let symbolData = result.0
         topicGraph.addNode(symbolData.topicGraphNode)
-        documentationCache.add(value: symbolData.node, reference: symbolData.reference, symbolID: symbolData.preciseIdentifier)
+        documentationCache.add(symbolData.node, reference: symbolData.reference, symbolID: symbolData.preciseIdentifier)
         
         for anchor in result.0.node.anchorSections {
             nodeAnchorSections[anchor.reference] = anchor
@@ -1279,7 +1279,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Update cache with the updated node value
                 if let symbol = updatedNode.symbol {
                     // If the node was a symbol, add both the reference and the symbol ID
-                    documentationCache.add(value: updatedNode, reference: reference, symbolID: symbol.identifier.precise)
+                    documentationCache.add(updatedNode, reference: reference, symbolID: symbol.identifier.precise)
                 } else {
                     documentationCache[reference] = updatedNode
                 }
@@ -1543,7 +1543,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Resolve all the collected symbol identifiers and add them do the topic graph.
         for symbolID in symbolsToResolve {
             if let (reference, entity) = symbolResolver.symbolReferenceAndEntity(withPreciseIdentifier: symbolID) {
-                externalCache.add(value: entity, reference: reference, symbolID: symbolID)
+                externalCache.add(entity, reference: reference, symbolID: symbolID)
             } else {
                 diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.ReferenceSymbolNotFound", summary: "Symbol with identifier \(symbolID.singleQuoted) was referenced in the combined symbol graph but couldn't be found in the symbol graph or externally."), possibleSolutions: []))
             }

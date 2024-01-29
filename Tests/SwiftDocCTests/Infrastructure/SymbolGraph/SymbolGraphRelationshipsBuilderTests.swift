@@ -34,12 +34,12 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         let engine = DiagnosticEngine()
         documentationCache.add(
-            value: DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
             reference: sourceRef,
             symbolID: "A"
         )
         documentationCache.add(
-            value: DocumentationNode(reference: targetRef, symbol: targetSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: targetRef, symbol: targetSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
             reference: targetRef,
             symbolID: "B"
         )
@@ -136,7 +136,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         
         documentationCache.add(
-            value: DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
+            DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine),
             reference: sourceRef,
             symbolID: "A"
         )

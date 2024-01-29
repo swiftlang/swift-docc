@@ -20,7 +20,7 @@ extension DocumentationContext {
         private var valuesByReference = [ResolvedTopicReference: Value]()
         /// A supplementary lookup of references by their symbol ID.
         ///
-        /// If a reference is found, ``valuesByReference``  will also have a value for that reference because ``add(value:reference:symbolID:)`` is the only place that writes to this lookup and it always adds the reference-value pair to ``valuesByReference``.
+        /// If a reference is found, ``valuesByReference``  will also have a value for that reference because ``add(_:reference:symbolID:)`` is the only place that writes to this lookup and it always adds the reference-value pair to ``valuesByReference``.
         private var referencesBySymbolID = [String: ResolvedTopicReference]()
         
         /// Accesses the value for a given reference.
@@ -36,7 +36,7 @@ extension DocumentationContext {
         ///   - value: The value to add to the cache.
         ///   - reference: The reference associated with that value.
         ///   - symbolID: The symbol ID associated with that value.
-        mutating func add(value: Value, reference: ResolvedTopicReference, symbolID: String) {
+        mutating func add(_ value: Value, reference: ResolvedTopicReference, symbolID: String) {
             referencesBySymbolID[symbolID] = reference
             valuesByReference[reference] = value
         }
