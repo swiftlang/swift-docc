@@ -41,7 +41,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             }
 
             func renderOtherDeclarationsTokens(from overloads: Symbol.Overloads?) -> DeclarationRenderSection.OtherDeclarations? {
-                guard let overloads else {
+                guard let overloads = overloads else {
                     // This symbol does not have overloads.
                     return nil
                 }
