@@ -4283,8 +4283,8 @@ let expected = """
             }
         }
         
-        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
-        
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
 
         let methodsIdentifiers = ["s:7Animals6DragonC3eatyyxlF",
@@ -4328,8 +4328,8 @@ let expected = """
     
     // We do not want to add overload behavior for some symbol kinds, even if they are collisions in the link resolver.
     func testContextDoesNotRecognizeUnoverloadableSymbolKinds() throws {
-        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
-        
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
 
         let structIdentifiers = ["s:8ShapeKit22overloadedparentstructV",
