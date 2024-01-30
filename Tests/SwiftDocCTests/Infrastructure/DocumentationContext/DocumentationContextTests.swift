@@ -4266,9 +4266,8 @@ let expected = """
                 let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
                 let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
                 
-                XCTAssertNotNil(overloadedSymbol.overloadsVariants.firstValue)
-                let overloads = overloadedSymbol.overloadsVariants.firstValue!
-                
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
                 // Make sure that each symbol contains all of its sibling overloads.
                 XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
                 for (otherIndex, otherReference) in overloadedReferences.indexed() {
