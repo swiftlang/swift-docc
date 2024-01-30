@@ -12,16 +12,19 @@ import Foundation
 import Markdown
 
 
-/// A directive that specifies an additional URL for the page where the directive appears.
+/// A directive that specifies a previous URL for the page where the directive appears.
 ///
-/// Use this directive to declare a URL where a piece of content was previously located.
-/// For example, if you host the compiled documentation on a web server,
-/// that server can read this data and set an HTTP "301 Moved Permanently" redirect from
-/// the declared URL to the page's current URL and avoid breaking any existing links to the content.
+/// If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL.
 ///
-/// > Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In
-/// previous versions, @Redirected must be used as a top level directive.
+/// > Note: Starting with version 5.11, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In
+/// earlier versions, the `Redirected` directive is only supported as a top-level directive.
 ///
+/// ### Setting up Redirects
+///
+/// If you host your documentation on a web server, you can set a HTTP "301 Moved Permanently" redirect for each `Redirected` value to avoid breaking existing links to your content.
+///
+/// To find each page's `Redirected` values, pass the `--emit-digest` flag to DocC and read the "linkable-entities.json" file that this makes DocC write to the output directory. 
+/// Each "entity" in that file has a "path"---which represents the current relative path of that page---and an optional list of "redirects"---which represent all the `Redirected` values for page as they were authored in the markup. You can write either relative redirect values or absolute redirect values depending on what information you need to set HTTP "301 Moved Permanently" redirects on your web server.
 public final class Redirect: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public static let directiveName = "Redirected"
