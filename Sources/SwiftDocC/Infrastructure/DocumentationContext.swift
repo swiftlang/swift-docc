@@ -2412,14 +2412,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Tell each symbol what other symbols overload it.
             for (index, symbolReference) in overloadedSymbolReferences.indexed() {
                 let documentationNode = try? entity(with: symbolReference)
-                
-                assert(documentationNode?.semantic is Symbol,
-                       "Overloads must be symbols.")
-                assert(symbolReference.sourceLanguage == .swift,
-                       "Overloads must be Swift symbols.")
-                guard let symbol = (documentationNode?.semantic as? Symbol),
-                        symbolReference.sourceLanguage == .swift else { continue }
-                
+
+                guard let symbol = documentationNode?.semantic as? Symbol else {
+                    preconditionFailure("""
+                    Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
+                    Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
+                    """)
+                }
+                guard symbolReference.sourceLanguage == .swift else {
+                    assertionFailure("Overload groups is only supported for Swift symbols.")
+                    continue
+                }
+
                 var otherOverloadedSymbolReferences = overloadedSymbolReferences
                 otherOverloadedSymbolReferences.remove(at: index)
                 let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
