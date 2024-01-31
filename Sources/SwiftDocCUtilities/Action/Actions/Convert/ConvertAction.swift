@@ -472,7 +472,7 @@ public struct ConvertAction: Action, RecreatingContext {
                          explanation: """
                         There was no root found for this documentation catalog.
                         - For Article-only documentation please add a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy.
-                        - For Tutorials please add a table of contents page (indicated by a `Tutorials` directive with the corresponding `Intro` and `Chapters` directive) to define the root of the documentation hierarchy.
+                        - For Tutorials please add a table of contents page (indicated by a `Tutorials` directive with the corresponding `Intro` and `Chapters` directive) to define the root of the documentation hierarchy.\n
                         """
                      )
                 )
