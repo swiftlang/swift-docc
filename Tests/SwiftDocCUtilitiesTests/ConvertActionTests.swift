@@ -3071,31 +3071,71 @@ class ConvertActionTests: XCTestCase {
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
     func testConvertWithNoTechnologyRoot() throws {
-        let bundle = Folder(name: "unit-test.docc", content: [
+        func convert(_ bundle: Folder) throws -> ConvertAction {
+            return try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: engine
+            )
+        }
+        var bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "Documentation.md", utf8Content: "")
         ])
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+        var testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        var targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
-        let engine = DiagnosticEngine()
-        var action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: true,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            dataProvider: testDataProvider,
-            fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
-            diagnosticEngine: engine
-        )
+        var engine = DiagnosticEngine()
+        var action = try convert(bundle)
         let _ = try action.perform(logHandle: .standardOutput)
         XCTAssertEqual(engine.problems.count, 1)
         XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+        
+        bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Article.tutorial", utf8Content: """
+                @Article(time: 20) {
+                   @Intro(title: "Slothy Tutorials") {
+                      This is an abstract for the intro.
+                   }
+                }
+                """
+            ),
+        ])
+        testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        engine = DiagnosticEngine()
+        action = try convert(bundle)
+        _ = try action.perform(logHandle: .standardOutput)
+        XCTAssert(engine.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
+        
+        bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "table-of-contents.tutorial", utf8Content: """
+                @Tutorials(name: "Tutorial") {
+                    @Intro(title: "Tutorial Introduction") {
+                    }
+                }
+                """
+            ),
+        ])
+        testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        engine = DiagnosticEngine()
+        action = try convert(bundle)
+        _ = try action.perform(logHandle: .standardOutput)
+        XCTAssertFalse(engine.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
     }
     
     func testWrittenDiagnosticsAfterConvert() throws {
@@ -3142,13 +3182,13 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
         
         XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
-            "No TechnologyRoot to organize article-only documentation.",
+            "No TechnologyRoot to organize the documentation.",
             "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
         ])
         
         let logLines = logStorage.text.splitByNewlines
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize article-only documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize the documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
     }
     

@@ -462,14 +462,18 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
-        if try context.renderRootModules.isEmpty {
+        if (try context.renderRootModules + context.rootTechnologies).isEmpty {
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
                         severity: .warning,
                         identifier: "org.swift.docc.MissingTechnologyRoot",
-                         summary: "No TechnologyRoot to organize article-only documentation.",
-                         explanation: "Article-only documentation needs a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
+                         summary: "No TechnologyRoot to organize the documentation.",
+                         explanation: """
+                        There was no root found for this documentation catalog.
+                        - For Article-only documentation please add a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy.
+                        - For Tutorials please add a table of contents page (indicated by a `Tutorials` directive with the corresponding `Intro` and `Chapters` directive) to define the root of the documentation hierarchy.
+                        """
                      )
                 )
             )
