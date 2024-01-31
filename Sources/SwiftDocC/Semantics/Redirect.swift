@@ -18,6 +18,10 @@ import Markdown
 /// For example, if you host the compiled documentation on a web server,
 /// that server can read this data and set an HTTP "301 Moved Permanently" redirect from
 /// the declared URL to the page's current URL and avoid breaking any existing links to the content.
+///
+/// > Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In
+/// previous versions, @Redirected must be used as a top level directive.
+///
 public final class Redirect: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public static let directiveName = "Redirected"
@@ -31,7 +35,7 @@ public final class Redirect: Semantic, AutomaticDirectiveConvertible {
         "oldPath" : \Redirect._oldPath,
     ]
     
-    static var hiddenFromDocumentation = true
+    static var hiddenFromDocumentation = false
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {

@@ -311,4 +311,30 @@ class VideoMediaTests: XCTestCase {
         
         XCTAssertEqual(renderedContent, [])
     }
+    
+    func testVideoDirectiveWithAltText() throws {
+        let source = """
+        @Video(source: "introvideo", alt: "A short video of a sloth jumping down from a branch and smiling.")
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "",
+            sourceLanguage: .swift
+        )
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let videoMediaReference = translator.visitVideoMedia(video!) as! RenderReferenceIdentifier
+        let videoMedia = translator.videoReferences[videoMediaReference.identifier]
+        // Check that the video references in the node translator contains the alt text.
+        XCTAssertEqual(videoMedia?.altText, "A short video of a sloth jumping down from a branch and smiling.")
+    }
 }
