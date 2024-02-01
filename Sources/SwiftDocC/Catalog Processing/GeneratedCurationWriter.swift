@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -47,9 +47,6 @@ public struct GeneratedCurationWriter {
         
         let relativeLinks = linkResolver.disambiguatedRelativeLinksForDescendants(of: reference)
         
-        // Any reference that is already curated should be excluded from the auto-generated curation
-        let alreadyCurated = Set((symbol.topics?.taskGroups ?? []).flatMap { $0.links.compactMap(\.destination) })
-        
         // Top-level curation has a few special behaviors regarding symbols with different representations in multiple languages.
         let isForTopLevelCuration = symbol.kind.identifier == .module
         
@@ -62,31 +59,30 @@ public struct GeneratedCurationWriter {
             }
             
             let links: [(link: String, comment: String?)] = taskGroup.references.compactMap { (curatedReference: ResolvedTopicReference) -> (String, String?)? in
-                guard !alreadyCurated.contains(curatedReference.absoluteString) else { return nil }
                 guard let linkInfo = relativeLinks[curatedReference] else { return nil }
-                // If this link contains disambiguation, include a comment with the full symbol declaration to make it easier to know which symbol it refers to.
-                if linkInfo.hasDisambiguation,
-                   let symbol = context.documentationCache[curatedReference]?.symbol,
-                   let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments
-                {
-                    let commentText = fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
-                    return (linkInfo.link, commentText)
+                // If this link contains disambiguation, include a comment with the full symbol declaration to make it easier to know which symbol the link refers to.
+                var commentText: String?
+                if linkInfo.hasDisambiguation {
+                    commentText = context.documentationCache[curatedReference]?.symbol?.declarationFragments?.map(\.spelling)
+                        // Replace sequences of whitespace and newlines with a single space
+                        .joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
                 }
-                return (linkInfo.link, nil)
                 
+                return ("\n- ``\(linkInfo.link)``", commentText.map { " <!-- \($0) -->" })
             }
             
             guard !links.isEmpty else { continue }
             
             text.append("\n\n### \(taskGroup.title ?? "<!-- This auto-generated topic has no title -->")\n")
             
-            let longestLink = links.map(\.link.count).max()! /* `links` are non-empty */ + 7 /* the extra characters used to make the link "\n- ``" before and "``" after */
+            // Calculate the longest link to nicely align all the comments
+            let longestLink = links.map(\.link.count).max()! // `links` are non-empty so it's safe to force-unwrap `.max()` here
             for (link, comment) in links {
                 if let comment = comment {
-                    text.append("\n- ``\(link)``".padding(toLength: longestLink, withPad: " ", startingAt: 0))
-                    text.append(" <!-- \(comment) -->")
+                    text.append(link.padding(toLength: longestLink, withPad: " ", startingAt: 0))
+                    text.append(comment)
                 } else {
-                    text.append("\n- ``\(link)``")
+                    text.append(link)
                 }
             }
         }
@@ -94,7 +90,10 @@ public struct GeneratedCurationWriter {
         guard !text.isEmpty else { return nil }
         
         var prefix = "<!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->"
-        if alreadyCurated.isEmpty {
+        
+        // Add "## Topics" to the curation text unless the symbol already had some manual curation.
+        let hasAnyManualCuration = symbol.topics?.taskGroups.isEmpty == false
+        if !hasAnyManualCuration {
             prefix.append("\n\n## Topics")
         }
         return "\(prefix)\(text)\n"
