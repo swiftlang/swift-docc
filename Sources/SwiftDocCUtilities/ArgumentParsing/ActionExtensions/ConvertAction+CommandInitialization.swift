@@ -41,7 +41,7 @@ extension ConvertAction {
         // into a dictionary. This will throw with a descriptive error upon failure.
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.platforms)
 
-        let additionalSymbolGraphFiles = convert.additionalSymbolGraphFiles + symbolGraphFiles(
+        let additionalSymbolGraphFiles = (convert as _DeprecatedSymbolGraphFilesAccess).additionalSymbolGraphFiles + symbolGraphFiles(
             in: convert.additionalSymbolGraphDirectory
         )
         
@@ -101,3 +101,8 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     return subpaths.map { directory.appendingPathComponent($0) }
         .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
 }
+
+private protocol _DeprecatedSymbolGraphFilesAccess {
+    var additionalSymbolGraphFiles: [URL] { get }
+}
+extension Docc.Convert: _DeprecatedSymbolGraphFilesAccess {}
