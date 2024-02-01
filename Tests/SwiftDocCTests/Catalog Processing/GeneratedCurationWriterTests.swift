@@ -297,6 +297,8 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``+(_:_:)``
         - ``-(_:_:)``
         - ``<(_:_:)``
+        - ``/(_:_:)``
+        - ``/=(_:_:)``
 
         ### Initializers
 

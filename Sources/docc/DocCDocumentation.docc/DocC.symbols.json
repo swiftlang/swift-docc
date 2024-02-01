@@ -4062,6 +4062,147 @@
         },
         {
           "kind" : "typeIdentifier",
+          "spelling" : "Redirected"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "from"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "URL"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies an additional URL for the page where the directive appears."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use this directive to declare a URL where a piece of content was previously located."
+          },
+          {
+            "text" : "For example, if you host the compiled documentation on a web server,"
+          },
+          {
+            "text" : "that server can read this data and set an HTTP \"301 Moved Permanently\" redirect from"
+          },
+          {
+            "text" : "the declared URL to the page's current URL and avoid breaking any existing links to the content."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In"
+          },
+          {
+            "text" : "previous versions, @Redirected must be used as a top level directive."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - from: The URL that redirects to the page associated with the directive."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Redirected"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Redirected",
+            "spelling" : "Redirected"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Redirected"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "from"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "URL"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Redirected"
+      },
+      "pathComponents" : [
+        "Redirected"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
           "spelling" : "Resources"
         },
         {

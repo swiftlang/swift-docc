@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,6 +18,10 @@ import Markdown
 /// For example, if you host the compiled documentation on a web server,
 /// that server can read this data and set an HTTP "301 Moved Permanently" redirect from
 /// the declared URL to the page's current URL and avoid breaking any existing links to the content.
+///
+/// > Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In
+/// previous versions, @Redirected must be used as a top level directive.
+///
 public final class Redirect: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public static let directiveName = "Redirected"
@@ -31,7 +35,7 @@ public final class Redirect: Semantic, AutomaticDirectiveConvertible {
         "oldPath" : \Redirect._oldPath,
     ]
     
-    static var hiddenFromDocumentation = true
+    static var hiddenFromDocumentation = false
     
     init(originalMarkup: BlockDirective, oldPath: URL) {
         self.originalMarkup = originalMarkup
