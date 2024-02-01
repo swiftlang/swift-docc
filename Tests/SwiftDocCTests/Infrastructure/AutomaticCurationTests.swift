@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -551,13 +551,13 @@ class AutomaticCurationTests: XCTestCase {
         )
     }
 
-    func testNamespacesAreCuratedProperly() throws {
-        let (bundle, context) = try testBundleAndContext(named: "CxxNamespaces")
+    func testCPlusPlusSymbolsAreCuratedProperly() throws {
+        let (bundle, context) = try testBundleAndContext(named: "CxxSymbols")
 
         let rootDocumentationNode = try context.entity(
             with: .init(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/CxxNamespaces",
+                path: "/documentation/CxxSymbols",
                 sourceLanguage: .objectiveC
             )
         )
@@ -573,7 +573,10 @@ class AutomaticCurationTests: XCTestCase {
             },
             [
                 "Namespaces",
-                "/documentation/CxxNamespaces/Foo",
+                "/documentation/CxxSymbols/Foo",
+
+                "Unions",
+                "/documentation/CxxSymbols/MyUnion",
             ]
         )
     }
