@@ -145,6 +145,83 @@ class DocumentationCuratorTests: XCTestCase {
         )
     }
     
+    func testModuleUnderTechnologyRoot() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+            try """
+            # Root curating a module
+
+            @Metadata {
+               @TechnologyRoot
+            }
+            
+            Curating a module from a technology root should not generated any warnings.
+            
+            ## Topics
+            
+            - ``SourceLocations``
+            
+            """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
+        
+        guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
+              let pathToRoot = context.pathsTo(moduleNode.reference).first,
+              let root = pathToRoot.first else {
+            
+            XCTFail("Module doesn't have technology root as a predecessor in its path")
+            return
+        }
+        
+        XCTAssertEqual(root.path, "/documentation/Root")
+        XCTAssertEqual(crawler.problems.count, 0)
+            
+    }
+        
+    func testModuleUnderAncestorOfTechnologyRoot() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+            try """
+            # Root with ancestor curatings a module
+            
+            This is a root article that enables testing the behavior of it's ancestors.
+            
+            @Metadata {
+               @TechnologyRoot
+            }
+            
+            ## Topics
+            - <doc:Ancestor>
+            
+            
+            """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # Ancestor of root
+            
+            Linking to a module shouldn't raise errors due to this article being an ancestor of a technology root.
+
+            ## Topics
+            - ``SourceLocations``
+
+            """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let _ = DocumentationCurator.init(in: context, bundle: bundle)
+        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
+        
+        guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
+              let pathToRoot = context.pathsTo(moduleNode.reference).first,
+              let root = pathToRoot.first else {
+            
+            XCTFail("Module doesn't have technology root as a predecessor in its path")
+            return
+        }
+        
+        XCTAssertEqual(root.path, "/documentation/Root")
+    }
+
+
     func testSymbolLinkResolving() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
