@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -296,9 +296,81 @@ class RedirectedTests: XCTestCase {
         
         @Redirected(from: /old/path/to/this/page)
         @Redirected(from: /another/old/path/to/this/page)
-           
+
         ## Section Name
-           
+
+        ![full width image](referenced-article-image.png)
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+
+        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        _ = analyzer.visit(document)
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
+
+        let redirects = try XCTUnwrap(article?.redirects)
+        XCTAssertEqual(2, redirects.count)
+        let oldPaths = redirects.map{ $0.oldPath.relativePath }.sorted()
+        XCTAssertEqual([
+            "/another/old/path/to/this/page",
+            "/old/path/to/this/page",
+        ], oldPaths)
+    }
+
+    func testArticleSupportsRedirectInMetadata() throws {
+        let source = """
+        # Plain article
+
+        The abstract of this article
+
+        @Metadata {
+            @Redirected(from: /old/path/to/this/page)
+            @Redirected(from: /another/old/path/to/this/page)
+        }
+
+        ## Section Name
+
+        ![full width image](referenced-article-image.png)
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+
+        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        _ = analyzer.visit(document)
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
+
+        let redirects = try XCTUnwrap(article?.redirects)
+        XCTAssertEqual(2, redirects.count)
+        let oldPaths = redirects.map{ $0.oldPath.relativePath }.sorted()
+        XCTAssertEqual([
+            "/another/old/path/to/this/page",
+            "/old/path/to/this/page",
+        ], oldPaths)
+    }
+
+    func testArticleSupportsBothRedirects() throws {
+        let source = """
+        # Plain article
+
+        The abstract of this article
+
+        @Metadata {
+            @Redirected(from: /old/path/to/this/page)
+            @Redirected(from: /another/old/path/to/this/page)
+        }
+
+        ## Section Name
+
+        @Redirected(from: /third/old/path/to/this/page)
+
         ![full width image](referenced-article-image.png)
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -311,6 +383,15 @@ class RedirectedTests: XCTestCase {
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
         XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
+
+        let redirects = try XCTUnwrap(article?.redirects)
+        XCTAssertEqual(3, redirects.count)
+        let oldPaths = redirects.map{ $0.oldPath.relativePath }.sorted()
+        XCTAssertEqual([
+            "/another/old/path/to/this/page",
+            "/old/path/to/this/page",
+            "/third/old/path/to/this/page",
+        ], oldPaths)
     }
     
     func testIncorrectArgumentLabel() throws {

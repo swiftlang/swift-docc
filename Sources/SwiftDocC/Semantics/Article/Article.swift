@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -121,7 +121,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         }
         
         var remainder: [Markup]
-        let redirects: [Redirect]
+        var redirects: [Redirect]
         (redirects, remainder) = markup.children.categorize { child -> Redirect? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
@@ -142,7 +142,13 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         }
         
         var optionalMetadata = metadata.first
-        
+
+        // Append any redirects found in the metadata to the redirects
+        // found in the main content.
+        if let redirectsFromMetadata = optionalMetadata?.redirects {
+            redirects.append(contentsOf: redirectsFromMetadata)
+        }
+
         let options: [Options]
         (options, remainder) = remainder.categorize { child -> Options? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Options.directiveName else {
@@ -217,8 +223,8 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
             
-            // Remove the display name customization from the article's metadata.
-            optionalMetadata = Metadata(originalMarkup: metadata.originalMarkup, documentationExtension: metadata.documentationOptions, technologyRoot: metadata.technologyRoot, displayName: nil, titleHeading: metadata.titleHeading)
+            metadata.displayName = nil
+            optionalMetadata = metadata
         }
         
         self.init(
