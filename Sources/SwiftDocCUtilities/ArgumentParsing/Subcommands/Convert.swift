@@ -530,6 +530,9 @@ extension Docc {
             )
             var enableExperimentalLinkHierarchySerialization = false
             
+            @Flag(help: .hidden)
+            var experimentalModifyCatalogWithGeneratedCuration = false
+
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
@@ -601,6 +604,16 @@ extension Docc {
         public var enableExperimentalLinkHierarchySerialization: Bool {
             get { featureFlags.enableExperimentalLinkHierarchySerialization }
             set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
+        }
+        
+        /// A user-provided value that is true if the user wants to in-place modify the provided documentation catalog to write generated curation to documentation extension files.
+        ///
+        /// Defaults to false
+        ///
+        /// > Important: This will write new and updated files to the provided documentation catalog directory.
+        public var experimentalModifyCatalogWithGeneratedCuration: Bool {
+            get { featureFlags.experimentalModifyCatalogWithGeneratedCuration }
+            set { featureFlags.experimentalModifyCatalogWithGeneratedCuration = newValue }
         }
 
         /// A user-provided value that is true if additional metadata files should be produced.
