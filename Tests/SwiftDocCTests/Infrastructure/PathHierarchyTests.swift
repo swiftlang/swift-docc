@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1786,6 +1786,49 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[symbolID], "/ModuleName/SymbolName")
     }
     
+    func testSameDefaultImplementationOnMultiplePlatforms() throws {
+        let protocolID = "some-protocol-symbol-id"
+        let protocolRequirementID = "some-protocol-requirement-symbol-id"
+        let defaultImplementationID = "some-default-implementation-symbol-id"
+        
+        func makeSymbolGraphFile(platformName: String) -> JSONFile<SymbolGraph> {
+            JSONFile(name: "\(platformName)-ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                platformName: platformName,
+                symbols: [
+                    (protocolID, .swift, ["SomeProtocolName"]),
+                    (protocolRequirementID, .swift, ["SomeProtocolName", "someProtocolRequirement()"]),
+                    (defaultImplementationID, .swift, ["SomeConformingType", "someProtocolRequirement()"]),
+                ],
+                relationships: [
+                    .init(source: protocolRequirementID, target: protocolID, kind: .requirementOf, targetFallback: nil),
+                    .init(source: defaultImplementationID, target: protocolRequirementID, kind: .defaultImplementationOf, targetFallback: nil),
+                ]
+            ))
+        }
+        
+        let multiPlatform = Folder(name: "unit-test.docc", content: [
+            makeSymbolGraphFile(platformName: "PlatformOne"),
+            makeSymbolGraphFile(platformName: "PlatformTwo"),
+        ])
+        
+        let (_, _, context) = try loadBundle(from: createTempFolder(content: [multiPlatform]))
+        let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[protocolRequirementID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-8lcpm")
+        XCTAssertEqual(paths[defaultImplementationID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-3docm")
+        
+        // Verify that the multi platform paths are the same as the single platform paths
+        let singlePlatform = Folder(name: "unit-test.docc", content: [
+            makeSymbolGraphFile(platformName: "PlatformOne"),
+        ])
+        let (_, _, singlePlatformContext) = try loadBundle(from: createTempFolder(content: [singlePlatform]))
+        let singlePlatformPaths = singlePlatformContext.linkResolver.localResolver.pathHierarchy.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[protocolRequirementID], singlePlatformPaths[protocolRequirementID])
+        XCTAssertEqual(paths[defaultImplementationID], singlePlatformPaths[defaultImplementationID])
+    }
+    
     func testMultiPlatformModuleWithExtension() throws {
         let (_, context) = try testBundleAndContext(named: "MultiPlatformModuleWithExtension")
         let tree = try XCTUnwrap(context.linkResolver.localResolver?.pathHierarchy)
@@ -1844,12 +1887,13 @@ class PathHierarchyTests: XCTestCase {
     
     private func makeSymbolGraph(
         moduleName: String,
+        platformName: String? = nil,
         symbols: [(identifier: String, language: SourceLanguage, pathComponents: [String])],
         relationships: [SymbolGraph.Relationship] = []
     ) -> SymbolGraph {
         return SymbolGraph(
             metadata: SymbolGraph.Metadata(formatVersion: .init(major: 0, minor: 5, patch: 3), generator: "unit-test"),
-            module: SymbolGraph.Module(name: moduleName, platform: .init()),
+            module: SymbolGraph.Module(name: moduleName, platform: .init(operatingSystem: platformName.map { .init(name: $0) })),
             symbols: symbols.map { identifier, language, pathComponents in
                 SymbolGraph.Symbol(
                     identifier: .init(precise: identifier, interfaceLanguage: language.id),
