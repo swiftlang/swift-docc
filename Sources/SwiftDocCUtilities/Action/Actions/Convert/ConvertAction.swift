@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -463,17 +463,21 @@ public struct ConvertAction: Action, RecreatingContext {
 
         var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
         if (try context.renderRootModules + context.rootTechnologies).isEmpty {
+            // Check if the converted documentation is a tutorial to provide
+            // a specific error message.
+            let hasTutorial = context.knownPages.contains(where: {
+                guard let kind = try? context.entity(with: $0).kind else { return false }
+                return kind == .tutorial || kind == .tutorialArticle
+            })
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
                         severity: .warning,
                         identifier: "org.swift.docc.MissingTechnologyRoot",
-                         summary: "No TechnologyRoot to organize the documentation.",
-                         explanation: """
-                        There was no root found for this documentation catalog.
-                        - For Article-only documentation please add a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy.
-                        - For Tutorials please add a table of contents page (indicated by a `Tutorials` directive with the corresponding `Intro` and `Chapters` directive) to define the root of the documentation hierarchy.\n
-                        """
+                         summary: "There was no root found for this documentation catalog.",
+                         explanation: hasTutorial ? """
+                        For Tutorials please add a table of contents page (indicated by a `Tutorials` directive with the corresponding `Intro` and `Chapters` directive) to define the root of the documentation hierarchy. \n
+                        """ : ""
                      )
                 )
             )

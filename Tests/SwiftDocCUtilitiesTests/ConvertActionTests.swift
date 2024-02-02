@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -3182,13 +3182,13 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
         
         XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
-            "No TechnologyRoot to organize the documentation.",
+            "There was no root found for this documentation catalog.",
             "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
-        ])
+        ].sorted())
         
         let logLines = logStorage.text.splitByNewlines
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize the documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("here was no root found for this documentation catalog.") }.count, 1, "The root page warning shouldn't be repeated.")
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
     }
     
