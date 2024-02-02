@@ -92,6 +92,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
+    var experimentalModifyCatalogWithGeneratedCuration: Bool
+    
     /// The identifiers and access level requirements for symbols that have an expanded version of their documentation page if the requirements are met
     var symbolIdentifiersWithExpandedDocumentation: [String: ConvertRequest.ExpandedDocumentationRequirements]? = nil
     
@@ -139,7 +141,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         sourceRepository: SourceRepository? = nil,
         isCancelled: Synchronized<Bool>? = nil,
         diagnosticEngine: DiagnosticEngine = .init(),
-        symbolIdentifiersWithExpandedDocumentation: [String: ConvertRequest.ExpandedDocumentationRequirements]? = nil
+        symbolIdentifiersWithExpandedDocumentation: [String: ConvertRequest.ExpandedDocumentationRequirements]? = nil,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false
     ) {
         self.rootURL = documentationBundleURL
         self.emitDigest = emitDigest
@@ -156,6 +159,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.isCancelled = isCancelled
         self.diagnosticEngine = diagnosticEngine
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+        self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         // Inject current platform versions if provided
         if let currentPlatforms = currentPlatforms {
@@ -245,6 +249,16 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         // For now, we only support one bundle.
         let bundle = bundles.first!
+        
+        if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
+            let writer = GeneratedCurationWriter(context: context, catalogURL: catalogURL, outputURL: catalogURL)
+            let curation = try writer.generateDefaultCurationContents()
+            for (url, updatedContent) in curation {
+                guard let data = updatedContent.data(using: .utf8) else { continue }
+                try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+                try? data.write(to: url, options: .atomic)
+            }
+        }
         
         guard !context.problems.containsErrors else {
             if emitDigest {

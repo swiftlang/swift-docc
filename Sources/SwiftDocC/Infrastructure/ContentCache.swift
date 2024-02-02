@@ -17,11 +17,11 @@ extension DocumentationContext {
     /// > The cache is not thread-safe. It's safe to read from the cache concurrently but writing needs to happen with exclusive access. It is the callers responsibility to synchronize write access.
     struct ContentCache<Value> {
         /// The main storage of cached values.
-        private var valuesByReference = [ResolvedTopicReference: Value]()
+        private(set) var valuesByReference = [ResolvedTopicReference: Value]()
         /// A supplementary lookup of references by their symbol ID.
         ///
         /// If a reference is found, ``valuesByReference``  will also have a value for that reference because ``add(_:reference:symbolID:)`` is the only place that writes to this lookup and it always adds the reference-value pair to ``valuesByReference``.
-        private var referencesBySymbolID = [String: ResolvedTopicReference]()
+        private(set) var referencesBySymbolID = [String: ResolvedTopicReference]()
         
         /// Accesses the value for a given reference.
         /// - Parameter reference: The reference to find in the cache.

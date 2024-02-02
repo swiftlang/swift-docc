@@ -79,10 +79,14 @@ extension XCTestCase {
         )
     }
     
-    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
+        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
+    }
+    
+    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+        let (_, bundle, context) = try testBundleAndContext(named: name, codeListings: codeListings, externalResolvers: externalResolvers)
         return (bundle, context)
     }
     

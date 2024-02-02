@@ -271,6 +271,26 @@ final class PathHierarchyBasedLinkResolver {
         }
         return result
     }
+    
+    // MARK: Links
+    
+    /// Determines the disambiguated relative links of all the direct descendants of the given page.
+    ///
+    /// - Parameters:
+    ///   - reference: The identifier of the page whose descendants to generate relative links for.
+    /// - Returns: A map topic references to pairs of links and flags indicating if the link is disambiguated or not.
+    func disambiguatedRelativeLinksForDescendants(of reference: ResolvedTopicReference) -> [ResolvedTopicReference: (link: String, hasDisambiguation: Bool)] {
+        guard let nodeID = resolvedReferenceMap[reference] else { return [:] }
+        
+        let links = pathHierarchy.disambiguatedChildLinks(of: nodeID)
+        var result = [ResolvedTopicReference: (link: String, hasDisambiguation: Bool)]()
+        result.reserveCapacity(links.count)
+        for (id, link) in links {
+            guard let reference = resolvedReferenceMap[id] else { continue }
+            result[reference] = link
+        }
+        return result
+    }
 }
 
 /// Creates a more writable version of an articles file name for use in documentation links.

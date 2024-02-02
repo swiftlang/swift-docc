@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -46,19 +46,6 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "caption" : \ImageMedia._caption,
         "deviceFrame" : \ImageMedia._deviceFrame,
     ]
-    
-    /// Creates a new image with the given parameters.
-    ///
-    /// - Parameters:
-    ///   - originalMarkup: A directive that represents the image.
-    ///   - source: A reference to the source file for the image.
-    ///   - altText: A description of the appearance and function of the image.
-    init(originalMarkup: BlockDirective, source: ResourceReference, altText: String?) {
-        self.originalMarkup = originalMarkup
-        self.altText = altText
-        super.init()
-        self.source = source
-    }
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         if !FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
