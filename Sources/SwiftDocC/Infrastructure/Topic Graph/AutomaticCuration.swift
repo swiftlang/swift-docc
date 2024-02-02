@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -214,6 +214,7 @@ extension AutomaticCuration {
             case .`typeProperty`: return "Type Properties"
             case .`typeSubscript`: return "Type Subscripts"
             case .`typealias`: return "Type Aliases"
+            case .union: return "Unions"
             case .`var`: return "Variables"
             case .module: return "Modules"
             case .extendedModule: return "Extended Modules"
@@ -236,6 +237,7 @@ extension AutomaticCuration {
         .`class`,
         .`protocol`,
         .`struct`,
+        .`union`,
         .`httpRequest`,
         .`dictionary`,
         .`var`,
