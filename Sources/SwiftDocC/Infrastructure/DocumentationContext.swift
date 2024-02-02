@@ -1328,7 +1328,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
 
-            groupOverloadedSymbols(with: linkResolver.localResolver)
+            try groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -2402,18 +2402,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     /// Handles overloaded symbols by grouping them together into one page.
-    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) {
+    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) throws {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         
-        linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
 
             // Tell each symbol what other symbols overload it.
             for (index, symbolReference) in overloadedSymbolReferences.indexed() {
-                let documentationNode = try? entity(with: symbolReference)
+                let documentationNode = try entity(with: symbolReference)
 
-                guard let symbol = documentationNode?.semantic as? Symbol else {
+                guard let symbol = documentationNode.semantic as? Symbol else {
                     preconditionFailure("""
                     Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
                     Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
