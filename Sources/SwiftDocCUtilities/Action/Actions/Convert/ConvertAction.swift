@@ -39,6 +39,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let inheritDocs: Bool
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
+    let experimentalModifyCatalogWithGeneratedCuration: Bool
     let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
@@ -107,6 +108,7 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
@@ -147,6 +149,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
+        self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
@@ -207,7 +210,8 @@ public struct ConvertAction: Action, RecreatingContext {
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
             isCancelled: isCancelled,
-            diagnosticEngine: self.diagnosticEngine
+            diagnosticEngine: self.diagnosticEngine,
+            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
         )
     }
     
@@ -250,6 +254,7 @@ public struct ConvertAction: Action, RecreatingContext {
             formatConsoleOutputForTools: emitFixits,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: false,
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository,
@@ -279,6 +284,7 @@ public struct ConvertAction: Action, RecreatingContext {
         formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String?,
@@ -314,6 +320,7 @@ public struct ConvertAction: Action, RecreatingContext {
             formatConsoleOutputForTools: formatConsoleOutputForTools,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: transformForStaticHosting,
             allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
             hostingBasePath: hostingBasePath,

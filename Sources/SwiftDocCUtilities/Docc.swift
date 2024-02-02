@@ -10,19 +10,27 @@
 
 import ArgumentParser
 
-
+private var subcommands: [ParsableCommand.Type] {
+    var subcommands: [ParsableCommand.Type] = [
+        Docc.Convert.self,
+        Docc.ProcessArchive.self,
+        Docc.ProcessCatalog.self,
+        Docc._Index.self,
+        Docc.Init.self,
+    ]
 #if canImport(NIOHTTP1)
-private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Preview.self, Docc.ProcessArchive.self, Docc._Index.self, Docc.Init.self]
-private let usage: String = """
-docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [<other-options>]
-docc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<other-options>]
-"""
-#else
-private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.ProcessArchive.self, Docc._Index.self, Docc.Init.self]
-private let usage: String = """
-docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [<other-options>]
-"""
+    subcommands.insert(Docc.Preview.self, at: 1)
 #endif
+    return subcommands
+}
+
+private var usage: String {
+    var usage = "docc convert [<catalog-path>] [--additional-symbol-graph-dir <symbol-graph-dir>] [<other-options>]"
+#if canImport(NIOHTTP1)
+    usage.append("\ndocc preview [<catalog-path>] [--port <port-number>] [--additional-symbol-graph-dir <symbol-graph-dir>] [--output-dir <output-dir>] [<other-options>]")
+#endif
+    return usage
+}
 
 /// The default, command-line interface you use to compile and preview documentation.
 public struct Docc: ParsableCommand {
