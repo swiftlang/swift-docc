@@ -9,8 +9,11 @@
 */
 
 import Foundation
-@_spi(ExternalLinks) import SwiftDocC // SPI to set `context.linkResolver.dependencyArchives`
 import _Common
+
+@_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
+@_spi(FileManagerProtocol) // SPI initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
+import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {

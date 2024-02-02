@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,7 +28,16 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     ///   - formattingOptions: The formatting options for the diagnostics.
     ///   - baseUrl: A url to be used as a base url when formatting diagnostic source path.
     ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
-    ///   - fileManager: The file manager that reads the contents of source files.
+    public convenience init(
+        _ stream: TextOutputStream = LogHandle.standardError,
+        formattingOptions options: DiagnosticFormattingOptions = [],
+        baseURL: URL? = nil,
+        highlight: Bool? = nil
+    ) {
+        self.init(stream, formattingOptions: options, baseURL: baseURL, highlight: highlight, fileManager: FileManager.default)
+    }
+    
+    @_spi(FileManagerProtocol)
     public init(
         _ stream: TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
