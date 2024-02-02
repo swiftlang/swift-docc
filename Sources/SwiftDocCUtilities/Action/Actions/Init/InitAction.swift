@@ -10,6 +10,7 @@
 
 import Foundation
 import SwiftDocC
+import _Common
 
 /// An action that generates a documentation catalog from a template seed.
 public struct InitAction: Action {

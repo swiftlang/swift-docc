@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -292,13 +292,13 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         
         var results = Set<String>()
         
-        let paths = files.keys.filter { $0.hasPrefix(path) }
-        for p in paths {
-            let endOfPath = String(p.dropFirst(path.count))
-            guard !endOfPath.isEmpty else { continue }
-            let pathParts = endOfPath.components(separatedBy: "/")
+        for subpath in files.keys where subpath.hasPrefix(path) {
+            let relativePath = subpath.dropFirst(path.count).removingLeadingSlash
+            guard !relativePath.isEmpty else { continue }
+            // only need to split twice because we only care about the first component and about identifying multiple components
+            let pathParts = relativePath.split(separator: "/", maxSplits: 2)
             if pathParts.count == 1 {
-                results.insert(pathParts[0])
+                results.insert(String(pathParts[0]))
             }
         }
         return Array(results)
