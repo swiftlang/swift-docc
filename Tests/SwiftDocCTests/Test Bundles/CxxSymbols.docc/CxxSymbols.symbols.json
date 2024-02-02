@@ -1,0 +1,339 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "?"
+  },
+  "module": {
+    "name": "CxxSymbols",
+    "platform": {
+      "architecture": "arm64",
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 11,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "macosx"
+      },
+      "vendor": "apple"
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "c:@N@Foo@S@Bar",
+      "target": "c:@N@Foo",
+      "targetFallback": "Foo"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@U@MyUnion@FI@a",
+      "target": "c:@U@MyUnion",
+      "targetFallback": "MyUnion"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@U@MyUnion@FI@b",
+      "target": "c:@U@MyUnion",
+      "targetFallback": "MyUnion"
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "namespace"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Foo"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "c++",
+        "precise": "c:@N@Foo"
+      },
+      "kind": {
+        "displayName": "Namespace",
+        "identifier": "c++.namespace"
+      },
+      "location": {
+        "position": {
+          "character": 10,
+          "line": 0
+        },
+        "uri": "file:///path/to/namespace.cpp.tmp/input.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Foo"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "Foo"
+          }
+        ],
+        "title": "Foo"
+      },
+      "pathComponents": [
+        "Foo"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Bar"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "c++",
+        "precise": "c:@N@Foo@S@Bar"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "c++.class"
+      },
+      "location": {
+        "position": {
+          "character": 8,
+          "line": 1
+        },
+        "uri": "file:///path/to/namespace.cpp.tmp/input.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Bar"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "Bar"
+          }
+        ],
+        "title": "Bar"
+      },
+      "pathComponents": [
+        "Foo",
+        "Bar"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "union"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyUnion"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 49,
+                "line": 0
+              },
+              "start": {
+                "character": 4,
+                "line": 0
+              }
+            },
+            "text": "A value that can be either an int or a float."
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "c++",
+        "precise": "c:@U@MyUnion"
+      },
+      "kind": {
+        "displayName": "Union",
+        "identifier": "c++.union"
+      },
+      "location": {
+        "position": {
+          "character": 6,
+          "line": 1
+        },
+        "uri": "file://INPUT_DIR/input.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyUnion"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MyUnion"
+          }
+        ],
+        "title": "MyUnion"
+      },
+      "pathComponents": [
+        "MyUnion"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:I",
+          "spelling": "int"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "a"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "c++",
+        "precise": "c:@U@MyUnion@FI@a"
+      },
+      "kind": {
+        "displayName": "Instance Property",
+        "identifier": "c++.property"
+      },
+      "location": {
+        "position": {
+          "character": 8,
+          "line": 2
+        },
+        "uri": "file://INPUT_DIR/input.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "a"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "a"
+          }
+        ],
+        "title": "a"
+      },
+      "pathComponents": [
+        "MyUnion",
+        "a"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:f",
+          "spelling": "float"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "b"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "c++",
+        "precise": "c:@U@MyUnion@FI@b"
+      },
+      "kind": {
+        "displayName": "Instance Property",
+        "identifier": "c++.property"
+      },
+      "location": {
+        "position": {
+          "character": 10,
+          "line": 3
+        },
+        "uri": "file://INPUT_DIR/input.h"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "b"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "b"
+          }
+        ],
+        "title": "b"
+      },
+      "pathComponents": [
+        "MyUnion",
+        "b"
+      ]
+    }
+  ]
+}

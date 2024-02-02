@@ -291,6 +291,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         defer { filesLock.unlock() }
         
         var results = Set<String>()
+        let path = path.appendingTrailingSlash
         
         for subpath in files.keys where subpath.hasPrefix(path) {
             let relativePath = subpath.dropFirst(path.count).removingLeadingSlash
@@ -304,19 +305,14 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         return Array(results)
     }
 
-
-
     public func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
 
         if let keys = keys {
-            XCTAssertTrue(
-                keys.isEmpty,
-                "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem"
-            )
+            XCTAssertTrue(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
         }
         
-        if mask != .skipsHiddenFiles && mask.isEmpty {
-            XCTFail("The given directory enumeration option(s) have not been implemented in the test file system: \(mask)")
+        if !mask.isSubset(of: [.skipsHiddenFiles]) {
+            XCTFail("The given directory enumeration option(s) \(mask.rawValue) have not been implemented in the test file system: \(mask)")
         }
 
         let skipHiddenFiles = mask == .skipsHiddenFiles
@@ -343,6 +339,17 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         defer { filesLock.unlock() }
 
         return files.keys.sorted().joined(separator: "\n")
+    }
+    
+    // This is a convenience utility for testing, not FileManagerProtocol API
+    public func recursiveContentsOfDirectory(atPath path: String) throws -> [String] {
+        var allSubpaths = try contentsOfDirectory(atPath: path)
+        
+        for subpath in allSubpaths { // This is iterating over a copy
+            let innerContents = try recursiveContentsOfDirectory(atPath: "\(path)/\(subpath)")
+            allSubpaths.append(contentsOf: innerContents.map({ "\(subpath)/\($0)" }))
+        }
+        return allSubpaths
     }
 }
 

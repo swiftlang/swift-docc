@@ -47,7 +47,7 @@ final class InitActionTests: XCTestCase {
         )
         let result = try action.perform(logHandle: .none)
         // Test the content of the output folder is the expected one.
-        let outputCatalogContent = try fileManager._recursiveContentsOfDirectory(atPath: result.outputs.first!.path).sorted()
+        let outputCatalogContent = try fileManager.recursiveContentsOfDirectory(atPath: result.outputs.first!.path).sorted()
         XCTAssertEqual(outputCatalogContent, [
             "table-of-contents.tutorial",
             "Chapter01",
@@ -135,17 +135,3 @@ final class InitActionTests: XCTestCase {
         """)
     }
 }
-
-private extension TestFileSystem {
-    func _recursiveContentsOfDirectory(atPath path: String) throws -> [String] {
-        var allSubpaths = try contentsOfDirectory(atPath: path)
-        
-        for subpath in allSubpaths { // This is iterating over a copy
-            let innerContents = try _recursiveContentsOfDirectory(atPath: "\(path)/\(subpath)")
-            allSubpaths.append(contentsOf: innerContents.map({ "\(subpath)/\($0)" }))
-        }
-        return allSubpaths
-    }
-}
-
-
