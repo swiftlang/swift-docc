@@ -4,7 +4,7 @@ Arrange information into rows and columns.
 
 ## Overview
 
-To add a table to your documentation, start a new paragraph and add the following elements, each on its own line:
+To add a table to your documentation, start a new paragraph and add the following required elements, each on its own line:
 
 * A table header, with the heading text of each column, separated by pipes (`|`)
 * A separator row, with at least 3 hyphens (`-`) for each column, separated by pipes
@@ -52,7 +52,8 @@ You can add leading and/or trailing pipes (`|`) if you find that table markup ea
 | `supersonic` | Moves faster than the speed of sound |
 ```
 
-The content of a table cell supports the same style attributes as other text and supports links to other content, including symbols. For more information about styling text, see [Format Text in Bold, Italics, and Code Voice](doc:formatting-your-documentation-content#Format-Text-in-Bold,-Italics,-and-Code-Voice).
+The content of a table cell supports the same style attributes as other text and supports links to other content, including symbols. If a table cell's content includes a pipe (`|`) you need to escape the pipe character by preceding it with a backslash 
+(`\`). For more information about styling text, see [Format Text in Bold, Italics, and Code Voice](doc:formatting-your-documentation-content#Format-Text-in-Bold,-Italics,-and-Code-Voice).
 
 > Note: A table cell can only contain a single line of formatted content. Lists, asides, code blocks, headings, and directives are not supported inside a table cell. 
 
