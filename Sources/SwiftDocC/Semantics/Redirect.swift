@@ -37,13 +37,6 @@ public final class Redirect: Semantic, AutomaticDirectiveConvertible {
     
     static var hiddenFromDocumentation = false
     
-    init(originalMarkup: BlockDirective, oldPath: URL) {
-        self.originalMarkup = originalMarkup
-        super.init()
-        
-        self.oldPath = oldPath
-    }
-    
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
