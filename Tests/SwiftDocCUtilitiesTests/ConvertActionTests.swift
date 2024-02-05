@@ -3188,7 +3188,7 @@ class ConvertActionTests: XCTestCase {
         
         let logLines = logStorage.text.splitByNewlines
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("here was no root found for this documentation catalog.") }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("There was no root found for this documentation catalog.") }.count, 1, "The root page warning shouldn't be repeated.")
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
     }
     
