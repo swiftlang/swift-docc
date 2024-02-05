@@ -281,11 +281,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     /// External metadata injected into the context, for example via command line arguments.
     public var externalMetadata = ExternalMetadata()
-    
-    
-    /// The decoder used in the `SymbolGraphLoader`
-    var decoder: JSONDecoder = JSONDecoder()
-    
+
     /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
     ///
     /// - Parameter dataProvider: The data provider to register bundles from.
@@ -1983,7 +1979,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             )
             
             do {
-                try symbolGraphLoader.loadAll(using: JSONDecoder())
+                try symbolGraphLoader.loadAll()
                 let pathHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
                 hierarchyBasedResolver = PathHierarchyBasedLinkResolver(pathHierarchy: pathHierarchy)
             } catch {

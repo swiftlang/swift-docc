@@ -22,15 +22,14 @@ extension XCTestCase {
                     externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
                     fallbackResolver: ConvertServiceFallbackResolver? = nil,
                     diagnosticFilterLevel: DiagnosticSeverity = .hint,
-                    configureContext: ((DocumentationContext) throws -> Void)? = nil,
-                    decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
+                    configureContext: ((DocumentationContext) throws -> Void)? = nil
+    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
         context.externalDocumentationSources = externalResolvers
         context.globalExternalSymbolResolver = externalSymbolResolver
         context.convertServiceFallbackResolver = fallbackResolver
         context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
-        context.decoder = decoder
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
@@ -48,8 +47,8 @@ extension XCTestCase {
                               externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
                               externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
                               fallbackResolver: ConvertServiceFallbackResolver? = nil,
-                              configureBundle: ((URL) throws -> Void)? = nil,
-                              decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
+                              configureBundle: ((URL) throws -> Void)? = nil
+    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         
@@ -74,8 +73,7 @@ extension XCTestCase {
             codeListings: codeListings,
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
-            fallbackResolver: fallbackResolver,
-            decoder: decoder
+            fallbackResolver: fallbackResolver
         )
     }
     
