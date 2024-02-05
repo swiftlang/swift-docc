@@ -309,6 +309,9 @@ public class NavigatorIndex {
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
+
+        // C++ symbols
+        case namespace = 48
                 
         /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
         init(symbolKind: String) {
@@ -336,6 +339,7 @@ public class NavigatorIndex {
             case "enumcm", "structcm", "clm", "intfcm", "type.method": self = .typeMethod
             case "httpget", "httpput", "httppost", "httppatch", "httpdelete": self = .httpRequest
             case "dict": self = .dictionarySymbol
+            case "namespace": self = .namespace
             default: self = .symbol
             }
         }
