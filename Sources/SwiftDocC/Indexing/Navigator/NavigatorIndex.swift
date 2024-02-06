@@ -304,14 +304,14 @@ public class NavigatorIndex {
 
         // A property list key.
         case propertyListKeyReference = 47
+
+        // C++ symbols
+        case namespace = 48
         
         // Special items
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
-
-        // C++ symbols
-        case namespace = 48
                 
         /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
         init(symbolKind: String) {
