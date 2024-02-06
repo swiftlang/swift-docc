@@ -60,7 +60,7 @@ class DoxygenTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
 
         XCTAssertEqual(symbol.abstract?.format(), "This is an abstract.")
-        XCTAssertEqual(symbol.discussion?.content.map { $0.format() }, ["This is a discussion.", "This is a note."])
+        XCTAssertEqual(symbol.discussion?.content.map { $0.format() }, [#"\discussion This is a discussion."#, #"\note This is a note."#])
 
         // Verify the expected content in the render model
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
