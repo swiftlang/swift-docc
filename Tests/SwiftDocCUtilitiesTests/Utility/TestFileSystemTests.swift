@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,9 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocC
-@testable import SwiftDocCUtilities
-import SwiftDocCTestUtilities
+@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class TestFileSystemTests: XCTestCase {
     
@@ -283,5 +281,33 @@ class TestFileSystemTests: XCTestCase {
         XCTAssert(bundle.markupURLs.allSatisfy(\.isFileURL))
         XCTAssert(bundle.miscResourceURLs.allSatisfy(\.isFileURL))
         XCTAssert(bundle.symbolGraphURLs.allSatisfy(\.isFileURL))
+    }
+    
+    func testBundleDiscovery() throws {
+        let somethingSymbolGraphData = try JSONEncoder().encode(makeSymbolGraph(moduleName: "Something"))
+        
+        do {
+            let fs = try TestFileSystem(folders: [
+                Folder(name: "CatalogName.docc", content: [
+                    InfoPlist(displayName: "DisplayName", identifier: "com.example"),
+                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
+                ])
+            ])
+            let bundle = try XCTUnwrap(fs.bundles().first)
+            XCTAssertEqual(bundle.displayName, "DisplayName", "Display name is read from Info.plist")
+            XCTAssertEqual(bundle.identifier, "com.example", "Identifier is read from Info.plist")
+        }
+         
+        do {
+            let fs = try TestFileSystem(folders: [
+                Folder(name: "CatalogName.docc", content: [
+                    // No Info.plist
+                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
+                ])
+            ])
+            let bundle = try XCTUnwrap(fs.bundles().first)
+            XCTAssertEqual(bundle.displayName, "CatalogName", "Display name is derived from catalog name")
+            XCTAssertEqual(bundle.displayName, "CatalogName", "Identifier is derived the display name")
+        }
     }
 }
