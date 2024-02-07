@@ -120,7 +120,8 @@ struct PathHierarchy {
                 }
             }
             
-            var topLevelCandidates = nodes
+            // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
+            var topLevelCandidates = nodes.filter { _, node in node.parent == nil }
             for relationship in graph.relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source], let expectedContainerName = sourceNode.symbol?.pathComponents.dropLast().last else {
                     continue
@@ -180,7 +181,14 @@ struct PathHierarchy {
                 moduleNode.add(symbolChild: topLevelNode)
             }
             
-            for node in topLevelCandidates.values where node.symbol!.pathComponents.count > 1 {
+            assert(
+                topLevelCandidates.values.filter({ $0.symbol!.pathComponents.count > 1 }).allSatisfy({ $0.parent == nil }), """
+                Top-level candidates shouldn't already exist in the hierarchy. \
+                This wasn't true for \(topLevelCandidates.filter({ $0.value.symbol!.pathComponents.count > 1 && $0.value.parent != nil }).map(\.key).sorted())
+                """
+            )
+            
+            for node in topLevelCandidates.values where node.symbol!.pathComponents.count > 1 && node.parent == nil {
                 var parent = moduleNode
                 var components = { (symbol: SymbolGraph.Symbol) -> [String] in
                     let original = symbol.pathComponents

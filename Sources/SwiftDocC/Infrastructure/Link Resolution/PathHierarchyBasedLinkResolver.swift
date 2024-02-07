@@ -14,7 +14,7 @@ import SymbolKit
 /// A type that encapsulates resolving links by searching a hierarchy of path components.
 final class PathHierarchyBasedLinkResolver {
     /// A hierarchy of path components used to resolve links in the documentation.
-    private(set) var pathHierarchy: PathHierarchy!
+    private(set) var pathHierarchy: PathHierarchy
     
     /// Map between resolved identifiers and resolved topic references.
     private(set) var resolvedReferenceMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
