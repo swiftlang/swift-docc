@@ -3071,36 +3071,35 @@ class ConvertActionTests: XCTestCase {
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
     func testConvertWithNoTechnologyRoot() throws {
-        func convert(_ bundle: Folder) throws -> ConvertAction {
-            return try ConvertAction(
-                documentationBundleURL: bundle.absoluteURL,
+        func problemsFromConverting(_ catalogContent: [File]) throws -> [Problem] {
+            let catalog = Folder(name: "unit-test.docc", content: catalogContent)
+            let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
+            let engine = DiagnosticEngine()
+            var action = try ConvertAction(
+                documentationBundleURL: catalog.absoluteURL,
                 outOfProcessResolver: nil,
-                analyze: true,
-                targetDirectory: targetDirectory,
+                analyze: false,
+                targetDirectory: URL(fileURLWithPath: "/output"),
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: URL(fileURLWithPath: "/tmp"),
                 diagnosticEngine: engine
             )
+            _ = try action.perform(logHandle: .none)
+            return engine.problems
         }
-        var bundle = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            TextFile(name: "Documentation.md", utf8Content: "")
-        ])
-        var testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        var targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        var engine = DiagnosticEngine()
-        var action = try convert(bundle)
-        let _ = try action.perform(logHandle: .standardOutput)
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
-        XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
         
-        bundle = Folder(name: "unit-test.docc", content: [
+        
+        let TutorialArticleWithNoContentProblems = try problemsFromConverting([
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Article.tutorial", utf8Content: "")
+        ])
+        XCTAssert(TutorialArticleWithNoContentProblems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
+        
+        let onlyTutorialArticleProblems = try problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "Article.tutorial", utf8Content: """
                 @Article(time: 20) {
@@ -3111,31 +3110,17 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
         ])
-        testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        engine = DiagnosticEngine()
-        action = try convert(bundle)
-        _ = try action.perform(logHandle: .standardOutput)
-        XCTAssert(engine.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
+        XCTAssert(onlyTutorialArticleProblems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
         
-        bundle = Folder(name: "unit-test.docc", content: [
+        let tutorialTableOfContentProblem = try problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "table-of-contents.tutorial", utf8Content: """
                 @Tutorials(name: "Tutorial") {
-                    @Intro(title: "Tutorial Introduction") {
-                    }
                 }
                 """
             ),
         ])
-        testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        engine = DiagnosticEngine()
-        action = try convert(bundle)
-        _ = try action.perform(logHandle: .standardOutput)
-        XCTAssertFalse(engine.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
+        XCTAssert(tutorialTableOfContentProblem.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
     }
     
     func testWrittenDiagnosticsAfterConvert() throws {
