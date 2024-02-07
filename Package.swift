@@ -41,7 +41,6 @@ let package = Package(
         .target(
             name: "SwiftDocC",
             dependencies: [
-                .target(name: "_Common"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
                 .product(name: "CLMDB", package: "swift-lmdb"),
@@ -67,7 +66,6 @@ let package = Package(
         .target(
             name: "SwiftDocCUtilities",
             dependencies: [
-                .target(name: "_Common"),
                 .target(name: "SwiftDocC"),
                 .product(name: "NIOHTTP1", package: "swift-nio", condition: .when(platforms: [.macOS, .iOS, .linux, .android])),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
@@ -84,13 +82,6 @@ let package = Package(
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
-            ],
-            swiftSettings: swiftSettings
-        ),
-        
-        .target(
-            name: "_Common",
-            dependencies: [
             ],
             swiftSettings: swiftSettings
         ),

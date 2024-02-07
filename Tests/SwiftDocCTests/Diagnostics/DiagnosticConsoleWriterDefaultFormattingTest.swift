@@ -11,7 +11,7 @@
 import XCTest
 import Markdown
 @testable @_spi(FileManagerProtocol) import SwiftDocC
-import SwiftDocCTestUtilities
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 

@@ -1,18 +1,17 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-@testable import SwiftDocC
+@testable @_spi(FileManagerProtocol) import SwiftDocC
 @testable import SwiftDocCUtilities
 import XCTest
 import SwiftDocCTestUtilities
-import _Common
 
 /*
  This file contains a test helper API for working with folder hierarchies, with the ability to:

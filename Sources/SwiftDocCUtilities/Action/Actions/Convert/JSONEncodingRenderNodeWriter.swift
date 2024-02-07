@@ -9,8 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
-import _Common
+@_spi(FileManagerProtocol) import SwiftDocC
 
 /// An object that writes render nodes, as JSON files, into a target folder.
 ///

@@ -10,8 +10,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftDocC
-import _Common
+@testable @_spi(FileManagerProtocol) import SwiftDocC
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
 ///
@@ -41,6 +40,7 @@ import _Common
 ///
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
+@_spi(FileManagerProtocol) // This needs to be SPI because it conforms to an SPI protocol
 public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
     public let currentDirectoryPath = "/"
     

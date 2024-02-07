@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,10 +9,9 @@
 */
 
 import Foundation
-import _Common
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
-@_spi(FileManagerProtocol) // SPI initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
+@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.

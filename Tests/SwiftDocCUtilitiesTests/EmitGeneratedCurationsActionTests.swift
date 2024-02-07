@@ -11,7 +11,7 @@
 import XCTest
 import Foundation
 @testable import SwiftDocCUtilities
-import SwiftDocCTestUtilities
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class EmitGeneratedCurationsActionTests: XCTestCase {
     

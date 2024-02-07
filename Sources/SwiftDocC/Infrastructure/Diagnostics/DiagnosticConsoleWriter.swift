@@ -10,7 +10,6 @@
 
 import Foundation
 import Markdown
-import _Common
 
 /// Writes diagnostic messages to a text output stream.
 ///
@@ -99,17 +98,28 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 // MARK: Formatted descriptions
 
 extension DiagnosticConsoleWriter {
-    
-    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String where Problems: Sequence, Problems.Element == Problem {
+    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
+        formattedDescription(for: problems, options: options, fileManager: FileManager.default)
+    }
+    @_spi(FileManagerProtocol)
+    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String where Problems: Sequence, Problems.Element == Problem {
         return problems.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
     
+    public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
+        formattedDescription(for: problem, options: options, fileManager: FileManager.default)
+    }
+    @_spi(FileManagerProtocol)
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
     
-    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
+    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
+        formattedDescription(for: diagnostic, options: options, fileManager: FileManager.default)
+    }
+    @_spi(FileManagerProtocol)
+    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
