@@ -4256,6 +4256,103 @@ let expected = """
         problem = try XCTUnwrap(linkResolutionProblems.last)
         XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
     }
+    
+    func testContextRecognizesOverloads() throws {
+        
+        func checkContainsSiblingOverloads(for overloadedReferences: [ResolvedTopicReference], using context: DocumentationContext, file: StaticString = #file, line: UInt = #line) throws {
+            var seenIndices = Set<Int>()
+            
+            for (index, reference) in overloadedReferences.indexed() {
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference], file: file, line: line)
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol, file: file, line: line)
+
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue, file: file, line: line)
+
+                // Make sure that each symbol contains all of its sibling overloads.
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1, file: file, line: line)
+                for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                    XCTAssertTrue(overloads.references.contains(otherReference), file: file, line: line)
+                }
+                
+                // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
+                let displayIndex = try XCTUnwrap(overloads.displayIndex, file: file, line: line)
+                XCTAssertFalse(seenIndices.contains(displayIndex), file: file, line: line)
+                seenIndices.insert(displayIndex)
+            }
+
+            // Check that all the overloads was encountered
+            for index in overloadedReferences.indices {
+                XCTAssert(seenIndices.contains(index), file: file, line: line)
+            }
+        }
+        
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, _, context) = try testBundleAndContext(copying: "OverloadedSymbols", configureBundle: { url in
+            try FileManager.default.copyItem(
+                at: Bundle.module.url(forResource: "Animals.symbols", withExtension: "json", subdirectory: "Test Resources")!,
+                to: url.appendingPathComponent("Animals.symbols.json"))
+            try FileManager.default.copyItem(
+                at: Bundle.module.url(forResource: "OverloadedMacros.symbols", withExtension: "json", subdirectory: "Test Resources")!,
+                to: url.appendingPathComponent("OverloadedMacros.symbols.json"))
+        })
+
+        let methodsIdentifiers = ["s:7Animals6DragonC3eatyyxlF",
+                                  "s:7Animals6DragonC3eatyySiF",
+                                  "s:7Animals6DragonC3eatyySSF"]
+        
+        let initializerIdentifiers = ["s:7Animals4BirdC5colorACSaySSG_tcfc",
+                                      "s:7Animals4BirdC5colorACSS_tcfc"]
+        
+        let staticMethodIdentifiers = ["s:7Animals4BirdC3flyyySdFZ",
+                                       "s:7Animals4BirdC3flyyySiFZ"]
+        
+        let operatorIdentifiers = ["s:7Animals6DragonC2eeoiySbAC_ACtFZ",
+                                   "s:7Animals6DragonC2eeoiySbAC_yptFZ"]
+        
+        let subscriptIdentifiers = ["s:7Animals4BirdCySSSicip",
+                                    "s:7Animals4BirdCySSs5Int16Vcip"]
+        
+        let functionIdentifiers = ["s:7Animals5sleepyyAA6DragonCF",
+                                    "s:7Animals5sleepyyAA4BirdCF"]
+        
+        let macroIdentifiers = ["s:10testMacros9stringifyyx_SStSSclufm",
+                                "s:10testMacros9stringifyyx_SStxclufm"]
+        
+        let methodsReferences = try methodsIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let initializerReferences = try initializerIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let staticMethodsReferences = try staticMethodIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let operatorReferences = try operatorIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let subscriptReferences = try subscriptIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let functionReferences = try functionIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let macroReferences = try macroIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        
+        try checkContainsSiblingOverloads(for: methodsReferences, using: context)
+        try checkContainsSiblingOverloads(for: initializerReferences, using: context)
+        try checkContainsSiblingOverloads(for: staticMethodsReferences, using: context)
+        try checkContainsSiblingOverloads(for: operatorReferences, using: context)
+        try checkContainsSiblingOverloads(for: subscriptReferences, using: context)
+        try checkContainsSiblingOverloads(for: functionReferences, using: context)
+        try checkContainsSiblingOverloads(for: macroReferences, using: context)
+    }
+    
+    // We do not want to add overload behavior for some symbol kinds, even if they are collisions in the link resolver.
+    func testContextDoesNotRecognizeUnoverloadableSymbolKinds() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+
+        let structIdentifiers = ["s:8ShapeKit22overloadedparentstructV",
+                                 "s:8ShapeKit22OverloadedParentStructV"]
+        
+        let structReferences = try structIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        
+        for reference in structReferences {
+            let documentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
+            XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
+        }
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
