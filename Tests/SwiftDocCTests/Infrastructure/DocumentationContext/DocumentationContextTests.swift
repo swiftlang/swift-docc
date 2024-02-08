@@ -4280,6 +4280,11 @@ let expected = """
                 XCTAssertFalse(seenIndices.contains(displayIndex), file: file, line: line)
                 seenIndices.insert(displayIndex)
             }
+
+            // Check that all the overloads was encountered
+            for index in overloadedReferences.indices {
+                XCTAssert(seenIndices.contains(index), file: file, line: line)
+            }
         }
         
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
