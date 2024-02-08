@@ -1432,8 +1432,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 XCTAssertNotNil(declaration.tokens)
             }
             
-            for (otherIndex, otherReference) in overloadReferences.indexed() {
-                guard otherIndex != index else { continue }
+            for (otherIndex, otherReference) in overloadReferences.indexed() where otherIndex != index {
                 XCTAssertTrue(otherDeclarations.declarations.contains(where: { $0.identifier == otherReference.absoluteString }))
             }
         }
