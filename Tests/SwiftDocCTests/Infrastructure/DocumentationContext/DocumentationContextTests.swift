@@ -4259,25 +4259,25 @@ let expected = """
     
     func testContextRecognizesOverloads() throws {
         
-        func checkContainsSiblingOverloads(for overloadedReferences: [ResolvedTopicReference], using context: DocumentationContext) throws {
+        func checkContainsSiblingOverloads(for overloadedReferences: [ResolvedTopicReference], using context: DocumentationContext, file: StaticString = #file, line: UInt = #line) throws {
             var seenIndices = Set<Int>()
             
             for (index, reference) in overloadedReferences.indexed() {
-                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
-                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
-                
-                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference], file: file, line: line)
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol, file: file, line: line)
+
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue, file: file, line: line)
 
                 // Make sure that each symbol contains all of its sibling overloads.
-                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1, file: file, line: line)
                 for (otherIndex, otherReference) in overloadedReferences.indexed() {
                    guard otherIndex != index else { continue }
-                    XCTAssertTrue(overloads.references.contains(otherReference))
+                    XCTAssertTrue(overloads.references.contains(otherReference), file: file, line: line)
                 }
                 
                 // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
-                let displayIndex = try XCTUnwrap(overloads.displayIndex)
-                XCTAssertFalse(seenIndices.contains(displayIndex))
+                let displayIndex = try XCTUnwrap(overloads.displayIndex, file: file, line: line)
+                XCTAssertFalse(seenIndices.contains(displayIndex), file: file, line: line)
                 seenIndices.insert(displayIndex)
             }
         }
