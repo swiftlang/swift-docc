@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+@_spi(FileManagerProtocol) import SwiftDocC
 
 /// An action that generates a documentation catalog from a template seed.
 public struct InitAction: Action {
