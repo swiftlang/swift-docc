@@ -244,6 +244,7 @@ extension DeclarationRenderSection: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.platforms, forKey: CodingKeys.platforms)
         diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
         diffBuilder.addDifferences(atKeyPath: \.languages, forKey: CodingKeys.languages)
+        diffBuilder.addDifferences(atKeyPath: \.otherDeclarations, forKey: CodingKeys.otherDeclarations)
 
         return diffBuilder.differences
     }
