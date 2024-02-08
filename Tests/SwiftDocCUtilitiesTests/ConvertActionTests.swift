@@ -3092,13 +3092,6 @@ class ConvertActionTests: XCTestCase {
             return engine.problems
         }
         
-        
-        let TutorialArticleWithNoContentProblems = try problemsFromConverting([
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            TextFile(name: "Article.tutorial", utf8Content: "")
-        ])
-        XCTAssert(TutorialArticleWithNoContentProblems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
-        
         let onlyTutorialArticleProblems = try problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "Article.tutorial", utf8Content: """
@@ -3110,17 +3103,27 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
         ])
-        XCTAssert(onlyTutorialArticleProblems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
+        XCTAssert(onlyTutorialArticleProblems.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
         
         let tutorialTableOfContentProblem = try problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             TextFile(name: "table-of-contents.tutorial", utf8Content: """
-                @Tutorials(name: "Tutorial") {
+                """
+            ),
+            TextFile(name: "article.tutorial", utf8Content: """
+                @Article(time: 20) {
+                   @Intro(title: "Slothy Tutorials") {
+                      This is an abstract for the intro.
+                   }
                 }
                 """
             ),
         ])
-        XCTAssert(tutorialTableOfContentProblem.contains(where: { $0.diagnostic.identifier == "org.swift.docc.MissingTechnologyRoot" }))
+        XCTAssert(tutorialTableOfContentProblem.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
     }
     
     func testWrittenDiagnosticsAfterConvert() throws {
@@ -3159,21 +3162,20 @@ class ConvertActionTests: XCTestCase {
         )
         
         let _ = try action.perform(logHandle: .standardOutput)
-        XCTAssertEqual(engine.problems.count, 2)
+        XCTAssertEqual(engine.problems.count, 1)
         
         XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
         
         let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
-        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
+        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 1)
         
         XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
-            "There was no root found for this documentation catalog.",
             "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
         ].sorted())
         
         let logLines = logStorage.text.splitByNewlines
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("There was no root found for this documentation catalog.") }.count, 1, "The root page warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 1, "There should be two warnings printed to the console")
+        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("There was no root found for this documentation catalog.") }.count, 0, "The root page warning shouldn't be repeated.")
         XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
     }
     

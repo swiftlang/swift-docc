@@ -469,23 +469,39 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
-        if (try context.renderRootModules + context.rootTechnologies).isEmpty {
-            // Check if the converted documentation is a tutorial to provide
-            // a specific error message.
-            let hasTutorial = context.knownPages.contains(where: {
-                guard let kind = try? context.entity(with: $0).kind else { return false }
-                return kind == .tutorial || kind == .tutorialArticle
-            })
+        let hasTutorial = context.knownPages.contains(where: {
+            guard let kind = try? context.entity(with: $0).kind else { return false }
+            return kind == .tutorial || kind == .tutorialArticle
+        })
+        // Warn the user if the catalog is a tutorial but does not contains a table of contents
+        // and provide template content to fix this problem.
+        if (
+            context.rootTechnologies.isEmpty &&
+            hasTutorial &&
+            !analysisProblems.contains(where: {$0.diagnostic.identifier == "org.swift.docc.HasExactlyOne<Tutorials, Intro>.Missing"})
+        ) {
+            let tableOfContentsFilename = "table-of-contents.tutorial"
+            let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
+                        source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTechnologyRoot",
-                         summary: "There was no root found for this documentation catalog.",
-                         explanation: hasTutorial ? """
-                        For Tutorials please add a table of contents page (indicated by a `Tutorials` directive with the corresponding `Intro` and `Chapters` directive) to define the root of the documentation hierarchy. \n
-                        """ : ""
-                     )
+                        identifier: "org.swift.docc.MissingTableOfContents",
+                        summary: "Missing tutorial table of contents page.",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                    ),
+                    possibleSolutions: [
+                        Solution(
+                            summary: "Create a `@Tutorials` table of content page.",
+                            replacements: [
+                                Replacement(
+                                    range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
+                                    replacement: CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Project Name")[tableOfContentsFilename]! // this file name is known to exist in the dictionary
+                                )
+                            ]
+                        )
+                    ]
                 )
             )
         }

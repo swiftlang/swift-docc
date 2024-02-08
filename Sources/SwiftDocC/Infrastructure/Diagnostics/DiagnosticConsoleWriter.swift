@@ -294,9 +294,29 @@ extension DefaultDiagnosticConsoleFormatter {
         
         guard let url = diagnostic.source
         else { return "" }
-        
         guard let diagnosticRange = diagnostic.range
-        else { return "\n--> \(formattedSourcePath(url))" }
+        else {
+            // If the replacement operation involves adding new files,
+            // emit the file content as an addition instead of a replacement.
+            //
+            // Example:
+            // --> /path/to/new/file.md
+            // Summary
+            // suggestion:
+            // 0 + Addition file and
+            // 1 + multiline file content.
+            var addition = ""
+            solutions.forEach { solution in
+                addition.append("\n" + solution.summary)
+                solution.replacements.forEach { replacement in
+                    let solutionFragments = replacement.replacement.split(separator: "\n")
+                    addition += "\nsuggestion:\n" + solutionFragments.enumerated().map {
+                        "\($0.offset) + \($0.element)"
+                    }.joined(separator: "\n")
+                }
+            }
+            return "\n--> \(formattedSourcePath(url))\(addition)"
+        }
         
         let sourceLines = readSourceLines(url)
 
