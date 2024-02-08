@@ -40,12 +40,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
             }
 
-            func renderOtherDeclarationsTokens(from overloads: Symbol.Overloads?) -> DeclarationRenderSection.OtherDeclarations? {
-                guard let overloads = overloads else {
-                    // This symbol does not have overloads.
-                    return nil
-                }
-
+            func renderOtherDeclarationsTokens(from overloads: Symbol.Overloads) -> DeclarationRenderSection.OtherDeclarations {
                 var otherDeclarations = [DeclarationRenderSection.OtherDeclarations.Declaration]()
                 for overloadReference in overloads.references {
                     guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol else {
@@ -81,7 +76,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 }
 
                 // If this symbol has overloads, render their declarations as well.
-                let otherDeclarations = renderOtherDeclarationsTokens(from: symbol.overloadsVariants[trait])
+                let otherDeclarations = symbol.overloadsVariants[trait].map({ renderOtherDeclarationsTokens(from: $0) })
 
                 declarations.append(
                     DeclarationRenderSection(
