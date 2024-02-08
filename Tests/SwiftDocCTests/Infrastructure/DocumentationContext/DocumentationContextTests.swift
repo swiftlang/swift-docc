@@ -4270,8 +4270,7 @@ let expected = """
 
                 // Make sure that each symbol contains all of its sibling overloads.
                 XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1, file: file, line: line)
-                for (otherIndex, otherReference) in overloadedReferences.indexed() {
-                   guard otherIndex != index else { continue }
+                for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
                     XCTAssertTrue(overloads.references.contains(otherReference), file: file, line: line)
                 }
                 
