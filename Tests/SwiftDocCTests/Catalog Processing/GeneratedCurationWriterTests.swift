@@ -249,7 +249,7 @@ class GeneratedCurationWriterTests: XCTestCase {
     }
     
     func testAddsCommentForDisambiguatedLinks() throws {
-        let (url, _, context) = try testBundleAndContext(named: "ShapeKit")
+        let (url, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
         let contentsToWrite = try writer.generateDefaultCurationContents(fromSymbol: "OverloadedProtocol")

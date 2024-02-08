@@ -4284,7 +4284,14 @@ let expected = """
         
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let (_, _, context) = try testBundleAndContext(copying: "OverloadedSymbols", configureBundle: { url in
+            try FileManager.default.copyItem(
+                at: Bundle.module.url(forResource: "Animals.symbols", withExtension: "json", subdirectory: "Test Resources")!,
+                to: url.appendingPathComponent("Animals.symbols.json"))
+            try FileManager.default.copyItem(
+                at: Bundle.module.url(forResource: "OverloadedMacros.symbols", withExtension: "json", subdirectory: "Test Resources")!,
+                to: url.appendingPathComponent("OverloadedMacros.symbols.json"))
+        })
 
         let methodsIdentifiers = ["s:7Animals6DragonC3eatyyxlF",
                                   "s:7Animals6DragonC3eatyySiF",
