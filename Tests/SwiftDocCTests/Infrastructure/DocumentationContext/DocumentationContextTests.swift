@@ -4258,100 +4258,120 @@ let expected = """
     }
     
     func testContextRecognizesOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        func checkContainsSiblingOverloads(for overloadedReferences: [ResolvedTopicReference], using context: DocumentationContext, file: StaticString = #file, line: UInt = #line) throws {
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { SymbolGraph.Symbol.KindIdentifier.isOverloadableKind($0.identifier) }
+        // Generate a 4 symbols with the same name for every overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        
+        for kindID in overloadableKindIDs {
             var seenIndices = Set<Int>()
+            // Find the 4 symbols of this specific kind
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+                .map { try XCTUnwrap(context.symbolIndex[$0.identifier.precise]) }
             
+            // Check that each symbol lists the other 3 overloads
             for (index, reference) in overloadedReferences.indexed() {
-                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference], file: file, line: line)
-                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol, file: file, line: line)
-
-                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue, file: file, line: line)
-
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+                
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+                
                 // Make sure that each symbol contains all of its sibling overloads.
-                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1, file: file, line: line)
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
                 for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
-                    XCTAssertTrue(overloads.references.contains(otherReference), file: file, line: line)
+                    XCTAssert(overloads.references.contains(otherReference))
                 }
                 
                 // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
-                let displayIndex = try XCTUnwrap(overloads.displayIndex, file: file, line: line)
-                XCTAssertFalse(seenIndices.contains(displayIndex), file: file, line: line)
+                let displayIndex = try XCTUnwrap(overloads.displayIndex)
+                XCTAssertFalse(seenIndices.contains(displayIndex))
                 seenIndices.insert(displayIndex)
             }
-
             // Check that all the overloads was encountered
             for index in overloadedReferences.indices {
-                XCTAssert(seenIndices.contains(index), file: file, line: line)
+                XCTAssert(seenIndices.contains(index))
             }
         }
-        
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
-        let (_, _, context) = try testBundleAndContext(copying: "OverloadedSymbols", configureBundle: { url in
-            try FileManager.default.copyItem(
-                at: Bundle.module.url(forResource: "Animals.symbols", withExtension: "json", subdirectory: "Test Resources")!,
-                to: url.appendingPathComponent("Animals.symbols.json"))
-            try FileManager.default.copyItem(
-                at: Bundle.module.url(forResource: "OverloadedMacros.symbols", withExtension: "json", subdirectory: "Test Resources")!,
-                to: url.appendingPathComponent("OverloadedMacros.symbols.json"))
-        })
-
-        let methodsIdentifiers = ["s:7Animals6DragonC3eatyyxlF",
-                                  "s:7Animals6DragonC3eatyySiF",
-                                  "s:7Animals6DragonC3eatyySSF"]
-        
-        let initializerIdentifiers = ["s:7Animals4BirdC5colorACSaySSG_tcfc",
-                                      "s:7Animals4BirdC5colorACSS_tcfc"]
-        
-        let staticMethodIdentifiers = ["s:7Animals4BirdC3flyyySdFZ",
-                                       "s:7Animals4BirdC3flyyySiFZ"]
-        
-        let operatorIdentifiers = ["s:7Animals6DragonC2eeoiySbAC_ACtFZ",
-                                   "s:7Animals6DragonC2eeoiySbAC_yptFZ"]
-        
-        let subscriptIdentifiers = ["s:7Animals4BirdCySSSicip",
-                                    "s:7Animals4BirdCySSs5Int16Vcip"]
-        
-        let functionIdentifiers = ["s:7Animals5sleepyyAA6DragonCF",
-                                    "s:7Animals5sleepyyAA4BirdCF"]
-        
-        let macroIdentifiers = ["s:10testMacros9stringifyyx_SStSSclufm",
-                                "s:10testMacros9stringifyyx_SStxclufm"]
-        
-        let methodsReferences = try methodsIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        let initializerReferences = try initializerIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        let staticMethodsReferences = try staticMethodIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        let operatorReferences = try operatorIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        let subscriptReferences = try subscriptIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        let functionReferences = try functionIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        let macroReferences = try macroIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        
-        try checkContainsSiblingOverloads(for: methodsReferences, using: context)
-        try checkContainsSiblingOverloads(for: initializerReferences, using: context)
-        try checkContainsSiblingOverloads(for: staticMethodsReferences, using: context)
-        try checkContainsSiblingOverloads(for: operatorReferences, using: context)
-        try checkContainsSiblingOverloads(for: subscriptReferences, using: context)
-        try checkContainsSiblingOverloads(for: functionReferences, using: context)
-        try checkContainsSiblingOverloads(for: macroReferences, using: context)
     }
     
     // We do not want to add overload behavior for some symbol kinds, even if they are collisions in the link resolver.
     func testContextDoesNotRecognizeUnoverloadableSymbolKinds() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
-        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
-
-        let structIdentifiers = ["s:8ShapeKit22overloadedparentstructV",
-                                 "s:8ShapeKit22OverloadedParentStructV"]
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let structReferences = try structIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
-        
-        for reference in structReferences {
-            let documentationNode = try XCTUnwrap(context.documentationCache[reference])
-            let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
-            XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
+        func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+            return SymbolGraph.Symbol(
+                identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+                names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: ["SymbolName"],
+                docComment: nil,
+                accessLevel: .public,
+                kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
+                mixins: [:]
+            )
         }
+        
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !SymbolGraph.Symbol.KindIdentifier.isOverloadableKind($0.identifier) }
+        // Generate a 4 symbols with the same name for every overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        
+        for kindID in overloadableKindIDs {
+            // Find the 4 symbols of this specific kind
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+                .map { try XCTUnwrap(context.symbolIndex[$0.identifier.precise]) }
+            
+            // Check that each symbol lists the other 3 overloads
+            for reference in overloadedReferences {
+                let documentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
+                XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
+            }
+        }
+    }
+    
+    // A test helper that creates a symbol with a given identifier and kind.
+    private func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+        return SymbolGraph.Symbol(
+            identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+            names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["SymbolName"],
+            docComment: nil,
+            accessLevel: .public,
+            kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
+            mixins: [:]
+        )
     }
 }
 
