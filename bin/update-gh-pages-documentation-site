@@ -51,6 +51,9 @@ swift package \
     generate-documentation \
     --target SwiftDocC \
     --disable-indexing \
+    --source-service github \
+    --source-service-base-url https://github.com/apple/swift-docc/blob/main \
+    --checkout-path "$SWIFT_DOCC_ROOT" \
     --transform-for-static-hosting \
     --hosting-base-path swift-docc \
     --output-path "$DOCC_OUTPUT_DIR"
@@ -64,6 +67,9 @@ swift package \
     generate-documentation \
     --target SwiftDocCUtilities \
     --disable-indexing \
+    --source-service github \
+    --source-service-base-url https://github.com/apple/swift-docc/blob/main \
+    --checkout-path "$SWIFT_DOCC_ROOT" \
     --transform-for-static-hosting \
     --hosting-base-path swift-docc \
     --output-path "$DOCC_UTILITIES_OUTPUT_DIR"
