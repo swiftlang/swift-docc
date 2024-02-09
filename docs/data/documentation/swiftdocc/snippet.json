@@ -38,6 +38,10 @@
         "text" : "Snippet"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Snippet.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L15"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

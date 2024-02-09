@@ -62,6 +62,10 @@
         "text" : "Node"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "NavigatorTree.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L401"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
@@ -136,7 +140,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/id",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/item",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/parent",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationDisambiguator",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationIdentifier"
       ],
       "title" : "Instance Properties"
@@ -1043,48 +1046,6 @@
   "title" : "parent",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/parent"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/presentationDisambiguator": {
-  "abstract" : [
-    {
-      "text" : "A value that can be used for disambiguation purposes in presentation contexts.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "presentationDisambiguator"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationDisambiguator",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "presentationDisambiguator",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/presentationdisambiguator"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/presentationIdentifier": {
   "abstract" : [

@@ -46,6 +46,10 @@
         "text" : "ImplementationsGroup"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DefaultImplementations.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DefaultImplementations.swift#L25"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

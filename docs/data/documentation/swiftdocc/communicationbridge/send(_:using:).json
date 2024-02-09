@@ -65,6 +65,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC19CommunicationBridgeP11SendHandlerQa",
         "text" : "SendHandler"
       },
       {
@@ -81,6 +82,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "CommunicationBridge.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L27"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -165,7 +170,9 @@
               "text" : "."
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge\/SendHandler",
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC19CommunicationBridgeP11SendHandlerQa",
               "text" : "SendHandler"
             },
             {
@@ -334,6 +341,35 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/communicationbridge"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridge/SendHandler": {
+  "abstract" : [
+    {
+      "text" : "Handler for sending messages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "associatedtype"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SendHandler"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge\/SendHandler",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "SendHandler",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/communicationbridge\/sendhandler"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridge/send(_:using:)": {
   "abstract" : [
     {
@@ -385,6 +421,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19CommunicationBridgeP11SendHandlerQa",
       "text" : "SendHandler"
     },
     {

@@ -46,6 +46,10 @@
         "text" : "Purpose"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "PageImage.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageImage.swift#L47"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

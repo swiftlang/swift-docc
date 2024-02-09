@@ -70,7 +70,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?, "
+        "text" : "?, (any "
       },
       {
         "kind" : "typeIdentifier",
@@ -79,7 +79,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?) -> ())?) -> ()) "
+        "text" : ")?) -> ())?) -> ()) "
       },
       {
         "kind" : "keyword",
@@ -91,6 +91,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "WebKitCommunicationBridge.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/WebKitCommunicationBridge.swift#L45"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
@@ -180,7 +184,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?, "
+              "text" : "?, (any "
             },
             {
               "kind" : "typeIdentifier",
@@ -189,7 +193,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?) -> ())?) -> ()) "
+              "text" : ")?) -> ())?) -> ()) "
             },
             {
               "kind" : "keyword",
@@ -359,7 +363,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -502,7 +506,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?, "
+      "text" : "?, (any "
     },
     {
       "kind" : "typeIdentifier",
@@ -511,7 +515,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?) -> ())?) -> ()) "
+      "text" : ")?) -> ())?) -> ()) "
     },
     {
       "kind" : "keyword",

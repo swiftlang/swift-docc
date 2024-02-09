@@ -39,6 +39,10 @@
         "text" : "NodeURLGenerator"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "NodeURLGenerator.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L23"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -96,7 +100,6 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.method",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:fileSafePath:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:lowercased:)"
       ],
@@ -105,7 +108,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeReferencePath(_:lowercased:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.type.method",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/pathForSemantic(_:source:bundle:)"
       ],
       "title" : "Type Methods"
@@ -329,51 +332,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafereferencepath(_:lowercased:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeURL(_:)-swift.method": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "fileSafeURL"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.method",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "fileSafeURL(_:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafeurl(_:)-swift.method"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeURL(_:)-swift.type.method": {
+"doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/fileSafeURL(_:)": {
   "abstract" : [
     {
       "text" : "Patch path components for writing to the file system.",
@@ -420,12 +379,12 @@
       "text" : "URL"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)-swift.type.method",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "fileSafeURL(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafeurl(_:)-swift.type.method"
+  "url" : "\/documentation\/swiftdocc\/nodeurlgenerator\/filesafeurl(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator/init(baseURL:)": {
   "abstract" : [

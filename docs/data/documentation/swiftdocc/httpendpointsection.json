@@ -44,6 +44,10 @@
         "text" : "HTTPEndpointSection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "HTTPEndpointSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPEndpointSection.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

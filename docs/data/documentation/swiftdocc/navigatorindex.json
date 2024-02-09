@@ -77,6 +77,10 @@
         "text" : "NavigatorIndex"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "NavigatorIndex.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L48"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
@@ -326,12 +330,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Identifier"
       ],
       "title" : "Structures"
-    },
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/init(url:bundleIdentifier:readNavigatorTree:presentationIdentifier:)"
-      ],
-      "title" : "Initializers"
     },
     {
       "identifiers" : [
@@ -975,119 +973,6 @@
   "title" : "id(for:with:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/id(for:with:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/init(url:bundleIdentifier:readNavigatorTree:presentationIdentifier:)": {
-  "abstract" : [
-    {
-      "text" : "Initialize an ",
-      "type" : "text"
-    },
-    {
-      "code" : "NavigatorIndex",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " from a given path.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "convenience"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "url"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bundleIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "readNavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "presentationIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?) "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/init(url:bundleIdentifier:readNavigatorTree:presentationIdentifier:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(url:bundleIdentifier:readNavigatorTree:presentationIdentifier:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatorindex\/init(url:bundleidentifier:readnavigatortree:presentationidentifier:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/itemsIndexKey": {
   "abstract" : [

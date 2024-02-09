@@ -39,6 +39,10 @@
         "text" : "FileSystemServerProvider"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "FileServer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L180"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

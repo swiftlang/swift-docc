@@ -51,6 +51,10 @@
         "text" : "RenderReferenceHierarchy"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderReferenceHierarchy.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderReferenceHierarchy.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -276,7 +280,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

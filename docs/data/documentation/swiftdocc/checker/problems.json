@@ -53,6 +53,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Checker.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L20"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Property",

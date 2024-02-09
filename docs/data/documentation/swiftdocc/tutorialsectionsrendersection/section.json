@@ -47,6 +47,10 @@
         "text" : "Section"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TutorialSectionsRenderSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/TutorialSectionsRenderSection.swift#L21"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

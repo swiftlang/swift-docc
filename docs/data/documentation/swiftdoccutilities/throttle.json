@@ -44,6 +44,10 @@
         "text" : "Throttle"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Throttle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Utility\/Throttle.swift#L18"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

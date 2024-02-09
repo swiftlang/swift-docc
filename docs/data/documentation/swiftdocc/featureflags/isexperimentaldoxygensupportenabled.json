@@ -9,7 +9,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Doxygen support is now enabled by default.",
+          "text" : "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released",
           "type" : "text"
         }
       ],
@@ -63,6 +63,10 @@
     "platforms" : [
 
     ],
+    "remoteSource" : {
+      "fileName" : "FeatureFlags.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L22"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",

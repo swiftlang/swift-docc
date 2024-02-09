@@ -45,6 +45,10 @@
         "text" : "DirectiveNames"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Tile.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Resources\/Tile.swift#L40"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

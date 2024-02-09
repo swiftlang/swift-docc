@@ -45,7 +45,7 @@
       },
       {
         "kind" : "text",
-        "text" : " : "
+        "text" : " : any "
       },
       {
         "kind" : "typeIdentifier",
@@ -62,6 +62,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationContext.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L244"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -102,7 +106,7 @@
             },
             {
               "kind" : "text",
-              "text" : " : "
+              "text" : " : any "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackAssetResolver",
@@ -334,7 +338,7 @@
     },
     {
       "kind" : "text",
-      "text" : " : "
+      "text" : " : any "
     },
     {
       "kind" : "typeIdentifier",

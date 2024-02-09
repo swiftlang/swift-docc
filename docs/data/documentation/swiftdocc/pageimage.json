@@ -45,6 +45,10 @@
         "text" : "PageImage"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "PageImage.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageImage.swift#L20"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

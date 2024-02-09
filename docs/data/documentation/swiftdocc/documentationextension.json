@@ -45,6 +45,10 @@
         "text" : "DocumentationExtension"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationExtension.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L29"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

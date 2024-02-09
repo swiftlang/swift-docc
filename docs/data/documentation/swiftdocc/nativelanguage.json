@@ -45,6 +45,10 @@
         "text" : "NativeLanguage"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "NativeLanguage.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Language\/NativeLanguage.swift#L21"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

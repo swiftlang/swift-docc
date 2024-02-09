@@ -47,6 +47,10 @@
         "text" : "Identifier"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderTile.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L19"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

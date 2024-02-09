@@ -53,6 +53,10 @@
         "text" : "AutomaticTitleHeading"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticTitleHeading.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticTitleHeading.swift#L18"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

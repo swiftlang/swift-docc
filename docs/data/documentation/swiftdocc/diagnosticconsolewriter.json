@@ -44,6 +44,10 @@
         "text" : "DiagnosticConsoleWriter"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DiagnosticConsoleWriter.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsoleWriter.swift#L17"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
@@ -136,7 +140,6 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:filterLevel:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:formattingOptions:baseURL:highlight:)"
       ],
       "title" : "Initializers"
@@ -562,14 +565,13 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/formattingoptions"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/init(_:filterLevel:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/init(_:formattingOptions:baseURL:highlight:)": {
   "abstract" : [
     {
-      "text" : "Creates a new instance of this class with the provided output stream and filter level.",
+      "text" : "Creates a new instance of this class with the provided output stream.",
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -585,57 +587,7 @@
     },
     {
       "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:s16TextOutputStreamP",
-      "text" : "TextOutputStream"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "filterLevel"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
-      "text" : "DiagnosticSeverity"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:filterLevel:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(_:filterLevel:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticconsolewriter\/init(_:filterlevel:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticConsoleWriter/init(_:formattingOptions:baseURL:highlight:)": {
-  "abstract" : [
-    {
-      "text" : "Creates a new instance of this class with the provided output stream.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
+      "text" : "(any "
     },
     {
       "kind" : "typeIdentifier",

@@ -69,6 +69,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationServerProtocol.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerProtocol.swift#L16"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",

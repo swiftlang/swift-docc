@@ -1,8 +1,27 @@
 {
   "abstract" : [
     {
-      "text" : "A user-provided list o path to additional symbol graph files that the convert action will process.",
+      "text" : "Inherited from ",
       "type" : "text"
+    },
+    {
+      "code" : "_DeprecatedSymbolGraphFilesAccess.additionalSymbolGraphFiles",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 5.12 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -53,6 +72,13 @@
         "name" : "SwiftDocCUtilities"
       }
     ],
+    "platforms" : [
+
+    ],
+    "remoteSource" : {
+      "fileName" : "Convert.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L112"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -222,11 +248,9 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/additionalSymbolGraphFiles": {
   "abstract" : [
-    {
-      "text" : "A user-provided list o path to additional symbol graph files that the convert action will process.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

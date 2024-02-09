@@ -52,6 +52,10 @@
         "text" : "SemanticAnalysis"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SemanticAnalysis.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/SemanticAnalysis.swift#L28"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",
@@ -984,6 +988,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16SemanticAnalysisP6ResultQa",
       "text" : "Result"
     }
   ],

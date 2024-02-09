@@ -41,6 +41,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TopicsVisualStyle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/TopicsVisualStyle.swift#L40"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

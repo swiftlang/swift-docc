@@ -17,7 +17,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.",
+          "text" : "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released",
           "type" : "text"
         }
       ],
@@ -73,6 +73,10 @@
     "platforms" : [
 
     ],
+    "remoteSource" : {
+      "fileName" : "Diagnostic.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L96"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",

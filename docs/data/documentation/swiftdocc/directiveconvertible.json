@@ -44,6 +44,10 @@
         "text" : "DirectiveConvertible"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DirectiveConvertable.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L17"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",
@@ -1515,7 +1519,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Redirect": {
   "abstract" : [
     {
-      "text" : "A directive that specifies an additional URL for the page where the directive appears.",
+      "text" : "A directive that specifies a previous URL for the page where the directive appears.",
       "type" : "text"
     }
   ],

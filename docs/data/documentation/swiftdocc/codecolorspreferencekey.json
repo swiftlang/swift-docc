@@ -49,6 +49,10 @@
         "text" : "CodeColorsPreferenceKey"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "CodeColorsPreferenceKey.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColorsPreferenceKey.swift#L17"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -148,7 +152,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceSchemeHandler",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MessageType",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors"
@@ -668,7 +671,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -755,7 +758,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -1373,38 +1376,6 @@
   "title" : "MessageType",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/messagetype"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/TopicReferenceSchemeHandler": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "TopicReferenceSchemeHandler"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceSchemeHandler",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "TopicReferenceSchemeHandler"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "TopicReferenceSchemeHandler",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/topicreferenceschemehandler"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/WebKitCommunicationBridge": {
   "abstract" : [

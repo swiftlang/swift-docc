@@ -46,6 +46,10 @@
         "text" : "RESTEndpointRenderSection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RESTEndpointRenderSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RESTEndpointRenderSection.swift#L37"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -517,7 +521,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

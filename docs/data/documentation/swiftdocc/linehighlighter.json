@@ -77,6 +77,10 @@
         "text" : "LineHighlighter"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "LineHighlighter.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/LineHighlighter.swift#L32"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

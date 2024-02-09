@@ -46,6 +46,10 @@
         "text" : "PeakMemory"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "PeakMemory.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/PeakMemory.swift#L18"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

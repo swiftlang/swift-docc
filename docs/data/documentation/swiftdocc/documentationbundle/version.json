@@ -53,6 +53,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationBundle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L68"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -141,9 +145,7 @@
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/displayName",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/defaultCodeListingLanguage",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/defaultAvailability"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier"
       ],
       "title" : "Bundle Metadata"
     }
@@ -209,87 +211,6 @@
   "title" : "DocumentationBundle",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/defaultAvailability": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "defaultAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DefaultAvailabilityV",
-      "text" : "DefaultAvailability"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/defaultAvailability",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "defaultAvailability",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/defaultavailability"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/defaultCodeListingLanguage": {
-  "abstract" : [
-    {
-      "text" : "Default syntax highlighting to use for code samples in this bundle.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "defaultCodeListingLanguage"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/defaultCodeListingLanguage",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "defaultCodeListingLanguage",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationbundle\/defaultcodelistinglanguage"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/displayName": {
   "abstract" : [

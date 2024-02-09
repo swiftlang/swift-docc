@@ -53,7 +53,7 @@
       },
       {
         "kind" : "text",
-        "text" : ") -> "
+        "text" : ") -> (any "
       },
       {
         "kind" : "typeIdentifier",
@@ -62,7 +62,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?"
+        "text" : ")?"
       }
     ],
     "modules" : [
@@ -70,6 +70,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderNodeTranslator.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L323"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
@@ -134,7 +138,7 @@
             },
             {
               "kind" : "text",
-              "text" : ") -> "
+              "text" : ") -> (any "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
@@ -144,7 +148,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?"
+              "text" : ")?"
             }
           ]
         }
@@ -292,7 +296,7 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> "
+      "text" : ") -> (any "
     },
     {
       "kind" : "typeIdentifier",
@@ -301,7 +305,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?"
+      "text" : ")?"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitMarkupContainer(_:)",

@@ -36,6 +36,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SampleDownloadSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/SampleDownloadSection.swift#L31"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

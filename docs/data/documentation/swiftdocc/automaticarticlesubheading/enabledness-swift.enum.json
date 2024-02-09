@@ -46,6 +46,10 @@
         "text" : "Enabledness"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticArticleSubheading.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticArticleSubheading.swift#L31"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

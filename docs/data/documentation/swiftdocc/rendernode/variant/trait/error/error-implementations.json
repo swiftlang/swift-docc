@@ -23,6 +23,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "Error Implementations"
   },
   "schemaVersion" : {

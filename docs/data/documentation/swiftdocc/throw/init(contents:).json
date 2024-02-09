@@ -37,7 +37,7 @@
       },
       {
         "kind" : "text",
-        "text" : ": ["
+        "text" : ": [any "
       },
       {
         "kind" : "typeIdentifier",
@@ -54,6 +54,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Throw.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Throw.swift#L20"
+    },
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",
@@ -84,7 +88,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": ["
+              "text" : ": [any "
             },
             {
               "kind" : "typeIdentifier",
@@ -240,7 +244,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": ["
+      "text" : ": [any "
     },
     {
       "kind" : "typeIdentifier",

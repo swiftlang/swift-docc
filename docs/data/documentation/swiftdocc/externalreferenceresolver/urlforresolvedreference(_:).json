@@ -58,6 +58,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ExternalReferenceResolver.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalReferenceResolver.swift#L66"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",

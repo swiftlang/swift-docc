@@ -45,6 +45,10 @@
         "text" : "DocumentationBundleFileTypes"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationBundleFileTypes.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundleFileTypes.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

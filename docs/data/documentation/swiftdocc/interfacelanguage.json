@@ -45,6 +45,10 @@
         "text" : "InterfaceLanguage"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AvailabilityIndex+Ext.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L71"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -162,7 +166,6 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/init(_:id:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/init(_:id:mask:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/init(from:)"
       ],
@@ -887,65 +890,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/interfacelanguage\/id-swift.property"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/InterfaceLanguage/init(_:id:)": {
-  "abstract" : [
-    {
-      "text" : "Initialize a platform with the given display name and id.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "Id is an integer used to shift bits and generate a mask for fast processing.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "id"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Si",
-      "text" : "Int"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/init(_:id:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(_:id:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/interfacelanguage\/init(_:id:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/InterfaceLanguage/init(_:id:mask:)": {
   "abstract" : [
     {
@@ -1032,7 +976,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

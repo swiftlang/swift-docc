@@ -326,6 +326,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedCurationWriter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPBody",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPBodySection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPEndpointSection",
@@ -357,10 +358,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BasicDiagnostic",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchDifferences",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MetricValue",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformation"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MetricValue"
       ],
       "title" : "Type Aliases"
     },
@@ -624,38 +623,6 @@
   "title" : "AssetReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/assetreference"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/BasicDiagnostic": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "BasicDiagnostic"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BasicDiagnostic",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "BasicDiagnostic"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "BasicDiagnostic",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/basicdiagnostic"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/BenchmarkBlockMetric": {
   "abstract" : [
@@ -2580,6 +2547,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/features"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/GeneratedCurationWriter": {
+  "abstract" : [
+    {
+      "text" : "A type that writes the auto-generated curation into documentation extension files.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GeneratedCurationWriter"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedCurationWriter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GeneratedCurationWriter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "GeneratedCurationWriter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/generatedcurationwriter"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/GeneratedDataProvider": {
   "abstract" : [
     {
@@ -3604,7 +3605,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Redirect": {
   "abstract" : [
     {
-      "text" : "A directive that specifies an additional URL for the page where the directive appears.",
+      "text" : "A directive that specifies a previous URL for the page where the directive appears.",
       "type" : "text"
     }
   ],
@@ -3786,41 +3787,6 @@
   "title" : "RenderJSONEncoder",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderjsonencoder"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformation": {
-  "abstract" : [
-    {
-      "text" : "A type that modifies a render node.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "RenderNodeTransformation"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformation",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "RenderNodeTransformation"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "RenderNodeTransformation",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/rendernodetransformation"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceDependencies": {
   "abstract" : [

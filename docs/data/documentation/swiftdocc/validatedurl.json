@@ -45,6 +45,10 @@
         "text" : "ValidatedURL"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ValidatedURL.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/ValidatedURL.swift#L25"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

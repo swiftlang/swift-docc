@@ -19,6 +19,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "Action Implementations"
   },
   "schemaVersion" : {
@@ -33,7 +34,7 @@
     {
       "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/performAndHandleResult()"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/performAndHandleResult(logHandle:)"
       ],
       "title" : "Instance Methods"
     }
@@ -100,7 +101,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/convertaction"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction/performAndHandleResult()": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction/performAndHandleResult(logHandle:)": {
   "abstract" : [
     {
       "text" : "Performs the action and checks for any problems in the result.",
@@ -122,19 +123,36 @@
     },
     {
       "kind" : "text",
-      "text" : "() "
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "logHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
     },
     {
       "kind" : "keyword",
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/performAndHandleResult()",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/performAndHandleResult(logHandle:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "performAndHandleResult()",
+  "title" : "performAndHandleResult(logHandle:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/convertaction\/performandhandleresult()"
+  "url" : "\/documentation\/swiftdoccutilities\/convertaction\/performandhandleresult(loghandle:)"
 }
 }
 }

@@ -44,6 +44,10 @@
         "text" : "Symbol"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Symbol.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L97"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
@@ -186,7 +190,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/platformNameVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/moduleReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/extendedModuleVariants",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/bystanderModuleNames",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isRequiredVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/externalIDVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevelVariants",
@@ -263,6 +266,7 @@
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/alternateDeclarationVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/crossImportOverlayModule",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/extendedModule"
       ],
@@ -712,6 +716,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15SemanticVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -941,6 +946,83 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol\/addswiftextensionconstraint(extendedmodule:extendedsymbolkind:constraint:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/alternateDeclarationVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbols alternate declarations in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "alternateDeclarationVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<[["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : "?] : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "]]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/alternateDeclarationVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "alternateDeclarationVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/alternatedeclarationvariants"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/availability": {
   "abstract" : [
     {
@@ -1067,48 +1149,6 @@
   "title" : "availabilityVariants",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol\/availabilityvariants"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Symbol/bystanderModuleNames": {
-  "abstract" : [
-    {
-      "text" : "The names of any “bystander” modules required for this symbol, if it came from a cross-import overlay.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "bystanderModuleNames"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/bystanderModuleNames",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "bystanderModuleNames",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbol\/bystandermodulenames"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/constraints": {
   "abstract" : [

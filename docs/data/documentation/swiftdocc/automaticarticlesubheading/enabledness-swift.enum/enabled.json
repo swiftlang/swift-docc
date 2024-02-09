@@ -41,6 +41,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticArticleSubheading.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticArticleSubheading.swift#L33"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

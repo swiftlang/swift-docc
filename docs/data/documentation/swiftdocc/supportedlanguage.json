@@ -45,6 +45,10 @@
         "text" : "SupportedLanguage"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SupportedLanguage.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/SupportedLanguage.swift#L33"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

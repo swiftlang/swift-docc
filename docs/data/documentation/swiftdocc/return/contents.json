@@ -37,7 +37,7 @@
       },
       {
         "kind" : "text",
-        "text" : ": ["
+        "text" : ": [any "
       },
       {
         "kind" : "typeIdentifier",
@@ -54,6 +54,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Return.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Return.swift#L16"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -84,7 +88,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": ["
+              "text" : ": [any "
             },
             {
               "kind" : "typeIdentifier",
@@ -207,7 +211,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": ["
+      "text" : ": [any "
     },
     {
       "kind" : "typeIdentifier",

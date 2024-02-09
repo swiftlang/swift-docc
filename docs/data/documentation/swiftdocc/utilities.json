@@ -18,6 +18,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "Utility APIs"
   },
   "schemaVersion" : {
@@ -41,8 +42,7 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError"
       ],
       "title" : "Errors"
     },
@@ -224,41 +224,6 @@
   "title" : "EnglishLanguage",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/englishlanguage"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems": {
-  "abstract" : [
-    {
-      "text" : "An error that contains a list of problems.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ErrorWithProblems"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ErrorWithProblems"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ErrorWithProblems",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorwithproblems"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags": {
   "abstract" : [

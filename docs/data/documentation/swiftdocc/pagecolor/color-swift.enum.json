@@ -46,6 +46,10 @@
         "text" : "Color"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "PageColor.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageColor.swift#L39"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

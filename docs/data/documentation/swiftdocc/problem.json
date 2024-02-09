@@ -45,6 +45,10 @@
         "text" : "Problem"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Problem.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Problem.swift#L16"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

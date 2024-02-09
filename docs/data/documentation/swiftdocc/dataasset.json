@@ -45,6 +45,10 @@
         "text" : "DataAsset"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DataAssetManager.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L151"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -212,7 +216,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/data(bestMatching:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/data(with:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/register(_:with:metadata:)"
       ],
       "title" : "Instance Methods"
@@ -521,61 +524,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/dataasset\/data(bestmatching:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DataAsset/data(with:)": {
-  "abstract" : [
-    {
-      "text" : "Returns the data that is registered to the data asset that best matches the given trait collection.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "data"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "with"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DataTraitCollectionV",
-      "text" : "DataTraitCollection"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10BundleDataV",
-      "text" : "BundleData"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/data(with:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "data(with:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/dataasset\/data(with:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DataAsset/init()": {
   "abstract" : [
     {
@@ -619,7 +567,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

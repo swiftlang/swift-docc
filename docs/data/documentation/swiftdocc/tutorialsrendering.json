@@ -25,6 +25,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "Tutorials Rendering"
   },
   "primaryContentSections" : [

@@ -86,6 +86,10 @@
         ]
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ParsableArguments.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/.build\/checkouts\/swift-argument-parser\/Sources\/ArgumentParser\/Parsable%20Types\/ParsableArguments.swift#L72"
+    },
     "role" : "symbol",
     "roleHeading" : "Type Method",
     "symbolKind" : "method",

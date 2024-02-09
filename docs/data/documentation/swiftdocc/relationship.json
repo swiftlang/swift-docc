@@ -46,6 +46,10 @@
         "text" : "Relationship"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Relationship.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Relationship.swift#L15"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

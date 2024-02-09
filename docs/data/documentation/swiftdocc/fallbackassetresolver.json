@@ -44,6 +44,10 @@
         "text" : "FallbackAssetResolver"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "FallbackAssetResolver.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/FallbackAssetResolver.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",

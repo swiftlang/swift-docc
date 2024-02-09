@@ -37,7 +37,7 @@
       },
       {
         "kind" : "text",
-        "text" : ": ["
+        "text" : ": [any "
       },
       {
         "kind" : "typeIdentifier",
@@ -54,6 +54,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DeprecatedSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DeprecatedSection.swift#L22"
+    },
     "role" : "symbol",
     "roleHeading" : "Initializer",
     "symbolKind" : "init",
@@ -84,7 +88,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": ["
+              "text" : ": [any "
             },
             {
               "kind" : "typeIdentifier",
@@ -193,7 +197,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": ["
+      "text" : ": [any "
     },
     {
       "kind" : "typeIdentifier",

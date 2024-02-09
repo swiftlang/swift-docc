@@ -44,6 +44,10 @@
         "text" : "Action"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Action.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L18"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",
@@ -128,6 +132,7 @@
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CoverageAction",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction"
       ],
       "kind" : "relationships",
@@ -157,7 +162,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/perform(logHandle:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/performAndHandleResult()"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/performAndHandleResult(logHandle:)"
       ],
       "title" : "Instance Methods"
     }
@@ -296,7 +301,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/action\/perform(loghandle:)"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Action/performAndHandleResult()": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Action/performAndHandleResult(logHandle:)": {
   "abstract" : [
     {
       "text" : "Performs the action and checks for any problems in the result.",
@@ -318,19 +323,36 @@
     },
     {
       "kind" : "text",
-      "text" : "() "
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "logHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
     },
     {
       "kind" : "keyword",
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/performAndHandleResult()",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/performAndHandleResult(logHandle:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "performAndHandleResult()",
+  "title" : "performAndHandleResult(logHandle:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/action\/performandhandleresult()"
+  "url" : "\/documentation\/swiftdoccutilities\/action\/performandhandleresult(loghandle:)"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ActionResult": {
   "abstract" : [
@@ -467,6 +489,40 @@
   "title" : "IndexAction",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/indexaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction": {
+  "abstract" : [
+    {
+      "text" : "An action that generates a documentation catalog from a template seed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InitAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewAction": {
   "abstract" : [

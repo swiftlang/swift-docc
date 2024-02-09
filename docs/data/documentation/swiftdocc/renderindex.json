@@ -45,6 +45,10 @@
         "text" : "RenderIndex"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderIndex.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L24"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -208,12 +212,13 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:references:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:references:includedArchiveIdentifiers:)"
       ],
       "title" : "Initializers"
     },
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/includedArchiveIdentifiers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/interfaceLanguages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/references",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/schemaVersion"
@@ -222,7 +227,8 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/encode(to:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/encode(to:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/merge(_:)"
       ],
       "title" : "Instance Methods"
     },
@@ -598,7 +604,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -621,6 +627,47 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex\/encode(to:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/includedArchiveIdentifiers": {
+  "abstract" : [
+    {
+      "text" : "The unique identifiers of the archives that are included in the documentation index.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "includedArchiveIdentifiers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/includedArchiveIdentifiers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "includedArchiveIdentifiers",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderindex\/includedarchiveidentifiers"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/init(from:)": {
   "abstract" : [
 
@@ -640,7 +687,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -663,7 +710,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/init(interfaceLanguages:references:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/init(interfaceLanguages:references:includedArchiveIdentifiers:)": {
   "abstract" : [
     {
       "text" : "Creates a new render index with the given interface language to node mapping.",
@@ -738,15 +785,32 @@
     },
     {
       "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includedArchiveIdentifiers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
       "text" : "])"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:references:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/init(interfaceLanguages:references:includedArchiveIdentifiers:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(interfaceLanguages:references:)",
+  "title" : "init(interfaceLanguages:references:includedArchiveIdentifiers:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/renderindex\/init(interfacelanguages:references:)"
+  "url" : "\/documentation\/swiftdocc\/renderindex\/init(interfacelanguages:references:includedarchiveidentifiers:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/interfaceLanguages": {
   "abstract" : [
@@ -758,7 +822,7 @@
   "fragments" : [
     {
       "kind" : "keyword",
-      "text" : "let"
+      "text" : "var"
     },
     {
       "kind" : "text",
@@ -806,6 +870,48 @@
   "title" : "interfaceLanguages",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderindex\/interfacelanguages"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/merge(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "merge"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11RenderIndexV",
+      "text" : "RenderIndex"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/merge(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "merge(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderindex\/merge(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/references": {
   "abstract" : [

@@ -49,6 +49,10 @@
         "text" : "AutomaticCuration"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticCuration.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Topic%20Graph\/AutomaticCuration.swift#L16"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

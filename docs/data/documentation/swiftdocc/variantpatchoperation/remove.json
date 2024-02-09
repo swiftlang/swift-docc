@@ -40,6 +40,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "VariantPatchOperation.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantPatchOperation.swift#L26"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

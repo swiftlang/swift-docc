@@ -82,6 +82,10 @@
         "name" : "SwiftDocCUtilities"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Action.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L20"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",

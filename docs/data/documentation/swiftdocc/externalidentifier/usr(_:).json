@@ -52,6 +52,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ExternalIdentifier.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/ExternalIdentifier.swift#L17"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

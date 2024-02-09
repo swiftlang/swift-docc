@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "An error indicating that the error node is corrupted or malformed.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "This error is never raised. This deprecated API will be removed after 5.11 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -42,6 +47,13 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderNodeVariantOverridesApplier.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L48"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",
@@ -148,11 +160,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error": {
   "abstract" : [
-    {
-      "text" : "An error that occured while applying overrides in a render node.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -182,11 +192,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error/corruptedRenderNode": {
   "abstract" : [
-    {
-      "text" : "An error indicating that the error node is corrupted or malformed.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

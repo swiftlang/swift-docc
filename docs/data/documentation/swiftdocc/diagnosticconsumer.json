@@ -45,6 +45,10 @@
         "text" : "DiagnosticConsumer"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DiagnosticConsumer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",

@@ -44,6 +44,10 @@
         "text" : "JSONPatchDifferences"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Differences.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Diffing\/Differences.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Type Alias",
     "symbolKind" : "typealias",

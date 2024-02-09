@@ -154,7 +154,7 @@
       },
       {
         "kind" : "text",
-        "text" : "]) -> ("
+        "text" : "]) -> ((any "
       },
       {
         "kind" : "typeIdentifier",
@@ -163,7 +163,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?, remainder"
+        "text" : ")?, remainder"
       },
       {
         "kind" : "text",
@@ -184,6 +184,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "HasExactlyOne.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L156"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
@@ -358,7 +362,7 @@
             },
             {
               "kind" : "text",
-              "text" : "]) -> ("
+              "text" : "]) -> ((any "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media",
@@ -368,7 +372,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?, remainder"
+              "text" : ")?, remainder"
             },
             {
               "kind" : "text",
@@ -419,11 +423,12 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:ST7ElementQa",
               "text" : "Element"
             },
             {
               "kind" : "text",
-              "text" : " == "
+              "text" : " == any "
             },
             {
               "kind" : "typeIdentifier",
@@ -877,7 +882,7 @@
     },
     {
       "kind" : "text",
-      "text" : "]) -> ("
+      "text" : "]) -> ((any "
     },
     {
       "kind" : "typeIdentifier",
@@ -886,7 +891,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?, remainder"
+      "text" : ")?, remainder"
     },
     {
       "kind" : "text",

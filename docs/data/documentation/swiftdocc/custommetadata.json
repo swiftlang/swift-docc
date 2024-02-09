@@ -44,6 +44,10 @@
         "text" : "CustomMetadata"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "CustomMetadata.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/CustomMetadata.swift#L27"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

@@ -42,6 +42,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Metrics.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics.swift#L29"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Property",

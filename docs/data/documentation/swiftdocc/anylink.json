@@ -60,6 +60,10 @@
         "text" : "AnyLink"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AnyLink.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/MarkupExtensions\/AnyLink.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",

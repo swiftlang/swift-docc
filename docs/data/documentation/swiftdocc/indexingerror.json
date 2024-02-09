@@ -39,6 +39,10 @@
         "text" : "IndexingError"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "IndexingError.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingError.swift#L13"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

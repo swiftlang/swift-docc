@@ -17,7 +17,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use DownloadReference and its `init(identifier:verbatimURL:checksum)` initializer instead.",
+          "text" : "Use DownloadReference and its `init(identifier:verbatimURL:checksum)` initializer instead. This deprecated API will be removed after 5.10 is released",
           "type" : "text"
         }
       ],
@@ -62,7 +62,7 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": any "
       },
       {
         "kind" : "typeIdentifier",
@@ -86,6 +86,10 @@
     "platforms" : [
 
     ],
+    "remoteSource" : {
+      "fileName" : "ExternalLocationReference.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/ExternalLocationReference.swift#L51"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
@@ -132,7 +136,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": any "
             },
             {
               "kind" : "typeIdentifier",
@@ -295,7 +299,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

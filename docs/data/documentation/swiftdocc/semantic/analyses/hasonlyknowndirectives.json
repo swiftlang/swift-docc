@@ -47,6 +47,10 @@
         "text" : "HasOnlyKnownDirectives"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "HasOnlyKnownDirectives.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlyKnownDirectives.swift#L16"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

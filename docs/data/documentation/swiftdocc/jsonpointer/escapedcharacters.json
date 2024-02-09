@@ -46,6 +46,10 @@
         "text" : "EscapedCharacters"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "JSONPointer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPointer.swift#L46"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

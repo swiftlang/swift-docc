@@ -20,6 +20,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "MarkupVisitor Implementations"
   },
   "schemaVersion" : {
@@ -161,7 +162,7 @@
     },
     {
       "kind" : "text",
-      "text" : "("
+      "text" : "(any "
     },
     {
       "kind" : "typeIdentifier",
@@ -199,7 +200,7 @@
     },
     {
       "kind" : "text",
-      "text" : "("
+      "text" : "(any "
     },
     {
       "kind" : "typeIdentifier",
@@ -220,6 +221,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -270,6 +272,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -320,6 +323,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -370,6 +374,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -420,6 +425,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -470,6 +476,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -520,6 +527,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -570,6 +578,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -620,6 +629,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -670,6 +680,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -720,6 +731,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -770,6 +782,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -820,6 +833,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -870,6 +884,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -920,6 +935,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -970,6 +986,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1020,6 +1037,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1070,6 +1088,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1120,6 +1139,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1170,6 +1190,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1220,6 +1241,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1270,6 +1292,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1320,6 +1343,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1370,6 +1394,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1420,6 +1445,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1470,6 +1496,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1529,6 +1556,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1588,6 +1616,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1647,6 +1676,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1706,6 +1736,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1756,6 +1787,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1806,6 +1838,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],
@@ -1856,6 +1889,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],

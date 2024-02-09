@@ -45,6 +45,10 @@
         "text" : "SymbolReference"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SymbolReference.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L22"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -113,7 +117,6 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/interfaceLanguage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/interfaceLanguages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/path"
       ],
@@ -742,41 +745,6 @@
   "title" : "init(pathComponents:interfaceLanguages:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbolreference\/init(pathcomponents:interfacelanguages:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SymbolReference/interfaceLanguage": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "interfaceLanguage"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguageV",
-      "text" : "SourceLanguage"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/interfaceLanguage",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "interfaceLanguage",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbolreference\/interfacelanguage"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SymbolReference/interfaceLanguages": {
   "abstract" : [

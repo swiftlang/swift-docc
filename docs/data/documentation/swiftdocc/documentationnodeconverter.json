@@ -44,6 +44,10 @@
         "text" : "DocumentationNodeConverter"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationNodeConverter.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationNodeConverter.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -95,8 +99,7 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/convert(_:at:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/convert(_:at:from:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/convert(_:at:)"
       ],
       "title" : "Instance Methods"
     }
@@ -233,95 +236,6 @@
   "title" : "convert(_:at:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnodeconverter\/convert(_:at:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter/convert(_:at:from:)": {
-  "abstract" : [
-    {
-      "text" : "Converts a documentation node to a render node.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "convert"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC17DocumentationNodeV",
-      "text" : "DocumentationNode"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "at"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
-      "text" : "DocumentationBundle"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    },
-    {
-      "kind" : "text",
-      "text" : " -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
-      "text" : "RenderNode"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter\/convert(_:at:from:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "convert(_:at:from:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnodeconverter\/convert(_:at:from:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter/init(bundle:context:)": {
   "abstract" : [

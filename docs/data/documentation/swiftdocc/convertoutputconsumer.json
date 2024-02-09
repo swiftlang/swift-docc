@@ -44,6 +44,10 @@
         "text" : "ConvertOutputConsumer"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ConvertOutputConsumer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L17"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",
@@ -233,7 +237,7 @@
     },
     {
       "kind" : "text",
-      "text" : " : ["
+      "text" : " : [any "
     },
     {
       "kind" : "typeIdentifier",

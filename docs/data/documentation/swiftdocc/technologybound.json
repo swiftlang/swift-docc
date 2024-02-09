@@ -44,6 +44,10 @@
         "text" : "TechnologyBound"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TechnologyBound.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/TechnologyBound.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",

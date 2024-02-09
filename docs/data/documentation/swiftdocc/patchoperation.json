@@ -46,6 +46,10 @@
         "text" : "PatchOperation"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "PatchOperation.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L19"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

@@ -45,6 +45,10 @@
         "text" : "DescribedError"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DescribedError.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Errors\/DescribedError.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",
@@ -109,7 +113,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error",
@@ -131,15 +134,6 @@
   },
   "sections" : [
 
-  ],
-  "seeAlsoSections" : [
-    {
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems"
-      ],
-      "title" : "Errors"
-    }
   ],
   "topicSections" : [
     {
@@ -561,41 +555,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ErrorWithProblems": {
-  "abstract" : [
-    {
-      "text" : "An error that contains a list of problems.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ErrorWithProblems"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorWithProblems",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ErrorWithProblems"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ErrorWithProblems",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/errorwithproblems"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/ErrorsEncountered": {
   "abstract" : [
     {
@@ -835,11 +794,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderNodeVariantOverridesApplier/Error": {
   "abstract" : [
-    {
-      "text" : "An error that occured while applying overrides in a render node.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

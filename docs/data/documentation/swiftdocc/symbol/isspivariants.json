@@ -61,6 +61,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Symbol.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L231"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",
@@ -138,7 +142,6 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/platformNameVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/moduleReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/extendedModuleVariants",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/bystanderModuleNames",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isRequiredVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/externalIDVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevelVariants",
@@ -481,48 +484,6 @@
   "title" : "availabilityVariants",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol\/availabilityvariants"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Symbol/bystanderModuleNames": {
-  "abstract" : [
-    {
-      "text" : "The names of any “bystander” modules required for this symbol, if it came from a cross-import overlay.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "bystanderModuleNames"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/bystanderModuleNames",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "bystanderModuleNames",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/symbol\/bystandermodulenames"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/constraintsVariants": {
   "abstract" : [

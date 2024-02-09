@@ -44,6 +44,10 @@
         "text" : "Layout"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Layout.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Layout.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

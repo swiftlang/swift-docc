@@ -62,7 +62,7 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": (any "
       },
       {
         "kind" : "typeIdentifier",
@@ -71,7 +71,7 @@
       },
       {
         "kind" : "text",
-        "text" : "?) -> "
+        "text" : ")?) -> "
       },
       {
         "kind" : "typeIdentifier",
@@ -87,6 +87,10 @@
         ]
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ParsableArguments.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/.build\/checkouts\/swift-argument-parser\/Sources\/ArgumentParser\/Parsable%20Types\/ParsableArguments.swift#L186"
+    },
     "role" : "symbol",
     "roleHeading" : "Type Method",
     "symbolKind" : "method",
@@ -141,7 +145,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": (any "
             },
             {
               "kind" : "typeIdentifier",
@@ -150,7 +154,7 @@
             },
             {
               "kind" : "text",
-              "text" : "? = nil) -> "
+              "text" : ")? = nil) -> "
             },
             {
               "kind" : "typeIdentifier",
@@ -313,7 +317,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": (any "
     },
     {
       "kind" : "typeIdentifier",
@@ -322,7 +326,7 @@
     },
     {
       "kind" : "text",
-      "text" : "?) -> "
+      "text" : ")?) -> "
     },
     {
       "kind" : "typeIdentifier",

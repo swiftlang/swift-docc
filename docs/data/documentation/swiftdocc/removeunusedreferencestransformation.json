@@ -45,6 +45,10 @@
         "text" : "RemoveUnusedReferencesTransformation"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RemoveUnusedReferencesTransformation.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveUnusedReferencesTransformation.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

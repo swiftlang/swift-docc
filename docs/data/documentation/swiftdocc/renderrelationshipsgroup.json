@@ -53,6 +53,10 @@
         "text" : "RenderRelationshipsGroup"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderNode+Relationships.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L98"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

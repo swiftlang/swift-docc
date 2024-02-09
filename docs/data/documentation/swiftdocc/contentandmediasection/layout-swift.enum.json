@@ -55,6 +55,10 @@
         "text" : "Layout"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ContentAndMediaSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/ContentAndMediaSection.swift#L35"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

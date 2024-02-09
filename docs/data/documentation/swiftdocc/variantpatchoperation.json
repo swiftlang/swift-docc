@@ -45,6 +45,10 @@
         "text" : "VariantPatchOperation"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "VariantPatchOperation.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantPatchOperation.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

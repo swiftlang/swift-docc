@@ -45,6 +45,10 @@
         "text" : "Indexable"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Indexable.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Indexable.swift#L33"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",

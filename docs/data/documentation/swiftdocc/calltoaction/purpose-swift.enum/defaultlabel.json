@@ -17,7 +17,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Replaced with 'CallToAction.buttonLabel(for:)'.",
+          "text" : "Use 'CallToAction.buttonLabel(for:)' instead. This deprecated API will be removed after 5.10 is released",
           "type" : "text"
         }
       ],
@@ -73,6 +73,10 @@
     "platforms" : [
 
     ],
+    "remoteSource" : {
+      "fileName" : "CallToAction.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/CallToAction.swift#L195"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",

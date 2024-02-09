@@ -45,6 +45,10 @@
         "text" : "MissingAbstract"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "MissingAbstract.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/MissingAbstract.swift#L19"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

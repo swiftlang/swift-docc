@@ -46,6 +46,10 @@
         "text" : "Style"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TopicsVisualStyle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/TopicsVisualStyle.swift#L25"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

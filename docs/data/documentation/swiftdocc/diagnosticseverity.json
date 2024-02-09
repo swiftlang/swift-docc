@@ -45,6 +45,10 @@
         "text" : "DiagnosticSeverity"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DiagnosticSeverity.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticSeverity.swift#L19"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

@@ -46,7 +46,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
+        "text" : "<any "
       },
       {
         "kind" : "typeIdentifier",
@@ -64,7 +64,7 @@
       },
       {
         "kind" : "text",
-        "text" : ") -> "
+        "text" : ") -> any "
       },
       {
         "kind" : "typeIdentifier",
@@ -77,6 +77,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "MarkupContainer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/MarkupContainer.swift#L50"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Subscript",
     "symbolKind" : "subscript",
@@ -116,7 +120,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
+              "text" : "<any "
             },
             {
               "kind" : "typeIdentifier",
@@ -134,7 +138,7 @@
             },
             {
               "kind" : "text",
-              "text" : ") -> "
+              "text" : ") -> any "
             },
             {
               "kind" : "typeIdentifier",
@@ -268,7 +272,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
+      "text" : "<any "
     },
     {
       "kind" : "typeIdentifier",
@@ -286,7 +290,7 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> "
+      "text" : ") -> any "
     },
     {
       "kind" : "typeIdentifier",

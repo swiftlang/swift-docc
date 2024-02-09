@@ -45,6 +45,10 @@
         "text" : "RenderInlineContent"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderInlineContent.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderInlineContent.swift#L32"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

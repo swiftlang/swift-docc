@@ -45,6 +45,10 @@
         "text" : "BundleData"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "BundleData.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/BundleData.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

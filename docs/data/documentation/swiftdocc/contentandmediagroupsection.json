@@ -46,6 +46,10 @@
         "text" : "ContentAndMediaGroupSection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ContentAndMediaGroupSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/ContentAndMediaGroupSection.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -342,7 +346,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

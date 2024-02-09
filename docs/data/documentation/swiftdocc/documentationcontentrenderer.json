@@ -44,6 +44,10 @@
         "text" : "DocumentationContentRenderer"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationContentRenderer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L48"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

@@ -46,6 +46,10 @@
         "text" : "TutorialArticleSection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TutorialArticleSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial%20Article\/TutorialArticleSection.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -866,7 +870,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

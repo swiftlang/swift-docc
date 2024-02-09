@@ -44,6 +44,10 @@
         "text" : "DirectiveArgumentWrapped"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DirectiveArgumentWrapper.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/DirectiveArgumentWrapper.swift#L63"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

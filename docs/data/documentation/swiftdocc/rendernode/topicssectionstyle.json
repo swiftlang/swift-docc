@@ -47,6 +47,10 @@
         "text" : "TopicsSectionStyle"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TopicsSectionStyle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/TopicsSectionStyle.swift#L13"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

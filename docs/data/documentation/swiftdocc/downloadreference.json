@@ -46,6 +46,10 @@
         "text" : "DownloadReference"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DownloadReference.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -113,7 +117,6 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/init(identifier:renderURL:checksum:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/init(identifier:renderURL:sha512Checksum:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/init(identifier:verbatimURL:checksum:)"
       ],
       "title" : "Initializers"
@@ -122,7 +125,6 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/checksum",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/identifier",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/sha512Checksum",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/type",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/url"
       ],
@@ -411,7 +413,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -487,7 +489,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -584,79 +586,6 @@
   "title" : "init(identifier:renderURL:checksum:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/downloadreference\/init(identifier:renderurl:checksum:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DownloadReference/init(identifier:renderURL:sha512Checksum:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "identifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
-      "text" : "RenderReferenceIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "renderURL"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "sha512Checksum"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/init(identifier:renderURL:sha512Checksum:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(identifier:renderURL:sha512Checksum:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/downloadreference\/init(identifier:renderurl:sha512checksum:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DownloadReference/init(identifier:verbatimURL:checksum:)": {
   "abstract" : [
@@ -777,41 +706,6 @@
   "title" : "locationName",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/downloadreference\/locationname"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DownloadReference/sha512Checksum": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "sha512Checksum"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference\/sha512Checksum",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "sha512Checksum",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/downloadreference\/sha512checksum"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DownloadReference/type": {
   "abstract" : [

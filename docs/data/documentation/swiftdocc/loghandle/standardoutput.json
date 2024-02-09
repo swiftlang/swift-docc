@@ -39,6 +39,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "LogHandle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LogHandle.swift#L19"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

@@ -46,6 +46,10 @@
         "text" : "SourceLanguage"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SourceLanguage.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -120,8 +124,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(knownLanguageIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(knownLanguageName:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:id:idAliases:linkDisambiguationID:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(queryID:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(name:id:idAliases:linkDisambiguationID:)"
       ],
       "title" : "Initializers"
     },
@@ -372,7 +375,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -492,7 +495,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -770,48 +773,6 @@
   "title" : "init(name:id:idAliases:linkDisambiguationID:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/sourcelanguage\/init(name:id:idaliases:linkdisambiguationid:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/init(queryID:)": {
-  "abstract" : [
-    {
-      "text" : "Finds the programming language that matches a given query identifier.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "queryID"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceLanguage\/init(queryID:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(queryID:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/sourcelanguage\/init(queryid:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SourceLanguage/javaScript": {
   "abstract" : [

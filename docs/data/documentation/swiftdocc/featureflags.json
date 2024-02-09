@@ -45,6 +45,10 @@
         "text" : "FeatureFlags"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "FeatureFlags.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -119,9 +123,8 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDeviceFrameSupportEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalDoxygenSupportEnabled",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalJSONIndexEnabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalLinkHierarchySerializationEnabled",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalObjectiveCSupportEnabled"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalOverloadedSymbolPresentationEnabled"
       ],
       "title" : "Instance Properties"
     },
@@ -360,7 +363,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -458,52 +461,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaldoxygensupportenabled"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalJSONIndexEnabled": {
-  "abstract" : [
-    {
-      "text" : "Whether or not experimental support for emitting a JSON representation of the converted",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "documentation’s navigator index is enabled.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "isExperimentalJSONIndexEnabled"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalJSONIndexEnabled",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "isExperimentalJSONIndexEnabled",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaljsonindexenabled"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalLinkHierarchySerializationEnabled": {
   "abstract" : [
     {
@@ -541,14 +498,13 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentallinkhierarchyserializationenabled"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalObjectiveCSupportEnabled": {
+"doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled": {
   "abstract" : [
     {
-      "text" : "Whether or not experimental language support for Objective-C is enabled.",
+      "text" : "Whether or not experimental support for combining overloaded symbol pages is enabled.",
       "type" : "text"
     }
   ],
-  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -560,7 +516,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "isExperimentalObjectiveCSupportEnabled"
+      "text" : "isExperimentalOverloadedSymbolPresentationEnabled"
     },
     {
       "kind" : "text",
@@ -572,12 +528,12 @@
       "text" : "Bool"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalObjectiveCSupportEnabled",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags\/isExperimentalOverloadedSymbolPresentationEnabled",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "isExperimentalObjectiveCSupportEnabled",
+  "title" : "isExperimentalOverloadedSymbolPresentationEnabled",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalobjectivecsupportenabled"
+  "url" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaloverloadedsymbolpresentationenabled"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Utilities": {
   "abstract" : [

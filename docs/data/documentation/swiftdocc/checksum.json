@@ -45,6 +45,10 @@
         "text" : "Checksum"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Checksum.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Checksum.swift#L15"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

@@ -45,6 +45,10 @@
         "text" : "SRGBColor"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SRGBColor.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/SRGBColor.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -113,8 +117,7 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(from:)-7qiba",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(from:)-8eybl",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(red:green:blue:alpha:)"
       ],
       "title" : "Initializers"
@@ -417,56 +420,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/srgbcolor\/green"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/SRGBColor/init(from:)-7qiba": {
-  "abstract" : [
-    {
-      "text" : "Creates a new instance from the given ",
-      "type" : "text"
-    },
-    {
-      "code" : "NSColor",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "?("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "from"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "c:objc(cs)NSColor",
-      "text" : "NSColor"
-    },
-    {
-      "kind" : "text",
-      "text" : ")"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(from:)-7qiba",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(from:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/srgbcolor\/init(from:)-7qiba"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/SRGBColor/init(from:)-8eybl": {
+"doc://SwiftDocC/documentation/SwiftDocC/SRGBColor/init(from:)": {
   "abstract" : [
 
   ],
@@ -485,7 +439,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -501,12 +455,12 @@
       "text" : "throws"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(from:)-8eybl",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SRGBColor\/init(from:)",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(from:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/srgbcolor\/init(from:)-8eybl"
+  "url" : "\/documentation\/swiftdocc\/srgbcolor\/init(from:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SRGBColor/init(red:green:blue:alpha:)": {
   "abstract" : [

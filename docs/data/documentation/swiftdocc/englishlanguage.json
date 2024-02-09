@@ -45,6 +45,10 @@
         "text" : "EnglishLanguage"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "EnglishLanguage.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Language\/EnglishLanguage.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

@@ -44,6 +44,10 @@
         "text" : "SourceRepositoryArguments"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SourceRepositoryArguments.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/Source%20Repository\/SourceRepositoryArguments.swift#L16"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -285,7 +289,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

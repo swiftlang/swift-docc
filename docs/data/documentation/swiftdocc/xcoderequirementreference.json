@@ -44,6 +44,10 @@
         "text" : "XcodeRequirementReference"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "XcodeRequirementReference.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/XcodeRequirementReference.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -299,7 +303,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",

@@ -44,6 +44,10 @@
         "text" : "HTTPBodySection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "HTTPBodySection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPBodySection.swift#L12"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

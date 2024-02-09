@@ -44,6 +44,10 @@
         "text" : "LinkResolver"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "LinkResolver.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Link%20Resolution\/LinkResolver.swift#L15"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

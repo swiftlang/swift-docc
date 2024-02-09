@@ -46,6 +46,10 @@
         "text" : "Behavior"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationExtension.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L42"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

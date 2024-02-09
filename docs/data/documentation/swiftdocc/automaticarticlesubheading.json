@@ -53,6 +53,10 @@
         "text" : "AutomaticArticleSubheading"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticArticleSubheading.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticArticleSubheading.swift#L19"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

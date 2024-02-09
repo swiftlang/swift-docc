@@ -42,6 +42,10 @@
         "text" : "Error"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RenderNodeVariant.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeVariant.swift#L36"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

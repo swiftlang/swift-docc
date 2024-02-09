@@ -52,6 +52,10 @@
         "text" : "Small"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Small.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Small.swift#L35"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

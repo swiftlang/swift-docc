@@ -44,6 +44,10 @@
         "text" : "Metadata"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Metadata.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Metadata.swift#L32"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

@@ -44,6 +44,10 @@
         "text" : "GeneratedDataProvider"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "GeneratedDataProvider.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/GeneratedDataProvider.swift#L15"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

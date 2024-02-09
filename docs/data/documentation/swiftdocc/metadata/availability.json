@@ -46,6 +46,10 @@
         "text" : "Availability"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Availability.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L46"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

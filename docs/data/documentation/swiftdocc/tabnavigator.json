@@ -44,6 +44,10 @@
         "text" : "TabNavigator"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TabNavigator.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/TabNavigator.swift#L38"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

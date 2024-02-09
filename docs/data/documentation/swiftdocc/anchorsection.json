@@ -44,6 +44,10 @@
         "text" : "AnchorSection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AnchorSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/AnchorSection.swift#L15"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

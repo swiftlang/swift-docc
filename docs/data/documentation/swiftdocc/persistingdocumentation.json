@@ -24,6 +24,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "Persisting Documentation"
   },
   "primaryContentSections" : [
@@ -59,9 +60,8 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Converter",
-              "isActive" : true,
-              "type" : "reference"
+              "code" : "Converter",
+              "type" : "codeVoice"
             },
             {
               "text" : " type converts documentation nodes to rendering nodes:",
@@ -138,7 +138,6 @@
   "topicSections" : [
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Converter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary"
       ],
       "title" : "Node Persistence"
@@ -182,41 +181,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Converter": {
-  "abstract" : [
-    {
-      "text" : "A converter that coverts documentation nodes to render nodes.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "typealias"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Converter"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Converter",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Converter"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Converter",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/converter"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [

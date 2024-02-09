@@ -41,6 +41,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticSeeAlso.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticSeeAlso.swift#L33"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

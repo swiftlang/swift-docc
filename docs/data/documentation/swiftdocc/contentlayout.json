@@ -46,6 +46,10 @@
         "text" : "ContentLayout"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TutorialArticleSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial%20Article\/TutorialArticleSection.swift#L34"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

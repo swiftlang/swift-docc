@@ -60,6 +60,10 @@
         "text" : "RemoveHierarchyTransformation"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "RemoveHierarchyTransformation.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L18"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

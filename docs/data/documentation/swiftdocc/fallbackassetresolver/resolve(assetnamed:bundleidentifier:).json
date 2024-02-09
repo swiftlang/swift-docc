@@ -86,6 +86,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "FallbackAssetResolver.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/FallbackAssetResolver.swift#L16"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",

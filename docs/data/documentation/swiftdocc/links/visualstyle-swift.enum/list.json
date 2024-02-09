@@ -40,6 +40,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Links.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Links.swift#L57"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

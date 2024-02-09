@@ -76,6 +76,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
         "text" : "Result"
       }
     ],
@@ -87,6 +88,10 @@
         ]
       }
     ],
+    "remoteSource" : {
+      "fileName" : "MarkupVisitor.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L377"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
     "symbolKind" : "method",
@@ -171,6 +176,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
               "text" : "Result"
             }
           ]
@@ -317,6 +323,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
       "text" : "Result"
     }
   ],

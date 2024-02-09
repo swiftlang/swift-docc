@@ -39,6 +39,10 @@
         "text" : "SymbolGraphDataLoader"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "GeneratedDataProvider.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/GeneratedDataProvider.swift#L18"
+    },
     "role" : "symbol",
     "roleHeading" : "Type Alias",
     "symbolKind" : "typealias",

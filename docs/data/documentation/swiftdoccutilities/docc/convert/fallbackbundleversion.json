@@ -9,7 +9,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "The bundle version isn't used for anything.",
+          "text" : "The bundle version isn't used for anything. This deprecated API will be removed after 5.12 is released",
           "type" : "text"
         }
       ],
@@ -67,6 +67,10 @@
     "platforms" : [
 
     ],
+    "remoteSource" : {
+      "fileName" : "Convert.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L402"
+    },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
     "symbolKind" : "property",

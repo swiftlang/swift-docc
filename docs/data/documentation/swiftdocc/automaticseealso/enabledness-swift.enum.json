@@ -46,6 +46,10 @@
         "text" : "Enabledness"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "AutomaticSeeAlso.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticSeeAlso.swift#L28"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

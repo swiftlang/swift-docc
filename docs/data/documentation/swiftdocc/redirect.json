@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A directive that specifies an additional URL for the page where the directive appears.",
+      "text" : "A directive that specifies a previous URL for the page where the directive appears.",
       "type" : "text"
     }
   ],
@@ -44,6 +44,10 @@
         "text" : "Redirect"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Redirect.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Redirect.swift#L36"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
@@ -96,7 +100,112 @@
         {
           "inlineContent" : [
             {
-              "text" : "Use this directive to declare a URL where a piece of content was previously located.",
+              "text" : "If the page has moved more than once you can add multiple  ",
+              "type" : "text"
+            },
+            {
+              "code" : "Redirected",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directives, each specifying one previous URL. For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "@Redirected(from: \"old\/path\/to\/this\/page\")",
+            "@Redirected(from: \"another\/old\/path\/to\/this\/page\")"
+          ],
+          "syntax" : "md",
+          "type" : "codeListing"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Starting with version 5.11, the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "Redirected",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " directive is supported both top-level and as a member of a ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " directive. In",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "earlier versions, the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "Redirected",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " directive is only supported as a top-level directive.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "anchor" : "Setting-up-Redirects",
+          "level" : 3,
+          "text" : "Setting up Redirects",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If you host your documentation on a web server, you can set a HTTP “301 Moved Permanently” redirect for each ",
+              "type" : "text"
+            },
+            {
+              "code" : "Redirected",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " value to avoid breaking existing links to your content.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "To find each page’s Redirected values, pass the ",
+              "type" : "text"
+            },
+            {
+              "code" : "--emit-digest",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " flag to DocC.",
               "type" : "text"
             },
             {
@@ -104,7 +213,7 @@
               "type" : "text"
             },
             {
-              "text" : "For example, if you host the compiled documentation on a web server,",
+              "text" : "This flag configures DocC to write additional metadata files to the output directory.",
               "type" : "text"
             },
             {
@@ -112,7 +221,15 @@
               "type" : "text"
             },
             {
-              "text" : "that server can read this data and set an HTTP “301 Moved Permanently” redirect from",
+              "text" : "One of these files, ",
+              "type" : "text"
+            },
+            {
+              "code" : "linkable-entities.json",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", contains summarized information about all pages and on-page landmarks that you can link to from outside the DocC documentation.",
               "type" : "text"
             },
             {
@@ -120,7 +237,39 @@
               "type" : "text"
             },
             {
-              "text" : "the declared URL to the page’s current URL and avoid breaking any existing links to the content.",
+              "text" : "Each of these “entities” has a ",
+              "type" : "text"
+            },
+            {
+              "code" : "\"path\"",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "—which represents the current relative path of that page—and an optional list of ",
+              "type" : "text"
+            },
+            {
+              "code" : "\"redirects\"",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "—which represent all the ",
+              "type" : "text"
+            },
+            {
+              "code" : "Redirected",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " values for page as they were authored in the markup.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "You can write either relative redirect values or absolute redirect values in the markup depending on what information you need when setting up HTTP “301 Moved Permanently” redirects on your web server.",
               "type" : "text"
             }
           ],
@@ -247,10 +396,44 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/directiveconvertible"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Metadata": {
+  "abstract" : [
+    {
+      "text" : "A directive that contains various metadata about a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/metadata"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Redirect": {
   "abstract" : [
     {
-      "text" : "A directive that specifies an additional URL for the page where the directive appears.",
+      "text" : "A directive that specifies a previous URL for the page where the directive appears.",
       "type" : "text"
     }
   ],

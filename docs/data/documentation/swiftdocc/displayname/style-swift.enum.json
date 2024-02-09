@@ -46,6 +46,10 @@
         "text" : "Style"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DisplayName.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DisplayName.swift#L48"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

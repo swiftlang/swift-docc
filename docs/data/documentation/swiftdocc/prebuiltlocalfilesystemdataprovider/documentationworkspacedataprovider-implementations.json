@@ -26,6 +26,7 @@
       }
     ],
     "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
     "title" : "DocumentationWorkspaceDataProvider Implementations"
   },
   "schemaVersion" : {

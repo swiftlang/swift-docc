@@ -46,6 +46,10 @@
         "text" : "DeclarationRenderSection"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DeclarationsRenderSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L59"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",
@@ -121,6 +125,7 @@
   "topicSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token"
       ],
       "title" : "Structures"
@@ -128,17 +133,30 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(from:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(languages:platforms:tokens:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(languages:platforms:tokens:otherDeclarations:)"
       ],
       "title" : "Initializers"
     },
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/languages",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/otherDeclarations-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/platforms",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/tokens"
       ],
       "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys"
+      ],
+      "title" : "Enumerations"
     },
     {
       "generated" : true,
@@ -260,6 +278,37 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/CodingKeys": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.CodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/codingkeys"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Equatable-Implementations": {
   "abstract" : [
 
@@ -270,6 +319,40 @@
   "title" : "Equatable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/OtherDeclarations-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "Declarations for other symbols that are related to this one, e.g. overloads.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "OtherDeclarations"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "OtherDeclarations"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.OtherDeclarations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.struct"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/TextIndexing-Implementations": {
   "abstract" : [
@@ -316,6 +399,56 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/encode(to:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/init(from:)": {
   "abstract" : [
 
@@ -335,7 +468,7 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": any "
     },
     {
       "kind" : "typeIdentifier",
@@ -358,7 +491,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/init(from:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/init(languages:platforms:tokens:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/init(languages:platforms:tokens:otherDeclarations:)": {
   "abstract" : [
     {
       "text" : "Creates a new declaration section.",
@@ -432,15 +565,41 @@
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "otherDeclarations"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
+      "text" : "DeclarationRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV",
+      "text" : "OtherDeclarations"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(languages:platforms:tokens:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(languages:platforms:tokens:otherDeclarations:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(languages:platforms:tokens:)",
+  "title" : "init(languages:platforms:tokens:otherDeclarations:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/init(languages:platforms:tokens:)"
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/init(languages:platforms:tokens:otherdeclarations:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/languages": {
   "abstract" : [
@@ -482,6 +641,56 @@
   "title" : "languages",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/declarationrendersection\/languages"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/otherDeclarations-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The declarations for this symbol’s overloads.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "otherDeclarations"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
+      "text" : "DeclarationRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV17OtherDeclarationsV",
+      "text" : "OtherDeclarations"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/otherDeclarations-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "otherDeclarations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/otherdeclarations-swift.property"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/platforms": {
   "abstract" : [

@@ -45,6 +45,10 @@
         "text" : "ExternalReferenceResolver"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ExternalReferenceResolver.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalReferenceResolver.swift#L37"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",
@@ -322,7 +326,7 @@
     },
     {
       "kind" : "text",
-      "text" : " : "
+      "text" : " : any "
     },
     {
       "kind" : "typeIdentifier",

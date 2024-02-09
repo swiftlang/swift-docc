@@ -45,6 +45,10 @@
         "text" : "VisualStyle"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Links.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Links.swift#L55"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

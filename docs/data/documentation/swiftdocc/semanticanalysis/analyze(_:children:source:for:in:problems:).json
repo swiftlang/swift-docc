@@ -165,6 +165,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC16SemanticAnalysisP6ResultQa",
         "text" : "Result"
       }
     ],
@@ -173,6 +174,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SemanticAnalysis.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/SemanticAnalysis.swift#L47"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -359,7 +364,9 @@
               "text" : "."
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC16SemanticAnalysisP6ResultQa",
               "text" : "Result"
             },
             {
@@ -401,11 +408,12 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:ST7ElementQa",
               "text" : "Element"
             },
             {
               "kind" : "text",
-              "text" : " == "
+              "text" : " == any "
             },
             {
               "kind" : "typeIdentifier",
@@ -994,6 +1002,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16SemanticAnalysisP6ResultQa",
       "text" : "Result"
     }
   ],

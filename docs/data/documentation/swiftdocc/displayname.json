@@ -45,6 +45,10 @@
         "text" : "DisplayName"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DisplayName.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DisplayName.swift#L28"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

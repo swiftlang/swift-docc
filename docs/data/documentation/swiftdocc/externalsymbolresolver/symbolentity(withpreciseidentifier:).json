@@ -74,6 +74,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "ExternalSymbolResolver.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalSymbolResolver.swift#L48"
+    },
     "required" : true,
     "role" : "symbol",
     "roleHeading" : "Instance Method",

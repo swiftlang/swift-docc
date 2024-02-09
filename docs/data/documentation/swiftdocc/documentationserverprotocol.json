@@ -44,6 +44,10 @@
         "text" : "DocumentationServerProtocol"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "DocumentationServerProtocol.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerProtocol.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Protocol",
     "symbolKind" : "protocol",

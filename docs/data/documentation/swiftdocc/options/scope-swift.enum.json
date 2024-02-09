@@ -45,6 +45,10 @@
         "text" : "Scope"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Options.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/Options.swift#L69"
+    },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
     "symbolKind" : "enum",

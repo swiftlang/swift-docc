@@ -39,6 +39,10 @@
         "text" : "SeeAlsoInTopicsHeadingChecker"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "SeeAlsoInTopicsHeadingChecker.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/SeeAlsoInTopicsHeadingChecker.swift#L14"
+    },
     "role" : "symbol",
     "roleHeading" : "Structure",
     "symbolKind" : "struct",

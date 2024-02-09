@@ -52,6 +52,10 @@
         "text" : "Row"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Row.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Row.swift#L50"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

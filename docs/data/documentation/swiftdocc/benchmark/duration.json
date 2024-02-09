@@ -46,6 +46,10 @@
         "text" : "Duration"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Duration.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/Duration.swift#L17"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",

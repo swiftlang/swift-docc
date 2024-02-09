@@ -40,6 +40,10 @@
         "name" : "SwiftDocC"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "Options.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/Options.swift#L71"
+    },
     "role" : "symbol",
     "roleHeading" : "Case",
     "symbolKind" : "case",

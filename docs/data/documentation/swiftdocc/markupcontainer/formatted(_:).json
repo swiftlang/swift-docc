@@ -73,6 +73,7 @@
       },
       {
         "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation11FormatStyleP0B6OutputQa",
         "text" : "FormatOutput"
       }
     ],
@@ -188,6 +189,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation11FormatStyleP0B6OutputQa",
               "text" : "FormatOutput"
             },
             {
@@ -220,6 +222,7 @@
             },
             {
               "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation11FormatStyleP0B5InputQa",
               "text" : "FormatInput"
             },
             {
@@ -381,6 +384,7 @@
     },
     {
       "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation11FormatStyleP0B6OutputQa",
       "text" : "FormatOutput"
     }
   ],

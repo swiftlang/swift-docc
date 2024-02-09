@@ -53,6 +53,10 @@
         "text" : "NavigatorTree"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "NavigatorTree.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L36"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
@@ -219,8 +223,6 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/identifierToNode",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/nodeToIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/numericIdentifierToNode",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/root"
       ],
@@ -559,66 +561,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/node"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/identifierToNode": {
-  "abstract" : [
-    {
-      "text" : "A map holding the mapping from topicIdentifier to the node.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "identifierToNode"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
-      "text" : "ResolvedTopicReference"
-    },
-    {
-      "kind" : "text",
-      "text" : " : "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
-      "text" : "Node"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/identifierToNode",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "identifierToNode",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatortree\/identifiertonode"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/init()": {
   "abstract" : [
     {
@@ -727,66 +669,6 @@
   "title" : "init(root:numericIdentifierToNode:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/init(root:numericidentifiertonode:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/nodeToIdentifier": {
-  "abstract" : [
-    {
-      "text" : "A map holding the mapping from node to the topicIdentifier.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "nodeToIdentifier"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
-      "text" : "NavigatorTree"
-    },
-    {
-      "kind" : "text",
-      "text" : "."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
-      "text" : "Node"
-    },
-    {
-      "kind" : "text",
-      "text" : " : "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
-      "text" : "ResolvedTopicReference"
-    },
-    {
-      "kind" : "text",
-      "text" : "]"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/nodeToIdentifier",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "nodeToIdentifier",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/navigatortree\/nodetoidentifier"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/numericIdentifierToNode": {
   "abstract" : [

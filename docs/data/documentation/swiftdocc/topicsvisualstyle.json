@@ -53,6 +53,10 @@
         "text" : "TopicsVisualStyle"
       }
     ],
+    "remoteSource" : {
+      "fileName" : "TopicsVisualStyle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/TopicsVisualStyle.swift#L16"
+    },
     "role" : "symbol",
     "roleHeading" : "Class",
     "symbolKind" : "class",
