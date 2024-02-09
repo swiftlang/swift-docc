@@ -2,13 +2,13 @@
 #
 # This source file is part of the Swift.org open source project
 #
-# Copyright (c) 2022 Apple Inc. and the Swift project authors
+# Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
 # Licensed under Apache License v2.0 with Runtime Library Exception
 #
 # See https://swift.org/LICENSE.txt for license information
 # See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 #
-# Updates the GitHub Pages documentation site thats published from the 'docs' 
+# Updates the GitHub Pages documentation site thats published from the 'docs'
 # subdirectory in the 'gh-pages' branch of this repository.
 #
 # This script should be run by someone with commit access to the 'gh-pages' branch
@@ -26,7 +26,8 @@ filepath() {
 SWIFT_DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
 
 DOCC_BUILD_DIR="$SWIFT_DOCC_ROOT"/.build/docc-gh-pages-build
-DOCC_UTILITIES_OUTPUT_DIR="$DOCC_BUILD_DIR"/docc-utilities-docs
+DOCC_OUTPUT_DIR="$DOCC_BUILD_DIR"/SwiftDocC.doccarchive
+DOCC_UTILITIES_OUTPUT_DIR="$DOCC_BUILD_DIR"/SwiftDocCUtilities.doccarchive
 
 mkdir -p "$DOCC_UTILITIES_OUTPUT_DIR"
 
@@ -42,14 +43,19 @@ export DOCC_JSON_PRETTYPRINT="YES"
 
 # Generate documentation for the 'SwiftDocC' target and output it
 # to the /docs subdirectory in the gh-pages worktree directory.
+
+echo -e "\033[34;1m Building SwiftDocC docs at $DOCC_OUTPUT_DIR \033[0m"
+
 swift package \
-    --allow-writing-to-directory "$SWIFT_DOCC_ROOT/gh-pages/docs" \
+    --allow-writing-to-directory "$SWIFT_DOCC_ROOT" \
     generate-documentation \
     --target SwiftDocC \
     --disable-indexing \
     --transform-for-static-hosting \
     --hosting-base-path swift-docc \
-    --output-path "$SWIFT_DOCC_ROOT/gh-pages/docs"
+    --output-path "$DOCC_OUTPUT_DIR"
+
+echo -e "\033[34;1m Building SwiftDocC Utilities docs at $DOCC_UTILITIES_OUTPUT_DIR \033[0m"
 
 # Generate documentation for the 'SwiftDocCUtilities' target and output it
 # to a temporary output directory in the .build directory.
@@ -62,8 +68,13 @@ swift package \
     --hosting-base-path swift-docc \
     --output-path "$DOCC_UTILITIES_OUTPUT_DIR"
 
+echo -e "\033[34;1m Merging docs \033q[0m"
+
 # Merge the SwiftDocCUtilities docs into the primary SwiftDocC docs
-cp -R "$DOCC_UTILITIES_OUTPUT_DIR"/* "$SWIFT_DOCC_ROOT/gh-pages/docs/"
+swift run docc merge \
+    "$DOCC_OUTPUT_DIR" \
+    "$DOCC_UTILITIES_OUTPUT_DIR" \
+    --output-path "$SWIFT_DOCC_ROOT/gh-pages/docs"
 
 # Save the current commit we've just built documentation from in a variable
 CURRENT_COMMIT_HASH=`git rev-parse --short HEAD`
@@ -73,7 +84,7 @@ cd gh-pages
 git add docs
 
 if [ -n "$(git status --porcelain)" ]; then
-    echo "Documentation changes found. Commiting the changes to the 'gh-pages' branch and pushing to origin."
+    echo "Documentation changes found. Committing the changes to the 'gh-pages' branch and pushing to origin."
     git commit -m "Update GitHub Pages documentation site to $CURRENT_COMMIT_HASH"
     git push origin HEAD:gh-pages
 else
