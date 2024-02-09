@@ -19,6 +19,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     var renderNodeWriter: JSONEncodingRenderNodeWriter
     var indexer: ConvertAction.Indexer?
     let enableCustomTemplates: Bool
+    var assetPrefixComponent: String?
 
     private enum CustomTemplateIdentifier: String {
         case header = "custom-header"
@@ -32,7 +33,8 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         context: DocumentationContext,
         indexer: ConvertAction.Indexer?,
         enableCustomTemplates: Bool = false,
-        transformForStaticHostingIndexHTML: URL?
+        transformForStaticHostingIndexHTML: URL?,
+        bundleIdentifier: BundleIdentifier?
     ) {
         self.targetFolder = targetFolder
         self.bundleRootFolder = bundleRootFolder
@@ -45,6 +47,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         )
         self.indexer = indexer
         self.enableCustomTemplates = enableCustomTemplates
+        self.assetPrefixComponent = bundleIdentifier?.split(separator: "/").joined(separator: "-")
     }
     
     func consume(problems: [Problem]) throws {
@@ -58,7 +61,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     func consume(renderNode: RenderNode) throws {
         // Write the render node to disk
-        try renderNodeWriter.write(renderNode)
+        try renderNodeWriter.write(renderNode, encoder: makeEncoder())
         
         // Index the node, if indexing is enabled.
         indexer?.index(renderNode)
@@ -77,11 +80,14 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
 
         // TODO: Supporting a single bundle for the moment.
         let bundleIdentifier = bundle.identifier
+        assert(bundleIdentifier == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
         
         // Create images directory if needed.
-        let imagesDirectory = targetFolder.appendingPathComponent("images", isDirectory: true)
+        let imagesDirectory = targetFolder
+            .appendingPathComponent("images", isDirectory: true)
+            .appendingPathComponent(bundleIdentifier, isDirectory: true)
         if !fileManager.directoryExists(atPath: imagesDirectory.path) {
-            try fileManager.createDirectory(at: imagesDirectory, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectory(at: imagesDirectory, withIntermediateDirectories: true, attributes: nil)
         }
         
         // Copy all registered images to the output directory.
@@ -90,9 +96,11 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
         
         // Create videos directory if needed.
-        let videosDirectory = targetFolder.appendingPathComponent("videos", isDirectory: true)
+        let videosDirectory = targetFolder
+            .appendingPathComponent("videos", isDirectory: true)
+            .appendingPathComponent(bundleIdentifier, isDirectory: true)
         if !fileManager.directoryExists(atPath: videosDirectory.path) {
-            try fileManager.createDirectory(at: videosDirectory, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectory(at: videosDirectory, withIntermediateDirectories: true, attributes: nil)
         }
         
         // Copy all registered videos to the output directory.
@@ -101,9 +109,11 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
         
         // Create downloads directory if needed.
-        let downloadsDirectory = targetFolder.appendingPathComponent(DownloadReference.locationName, isDirectory: true)
+        let downloadsDirectory = targetFolder
+            .appendingPathComponent(DownloadReference.locationName, isDirectory: true)
+            .appendingPathComponent(bundleIdentifier, isDirectory: true)
         if !fileManager.directoryExists(atPath: downloadsDirectory.path) {
-            try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: false, attributes: nil)
+            try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true, attributes: nil)
         }
 
         // Copy all downloads into the output directory.
@@ -190,7 +200,11 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     /// Encodes the given value using the default render node JSON encoder.
     private func encode<E: Encodable>(_ value: E) throws -> Data {
-        try RenderJSONEncoder.makeEncoder().encode(value)
+        try makeEncoder().encode(value)
+    }
+    
+    private func makeEncoder() -> JSONEncoder {
+        RenderJSONEncoder.makeEncoder(assetPrefixComponent: assetPrefixComponent)
     }
 
     // Injects a <template> tag into the index.html <body> using the contents of

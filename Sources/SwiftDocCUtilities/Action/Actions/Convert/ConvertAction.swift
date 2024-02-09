@@ -454,7 +454,8 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        let bundleIdentifier = converter.firstAvailableBundle()?.identifier
+        if let bundleIdentifier = bundleIdentifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -466,7 +467,8 @@ public struct ConvertAction: Action, RecreatingContext {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil
+            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
+            bundleIdentifier: bundleIdentifier
         )
 
         let analysisProblems: [Problem]
@@ -558,7 +560,8 @@ public struct ConvertAction: Action, RecreatingContext {
                 fileManager: fileManager,
                 context: context,
                 indexer: nil,
-                transformForStaticHostingIndexHTML: nil
+                transformForStaticHostingIndexHTML: nil,
+                bundleIdentifier: bundleIdentifier
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)

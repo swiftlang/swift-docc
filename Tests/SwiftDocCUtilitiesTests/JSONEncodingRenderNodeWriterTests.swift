@@ -40,7 +40,7 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
         
         DispatchQueue.global(qos: .default).async {
             do {
-                try writer.write(renderNode)
+                try writer.write(renderNode, encoder: RenderJSONEncoder.makeEncoder())
                 XCTFail("Did not throw when writing to invalid path.")
             } catch {
                 didReleaseExecution.fulfill()

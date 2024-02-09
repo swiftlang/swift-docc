@@ -86,7 +86,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         
         // Render URL
         if !encodeUrlVerbatim {
-            try container.encode(renderURL(for: url), forKey: .url)
+            try container.encode(renderURL(for: url, prefixComponent: encoder.assetPrefixComponent), forKey: .url)
         } else {
             try container.encode(url, forKey: .url)
         }
@@ -100,8 +100,8 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
 }
 
 extension DownloadReference {
-    private func renderURL(for url: URL) -> URL {
-        url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent)
+    private func renderURL(for url: URL, prefixComponent: String?) -> URL {
+        url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent, prefixComponent: prefixComponent)
     }
 }
 

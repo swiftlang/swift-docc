@@ -418,19 +418,19 @@ class ExternalLinkableTests: XCTestCase {
             }
             
             // TODO: DataAsset doesn't round-trip encode/decode
-            summary.references = summary.references?.compactMap {
-                guard var imageRef = $0 as? ImageReference else { return nil }
+            summary.references = summary.references?.compactMap { (original: RenderReference) -> RenderReference? in
+                guard var imageRef = original as? ImageReference else { return nil }
                 imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
-                    return imageRef.destinationURL(for: variant.lastPathComponent)
+                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: bundle.identifier)
                 }
                 imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
-                    return (imageRef.destinationURL(for: key.lastPathComponent), value)
+                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: bundle.identifier), value)
                 })
                 return imageRef as RenderReference
             }
             
             
-            let encoded = try JSONEncoder().encode(summary)
+            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: bundle.identifier).encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }

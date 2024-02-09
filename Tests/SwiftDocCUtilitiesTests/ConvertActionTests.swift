@@ -102,15 +102,17 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: testImageName),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: testImageName),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
         // Verify that the copied image has the same capitalization as the original
         let copiedImageOutput = testDataProvider.files.keys
-            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("images").path + "/") })
-            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("images").path + "/", with: "") })
+            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("images/com.test.example").path + "/") })
+            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("images/com.test.example").path + "/", with: "") })
         
         XCTAssertEqual(copiedImageOutput, [testImageName])
     }
@@ -149,15 +151,17 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "videos", content: [
-               CopyOfFile(original: videoFile, newName: testVideoName),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: videoFile, newName: testVideoName),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
         // Verify that the copied video has the same capitalization as the original
         let copiedVideoOutput = testDataProvider.files.keys
-            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("videos").path + "/") })
-            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("videos").path + "/", with: "") })
+            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("videos/com.test.example").path + "/") })
+            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("videos/com.test.example").path + "/", with: "") })
         
         XCTAssertEqual(copiedVideoOutput, [testVideoName])
     }
@@ -208,7 +212,9 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "downloads", content: [
-               CopyOfFile(original: downloadFile),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: downloadFile),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
@@ -439,10 +445,14 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: "TEST.png"),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: "TEST.png"),
+                ]),
             ]),
             Folder(name: "videos", content: [
-               CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
@@ -636,9 +646,12 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
+                ]),
             ]),
             Folder(name: "videos", content: [
+                Folder(name: "com.test.example", content: []),
             ]),
             JSONFile(name: "diagnostics.json", content: [
                 Digest.Diagnostic(
