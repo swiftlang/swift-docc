@@ -4260,7 +4260,7 @@ let expected = """
     func testContextRecognizesOverloads() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { SymbolGraph.Symbol.KindIdentifier.isOverloadableKind($0.identifier) }
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
             makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
@@ -4328,7 +4328,7 @@ let expected = """
             )
         }
         
-        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !SymbolGraph.Symbol.KindIdentifier.isOverloadableKind($0.identifier) }
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
             makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
