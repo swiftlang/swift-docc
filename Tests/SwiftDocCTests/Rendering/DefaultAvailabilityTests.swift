@@ -55,7 +55,13 @@ class DefaultAvailabilityTests: XCTestCase {
         }
         
         // Verify the bundle has loaded the default availability
-        XCTAssertEqual(bundle.info.defaultAvailability?.modules["MyKit"]?.map({ "\($0.platformName.displayName) \($0.platformVersion)" }).sorted(), expectedDefaultAvailability)
+        XCTAssertEqual(
+            bundle.info.defaultAvailability?
+                .modules["MyKit"]?
+                .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
+                .sorted(),
+            expectedDefaultAvailability
+        )
         
         // Bail the rendering part of the test if the availability hasn't been loaded
         guard bundle.info.defaultAvailability != nil else {
@@ -373,5 +379,73 @@ class DefaultAvailabilityTests: XCTestCase {
         ]
         
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
+    }
+    
+    func testUnconditionallyUnavailable() throws {
+        let infoPlist = """
+            <plist version="1.0">
+            <dict>
+                <key>CFBundleName</key>
+                <string>MyModule</string>
+                <key>CFBundleDisplayName</key>
+                <string>MyModule</string>
+                <key>CFBundleIdentifier</key>
+                <string>com.apple.MyModule</string>
+                <key>CFBundleVersion</key>
+                <string>0.1.0</string>
+                <key>CDAppleDefaultAvailability</key>
+                <dict>
+                    <key>MyModule</key>
+                    <array>
+                        <dict>
+                            <key>name</key>
+                            <string>visionOS</string>
+                            <key>unavailable</key>
+                            <true/>
+                        </dict>
+                        <dict>
+                            <key>unavailable</key>
+                            <true/>
+                            <key>name</key>
+                            <string>tvOS</string>
+                            <key>version</key>
+                            <string>1.0</string>
+                        </dict>
+                        <dict>
+                            <key>name</key>
+                            <string>watchOS</string>
+                            <key>version</key>
+                            <string>1.0</string>
+                        </dict>
+                    </array>
+                </dict>
+            </dict>
+            </plist>
+            """
+        
+        let decodedInfo = try DocumentationBundle.Info(from: Data(infoPlist.utf8))
+        let reEncodedInfo = try PropertyListEncoder().encode(decodedInfo.defaultAvailability)
+        let defaultAvailability = try PropertyListDecoder().decode(
+            DefaultAvailability.self,
+            from: reEncodedInfo
+        )
+        let module = try XCTUnwrap(defaultAvailability.modules["MyModule"])
+        XCTAssertEqual(module.count, 3)
+        XCTAssertEqual(
+            module.filter({ $0.platformName.displayName == "visionOS" }).first?.state,
+            .unavailable
+        )
+        XCTAssertEqual(
+            module.filter({ $0.platformName.displayName == "tvOS" }).first?.state,
+            .unavailable
+        )
+        XCTAssertEqual(
+            module.filter({ $0.platformName.displayName == "watchOS" }).first?.state,
+            .available(version: "1.0")
+        )
+        XCTAssertEqual(
+            module.filter({ $0.platformName.displayName == "watchOS" }).first?.introducedVersion,
+            "1.0"
+        )
     }
 }

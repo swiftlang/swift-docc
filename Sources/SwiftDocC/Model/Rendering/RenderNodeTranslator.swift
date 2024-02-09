@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1747,7 +1747,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
         guard
             // Check if we have a symbol availability version and a target platform version
-            let moduleVersion = Version(versionString: moduleAvailability.platformVersion),
+            let moduleVersion = Version(versionString: moduleAvailability.introducedVersion),
             // We require at least two components for a platform version (e.g. 10.15 or 10.15.1)
             moduleVersion.count >= 2,
             // Verify we're building against this platform
@@ -1780,10 +1780,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Prepare for rendering
         let renderedAvailability = moduleAvailability
+            .filter({ $0.state != .unavailable })
             .map({ availability -> AvailabilityRenderItem in
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
-                    introduced: availability.platformVersion,
+                    introduced: availability.introducedVersion,
                     isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
                 )
             })

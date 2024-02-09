@@ -14,7 +14,9 @@ import Foundation
 ///
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
-/// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs:
+/// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
+/// or in the case where the platform in uncodinionally unavailable, "name" and "unavailable" pairs:
+///
 /// ```
 /// <key>CDAppleDefaultAvailability</key>
 /// <dict>
@@ -26,6 +28,12 @@ import Foundation
 ///             <key>version</key>
 ///             <string>Version Number</string>
 ///         </dict>
+///         <dict>
+///             <key>name</key>
+///             <string>Platform Name</string>
+///             <key>unavailable</key>
+///             <true/>
+///         </dict>
 ///     </array>
 /// </dict>
 /// ```
@@ -36,32 +44,82 @@ public struct DefaultAvailability: Codable, Equatable {
         enum CodingKeys: String, CodingKey {
             case platformName = "name"
             case platformVersion = "version"
+            case unavailable = "unavailable"
+        }
+        
+        /// The diferent availability states that can be declared.
+        /// Unavailable or Available with an introduced version.
+        public enum State: Equatable, Hashable, Encodable {
+            case unavailable
+            case available(version: String)
         }
 
         /// The name of the platform, e.g. "macOS".
         public var platformName: PlatformName
+        
+        /// The availability state, e.g unavailable
+        public var state: State
 
         /// A string representation of the version for this platform.
-        public var platformVersion: String
+        @available(*, deprecated, message: "Use `introducedVersion` instead.")
+        public var platformVersion: String {
+            return introducedVersion ?? "0.0"
+        }
+        
+        /// A string representation of the version for this platform
+        /// or nil if it's unavailable.
+        public var introducedVersion: String? {
+            switch state {
+            case .available(let introduced):
+                return introduced.description
+            case .unavailable:
+                return nil
+            }
+        }
 
         /// Creates a new module availability with a given platform name and platform version.
         ///
         /// - Parameters:
         ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
-        ///   - platformVersion: A 2- or 3-component version string, such as `"13.0"` or `"13.1.2"`
+        ///   - platformVersion: A 2- or 3-component version string, such as `"13.0"` or `"13.1.2"`.
+        @available(*, deprecated, message: "Use `init(platformName:platformState:) instead.")
         public init(platformName: PlatformName, platformVersion: String) {
             self.platformName = platformName
-            self.platformVersion = platformVersion
+            self.state = .available(version: platformVersion)
+        }
+        
+        /// Creates a new module availability with a given platform name and platform availability state.
+        ///
+        /// - Parameters:
+        ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
+        ///   - platformState: A state defining either the unavailability of the platform or the introduced version string, such as `"13.0"` or `"13.1.2"`.
+        public init(platformName: PlatformName, platformState: State) {
+            self.platformName = platformName
+            self.state = platformState
         }
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             platformName = try values.decode(PlatformName.self, forKey: .platformName)
-            platformVersion = try values.decode(String.self, forKey: .platformVersion)
-            
-            guard let version = Version(versionString: platformVersion), (2...3).contains(version.count) else {
-                throw DocumentationBundle.PropertyListError.invalidVersionString(platformVersion)
+            if let unavailable = try values.decodeIfPresent(Bool.self, forKey: .unavailable), unavailable == true {
+                state = .unavailable
+                return
             }
+            let introducedVersion = try values.decode(String.self, forKey: .platformVersion)
+            state = .available(version: introducedVersion)
+            guard let version = Version(versionString: introducedVersion), (2...3).contains(version.count) else {
+                throw DocumentationBundle.PropertyListError.invalidVersionString(introducedVersion)
+            }
+        }
+        
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(platformName, forKey: .platformName)
+            guard let introducedVersion = introducedVersion else {
+                try container.encode(true, forKey: .unavailable)
+                return
+            }
+            try container.encode(introducedVersion, forKey: .platformVersion)
         }
     }
 

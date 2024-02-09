@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,7 +36,10 @@ class DocumentationBundleInfoTests: XCTestCase {
         let info = try DocumentationBundle.Info(from: infoPlistData)
 
         XCTAssertEqual(
-            info.defaultAvailability?.modules["MyKit"]?.map({ "\($0.platformName.displayName) \($0.platformVersion)" }).sorted(),
+            info.defaultAvailability?
+                .modules["MyKit"]?
+                .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
+                .sorted(),
             ["Mac Catalyst 13.5", "macOS 10.15.1"]
         )
     }
@@ -229,7 +232,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                     "MyModule": [
                         DefaultAvailability.ModuleAvailability(
                             platformName: .iOS,
-                            platformVersion: "7.0.0"
+                            platformState: .available(version: "7.0.0")
                         )
                     ]
                 ]
@@ -250,7 +253,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                         "MyModule": [
                             DefaultAvailability.ModuleAvailability(
                                 platformName: .iOS,
-                                platformVersion: "7.0.0"
+                                platformState: .available(version: "7.0.0")
                             )
                         ]
                     ]
@@ -271,7 +274,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                     "MyModule": [
                         DefaultAvailability.ModuleAvailability(
                             platformName: .iOS,
-                            platformVersion: "7.0.0"
+                            platformState: .available(version: "7.0.0")
                         )
                     ]
                 ]

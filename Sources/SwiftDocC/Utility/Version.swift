@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,7 +35,8 @@ public struct Version: Codable, RandomAccessCollection, ExpressibleByArrayLitera
     /// - warning: Returns `nil` if the version string contains non-integer or
     ///   negative numeric components; for example the strings "1.2.3-beta6" and "1.-2.3"
     ///   are invalid inputs.
-    public init?(versionString: String) {
+    public init?(versionString: String?) {
+        guard let versionString = versionString else { return nil }
         let stringComponents = versionString.components(separatedBy: ".")
         let intComponents = stringComponents.compactMap { Int($0) }
         guard intComponents.count == stringComponents.count,
