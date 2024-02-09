@@ -1,0 +1,748 @@
+{
+  "abstract" : [
+    {
+      "text" : "A remote repository that hosts source code.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC16SourceRepositoryV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "SourceRepository"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "SourceRepository"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "SourceRepository.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/SourceRepository\/SourceRepository.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "SourceRepository"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "SourceRepository"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/init(checkoutPath:sourceServiceBaseURL:formatLineNumber:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/checkoutPath",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/formatLineNumber",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/sourceServiceBaseURL"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/format(sourceFileURL:lineNumber:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/bitbucket(checkoutPath:sourceServiceBaseURL:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/github(checkoutPath:sourceServiceBaseURL:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/gitlab(checkoutPath:sourceServiceBaseURL:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/localFilesystem()"
+      ],
+      "title" : "Type Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/sourcerepository"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository": {
+  "abstract" : [
+    {
+      "text" : "A remote repository that hosts source code.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepository"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepository"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceRepository",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/bitbucket(checkoutPath:sourceServiceBaseURL:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a source repository hosted by the BitBucket service.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bitbucket"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "checkoutPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sourceServiceBaseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16SourceRepositoryV",
+      "text" : "SourceRepository"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/bitbucket(checkoutPath:sourceServiceBaseURL:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bitbucket(checkoutPath:sourceServiceBaseURL:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/bitbucket(checkoutpath:sourceservicebaseurl:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/checkoutPath": {
+  "abstract" : [
+    {
+      "text" : "The path at which the repository is cloned locally.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "checkoutPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/checkoutPath",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "checkoutPath",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/checkoutpath"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/format(sourceFileURL:lineNumber:)": {
+  "abstract" : [
+    {
+      "text" : "Formats a local source file URL to a URL hosted by the remote source code service.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "format"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sourceFileURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "lineNumber"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/format(sourceFileURL:lineNumber:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "format(sourceFileURL:lineNumber:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/format(sourcefileurl:linenumber:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/formatLineNumber": {
+  "abstract" : [
+    {
+      "text" : "A function that formats a line number to be included in a URL.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "formatLineNumber"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/formatLineNumber",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "formatLineNumber",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/formatlinenumber"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/github(checkoutPath:sourceServiceBaseURL:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a source repository hosted by the GitHub service.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "github"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "checkoutPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sourceServiceBaseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16SourceRepositoryV",
+      "text" : "SourceRepository"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/github(checkoutPath:sourceServiceBaseURL:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "github(checkoutPath:sourceServiceBaseURL:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/github(checkoutpath:sourceservicebaseurl:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/gitlab(checkoutPath:sourceServiceBaseURL:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a source repository hosted by the GitLab service.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "gitlab"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "checkoutPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sourceServiceBaseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16SourceRepositoryV",
+      "text" : "SourceRepository"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/gitlab(checkoutPath:sourceServiceBaseURL:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "gitlab(checkoutPath:sourceServiceBaseURL:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/gitlab(checkoutpath:sourceservicebaseurl:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/init(checkoutPath:sourceServiceBaseURL:formatLineNumber:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a source code repository.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "checkoutPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "sourceServiceBaseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "formatLineNumber"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/init(checkoutPath:sourceServiceBaseURL:formatLineNumber:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(checkoutPath:sourceServiceBaseURL:formatLineNumber:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/init(checkoutpath:sourceservicebaseurl:formatlinenumber:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/localFilesystem()": {
+  "abstract" : [
+    {
+      "text" : "Creates a source repository hosted by the device’s filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "localFilesystem"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16SourceRepositoryV",
+      "text" : "SourceRepository"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/localFilesystem()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "localFilesystem()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/localfilesystem()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SourceRepository/sourceServiceBaseURL": {
+  "abstract" : [
+    {
+      "text" : "The base URL where the service hosts the repository’s contents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sourceServiceBaseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/sourceServiceBaseURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sourceServiceBaseURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sourcerepository\/sourceservicebaseurl"
+}
+}
+}

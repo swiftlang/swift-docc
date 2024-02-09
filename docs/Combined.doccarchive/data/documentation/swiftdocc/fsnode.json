@@ -1,0 +1,511 @@
+{
+  "abstract" : [
+    {
+      "text" : "An element in a virtual filesystem.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC6FSNodeO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "FSNode"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "FSNode"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "FileSystemProvider.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/FileSystemProvider.swift#L20"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "FSNode"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "FSNode"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider"
+      ],
+      "title" : "File Data Providers"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/Directory",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/File"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/directory(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/file(_:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/url"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/fsnode"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+  "abstract" : [
+    {
+      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Bundle Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode": {
+  "abstract" : [
+    {
+      "text" : "An element in a virtual filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FSNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FSNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FSNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/Directory": {
+  "abstract" : [
+    {
+      "text" : "A directory in a virtual file system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Directory"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/Directory",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Directory"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FSNode.Directory",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/directory"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/File": {
+  "abstract" : [
+    {
+      "text" : "A file in a virtual file system",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "File"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/File",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "File"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FSNode.File",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/file"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/directory(_:)": {
+  "abstract" : [
+    {
+      "text" : "A directory in a filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "directory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6FSNodeO",
+      "text" : "FSNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6FSNodeO9DirectoryV",
+      "text" : "Directory"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/directory(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "FSNode.directory(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/directory(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/file(_:)": {
+  "abstract" : [
+    {
+      "text" : "A file in a filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "file"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6FSNodeO",
+      "text" : "FSNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6FSNodeO4FileV",
+      "text" : "File"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/file(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "FSNode.file(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/file(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/url": {
+  "abstract" : [
+    {
+      "text" : "The URL for the node in the filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "url"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/url",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "url",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/url"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileSystemProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that vends a tree of virtual filesystem objects.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileSystemProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileSystemProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileSystemProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filesystemprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides documentation bundles that it discovers by traversing the local file system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalFileSystemDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalFileSystemDataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalFileSystemDataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PrebuiltLocalFileSystemDataProvider": {
+  "abstract" : [
+    {
+      "text" : "A data provider that provides existing in-memory documentation bundles with files on the local filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PrebuiltLocalFileSystemDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PrebuiltLocalFileSystemDataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PrebuiltLocalFileSystemDataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/prebuiltlocalfilesystemdataprovider"
+}
+}
+}

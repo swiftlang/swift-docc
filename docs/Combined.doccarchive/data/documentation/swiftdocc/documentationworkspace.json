@@ -1,0 +1,989 @@
+{
+  "abstract" : [
+    {
+      "text" : "The documentation workspace provides a unified interface for accessing serialized documentation bundles and their files, from a variety of sources.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC22DocumentationWorkspaceC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationWorkspace"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationWorkspace"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "DocumentationWorkspace.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L60"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "DocumentationWorkspace"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DocumentationWorkspace"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " and the workspace that the context is operating in are connected in two ways:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "The workspace is the context’s data provider.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "The context is the workspace’s ",
+                      "type" : "text"
+                    },
+                    {
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
+                      "isActive" : true,
+                      "type" : "reference"
+                    },
+                    {
+                      "text" : ".",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The first lets the workspace multiplex the bundles from any number of data providers (",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ") into a single list of",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider\/bundles",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " and allows the context to access the contents of the various bundles without knowing any specifics",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "of its source (files on disk, a database, or a web services).",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The second lets the workspace notify the context when bundles are added or removed so that the context stays up to date, even after the context is created.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "                                                                                      ┌─────┐",
+            "                                                     ┌────────────────────────────────│ IDE │─────────────────────────────┐",
+            "      ┌──────────┐  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐          │                                └─────┘                             │",
+            "      │FileSystem│─▶ WorkspaceDataProvider ─┐        │                                                                    │",
+            "      └──────────┘  └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ │        │                                                                    │",
+            "                                            │        │                                                                    │",
+            "                                            │        │                                                                    │",
+            "      ┌──────────┐  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐ │  ┌───────────┐     Read-only     ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐                 ┌─────────┐",
+            "      │WebService│─▶ WorkspaceDataProvider ─┼─▶│ Workspace │◀────interface───── ContextDataProvider ◀────get data────│ Context │",
+            "      └──────────┘  └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘ │  └───────────┘                   └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘                 └─────────┘",
+            "                                            │        │                                                                    ▲",
+            "                                            │        │                                                                    │",
+            "┌────────────────┐  ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐ │        │                                                                    │",
+            "│MyCustomDatabase│─▶ WorkspaceDataProvider ─┘        │    Bundle or       ┌ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┐     Event push    │",
+            "└────────────────┘  └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘          └───────file ───────▶ ContextDataProviderDelegate ─────interface─────┘",
+            "                                                            change        └ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ┘"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Each data provider is treated as a separate file system. A single documentation bundle may not span multiple data providers.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate"
+      ],
+      "title" : "Related Documentation"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider"
+      ],
+      "title" : "Workspaces"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider"
+      ],
+      "title" : "Data Providers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/init()"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/bundles",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/delegate"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/contentsOfURL(_:in:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/registerProvider(_:options:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/unregisterProvider(_:options:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/documentationworkspace"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
+  "abstract" : [
+    {
+      "text" : "The documentation context manages the in-memory model for the built documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides information about documentation bundles and their content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContextDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContextDataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContextDataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontextdataprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProvider/bundles": {
+  "abstract" : [
+    {
+      "text" : "The documentation bundles that this data provider provides.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16BundleIdentifiera",
+      "text" : "BundleIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider\/bundles",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "bundles",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontextdataprovider\/bundles"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextDataProviderDelegate": {
+  "abstract" : [
+    {
+      "text" : "An object that responds to changes in available documentation bundles for a specific provider.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContextDataProviderDelegate"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContextDataProviderDelegate"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContextDataProviderDelegate",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontextdataproviderdelegate"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace": {
+  "abstract" : [
+    {
+      "text" : "The documentation workspace provides a unified interface for accessing serialized documentation bundles and their files, from a variety of sources.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationWorkspace"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationWorkspace"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationWorkspace",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/WorkspaceError": {
+  "abstract" : [
+    {
+      "text" : "An error when requesting information from a workspace.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "WorkspaceError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "WorkspaceError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationWorkspace.WorkspaceError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/workspaceerror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/bundles": {
+  "abstract" : [
+    {
+      "text" : "A map of bundle identifiers to documentation bundles.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/bundles",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bundles",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/bundles"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/contentsOfURL(_:in:)": {
+  "abstract" : [
+    {
+      "text" : "Reads the data for a given file in a given documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentsOfURL"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "in"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/contentsOfURL(_:in:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "contentsOfURL(_:in:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/contentsofurl(_:in:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/delegate": {
+  "abstract" : [
+    {
+      "text" : "The delegate to notify when documentation bundles are added or removed from this workspace.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "delegate"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC40DocumentationContextDataProviderDelegateP",
+      "text" : "DocumentationContextDataProviderDelegate"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/delegate",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "delegate",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/delegate"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/init()": {
+  "abstract" : [
+    {
+      "text" : "Creates a new, empty documentation workspace.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/init()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/init()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/registerProvider(_:options:)": {
+  "abstract" : [
+    {
+      "text" : "Adds a new data provider to the workspace.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "registerProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : "(any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC34DocumentationWorkspaceDataProviderP",
+      "text" : "DocumentationWorkspaceDataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22BundleDiscoveryOptionsV",
+      "text" : "BundleDiscoveryOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/registerProvider(_:options:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "registerProvider(_:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/registerprovider(_:options:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspace/unregisterProvider(_:options:)": {
+  "abstract" : [
+    {
+      "text" : "Removes a given data provider from the workspace.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "unregisterProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : "(any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC34DocumentationWorkspaceDataProviderP",
+      "text" : "DocumentationWorkspaceDataProvider"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "options"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22BundleDiscoveryOptionsV",
+      "text" : "BundleDiscoveryOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/unregisterProvider(_:options:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "unregisterProvider(_:options:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspace\/unregisterprovider(_:options:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceDataProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that vends bundles and responds to requests for data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationWorkspaceDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationWorkspaceDataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationWorkspaceDataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspacedataprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+  "abstract" : [
+    {
+      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Bundle Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider": {
+  "abstract" : [
+    {
+      "text" : "A type that provides documentation bundles that it discovers by traversing the local file system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LocalFileSystemDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LocalFileSystemDataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LocalFileSystemDataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/localfilesystemdataprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PrebuiltLocalFileSystemDataProvider": {
+  "abstract" : [
+    {
+      "text" : "A data provider that provides existing in-memory documentation bundles with files on the local filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PrebuiltLocalFileSystemDataProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PrebuiltLocalFileSystemDataProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PrebuiltLocalFileSystemDataProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/prebuiltlocalfilesystemdataprovider"
+}
+}
+}

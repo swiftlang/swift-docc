@@ -1,0 +1,795 @@
+{
+  "abstract" : [
+    {
+      "text" : "An action that generates a documentation catalog from a template seed.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:18SwiftDocCUtilities10InitActionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "InitAction"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "InitAction"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "InitAction.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/InitAction.swift#L15"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "InitAction"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "InitAction"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "Overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Generates a DocC catalog from one of the two available templates:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "code" : "articleOnly",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : ": A template designed for authoring article-only reference documentation.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "code" : "tutorial",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : ": A template designed for authoring tutorials, consisting of a catalog that contains a table of contents and a chapter.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "ommit",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "Use ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "docc init",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " to quickly start authoring your content without having to manually add boilerplate content to get the DocC documentation catalog working.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "anchor" : "Templates",
+          "level" : 2,
+          "text" : "Templates",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "There are two available templates to start from, depending on the type of content the author wants to write.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "anchor" : "Article-Only-Template",
+          "level" : 3,
+          "text" : "Article-Only Template",
+          "type" : "heading"
+        },
+        {
+          "anchor" : "ArticleOnlymd",
+          "level" : 6,
+          "text" : "ArticleOnly.md",
+          "type" : "heading"
+        },
+        {
+          "code" : [
+            "# ArticleOnly Template",
+            "",
+            "<!--- Metadata configuration to make appear this documentation page as a top-level page -->",
+            "",
+            "@Metadata {",
+            "  @TechnologyRoot",
+            "}",
+            "",
+            "Add a single sentence or sentence fragment, which DocC uses as the page’s abstract or summary.",
+            "",
+            "## Overview",
+            "",
+            "Add one or more paragraphs that introduce your content overview."
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "With the structure:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "⎯ ArticleOnly.docc",
+            "    ├ ArticleOnly.md",
+            "    ⎣ Resources"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "anchor" : "Tutorial-Template",
+          "level" : 3,
+          "text" : "Tutorial Template",
+          "type" : "heading"
+        },
+        {
+          "anchor" : "table-of-contentstutorial",
+          "level" : 6,
+          "text" : "table-of-contents.tutorial",
+          "type" : "heading"
+        },
+        {
+          "code" : [
+            "@Tutorials(name: \"\\(title)\") {",
+            "    @Intro(title: \"Tutorial Introduction\") {",
+            "        Add one or more paragraphs that introduce your tutorial.",
+            "    }",
+            "    @Chapter(name: \"Chapter Name\") {",
+            "        @Image(source: \"add-your-chapter-image-filename-here.jpg\", alt: \"Add an accessible description for your image here.\")",
+            "        @TutorialReference(tutorial: \"doc:page-01\")",
+            "    }",
+            "}"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "anchor" : "Chapter01page-01tutorial",
+          "level" : 6,
+          "text" : "Chapter01\/page-01.tutorial",
+          "type" : "heading"
+        },
+        {
+          "code" : [
+            "@Tutorial() {",
+            "    @Intro(title: \"Tutorial Page Title\") {",
+            "        Add one paragraph that introduce your tutorial.",
+            "    }",
+            "    @Section(title: \"Section Name\") {",
+            "        @ContentAndMedia {",
+            "            Add text that introduces the tasks that the reader needs to follow.",
+            "            @Image(source: \"add-your-section-image-filename-here.jpg\", alt: \"Add an accessible description for your image here.\")",
+            "        }",
+            "        @Steps {",
+            "            @Step {",
+            "                This is a step with code.",
+            "                @Code(name: \"\", file: \"\")",
+            "            }",
+            "            @Step {",
+            "                This is a step with an image.",
+            "                @Image(source: \"\", alt: \"\")",
+            "            }",
+            "        }",
+            "    }",
+            "}"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "With the structure:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "⎯ Tutorial.docc",
+            "    ├ table-of-contents.tutorial",
+            "    ├ Chapter01",
+            "    ⎜   ├ page-01.tutorial",
+            "    ⎜   ⎣ Resources",
+            "    ⎣ Resources"
+          ],
+          "syntax" : null,
+          "type" : "codeListing"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction"
+      ],
+      "title" : "Compiler Workflow"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/init(catalogOutputDirectory:documentationTitle:catalogTemplate:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/init(fromInitOptions:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/perform(logHandle:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/Action-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/initaction"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Action": {
+  "abstract" : [
+    {
+      "text" : "An independent unit of work in the command-line workflow.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Action"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Action"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Action",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/action"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction": {
+  "abstract" : [
+    {
+      "text" : "An action that converts a source bundle into compiled documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConvertAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/convertaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
+  "abstract" : [
+    {
+      "text" : "The default, command-line interface you use to compile and preview documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/IndexAction": {
+  "abstract" : [
+    {
+      "text" : "An action that creates an index of a documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "IndexAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "IndexAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "IndexAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/indexaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction": {
+  "abstract" : [
+    {
+      "text" : "An action that generates a documentation catalog from a template seed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InitAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction/Action-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/Action-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Action Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction\/action-implementations"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction/init(catalogOutputDirectory:documentationTitle:catalogTemplate:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new Init action from the given parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "catalogOutputDirectory"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "documentationTitle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "catalogTemplate"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:18SwiftDocCUtilities19CatalogTemplateKindO",
+      "text" : "CatalogTemplateKind"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/init(catalogOutputDirectory:documentationTitle:catalogTemplate:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(catalogOutputDirectory:documentationTitle:catalogTemplate:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction\/init(catalogoutputdirectory:documentationtitle:catalogtemplate:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction/init(fromInitOptions:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a init action from the options given in the init command.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "fromInitOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:18SwiftDocCUtilities11InitOptionsV",
+      "text" : "InitOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/init(fromInitOptions:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(fromInitOptions:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction\/init(frominitoptions:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction/perform(logHandle:)": {
+  "abstract" : [
+    {
+      "text" : "Generates a documentation catalog from a catalog template.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "perform"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "logHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:18SwiftDocCUtilities12ActionResultV",
+      "text" : "ActionResult"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/perform(logHandle:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "perform(logHandle:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction\/perform(loghandle:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewAction": {
+  "abstract" : [
+    {
+      "text" : "An action that monitors a documentation bundle for changes and runs a live web-preview.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PreviewAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PreviewAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PreviewAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewaction"
+}
+}
+}

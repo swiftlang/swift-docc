@@ -1,0 +1,547 @@
+{
+  "abstract" : [
+    {
+      "text" : "A suffix attached to a documentation link to disambiguate it from other symbols",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "that share the same base name.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "SwiftDocC",
+    "externalID" : "s:9SwiftDocC18AbsoluteSymbolLinkV0E9ComponentV20DisambiguationSuffixO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "DisambiguationSuffix"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DisambiguationSuffix"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "AbsoluteSymbolLink.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L213"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "DisambiguationSuffix"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
+        "doc:\/\/SwiftDocC\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/kindAndPreciseIdentifier(kindIdentifier:preciseIdentifierHash:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/kindIdentifier(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/none",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/preciseIdentifierHash(_:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/asLinkSuffixString",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/description"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink": {
+  "abstract" : [
+    {
+      "text" : "An absolute link to a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AbsoluteSymbolLink"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AbsoluteSymbolLink"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent": {
+  "abstract" : [
+    {
+      "text" : "A component of a symbol link.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkComponent"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkComponent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "A suffix attached to a documentation link to disambiguate it from other symbols",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "that share the same base name.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DisambiguationSuffix"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DisambiguationSuffix"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/asLinkSuffixString": {
+  "abstract" : [
+    {
+      "text" : "A string representation of the given disambiguation suffix.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "asLinkSuffixString"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/asLinkSuffixString",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "asLinkSuffixString",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/aslinksuffixstring"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/description": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "description"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/description",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "description",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/description"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/kindAndPreciseIdentifier(kindIdentifier:preciseIdentifierHash:)": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s kind and precise identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "kindAndPreciseIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "kindIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "preciseIdentifierHash"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/kindAndPreciseIdentifier(kindIdentifier:preciseIdentifierHash:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix.kindAndPreciseIdentifier(kindIdentifier:preciseIdentifierHash:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/kindandpreciseidentifier(kindidentifier:preciseidentifierhash:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/kindIdentifier(_:)": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s kind.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "kindIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/kindIdentifier(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix.kindIdentifier(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/kindidentifier(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/none": {
+  "abstract" : [
+    {
+      "text" : "The link is not disambiguated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "none"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/none",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix.none",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/none"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/preciseIdentifierHash(_:)": {
+  "abstract" : [
+    {
+      "text" : "A hash of the symbol’s precise identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "preciseIdentifierHash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/preciseIdentifierHash(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix.preciseIdentifierHash(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/preciseidentifierhash(_:)"
+},
+"doc://SwiftDocC/s23CustomStringConvertibleP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
+  "title" : "Swift.CustomStringConvertible",
+  "type" : "unresolvable"
+}
+}
+}

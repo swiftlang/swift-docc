@@ -1,0 +1,883 @@
+{
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "SwiftDocCUtilities",
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities"
+      }
+    ],
+    "role" : "collection",
+    "roleHeading" : "Framework",
+    "symbolKind" : "module",
+    "title" : "SwiftDocCUtilities"
+  },
+  "primaryContentSections" : [
+    {
+      "content" : [
+        {
+          "anchor" : "Overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "SwiftDocCUtilities provides a default, command-line workflow for DocC, powered by Swift ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "https:\/\/apple.github.io\/swift-argument-parser\/documentation\/argumentparser\/",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ". ",
+              "type" : "text"
+            },
+            {
+              "code" : "docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " commands, such as ",
+              "type" : "text"
+            },
+            {
+              "code" : "convert",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and ",
+              "type" : "text"
+            },
+            {
+              "code" : "preview",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", are conformant ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " types that use DocC to perform documentation tasks.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Use SwiftDocCUtilities to build a custom, command-line interface and extend it with additional commands. To add a new sub-command called ",
+              "type" : "text"
+            },
+            {
+              "code" : "example",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", create a conformant ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " type, ",
+              "type" : "text"
+            },
+            {
+              "code" : "ExampleAction",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", that performs the desired work, and add it as a sub-command. Optionally, you can also reuse any of the provided actions like ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "import ArgumentParser",
+            "",
+            "public struct MyDocumentationTool: ParsableCommand {",
+            "    public static var configuration = CommandConfiguration(",
+            "        abstract: \"My custom documentation tool\",",
+            "        subcommands: [ConvertAction.self, ExampleAction.self]",
+            "    )",
+            "    ",
+            "    public init() {",
+            "    }",
+            "}",
+            "",
+            "MyDocumentationTool.main()"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Adding a new sub-command automatically adds routing and execution of its code, adds its description to the command-line help menu, and ensures validation for its expected arguments.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction"
+      ],
+      "title" : "Compiler Workflow"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/RecreatingContext"
+      ],
+      "title" : "Actions Design"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Throttle",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Signal"
+      ],
+      "title" : "Execution Workflow"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption"
+      ],
+      "title" : "Protocols"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CoverageAction",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitOptions",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Action": {
+  "abstract" : [
+    {
+      "text" : "An independent unit of work in the command-line workflow.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Action"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Action"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Action",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/action"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ActionResult": {
+  "abstract" : [
+    {
+      "text" : "The result of executing an action.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ActionResult"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ActionResult"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ActionResult",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/actionresult"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/CatalogTemplateKind": {
+  "abstract" : [
+    {
+      "text" : "Specifies the different template kinds available for",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "initializing the documentation catalog.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CatalogTemplateKind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CatalogTemplateKind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CatalogTemplateKind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/catalogtemplatekind"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction": {
+  "abstract" : [
+    {
+      "text" : "An action that converts a source bundle into compiled documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConvertAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConvertAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/convertaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/CoverageAction": {
+  "abstract" : [
+    {
+      "text" : "An action that creates documentation coverage info for a documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CoverageAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CoverageAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CoverageAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CoverageAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/coverageaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DirectoryPathOption": {
+  "abstract" : [
+    {
+      "text" : "A parsable argument for an optional directory path.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DirectoryPathOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DirectoryPathOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DirectoryPathOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/directorypathoption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
+  "abstract" : [
+    {
+      "text" : "The default, command-line interface you use to compile and preview documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCatalogOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a URL value that provides the path to a documentation catalog.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCatalogOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCatalogOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCatalogOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcatalogoption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to enable the documentation coverage feature.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptionsArgument"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptionsArgument"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptionsArgument",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/IndexAction": {
+  "abstract" : [
+    {
+      "text" : "An action that creates an index of a documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "IndexAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "IndexAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "IndexAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/indexaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitAction": {
+  "abstract" : [
+    {
+      "text" : "An action that generates a documentation catalog from a template seed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InitAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InitAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/InitOptions": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to run the init catalog actions.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InitOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InitOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InitOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/initoptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewAction": {
+  "abstract" : [
+    {
+      "text" : "An action that monitors a documentation bundle for changes and runs a live web-preview.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PreviewAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewAction",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PreviewAction"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PreviewAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewaction"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewOptions": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to start a documentation preview server.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PreviewOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PreviewOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PreviewOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewoptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/RecreatingContext": {
+  "abstract" : [
+    {
+      "text" : "An action for which you can optionally customize the documentation context.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RecreatingContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/RecreatingContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RecreatingContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RecreatingContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/recreatingcontext"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Signal": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Signal"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Signal",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Signal"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Signal",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/signal"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SourceRepositoryArguments": {
+  "abstract" : [
+    {
+      "text" : "Command-line arguments for specifying the catalog’s source repository information.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepositoryArguments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceRepositoryArguments"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SourceRepositoryArguments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Throttle": {
+  "abstract" : [
+    {
+      "text" : "A task scheduler that throttles execution within a given time interval.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Throttle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Throttle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Throttle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Throttle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/throttle"
+},
+"https://apple.github.io/swift-argument-parser/documentation/argumentparser/": {
+  "identifier" : "https:\/\/apple.github.io\/swift-argument-parser\/documentation\/argumentparser\/",
+  "title" : "Argument Parser",
+  "titleInlineContent" : [
+    {
+      "text" : "Argument Parser",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/apple.github.io\/swift-argument-parser\/documentation\/argumentparser\/"
+}
+}
+}

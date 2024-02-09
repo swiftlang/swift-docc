@@ -1,0 +1,543 @@
+{
+  "abstract" : [
+    {
+      "text" : "A context-dependent, standard color.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC9PageColorC0D0O",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Color"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Color"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "PageColor.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageColor.swift#L39"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "PageColor.Color"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Color"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s12CaseIterableP",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/blue",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/gray",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/green",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/orange",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/purple",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/red",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/yellow"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Metadata": {
+  "abstract" : [
+    {
+      "text" : "A directive that contains various metadata about a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/metadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor": {
+  "abstract" : [
+    {
+      "text" : "A directive that specifies an accent color for a given documentation page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PageColor"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PageColor"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PageColor",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent, standard color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Color"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Color"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PageColor.Color",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/blue": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent blue color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "blue"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/blue",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.blue",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/blue"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/gray": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent gray color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "gray"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/gray",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.gray",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/gray"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/green": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent green color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "green"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/green",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.green",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/green"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/orange": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent orange color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "orange"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/orange",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.orange",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/orange"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/purple": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent purple color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "purple"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/purple",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.purple",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/purple"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/red": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent red color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "red"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/red",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.red",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/red"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PageColor/Color-swift.enum/yellow": {
+  "abstract" : [
+    {
+      "text" : "A context-dependent yellow color.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "yellow"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/yellow",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PageColor.Color.yellow",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/pagecolor\/color-swift.enum\/yellow"
+},
+"doc://SwiftDocC/s12CaseIterableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s12CaseIterableP",
+  "title" : "Swift.CaseIterable",
+  "type" : "unresolvable"
+}
+}
+}

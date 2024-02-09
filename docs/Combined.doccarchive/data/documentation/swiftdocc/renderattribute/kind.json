@@ -1,0 +1,575 @@
+{
+  "abstract" : [
+    {
+      "text" : "A list of the plain-text names of supported attributes.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC15RenderAttributeO4KindO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Kind"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Kind"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "AttributesRenderSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L58"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "RenderAttribute.Kind"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Kind"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/allowedTypes",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/allowedValues",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/default",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximum",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumExclusive",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumLength",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimum",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumExclusive",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumLength"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/renderattribute\/kind"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute": {
+  "abstract" : [
+    {
+      "text" : "A single renderable attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderAttribute"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderAttribute"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderAttribute",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind": {
+  "abstract" : [
+    {
+      "text" : "A list of the plain-text names of supported attributes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Kind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/allowedTypes": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "allowedTypes"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/allowedTypes",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.allowedTypes",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/allowedtypes"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/allowedValues": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "allowedValues"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/allowedValues",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.allowedValues",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/allowedvalues"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/default": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "`default`"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/default",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.default",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/default"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/maximum": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maximum"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximum",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.maximum",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/maximum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/maximumExclusive": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maximumExclusive"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumExclusive",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.maximumExclusive",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/maximumexclusive"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/maximumLength": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "maximumLength"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/maximumLength",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.maximumLength",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/maximumlength"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/minimum": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "minimum"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimum",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.minimum",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/minimum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/minimumExclusive": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "minimumExclusive"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumExclusive",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.minimumExclusive",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/minimumexclusive"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute/Kind/minimumLength": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "minimumLength"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/minimumLength",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderAttribute.Kind.minimumLength",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute\/kind\/minimumlength"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolReferenceRendering": {
+  "abstract" : [
+    {
+      "text" : "Render rich reference documentation for programming symbols.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Symbol Reference Rendering",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolreferencerendering"
+}
+}
+}

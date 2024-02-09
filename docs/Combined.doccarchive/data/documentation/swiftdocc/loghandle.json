@@ -1,0 +1,465 @@
+{
+  "abstract" : [
+    {
+      "text" : "An object that writes logs to the given output device.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC9LogHandleO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "LogHandle"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "LogHandle"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "LogHandle.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LogHandle.swift#L16"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "LogHandle"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "LogHandle"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "You can use log handle objects to write to standard output, standard error, or any given file handle.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s16TextOutputStreamP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/LogStorage"
+      ],
+      "title" : "Classes"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/file(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/memory(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/none",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/standardError",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/standardOutput"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/write(_:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/loghandle"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle": {
+  "abstract" : [
+    {
+      "text" : "An object that writes logs to the given output device.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogHandle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogHandle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogHandle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/LogStorage": {
+  "abstract" : [
+    {
+      "text" : "A by-reference string storage.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LogStorage"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/LogStorage",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LogStorage"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LogHandle.LogStorage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/logstorage"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/file(_:)": {
+  "abstract" : [
+    {
+      "text" : "A log handle that will write to the given file handle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "file"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)NSFileHandle",
+      "text" : "FileHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/file(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogHandle.file(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/file(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/memory(_:)": {
+  "abstract" : [
+    {
+      "text" : "A log handle that writes to an NSString reference.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "memory"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO",
+      "text" : "LogHandle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9LogHandleO0C7StorageC",
+      "text" : "LogStorage"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/memory(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogHandle.memory(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/memory(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/none": {
+  "abstract" : [
+    {
+      "text" : "A log handle that will ignore all write requests.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "none"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/none",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogHandle.none",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/none"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/standardError": {
+  "abstract" : [
+    {
+      "text" : "A log handle that will perform writes to standard error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "standardError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/standardError",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogHandle.standardError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/standarderror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/standardOutput": {
+  "abstract" : [
+    {
+      "text" : "A log handle that will perform writes to standard output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "standardOutput"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/standardOutput",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "LogHandle.standardOutput",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/standardoutput"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LogHandle/write(_:)": {
+  "abstract" : [
+    {
+      "text" : "Writes the given string to the log handle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "write"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/write(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "write(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/loghandle\/write(_:)"
+},
+"doc://SwiftDocC/s16TextOutputStreamP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s16TextOutputStreamP",
+  "title" : "Swift.TextOutputStream",
+  "type" : "unresolvable"
+}
+}
+}

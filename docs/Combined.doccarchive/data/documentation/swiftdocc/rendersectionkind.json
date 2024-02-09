@@ -1,0 +1,1196 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC17RenderSectionKindO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "RenderSectionKind"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "RenderSectionKind"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderSection.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderSection.swift#L15"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "RenderSectionKind"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "RenderSectionKind"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy"
+      ],
+      "title" : "Render Nodes"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/articleBody",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/assessments",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/attributes",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/callToAction",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/content",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/contentAndMedia",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/contentAndMediaGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/declarations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/discussion",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/hero",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/intro",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/parameters",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/plistDetails",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/possibleValues",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/properties",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/relationships",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/resources",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restBody",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restEndpoint",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restParameters",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restResponses",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/row",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/sampleDownload",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/taskGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/tasks",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/tile",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/volume"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/rendersectionkind"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderHierarchy": {
+  "abstract" : [
+    {
+      "text" : "Hierarchical information for a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderHierarchy"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderHierarchy"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderHierarchy",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderhierarchy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata": {
+  "abstract" : [
+    {
+      "text" : "Arbitrary metadata for a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderMetadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderMetadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderMetadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode": {
+  "abstract" : [
+    {
+      "text" : "A rendering-friendly representation of a documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator": {
+  "abstract" : [
+    {
+      "text" : "A visitor which converts a semantic model into a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTranslator"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTranslator"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTranslator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetranslator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSection": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderSectionKind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderSectionKind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderSectionKind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/articleBody": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "articleBody"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/articleBody",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.articleBody",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/articlebody"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/assessments": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "assessments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/assessments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.assessments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/assessments"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/attributes": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attributes"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/attributes",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.attributes",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/attributes"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/callToAction": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "callToAction"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/callToAction",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.callToAction",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/calltoaction"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/content": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "content"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/content",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.content",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/content"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/contentAndMedia": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentAndMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/contentAndMedia",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.contentAndMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/contentandmedia"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/contentAndMediaGroup": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentAndMediaGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/contentAndMediaGroup",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.contentAndMediaGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/contentandmediagroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/declarations": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "declarations"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/declarations",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.declarations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/declarations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/discussion": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "discussion"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/discussion",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.discussion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/discussion"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/hero": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hero"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/hero",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.hero",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/hero"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/intro": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "intro"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/intro",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.intro",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/intro"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/parameters": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parameters"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/parameters",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.parameters",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/parameters"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/plistDetails": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "plistDetails"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/plistDetails",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.plistDetails",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/plistdetails"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/possibleValues": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "possibleValues"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/possibleValues",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.possibleValues",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/possiblevalues"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/properties": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "properties"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/properties",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.properties",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/properties"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/relationships": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "relationships"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/relationships",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.relationships",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/relationships"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/resources": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "resources"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/resources",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.resources",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/resources"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/restBody": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "restBody"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restBody",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.restBody",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/restbody"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/restEndpoint": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "restEndpoint"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restEndpoint",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.restEndpoint",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/restendpoint"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/restParameters": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "restParameters"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restParameters",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.restParameters",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/restparameters"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/restResponses": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "restResponses"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/restResponses",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.restResponses",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/restresponses"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/row": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "row"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/row",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.row",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/row"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/sampleDownload": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sampleDownload"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/sampleDownload",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.sampleDownload",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/sampledownload"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/taskGroup": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "taskGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/taskGroup",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.taskGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/taskgroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/tasks": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tasks"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/tasks",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.tasks",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/tasks"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/tile": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tile"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/tile",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.tile",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/tile"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/volume": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "volume"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/volume",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.volume",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/volume"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderTree": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderTree"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderTree"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderTree",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendertree"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+}
+}
+}

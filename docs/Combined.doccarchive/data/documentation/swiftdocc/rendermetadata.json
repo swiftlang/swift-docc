@@ -1,0 +1,2407 @@
+{
+  "abstract" : [
+    {
+      "text" : "Arbitrary metadata for a render node.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC14RenderMetadataV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "RenderMetadata"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "RenderMetadata"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderMetadata.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/RenderMetadata.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "RenderMetadata"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "RenderMetadata"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy"
+      ],
+      "title" : "Render Nodes"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/CodingKeys",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Module",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/RemoteSource-swift.struct"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/category",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/categoryPathComponent",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/color",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/conformance",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/customMetadata",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/estimatedTime",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/extendedModule",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/extendedModuleVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/externalID",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/externalIDVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/extraMetadata",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/fragments",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/fragmentsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/hasNoExpandedDocumentation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/images",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/modules",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/modulesVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/navigatorTitle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/navigatorTitleVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/platforms",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/platformsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/remoteSource-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/remoteSourceVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/required",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/requiredVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/role-swift.property",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/roleHeading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/roleHeadingVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/sourceFileURI",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/sourceFileURIVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolAccessLevel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolAccessLevelVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolKind",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolKindVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/tags",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/title",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/titleVariants"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Role-swift.enum"
+      ],
+      "title" : "Enumerations"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Decodable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Encodable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/VariantContainer-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/rendermetadata"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderHierarchy": {
+  "abstract" : [
+    {
+      "text" : "Hierarchical information for a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderHierarchy"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderHierarchy"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderHierarchy",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderhierarchy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata": {
+  "abstract" : [
+    {
+      "text" : "Arbitrary metadata for a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderMetadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderMetadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderMetadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/CodingKeys": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/CodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderMetadata.CodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/codingkeys"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/Decodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Decodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Decodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/decodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/Encodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Encodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Encodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/encodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/Module": {
+  "abstract" : [
+    {
+      "text" : "Metadata about a module dependency.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Module"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Module",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Module"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderMetadata.Module",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/module"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/RemoteSource-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "Describes the location of the topic’s source code, hosted remotely by a source service.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoteSource"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/RemoteSource-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoteSource"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderMetadata.RemoteSource",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/remotesource-swift.struct"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/Role-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "A list of pre-defined roles to assign to nodes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Role"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/Role-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Role"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderMetadata.Role",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/role-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/VariantContainer-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/VariantContainer-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "VariantContainer Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/variantcontainer-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/category": {
+  "abstract" : [
+    {
+      "text" : "The name of technology associated with a tutorial.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "category"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/category",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "category",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/category"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/categoryPathComponent": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "categoryPathComponent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/categoryPathComponent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "categoryPathComponent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/categorypathcomponent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/color": {
+  "abstract" : [
+    {
+      "text" : "Custom authored color that represents this page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "color"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10TopicColorV",
+      "text" : "TopicColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/color",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "color",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/color"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/conformance": {
+  "abstract" : [
+    {
+      "text" : "Information the availability of generic APIs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "conformance"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18ConformanceSectionV",
+      "text" : "ConformanceSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/conformance",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "conformance",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/conformance"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/customMetadata": {
+  "abstract" : [
+    {
+      "text" : "Author provided custom metadata describing the page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "customMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/customMetadata",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "customMetadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/custommetadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/estimatedTime": {
+  "abstract" : [
+    {
+      "text" : "A description of the estimated time to complete the tutorials of a technology.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "estimatedTime"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/estimatedTime",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "estimatedTime",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/estimatedtime"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/extendedModule": {
+  "abstract" : [
+    {
+      "text" : "The name of the module extension in which the symbol is defined, if applicable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedModule"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/extendedModule",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedModule",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/extendedmodule"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/extendedModuleVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the module extension.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedModuleVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/extendedModuleVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedModuleVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/extendedmodulevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/externalID": {
+  "abstract" : [
+    {
+      "text" : "An identifier for a symbol generated externally.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/externalID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "externalID",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/externalid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/externalIDVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the external ID.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalIDVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/externalIDVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "externalIDVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/externalidvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/extraMetadata": {
+  "abstract" : [
+    {
+      "text" : "Additional metadata associated with the render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extraMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
+      "text" : "RenderMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV10CodingKeysV",
+      "text" : "CodingKeys"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/extraMetadata",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extraMetadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/extrametadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/fragments": {
+  "abstract" : [
+    {
+      "text" : "Abbreviated declaration to display in links.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fragments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
+      "text" : "DeclarationRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV",
+      "text" : "Token"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/fragments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fragments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/fragments"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/fragmentsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the fragments of a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "fragmentsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
+      "text" : "DeclarationRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV",
+      "text" : "Token"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/fragmentsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "fragmentsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/fragmentsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/hasNoExpandedDocumentation": {
+  "abstract" : [
+    {
+      "text" : "Whether there isn’t a version of the page with more content that a renderer can link to.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hasNoExpandedDocumentation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/hasNoExpandedDocumentation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hasNoExpandedDocumentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/hasnoexpandeddocumentation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/images": {
+  "abstract" : [
+    {
+      "text" : "Custom authored images that represent this page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "images"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10TopicImageV",
+      "text" : "TopicImage"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/images",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "images",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/images"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/modules": {
+  "abstract" : [
+    {
+      "text" : "The modules that the symbol is apart of.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "modules"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
+      "text" : "RenderMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV6ModuleV",
+      "text" : "Module"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/modules",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "modules",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/modules"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/modulesVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the modules.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "modulesVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
+      "text" : "RenderMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV6ModuleV",
+      "text" : "Module"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/modulesVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "modulesVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/modulesvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/navigatorTitle": {
+  "abstract" : [
+    {
+      "text" : "Abbreviated declaration to display in navigators.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "navigatorTitle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
+      "text" : "DeclarationRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV",
+      "text" : "Token"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/navigatorTitle",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "navigatorTitle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/navigatortitle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/navigatorTitleVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the navigator title of a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "navigatorTitleVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV",
+      "text" : "DeclarationRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV",
+      "text" : "Token"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/navigatorTitleVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "navigatorTitleVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/navigatortitlevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/platforms": {
+  "abstract" : [
+    {
+      "text" : "The platform availability information about a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "platforms"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22AvailabilityRenderItemV",
+      "text" : "AvailabilityRenderItem"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/platforms",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "platforms",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/platforms"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/platformsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the platforms.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "platformsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22AvailabilityRenderItemV",
+      "text" : "AvailabilityRenderItem"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/platformsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "platformsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/platformsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/remoteSource-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The remote location where the source declaration of the topic can be viewed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "remoteSource"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
+      "text" : "RenderMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV12RemoteSourceV",
+      "text" : "RemoteSource"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/remoteSource-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "remoteSource",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/remotesource-swift.property"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/remoteSourceVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the topic’s remote source.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "remoteSourceVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV",
+      "text" : "RenderMetadata"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14RenderMetadataV12RemoteSourceV",
+      "text" : "RemoteSource"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/remoteSourceVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "remoteSourceVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/remotesourcevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/required": {
+  "abstract" : [
+    {
+      "text" : "Whether protocol method is required to be implemented by conforming types.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "required"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/required",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "required",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/required"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/requiredVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the ",
+      "type" : "text"
+    },
+    {
+      "code" : "required",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " property.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "requiredVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/requiredVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "requiredVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/requiredvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/role-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The role of the document.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "role"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/role-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "role",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/role-swift.property"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/roleHeading": {
+  "abstract" : [
+    {
+      "text" : "A heading describing the type of the document.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "roleHeading"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/roleHeading",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "roleHeading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/roleheading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/roleHeadingVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the role heading.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "roleHeadingVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/roleHeadingVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "roleHeadingVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/roleheadingvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/sourceFileURI": {
+  "abstract" : [
+    {
+      "text" : "The URI of the source file in which the symbol was originally declared, suitable for display in a user interface.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sourceFileURI"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/sourceFileURI",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sourceFileURI",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/sourcefileuri"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/sourceFileURIVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the source file URI of a page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "sourceFileURIVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/sourceFileURIVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "sourceFileURIVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/sourcefileurivariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/symbolAccessLevel": {
+  "abstract" : [
+    {
+      "text" : "The access level of a symbol, e.g., “public” or “private”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolAccessLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolAccessLevel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolAccessLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/symbolaccesslevel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/symbolAccessLevelVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the access level of a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolAccessLevelVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolAccessLevelVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolAccessLevelVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/symbolaccesslevelvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/symbolKind": {
+  "abstract" : [
+    {
+      "text" : "The kind of a symbol, e.g., “class” or “func”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolKind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolKind",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolKind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/symbolkind"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/symbolKindVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the symbol kind.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolKindVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/symbolKindVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolKindVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/symbolkindvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/tags": {
+  "abstract" : [
+    {
+      "text" : "Any tags assigned to the node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
+      "text" : "RenderNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV3TagV",
+      "text" : "Tag"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/tags",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/tags"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/title": {
+  "abstract" : [
+    {
+      "text" : "The title of the page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "title"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/title",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "title",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/title"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata/titleVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the title.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "titleVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderMetadata\/titleVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "titleVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendermetadata\/titlevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode": {
+  "abstract" : [
+    {
+      "text" : "A rendering-friendly representation of a documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator": {
+  "abstract" : [
+    {
+      "text" : "A visitor which converts a semantic model into a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTranslator"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTranslator"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTranslator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetranslator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSection": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderSectionKind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderSectionKind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderSectionKind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderTree": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderTree"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderTree"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderTree",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendertree"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantContainer": {
+  "abstract" : [
+    {
+      "text" : "A type that contains variant collections.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantContainer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantContainer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantContainer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantcontainer"
+}
+}
+}

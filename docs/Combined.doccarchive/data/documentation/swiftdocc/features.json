@@ -1,0 +1,232 @@
+{
+  "abstract" : [
+    {
+      "text" : "Add features to DocC and indicate the feature’s availability to other tools.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Features"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "article",
+    "roleHeading" : "Article",
+    "title" : "Indicating Feature Availability to Tools"
+  },
+  "primaryContentSections" : [
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Over time as we develop new features in DocC we also add, update, or remove the flags and options that the ",
+              "type" : "text"
+            },
+            {
+              "code" : "docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " executable accepts. So that other tools can know what flags and options a certain version of the ",
+              "type" : "text"
+            },
+            {
+              "code" : "docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " executable accepts, we add new entries in the “features.json” file.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "anchor" : "Adding-a-New-Feature",
+          "level" : 2,
+          "text" : "Adding a New Feature",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "When adding a new collection of command line flags or options to the ",
+              "type" : "text"
+            },
+            {
+              "code" : "docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " executable that relate to some new feature, add a new entry to the “feature.json” file that name the new feature. For example:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "{",
+            "  \"features\": [",
+            "    {",
+            "      \"name\": \"name-of-first-feature\"",
+            "    },",
+            "    {",
+            "      \"name\": \"name-of-second-feature\"",
+            "    }",
+            "  ]",
+            "}"
+          ],
+          "syntax" : "json",
+          "type" : "codeListing"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Use a single entry for multiple related command line flags and options if they are all added in the same build.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "anchor" : "Checking-what-Features-DocC-Supports",
+          "level" : 2,
+          "text" : "Checking what Features DocC Supports",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "In a Swift toolchain, the ",
+              "type" : "text"
+            },
+            {
+              "code" : "docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " executable is installed at ",
+              "type" : "text"
+            },
+            {
+              "code" : "usr\/bin\/docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ". In the same toolchain, the “features.json” file is installed at ",
+              "type" : "text"
+            },
+            {
+              "code" : "usr\/share\/docc\/features.json",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Tools that call the ",
+              "type" : "text"
+            },
+            {
+              "code" : "docc",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " executable from a Swift toolchain can read the “features.json” file to check if a specific feature is available in that build.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The feature entry describes the feature name and doesn’t list what command line flags or options that feature corresponds to.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Note",
+          "style" : "note",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/features"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+}
+}
+}

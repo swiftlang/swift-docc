@@ -1,0 +1,777 @@
+{
+  "abstract" : [
+    {
+      "text" : "A relationship to a node in the topic graph.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC12RelationshipO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Relationship"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Relationship"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "Relationship.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Relationship.swift#L15"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "Relationship"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Relationship"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultImplementationsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImplementationsGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection"
+      ],
+      "title" : "Relationship Sections"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/conformingType(_:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/conformsTo(_:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/defaultImplementation(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/defaultImplementationOf(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/inheritedBy(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/inheritsFrom(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/requirementOf(_:)"
+      ],
+      "title" : "Enumeration Cases"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/relationship"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConformanceSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of generic constraints for a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConformanceSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConformanceSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConformanceSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/conformancesection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultImplementationsSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains default implementations of a protocol-requirement, for example a property or a method.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DefaultImplementationsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultImplementationsSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DefaultImplementationsSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DefaultImplementationsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultimplementationssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImplementationsGroup": {
+  "abstract" : [
+    {
+      "text" : "A group that represents a list of a protocol-requirement implementations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ImplementationsGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImplementationsGroup",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ImplementationsGroup"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ImplementationsGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/implementationsgroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship": {
+  "abstract" : [
+    {
+      "text" : "A relationship to a node in the topic graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Relationship",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/conformingType(_:_:)": {
+  "abstract" : [
+    {
+      "text" : "A type that conforms to the current node, under optional constraints.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "conformingType"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ", ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+      "text" : "Swift"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+      "text" : "GenericConstraint"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/conformingType(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.conformingType(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/conformingtype(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/conformsTo(_:_:)": {
+  "abstract" : [
+    {
+      "text" : "A conformance to a protocol, under optional constraints.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "conformsTo"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ", ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+      "text" : "Swift"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+      "text" : "GenericConstraint"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/conformsTo(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.conformsTo(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/conformsto(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/defaultImplementation(_:)": {
+  "abstract" : [
+    {
+      "text" : "A default implementation if the current node is a protocol requirement.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultImplementation"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/defaultImplementation(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.defaultImplementation(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/defaultimplementation(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/defaultImplementationOf(_:)": {
+  "abstract" : [
+    {
+      "text" : "A protocol requirement of which that the current node is a default implementation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultImplementationOf"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/defaultImplementationOf(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.defaultImplementationOf(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/defaultimplementationof(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/inheritedBy(_:)": {
+  "abstract" : [
+    {
+      "text" : "A child node for the current node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inheritedBy"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/inheritedBy(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.inheritedBy(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/inheritedby(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/inheritsFrom(_:)": {
+  "abstract" : [
+    {
+      "text" : "A parent node for the current node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inheritsFrom"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/inheritsFrom(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.inheritsFrom(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/inheritsfrom(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship/requirementOf(_:)": {
+  "abstract" : [
+    {
+      "text" : "A protocol of which the current node is a requirement.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "requirementOf"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
+      "text" : "TopicReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/requirementOf(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "Relationship.requirementOf(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship\/requirementof(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsGroup": {
+  "abstract" : [
+    {
+      "text" : "A group of symbol relationships.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsGroup",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsGroup"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RelationshipsGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationshipsgroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of symbol relationships of the same kind.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RelationshipsRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationshipsrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains symbol-relationship groups.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RelationshipsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationshipssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolReferenceRendering": {
+  "abstract" : [
+    {
+      "text" : "Render rich reference documentation for programming symbols.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Symbol Reference Rendering",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolreferencerendering"
+}
+}
+}

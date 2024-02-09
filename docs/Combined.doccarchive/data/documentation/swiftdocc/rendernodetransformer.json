@@ -1,0 +1,510 @@
+{
+  "abstract" : [
+    {
+      "text" : "An object that modifies a render node by applying transformations to it.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC21RenderNodeTransformerC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "RenderNodeTransformer"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "RenderNodeTransformer"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "RenderNodeTransformer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransformer.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "RenderNodeTransformer"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "RenderNodeTransformer"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationContext"
+      ],
+      "title" : "Render Node Rewriter"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer\/init(renderNodeData:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer\/renderNode"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer\/apply(transformation:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/rendernodetransformer"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PersistingDocumentation": {
+  "abstract" : [
+    {
+      "text" : "Save compiled documentation to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Persisting Documentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/persistingdocumentation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation": {
+  "abstract" : [
+    {
+      "text" : "A transformation that removes automatically curated See Also sections.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removeautomaticallycuratedseealsosectionstransformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation": {
+  "abstract" : [
+    {
+      "text" : "A transformation that removes unused references from a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoveUnusedReferencesTransformation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoveUnusedReferencesTransformation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RemoveUnusedReferencesTransformation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removeunusedreferencestransformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationComposition": {
+  "abstract" : [
+    {
+      "text" : "A transformation that applies two transformations, one after the other.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformationComposition",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcomposition"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationContext": {
+  "abstract" : [
+    {
+      "text" : "A value that tracks state and state changes while transforming a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformer": {
+  "abstract" : [
+    {
+      "text" : "An object that modifies a render node by applying transformations to it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformer/apply(transformation:)": {
+  "abstract" : [
+    {
+      "text" : "Applies the given transformation to the decoded render node and removes unreferenced references from it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "apply"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "transformation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+      "text" : "RenderNodeTransforming"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
+      "text" : "RenderNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer\/apply(transformation:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "apply(transformation:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformer\/apply(transformation:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformer/init(renderNodeData:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new transformer given the data of a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "renderNodeData"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer\/init(renderNodeData:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(renderNodeData:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformer\/init(rendernodedata:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformer/renderNode": {
+  "abstract" : [
+    {
+      "text" : "The untransformed, decoded render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "renderNode"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10RenderNodeV",
+      "text" : "RenderNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer\/renderNode",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "renderNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformer\/rendernode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransforming": {
+  "abstract" : [
+    {
+      "text" : "A type that modifies a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransforming"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransforming"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransforming",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransforming"
+}
+}
+}

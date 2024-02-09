@@ -1,0 +1,500 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC24FileSystemServerProviderC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "FileSystemServerProvider"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "FileSystemServerProvider"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "FileServer.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L180"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "FileSystemServerProvider"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "FileSystemServerProvider"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemRenderNodeProvider",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider"
+      ],
+      "title" : "Communication File Server"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/data(for:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/filesystemserverprovider"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Communication": {
+  "abstract" : [
+    {
+      "text" : "Offer native integration of DocC in your IDE.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Communication Bridge",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/communication"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileServer": {
+  "abstract" : [
+    {
+      "text" : "FileServer is a struct simulating a web server behavior to serve files.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "It is useful to interface a custom schema with ",
+      "type" : "text"
+    },
+    {
+      "code" : "WKWebView",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " via ",
+      "type" : "text"
+    },
+    {
+      "code" : "WKURLSchemeHandler",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " or",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "WebView",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " via a custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "URLProtocol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileServer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileServer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileServer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fileserver"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileServerProvider": {
+  "abstract" : [
+    {
+      "text" : "A protocol used for serving content to a ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileServer",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". The data can then come from multiple sources such as:",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileServerProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileServerProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileServerProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fileserverprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileSystemRenderNodeProvider": {
+  "abstract" : [
+    {
+      "text" : "This class provides a simple way to transform a ",
+      "type" : "text"
+    },
+    {
+      "code" : "FileSystemProvider",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " into a ",
+      "type" : "text"
+    },
+    {
+      "code" : "RenderNodeProvider",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " to feed an index builder.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The data from the disk is fetched and processed in an efficient way to build a navigator index.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileSystemRenderNodeProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemRenderNodeProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileSystemRenderNodeProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileSystemRenderNodeProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filesystemrendernodeprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileSystemServerProvider": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileSystemServerProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileSystemServerProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileSystemServerProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filesystemserverprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileSystemServerProvider/data(for:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "data"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/data(for:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "data(for:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filesystemserverprovider\/data(for:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileSystemServerProvider/init(directoryPath:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "directoryPath"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(directoryPath:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filesystemserverprovider\/init(directorypath:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MemoryFileServerProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MemoryFileServerProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MemoryFileServerProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/memoryfileserverprovider"
+}
+}
+}

@@ -1,0 +1,438 @@
+{
+  "abstract" : [
+    {
+      "text" : "Save compiled documentation to disk.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
+    "title" : "Persisting Documentation"
+  },
+  "primaryContentSections" : [
+    {
+      "content" : [
+        {
+          "anchor" : "Overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Once the in-memory documentation model is finalized each of its graph nodes can be converted to a rendering node and persisted on disk or elsewhere via the ",
+              "type" : "text"
+            },
+            {
+              "code" : "Codable",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " protocol.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "code" : "Converter",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " type converts documentation nodes to rendering nodes:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "let converter = DocumentationNodeConverter(bundle: myBundle, context: myContext)",
+            "let renderNode = converter.convert(documentationNode, ",
+            "    at: sourceURL, from: bundle)"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The render nodes can be persisted on disk as JSON files via ",
+              "type" : "text"
+            },
+            {
+              "code" : "JSONEncodingRenderNodeWriter",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ":",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "let writer = JSONEncodingRenderNodeWriter(targetFolder: outputURL, ",
+            "    fileManager: FileManager.default)",
+            "try writer.write(renderNode)"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The precise path inside the output folder where resulting JSON file is saved is automatically determined by the node type (article, symbol reference, etc.).",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+      ],
+      "title" : "Rendering"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary"
+      ],
+      "title" : "Node Persistence"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationContext",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer"
+      ],
+      "title" : "Render Node Rewriter"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/persistingdocumentation"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
+  "abstract" : [
+    {
+      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkDestinationSummary"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkDestinationSummary"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkDestinationSummary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation": {
+  "abstract" : [
+    {
+      "text" : "A transformation that removes automatically curated See Also sections.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removeautomaticallycuratedseealsosectionstransformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation": {
+  "abstract" : [
+    {
+      "text" : "A transformation that removes unused references from a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoveUnusedReferencesTransformation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoveUnusedReferencesTransformation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RemoveUnusedReferencesTransformation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removeunusedreferencestransformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationComposition": {
+  "abstract" : [
+    {
+      "text" : "A transformation that applies two transformations, one after the other.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformationComposition",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcomposition"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationContext": {
+  "abstract" : [
+    {
+      "text" : "A value that tracks state and state changes while transforming a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformer": {
+  "abstract" : [
+    {
+      "text" : "An object that modifies a render node by applying transformations to it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransforming": {
+  "abstract" : [
+    {
+      "text" : "A type that modifies a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransforming"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransforming"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransforming",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransforming"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+}
+}
+}
