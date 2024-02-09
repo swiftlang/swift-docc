@@ -1736,6 +1736,53 @@ let expected = """
         XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-3m4ko"])
     }
     
+    func testFileNamesWithDifferentPunctuation() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "Hello-world.md", utf8Content: """
+                # Dash
+                
+                No whitespace in the file name
+                """),
+                
+                TextFile(name: "Hello world.md", utf8Content: """
+                # Only space
+                
+                This has the same reference as "Hello-world.md" and will raise a warning.
+                """),
+                
+                TextFile(name: "Hello  world.md", utf8Content: """
+                # Multiple spaces
+                
+                Each space is replaced with a dash in the reference, so this has a unique reference.
+                """),
+                
+                TextFile(name: "Hello, world!.md", utf8Content: """
+                # Space and punctuation
+                
+                The punctuation is not removed from the reference, so this has a unique reference.
+                """),
+                
+                TextFile(name: "Hello. world?.md", utf8Content: """
+                # Space and different punctuation
+                
+                The punctuation is not removed from the reference, so this has a unique reference.
+                """),
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), ["Redeclaration of 'Hello world.md'; this file will be skipped"])
+        
+        XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
+            "doc://unit-test/documentation/unit-test",
+            "doc://unit-test/documentation/unit-test/Hello,-world!",
+            "doc://unit-test/documentation/unit-test/Hello--world",
+            "doc://unit-test/documentation/unit-test/Hello-world",
+            "doc://unit-test/documentation/unit-test/Hello.-world-",
+        ])
+    }
+    
     func testSpecialCharactersInLinks() throws {
         let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
         
@@ -1751,7 +1798,15 @@ let expected = """
             """),
             
             TextFile(name: "article-with-😃-in-filename.md", utf8Content: """
-            # Article with 😃 emoji in file name
+            # Article with 😃 emoji in its filename
+            
+            Abstract
+            
+            ### Hello world
+            """),
+            
+            TextFile(name: "Article: with - various! whitespace & punctuation. in, filename.md", utf8Content: """
+            # Article with various whitespace and punctuation in its filename
             
             Abstract
             
@@ -1767,6 +1822,8 @@ let expected = """
             - <doc:article-with-emoji-in-heading#Hello-🌍>
             - <doc:article-with-😃-in-filename>
             - <doc:article-with-😃-in-filename#Hello-world>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename#Hello-world>
             
             Now test the same links in topic curation.
             
@@ -1776,6 +1833,7 @@ let expected = """
             
             - ``MyClass/myFunc🙂()``
             - <doc:article-with-😃-in-filename>
+            - <doc:Article:-with-various!-whitespace-&-punctuation.-in,-filename>
             """),
         ])
         let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
@@ -1789,11 +1847,12 @@ let expected = """
         
         let moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
         let topicSection = try XCTUnwrap(moduleSymbol.topics?.taskGroups.first)
-        
+
         // Verify that all the links in the topic section resolved
         XCTAssertEqual(topicSection.links.map(\.destination), [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename",
         ])
         
         // Verify that all resolved link exist in the context.
@@ -1808,10 +1867,11 @@ let expected = """
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
-        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 2)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 3)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename",
         ])
         
         
@@ -1826,7 +1886,7 @@ let expected = """
         
         XCTAssertEqual(lists.count, 1)
         let list = try XCTUnwrap(lists.first)
-        XCTAssertEqual(list.items.count, 4, "Unexpected list items: \(list.items.map(\.content))")
+        XCTAssertEqual(list.items.count, 6, "Unexpected list items: \(list.items.map(\.content))")
         
         func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
             guard let listItem = listItem else {
@@ -1866,7 +1926,19 @@ let expected = """
             XCTAssertEqual(overridingTitle, nil)
             XCTAssertEqual(overridingTitleInlineContent, nil)
         }
-        
+        withContentAsReference(list.items.dropFirst(4).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst(5).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename#Hello-world")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+    
         // Verify that the topic render references have titles with special characters when the original content contained special characters
         XCTAssertEqual(
             (renderNode.references["doc://special-characters/documentation/MyKit/MyClass/myFunc_()"] as? TopicRenderReference)?.title,
@@ -1878,10 +1950,18 @@ let expected = """
         )
         XCTAssertEqual(
             (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename"] as? TopicRenderReference)?.title,
-            "Article with 😃 emoji in file name"
+            "Article with 😃 emoji in its filename"
         )
         XCTAssertEqual(
             (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world"] as? TopicRenderReference)?.title,
+            "Hello world"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename"] as? TopicRenderReference)?.title,
+            "Article with various whitespace and punctuation in its filename"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/Article:-with---various!-whitespace-&-punctuation.-in,-filename#Hello-world"] as? TopicRenderReference)?.title,
             "Hello world"
         )
     }
@@ -1984,6 +2064,47 @@ let expected = """
         XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
     }
     
+    func testExtendingSymbolWithSpaceInName() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "Symbol Name", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["Symbol Name"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                ]
+            )),
+            
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``Symbol Name``
+            
+            Extend a symbol with a space in its name.
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Article
+            
+            Link in content to a symbol with a space in its name: ``Symbol Name``.
+            """),
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/Symbol_Name", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        
+        XCTAssertEqual((node.semantic as? Symbol)?.abstract?.plainText, "Extend a symbol with a space in its name.")
+    }
+
     func testDeprecationSummaryWithLocalLink() throws {
         let exampleDocumentation = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -2592,41 +2713,35 @@ let expected = """
     }
     
     func testContextCachesReferences() throws {
+        let bundleID = #function
         // Verify there is no pool bucket for the bundle we're about to test
-        XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
-                .replacingOccurrences(of: "org.swift.docc.example", with: #function)
+                .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
                 .write(to: infoPlistURL, atomically: true, encoding: .utf8)
         })
 
         // Verify there is a pool bucket for the bundle we've loaded
-        XCTAssertNotNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        XCTAssertNotNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        guard let references = ResolvedTopicReference.sharedPool.sync({ $0[#function] }) else {
-            return
-        }
-        
-        let beforeCount = references.count
+        let beforeCount = try XCTUnwrap(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Verify a given identifier exists in the pool by creating it and verifying it wasn't added to the pool
-        let identifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
-        _ = identifier
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
         // Verify create the reference above did not add to the cache
-        XCTAssertEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        XCTAssertEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Create a new reference for the same bundle that was not loaded with the context
-        let newIdentifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
-        _ = newIdentifier
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
         
         // Verify creating a new reference added to the ones loaded with the context
-        XCTAssertNotEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        XCTAssertNotEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        // Purge the pool
-        ResolvedTopicReference.purgePool(for: #function)
+        ResolvedTopicReference.purgePool(for: bundleID)
     }
     
     func testAbstractAfterMetadataDirective() throws {
@@ -4144,6 +4259,103 @@ let expected = """
         XCTAssertEqual(linkResolutionProblems.count, 1)
         problem = try XCTUnwrap(linkResolutionProblems.last)
         XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
+    }
+    
+    func testContextRecognizesOverloads() throws {
+        
+        func checkContainsSiblingOverloads(for overloadedReferences: [ResolvedTopicReference], using context: DocumentationContext, file: StaticString = #file, line: UInt = #line) throws {
+            var seenIndices = Set<Int>()
+            
+            for (index, reference) in overloadedReferences.indexed() {
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference], file: file, line: line)
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol, file: file, line: line)
+
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue, file: file, line: line)
+
+                // Make sure that each symbol contains all of its sibling overloads.
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1, file: file, line: line)
+                for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                    XCTAssertTrue(overloads.references.contains(otherReference), file: file, line: line)
+                }
+                
+                // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
+                let displayIndex = try XCTUnwrap(overloads.displayIndex, file: file, line: line)
+                XCTAssertFalse(seenIndices.contains(displayIndex), file: file, line: line)
+                seenIndices.insert(displayIndex)
+            }
+
+            // Check that all the overloads was encountered
+            for index in overloadedReferences.indices {
+                XCTAssert(seenIndices.contains(index), file: file, line: line)
+            }
+        }
+        
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, _, context) = try testBundleAndContext(copying: "OverloadedSymbols", configureBundle: { url in
+            try FileManager.default.copyItem(
+                at: Bundle.module.url(forResource: "Animals.symbols", withExtension: "json", subdirectory: "Test Resources")!,
+                to: url.appendingPathComponent("Animals.symbols.json"))
+            try FileManager.default.copyItem(
+                at: Bundle.module.url(forResource: "OverloadedMacros.symbols", withExtension: "json", subdirectory: "Test Resources")!,
+                to: url.appendingPathComponent("OverloadedMacros.symbols.json"))
+        })
+
+        let methodsIdentifiers = ["s:7Animals6DragonC3eatyyxlF",
+                                  "s:7Animals6DragonC3eatyySiF",
+                                  "s:7Animals6DragonC3eatyySSF"]
+        
+        let initializerIdentifiers = ["s:7Animals4BirdC5colorACSaySSG_tcfc",
+                                      "s:7Animals4BirdC5colorACSS_tcfc"]
+        
+        let staticMethodIdentifiers = ["s:7Animals4BirdC3flyyySdFZ",
+                                       "s:7Animals4BirdC3flyyySiFZ"]
+        
+        let operatorIdentifiers = ["s:7Animals6DragonC2eeoiySbAC_ACtFZ",
+                                   "s:7Animals6DragonC2eeoiySbAC_yptFZ"]
+        
+        let subscriptIdentifiers = ["s:7Animals4BirdCySSSicip",
+                                    "s:7Animals4BirdCySSs5Int16Vcip"]
+        
+        let functionIdentifiers = ["s:7Animals5sleepyyAA6DragonCF",
+                                    "s:7Animals5sleepyyAA4BirdCF"]
+        
+        let macroIdentifiers = ["s:10testMacros9stringifyyx_SStSSclufm",
+                                "s:10testMacros9stringifyyx_SStxclufm"]
+        
+        let methodsReferences = try methodsIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let initializerReferences = try initializerIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let staticMethodsReferences = try staticMethodIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let operatorReferences = try operatorIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let subscriptReferences = try subscriptIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let functionReferences = try functionIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let macroReferences = try macroIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        
+        try checkContainsSiblingOverloads(for: methodsReferences, using: context)
+        try checkContainsSiblingOverloads(for: initializerReferences, using: context)
+        try checkContainsSiblingOverloads(for: staticMethodsReferences, using: context)
+        try checkContainsSiblingOverloads(for: operatorReferences, using: context)
+        try checkContainsSiblingOverloads(for: subscriptReferences, using: context)
+        try checkContainsSiblingOverloads(for: functionReferences, using: context)
+        try checkContainsSiblingOverloads(for: macroReferences, using: context)
+    }
+    
+    // We do not want to add overload behavior for some symbol kinds, even if they are collisions in the link resolver.
+    func testContextDoesNotRecognizeUnoverloadableSymbolKinds() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+
+        let structIdentifiers = ["s:8ShapeKit22overloadedparentstructV",
+                                 "s:8ShapeKit22OverloadedParentStructV"]
+        
+        let structReferences = try structIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        
+        for reference in structReferences {
+            let documentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
+            XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
+        }
     }
 }
 

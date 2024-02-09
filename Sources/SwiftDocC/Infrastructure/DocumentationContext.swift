@@ -1261,9 +1261,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
                 }
-                guard let url = ValidatedURL(parsingExact: destination) else {
+                guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
                     let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
-                        \(destination.singleQuoted) is
+                        \(destination.singleQuoted) is not a valid RFC 3986 URL.
                         """, explanation: nil, notes: [])
                     diagnosticEngine.emit(Problem(diagnostic: diagnostic))
                     continue
@@ -1327,6 +1327,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
+
+            try groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -2397,6 +2399,37 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
         }
         return automaticallyCuratedSymbols
+    }
+
+    /// Handles overloaded symbols by grouping them together into one page.
+    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) throws {
+        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
+            return
+        }
+        
+        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+
+            // Tell each symbol what other symbols overload it.
+            for (index, symbolReference) in overloadedSymbolReferences.indexed() {
+                let documentationNode = try entity(with: symbolReference)
+
+                guard let symbol = documentationNode.semantic as? Symbol else {
+                    preconditionFailure("""
+                    Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
+                    Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
+                    """)
+                }
+                guard symbolReference.sourceLanguage == .swift else {
+                    assertionFailure("Overload groups is only supported for Swift symbols.")
+                    continue
+                }
+
+                var otherOverloadedSymbolReferences = overloadedSymbolReferences
+                otherOverloadedSymbolReferences.remove(at: index)
+                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                symbol.overloadsVariants = .init(swiftVariant: overloads)
+            }
+        }
     }
     
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.

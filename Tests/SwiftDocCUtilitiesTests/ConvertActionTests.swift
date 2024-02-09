@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,11 +10,11 @@
 
 import XCTest
 import Foundation
-@testable import SwiftDocC
+@testable @_spi(FileManagerProtocol)  import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
-import SwiftDocCTestUtilities
+@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
@@ -97,7 +97,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -144,7 +144,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -203,7 +203,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -237,7 +237,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -270,7 +270,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         XCTAssertEqual(result.problems.count, 0)
     }
     
@@ -309,7 +309,7 @@ class ConvertActionTests: XCTestCase {
             )
         )
         
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         XCTAssertEqual(result.problems.count, 0)
         XCTAssertEqual(result.outputs, [outputLocation.absoluteURL])
         
@@ -434,7 +434,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -631,7 +631,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -689,7 +689,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -770,7 +770,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -855,7 +855,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             
             XCTAssertFalse(
                 result.didEncounterError,
@@ -885,7 +885,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssert(
                 result.didEncounterError,
@@ -924,7 +924,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -1027,7 +1027,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
         let indexingRecords: [IndexingRecord] = action.context.knownPages.compactMap { reference in
@@ -1298,7 +1298,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
             guard let data = testDataProvider.contents(atPath: url.path) else {
@@ -1388,7 +1388,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
         let indexingRecords: [IndexingRecord] = action.context.knownPages.compactMap { reference in
@@ -1550,7 +1550,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
@@ -1575,7 +1575,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
@@ -1640,7 +1640,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: .noCoverage)
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
 
@@ -1667,7 +1667,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .brief))
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
 
@@ -1695,7 +1695,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .detailed))
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
 
@@ -1769,9 +1769,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        ResolvedTopicReference.sharedPool.sync { sharedPool in
-            XCTAssertEqual(sharedPool[#function]?.count, 8)
-        }
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 8)
     }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
@@ -1798,7 +1796,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 diagnosticEngine: engine)
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             XCTAssertFalse(result.didEncounterError)
             return engine.problems
         }
@@ -1868,7 +1866,7 @@ class ConvertActionTests: XCTestCase {
             
             action.context.externalReferenceResolvers["com.example.test"] = TestReferenceResolver()
             
-            return try action.perform(logHandle: .standardOutput)
+            return try action.perform(logHandle: .none)
         }
 
         for withDigest in [false, true] {
@@ -1944,6 +1942,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testFileSystem,
                 temporaryDirectory: createTemporaryDirectory()
             )
+            action.diagnosticEngine.consumers.sync { $0.removeAll() } 
             
             _ = try action.perform(logHandle: .none)
         }
@@ -2019,7 +2018,7 @@ class ConvertActionTests: XCTestCase {
             buildIndex: true,
             temporaryDirectory: createTemporaryDirectory() // Create an index
         )
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
         let indexURL = targetURL.appendingPathComponent("index")
         
@@ -2036,7 +2035,7 @@ class ConvertActionTests: XCTestCase {
             outputURL: indexURL,
             bundleIdentifier: indexFromConvertAction.bundleIdentifier
         )
-        _ = try indexAction.perform(logHandle: .standardOutput)
+        _ = try indexAction.perform(logHandle: .none)
         
         let indexFromIndexAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromIndexAction.count, 37)
@@ -2358,7 +2357,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "error"
         )
-        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
     }
@@ -2398,7 +2397,7 @@ class ConvertActionTests: XCTestCase {
         )
         
         XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
-        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
         XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
@@ -2473,7 +2472,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory()
         )
         
-        XCTAssertThrowsError(try action.performAndHandleResult(), "The test bundle should have thrown an error about an incomplete symbol graph file")
+        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none), "The test bundle should have thrown an error about an incomplete symbol graph file")
         XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path), "The digest file should have been written even though compilation errors occurred")
         
         let data = try testDataProvider.contentsOfURL(digestFileURL)
@@ -2507,12 +2506,12 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory()
         )
         
-        try action.performAndHandleResult()
+        try action.performAndHandleResult(logHandle: .none)
         
         let indexDirectory = targetDirectory.appendingPathComponent("index", isDirectory: true)
         let renderIndexJSON = indexDirectory.appendingPathComponent("index.json", isDirectory: false)
         
-        try action.performAndHandleResult()
+        try action.performAndHandleResult(logHandle: .none)
         XCTAssertTrue(FileManager.default.directoryExists(atPath: indexDirectory.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: renderIndexJSON.path))
         try XCTAssertEqual(FileManager.default.contentsOfDirectory(at: indexDirectory, includingPropertiesForKeys: nil).count, 1)
@@ -2541,7 +2540,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory()
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         let expectedOutput = Folder(name: ".docc-build", content: [
             JSONFile(
@@ -2648,7 +2647,7 @@ class ConvertActionTests: XCTestCase {
             transformForStaticHosting: true
         )
         
-        XCTAssertNoThrow(try action.performAndHandleResult())
+        XCTAssertNoThrow(try action.performAndHandleResult(logHandle: .none))
     }
     func testConvertWithCustomTemplates() throws {
         let info = InfoPlist(displayName: "TestConvertWithCustomTemplates", identifier: "com.test.example")
@@ -2701,7 +2700,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // The custom template contents should be wrapped in <template> tags and
         // prepended to the <body>
@@ -2783,7 +2782,7 @@ class ConvertActionTests: XCTestCase {
             experimentalEnableCustomTemplates: true,
             transformForStaticHosting: true
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // The custom template contents should be wrapped in <template> tags and
         // prepended to the <body>
@@ -2852,7 +2851,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         let expectedOutput = Folder(name: ".docc-build", content: [
             index,
@@ -2970,7 +2969,7 @@ class ConvertActionTests: XCTestCase {
         )
         
         XCTAssert(action.context.registeredBundles.isEmpty)
-        XCTAssertNoThrow(try action.perform(logHandle: .standardOutput))
+        XCTAssertNoThrow(try action.perform(logHandle: .none))
 
         XCTAssertEqual(action.context.registeredBundles.count, 1)
         let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
@@ -3054,7 +3053,7 @@ class ConvertActionTests: XCTestCase {
             )
         )
         XCTAssert(action.context.registeredBundles.isEmpty)
-        XCTAssertNoThrow(try action.perform(logHandle: .standardOutput))
+        XCTAssertNoThrow(try action.perform(logHandle: .none))
 
         XCTAssertEqual(action.context.registeredBundles.count, 1)
         let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
@@ -3094,7 +3093,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticEngine: engine
         )
-        let _ = try action.perform(logHandle: .standardOutput)
+        let _ = try action.perform(logHandle: .none)
         XCTAssertEqual(engine.problems.count, 1)
         XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
@@ -3135,7 +3134,7 @@ class ConvertActionTests: XCTestCase {
             diagnosticEngine: engine
         )
         
-        let _ = try action.perform(logHandle: .standardOutput)
+        let _ = try action.perform(logHandle: .none)
         XCTAssertEqual(engine.problems.count, 2)
         
         XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))

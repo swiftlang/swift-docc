@@ -93,51 +93,41 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String, identifier: String, versionString: String = "1.0", developmentRegion: String = "en") {
+    public init(displayName: String, identifier: String? = nil, versionString: String = "1.0") {
         self.content = Content(
             displayName: displayName,
             identifier: identifier,
-            versionString: versionString,
-            developmentRegion: developmentRegion
+            versionString: versionString
         )
     }
 
     public struct Content: Codable, Equatable {
         public let displayName: String
-        public let identifier: String
-        public let versionString: String
-        public let developmentRegion: String
+        public let identifier: String?
+        public let versionString: String?
 
-        fileprivate init(displayName: String, identifier: String, versionString: String, developmentRegion: String) {
+        fileprivate init(displayName: String, identifier: String?, versionString: String) {
             self.displayName = displayName
             self.identifier = identifier
             self.versionString = versionString
-            self.developmentRegion = developmentRegion
         }
 
         enum CodingKeys: String, CodingKey {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
             case versionString = "CFBundleVersion"
-            case developmentRegion = "CFBundleDevelopmentRegion"
         }
     }
 
     public func data() throws -> Data {
-        // TODO: Replace this with PropertListEncoder (see below) when it's available in swift-corelibs-foundation
-        // https://github.com/apple/swift-corelibs-foundation/commit/d2d72f88d93f7645b94c21af88a7c9f69c979e4f
-        let infoPlist = [
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .xml
+        
+        return try encoder.encode([
             Content.CodingKeys.displayName.rawValue: content.displayName,
             Content.CodingKeys.identifier.rawValue: content.identifier,
             Content.CodingKeys.versionString.rawValue: content.versionString,
-            Content.CodingKeys.developmentRegion.rawValue: content.developmentRegion,
-        ]
-
-        return try PropertyListSerialization.data(
-            fromPropertyList: infoPlist,
-            format: .xml,
-            options: 0
-        )
+        ])
     }
 }
 

@@ -1,0 +1,11 @@
+<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="80" height="73">
+  <style>
+  rect { fill: #777; }
+  </style>
+  <g>
+    <rect x="0" y="0" width="80" height="12" rx="2" ry="2" />
+    <rect x="13" y="19" width="54" height="12" rx="2" ry="2" />
+    <rect x="20" y="38" width="40" height="12" rx="2" ry="2" />
+    <rect x="7" y="57" width="66" height="12" rx="2" ry="2" />
+  </g>
+</svg>

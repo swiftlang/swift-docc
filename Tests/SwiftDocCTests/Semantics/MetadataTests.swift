@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -164,7 +164,23 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.customMetadata.count, 2)
         XCTAssertEqual(problems.count, 0)
     }
-    
+
+    func testRedirectSupport() throws {
+        let source = """
+        @Metadata {
+           @Redirected(from: "some/other/path")
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(metadata)
+        XCTAssertEqual(0, problems.count)
+        XCTAssertEqual(metadata?.redirects?.first?.oldPath.relativePath, "some/other/path")
+    }
+
     // MARK: - Metadata Support
     
     func testArticleSupportsMetadata() throws {

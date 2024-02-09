@@ -2,7 +2,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -90,6 +90,7 @@ let package = Package(
         .target(
             name: "SwiftDocCTestUtilities",
             dependencies: [
+                .target(name: "SwiftDocC"),
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings
@@ -136,7 +137,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-markdown.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.2"),
-        .package(url: "https://github.com/d-ronnqvist/swift-docc-symbolkit", branch: "function-signature-internal-param"),
+        .package(url: "https://github.com/apple/swift-docc-symbolkit", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "2.5.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
     ]
