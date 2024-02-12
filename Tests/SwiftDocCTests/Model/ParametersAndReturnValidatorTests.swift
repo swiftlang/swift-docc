@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,8 +12,8 @@ import Foundation
 import XCTest
 import Markdown
 @testable import SymbolKit
-@testable import SwiftDocC
-import SwiftDocCTestUtilities
+@testable @_spi(FileManagerProtocol) import SwiftDocC
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class ParametersAndReturnValidatorTests: XCTestCase {
     
@@ -322,13 +322,282 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n///- Parameter fourthParameter: <#parameter description#>")
     }
     
-    private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 3) // an arbitrary non-zero start position
+    func testFunctionWithOnlyErrorParameter() throws {
+        let url = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: nil,
+                        sourceLanguage: .swift,
+                        parameters: [],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+                    ))
+                ]),
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Returns: Some return value description.
+                        """,
+                        sourceLanguage: .objectiveC,
+                        parameters: [(name: "error", externalName: nil)],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
+                    ))
+                ])
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: url)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let parameterSections = symbol.parametersSectionVariants
+        XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), [], "The Swift variant has no error parameter")
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["error"])
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+        
+        let returnsSections = symbol.returnsSectionVariants
+        XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), "", "The Swift variant has no return value")
+        XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some return value description.")
+    }
+    
+    func testFunctionWithErrorParameterButVoidType() throws {
+        let url = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: nil,
+                        sourceLanguage: .swift,
+                        parameters: [(name: "error", externalName: nil)],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+                    ))
+                ]),
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        docComment: """
+                        Some function description
+                        
+                        - Parameter error: Some parameter description.
+                        """,
+                        sourceLanguage: .objectiveC,
+                        parameters: [(name: "error", externalName: nil)],
+                        returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+                    ))
+                ])
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: url)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let parameterSections = symbol.parametersSectionVariants
+        XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["error"])
+        XCTAssertEqual(parameterSections[.swift]?.parameters.last?.contents.map({ $0.format() }).joined(), "Some parameter description.")
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["error"])
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "Some parameter description.")
+        
+        let returnsSections = symbol.returnsSectionVariants
+        XCTAssertNil(returnsSections[.swift])
+        XCTAssertNil(returnsSections[.objectiveC])
+    }
+    
+    func testWarningForDocumentingExternalParameterNames() throws {
+        let warningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter with: Some parameter description
+            """,
+            parameters: [(name: "someValue", externalName: "with")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(warningOutput, """
+        warning: External name 'with' used to document parameter
+          --> /path/to/SomeFile.swift:10:19-10:23
+        8  |   /// Some function description
+        9  |   ///
+        10 +   /// - Parameter with: Some parameter description
+           |                   ╰─suggestion: Replace 'with' with 'someValue'
+        """)
+    }
+    
+    func testWarningForDocumentingVoidReturn() throws {
+        let warningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter someValue: Some parameter description
+            - Returns: Some return value description
+            """,
+            parameters: [(name: "someValue", externalName: "with")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(warningOutput, """
+        warning: Return value documented for function returning void
+          --> /path/to/SomeFile.swift:11:7-11:47
+        9  |   ///
+        10 |   /// - Parameter someValue: Some parameter description
+        11 +   /// - Returns: Some return value description
+           |       ╰─suggestion: Remove return value documentation
+        """)
+    }
+    
+    func testWarningForParameterDocumentedTwice() throws {
+        let warningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter someValue: Some parameter description
+            - Parameter someValue: Some parameter description
+            """,
+            parameters: [(name: "someValue", externalName: "with")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(warningOutput, """
+        warning: Parameter 'someValue' is already documented
+        /path/to/SomeFile.swift:10:7: Previously documented here
+          --> /path/to/SomeFile.swift:11:7-11:56
+        9  |   ///
+        10 |   /// - Parameter someValue: Some parameter description
+        11 +   /// - Parameter someValue: Some parameter description
+           |       ╰─suggestion: Remove duplicate parameter documentation
+        """)
+    }
+    
+    func testWarningForExtraDocumentedParameter() throws {
+        let warningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter someValue: Some parameter description
+            - Parameter anotherValue: Some other parameter description
+            """,
+            parameters: [(name: "someValue", externalName: "with")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(warningOutput, """
+        warning: Parameter 'anotherValue' not found in function declaration
+          --> /path/to/SomeFile.swift:11:7-11:65
+        9  |   ///
+        10 |   /// - Parameter someValue: Some parameter description
+        11 +   /// - Parameter anotherValue: Some other parameter description
+           |       ╰─suggestion: Remove 'anotherValue' parameter documentation
+        """)
+    }
+    
+    func testWarningForUndocumentedParameter() throws {
+        let missingFirstWarningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter second: Some parameter description
+            """,
+            parameters: [(name: "first", externalName: "with"), (name: "second", externalName: "and")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(missingFirstWarningOutput, """
+        warning: Parameter 'first' is missing documentation
+          --> /path/to/SomeFile.swift:10:53-10:53
+        8  |   /// Some function description
+        9  |   ///
+        10 +   /// - Parameter second: Some parameter description
+           |       ╰─suggestion: Document 'first' parameter
+        """)
+        
+        
+        let missingSecondWarningOutput = try warningOutputRaisedFrom(
+            docComment: """
+            Some function description
+            
+            - Parameter first: Some parameter description
+            """,
+            parameters: [(name: "first", externalName: "with"), (name: "second", externalName: "and")],
+            returnValue: .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida")
+        )
+        XCTAssertEqual(missingSecondWarningOutput, """
+        warning: Parameter 'second' is missing documentation
+          --> /path/to/SomeFile.swift:10:52-10:52
+        8  |   /// Some function description
+        9  |   ///
+        10 +   /// - Parameter first: Some parameter description
+           |                                                    ╰─suggestion: Document 'second' parameter
+        """)
+        
+        
+    }
+    
+    // MARK: Test helpers
+    
+    private func warningOutputRaisedFrom(
+        docComment: String,
+        parameters: [(name: String, externalName: String?)],
+        returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> String {
+        let url = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    docComment: docComment,
+                    sourceLanguage: .swift,
+                    parameters: parameters,
+                    returnValue: returnValue
+                ))
+            ])
+        ])
+        let logStorage = LogHandle.LogStorage()
+        let (_, _, context) = try loadBundle(from: url, configureContext: { context in
+            for consumerID in context.diagnosticEngine.consumers.sync({ $0.values }) {
+                context.diagnosticEngine.remove(consumerID)
+            }
+            let fileSystem = try TestFileSystem(folders: [
+                Folder(name: "path", content: [
+                    Folder(name: "to", content: [
+                        // The generated symbol graph uses a fake source file where the documentation comment starts at line 7, column 6
+                        TextFile(name: "SomeFile.swift", utf8Content: String(repeating: "\n", count: 7) + docComment.splitByNewlines.map { "  /// \($0)" }.joined(separator: "\n"))
+                    ])
+                ])
+            ])
+            context.diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, fileManager: fileSystem))
+        })
+        
+        context.diagnosticEngine.flush()
+        return logStorage.text
+    }
+    
+    private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
     private let symbolURL =  URL(fileURLWithPath: "/path/to/SomeFile.swift")
     
     private func makeSymbolGraph(docComment: String) -> SymbolGraph {
+        makeSymbolGraph(
+            docComment: docComment,
+            sourceLanguage: .swift,
+            parameters: [
+                ("firstParameter", nil),
+                ("secondParameter", nil),
+                ("thirdParameter", nil),
+                ("fourthParameter", nil),
+            ],
+            returnValue: .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
+        )
+    }
+    
+    private func makeSymbolGraph(
+        docComment: String?,
+        sourceLanguage: SourceLanguage,
+        parameters: [(name: String, externalName: String?)],
+        returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
+    ) -> SymbolGraph {
         let uri = symbolURL.absoluteString // we want to include the file:// scheme here
         func makeLineList(text: String) -> SymbolGraph.LineList {
-            
             return .init(text.splitByNewlines.enumerated().map { lineOffset, line in
                     .init(text: line, range: .init(start: .init(line: start.line + lineOffset, character: start.character),
                                                    end: .init(line: start.line + lineOffset, character: start.character + line.count)))
@@ -339,24 +608,19 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             moduleName: "ModuleName",
             symbols: [
                 .init(
-                    identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                    identifier: .init(precise: "symbol-id", interfaceLanguage: sourceLanguage.id),
                     names: .init(title: "functionName(...)", navigator: nil, subHeading: nil, prose: nil),
                     pathComponents: ["functionName(...)"],
-                    docComment: makeLineList(text: docComment),
+                    docComment: docComment.map { makeLineList(text: $0) },
                     accessLevel: .public, kind: .init(parsedIdentifier: .func, displayName: "Function"),
                     mixins: [
                         SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: uri, position: start),
                         
                         SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
-                            parameters: [
-                                .init(name: "firstParameter", externalName: nil, declarationFragments: [], children: []),
-                                .init(name: "secondParameter", externalName: nil, declarationFragments: [], children: []),
-                                .init(name: "thirdParameter", externalName: nil, declarationFragments: [], children: []),
-                                .init(name: "fourthParameter", externalName: nil, declarationFragments: [], children: []),
-                            ],
-                            returns: [
-                                .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
-                            ]
+                            parameters: parameters.map {
+                                .init(name: $0.name, externalName: $0.externalName, declarationFragments: [], children: [])
+                            },
+                            returns: [returnValue]
                         )
                     ]
                 )
