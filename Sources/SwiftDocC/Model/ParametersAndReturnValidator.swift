@@ -79,10 +79,17 @@ struct ParametersAndReturnValidator {
             )
         }
         
-        return (
-            makeParametersSectionVariants(parameters, signatures, symbol.documentedSymbol?.kind, hasDocumentedReturnValues: returns != nil),
-            makeReturnsSectionVariants(returns?.first, signatures, symbol.documentedSymbol?.kind, hasDocumentedParameters: parameters != nil)
-        )
+        var parameterVariants = makeParametersSectionVariants(parameters, signatures, symbol.documentedSymbol?.kind, hasDocumentedReturnValues: returns != nil)
+        if parameterVariants.allValues.allSatisfy({ _, section in section.parameters.isEmpty }) {
+            // If all source languages have empty parameter sections, return `nil` instead of individually empty sections.
+            parameterVariants = DocumentationDataVariants(defaultVariantValue: nil)
+        }
+        var returnVariants = makeReturnsSectionVariants(returns?.first, signatures, symbol.documentedSymbol?.kind, hasDocumentedParameters: parameters != nil)
+        if returnVariants.allValues.allSatisfy({ _, section in section.content.isEmpty }) {
+            // If all source languages have empty return value sections, return `nil` instead of individually empty sections.
+            returnVariants = DocumentationDataVariants(defaultVariantValue: nil)
+        }
+        return (parameterVariants, returnVariants)
     }
     
     /// Creates a validated parameter section containing only the parameters that exist in each language representation's function signature.
@@ -126,11 +133,6 @@ struct ParametersAndReturnValidator {
             
             // Remove documented parameters that don't apply to this language representation's function signature.
             var languageApplicableParametersByName = parametersByName.filter { knownParameterNames.contains($0.key) }
-            guard !languageApplicableParametersByName.isEmpty else { 
-                // Add an empty section so that this language doesn't fallback to another language's content.
-                variants[trait] = ParametersSection(parameters: [])
-                continue
-            }
             
             // Add a missing error parameter documentation if needed.
             if trait == .objectiveC, Self.shouldAddObjectiveCErrorParameter(signatures, parameters) {
