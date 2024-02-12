@@ -344,7 +344,44 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
         self.overloadsVariants = overloadsVariants
     }
-    
+
+    internal convenience init(cloning other: Symbol) {
+        self.init(
+            kindVariants: other.kindVariants,
+            titleVariants: other.titleVariants,
+            subHeadingVariants: other.subHeadingVariants,
+            navigatorVariants: other.navigatorVariants,
+            roleHeadingVariants: other.roleHeadingVariants,
+            platformNameVariants: other.platformNameVariants,
+            moduleReference: other.moduleReference,
+            requiredVariants: other.isRequiredVariants,
+            externalIDVariants: other.externalIDVariants,
+            accessLevelVariants: other.accessLevelVariants,
+            availabilityVariants: other.availabilityVariants,
+            deprecatedSummaryVariants: other.deprecatedSummaryVariants,
+            mixinsVariants: other.mixinsVariants,
+            declarationVariants: other.declarationVariants,
+            defaultImplementationsVariants: other.defaultImplementationsVariants,
+            relationshipsVariants: other.relationshipsVariants,
+            abstractSectionVariants: other.abstractSectionVariants,
+            discussionVariants: other.discussionVariants,
+            topicsVariants: other.topicsVariants,
+            seeAlsoVariants: other.seeAlsoVariants,
+            returnsSectionVariants: other.returnsSectionVariants,
+            parametersSectionVariants: other.parametersSectionVariants,
+            dictionaryKeysSectionVariants: other.dictionaryKeysSectionVariants,
+            httpEndpointSectionVariants: other.httpEndpointSectionVariants,
+            httpBodySectionVariants: other.httpBodySectionVariants,
+            httpParametersSectionVariants: other.httpParametersSectionVariants,
+            httpResponsesSectionVariants: other.httpResponsesSectionVariants,
+            redirectsVariants: other.redirectsVariants,
+            crossImportOverlayModule: other.crossImportOverlayModule,
+            originVariants: other.originVariants,
+            automaticTaskGroupsVariants: other.automaticTaskGroupsVariants,
+            overloadsVariants: other.overloadsVariants
+        )
+    }
+
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
         return visitor.visitSymbol(self)
     }

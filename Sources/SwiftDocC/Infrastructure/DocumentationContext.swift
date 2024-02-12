@@ -2369,8 +2369,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.addNode(overloadGroupTopicGraphNode)
             
             // Create the new overload group symbol
-            let overloadGroupSymbol = firstOverloadSymbol
-            
+            // This needs to be a clone because otherwise the declaration simplifications below will
+            // also modify the original overload symbol
+            let overloadGroupSymbol = Symbol(cloning: firstOverloadSymbol)
+
+            if let subHeading = overloadGroupSymbol.subHeadingVariants[.swift] {
+                overloadGroupSymbol.subHeadingVariants[.swift] = subHeading.simplifyForOverloads()
+            }
+            if let navigator = overloadGroupSymbol.navigatorVariants[.swift] {
+                overloadGroupSymbol.navigatorVariants[.swift] = navigator.simplifyForOverloads()
+            }
+
             // Create the new overload group documentation node
             let overloadGroupNode = DocumentationNode(
                 reference: overloadGroupReference,
