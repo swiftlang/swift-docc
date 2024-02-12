@@ -20,6 +20,7 @@ extension SymbolGraph.Symbol.KindIdentifier {
              .`init`,
              .macro,
              .subscript,
+             .typeSubscript,
              .`operator`:
             return true
         default:
