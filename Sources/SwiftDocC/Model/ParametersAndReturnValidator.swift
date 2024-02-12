@@ -307,6 +307,10 @@ struct ParametersAndReturnValidator {
             // If the existing returns value documentation mentions "error" at all, don't add anything
             return nil
         }
+        if signatures[.objectiveC]?.returns == [.init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")] {
+            // If the Objective-C function signature returns BOOL, don't add anything
+            return nil
+        }
         
         let contentToAdd = objcObjectErrorAddition(endPreviousSentence: returns.contents.last?.format().removingTrailingWhitespace().last != ".")
         if let inlineContents = returns.contents as? [InlineMarkup] {
