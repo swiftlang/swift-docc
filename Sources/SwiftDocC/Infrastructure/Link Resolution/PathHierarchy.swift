@@ -475,7 +475,7 @@ extension PathHierarchy {
     func traverseOverloadedSymbolGroups(observe: (_ overloadedSymbols: [ResolvedIdentifier]) throws -> Void) rethrows {
         for node in lookup.values where node.symbol != nil {
             for disambiguation in node.children.values {
-                for (kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && SymbolGraph.Symbol.KindIdentifier.isOverloadableKind(kind) {
+                for (kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && SymbolGraph.Symbol.KindIdentifier(identifier: kind).isOverloadableKind {
                     assert(innerStorage.values.allSatisfy { $0.symbol != nil }, "Only symbols should have symbol kind identifiers (\(kind))")
 
                     try observe(innerStorage.values.map(\.identifier))
