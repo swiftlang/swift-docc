@@ -235,6 +235,16 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
+    
+    struct Overloads {
+         /// References to other symbols that overload this one.
+         let references: [ResolvedTopicReference]
+         /// The index where this symbol's should be displayed (inserted) among the overloads declarations.
+         let displayIndex: Int
+    }
+    
+    /// References to other symbols that overload this one.
+    var overloadsVariants: DocumentationDataVariants<Overloads>
 
     /// Creates a new symbol with the given data.
     init(
@@ -268,7 +278,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         redirectsVariants: DocumentationDataVariants<[Redirect]>,
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
-        automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: [])
+        automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: []),
+        overloadsVariants: DocumentationDataVariants<Overloads> = .init(defaultVariantValue: nil)
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
@@ -331,6 +342,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.redirectsVariants = redirectsVariants
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
+        self.overloadsVariants = overloadsVariants
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
