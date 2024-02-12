@@ -415,8 +415,15 @@ public struct DocumentationNode {
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
 
+            let docCommentLocation: SymbolGraph.Symbol.Location? = {
+                if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
+                    return .init(uri: uri, position: position)
+                }
+                return symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)
+            }()
+            
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
-            let docCommentMarkup = Document(parsing: docCommentString, source: docComment.url, options: documentOptions)
+            let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
             let offset = symbol.offsetAdjustedForInterfaceLanguage()
 
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
@@ -460,17 +467,11 @@ public struct DocumentationNode {
                     engine.emit(problem)
                 }
             }
-
-            func docCommentLocation() -> SymbolGraph.Symbol.Location? {
-                if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
-                    return .init(uri: uri, position: position)
-                }
-                return symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)
-            }
+            
             documentationChunks = [
                 DocumentationChunk(
                     source: .sourceCode(
-                        location: docCommentLocation(), // The documentation chunk represents the doc comment's location, which isn't necessarily the symbol's location.
+                        location: docCommentLocation, // The documentation chunk represents the doc comment's location, which isn't necessarily the symbol's location.
                         offset: offset
                     ),
                     markup: docCommentMarkup
