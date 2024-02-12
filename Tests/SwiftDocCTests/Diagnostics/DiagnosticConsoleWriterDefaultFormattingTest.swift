@@ -393,7 +393,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     func testEmitAdditionReplacementSolution() throws {
         func problemsLoggerOutput(possibleSolutions: [Solution]) -> String {
             let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger)
+            let consumer = DiagnosticConsoleWriter(logger, highlight: true)
             let problem = Problem(diagnostic: Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: possibleSolutions)
             consumer.receive([problem])
             try? consumer.flush()
