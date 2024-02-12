@@ -312,11 +312,16 @@ struct ParametersAndReturnValidator {
             return nil
         }
         
-        let contentToAdd = objcObjectErrorAddition(endPreviousSentence: returns.contents.last?.format().removingTrailingWhitespace().last != ".")
+        let lastSentenceEndsWithPunctuation = returns.contents.last?.format().removingTrailingWhitespace().last?.isPunctuation == true
         if let inlineContents = returns.contents as? [InlineMarkup] {
-            return [Paragraph(inlineContents + contentToAdd)]
+            return [Paragraph(inlineContents + objcObjectErrorAddition(endPreviousSentence: !lastSentenceEndsWithPunctuation))]
+        } else if let paragraphs = returns.contents as? [Paragraph] {
+            guard let lastParagraph = paragraphs.last else {
+                return [Paragraph(objcObjectErrorAddition(endPreviousSentence: false))]
+            }
+            return paragraphs.dropLast() + [Paragraph(lastParagraph.inlineChildren + objcObjectErrorAddition(endPreviousSentence: !lastSentenceEndsWithPunctuation))]
         } else {
-            return returns.contents + [Paragraph(contentToAdd)]
+            return returns.contents + [Paragraph(objcObjectErrorAddition(endPreviousSentence: false))]
         }
     }
     
