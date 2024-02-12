@@ -4310,27 +4310,13 @@ let expected = """
         }
     }
     
-    // We do not want to add overload behavior for some symbol kinds, even if they are collisions in the link resolver.
-    func testContextDoesNotRecognizeUnoverloadableSymbolKinds() throws {
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-
+    // The overload behavior doesn't apply to symbol kinds that don't support overloading
+    func testContextDoesNotRecognizeNonOverloadableSymbolKinds() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
         
-        func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
-            return SymbolGraph.Symbol(
-                identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-                names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-                pathComponents: ["SymbolName"],
-                docComment: nil,
-                accessLevel: .public,
-                kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
-                mixins: [:]
-            )
-        }
-        
-        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
-        // Generate a 4 symbols with the same name for every overloadable symbol kind
-        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every non overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
             makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
             makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
             makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
@@ -4347,12 +4333,12 @@ let expected = """
         ])
         let (_, _, context) = try loadBundle(from: tempURL)
         
-        for kindID in overloadableKindIDs {
+        for kindID in nonOverloadableKindIDs {
             // Find the 4 symbols of this specific kind
             let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
                 .map { try XCTUnwrap(context.symbolIndex[$0.identifier.precise]) }
             
-            // Check that each symbol lists the other 3 overloads
+            // Check that none of the symbols lists any overloads
             for reference in overloadedReferences {
                 let documentationNode = try XCTUnwrap(context.documentationCache[reference])
                 let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
