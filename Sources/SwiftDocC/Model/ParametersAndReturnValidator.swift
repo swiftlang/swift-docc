@@ -182,7 +182,15 @@ struct ParametersAndReturnValidator {
         if let parameterNameOrder = signatures.values.map(\.parameters).max(by: { $0.count < $1.count })?.map(\.name) {
             let parametersEndLocation = parameters.last?.range?.upperBound
             
-            for parameterName in allKnownParameterNames.subtracting(["error"]) where parametersByName[parameterName] == nil {
+            var missingParameterNames = allKnownParameterNames.subtracting(["error"]).filter { parametersByName[$0] == nil }
+            for parameter in parameters {
+                // Parameters that are documented using their external name already has raised a more specific diagnostic.
+                if let documentedByExternalName = parameterNamesByExternalName[parameter.name] {
+                    missingParameterNames.subtract(documentedByExternalName)
+                }
+            }
+
+            for parameterName in missingParameterNames{
                 // Look for the parameter that should come after the missing parameter to insert the placeholder documentation in the right location.
                 let parameterAfter = parameterNameOrder.drop(while: { $0 != parameterName }).dropFirst()
                     .mapFirst(where: { parametersByName[$0]?.first! /* Each group is guaranteed to be non-empty */ })

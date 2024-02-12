@@ -149,7 +149,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
         
         do {
-            XCTAssertEqual(context.problems.count, 5)
+            XCTAssertEqual(context.problems.count, 4)
             
             let parameterNearMissProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Parameter 'somevalue' not found in instance method declaration" }))
             XCTAssertEqual(parameterNearMissProblem.diagnostic.source, url.appendingPathComponent("extension.md"))
@@ -198,21 +198,6 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(argumentLabelProblem.possibleSolutions.first?.summary, "Replace 'with' with 'someValue'")
             XCTAssertEqual(argumentLabelProblem.possibleSolutions.first?.replacements.first?.range, argumentLabelProblem.diagnostic.range)
             XCTAssertEqual(argumentLabelProblem.possibleSolutions.first?.replacements.first?.replacement, "someValue")
-            
-            let undocumentedParameterProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Parameter 'someValue' is missing documentation" }))
-            XCTAssertEqual(undocumentedParameterProblem.diagnostic.source, url.appendingPathComponent("swift-extension.md"))
-            XCTAssertEqual(undocumentedParameterProblem.diagnostic.range?.lowerBound.line, 10)
-            XCTAssertEqual(undocumentedParameterProblem.diagnostic.range?.lowerBound.column, 37)
-            XCTAssertEqual(undocumentedParameterProblem.diagnostic.range?.upperBound.line, 10)
-            XCTAssertEqual(undocumentedParameterProblem.diagnostic.range?.upperBound.column, 37)
-            
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.summary, "Document 'someValue' parameter")
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.source, url.appendingPathComponent("swift-extension.md"))
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound.line, 10)
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound.column, 1)
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound.line, 10)
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound.column, 1)
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- Parameter someValue: <#parameter description#>\n///")
         }
     }
     
