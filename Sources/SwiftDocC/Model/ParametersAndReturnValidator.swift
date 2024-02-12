@@ -459,7 +459,7 @@ struct ParametersAndReturnValidator {
                 source: parameter.range?.source,
                 severity: .warning,
                 range: adjusted(parameter.nameRange),
-                identifier: "org.swift.docc.DocumentedArgumentLabel",
+                identifier: "org.swift.docc.DocumentedExternalName",
                 summary: "External name \(parameter.name.singleQuoted) used to document parameter"
             ),
             // Suggest to replace the documented argument label with the one of the parameter names.
@@ -536,7 +536,7 @@ struct ParametersAndReturnValidator {
     private func makeMissingParameterProblem(name: String, before nextParameter: Parameter?, standalone: Bool, lastParameterEndLocation: SourceLocation?) -> Problem {
         let solutions: [Solution]
         if let insertLocation = nextParameter?.range?.lowerBound ?? lastParameterEndLocation {
-            let extraWhitespace = "\n" + String(repeating: " ", count: (nextParameter?.range?.lowerBound.column ?? 1 + (standalone ? 0 : 2) /* indent items in a parameter outline by 2 spaces */) - 1)
+            let extraWhitespace = "\n///" + String(repeating: " ", count: (nextParameter?.range?.lowerBound.column ?? 1 + (standalone ? 0 : 2) /* indent items in a parameter outline by 2 spaces */) - 1)
             let replacement: String
             if nextParameter != nil {
                 // /// - Paramaters:

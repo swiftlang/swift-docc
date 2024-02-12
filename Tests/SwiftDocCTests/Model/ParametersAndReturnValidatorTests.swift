@@ -17,18 +17,9 @@ import SwiftDocCTestUtilities
 
 class ParametersAndReturnValidatorTests: XCTestCase {
     
-    private var originalFeatureFlagsState: FeatureFlags!
-    
     override func setUp() {
         super.setUp()
-        originalFeatureFlagsState = FeatureFlags.current
-        FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled = true
-    }
-    
-    override func tearDown() {
-        FeatureFlags.current = originalFeatureFlagsState
-        originalFeatureFlagsState = nil
-        super.tearDown()
+        enableFeatureFlag(\.isExperimentalParametersAndReturnsValidationEnabled)
     }
     
     func testFiltersParameters() throws {
@@ -197,7 +188,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(duplicateParameterProblem.diagnostic.notes.first?.range.upperBound.line, 10)
             XCTAssertEqual(duplicateParameterProblem.diagnostic.notes.first?.range.upperBound.column, 33)
             
-            let argumentLabelProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Argument label 'with' used to document parameter" }))
+            let argumentLabelProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "External name 'with' used to document parameter" }))
             XCTAssertEqual(argumentLabelProblem.diagnostic.source, url.appendingPathComponent("swift-extension.md"))
             XCTAssertEqual(argumentLabelProblem.diagnostic.range?.lowerBound.line, 9)
             XCTAssertEqual(argumentLabelProblem.diagnostic.range?.lowerBound.column, 13)
@@ -221,7 +212,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound.column, 1)
             XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound.line, 10)
             XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound.column, 1)
-            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- Parameter someValue: <#parameter description#>\n")
+            XCTAssertEqual(undocumentedParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- Parameter someValue: <#parameter description#>\n///")
         }
     }
     
@@ -291,7 +282,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let startOfParameterTwoLocation = SourceLocation(line: start.line + 4, column: start.character + 3, source: symbolURL)
         XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound, startOfParameterTwoLocation)
         XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound, startOfParameterTwoLocation)
-        XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- firstParameter: <#parameter description#>\n  ")
+        XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- firstParameter: <#parameter description#>\n///  ")
         
         let otherMissingParameterProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Parameter 'fourthParameter' is missing documentation" }))
         XCTAssertEqual(otherMissingParameterProblem.diagnostic.source, symbolURL)
@@ -302,7 +293,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.summary, "Document 'fourthParameter' parameter")
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound, endOfParameterSectionLocation)
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound, endOfParameterSectionLocation)
-        XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n  - fourthParameter: <#parameter description#>")
+        XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n///  - fourthParameter: <#parameter description#>")
     }
     
     func testMissingSeparateParametersInDocCommentDiagnostics() throws {
@@ -332,7 +323,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let startOfParameterTwoLocation = SourceLocation(line: start.line + 3, column: start.character + 1, source: symbolURL)
         XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound, startOfParameterTwoLocation)
         XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound, startOfParameterTwoLocation)
-        XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- Parameter firstParameter: <#parameter description#>\n")
+        XCTAssertEqual(oneMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "- Parameter firstParameter: <#parameter description#>\n///")
         
         let otherMissingParameterProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Parameter 'fourthParameter' is missing documentation" }))
         XCTAssertEqual(otherMissingParameterProblem.diagnostic.source, symbolURL)
@@ -343,7 +334,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.summary, "Document 'fourthParameter' parameter")
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.lowerBound, endOfParameterSectionLocation)
         XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.range.upperBound, endOfParameterSectionLocation)
-        XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n- Parameter fourthParameter: <#parameter description#>")
+        XCTAssertEqual(otherMissingParameterProblem.possibleSolutions.first?.replacements.first?.replacement, "\n///- Parameter fourthParameter: <#parameter description#>")
     }
     
     private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 3) // an arbitrary non-zero start position
