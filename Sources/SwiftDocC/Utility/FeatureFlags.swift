@@ -27,6 +27,10 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for combining overloaded symbol pages is enabled.
     public var isExperimentalOverloadedSymbolPresentationEnabled = false
     
+    /// Whether experimental support for automatically rendering links on symbol documentation to articles
+    /// that mention that symbol.
+    public var isExperimentalMentionedInEnabled = false
+
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:

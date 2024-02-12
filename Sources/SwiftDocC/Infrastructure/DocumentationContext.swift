@@ -297,8 +297,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     /// External metadata injected into the context, for example via command line arguments.
     public var externalMetadata = ExternalMetadata()
-    
-    
+
+    /// Mentions of symbols within articles.
+    var articleSymbolMentions = ArticleSymbolMentions()
+
     /// The decoder used in the `SymbolGraphLoader`
     var decoder: JSONDecoder = JSONDecoder()
     
@@ -624,6 +626,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
+
+            if FeatureFlags.current.isExperimentalMentionedInEnabled {
+                // Record symbol links as symbol "mentions" for automatic cross references
+                // on rendered symbol documentation.
+                if let article = result.node.semantic as? Article,
+                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) {
+                    for markup in article.abstractSection?.content ?? [] {
+                        var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 2)
+                        mentions.visit(markup)
+                    }
+                    for markup in article.discussion?.content ?? [] {
+                        var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 1)
+                        mentions.visit(markup)
+                    }
+                }
+            }
+
             assert(
                 // If this is a symbol, verify that the reference exist in the in the symbolIndex
                 result.node.symbol.map { symbolIndex[$0.identifier.precise] == result.reference }
@@ -1868,7 +1887,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
-            
+
             var article = article
             // Update the article's topic graph node with the one we just added to the topic graph.
             article.topicGraphNode = graphNode
