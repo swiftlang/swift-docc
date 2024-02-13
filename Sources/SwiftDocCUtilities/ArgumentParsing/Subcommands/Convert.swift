@@ -529,9 +529,21 @@ extension Docc {
                 """)
             )
             var enableExperimentalLinkHierarchySerialization = false
-            
+
             @Flag(help: .hidden)
             var experimentalModifyCatalogWithGeneratedCuration = false
+
+            @Flag(
+                name: .customLong("enable-experimental-overloaded-symbol-presentation"),
+                help: ArgumentHelp("Collects all the symbols that are overloads of each other onto a new merged-symbol page.")
+            )
+            var enableExperimentalOverloadedSymbolPresentation = false
+
+            @Flag(
+                name: .customLong("enable-experimental-mentioned-in"),
+                help: ArgumentHelp("Render a section on symbol documentation which links to articles that mention that symbol")
+            )
+            var enableExperimentalMentionedIn = false
 
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
@@ -605,7 +617,7 @@ extension Docc {
             get { featureFlags.enableExperimentalLinkHierarchySerialization }
             set { featureFlags.enableExperimentalLinkHierarchySerialization = newValue }
         }
-        
+
         /// A user-provided value that is true if the user wants to in-place modify the provided documentation catalog to write generated curation to documentation extension files.
         ///
         /// Defaults to false
@@ -614,6 +626,19 @@ extension Docc {
         public var experimentalModifyCatalogWithGeneratedCuration: Bool {
             get { featureFlags.experimentalModifyCatalogWithGeneratedCuration }
             set { featureFlags.experimentalModifyCatalogWithGeneratedCuration = newValue }
+        }
+
+        /// A user-provided value that is true if the user enables experimental serialization of the local link resolution information.
+        public var enableExperimentalOverloadedSymbolPresentation: Bool {
+            get { featureFlags.enableExperimentalOverloadedSymbolPresentation }
+            set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
+        }
+
+        /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
+        /// links on symbols.
+        public var enableExperimentalMentionedIn: Bool {
+            get { featureFlags.enableExperimentalMentionedIn }
+            set { featureFlags.enableExperimentalMentionedIn = newValue }
         }
 
         /// A user-provided value that is true if additional metadata files should be produced.

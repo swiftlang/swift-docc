@@ -4201,6 +4201,109 @@ let expected = """
         problem = try XCTUnwrap(linkResolutionProblems.last)
         XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
     }
+    
+    func testContextRecognizesOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        
+        for kindID in overloadableKindIDs {
+            var seenIndices = Set<Int>()
+            // Find the 4 symbols of this specific kind
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+                .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
+            
+            // Check that each symbol lists the other 3 overloads
+            for (index, reference) in overloadedReferences.indexed() {
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+                
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+                
+                // Make sure that each symbol contains all of its sibling overloads.
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+                for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                    XCTAssert(overloads.references.contains(otherReference))
+                }
+                
+                // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
+                let displayIndex = try XCTUnwrap(overloads.displayIndex)
+                XCTAssertFalse(seenIndices.contains(displayIndex))
+                seenIndices.insert(displayIndex)
+            }
+            // Check that all the overloads was encountered
+            for index in overloadedReferences.indices {
+                XCTAssert(seenIndices.contains(index))
+            }
+        }
+    }
+    
+    // The overload behavior doesn't apply to symbol kinds that don't support overloading
+    func testContextDoesNotRecognizeNonOverloadableSymbolKinds() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        
+        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every non overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        
+        for kindID in nonOverloadableKindIDs {
+            // Find the 4 symbols of this specific kind
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+                .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
+            
+            // Check that none of the symbols lists any overloads
+            for reference in overloadedReferences {
+                let documentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
+                XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
+            }
+        }
+    }
+    
+    // A test helper that creates a symbol with a given identifier and kind.
+    private func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+        return SymbolGraph.Symbol(
+            identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+            names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["SymbolName"],
+            docComment: nil,
+            accessLevel: .public,
+            kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
+            mixins: [:]
+        )
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {

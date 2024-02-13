@@ -282,6 +282,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// External metadata injected into the context, for example via command line arguments.
     public var externalMetadata = ExternalMetadata()
 
+    /// Mentions of symbols within articles.
+    var articleSymbolMentions = ArticleSymbolMentions()
+
     /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
     ///
     /// - Parameter dataProvider: The data provider to register bundles from.
@@ -594,6 +597,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
+
+            if FeatureFlags.current.isExperimentalMentionedInEnabled {
+                // Record symbol links as symbol "mentions" for automatic cross references
+                // on rendered symbol documentation.
+                if let article = result.node.semantic as? Article,
+                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) {
+                    for markup in article.abstractSection?.content ?? [] {
+                        var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 2)
+                        mentions.visit(markup)
+                    }
+                    for markup in article.discussion?.content ?? [] {
+                        var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 1)
+                        mentions.visit(markup)
+                    }
+                }
+            }
+
             assert(
                 // If this is a symbol, verify that the reference exist in the in the symbolIndex
                 result.node.symbol.map { documentationCache.reference(symbolID: $0.identifier.precise) == result.reference }
@@ -1263,6 +1283,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
+
+            try groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -1784,7 +1806,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
-            
+
             var article = article
             // Update the article's topic graph node with the one we just added to the topic graph.
             article.topicGraphNode = graphNode
@@ -2291,6 +2313,37 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
         }
         return automaticallyCuratedSymbols
+    }
+
+    /// Handles overloaded symbols by grouping them together into one page.
+    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) throws {
+        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
+            return
+        }
+        
+        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+
+            // Tell each symbol what other symbols overload it.
+            for (index, symbolReference) in overloadedSymbolReferences.indexed() {
+                let documentationNode = try entity(with: symbolReference)
+
+                guard let symbol = documentationNode.semantic as? Symbol else {
+                    preconditionFailure("""
+                    Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
+                    Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
+                    """)
+                }
+                guard symbolReference.sourceLanguage == .swift else {
+                    assertionFailure("Overload groups is only supported for Swift symbols.")
+                    continue
+                }
+
+                var otherOverloadedSymbolReferences = overloadedSymbolReferences
+                otherOverloadedSymbolReferences.remove(at: index)
+                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                symbol.overloadsVariants = .init(swiftVariant: overloads)
+            }
+        }
     }
     
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
