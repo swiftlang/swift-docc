@@ -14,16 +14,16 @@ import SymbolKit
 ///
 /// This is used to identify parsed path components as kind information.
 private let knownSymbolKinds: Set<String> = {
-    // There's nowhere else that registers these extended symbol kinds and we need to know them in this list.
-    SymbolGraph.Symbol.KindIdentifier.register(
+    // We don't want to register these extended symbol kinds because that makes them available for decoding from symbol graphs which is unexpected.
+    let knownKinds = SymbolGraph.Symbol.KindIdentifier.allCases + [
         .extendedProtocol,
         .extendedStructure,
         .extendedClass,
         .extendedEnumeration,
         .unknownExtendedType,
         .extendedModule
-    )
-    return Set(SymbolGraph.Symbol.KindIdentifier.allCases.map(\.identifier))
+    ]
+    return Set(knownKinds.map(\.identifier))
 }()
 
 /// All known source language identifiers.
