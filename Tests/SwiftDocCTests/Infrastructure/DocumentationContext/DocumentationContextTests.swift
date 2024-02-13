@@ -4208,10 +4208,10 @@ let expected = """
         let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "fourth-\($0.identifier)-id", kind: $0),
         ] }
         
         let tempURL = try createTempFolder(content: [
@@ -4229,7 +4229,9 @@ let expected = """
             // Find the 4 symbols of this specific kind
             let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
                 .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
-            
+
+            var overloadGroupReference: ResolvedTopicReference?
+
             // Check that each symbol lists the other 3 overloads
             for (index, reference) in overloadedReferences.indexed() {
                 let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
@@ -4247,6 +4249,15 @@ let expected = """
                 let displayIndex = try XCTUnwrap(overloads.displayIndex)
                 XCTAssertFalse(seenIndices.contains(displayIndex))
                 seenIndices.insert(displayIndex)
+
+                if let overloadGroupReference = overloadGroupReference {
+                    // Ensure that all the overloads reference the same "overload group" page
+                    XCTAssertEqual(overloadGroupReference, overloads.overloadGroup)
+                } else {
+                    // Ensure that the "overload group" page was added to the documentation cache
+                    overloadGroupReference = overloads.overloadGroup
+                    XCTAssert(context.documentationCache.allReferences.contains(overloads.overloadGroup))
+                }
             }
             // Check that all the overloads was encountered
             for index in overloadedReferences.indices {
@@ -4262,10 +4273,10 @@ let expected = """
         let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every non overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(name: "\($0.identifier) Symbol", identifier: "fourth-\($0.identifier)-id", kind: $0),
         ] }
         
         let tempURL = try createTempFolder(content: [
@@ -4293,11 +4304,11 @@ let expected = """
     }
     
     // A test helper that creates a symbol with a given identifier and kind.
-    private func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+    private func makeSymbol(name: String = "SymbolName", identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
             identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-            names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: ["SymbolName"],
+            names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: [name],
             docComment: nil,
             accessLevel: .public,
             kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),

@@ -237,10 +237,12 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
     
     struct Overloads {
-         /// References to other symbols that overload this one.
-         let references: [ResolvedTopicReference]
-         /// The index where this symbol's should be displayed (inserted) among the overloads declarations.
-         let displayIndex: Int
+        /// References to other symbols that overload this one.
+        let references: [ResolvedTopicReference]
+        /// Reference to the "overload group" page, which points to the first declaration.
+        let overloadGroup: ResolvedTopicReference
+        /// The index where this symbol's should be displayed (inserted) among the overloads declarations.
+        let displayIndex: Int
     }
     
     /// References to other symbols that overload this one.

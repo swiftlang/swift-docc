@@ -2330,6 +2330,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 return
             }
 
+            // Create the overload group topic reference without a disambiguating hash at the end.
+            guard let indexOfHash = firstOverloadReference.path.lastIndex(of: "-") else { return }
+            let overloadGroupPath = String(firstOverloadReference.path[..<indexOfHash])
+            let overloadGroupReference = ResolvedTopicReference(
+                bundleIdentifier: firstOverloadTopicNode.reference.bundleIdentifier,
+                path: overloadGroupPath,
+                sourceLanguages: firstOverloadTopicNode.reference.sourceLanguages
+            )
+
             // Tell each symbol what other symbols overload it.
             for (index, symbolReference) in overloadedSymbolReferences.indexed() {
                 let documentationNode = try entity(with: symbolReference)
@@ -2347,18 +2356,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                 var otherOverloadedSymbolReferences = overloadedSymbolReferences
                 otherOverloadedSymbolReferences.remove(at: index)
-                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                let overloads = Symbol.Overloads(
+                    references: otherOverloadedSymbolReferences,
+                    overloadGroup: overloadGroupReference,
+                    displayIndex: index
+                )
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
             }
-            
-            // Create the overload group topic reference without a disambiguating hash at the end.
-            guard let indexOfHash = firstOverloadReference.path.lastIndex(of: "-") else { return }
-            let overloadGroupPath = String(firstOverloadReference.path[..<indexOfHash])
-            let overloadGroupReference = ResolvedTopicReference(
-                bundleIdentifier: firstOverloadTopicNode.reference.bundleIdentifier,
-                path: overloadGroupPath,
-                sourceLanguages: firstOverloadTopicNode.reference.sourceLanguages
-            )
             
             // Add the topic graph node
             let overloadGroupTopicGraphNode = TopicGraph.Node(reference: overloadGroupReference,
