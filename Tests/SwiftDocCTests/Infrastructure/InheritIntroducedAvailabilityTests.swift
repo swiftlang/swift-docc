@@ -108,8 +108,8 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         XCTAssertEqual(Version(major: 13, minor: 0, patch: 0), iOSOnlyIntroduced.introducedVersion)
     }
 
-    /// Tests that the `introduced` availability version does not
-    /// comes from the iOS version in the Info.plist via a fallback mechanism.
+    /// Tests that the `introduced` availability version does
+    /// come from the iOS version in the Info.plist via a fallback mechanism.
     func testCatalystOnlyDeprecated() {
         let catalystOnlyDeprecated =
             context.nodeWithSymbolIdentifier("s:14FillIntroduced25macCatalystOnlyDeprecatedyyF")!
@@ -118,7 +118,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         }!
 
         // From Info.plist, filled from iOS
-        XCTAssertEqual(nil, catalystOnlyDeprecated.introducedVersion)
+        XCTAssertEqual(Version(major: 11, minor: 1, patch: 0), catalystOnlyDeprecated.introducedVersion)
 
         // From symbol graph, untouched
         XCTAssertEqual(Version(major: 13, minor: 0, patch: 0), catalystOnlyDeprecated.deprecatedVersion)

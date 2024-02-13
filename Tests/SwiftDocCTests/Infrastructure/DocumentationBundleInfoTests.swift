@@ -183,6 +183,12 @@ class DocumentationBundleInfoTests: XCTestCase {
                         <key>version</key>
                         <string>11.1</string>
                     </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iPadOS</string>
+                        <key>version</key>
+                        <string>11.1</string>
+                    </dict>
                 </array>
             </dict>
             <key>CDDefaultCodeListingLanguage</key>

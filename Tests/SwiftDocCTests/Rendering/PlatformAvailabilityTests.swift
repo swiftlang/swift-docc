@@ -151,10 +151,22 @@ class PlatformAvailabilityTests: XCTestCase {
         )
         let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
         let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
-        XCTAssertEqual(availability.count, 4)
-        availability.forEach { platform in
-            XCTAssertTrue(platform.deprecated != nil)
-        }
+        XCTAssertEqual(availability.count, 5)
+        XCTAssert(availability.contains(where: { platform in
+            platform.name == "iOS" && platform.deprecated != nil
+        }))
+        XCTAssert(availability.contains(where: { platform in
+            platform.name == "macOS" && platform.deprecated != nil
+        }))
+        XCTAssert(availability.contains(where: { platform in
+            platform.name == "watchOS" && platform.deprecated != nil
+        }))
+        XCTAssert(availability.contains(where: { platform in
+            platform.name == "Mac Catalyst" && platform.deprecated != nil
+        }))
+        XCTAssert(availability.contains(where: { platform in
+            platform.name == "iPadOS" && platform.deprecated == nil
+        }))
         XCTAssertFalse(availability.contains(where: { platform in
             platform.name == "tvOS"
         }))

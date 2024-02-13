@@ -25,7 +25,7 @@
         "path" : "\/documentation\/fillintroduced\/maccatalystonlydeprecated()",
         "title" : "func macCatalystOnlyDeprecated()",
         "type" : "func",
-        "deprecated" : false
+        "deprecated" : true
       },
       {
         "path" : "\/documentation\/fillintroduced\/maccatalystonlyintroduced()",

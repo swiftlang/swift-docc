@@ -18,6 +18,8 @@ let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
+    let iPadOSPlatformName = Platform.Name("iPadOS", id: 6)
+    
     struct Language: OptionSet {
         let rawValue: UInt8
         
@@ -425,8 +427,10 @@ Root
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.type, "groupMarker")
             
             let navigatorIndex = builder.navigatorIndex!
-            
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+            XCTAssertEqual(
+                navigatorIndex.availabilityIndex.platforms,
+                [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName]
+            )
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -630,7 +634,7 @@ Root
             
             let navigatorIndex = builder.navigatorIndex!
             
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -680,7 +684,7 @@ Root
             // Read the index back from disk
             let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
             
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -718,7 +722,7 @@ Root
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
         let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
         
-        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
             Platform.Version(string: "13.0")!,
             Platform.Version(string: "10.15")!,
@@ -820,7 +824,7 @@ Root
         
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
         XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
-        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS])
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, iPadOSPlatformName])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .macOS), Set([
             Platform.Version(string: "10.9")!,
             Platform.Version(string: "10.10")!,
@@ -842,7 +846,7 @@ Root
             Platform.Version(string: "13.0")!,
         ]))
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
-        XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS]))
+        XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, iPadOSPlatformName]))
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "macOS"), .macOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "watchOS"), .watchOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "tvOS"), .tvOS)

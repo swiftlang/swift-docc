@@ -195,7 +195,7 @@ struct SymbolGraphLoader {
             // Prepare a default availability versions lookup for this module.
             let defaultAvailabilityVersionByPlatform = defaultAvailabilities
                 .reduce(into: [PlatformName: SymbolGraph.SemanticVersion](), { result, defaultAvailability in
-                    if let version = SymbolGraph.SemanticVersion(string: defaultAvailability.introducedVersion) {
+                    if let introducedVersion = defaultAvailability.introducedVersion, let version = SymbolGraph.SemanticVersion(string: introducedVersion) {
                         result[defaultAvailability.platformName] = version
                     }
                 })
@@ -290,8 +290,7 @@ extension SymbolGraph.SemanticVersion {
     ///
     /// Returns `nil` if the string doesn't contain 1, 2, or 3 numeric components separated by periods.
     /// - parameter string: A version number as a string.
-    init?(string: String?) {
-        guard let string = string else { return nil }
+    init?(string: String) {
         let componentStrings = string.components(separatedBy: ".")
         let components = componentStrings.compactMap(Int.init)
 
@@ -319,7 +318,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// - Note: If the `defaultAvailability` argument doesn't have a valid
     /// platform version that can be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
-        guard let platformVersion = SymbolGraph.SemanticVersion(string: defaultAvailability.introducedVersion) else {
+        guard let introducedVersion = defaultAvailability.introducedVersion, let platformVersion = SymbolGraph.SemanticVersion(string: introducedVersion) else {
             return nil
         }
         let domain = SymbolGraph.Symbol.Availability.Domain(rawValue: defaultAvailability.platformName.rawValue)

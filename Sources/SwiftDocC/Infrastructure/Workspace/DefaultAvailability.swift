@@ -131,8 +131,26 @@ public struct DefaultAvailability: Codable, Equatable {
     /// Creates a default availability module.
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
     public init(with modules: [String: [ModuleAvailability]]) {
+        let fallbackPlatforms: [PlatformName : PlatformName] = [
+            .catalyst:.iOS,
+            PlatformName(operatingSystemName: "iPadOS"):.iOS
+        ]
         self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
-            platformAvailabilities
+            // If a module doesn't contain default availability information for any of the fallbackPlatforms,
+            // infer it from the corresponding mapped value.
+            // For iPadOS and Catalyst, their platform versions are always the same as iOS.
+            platformAvailabilities + fallbackPlatforms.compactMap { (platform, fallbackPlatform) in
+                if !platformAvailabilities.contains(where: { $0.platformName == platform }),
+                   let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
+                   let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
+                {
+                    return DefaultAvailability.ModuleAvailability(
+                        platformName: platform,
+                        platformState: .available(version: fallbackIntroducedVersion)
+                    )
+                }
+                return nil
+            }
         }
     }
     
