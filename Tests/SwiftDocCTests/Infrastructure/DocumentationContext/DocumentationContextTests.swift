@@ -4302,12 +4302,99 @@ let expected = """
             }
         }
     }
-    
+
+    func testOverloadGroupHasSimplifiedSubHeading() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        var symbols = [SymbolGraph.Symbol]()
+        // func myFunc(param: Int, other: Int) -> Int
+        symbols.append(makeSymbol(
+            name: "myFunc(param:other:)",
+            identifier: "myFunc-1",
+            kind: .method,
+            subHeading: [
+                .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+                .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+                .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "param", preciseIdentifier: nil),
+                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "Int"),
+                .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "other", preciseIdentifier: nil),
+                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "Int"),
+                .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "Int"),
+            ]
+        ))
+        // func myFunc(param: String, other: String) -> String
+        symbols.append(makeSymbol(
+            name: "myFunc(param:other:)",
+            identifier: "myFunc-2",
+            kind: .method,
+            subHeading: [
+                .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+                .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+                .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "param", preciseIdentifier: nil),
+                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "String"),
+                .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                .init(kind: .externalParameter, spelling: "other", preciseIdentifier: nil),
+                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "String"),
+                .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "String"),
+            ]
+        ))
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        let symbolIdentifier = symbols.first!.identifier.precise
+        let symbolReference = try XCTUnwrap(context.documentationCache.reference(symbolID: symbolIdentifier))
+        let overloadDocumentationNode = try XCTUnwrap(context.documentationCache[symbolReference])
+        let overloadSymbol = try XCTUnwrap(overloadDocumentationNode.semantic as? Symbol)
+        let overloadData = try XCTUnwrap(overloadSymbol.overloadsVariants.firstValue)
+
+        let overloadGroupNode = try XCTUnwrap(context.documentationCache[overloadData.overloadGroup])
+        let overloadGroupSemantic = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+
+        // func myFunc(param:other:)
+        let simplifiedFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "param", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ":", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "other", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ":)", preciseIdentifier: nil),
+        ]
+
+        XCTAssertEqual(overloadGroupSemantic.subHeading, simplifiedFragments)
+        XCTAssertEqual(overloadGroupSemantic.navigator, simplifiedFragments)
+    }
+
     // A test helper that creates a symbol with a given identifier and kind.
-    private func makeSymbol(name: String = "SymbolName", identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+    private func makeSymbol(
+        name: String = "SymbolName",
+        identifier: String,
+        kind: SymbolGraph.Symbol.KindIdentifier,
+        subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment]? = nil
+    ) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
             identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-            names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
+            names: .init(title: name, navigator: subHeading, subHeading: subHeading, prose: nil),
             pathComponents: [name],
             docComment: nil,
             accessLevel: .public,
