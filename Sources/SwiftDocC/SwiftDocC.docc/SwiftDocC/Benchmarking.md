@@ -16,7 +16,7 @@ swift run --package-path bin/benchmark benchmark --docc-arguments convert MyFram
 
 The tool will enable metrics logging, do five sequential runs of the `convert` command with the given inputs and options, and write the results to a JSON file on disk.
 
-For pull requests where you want to compare the local changes against another version of the—the HEAD commits of the branch that the pull request is targeting—you can use the `compare-against-commit` tool:
+For pull requests where you want to compare the local changes against another version of the---the HEAD commits of the branch that the pull request is targeting---you can use the `compare-against-commit` tool:
 
 ```
 swift run --package-path bin/benchmark benchmark compare-to <commit-ish> --docc-arguments convert MyFramework.docc

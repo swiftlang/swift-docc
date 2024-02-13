@@ -37,7 +37,7 @@ final class PathHierarchyBasedLinkResolver {
         resolvedReferenceMap = newMap
     }
     
-    /// Creates a path string—that can be used to find documentation in the path hierarchy—from an unresolved topic reference,
+    /// Creates a path string---that can be used to find documentation in the path hierarchy---from an unresolved topic reference,
     private static func path(for unresolved: UnresolvedTopicReference) -> String {
         guard let fragment = unresolved.fragment else {
             return unresolved.path
@@ -85,11 +85,12 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
-    func addMappingForSymbols(symbolIndex: [String: ResolvedTopicReference]) {
+    func addMappingForSymbols(localCache: DocumentationContext.LocalCache) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise] else {
+            guard let symbol = node.symbol, let reference = localCache.reference(symbolID: symbol.identifier.precise) else {
                 continue
             }
+            // Our bidirectional dictionary doesn't support nil values.
             resolvedReferenceMap[id] = reference
         }
     }
@@ -175,9 +176,9 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Adds the headings for all symbols in the symbol index to the path hierarchy.
-    func addAnchorForSymbols(symbolIndex: [String: ResolvedTopicReference], documentationCache: [ResolvedTopicReference: DocumentationNode]) {
+    func addAnchorForSymbols(localCache: DocumentationContext.LocalCache) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise], let node = documentationCache[reference] else { continue }
+            guard let symbol = node.symbol, let node = localCache[symbol.identifier.precise] else { continue }
             addAnchors(node.anchorSections, to: id)
         }
     }
@@ -206,7 +207,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - isCurrentlyResolvingSymbolLink: Whether or not the documentation link is a symbol link.
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
-    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) throws -> TopicReferenceResolutionResult {
+    func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool) throws -> TopicReferenceResolutionResult {
         let parentID = resolvedReferenceMap[parent]
         let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
         guard let foundReference = resolvedReferenceMap[found] else {
