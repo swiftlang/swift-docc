@@ -496,6 +496,15 @@ public struct ConvertAction: Action, RecreatingContext {
         ) {
             let tableOfContentsFilename = "table-of-contents.tutorial"
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
+            var replacements = [Replacement]()
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {
+                replacements.append(
+                    Replacement(
+                        range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
+                        replacement: tableOfContentsTemplate
+                    )
+                )
+            }
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
@@ -508,12 +517,7 @@ public struct ConvertAction: Action, RecreatingContext {
                     possibleSolutions: [
                         Solution(
                             summary: "Create a `@Tutorials` table of content page.",
-                            replacements: [
-                                Replacement(
-                                    range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
-                                    replacement: CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Project Name")[tableOfContentsFilename]! // this file name is known to exist in the dictionary
-                                )
-                            ]
+                            replacements: replacements
                         )
                     ]
                 )
