@@ -1413,7 +1413,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                                    "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF",
                                    "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"]
         
-        let overloadReferences = try overloadPreciseIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let overloadReferences = try overloadPreciseIdentifiers.map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
         
         for (index, reference) in overloadReferences.indexed() {
             let documentationNode = try context.entity(with: reference)

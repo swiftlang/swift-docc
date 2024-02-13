@@ -40,19 +40,19 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
         var renderedTokens: [DeclarationRenderSection.Token]? = nil
         
         if let responseSymbol = response.symbol {
-            
             // Convert the dictionary key's declaration into section tokens
             if let fragments = responseSymbol.declarationFragments {
                 renderedTokens = fragments.map { token -> DeclarationRenderSection.Token in
-                    
-                    // Create a reference if one found
-                    var reference: ResolvedTopicReference?
+                    let reference: ResolvedTopicReference?
                     if let preciseIdentifier = token.preciseIdentifier,
-                       let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
+                       let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                    {
                         reference = resolved
                         
                         // Add relationship to render references
                         renderNodeTranslator.collectedTopicReferences.append(resolved)
+                    } else {
+                        reference = nil
                     }
                     
                     // Add the declaration token

@@ -23,6 +23,7 @@ extension ConvertAction {
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
         FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
         FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
+        FeatureFlags.current.isExperimentalMentionedInEnabled = convert.enableExperimentalMentionedIn
         FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled = convert.enableExperimentalParametersAndReturnsValidation
         
         // If the user-provided a URL for an external link resolver, attempt to

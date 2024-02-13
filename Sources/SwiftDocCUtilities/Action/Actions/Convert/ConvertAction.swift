@@ -399,9 +399,8 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         if let outOfProcessResolver = outOfProcessResolver {
-            context.externalReferenceResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
-            context.externalSymbolResolver = outOfProcessResolver
-            context._externalAssetResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.globalExternalSymbolResolver = outOfProcessResolver
         }
         
         let temporaryFolder = try createTempFolder(

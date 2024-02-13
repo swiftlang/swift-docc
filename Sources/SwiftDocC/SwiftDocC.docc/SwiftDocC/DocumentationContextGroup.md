@@ -9,7 +9,7 @@ The documentation context generally manages the in-memory documentation includin
  - Analyzing bundle file contents and converting to semantic models.
  - Managing a graph of documentation nodes (a single node representing one documentation topic).
  - Processing assets like media files or download archives.
- - Resolving links to external documentation via ``ExternalReferenceResolver`` and resolving external symbols via ``ExternalSymbolResolver``.
+ - Resolving links to external documentation sources via ``ExternalDocumentationSource`` and resolving external symbols via ``GlobalExternalSymbolResolver``.
  - Random access to documentation data including walking the graph and path finding.
 
 ### Creating a Context
@@ -68,10 +68,10 @@ context.knownIdentifiers.forEach({ print($0) })
 
 - ``NodeURLGenerator``
 
-### External Documentation
+### External Documentation Sources
 
-- ``ExternalReferenceResolver``
-- ``ExternalSymbolResolver``
+- ``ExternalDocumentationSource``
+- ``GlobalExternalSymbolResolver``
 - ``OutOfProcessReferenceResolver``
 
 ### Code Listings
@@ -81,4 +81,4 @@ context.knownIdentifiers.forEach({ print($0) })
 - ``CodeColorsPreferenceKey``
 - ``SRGBColor``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

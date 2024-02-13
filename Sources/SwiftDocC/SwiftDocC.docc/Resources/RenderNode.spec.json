@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Render Node API",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "title": "Render Node API"
     },
     "paths": { },
@@ -2443,6 +2443,9 @@
             "DocumentationPrimaryRenderSection": {
                 "oneOf": [
                     {
+                        "$ref": "#/components/schemas/MentionsRenderSection"
+                    },
+                    {
                         "$ref": "#/components/schemas/DeclarationsRenderSection"
                     },
                     {
@@ -2476,6 +2479,21 @@
                         "$ref": "#/components/schemas/PropertiesSection"
                     }
                 ]
+            },
+            "MentionsRenderSection": {
+                "required": [
+                    "kind",
+                    "mentions"
+                ],
+                "type": "object",
+                "properties": {
+                    "mentions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "DeclarationsRenderSection": {
                 "required": [

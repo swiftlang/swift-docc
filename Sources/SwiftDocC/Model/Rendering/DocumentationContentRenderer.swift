@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -61,7 +61,7 @@ public class DocumentationContentRenderer {
         self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: bundle.baseURL)
     }
     
-    /// For symbol nodes, returns the fragments mixin if any.
+    /// For symbol nodes, returns the declaration render section if any.
     func subHeadingFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
         guard let symbol = (node.semantic as? Symbol) else {
             return .init(defaultValue: nil)
@@ -72,10 +72,7 @@ public class DocumentationContentRenderer {
             symbol.titleVariants,
             symbol.kindVariants
         ) { trait, subHeading, title, kind in
-            var fragments = subHeading
-                .map({ fragment -> DeclarationRenderSection.Token in
-                    return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-                })
+            var fragments = subHeading.map({ DeclarationRenderSection.Token(fragment: $0, identifier: nil) })
             if fragments.last?.text == "\n" { fragments.removeLast() }
             
             if trait == .swift {
@@ -96,9 +93,7 @@ public class DocumentationContentRenderer {
             from: symbol.navigatorVariants,
             symbol.titleVariants
         ) { trait, navigator, title in
-            var fragments = navigator.map { fragment -> DeclarationRenderSection.Token in
-                return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-            }
+            var fragments = navigator.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
             if fragments.last?.text == "\n" { fragments.removeLast() }
             
             if trait == .swift {
@@ -183,7 +178,7 @@ public class DocumentationContentRenderer {
         }
         
         // Render references can have either availability or conformance data
-        var constraints: [SymbolGraph.Symbol.Swift.GenericConstraint] = []
+        let constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]
         
         if let conformanceConstraints = collectedConstraints[.successfullyResolved(reference)], !conformanceConstraints.isEmpty {
             // Collected conformance constraints
@@ -198,8 +193,7 @@ public class DocumentationContentRenderer {
         
         let isLeaf = SymbolReference.isLeaf(symbol)
         let parentName = documentationContext.parents(of: reference).first
-            .flatMap { try? documentationContext.entity(with: $0) }
-            .flatMap { $0?.symbol?.names.title }
+            .flatMap { try? documentationContext.entity(with: $0).symbol?.names.title }
         
         let options = ConformanceSection.ConstraintRenderOptions(
             isLeaf: isLeaf,
@@ -276,14 +270,14 @@ public class DocumentationContentRenderer {
     
     /// Creates a render reference for the given topic reference.
     /// - Parameters:
-    ///     - reference: A documentation node topic reference.
-    ///     - overridingDocumentationNode: An optional overriding documentation node to create
-    ///       the returned topic render reference from.
+    ///   - reference: A documentation node topic reference.
+    ///   - overridingDocumentationNode: An optional overriding documentation node to create
+    ///     the returned topic render reference from.
     ///
-    ///       You should only provide an overriding documentation node in situations where a
-    ///       full documentation build is not being performed (like when using a ``ConvertService``) and
-    ///       the current ``DocumentationContext`` does not have a documentation node for
-    ///       the given reference.
+    ///     You should only provide an overriding documentation node in situations where a
+    ///     full documentation build is not being performed (like when using a ``ConvertService``) and
+    ///     the current ``DocumentationContext`` does not have a documentation node for
+    ///     the given reference.
     ///
     /// - Returns: The rendered documentation node.
     func renderReference(for reference: ResolvedTopicReference, with overridingDocumentationNode: DocumentationNode? = nil, dependencies: inout RenderReferenceDependencies) -> TopicRenderReference {
@@ -300,7 +294,7 @@ public class DocumentationContentRenderer {
                 identifier: RenderReferenceIdentifier(reference.absoluteString),
                 title: anchorSection.title,
                 abstract: [],
-                url: urlGenerator.presentationURLForReference(reference, requireRelativeURL: true).absoluteString,
+                url: urlGenerator.presentationURLForReference(reference).absoluteString,
                 kind: .section,
                 estimatedTime: nil
             )
@@ -322,7 +316,7 @@ public class DocumentationContentRenderer {
         let referenceURL = reference.absoluteString
         
         // Topic render references require the URLs to be relative, even if they're external.
-        let presentationURL = urlGenerator.presentationURLForReference(reference, requireRelativeURL: true)
+        let presentationURL = urlGenerator.presentationURLForReference(reference)
         
         var contentCompiler = RenderContentCompiler(context: documentationContext, bundle: bundle, identifier: reference)
         let abstractContent: VariantCollection<[RenderInlineContent]>
