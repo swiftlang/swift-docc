@@ -166,7 +166,7 @@ class DocumentationCuratorTests: XCTestCase {
         let crawler = DocumentationCurator.init(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
-        guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
+        guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.pathsTo(moduleNode.reference).first,
               let root = pathToRoot.first else {
             
@@ -182,7 +182,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testModuleUnderAncestorOfTechnologyRoot() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
             try """
-            # Root with ancestor curatings a module
+            # Root with ancestor curating a module
             
             This is a root article that enables testing the behavior of it's ancestors.
             
@@ -210,7 +210,7 @@ class DocumentationCuratorTests: XCTestCase {
         let _ = DocumentationCurator.init(in: context, bundle: bundle)
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
-        guard let moduleNode = context.nodeWithSymbolIdentifier("SourceLocations"),
+        guard let moduleNode = context.documentationCache["SourceLocations"],
               let pathToRoot = context.pathsTo(moduleNode.reference).first,
               let root = pathToRoot.first else {
             

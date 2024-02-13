@@ -34,7 +34,7 @@ struct ResolvedIdentifier: Equatable, Hashable {
 ///
 /// ### Usage
 ///
-/// After a path hierarchy has been fully created — with both symbols and non-symbols — it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
+/// After a path hierarchy has been fully created---with both symbols and non-symbols---it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
     
     /// The list of module nodes.
