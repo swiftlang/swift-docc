@@ -4141,10 +4141,14 @@ let expected = """
         // One doc comment in the Obj-C header file contains an invalid doc
         // link on line 24, columns 56-63:
         // "Log a hello world message. This line contains an ``invalid`` link."
-        let (_, _, context) = try testBundleAndContext(copying: "ObjCFrameworkWithInvalidLink")
+        let (_, context) = try testBundleAndContext(named: "ObjCFrameworkWithInvalidLink")
         let problems = context.problems
-        XCTAssertEqual(1, problems.count)
-        let problem = try XCTUnwrap(problems.first)
+        if FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled {
+            XCTAssertEqual(5, problems.count)
+        } else {
+            XCTAssertEqual(1, problems.count)
+        }
+        let problem = try XCTUnwrap(problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
         let basename = try XCTUnwrap(problem.diagnostic.source?.lastPathComponent)
         XCTAssertEqual("HelloWorldFramework.h", basename)
         let start = Markdown.SourceLocation(line: 24, column: 56, source: nil)
