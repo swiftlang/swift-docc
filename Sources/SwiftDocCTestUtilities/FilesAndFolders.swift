@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,7 +93,7 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String, identifier: String? = nil, versionString: String = "1.0") {
+    public init(displayName: String? = nil, identifier: String? = nil, versionString: String = "1.0") {
         self.content = Content(
             displayName: displayName,
             identifier: identifier,
@@ -102,11 +102,11 @@ public struct InfoPlist: File, DataRepresentable {
     }
 
     public struct Content: Codable, Equatable {
-        public let displayName: String
+        public let displayName: String?
         public let identifier: String?
         public let versionString: String?
 
-        fileprivate init(displayName: String, identifier: String?, versionString: String) {
+        fileprivate init(displayName: String?, identifier: String?, versionString: String) {
             self.displayName = displayName
             self.identifier = identifier
             self.versionString = versionString

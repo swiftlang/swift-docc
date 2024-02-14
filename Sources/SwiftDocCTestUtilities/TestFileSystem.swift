@@ -121,9 +121,13 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         defer { filesLock.unlock() }
 
         guard let file = files[url.path] else {
-            throw Errors.invalidPath(url.path)
+            throw CocoaError.error(.fileReadNoSuchFile)
         }
         return file
+    }
+    
+    public func contents(of url: URL) throws -> Data {
+        try contentsOfURL(url)
     }
     
     func filesIn(folder: Folder, at: URL) throws -> [String: Data] {
@@ -223,7 +227,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
             // If it's not the root folder, check if parents exist
             if createIntermediates == false {
                 guard files.keys.contains(parent.path) else {
-                    throw Errors.invalidPath(path)
+                    throw CocoaError.error(.fileReadNoSuchFile)
                 }
             } else {
                 // Create missing parent directories
@@ -322,16 +326,6 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         }
 
         return output
-    }
-
-    
-    enum Errors: DescribedError {
-        case invalidPath(String)
-        var errorDescription: String {
-            switch self { 
-                case .invalidPath(let path): return "Invalid path \(path.singleQuoted)"
-            }
-        }
     }
     
     func dump() -> String {

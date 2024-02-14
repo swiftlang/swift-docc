@@ -78,11 +78,9 @@ final class ExternalPathHierarchyResolver {
     }
 
     /// Returns the external entity for a symbol's unique identifier or `nil` if that symbol isn't known in this external context.
-    func entity(symbolID usr: String) -> LinkResolver.ExternalEntity? {
-        // TODO: Resolve external symbols by USR (rdar://116085974) (There is nothing calling this function)
-        // This function has an optional return value since it's not easy to check what module a symbol belongs to based on its identifier.
+    func symbolReferenceAndEntity(symbolID usr: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
         guard let reference = symbols[usr] else { return nil }
-        return entity(reference)
+        return (reference, entity(reference))
     }
     
     /// Returns the external entity for a reference that was successfully resolved by this external resolver.
@@ -163,14 +161,14 @@ final class ExternalPathHierarchyResolver {
         }
     }
     
-    convenience init(dependencyArchive: URL) throws {
+    convenience init(dependencyArchive: URL, fileManager: FileManagerProtocol) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
         let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
         let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")
         
         self.init(
-            linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: Data(contentsOf: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: Data(contentsOf: entityURL))
+            linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: fileManager.contents(of: linkHierarchyFile)),
+            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: fileManager.contents(of: entityURL))
         )
     }
 }

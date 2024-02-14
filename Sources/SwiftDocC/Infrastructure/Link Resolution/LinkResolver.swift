@@ -17,6 +17,7 @@ public class LinkResolver {
     @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
     public var dependencyArchives: [URL] = []
     
+    var fileManager: FileManagerProtocol = FileManager.default
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
     /// A fallback resolver to use when the local resolver fails to resolve a link.
@@ -29,7 +30,7 @@ public class LinkResolver {
     /// Create link resolvers for all documentation archive dependencies.
     func loadExternalResolvers() throws {
         let resolvers = try dependencyArchives.compactMap {
-            try ExternalPathHierarchyResolver(dependencyArchive: $0)
+            try ExternalPathHierarchyResolver(dependencyArchive: $0, fileManager: fileManager)
         }
         for resolver in resolvers {
             for moduleNode in resolver.pathHierarchy.modules {
