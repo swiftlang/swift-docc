@@ -554,13 +554,13 @@ struct ParametersAndReturnValidator {
             if nextParameter != nil {
                 // /// - Paramaters:
                 // ///   - nextParameter: Description
-                //      ^inserting "- parameterName: placeholder\n  "
+                //      ^inserting "- parameterName: placeholder\n///  "
                 //                                              ^^^^ add newline after to insert before the other parameter
                 replacement = Self.newParameterDescription(name: name, standalone: standalone) + extraWhitespace
             } else {
                 // /// - Paramaters:
                 // ///   - otherParameter: Description
-                //                                    ^inserting "\n  - parameterName: placeholder"
+                //                                    ^inserting "\n///  - parameterName: placeholder"
                 //                                                ^^^^ add newline before to insert after the last parameter
                 replacement = extraWhitespace + Self.newParameterDescription(name: name, standalone: standalone)
             }
