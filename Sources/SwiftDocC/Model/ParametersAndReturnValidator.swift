@@ -369,7 +369,7 @@ struct ParametersAndReturnValidator {
     /// ## Example
     ///
     /// ```swift
-    /// /// - Paramaters:
+    /// /// - Parameters:
     /// ///   - someValue: Some description of this parameter
     /// /// - Returns: Description of what this function returns
     /// ///   ^~~~~~~
@@ -404,7 +404,7 @@ struct ParametersAndReturnValidator {
     /// ## Example
     ///
     /// ```swift
-    /// /// - Paramaters:
+    /// /// - Parameters:
     /// ///   - someValue: Some description of this parameter
     /// ///   - anotherValue: Another description of this parameter
     /// ///     ^~~~~~~~~~~~
@@ -455,7 +455,7 @@ struct ParametersAndReturnValidator {
     /// ## Example
     ///
     /// ```swift
-    /// /// - Paramaters:
+    /// /// - Parameters:
     /// ///   - with: Some description of this parameter
     /// ///     ^~~~
     /// ///     External name 'with' used to document parameter
@@ -490,7 +490,7 @@ struct ParametersAndReturnValidator {
     /// ## Example
     ///
     /// ```swift
-    /// /// - Paramaters:
+    /// /// - Parameters:
     /// ///   - someValue: Some description of this parameter
     /// ///   - someValue: Another description of this parameter
     /// ///     ^~~~~~~~~
@@ -533,7 +533,7 @@ struct ParametersAndReturnValidator {
     /// ## Example
     /// 
     /// ```swift
-    /// /// - Paramaters:
+    /// /// - Parameters:
     /// ///   - firstValue: Description of the first parameter
     /// ///                                                   ^
     /// ///                                                   Parameter 'secondValue' is missing documentation
@@ -552,13 +552,13 @@ struct ParametersAndReturnValidator {
             let extraWhitespace = "\n///" + String(repeating: " ", count: (nextParameter?.range?.lowerBound.column ?? 1 + (standalone ? 0 : 2) /* indent items in a parameter outline by 2 spaces */) - 1)
             let replacement: String
             if nextParameter != nil {
-                // /// - Paramaters:
+                // /// - Parameters:
                 // ///   - nextParameter: Description
                 //      ^inserting "- parameterName: placeholder\n///  "
                 //                                              ^^^^ add newline after to insert before the other parameter
                 replacement = Self.newParameterDescription(name: name, standalone: standalone) + extraWhitespace
             } else {
-                // /// - Paramaters:
+                // /// - Parameters:
                 // ///   - otherParameter: Description
                 //                                    ^inserting "\n///  - parameterName: placeholder"
                 //                                                ^^^^ add newline before to insert after the last parameter
