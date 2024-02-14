@@ -1,0 +1,832 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)"
+  },
+  "module": {
+    "name": "ErrorParameters",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 14,
+          "minor": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.class",
+        "displayName": "Class"
+      },
+      "identifier": {
+        "precise": "c:objc(cs)MyClassInObjectiveC",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClassInObjectiveC"
+      ],
+      "names": {
+        "title": "MyClassInObjectiveC",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClassInObjectiveC"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "class"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MyClassInObjectiveC"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyClassInObjectiveC"
+        }
+      ],
+      "accessLevel": "open"
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "c:@M@ErrorParameters@objc(cs)MyClassInSwift(im)returnSomethingAndReturnError:",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClassInSwift",
+        "returnSomething()"
+      ],
+      "names": {
+        "title": "returnSomething()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "returnSomething"
+          },
+          {
+            "kind": "text",
+            "spelling": "() "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "throws"
+          },
+          {
+            "kind": "text",
+            "spelling": " -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
+        "module": "ErrorParameters",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 22,
+                "character": 8
+              },
+              "end": {
+                "line": 22,
+                "character": 37
+              }
+            },
+            "text": "Returns something from Swift."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 23,
+                "character": 8
+              },
+              "end": {
+                "line": 23,
+                "character": 31
+              }
+            },
+            "text": "- Returns: Some string."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 24,
+                "character": 8
+              },
+              "end": {
+                "line": 24,
+                "character": 52
+              }
+            },
+            "text": "- Throws: Some error if something does wrong"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "attribute",
+          "spelling": "@objc"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "returnSomething"
+        },
+        {
+          "kind": "text",
+          "spelling": "() "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "throws"
+        },
+        {
+          "kind": "text",
+          "spelling": " -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
+        "position": {
+          "line": 25,
+          "character": 22
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "c:objc(cs)MyClassInObjectiveC(im)doSomethingWith:error:",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClassInObjectiveC",
+        "doSomething(with:)"
+      ],
+      "names": {
+        "title": "doSomething(with:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "doSomething"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "with"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ") "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "throws"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "with",
+            "internalName": "someValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "someValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "doSomething"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "with"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "someValue"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "throws"
+        }
+      ],
+      "accessLevel": "open"
+    },
+    {
+      "kind": {
+        "identifier": "swift.class",
+        "displayName": "Class"
+      },
+      "identifier": {
+        "precise": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClassInSwift"
+      ],
+      "names": {
+        "title": "MyClassInSwift",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClassInSwift"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "class"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MyClassInSwift"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
+        "module": "ErrorParameters",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 9,
+                "character": 4
+              },
+              "end": {
+                "line": 9,
+                "character": 44
+              }
+            },
+            "text": "A Swift class with 2 throwing functions."
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "attribute",
+          "spelling": "@objc"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyClassInSwift"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
+        "position": {
+          "line": 10,
+          "character": 19
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "c:objc(cs)MyClassInObjectiveC(im)returnSomethingAndReturnError:",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClassInObjectiveC",
+        "returnSomething()"
+      ],
+      "names": {
+        "title": "returnSomething()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "returnSomething"
+          },
+          {
+            "kind": "text",
+            "spelling": "() "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "throws"
+          },
+          {
+            "kind": "text",
+            "spelling": " -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "returnSomething"
+        },
+        {
+          "kind": "text",
+          "spelling": "() "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "throws"
+        },
+        {
+          "kind": "text",
+          "spelling": " -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        }
+      ],
+      "accessLevel": "open"
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "c:@M@ErrorParameters@objc(cs)MyClassInSwift(im)doSomethingWith:error:",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClassInSwift",
+        "doSomething(with:)"
+      ],
+      "names": {
+        "title": "doSomething(with:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "doSomething"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "with"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ") "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "throws"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
+        "module": "ErrorParameters",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 16,
+                "character": 8
+              },
+              "end": {
+                "line": 16,
+                "character": 32
+              }
+            },
+            "text": "Does something in Swift."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 17,
+                "character": 8
+              },
+              "end": {
+                "line": 17,
+                "character": 42
+              }
+            },
+            "text": "- Parameter someValue: Some value."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 18,
+                "character": 8
+              },
+              "end": {
+                "line": 18,
+                "character": 52
+              }
+            },
+            "text": "- Throws: Some error if something does wrong"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "with",
+            "internalName": "someValue",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "someValue"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "attribute",
+          "spelling": "@objc"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "doSomething"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "with"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "someValue"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "throws"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:\/\/\/Users\/username\/path\/to\/ErrorParameters\/MyClassInSwift.swift",
+        "position": {
+          "line": 19,
+          "character": 22
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "s:SQ",
+      "targetFallback": "Swift.Equatable"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "s:s23CustomStringConvertibleP",
+      "targetFallback": "Swift.CustomStringConvertible"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "s:SH",
+      "targetFallback": "Swift.Hashable"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "s:s7CVarArgP",
+      "targetFallback": "Swift.CVarArg"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "s:s28CustomDebugStringConvertibleP",
+      "targetFallback": "Swift.CustomDebugStringConvertible"
+    },
+    {
+      "kind": "inheritsFrom",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "c:objc(cs)NSObject",
+      "targetFallback": "ObjectiveC.NSObject"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift(im)returnSomethingAndReturnError:",
+      "target": "c:@M@ErrorParameters@objc(cs)MyClassInSwift"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:objc(cs)MyClassInObjectiveC(im)returnSomethingAndReturnError:",
+      "target": "c:objc(cs)MyClassInObjectiveC"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "c:objc(pl)NSObject",
+      "targetFallback": "ObjectiveC.NSObjectProtocol"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "s:s23CustomStringConvertibleP",
+      "targetFallback": "Swift.CustomStringConvertible"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "s:SQ",
+      "targetFallback": "Swift.Equatable"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "s:SH",
+      "targetFallback": "Swift.Hashable"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "s:s7CVarArgP",
+      "targetFallback": "Swift.CVarArg"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift",
+      "target": "s:s28CustomDebugStringConvertibleP",
+      "targetFallback": "Swift.CustomDebugStringConvertible"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@M@ErrorParameters@objc(cs)MyClassInSwift(im)doSomethingWith:error:",
+      "target": "c:@M@ErrorParameters@objc(cs)MyClassInSwift"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "c:objc(pl)NSObject",
+      "targetFallback": "ObjectiveC.NSObjectProtocol"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:objc(cs)MyClassInObjectiveC(im)doSomethingWith:error:",
+      "target": "c:objc(cs)MyClassInObjectiveC"
+    },
+    {
+      "kind": "inheritsFrom",
+      "source": "c:objc(cs)MyClassInObjectiveC",
+      "target": "c:objc(cs)NSObject",
+      "targetFallback": "ObjectiveC.NSObject"
+    }
+  ]
+}
