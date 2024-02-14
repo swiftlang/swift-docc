@@ -40,7 +40,21 @@ class DeclarationsRenderSectionTests: XCTestCase {
                                 "text": "",
                                 "kind": "\(string)"
                             }
-                        ]
+                        ],
+                        "otherDeclarations": {
+                            "declarations": [
+                                {
+                                    "identifier": "identifier",
+                                    "tokens": [
+                                        {
+                                            "text": "",
+                                            "kind": "\(string)"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "displayIndex": 0
+                        }
                     }
                 ]
             }
@@ -52,11 +66,33 @@ class DeclarationsRenderSectionTests: XCTestCase {
                     DeclarationRenderSection(
                         languages: nil,
                         platforms: [],
-                        tokens: [.init(text: "", kind: token)]
+                        tokens: [.init(text: "", kind: token)],
+                        otherDeclarations: DeclarationRenderSection.OtherDeclarations(
+                            declarations: [.init(tokens: [.init(text: "", kind: token)], identifier: "identifier")],
+                            displayIndex: 0
+                        )
                     ),
                 ])
             )
         }
+    }
+    
+    func testDoNotEmitOtherDeclarationsIfEmpty() throws {
+
+        let encoder = RenderJSONEncoder.makeEncoder(prettyPrint: true)
+        let encodedData = try encoder.encode(
+            DeclarationsRenderSection(declarations: [
+                DeclarationRenderSection(
+                    languages: nil,
+                    platforms: [],
+                    tokens: [.init(text: "", kind: .string)]
+                )]
+            )
+        )
+        
+        let encodedJsonString = try XCTUnwrap(String(data: encodedData, encoding: .utf8))
+        XCTAssertFalse(encodedJsonString.contains("otherDeclarations"))
+        XCTAssertFalse(encodedJsonString.contains("indexInOtherDeclarations"))
     }
 
     func testRoundTrip() throws {
@@ -71,7 +107,21 @@ class DeclarationsRenderSectionTests: XCTestCase {
                             "text": "",
                             "kind": "label"
                         }
-                    ]
+                    ],
+                    "otherDeclarations": {
+                        "declarations": [
+                            {
+                                "identifier": "identifier",
+                                "tokens": [
+                                    {
+                                        "text": "",
+                                        "kind": "label"
+                                    }
+                                ]
+                            }
+                        ],
+                        "displayIndex": 0
+                    }
                 }
             ]
         }

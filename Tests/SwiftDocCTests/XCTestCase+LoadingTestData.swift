@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,21 +18,18 @@ extension XCTestCase {
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
     func loadBundle(from bundleURL: URL,
                     codeListings: [String : AttributedCodeListing] = [:],
-                    externalResolvers: [String: ExternalReferenceResolver] = [:],
-                    externalSymbolResolver: ExternalSymbolResolver? = nil,
-                    fallbackAssetResolvers: [String: FallbackAssetResolver] = [:],
-                    _externalAssetResolvers: [String: _ExternalAssetResolver] = [:],
+                    externalResolvers: [String: ExternalDocumentationSource] = [:],
+                    externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
+                    fallbackResolver: ConvertServiceFallbackResolver? = nil,
                     diagnosticFilterLevel: DiagnosticSeverity = .hint,
-                    configureContext: ((DocumentationContext) throws -> Void)? = nil,
-                    decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
+                    configureContext: ((DocumentationContext) throws -> Void)? = nil
+    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
-        context.externalReferenceResolvers = externalResolvers
-        context.externalSymbolResolver = externalSymbolResolver
-        context.fallbackAssetResolvers = fallbackAssetResolvers
-        context._externalAssetResolvers = _externalAssetResolvers
+        context.externalDocumentationSources = externalResolvers
+        context.globalExternalSymbolResolver = externalSymbolResolver
+        context.convertServiceFallbackResolver = fallbackResolver
         context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
-        context.decoder = decoder
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
@@ -47,12 +44,11 @@ extension XCTestCase {
     func testBundleAndContext(copying name: String,
                               excludingPaths excludedPaths: [String] = [],
                               codeListings: [String : AttributedCodeListing] = [:],
-                              externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:],
-                              externalSymbolResolver: ExternalSymbolResolver? = nil,
-                              fallbackAssetResolvers: [BundleIdentifier : FallbackAssetResolver] = [:],
-                              _externalAssetResolvers: [BundleIdentifier : _ExternalAssetResolver] = [:],
-                              configureBundle: ((URL) throws -> Void)? = nil,
-                              decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
+                              externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
+                              externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
+                              fallbackResolver: ConvertServiceFallbackResolver? = nil,
+                              configureBundle: ((URL) throws -> Void)? = nil
+    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         
@@ -77,16 +73,18 @@ extension XCTestCase {
             codeListings: codeListings,
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
-            fallbackAssetResolvers: fallbackAssetResolvers,
-            _externalAssetResolvers: _externalAssetResolvers,
-            decoder: decoder
+            fallbackResolver: fallbackResolver
         )
     }
     
-    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
+        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
+    }
+    
+    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+        let (_, bundle, context) = try testBundleAndContext(named: name, codeListings: codeListings, externalResolvers: externalResolvers)
         return (bundle, context)
     }
     

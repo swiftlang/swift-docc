@@ -222,6 +222,9 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
+    // This test calls ``ConvertOptions.additionalSymbolGraphFiles`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testAdditionalSymbolGraphFiles() throws {
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
@@ -407,6 +410,26 @@ class ConvertSubcommandTests: XCTestCase {
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.enableExperimentalLinkHierarchySerialization)
         XCTAssertTrue(FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled)
+    }
+    
+    func testExperimentalEnableOverloadedSymbolPresentation() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+        
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalOverloadedSymbolPresentation)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-overloaded-symbol-presentation",
+            testBundleURL.path,
+        ])
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalOverloadedSymbolPresentation)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
     }
     
     func testLinkDependencyValidation() throws {

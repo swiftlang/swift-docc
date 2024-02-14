@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -39,7 +39,7 @@ public enum VariantPatchOperation<Value: Codable> {
     
     /// Returns a new patch operation with its value transformed using the given closure.
     ///
-    /// If the patch operation doesn't have a value—for example, if it's a removal operation—the operation is returned unmodified.
+    /// If the patch operation doesn't have a value---for example, if it's a removal operation---the operation is returned unmodified.
     func map<TransformedValue>(
         _ transform: (Value) -> TransformedValue
     ) -> VariantPatchOperation<TransformedValue> {

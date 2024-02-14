@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,17 +40,17 @@ struct ExternalReferenceWalker: SemanticVisitor {
     /// A markup walker to use for collecting links from markup elements.
     private var markupResolver: ExternalMarkupReferenceWalker
     
-    /// Collected external links while walking the given elements.
-    var collectedExternalReferences: [UnresolvedTopicReference] {
-        return markupResolver.collectedExternalLinks.map { url -> UnresolvedTopicReference in
-            return .init(topicURL: url)
+    /// Collected unresolved external references, grouped by the bundle ID.
+    var collectedExternalReferences: [BundleIdentifier: [UnresolvedTopicReference]] {
+        return markupResolver.collectedExternalLinks.mapValues { links in
+            links.map(UnresolvedTopicReference.init(topicURL:))
         }
     }
     
-    /// Creates a new semantic walker.
-    /// - Parameter bundle: All links with a bundle ID different than this bundle's are considered external and collected.
-    init(bundle: DocumentationBundle) {
-        self.markupResolver = ExternalMarkupReferenceWalker(bundle: bundle)
+    /// Creates a new semantic walker that collects links to other documentation sources.
+    /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
+    init(localBundleID: BundleIdentifier) {
+        self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
     }
     
     mutating func visitCode(_ code: Code) { }
