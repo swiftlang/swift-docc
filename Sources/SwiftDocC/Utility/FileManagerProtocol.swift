@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,7 +22,8 @@ import Foundation
 /// Should you need a file system with a different storage, create your own
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
-protocol FileManagerProtocol {
+@_spi(FileManagerProtocol)
+public protocol FileManagerProtocol {
     
     /// Returns the data content of a file at the given path, if it exists.
     func contents(atPath: String) -> Data?
@@ -73,9 +74,10 @@ protocol FileManagerProtocol {
     func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws
 }
 
+@_spi(FileManagerProtocol)
 extension FileManagerProtocol {
     /// Returns a Boolean value that indicates whether a directory exists at a specified path.
-    func directoryExists(atPath path: String) -> Bool {
+    public func directoryExists(atPath path: String) -> Bool {
         var isDirectory = ObjCBool(booleanLiteral: false)
         let fileExistsAtPath = fileExists(atPath: path, isDirectory: &isDirectory)
         return fileExistsAtPath && isDirectory.boolValue
@@ -84,14 +86,15 @@ extension FileManagerProtocol {
 
 /// Add compliance to `FileManagerProtocol` to `FileManager`,
 /// most of the methods are already implemented in Foundation.
+@_spi(FileManagerProtocol)
 extension FileManager: FileManagerProtocol {
     
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
-    func createFile(at location: URL, contents: Data) throws {
+    public func createFile(at location: URL, contents: Data) throws {
         try contents.write(to: location, options: .atomic)
     }
     
-    func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
+    public func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
         if let writingOptions = writingOptions {
             try contents.write(to: location, options: writingOptions)
         } else {

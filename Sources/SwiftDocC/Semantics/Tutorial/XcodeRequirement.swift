@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,13 +30,6 @@ public final class XcodeRequirement: Semantic, AutomaticDirectiveConvertible {
         "title"         : \XcodeRequirement._title,
         "destination"   : \XcodeRequirement._destination,
     ]
-        
-    init(originalMarkup: BlockDirective, title: String, destination: URL) {
-        self.originalMarkup = originalMarkup
-        super.init()
-        self.title = title
-        self.destination = destination
-    }
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {

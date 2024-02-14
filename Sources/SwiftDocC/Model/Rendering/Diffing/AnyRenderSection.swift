@@ -54,7 +54,9 @@ struct AnyRenderSection: Equatable, Encodable, RenderJSONDiffable {
             return (value as! SampleDownloadSection).difference(from: (other.value as! SampleDownloadSection), at: path)
         case (.taskGroup, .taskGroup):
             return (value as! TaskGroupRenderSection).difference(from: (other.value as! TaskGroupRenderSection), at: path)
-            
+        case (.mentions, .mentions):
+            return (value as! MentionsRenderSection).difference(from: (other.value as! MentionsRenderSection), at: path)
+
         // MARK: Tutorial Sections
             
         case (.intro, .intro), (.hero, .hero):
@@ -119,7 +121,9 @@ struct AnyRenderSection: Equatable, Encodable, RenderJSONDiffable {
             return (lhs.value as! SampleDownloadSection) == (rhs.value as! SampleDownloadSection)
         case (.taskGroup, .taskGroup):
             return (lhs.value as! TaskGroupRenderSection) == (rhs.value as! TaskGroupRenderSection)
-            
+        case (.mentions, .mentions):
+            return (lhs.value as! MentionsRenderSection) == (rhs.value as! MentionsRenderSection)
+
         // MARK: Tutorial Sections
             
         case (.intro, .intro), (.hero, .hero):

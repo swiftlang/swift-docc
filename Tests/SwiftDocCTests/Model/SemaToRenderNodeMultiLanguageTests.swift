@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() throws {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        for documentationNode in context.documentationCache.values where documentationNode.kind.isSymbol {
+        for (_, documentationNode) in context.documentationCache where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
             
             let expectedSwiftOnlyUSRs: Set<String> = [
@@ -66,7 +66,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             }
         }
         
-        for documentationNode in context.documentationCache.values
+        for (_, documentationNode) in context.documentationCache
             where !documentationNode.kind.isSymbol && documentationNode.kind.isPage
         {
             XCTAssertEqual(

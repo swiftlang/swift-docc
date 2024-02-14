@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,10 @@
 */
 
 import Foundation
-@_spi(ExternalLinks) import SwiftDocC // SPI to set `context.linkResolver.dependencyArchives`
+
+@_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
+@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
+import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {
@@ -39,6 +42,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let inheritDocs: Bool
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
+    let experimentalModifyCatalogWithGeneratedCuration: Bool
     let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
@@ -76,6 +80,7 @@ public struct ConvertAction: Action, RecreatingContext {
     var converter: DocumentationConverter
     
     private var durationMetric: Benchmark.Duration?
+    private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     /// - Parameter buildIndex: Whether or not the convert action should emit an LMDB representation
@@ -107,6 +112,7 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
@@ -143,19 +149,19 @@ public struct ConvertAction: Action, RecreatingContext {
         } else {
             formattingOptions = []
         }
+        self.diagnosticWriterOptions = (
+            formattingOptions,
+            documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
+        )
+        
         self.inheritDocs = inheritDocs
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
+        self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        engine.add(
-            DiagnosticConsoleWriter(
-                formattingOptions: formattingOptions,
-                baseURL: documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
-            )
-        )
         if let diagnosticFilePath = diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }
@@ -207,7 +213,8 @@ public struct ConvertAction: Action, RecreatingContext {
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
             isCancelled: isCancelled,
-            diagnosticEngine: self.diagnosticEngine
+            diagnosticEngine: self.diagnosticEngine,
+            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
         )
     }
     
@@ -250,6 +257,7 @@ public struct ConvertAction: Action, RecreatingContext {
             formatConsoleOutputForTools: emitFixits,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: false,
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository,
@@ -279,6 +287,7 @@ public struct ConvertAction: Action, RecreatingContext {
         formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String?,
@@ -314,6 +323,7 @@ public struct ConvertAction: Action, RecreatingContext {
             formatConsoleOutputForTools: formatConsoleOutputForTools,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: transformForStaticHosting,
             allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
             hostingBasePath: hostingBasePath,
@@ -362,8 +372,19 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+        // Add the default diagnostic console writer now that we know what log handle it should write to.
+        if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
+            diagnosticEngine.add(
+                DiagnosticConsoleWriter(
+                    logHandle,
+                    formattingOptions: diagnosticWriterOptions.formatting,
+                    baseURL: diagnosticWriterOptions.baseURL,
+                    fileManager: fileManager
+                )
+            )
+        }
         
-        // The converter has already emitted its problems to the diagnostic engine. 
+        // The converter has already emitted its problems to the diagnostic engine.
         // Track additional problems separately to avoid repeating the converter's problems.
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
@@ -378,9 +399,8 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         if let outOfProcessResolver = outOfProcessResolver {
-            context.externalReferenceResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
-            context.externalSymbolResolver = outOfProcessResolver
-            context._externalAssetResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.globalExternalSymbolResolver = outOfProcessResolver
         }
         
         let temporaryFolder = try createTempFolder(

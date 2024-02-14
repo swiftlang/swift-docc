@@ -131,7 +131,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         // MARK: - Codable
         
         private enum CodingKeys: CodingKey {
-            case text, kind, identifier, preciseIdentifier
+            case text, kind, identifier, preciseIdentifier, otherDeclarations
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -157,15 +157,55 @@ public struct DeclarationRenderSection: Codable, Equatable {
         }
     }
     
+    /// Declarations for other symbols that are related to this one, e.g. overloads.
+    public struct OtherDeclarations: Codable, Equatable {
+        /// A displayable declaration for a different symbol that is connected to this one.
+        public struct Declaration: Codable, Equatable {
+            /// The symbol's declaration tokens.
+            public let tokens: [Token]
+            
+            /// The symbol's identifier.
+            public let identifier: String
+            
+            /// Creates a new other declaration for a symbol that is connected to this one, e.g. an overload.
+            public init(tokens: [Token], identifier: String) {
+                self.tokens = tokens
+                self.identifier = identifier
+            }
+        }
+        /// The displayable declarations for this symbol's overloads.
+        let declarations: [Declaration]
+        /// The index where this symbol's declaration should be displayed (inserted) among the declarations.
+        let displayIndex: Int
+        
+        /// Creates a group of declarations for symbols that are connected to this one, e.g. overloads.
+        public init(declarations: [Declaration], displayIndex: Int) {
+            self.declarations = declarations
+            self.displayIndex = displayIndex
+        }
+    }
+    
+    /// The declarations for this symbol's overloads.
+    public let otherDeclarations: OtherDeclarations?
+    
+    public enum CodingKeys: CodingKey {
+        case tokens
+        case platforms
+        case languages
+        case otherDeclarations
+    }
+    
     /// Creates a new declaration section.
     /// - Parameters:
     ///   - languages: The source languages to which this declaration applies.
     ///   - platforms: The platforms to which this declaration applies.
     ///   - tokens: The list of declaration tokens.
-    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token]) {
+    ///   - otherDeclarations: The declarations for this symbol's overloads.
+    public init(languages: [String]?, platforms: [PlatformName?], tokens: [Token], otherDeclarations: OtherDeclarations? = nil) {
         self.languages = languages
         self.platforms = platforms
         self.tokens = tokens
+        self.otherDeclarations = otherDeclarations
     }
     
     public init(from decoder: Decoder) throws {
@@ -173,6 +213,15 @@ public struct DeclarationRenderSection: Codable, Equatable {
         tokens = try container.decode([Token].self, forKey: .tokens)
         platforms = try container.decode([PlatformName?].self, forKey: .platforms)
         languages = try container.decodeIfPresent([String].self, forKey: .languages)
+        otherDeclarations = try container.decodeIfPresent(OtherDeclarations.self, forKey: .otherDeclarations)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: DeclarationRenderSection.CodingKeys.self)
+        try container.encode(self.tokens, forKey: DeclarationRenderSection.CodingKeys.tokens)
+        try container.encode(self.platforms, forKey: DeclarationRenderSection.CodingKeys.platforms)
+        try container.encode(self.languages, forKey: DeclarationRenderSection.CodingKeys.languages)
+        try container.encodeIfPresent(self.otherDeclarations, forKey: DeclarationRenderSection.CodingKeys.otherDeclarations)
     }
 }
 
@@ -195,6 +244,7 @@ extension DeclarationRenderSection: RenderJSONDiffable {
         diffBuilder.addDifferences(atKeyPath: \.platforms, forKey: CodingKeys.platforms)
         diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
         diffBuilder.addDifferences(atKeyPath: \.languages, forKey: CodingKeys.languages)
+        diffBuilder.addDifferences(atKeyPath: \.otherDeclarations, forKey: CodingKeys.otherDeclarations)
 
         return diffBuilder.differences
     }
