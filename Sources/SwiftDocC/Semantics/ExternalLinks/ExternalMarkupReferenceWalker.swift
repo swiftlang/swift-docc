@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,23 +11,16 @@
 import Foundation
 import Markdown
 
-/**
- Walks a markup tree and collects any links external to a given bundle.
- */
+/// Walks a markup tree and collects any links external to a given bundle.
 struct ExternalMarkupReferenceWalker: MarkupVisitor {
-    var bundle: DocumentationBundle
+    /// The local bundle ID, used to identify and skip absolute fully qualified local links.
+    var localBundleID: BundleIdentifier
     
-    /// After walking a markup tree, all encountered external links are collected in this list.
-    var collectedExternalLinks = [ValidatedURL]()
-    
-    /// Creates a new markup walker.
-    /// - Parameter bundle: All links with a bundle ID different than this bundle's are considered external and collected.
-    init(bundle: DocumentationBundle) {
-        self.bundle = bundle
-    }
+    /// After walking a markup tree, all encountered external links are collected grouped by the bundle ID.
+    var collectedExternalLinks = [BundleIdentifier: Set<ValidatedURL>]()
 
     /// Descends down the given elements' children.
-    public mutating func defaultVisit(_ markup: Markup) {
+    mutating func defaultVisit(_ markup: Markup) {
         for child in markup.children {
             self.visit(child)
         }
@@ -37,14 +30,14 @@ struct ExternalMarkupReferenceWalker: MarkupVisitor {
     mutating func visitLink(_ link: Link) {
         // Only process documentation links to external bundles
         guard let destination = link.destination,
-            let url = ValidatedURL(parsingExact: destination),
-            url.components.scheme == ResolvedTopicReference.urlScheme,
-            let bundleID = url.components.host,
-            bundleID != bundle.identifier else {
+              let url = ValidatedURL(parsingAuthoredLink: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme),
+              let bundleID = url.components.host,
+              bundleID != localBundleID
+        else {
             return
         }
         
         // Collect the external link.
-        collectedExternalLinks.append(url)
+        collectedExternalLinks[bundleID, default: []].insert(url)
     }
 }

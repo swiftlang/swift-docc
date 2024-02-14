@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -81,7 +81,7 @@ struct DocumentationCurator {
         
         // Check if the link has been externally resolved already.
         if let bundleID = unresolved.topicURL.components.host,
-           context.externalReferenceResolvers[bundleID] != nil || context.fallbackReferenceResolvers[bundleID] != nil {
+           context.externalDocumentationSources[bundleID] != nil || context.convertServiceFallbackResolver != nil {
             if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
                 return resolvedExternalReference
             } else {
@@ -230,28 +230,22 @@ struct DocumentationCurator {
                         continue
                 }
 
-
-                // If a module has a path with a manual technology root there shouldn't
-                // be an error messsage. This is an if statement instead of a guard because
-                // when there's no warning we still curate the node
+                // Allow curating a module node from a manual technology root.
                 if childDocumentationNode.kind == .module {
-                    
                     func isTechnologyRoot(_ reference: ResolvedTopicReference) -> Bool {
-                        guard let node = context.topicGraph.nodeWithReference(reference) else {return false}
+                        guard let node = context.topicGraph.nodeWithReference(reference) else { return false }
                         return node.kind == .module && documentationNode.kind.isSymbol == false
                     }
         
-                    
                     let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.pathsTo(nodeReference).contains { path in
-                        guard let root = path.first else {return false}
+                        guard let root = path.first else { return false }
                         return isTechnologyRoot(root)
                     }
 
                     if !hasTechnologyRoot {
-                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
-                    continue
+                        problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
+                        continue
                     }
-                    
                 }
                 
                 // Verify we are not creating a graph cyclic relationship.

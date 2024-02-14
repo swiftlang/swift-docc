@@ -10,13 +10,11 @@
 
 import XCTest
 import Foundation
-import SwiftDocCTestUtilities
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 @testable import SwiftDocCUtilities
 
 final class InitActionTests: XCTestCase {
-    
-    let fileManager = FileManager.default
-    let documentationTitle = "MyTestDocumentation"
+    private let documentationTitle = "MyTestDocumentation"
     
     func testInitActionCreatesArticleOnlyCatalog() throws {
         let outputLocation = Folder(name: "output", content: [])
@@ -29,12 +27,11 @@ final class InitActionTests: XCTestCase {
         )
         let result = try action.perform(logHandle: .none)
         // Test the content of the output folder is the expected one.
-        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path) }
-        XCTAssertEqual(outputCatalogContent.keys.sorted(), [
-            "/output/\(documentationTitle).docc",
-            "/output/\(documentationTitle).docc/\(documentationTitle).md",
-            "/output/\(documentationTitle).docc/Resources"
-        ].sorted(), "Unexpected output")
+        let outputCatalogContent = try fileManager.contentsOfDirectory(atPath: result.outputs.first!.path).sorted()
+        XCTAssertEqual(outputCatalogContent, [
+            "\(documentationTitle).md",
+            "Resources"
+        ].sorted())
     }
     
     func testInitActionCreatesTutorialCatalog() throws {
@@ -48,17 +45,16 @@ final class InitActionTests: XCTestCase {
             catalogTemplate: .tutorial,
             fileManager: fileManager
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         // Test the content of the output folder is the expected one.
-        let outputCatalogContent = fileManager.files.filter { $0.key.hasPrefix(result.outputs.first!.path) }
-        XCTAssertEqual(outputCatalogContent.keys.sorted(), [
-            "/output/\(documentationTitle).docc",
-            "/output/\(documentationTitle).docc/table-of-contents.tutorial",
-            "/output/\(documentationTitle).docc/Chapter01",
-            "/output/\(documentationTitle).docc/Chapter01/page-01.tutorial",
-            "/output/\(documentationTitle).docc/Chapter01/Resources",
-            "/output/\(documentationTitle).docc/Resources"
-        ].sorted(), "Unexpected output")
+        let outputCatalogContent = try fileManager.recursiveContentsOfDirectory(atPath: result.outputs.first!.path).sorted()
+        XCTAssertEqual(outputCatalogContent, [
+            "table-of-contents.tutorial",
+            "Chapter01",
+            "Chapter01/page-01.tutorial",
+            "Chapter01/Resources",
+            "Resources"
+        ].sorted())
     }
     
     func testArticleOnlyCatalogContent() throws {
@@ -72,12 +68,8 @@ final class InitActionTests: XCTestCase {
         )
         let _ = try action.perform(logHandle: .none)
         // Test the content of the articleOnly root template is the expected one.
-        let rootFile = fileManager.files.first { $0.key == "/output/\(documentationTitle).docc/\(documentationTitle).md"  }
-        guard let rootFile = rootFile else {
-            XCTFail("Expected non-nil file")
-            return
-        }
-        XCTAssertEqual(String(decoding: rootFile.value, as: UTF8.self), """
+        let rootFile = try XCTUnwrap(fileManager.contents(atPath: "/output/\(documentationTitle).docc/\(documentationTitle).md"))
+        XCTAssertEqual(String(data: rootFile, encoding: .utf8), """
         # \(documentationTitle)
 
         <!--- Metadata configuration to make appear this documentation page as a top-level page -->
@@ -91,7 +83,7 @@ final class InitActionTests: XCTestCase {
         ## Overview
 
         Add one or more paragraphs that introduce your content overview.
-        """, "Unexpected output")
+        """)
     }
     
     func testTutorialCatalogContent() throws {
@@ -105,13 +97,9 @@ final class InitActionTests: XCTestCase {
         )
         let _ = try action.perform(logHandle: .none)
         // Test the content of the articleOnly root template is the expected one.
-        let tableOfContentFile = fileManager.files.first { $0.key == "/output/\(documentationTitle).docc/table-of-contents.tutorial"  }
-        let page01File = fileManager.files.first { $0.key == "/output/\(documentationTitle).docc/Chapter01/page-01.tutorial"  }
-        guard let tableOfContentFile = tableOfContentFile, let page01File = page01File else {
-            XCTFail("Expected non-nil file")
-            return
-        }
-        XCTAssertEqual(String(decoding: tableOfContentFile.value, as: UTF8.self), """
+        let tableOfContentFile = try XCTUnwrap(fileManager.contents(atPath: "/output/\(documentationTitle).docc/table-of-contents.tutorial"))
+        let page01File = try XCTUnwrap(fileManager.contents(atPath: "/output/\(documentationTitle).docc/Chapter01/page-01.tutorial"))
+        XCTAssertEqual(String(data: tableOfContentFile, encoding: .utf8), """
         @Tutorials(name: "\(documentationTitle)") {
             @Intro(title: "Tutorial Introduction") {
                 Add one or more paragraphs that introduce your tutorial.
@@ -121,8 +109,8 @@ final class InitActionTests: XCTestCase {
                 @TutorialReference(tutorial: "doc:page-01")
             }
         }
-        """, "Unexpected output")
-        XCTAssertEqual(String(decoding: page01File.value, as: UTF8.self), """
+        """)
+        XCTAssertEqual(String(data: page01File, encoding: .utf8), """
         @Tutorial() {
             @Intro(title: "Tutorial Page Title") {
                 Add one paragraph that introduce your tutorial.
@@ -144,9 +132,6 @@ final class InitActionTests: XCTestCase {
                 }
             }
         }
-        """, "Unexpected output")
+        """)
     }
-
 }
-
-

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import XCTest
 import Foundation
 @testable import SwiftDocCUtilities
-import SwiftDocCTestUtilities
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class EmitGeneratedCurationsActionTests: XCTestCase {
     
@@ -23,7 +23,7 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
             initialContent: [File],
             depthLimit: Int?,
             startingPointSymbolLink: String?,
-            expectedFilesList: String,
+            expectedFilesList: [String],
             file: StaticString = #file,
             line: UInt = #line
         ) throws {
@@ -42,33 +42,27 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
             )
             _ = try action.perform(logHandle: .none)
             
-            XCTAssertEqual(fs.dump(), """
-            /
-            /output
-            \(expectedFilesList)
-            """.trimmingCharacters(in: .newlines),
-                           file: file, line: line
-            )
+            XCTAssertEqual(try fs.recursiveContentsOfDirectory(atPath: "/output").sorted(), expectedFilesList, file: file, line: line)
         }
         
-        try assertOutput(initialContent: [], depthLimit: 0, startingPointSymbolLink: nil, expectedFilesList: """
-            /output/Output.doccarchive
-            /output/Output.doccarchive/MixedLanguageFramework.md
-            """)
+        try assertOutput(initialContent: [], depthLimit: 0, startingPointSymbolLink: nil, expectedFilesList: [
+            "Output.doccarchive",
+            "Output.doccarchive/MixedLanguageFramework.md",
+        ])
         
-        try assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: nil, expectedFilesList: """
-            /output/Output.doccarchive
-            /output/Output.doccarchive/MixedLanguageFramework
-            /output/Output.doccarchive/MixedLanguageFramework.md
-            /output/Output.doccarchive/MixedLanguageFramework/Bar.md
-            /output/Output.doccarchive/MixedLanguageFramework/Foo-swift.struct.md
-            /output/Output.doccarchive/MixedLanguageFramework/SwiftOnlyStruct.md
-            """)
+        try assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: nil, expectedFilesList: [
+            "Output.doccarchive",
+            "Output.doccarchive/MixedLanguageFramework",
+            "Output.doccarchive/MixedLanguageFramework.md",
+            "Output.doccarchive/MixedLanguageFramework/Bar.md",
+            "Output.doccarchive/MixedLanguageFramework/Foo-swift.struct.md",
+            "Output.doccarchive/MixedLanguageFramework/SwiftOnlyStruct.md",
+        ])
         
-        try assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: "Foo-struct", expectedFilesList: """
-            /output/Output.doccarchive
-            /output/Output.doccarchive/MixedLanguageFramework
-            /output/Output.doccarchive/MixedLanguageFramework/Foo-swift.struct.md
-            """)
+        try assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: "Foo-struct", expectedFilesList: [
+            "Output.doccarchive",
+            "Output.doccarchive/MixedLanguageFramework",
+            "Output.doccarchive/MixedLanguageFramework/Foo-swift.struct.md",
+        ])
     }
 }
