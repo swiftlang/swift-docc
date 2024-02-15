@@ -438,7 +438,7 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newParametersVariants = symbol.parametersSectionVariants.map { parametersSection -> ParametersSection in
             let parameters = parametersSection.parameters.map {
-                Parameter(name: $0.name, contents: $0.contents.map { visitMarkup($0) })
+                Parameter(name: $0.name, nameRange: $0.nameRange, contents: $0.contents.map { visitMarkup($0) }, range: $0.range, isStandalone: $0.isStandalone)
             }
             return ParametersSection(parameters: parameters)
         }

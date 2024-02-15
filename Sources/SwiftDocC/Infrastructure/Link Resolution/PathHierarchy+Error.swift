@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -169,7 +169,7 @@ extension PathHierarchy.Error {
             // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
             // only make suggestions for similarly spelled structs.
             let filteredNearMisses = nearMisses.filter { name in
-                (try? partialResult.node.children[name]?.find(nextPathComponent.kind.map(String.init), nextPathComponent.hash.map(String.init))) != nil
+                (try? partialResult.node.children[name]?.find(nextPathComponent.disambiguation)) != nil
             }
 
             let pathPrefix = partialResult.pathPrefix

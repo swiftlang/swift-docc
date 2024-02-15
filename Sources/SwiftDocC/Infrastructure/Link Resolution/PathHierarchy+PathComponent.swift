@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,16 +14,16 @@ import SymbolKit
 ///
 /// This is used to identify parsed path components as kind information.
 private let knownSymbolKinds: Set<String> = {
-    // There's nowhere else that registers these extended symbol kinds and we need to know them in this list.
-    SymbolGraph.Symbol.KindIdentifier.register(
+    // We don't want to register these extended symbol kinds because that makes them available for decoding from symbol graphs which is unexpected.
+    let knownKinds = SymbolGraph.Symbol.KindIdentifier.allCases + [
         .extendedProtocol,
         .extendedStructure,
         .extendedClass,
         .extendedEnumeration,
         .unknownExtendedType,
         .extendedModule
-    )
-    return Set(SymbolGraph.Symbol.KindIdentifier.allCases.map(\.identifier))
+    ]
+    return Set(knownKinds.map(\.identifier))
 }()
 
 /// All known source language identifiers.
@@ -38,10 +38,13 @@ extension PathHierarchy {
         let full: String
         /// The parsed entity name
         let name: Substring
-        /// The parsed entity kind, if any.
-        var kind: Substring?
-        /// The parsed entity hash, if any.
-        var hash: Substring?
+        /// The parsed disambiguation information, if any.
+        var disambiguation: Disambiguation?
+        
+        enum Disambiguation {
+            /// This path component uses a combination of kind and hash disambiguation
+            case kindAndHash(kind: Substring?, hash: Substring?)
+        }
     }
     
     enum PathParser {
@@ -65,13 +68,14 @@ extension PathHierarchy.PathParser {
     static func parse(pathComponent original: Substring) -> PathComponent {
         let full = String(original)
         guard let dashIndex = original.lastIndex(of: "-") else {
-            return PathComponent(full: full, name: full[...], kind: nil, hash: nil)
+            return PathComponent(full: full, name: full[...], disambiguation: nil)
         }
         
         let hash = original[dashIndex...].dropFirst()
         let name = original[..<dashIndex]
         
         func isValidHash(_ hash: Substring) -> Bool {
+            // Checks if a string looks like a truncated, lowercase FNV-1 hash string.
             var index: UInt8 = 0
             for char in hash.utf8 {
                 guard index <= 5, (48...57).contains(char) || (97...122).contains(char) else { return false }
@@ -82,28 +86,28 @@ extension PathHierarchy.PathParser {
         
         if knownSymbolKinds.contains(String(hash)) {
             // The parsed hash value is a symbol kind
-            return PathComponent(full: full, name: name, kind: hash, hash: nil)
+            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: hash, hash: nil))
         }
         if let languagePrefix = knownLanguagePrefixes.first(where: { hash.starts(with: $0) }) {
             // The hash is actually a symbol kind with a language prefix
-            return PathComponent(full: full, name: name, kind: hash.dropFirst(languagePrefix.count), hash: nil)
+            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: hash.dropFirst(languagePrefix.count), hash: nil))
         }
         if !isValidHash(hash) {
             // The parsed hash is neither a symbol not a valid hash. It's probably a hyphen-separated name.
-            return PathComponent(full: full, name: full[...], kind: nil, hash: nil)
+            return PathComponent(full: full, name: full[...], disambiguation: nil)
         }
         
         if let dashIndex = name.lastIndex(of: "-") {
             let kind = name[dashIndex...].dropFirst()
             let name = name[..<dashIndex]
             if knownSymbolKinds.contains(String(kind)) {
-                return PathComponent(full: full, name: name, kind: kind, hash: hash)
+                return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kind, hash: hash))
             } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
                 let kindWithoutLanguage = kind.dropFirst(languagePrefix.count)
-                return PathComponent(full: full, name: name, kind: kindWithoutLanguage, hash: hash)
+                return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kindWithoutLanguage, hash: hash))
             }
         }
-        return PathComponent(full: full, name: name, kind: nil, hash: hash)
+        return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: nil, hash: hash))
     }
     
     static func split(_ path: String) -> (componentSubstrings: [Substring], isAbsolute: Bool) {
