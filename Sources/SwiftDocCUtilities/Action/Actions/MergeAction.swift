@@ -17,37 +17,40 @@ struct MergeAction: Action {
     var landingPageCatalog: URL?
     var outputURL: URL
     var fileManager: FileManagerProtocol
-
+    
     mutating func perform(logHandle: LogHandle) throws -> ActionResult {
         guard let firstArchive = archives.first else {
             // A validation warning should have already been raised in `Docc/Merge/InputAndOutputOptions/validate()`.
             return ActionResult(didEncounterError: true, outputs: [])
         }
         
-        try? fileManager.removeItem(at: outputURL)
-        try fileManager.copyItem(at: firstArchive, to: outputURL)
+        try validateThatOutputIsEmpty()
+        try validateThatArchivesHaveDisjointData()
         
+        let targetURL = try Self.createUniqueDirectory(inside: fileManager.temporaryDirectory, template: firstArchive, fileManager: fileManager)
+        defer {
+            try? fileManager.removeItem(at: targetURL)
+        }
+      
         // TODO: Merge the LMDB navigator index
         
-        let jsonIndexURL = outputURL.appendingPathComponent("index/index.json")
+        let jsonIndexURL = targetURL.appendingPathComponent("index/index.json")
         guard let jsonIndexData = fileManager.contents(atPath: jsonIndexURL.path) else {
-            // TODO: Error
-            return ActionResult(didEncounterError: true, outputs: [])
+            throw CocoaError.error(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: jsonIndexURL.path])
         }
         var combinedJSONIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
         
         for archive in archives.dropFirst() {
             for directoryToCopy in ["data/documentation", "data/tutorials", "documentation", "tutorials", "images", "videos", "downloads"] {
                 let fromDirectory = archive.appendingPathComponent(directoryToCopy, isDirectory: true)
-                let toDirectory = outputURL.appendingPathComponent(directoryToCopy, isDirectory: true)
+                let toDirectory = targetURL.appendingPathComponent(directoryToCopy, isDirectory: true)
                 
                 for from in (try? fileManager.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
                     try fileManager.copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
                 }
             }
             guard let jsonIndexData = fileManager.contents(atPath: archive.appendingPathComponent("index/index.json").path) else {
-                // TODO: Error
-                return ActionResult(didEncounterError: true, outputs: [])
+                throw CocoaError.error(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: archive.appendingPathComponent("index/index.json").path])
             }
             let renderIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
             
@@ -60,6 +63,102 @@ struct MergeAction: Action {
         
         // TODO: Inactivate external links outside the merged archives
         
+        try Self.moveOutput(from: targetURL, to: outputURL, fileManager: fileManager)
+        
         return ActionResult(didEncounterError: false, outputs: [outputURL])
+    }
+    
+    private func validateThatArchivesHaveDisjointData() throws {
+        // Check that the archives don't have overlapping data
+        typealias ArchivesByDirectoryName = [String: Set<String>]
+        
+        var archivesByTopLevelDocumentationDirectory = ArchivesByDirectoryName()
+        var archivesByTopLevelTutorialDirectory = ArchivesByDirectoryName()
+        
+        // Gather all the top level /data/documentation and /data/tutorials directories to ensure that the different archives don't have overlapping data
+        for archive in archives {
+            for topLevelDocumentation in (try? fileManager.contentsOfDirectory(at: archive.appendingPathComponent("data/documentation", isDirectory: true), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
+                archivesByTopLevelDocumentationDirectory[topLevelDocumentation.deletingPathExtension().lastPathComponent, default: []].insert(archive.lastPathComponent)
+            }
+            for topLevelDocumentation in (try? fileManager.contentsOfDirectory(at: archive.appendingPathComponent("data/tutorials", isDirectory: true), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
+                archivesByTopLevelTutorialDirectory[topLevelDocumentation.deletingPathExtension().lastPathComponent, default: []].insert(archive.lastPathComponent)
+            }
+        }
+        
+        // Only data directories found in a multiple archives is a problem
+        archivesByTopLevelDocumentationDirectory = archivesByTopLevelDocumentationDirectory.filter({ $0.value.count > 1 })
+        archivesByTopLevelTutorialDirectory = archivesByTopLevelTutorialDirectory.filter({ $0.value.count > 1 })
+        
+        guard archivesByTopLevelDocumentationDirectory.isEmpty, archivesByTopLevelTutorialDirectory.isEmpty else {
+            struct OverlappingDataError: DescribedError {
+                var archivesByDocumentationData: ArchivesByDirectoryName
+                var archivesByTutorialData: ArchivesByDirectoryName
+                
+                var errorDescription: String {
+                    var message = "Input archives contain overlapping data"
+                    if let overlappingDocumentationDescription = overlapDescription(archivesByData: archivesByDocumentationData, pathComponentName: "documentation") {
+                        message.append(overlappingDocumentationDescription)
+                    }
+                    if let overlappingDocumentationDescription = overlapDescription(archivesByData: archivesByTutorialData, pathComponentName: "tutorials") {
+                        message.append(overlappingDocumentationDescription)
+                    }
+                    return message
+                }
+                
+                private func overlapDescription(archivesByData: ArchivesByDirectoryName, pathComponentName: String) -> String? {
+                    guard !archivesByData.isEmpty else {
+                        return nil
+                    }
+                    
+                    var description = "\n"
+                    for (topLevelDirectory, archives) in archivesByData.mapValues({ $0.sorted() }) {
+                        if archives.count == 2 {
+                            description.append("\n'\(archives.first!)' and '\(archives.last!)' both ")
+                        } else {
+                            description.append("\n\(archives.dropLast().map({ "'\($0)'" }).joined(separator: ", ")), and '\(archives.last!)' all ")
+                        }
+                        description.append("contain '/data/\(pathComponentName)/\(topLevelDirectory)/'")
+                    }
+                    return description
+                }
+            }
+            
+            throw OverlappingDataError(
+                archivesByDocumentationData: archivesByTopLevelDocumentationDirectory,
+                archivesByTutorialData: archivesByTopLevelTutorialDirectory
+            )
+        }
+    }
+    
+    private func validateThatOutputIsEmpty() throws {
+        guard fileManager.directoryExists(atPath: outputURL.path) else {
+            return
+        }
+        
+        let existingContents = (try? fileManager.contentsOfDirectory(at: outputURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? []
+        guard existingContents.isEmpty else {
+            struct NonEmptyOutputError: DescribedError {
+                var existingContents: [URL]
+                var fileManager: FileManagerProtocol
+                
+                var errorDescription: String {
+                    var contentDescriptions = existingContents
+                        .sorted(by: { $0.lastPathComponent < $1.lastPathComponent })
+                        .prefix(6)
+                        .map { " - \($0.lastPathComponent)\(fileManager.directoryExists(atPath: $0.path) ? "/" : "")" }
+                    
+                    if existingContents.count > 6 {
+                        contentDescriptions[5] = "and \(existingContents.count - 5) more files and directories"
+                    }
+                    
+                    return """
+                    Output directory is not empty. It contains:
+                    \(contentDescriptions.joined(separator: "\n"))
+                    """
+                }
+            }
+        
+            throw NonEmptyOutputError(existingContents: existingContents, fileManager: fileManager)
+        }
     }
 }

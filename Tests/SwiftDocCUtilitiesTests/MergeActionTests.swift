@@ -16,19 +16,43 @@ import XCTest
 class MergeActionTests: XCTestCase {
     
     func testCopiesArchivesIntoOutputLocation() throws {
-        let fileSystem = try TestFileSystem(folders: [
-            Folder(name: "Output.doccarchive", content: []),
-            Self.makeArchive(name: "First", pages: [
-                "First/SomeClass",
-                "First/SomeClass/someProperty",
-                "First/SomeClass/someFunction(:_)",
-            ], images: ["something.png"], videos: ["something.mov"], downloads: ["something.zip"]),
-            Self.makeArchive(name: "Second", pages: [
-                "Second/SomeStruct",
-                "Second/SomeStruct/someProperty",
-                "Second/SomeStruct/someFunction(:_)",
-            ], images: ["something.png"], videos: ["something.mov"], downloads: ["something.zip"]),
-        ])
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: [
+                        "First",
+                        "First/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [
+                        "Second",
+                        "Second/SomeStruct",
+                        "Second/SomeStruct/someProperty",
+                        "Second/SomeStruct/someFunction(:_)",
+                    ],
+                    tutorialPages: [
+                        "Second",
+                        "Second/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+            ]
+        )
         
         let logStorage = LogHandle.LogStorage()
         var action = MergeAction(
@@ -49,19 +73,29 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
-        │  ╰─ documentation/
+        │  ├─ documentation/
+        │  │  ├─ first.json
+        │  │  ├─ first/
+        │  │  │  ├─ someclass.json
+        │  │  │  ╰─ someclass/
+        │  │  │     ├─ somefunction(:_).json
+        │  │  │     ╰─ someproperty.json
+        │  │  ├─ second.json
+        │  │  ╰─ second/
+        │  │     ├─ somestruct.json
+        │  │     ╰─ somestruct/
+        │  │        ├─ somefunction(:_).json
+        │  │        ╰─ someproperty.json
+        │  ╰─ tutorials/
+        │     ├─ first.json
         │     ├─ first/
-        │     │  ├─ someclass.json
-        │     │  ╰─ someclass/
-        │     │     ├─ somefunction(:_).json
-        │     │     ╰─ someproperty.json
+        │     │  ╰─ sometutorial.json
+        │     ├─ second.json
         │     ╰─ second/
-        │        ├─ somestruct.json
-        │        ╰─ somestruct/
-        │           ├─ somefunction(:_).json
-        │           ╰─ someproperty.json
+        │        ╰─ sometutorial.json
         ├─ documentation/
         │  ├─ first/
+        │  │  ├─ index.html
         │  │  ╰─ someclass/
         │  │     ├─ index.html
         │  │     ├─ somefunction(:_)/
@@ -69,6 +103,7 @@ class MergeActionTests: XCTestCase {
         │  │     ╰─ someproperty/
         │  │        ╰─ index.html
         │  ╰─ second/
+        │     ├─ index.html
         │     ╰─ somestruct/
         │        ├─ index.html
         │        ├─ somefunction(:_)/
@@ -93,6 +128,15 @@ class MergeActionTests: XCTestCase {
         ├─ js/
         │  ╰─ something.js
         ├─ metadata.json
+        ├─ tutorials/
+        │  ├─ first/
+        │  │  ├─ index.html
+        │  │  ╰─ sometutorial/
+        │  │     ╰─ index.html
+        │  ╰─ second/
+        │     ├─ index.html
+        │     ╰─ sometutorial/
+        │        ╰─ index.html
         ╰─ videos/
            ├─ com.example.first/
            │  ╰─ something.mov
@@ -101,16 +145,127 @@ class MergeActionTests: XCTestCase {
         """)
     }
     
+    func testErrorWhenArchivesContainOverlappingData() throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "Something",
+                        "Something/SomeClass",
+                        "Something/SomeClass/someProperty",
+                        "Something/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: [],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [
+                        "Something",
+                        "Something/SomeStruct",
+                        "Something/SomeStruct/someProperty",
+                        "Something/SomeStruct/someFunction(:_)",
+                    ],
+                    tutorialPages: [
+                        "Something",
+                        "Something/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+                Self.makeArchive(
+                    name: "Third",
+                    documentationPages: [
+                        "Something",
+                        "Something/SomeStruct",
+                        "Something/SomeStruct/someProperty",
+                        "Something/SomeStruct/someFunction(:_)",
+                    ],
+                    tutorialPages: [
+                        "Something",
+                        "Something/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+                URL(fileURLWithPath: "/Third.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
+            XCTAssertEqual(error.localizedDescription, """
+            Input archives contain overlapping data
+
+            'First.doccarchive', 'Second.doccarchive', and 'Third.doccarchive' all contain '/data/documentation/something/'
+
+            'Second.doccarchive' and 'Third.doccarchive' both contain '/data/tutorials/something/'
+            """)
+        }
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), "Output.doccarchive/", "Nothing was written to the output directory")
+    }
+    
+    func testErrorWhenOutputDirectoryIsNotEmpty() throws {
+        let fileSystem = try TestFileSystem(folders: [
+            Self.makeArchive(name: "Output", documentationPages: [
+                "Something",
+            ], tutorialPages: [], images: [], videos: [], downloads: []),
+            Self.makeArchive(name: "First", documentationPages: [
+                "First",
+                "First/SomeClass",
+                "First/SomeClass/someProperty",
+                "First/SomeClass/someFunction(:_)",
+            ], tutorialPages: [], images: ["something.png"], videos: ["something.mov"], downloads: ["something.zip"]),
+        ])
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
+            XCTAssertEqual(error.localizedDescription, """
+            Output directory is not empty. It contains:
+             - css/
+             - data/
+             - documentation/
+             - downloads/
+             - favicon.svg
+            and 6 more files and directories
+            """)
+        }
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+    }
+    
     // MARK: Test helpers
     
     func testMakeArchive() throws {
-        XCTAssertEqual(Self.makeArchive(name: "Something", pages: []).dump(), """
+        XCTAssertEqual(Self.makeArchive(name: "Something", documentationPages: [], tutorialPages: []).dump(), """
         Something.doccarchive/
         ├─ css/
         │  ╰─ something.css
-        ├─ data/
-        │  ╰─ documentation/
-        ├─ documentation/
         ├─ downloads/
         │  ╰─ com.example.something/
         ├─ favicon.svg
@@ -129,10 +284,15 @@ class MergeActionTests: XCTestCase {
         
         XCTAssertEqual(Self.makeArchive(
             name: "Something",
-            pages: [
-                "SomeClass",
-                "SomeClass/someProperty",
-                "SomeClass/someFunction(:_)",
+            documentationPages: [
+                "Something",
+                "Something/SomeClass",
+                "Something/SomeClass/someProperty",
+                "Something/SomeClass/someFunction(:_)",
+            ],
+            tutorialPages: [
+                "Something",
+                "Something/SomeTutorial",
             ],
             images: ["first-image.png", "second-image.png"],
             videos: ["some-video.mov"],
@@ -142,18 +302,26 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
-        │  ╰─ documentation/
-        │     ├─ someclass.json
-        │     ╰─ someclass/
-        │        ├─ somefunction(:_).json
-        │        ╰─ someproperty.json
+        │  ├─ documentation/
+        │  │  ├─ something.json
+        │  │  ╰─ something/
+        │  │     ├─ someclass.json
+        │  │     ╰─ someclass/
+        │  │        ├─ somefunction(:_).json
+        │  │        ╰─ someproperty.json
+        │  ╰─ tutorials/
+        │     ├─ something.json
+        │     ╰─ something/
+        │        ╰─ sometutorial.json
         ├─ documentation/
-        │  ╰─ someclass/
+        │  ╰─ something/
         │     ├─ index.html
-        │     ├─ somefunction(:_)/
-        │     │  ╰─ index.html
-        │     ╰─ someproperty/
-        │        ╰─ index.html
+        │     ╰─ someclass/
+        │        ├─ index.html
+        │        ├─ somefunction(:_)/
+        │        │  ╰─ index.html
+        │        ╰─ someproperty/
+        │           ╰─ index.html
         ├─ downloads/
         │  ╰─ com.example.something/
         │     ╰─ some-download.zip
@@ -169,6 +337,11 @@ class MergeActionTests: XCTestCase {
         ├─ js/
         │  ╰─ something.js
         ├─ metadata.json
+        ├─ tutorials/
+        │  ╰─ something/
+        │     ├─ index.html
+        │     ╰─ sometutorial/
+        │        ╰─ index.html
         ╰─ videos/
            ╰─ com.example.something/
               ╰─ some-video.mov
@@ -177,14 +350,15 @@ class MergeActionTests: XCTestCase {
     
     static func makeArchive(
         name: String,
-        pages: [String],
+        documentationPages: [String],
+        tutorialPages: [String],
         images: [String] = [],
         videos: [String] = [],
         downloads: [String] = []
     ) -> Folder {
         let identifier = "com.example.\(name.lowercased())"
         
-        return Folder(name: "\(name).doccarchive", content: [
+        var content: [File] = [
             // Template files
             Folder(name: "css", content: [
                 TextFile(name: "something.css", utf8Content: ""),
@@ -196,12 +370,33 @@ class MergeActionTests: XCTestCase {
                 TextFile(name: "something.svg", utf8Content: ""),
             ]),
             TextFile(name: "favicon.svg", utf8Content: ""),
-            
-            // Content
-            Folder(name: "documentation", content: Folder.makeStructure(filePaths: pages.map { $0.lowercased() + "/index.html" })),
-            Folder(name: "data", content: [
-                Folder(name: "documentation", content: Folder.makeStructure(filePaths: pages.map { $0.lowercased() + ".json" })),
-            ]),
+        ]
+        
+        // Content
+        var dataContent: [File] = []
+        if !documentationPages.isEmpty {
+            content += [
+                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased())/index.html" })),
+            ]
+            dataContent += [
+                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" })),
+            ]
+        }
+        if !tutorialPages.isEmpty {
+            content += [
+                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased())/index.html" })),
+            ]
+            dataContent += [
+                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" })),
+            ]
+        }
+        if !dataContent.isEmpty {
+            content += [
+                Folder(name: "data", content: dataContent)
+            ]
+        }
+        
+        content += [
             Folder(name: "images", content: [
                 Folder(name: identifier, content: images.map {
                     DataFile(name: $0, data: Data())
@@ -224,6 +419,8 @@ class MergeActionTests: XCTestCase {
             ]),
             
             JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleIdentifier: identifier))
-        ])
+        ]
+        
+        return Folder(name: "\(name).doccarchive", content: content)
     }
 }

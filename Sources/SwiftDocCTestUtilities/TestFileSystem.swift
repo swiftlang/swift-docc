@@ -42,6 +42,7 @@ import XCTest
 /// - Warning: Use this type for unit testing.
 @_spi(FileManagerProtocol) // This needs to be SPI because it conforms to an SPI protocol
 public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
+    public let temporaryDirectory = URL(fileURLWithPath: "/tmp")
     public let currentDirectoryPath = "/"
     
     public var identifier: String = UUID().uuidString

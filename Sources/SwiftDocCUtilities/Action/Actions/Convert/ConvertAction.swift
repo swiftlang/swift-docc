@@ -570,38 +570,10 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
-        let targetURL = temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        if let templateURL = templateURL {
-            // If a template directory has been provided, create the temporary build folder with
-            // its contents
-            try fileManager.copyItem(at: templateURL, to: targetURL)
-        } else {
-            // Otherwise, just create the temporary build folder
-            try fileManager.createDirectory(
-                at: targetURL,
-                withIntermediateDirectories: true,
-                attributes: nil)
-        }
-        return targetURL
+        return try Self.createUniqueDirectory(inside: temporaryDirectory, template: templateURL, fileManager: fileManager)
     }
     
     func moveOutput(from: URL, to: URL) throws {
-        // We only need to move output if it exists
-        guard fileManager.fileExists(atPath: from.path) else { return }
-        
-        if fileManager.fileExists(atPath: to.path) {
-            try fileManager.removeItem(at: to)
-        }
-        
-        try ensureThatParentFolderExist(for: to)
-        try fileManager.moveItem(at: from, to: to)
-    }
-    
-    private func ensureThatParentFolderExist(for location: URL) throws {
-        let parentFolder = location.deletingLastPathComponent()
-        if !fileManager.directoryExists(atPath: parentFolder.path) {
-            try fileManager.createDirectory(at: parentFolder, withIntermediateDirectories: false, attributes: nil)
-        }
+        return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
     }
 }
