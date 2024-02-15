@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import XCTest
 import Foundation
 import SymbolKit
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import SwiftDocCTestUtilities
 
@@ -96,53 +96,48 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
             UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!))
-        guard case .success(let resolvedReference) = resolver.resolve(
-                unresolved, sourceLanguage: .swift)
-        else {
+        guard case .success(let resolvedReference) = resolver.resolve(unresolved) else {
             XCTFail("Unexpectedly failed to resolve reference")
             return
         }
         
-        XCTAssertEqual(resolver.urlForResolvedReference(resolvedReference), testMetadata.url)
+        // Resolve the symbol
+        let entity = resolver.entity(with: resolvedReference)
         
-        let node = try resolver.entity(with: resolvedReference)
+        XCTAssertEqual(entity.topicRenderReference.url, testMetadata.url.withoutHostAndPortAndScheme().absoluteString)
         
-        XCTAssertEqual(node.kind.name, testMetadata.kind.name)
-        XCTAssertEqual(node.kind.id, testMetadata.kind.id)
-        XCTAssertEqual(node.kind.isSymbol, testMetadata.kind.isSymbol)
+        XCTAssertEqual(entity.topicRenderReference.kind.rawValue, "symbol")
+        XCTAssertEqual(entity.topicRenderReference.role, "symbol")
         
-        XCTAssertEqual(ReferenceResolver.title(forNode: node), "Resolved Title")
-        
-        let symbol = try XCTUnwrap(node.semantic as? Symbol)
-        XCTAssertEqual(symbol.title, "Resolved Title")
-        
-        XCTAssertEqual(node.name, .symbol(declaration: .init([.plain(testMetadata.title)])))
-        
-        XCTAssertEqual(node.sourceLanguage, testMetadata.language)
+        XCTAssertEqual(entity.topicRenderReference.title, "Resolved Title")
+        XCTAssertEqual(entity.topicRenderReference.abstract, [.text("Resolved abstract for this topic.")])
 
-        XCTAssertEqual(node.availableSourceLanguages.count, 3)
+        XCTAssertEqual(entity.sourceLanguages.count, 3)
 
-        let availableSourceLanguages = node.availableSourceLanguages
-            .sorted(by: { lhs, rhs in lhs.id < rhs.id })
-        let expectedLanguages = testMetadata.availableLanguages
-            .sorted(by: { lhs, rhs in lhs.id < rhs.id })
+        let availableSourceLanguages = entity.sourceLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
+        let expectedLanguages = testMetadata.availableLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
         
         XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
         XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
         
-        XCTAssertEqual(node.platformNames?.sorted(), ["barOS", "fooOS"])
+        XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
+
+        let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
         
-        XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
+        let titleVariant = try XCTUnwrap(entity.topicRenderReference.titleVariants.variants.first(where: { $0.traits == variantTraits }))
+        XCTAssertEqual(titleVariant.applyingPatchTo(entity.topicRenderReference.title), "Resolved Variant Title")
         
-        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.another-language.id")
-        XCTAssert(node.availableVariantTraits.contains(variantTrait))
+        let abstractVariant = try XCTUnwrap(entity.topicRenderReference.abstractVariants.variants.first(where: { $0.traits == variantTraits }))
+        XCTAssertEqual(abstractVariant.applyingPatchTo(entity.topicRenderReference.abstract), [.text("Resolved variant abstract for this topic.")])
         
-        XCTAssertEqual(symbol.kindVariants[variantTrait]?.displayName, testMetadata.variants?.first?.kind?.name)
-        
-        XCTAssertEqual(symbol.titleVariants[variantTrait], "Resolved Variant Title")
-        XCTAssertEqual(symbol.abstractVariants[variantTrait]?.plainText, "Resolved variant abstract for this topic.")
-        XCTAssertEqual(symbol.subHeadingVariants[variantTrait], [.init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)])
+        let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
+        XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
+        if case .replace(let variantFragment) = fragmentVariant.patch.first {
+            XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
+        } else {
+           XCTFail("Unexpected fragments variant patch")
+        }
     }
     
     func testResolvingTopicLinkProcess() throws {
@@ -283,59 +278,52 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
         
         // Resolve the symbol
-        guard let symbolNode = try? resolver.symbolEntity(withPreciseIdentifier: "abc123") else {
-            XCTFail("Unexpectedly failed to resolve symbol")
-            return
-        }
+        let (_, entity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
         
-        XCTAssertEqual(resolver.urlForResolvedSymbol(reference: symbolNode.reference), testMetadata.url)
+        XCTAssertEqual(entity.topicRenderReference.url, testMetadata.url.absoluteString)
         
-        XCTAssertEqual(symbolNode.kind.name, testMetadata.kind.name)
-        XCTAssertEqual(symbolNode.kind.id, testMetadata.kind.id)
-        XCTAssertEqual(symbolNode.kind.isSymbol, testMetadata.kind.isSymbol)
+        XCTAssertEqual(entity.topicRenderReference.kind.rawValue, "symbol")
+        XCTAssertEqual(entity.topicRenderReference.role, "symbol")
         
-        XCTAssertEqual(ReferenceResolver.title(forNode: symbolNode), "Resolved Title")
-        
-        let symbol = try XCTUnwrap(symbolNode.semantic as? Symbol)
-        XCTAssertEqual(symbol.kind.identifier, .class,
-                       "When the node kind doesn't map to a known value it should fallback to a `.class` kind.")
-        XCTAssertEqual(symbol.title, "Resolved Title")
-        
-        XCTAssertEqual(symbolNode.name, .symbol(declaration: .init([.plain(testMetadata.title)])))
-        
-        XCTAssertEqual(symbolNode.sourceLanguage, testMetadata.language)
+        XCTAssertEqual(entity.topicRenderReference.title, "Resolved Title")
 
-        XCTAssertEqual(symbolNode.availableSourceLanguages.count, 3)
+        XCTAssertEqual(entity.sourceLanguages.count, 3)
 
-        let availableSourceLanguages = symbolNode.availableSourceLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
+        let availableSourceLanguages = entity.sourceLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
         let expectedLanguages = testMetadata.availableLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
         
         XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
         XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
         
-        XCTAssertEqual(symbolNode.platformNames?.sorted(), ["barOS", "fooOS"])
+        XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
         
-        XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
+        let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
         
-        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.another-language.id")
-        XCTAssert(symbolNode.availableVariantTraits.contains(variantTrait))
+        let titleVariant = try XCTUnwrap(entity.topicRenderReference.titleVariants.variants.first(where: { $0.traits == variantTraits }))
+        XCTAssertEqual(titleVariant.applyingPatchTo(entity.topicRenderReference.title), "Resolved Variant Title")
         
-        XCTAssertEqual(symbol.kindVariants[variantTrait]?.displayName, testMetadata.variants?.first?.kind?.name)
+        let abstractVariant = try XCTUnwrap(entity.topicRenderReference.abstractVariants.variants.first(where: { $0.traits == variantTraits }))
+        XCTAssertEqual(abstractVariant.applyingPatchTo(entity.topicRenderReference.abstract), [.text("Resolved variant abstract for this topic.")])
         
-        XCTAssertEqual(symbol.titleVariants[variantTrait], "Resolved Variant Title")
-        XCTAssertEqual(symbol.abstractVariants[variantTrait]?.plainText, "Resolved variant abstract for this topic.")
-        XCTAssertEqual(symbol.subHeadingVariants[variantTrait], [.init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)])
+        let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
+        XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
+        if case .replace(let variantFragment) = fragmentVariant.patch.first {
+            XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
+        } else {
+           XCTFail("Unexpected fragments variant patch")
+        }
+
+        XCTAssertEqual(entity.topicRenderReference.images.count, 1)
+        let topicImage = try XCTUnwrap(entity.topicRenderReference.images.first)
+        XCTAssertEqual(topicImage.type, .card)
         
-        XCTAssertEqual(symbolNode.metadata?.pageImages.count, 1)
-        let pageImage = try XCTUnwrap(symbolNode.metadata?.pageImages.first)
-        XCTAssertEqual(pageImage.purpose, .card)
-        XCTAssertEqual(pageImage.source, ResourceReference(bundleIdentifier: "com.externally.resolved.symbol", path: "external-card"))
-        XCTAssertEqual(pageImage.alt, "External card alt text")
+        let image = try XCTUnwrap(entity.renderReferenceDependencies.imageReferences.first(where: { $0.identifier == topicImage.identifier }))
         
-        let asset = try XCTUnwrap(resolver.resolve(assetNamed: pageImage.source.path, bundleIdentifier: pageImage.source.bundleIdentifier))
-        
-        XCTAssertEqual(asset, DataAsset(
+        XCTAssertEqual(image.identifier, RenderReferenceIdentifier("external-card"))
+        XCTAssertEqual(image.altText, "External card alt text")
+
+        XCTAssertEqual(image.asset, DataAsset(
             variants: [
                 DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
                 DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
@@ -445,14 +433,14 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         #endif
     }
     
-    func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver) throws {
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
-        let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)), sourceLanguage: .swift)
+    func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver, file: StaticString = #file, line: UInt = #line) throws {
+        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle", file: file, line: line)
+        let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)))
         guard case .failure(_, let error) = resolverResult else {
-            XCTFail("Encountered an unexpected type of error.")
+            XCTFail("Encountered an unexpected type of error.", file: file, line: line)
             return
         }
-        XCTAssertEqual(error.message, "Some error message.")
+        XCTAssertEqual(error.message, "Some error message.", file: file, line: line)
     }
     
     func testForwardsResolverErrorsProcess() throws {

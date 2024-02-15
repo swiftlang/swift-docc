@@ -65,6 +65,8 @@ public struct CodableContentSection: Codable, Equatable {
                 section = try PlistDetailsRenderSection(from: decoder)
             case .possibleValues:
                 section = try PossibleValuesRenderSection(from: decoder)
+            case .mentions:
+                section = try MentionsRenderSection(from: decoder)
             default: fatalError()
         }
     }

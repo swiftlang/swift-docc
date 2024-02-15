@@ -570,14 +570,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     
     func testDiscussionSectionVariants() throws {
         func discussionSection(in renderNode: RenderNode) throws -> ContentRenderSection {
-            let discussionSectionIndex = 1
-            
-            guard renderNode.primaryContentSections.indices.contains(discussionSectionIndex) else {
-                XCTFail("Missing discussion section")
-                return ContentRenderSection(kind: .content, content: [], heading: nil)
-            }
-            
-            return try XCTUnwrap(renderNode.primaryContentSections[discussionSectionIndex] as? ContentRenderSection)
+            return try XCTUnwrap(renderNode.primaryContentSections.mapFirst { $0 as? ContentRenderSection })
         }
         
         try assertMultiVariantSymbol(

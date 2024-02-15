@@ -538,7 +538,23 @@ extension Docc {
                 help: ArgumentHelp("Collects all the symbols that are overloads of each other onto a new merged-symbol page.")
             )
             var enableExperimentalOverloadedSymbolPresentation = false
+            
+            @Flag(
+                name: .customLong("enable-experimental-mentioned-in"),
+                help: ArgumentHelp("Render a section on symbol documentation which links to articles that mention that symbol", discussion: """
+                Validates and filters symbols' parameter and return value documentation based on the symbol's function signature in each language representation.
+                """)
+            )
+            var enableExperimentalMentionedIn = false
 
+            @Flag(
+                name: .customLong("enable-experimental-parameters-and-returns-validation"),
+                help: ArgumentHelp("Validate parameter and return value documentation", discussion: """
+                Validates and filters symbols' parameter and return value documentation based on the symbol's function signature in each language representation.
+                """)
+            )
+            var enableExperimentalParametersAndReturnsValidation = false
+            
             @Flag(help: "Write additional metadata files to the output directory.")
             var emitDigest = false
         
@@ -628,6 +644,19 @@ extension Docc {
             set { featureFlags.enableExperimentalOverloadedSymbolPresentation = newValue }
         }
 
+        /// A user-provided value that is true if the user enables experimental automatically generated "mentioned in"
+        /// links on symbols.
+        public var enableExperimentalMentionedIn: Bool {
+            get { featureFlags.enableExperimentalMentionedIn }
+            set { featureFlags.enableExperimentalMentionedIn = newValue }
+        }
+        
+        /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.
+        public var enableExperimentalParametersAndReturnsValidation: Bool {
+            get { featureFlags.enableExperimentalParametersAndReturnsValidation }
+            set { featureFlags.enableExperimentalParametersAndReturnsValidation = newValue }
+        }
+        
         /// A user-provided value that is true if additional metadata files should be produced.
         ///
         /// Defaults to false.

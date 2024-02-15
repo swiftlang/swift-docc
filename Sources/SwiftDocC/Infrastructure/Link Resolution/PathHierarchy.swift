@@ -34,7 +34,7 @@ struct ResolvedIdentifier: Equatable, Hashable {
 ///
 /// ### Usage
 ///
-/// After a path hierarchy has been fully created — with both symbols and non-symbols — it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
+/// After a path hierarchy has been fully created---with both symbols and non-symbols---it can be used to find elements in the hierarchy and to determine the least disambiguated paths for all elements.
 struct PathHierarchy {
     
     /// The list of module nodes.
@@ -198,7 +198,7 @@ struct PathHierarchy {
                         return original
                     }
                 }(node.symbol!)[...].dropLast()
-                while !components.isEmpty, let child = try? parent.children[components.first!]?.find(nil, nil) {
+                while !components.isEmpty, let child = try? parent.children[components.first!]?.find(nil) {
                     parent = child
                     components = components.dropFirst()
                 }
@@ -210,7 +210,12 @@ struct PathHierarchy {
                     let component = PathParser.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: String(component.name))
                     nodeWithoutSymbol.isDisfavoredInCollision = true
-                    parent.add(child: nodeWithoutSymbol, kind: component.kind.map(String.init), hash: component.hash.map(String.init))
+                    switch component.disambiguation {
+                    case .kindAndHash(kind: let kind, hash: let hash):
+                        parent.add(child: nodeWithoutSymbol, kind: kind.map(String.init), hash: hash.map(String.init))
+                    case nil:
+                        parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
+                    }
                     parent = nodeWithoutSymbol
                 }
                 parent.add(symbolChild: node)
@@ -425,7 +430,7 @@ extension PathHierarchy {
         fileprivate func add(child: Node, kind: String?, hash: String?) {
             guard child.parent !== self else { 
                 assert(
-                    (try? children[child.name]?.find(kind, hash)) === child,
+                    (try? children[child.name]?.find(.kindAndHash(kind: kind?[...], hash: hash?[...]))) === child,
                     "If the new child node already has this node as its parent it should already exist among this node's children."
                 )
                 return
@@ -475,7 +480,7 @@ extension PathHierarchy {
     func traverseOverloadedSymbolGroups(observe: (_ overloadedSymbols: [ResolvedIdentifier]) throws -> Void) rethrows {
         for node in lookup.values where node.symbol != nil {
             for disambiguation in node.children.values {
-                for (kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && SymbolGraph.Symbol.KindIdentifier.isOverloadableKind(kind) {
+                for (kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && SymbolGraph.Symbol.KindIdentifier(identifier: kind).isOverloadableKind {
                     assert(innerStorage.values.allSatisfy { $0.symbol != nil }, "Only symbols should have symbol kind identifiers (\(kind))")
 
                     try observe(innerStorage.values.map(\.identifier))

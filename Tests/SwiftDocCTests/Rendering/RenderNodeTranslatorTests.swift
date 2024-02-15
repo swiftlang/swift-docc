@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1413,7 +1413,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                                    "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF",
                                    "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"]
         
-        let overloadReferences = try overloadPreciseIdentifiers.map { try XCTUnwrap(context.symbolIndex[$0]) }
+        let overloadReferences = try overloadPreciseIdentifiers.map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
         
         for (index, reference) in overloadReferences.indexed() {
             let documentationNode = try context.entity(with: reference)
@@ -1434,6 +1434,8 @@ class RenderNodeTranslatorTests: XCTestCase {
             
             for (otherIndex, otherReference) in overloadReferences.indexed() where otherIndex != index {
                 XCTAssertTrue(otherDeclarations.declarations.contains(where: { $0.identifier == otherReference.absoluteString }))
+
+                XCTAssert(renderNode.references.keys.contains(otherReference.absoluteString))
             }
         }
     }

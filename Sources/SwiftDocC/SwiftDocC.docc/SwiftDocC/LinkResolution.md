@@ -68,8 +68,10 @@ extension B {
 }
 ```
 
-## Resolving Links Outside the Documentation Catalog
+## Resolving Links to Other Documentation Sources
 
-If a ``DocumentationContext`` is configured with one or more ``DocumentationContext/externalReferenceResolvers`` it is capable of resolving links general documentation links via that ``ExternalReferenceResolver``. External documentation links need to be written with a bundle ID in the URI to identify which external resolver should handle the request.
+If a ``DocumentationContext`` is configured with one or more ``DocumentationContext/externalDocumentationSources`` it is capable of resolving links general documentation links via that ``ExternalDocumentationSource``. Links to external documentation sources need to be written with a bundle ID in the URI to identify which external resolver should handle the request.
 
-<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+If the other documentation source represents DocC content for another module or project, it is preferred to use ``LinkResolver/dependencyArchives`` instead. This provides richer diagnostics with solutions and supports symbol links to external symbols. 
+
+<!-- Copyright (c) 2022-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

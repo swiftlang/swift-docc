@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -538,7 +538,7 @@ class SymbolTests: XCTestCase {
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
         }
-        let symbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:")?.semantic as? Symbol)
+        let symbol = try XCTUnwrap(context.documentationCache["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
 
         XCTAssertEqual(symbol.abstract?.format(), "Allocate and initialize a new card with the given rank and suit.")
 
@@ -1223,7 +1223,7 @@ class SymbolTests: XCTestCase {
             try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
         }
         
-        guard let original = context.nodeWithSymbolIdentifier(myFunctionUSR), let symbol = original.symbol, let symbolSemantic = original.semantic as? Symbol else {
+        guard let original = context.documentationCache[myFunctionUSR], let symbol = original.symbol, let symbolSemantic = original.semantic as? Symbol else {
             XCTFail("Couldn't find the expected symbol", file: (file), line: line)
             enum TestHelperError: Error { case missingExpectedMyFuctionSymbol }
             throw TestHelperError.missingExpectedMyFuctionSymbol

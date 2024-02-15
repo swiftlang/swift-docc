@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -34,7 +34,7 @@ open class Semantic: Equatable {
         return visitor.visit(self)
     }
     
-    /// Visit the semantic object and all its children—and their children—to construct a string representation of the semantic hierarchy.
+    /// Visit the semantic object and all its children---and their children---to construct a string representation of the semantic hierarchy.
     ///
     /// - Returns: A string representation of the semantic hierarchy.
     public func dump() -> String {
