@@ -17,7 +17,7 @@ public enum RenderSectionKind: String, Codable {
     case hero, intro, tasks, assessments, volume, contentAndMedia, contentAndMediaGroup, callToAction, tile, articleBody, resources
     
     // Symbol render sections
-    case discussion, content, taskGroup, relationships, declarations, parameters, sampleDownload, row
+    case mentions, discussion, content, taskGroup, relationships, declarations, parameters, sampleDownload, row
 
     // Rest symbol sections
     case restParameters, restResponses, restBody, restEndpoint, properties

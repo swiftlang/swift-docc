@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -352,17 +352,15 @@ public struct DocumentationNode {
             defaultVariantValue: documentationExtension?.redirects
         )
         
-        if let returns = markupModel.discussionTags?.returns, !returns.isEmpty {
-            semantic.returnsSectionVariants = DocumentationDataVariants(
-                defaultVariantValue: ReturnsSection(content: returns[0].contents)
-            )
-        }
+        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source))
+        let (parametersSectionVariants, returnsSectionVariants) = filter.makeParametersAndReturnsSections(
+            markupModel.discussionTags?.parameters,
+            markupModel.discussionTags?.returns,
+            unifiedSymbol
+        )
         
-        if let parameters = markupModel.discussionTags?.parameters, !parameters.isEmpty {
-            semantic.parametersSectionVariants = DocumentationDataVariants(
-                defaultVariantValue: ParametersSection(parameters: parameters)
-            )
-        }
+        semantic.parametersSectionVariants = parametersSectionVariants
+        semantic.returnsSectionVariants = returnsSectionVariants
         
         if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
             // Record the keys extracted from the markdown
@@ -417,8 +415,15 @@ public struct DocumentationNode {
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
 
+            let docCommentLocation: SymbolGraph.Symbol.Location? = {
+                if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
+                    return .init(uri: uri, position: position)
+                }
+                return symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)
+            }()
+            
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
-            let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
+            let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
             let offset = symbol.offsetAdjustedForInterfaceLanguage()
 
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
@@ -462,11 +467,11 @@ public struct DocumentationNode {
                     engine.emit(problem)
                 }
             }
-
+            
             documentationChunks = [
                 DocumentationChunk(
                     source: .sourceCode(
-                        location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self),
+                        location: docCommentLocation, // The documentation chunk represents the doc comment's location, which isn't necessarily the symbol's location.
                         offset: offset
                     ),
                     markup: docCommentMarkup
@@ -527,6 +532,7 @@ public struct DocumentationNode {
         case .`typeProperty`: return .typeProperty
         case .`typeSubscript`: return .typeSubscript
         case .`typealias`: return .typeAlias
+        case .union: return .union
         case .`var`: return .globalVariable
         case .module: return .module
         case .extendedModule: return .extendedModule

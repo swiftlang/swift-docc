@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -251,17 +251,17 @@ enum GeneratedDocumentationTopics {
             // Check the relationship type
             if relationship.kind == .memberOf,
                // Check that there is origin information (i.e. the symbol is inherited)
-               let origin = relationship.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] as? SymbolGraph.Relationship.SourceOrigin,
+               let origin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
                // Resolve the containing type
-               let parent = context.nodeWithSymbolIdentifier(relationship.target),
+               let parent = context.documentationCache[relationship.target],
                // Resolve the child
-               let child = context.nodeWithSymbolIdentifier(relationship.source),
+               let child = context.documentationCache[relationship.source],
                // Get the child symbol
                let childSymbol = child.symbol,
                // Get the swift extension data
-               let extends = childSymbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension
+               let extends = childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self]
             {
-                let originSymbol = context.nodeWithSymbolIdentifier(origin.identifier)?.symbol
+                let originSymbol = context.documentationCache[origin.identifier]?.symbol
                 
                 // Add the inherited symbol to the index.
                 try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)

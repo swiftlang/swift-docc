@@ -38,8 +38,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: try createTemporaryDirectory()
         )
-       
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
         let outputURL = try createTemporaryDirectory()//.appendingPathComponent("output")
     
@@ -53,7 +52,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
-        _ = try transformAction.perform(logHandle: .standardOutput)
+        _ = try transformAction.perform(logHandle: .none)
         
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
@@ -123,8 +122,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: try createTemporaryDirectory()
         )
-       
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
       
         let basePath =  "test/folder"
@@ -137,7 +135,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
-        _ = try transformAction.perform(logHandle: .standardOutput)
+        _ = try transformAction.perform(logHandle: .none)
         
         var isDirectory: ObjCBool = false
         

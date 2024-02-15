@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,45 +12,108 @@ import Foundation
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class AutomaticCurationTests: XCTestCase {
-    func testAutomaticTopics() throws {
-        // Create each kind of symbol and verify it gets its own topic group automatically
-        let decoder = JSONDecoder()
-
-        var availableSymbolKinds = Set(AutomaticCuration.groupKindOrder)
-        availableSymbolKinds.formUnion(SymbolGraph.Symbol.KindIdentifier.allCases)
-
-        for kind in availableSymbolKinds where kind.symbolGeneratesPage() {
-            // TODO: Synthesize appropriate `swift.extension` symbols that get transformed into
-            // the respective internal symbol kinds as defined by `ExtendedTypeFormatTransformation`
-            // and remove decoder injection logic from `DocumentationContext` and `SymbolGraphLoader`
-            if !SymbolGraph.Symbol.KindIdentifier.allCases.contains(kind) {
-                decoder.register(symbolKinds: kind)
-            }
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
-                let sidekitURL = url.appendingPathComponent("sidekit.symbols.json")
-                let text = try String(contentsOf: sidekitURL)
-                    .replacingOccurrences(of: "\"identifier\" : \"swift.enum.case\"", with: "\"identifier\" : \"\(kind.identifier)\"")
-                try text.write(to: sidekitURL, atomically: true, encoding: .utf8)
-            }, decoder: decoder)
-
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
-            // Compile docs and verify the generated Topics section
-            let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
-            let renderNode = translator.visit(symbol) as! RenderNode
+    private let (availableExtensionSymbolKinds, availableNonExtensionSymbolKinds) = Set(AutomaticCuration.groupKindOrder).union(SymbolGraph.Symbol.KindIdentifier.allCases)
+        .filter { $0.symbolGeneratesPage() }
+        .categorize(where: { $0.identifier.hasSuffix(".extension") })
+    
+    func testAutomaticTopicsGenerationForSameModuleTypes() throws {
+        for kind in availableNonExtensionSymbolKinds {
+            let containerID = "some-container-id"
+            let memberID = "some-member-id"
             
-            for section in renderNode.topicSections {
-                XCTAssert(section.generated, "\((section.title ?? "").singleQuoted) was not marked as generated.")
-            }
+            let tempURL = try createTempFolder(content: [
+                Folder(name: "unit-test.docc", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                            makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                        ],
+                        relationships: [
+                            .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
+                        ]
+                    ))
+                ])
+            ])
+            let (_, bundle, context) = try loadBundle(from: tempURL)
             
-            XCTAssertNotNil(renderNode.topicSections.first(where: { group -> Bool in
-                return group.title == AutomaticCuration.groupTitle(for: kind)
-            }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group. Please add it to either AutomaticCuration.groupKindOrder or KindIdentifier.noPageKinds." )
+            try assertRenderedPage(atPath: "/documentation/ModuleName/SomeClass", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
         }
     }
-
+    
+    func testAutomaticTopicsGenerationForExtensionSymbols() throws {
+        // The extended module behavior is already verified for each extended symbol kind in the module.
+        for kind in availableExtensionSymbolKinds where kind != .extendedModule {
+            let containerID = "some-container-id"
+            let extensionID = "some-extension-id"
+            let memberID = "some-member-id"
+            
+            let nonExtensionKind = SymbolGraph.Symbol.KindIdentifier(identifier: String(kind.identifier.dropLast(".extension".count)))
+            
+            let tempURL = try createTempFolder(content: [
+                Folder(name: "unit-test.docc", content: [
+                    // Add an empty main symbol graph file so that the extension symbol graph file is processed
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
+                    JSONFile(name: "ModuleName@ExtendedModule.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            // public extension Something {
+                            //     func someFunction() { }
+                            // }
+                            makeSymbol(
+                                identifier: extensionID,
+                                kind: .extension,
+                                // The extension has the path component of the extended type
+                                pathComponents: ["Something"],
+                                // Specify the extended symbol's symbol kind
+                                swiftExtension: .init(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                            ),
+                            // No matter what type `ExtendedModule.Something` is, always add a function in the extension
+                            makeSymbol(identifier: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
+                        ],
+                        relationships: [
+                            .init(source: extensionID, target: containerID, kind: .extensionTo, targetFallback: "ExtendedModule.Something"),
+                            .init(source: memberID, target: extensionID, kind: .memberOf, targetFallback: "ExtendedModule.Something"),
+                        ]
+                    )),
+                ])
+            ])
+            let (_, bundle, context) = try loadBundle(from: tempURL)
+            
+            try assertRenderedPage(atPath: "/documentation/ModuleName", containsAutomaticTopicSectionFor: .extendedModule, context: context, bundle: bundle)
+            try assertRenderedPage(atPath: "/documentation/ModuleName/ExtendedModule", containsAutomaticTopicSectionFor: kind, context: context, bundle: bundle)
+        }
+    }
+    
+    private func assertRenderedPage(
+        atPath path: String,
+        containsAutomaticTopicSectionFor kind: SymbolGraph.Symbol.KindIdentifier,
+        context: DocumentationContext,
+        bundle: DocumentationBundle,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode, file: file, line: line)
+        
+        for section in renderNode.topicSections {
+            XCTAssert(section.generated, "\(section.title?.singleQuoted ?? "Untitled topic section") was not marked as generated.", file: file, line: line)
+        }
+        
+        XCTAssert(
+            renderNode.topicSections.contains(where: { group in group.title == AutomaticCuration.groupTitle(for: kind) }),
+            """
+            Missing automatic \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group.
+            Add \(kind.identifier) to either 'AutomaticCuration.groupKindOrder or 'SymbolGraph.Symbol.KindIdentifier.noPageKinds'.
+            """,
+            file: file, line: line
+        )
+    }
+    
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
             // Curate some of `SideClass`'s children under SideKit.
@@ -551,13 +614,13 @@ class AutomaticCurationTests: XCTestCase {
         )
     }
 
-    func testNamespacesAreCuratedProperly() throws {
-        let (bundle, context) = try testBundleAndContext(named: "CxxNamespaces")
+    func testCPlusPlusSymbolsAreCuratedProperly() throws {
+        let (bundle, context) = try testBundleAndContext(named: "CxxSymbols")
 
         let rootDocumentationNode = try context.entity(
             with: .init(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/CxxNamespaces",
+                path: "/documentation/CxxSymbols",
                 sourceLanguage: .objectiveC
             )
         )
@@ -573,7 +636,10 @@ class AutomaticCurationTests: XCTestCase {
             },
             [
                 "Namespaces",
-                "/documentation/CxxNamespaces/Foo",
+                "/documentation/CxxSymbols/Foo",
+
+                "Unions",
+                "/documentation/CxxSymbols/MyUnion",
             ]
         )
     }
@@ -608,4 +674,25 @@ class AutomaticCurationTests: XCTestCase {
             ]
         )
     }
+}
+
+private func makeSymbol(
+    identifier: String,
+    kind: SymbolGraph.Symbol.KindIdentifier,
+    pathComponents: [String],
+    swiftExtension: SymbolGraph.Symbol.Swift.Extension? = nil
+) -> SymbolGraph.Symbol {
+    var mixins = [String: Mixin]()
+    if let swiftExtension = swiftExtension {
+        mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
+    }
+    return SymbolGraph.Symbol(
+        identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+        names: .init(title: pathComponents.last!, navigator: nil, subHeading: nil, prose: nil),
+        pathComponents: pathComponents,
+        docComment: nil,
+        accessLevel: .public,
+        kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
+        mixins: mixins
+    )
 }

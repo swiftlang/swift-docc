@@ -9,13 +9,13 @@
 */
 
 import XCTest
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 import SymbolKit
 import SwiftDocCTestUtilities
 
 class ExternalReferenceResolverTests: XCTestCase {
-    class TestExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver {
+    class TestExternalReferenceResolver: ExternalDocumentationSource {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
         var expectedFragment: String? = nil
@@ -23,83 +23,39 @@ class ExternalReferenceResolverTests: XCTestCase {
         var resolvedEntityKind = DocumentationNode.Kind.article
         var resolvedEntityLanguage = SourceLanguage.swift
         var resolvedEntityDeclarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
-        
-        enum Error: Swift.Error {
-            case testErrorRaisedForWrongBundleIdentifier
-        }
-        
+   
         var resolvedExternalPaths = [String]()
         
-        func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+        func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
             if let path = reference.url?.path {
                 resolvedExternalPaths.append(path)
             }
             return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: resolvedEntityLanguage))
         }
         
-        func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+        func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
             guard reference.bundleIdentifier == bundleIdentifier else {
-                throw Error.testErrorRaisedForWrongBundleIdentifier
+                fatalError("It is a programming mistake to retrieve an entity for a reference that the external resolver didn't resolve.")
             }
             
-            let semantic: Semantic?
-            if let declaration = resolvedEntityDeclarationFragments {
-                semantic = Symbol(
-                    kindVariants: .init(swiftVariant: OutOfProcessReferenceResolver.symbolKind(forNodeKind: resolvedEntityKind)),
-                    titleVariants: .init(swiftVariant: resolvedEntityTitle),
-                    subHeadingVariants: .init(swiftVariant: declaration.declarationFragments),
-                    navigatorVariants: .init(swiftVariant: nil),
-                    roleHeadingVariants: .init(swiftVariant: ""), // This information isn't used anywhere.
-                    platformNameVariants: .init(swiftVariant: nil),
-                    moduleReference: reference, // This information isn't used anywhere.
-                    externalIDVariants: .init(swiftVariant: nil),
-                    accessLevelVariants: .init(swiftVariant: nil),
-                    availabilityVariants: .init(swiftVariant: nil),
-                    deprecatedSummaryVariants: .init(swiftVariant: nil),
-                    mixinsVariants: .init(swiftVariant: nil),
-                    abstractSectionVariants: .init(swiftVariant: nil),
-                    discussionVariants: .init(swiftVariant: nil),
-                    topicsVariants: .init(swiftVariant: nil),
-                    seeAlsoVariants: .init(swiftVariant: nil),
-                    returnsSectionVariants: .init(swiftVariant: nil),
-                    parametersSectionVariants: .init(swiftVariant: nil),
-                    dictionaryKeysSectionVariants: .init(swiftVariant: nil),
-                    httpEndpointSectionVariants: .init(swiftVariant: nil),
-                    httpBodySectionVariants: .init(swiftVariant: nil),
-                    httpParametersSectionVariants: .init(swiftVariant: nil),
-                    httpResponsesSectionVariants: .init(swiftVariant: nil),
-                    redirectsVariants: .init(swiftVariant: nil)
-                )
-            } else {
-                semantic = nil
-            }
-            
-            return DocumentationNode(
-                reference: reference,
-                kind: resolvedEntityKind,
-                sourceLanguage: resolvedEntityLanguage,
-                name: .conceptual(title: resolvedEntityTitle),
-                markup: Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks]),
-                semantic: semantic
+            let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedEntityKind, semantic: nil)
+            return LinkResolver.ExternalEntity(
+                topicRenderReference: TopicRenderReference(
+                    identifier: .init(reference.absoluteString),
+                    title: resolvedEntityTitle,
+                    abstract: [.text("Externally Resolved Markup Content")],
+                    url: "/example" + reference.path + (reference.fragment.map { "#\($0)" } ?? ""),
+                    kind: kind,
+                    role: role,
+                    fragments: resolvedEntityDeclarationFragments?.declarationFragments.map { fragment in
+                        return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
+                    },
+                    estimatedTime: nil,
+                    titleStyle: resolvedEntityKind.isSymbol ? .symbol : .title
+                ),
+                renderReferenceDependencies: RenderReferenceDependencies(),
+                sourceLanguages: [resolvedEntityLanguage]
             )
-        }
-        
-        let testBaseURL: String = "https://example.com/example"
-        func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-            let fragment = expectedFragment.map {"#\($0)"} ?? ""
-            return URL(string: "\(testBaseURL)\(reference.path)\(fragment)")!
-        }
-        
-        func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) throws -> DocumentationNode? {
-            hasResolvedReference(reference) ? try entity(with: reference) : nil
-        }
-        
-        func urlForResolvedReferenceIfPreviouslyResolved(_ reference: ResolvedTopicReference) -> URL? {
-            hasResolvedReference(reference) ? urlForResolvedReference(reference) : nil
-        }
-        
-        func hasResolvedReference(_ reference: ResolvedTopicReference) -> Bool {
-            true
         }
     }
     
@@ -123,7 +79,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        context.externalReferenceResolvers = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        context.externalDocumentationSources = ["com.external.testbundle" : TestExternalReferenceResolver()]
 
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
@@ -143,7 +99,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssertEqual(expectedURL, resolved.url)
         
         try workspace.unregisterProvider(dataProvider)
-        context.externalReferenceResolvers = [:]
+        context.externalDocumentationSources = [:]
         guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
             return
@@ -233,8 +189,8 @@ class ExternalReferenceResolverTests: XCTestCase {
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
         
         do {
-            context.externalReferenceResolvers = [:]
-            context.fallbackReferenceResolvers = [:]
+            context.externalDocumentationSources = [:]
+            context.convertServiceFallbackResolver = nil
             
             if case .success = context.resolve(.unresolved(unresolved), in: parent) {
                 XCTFail("The reference was unexpectedly resolved.")
@@ -242,8 +198,21 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         do {
-            context.externalReferenceResolvers = [:]
-            context.fallbackReferenceResolvers = [bundleIdentifier : TestExternalReferenceResolver()]
+            class TestFallbackResolver: ConvertServiceFallbackResolver {
+                private var resolver = TestExternalReferenceResolver()
+                func resolve(_ reference: SwiftDocC.TopicReference) -> TopicReferenceResolutionResult {
+                    TestExternalReferenceResolver().resolve(reference)
+                }
+                func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
+                    nil
+                }
+                func resolve(assetNamed assetName: String) -> DataAsset? {
+                    nil
+                }
+            }
+            
+            context.externalDocumentationSources = [:]
+            context.convertServiceFallbackResolver = TestFallbackResolver()
             
             guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("The reference was unexpectedly unresolved.")
@@ -257,7 +226,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             XCTAssertEqual(expectedURL, resolved.url)
             
             try workspace.unregisterProvider(dataProvider)
-            context.externalReferenceResolvers = [:]
+            context.externalDocumentationSources = [:]
             guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
                 return
@@ -271,20 +240,13 @@ class ExternalReferenceResolverTests: XCTestCase {
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
-        context.externalReferenceResolvers = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        context.externalDocumentationSources = ["com.external.testbundle" : TestExternalReferenceResolver()]
         
         let identifier = ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)
         
         XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "some.other.bundle", path: identifier.path, sourceLanguage: .swift)))
         
-        let node = try context.entity(with: identifier)
-        
-        let expectedDump = """
-Document @1:1-1:35
-└─ Paragraph @1:1-1:35
-   └─ Text @1:1-1:35 "Externally Resolved Markup Content"
-"""
-        XCTAssertEqual(expectedDump, node.markup.debugDescription(options: .printSourceLocations))
+        XCTAssertThrowsError(try context.entity(with: identifier))
     }
     
     func testRenderReferenceHasSymbolKind() throws {
@@ -313,7 +275,7 @@ Document @1:1-1:35
             externalResolver.expectedReferencePath = "/path/to/external/symbol"
             externalResolver.resolvedEntityTitle = "ClassName"
             externalResolver.resolvedEntityKind = resolvedEntityKind
-            context.externalReferenceResolvers = [externalResolver.bundleIdentifier: externalResolver]
+            context.externalDocumentationSources = [externalResolver.bundleIdentifier: externalResolver]
             
             let bundle = try testBundle(named: "TestBundle")
             
@@ -424,7 +386,7 @@ Document @1:1-1:35
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        context.externalReferenceResolvers = [externalResolver.bundleIdentifier: externalResolver]
+        context.externalDocumentationSources = [externalResolver.bundleIdentifier: externalResolver]
         let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolder)
         try workspace.registerProvider(dataProvider)
         let bundle = try XCTUnwrap(workspace.bundles.first?.value)
@@ -432,11 +394,7 @@ Document @1:1-1:35
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/article", sourceLanguage: .swift))
         
-        guard let fileURL = context.documentURL(for: node.reference) else {
-            XCTFail("Unable to find the file for \(node.reference.path)")
-            return
-        }
-        
+        let fileURL = try XCTUnwrap(context.documentURL(for: node.reference))
         let renderNode = try converter.convert(node, at: fileURL)
         
         XCTAssertEqual(externalResolver.resolvedExternalPaths, ["/path/to/external/symbol"], "The authored link was resolved")
@@ -560,7 +518,7 @@ Document @1:1-1:35
             ),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleIdentifier: externalResolver], _externalAssetResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
             try """
             # SomeSample
 
@@ -607,6 +565,7 @@ Document @1:1-1:35
         
         XCTAssertEqual(firstExternalRenderReference.images, [
             TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card-1")),
+            TopicImage(type: .icon, identifier: RenderReferenceIdentifier("external-icon-1")),
         ])
         
         let secondExternalRenderReference = try XCTUnwrap(renderNode.references["doc://com.test.external/path/to/external-page-with-topic-image-2"] as? TopicRenderReference)
@@ -618,48 +577,59 @@ Document @1:1-1:35
         
         XCTAssertEqual(secondExternalRenderReference.images, [
             TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card-2")),
+            TopicImage(type: .icon, identifier: RenderReferenceIdentifier("external-icon-2")),
         ])
         
         let imageReferences = (renderNode.assetReferences[.image] ?? [])
             .compactMap { $0 as? ImageReference }
             .sorted(by: \.identifier.identifier)
         
-        XCTAssertEqual(imageReferences.map(\.identifier.identifier), ["external-card-1", "external-card-2"])
+        XCTAssertEqual(imageReferences.map(\.identifier.identifier), ["external-card-1", "external-card-2", "external-icon-1", "external-icon-2"])
         XCTAssertEqual(imageReferences, [
             ImageReference(
                 identifier: RenderReferenceIdentifier("external-card-1"),
                 altText: "First external card alt text",
-                imageAsset:
-                    DataAsset(
-                        variants: [
-                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): firstCardImageLightURL,
-                            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): firstCardImageDarkURL,
-                        ],
-                        metadata: [
-                            firstCardImageLightURL: DataAsset.Metadata(svgID: nil),
-                            firstCardImageDarkURL: DataAsset.Metadata(svgID: nil),
-                        ],
-                        context: .display
-                    )
+                imageAsset: DataAsset(
+                    variants: [
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): firstCardImageLightURL,
+                        DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): firstCardImageDarkURL,
+                    ],
+                    metadata: [
+                        firstCardImageLightURL: DataAsset.Metadata(svgID: nil),
+                        firstCardImageDarkURL: DataAsset.Metadata(svgID: nil),
+                    ],
+                    context: .display
+                )
             ),
             
             ImageReference(
                 identifier: RenderReferenceIdentifier("external-card-2"),
                 altText: "Second external card alt text",
-                imageAsset:
-                    DataAsset(
-                        variants: [
-                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): secondCardImageStandardURL,
-                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): secondCardImageDoubleURL,
-                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .triple): secondCardImageTripleURL,
-                        ],
-                        metadata: [
-                            secondCardImageStandardURL: DataAsset.Metadata(svgID: nil),
-                            secondCardImageDoubleURL: DataAsset.Metadata(svgID: nil),
-                            secondCardImageTripleURL: DataAsset.Metadata(svgID: nil),
-                        ],
-                        context: .display
-                    )
+                imageAsset: DataAsset(
+                    variants: [
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): secondCardImageStandardURL,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): secondCardImageDoubleURL,
+                        DataTraitCollection(userInterfaceStyle: .light, displayScale: .triple): secondCardImageTripleURL,
+                    ],
+                    metadata: [
+                        secondCardImageStandardURL: DataAsset.Metadata(svgID: nil),
+                        secondCardImageDoubleURL: DataAsset.Metadata(svgID: nil),
+                        secondCardImageTripleURL: DataAsset.Metadata(svgID: nil),
+                    ],
+                    context: .display
+                )
+            ),
+            
+            ImageReference(
+                identifier: RenderReferenceIdentifier("external-icon-1"),
+                altText: "First external icon alt text",
+                imageAsset: DataAsset() // this image reference didn't have an asset in the test setup
+            ),
+            
+            ImageReference(
+                identifier: RenderReferenceIdentifier("external-icon-2"),
+                altText: "Second external icon alt text",
+                imageAsset: DataAsset() // this image reference didn't have an asset in the test setup
             )
         ])
     }
@@ -691,7 +661,7 @@ Document @1:1-1:35
         let context = try DocumentationContext(dataProvider: workspace)
         
         // Add external resolver
-        context.externalReferenceResolvers = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        context.externalDocumentationSources = ["com.external.testbundle" : TestExternalReferenceResolver()]
         
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -725,8 +695,10 @@ Document @1:1-1:35
             )
         })
 
-        // Verify the external symbol is included in cache
-        XCTAssertNotNil(context.documentationCache[.init(bundleIdentifier: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)])
+        // Verify the external symbol is included in external cache
+        let reference = ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)
+        XCTAssertNil(context.documentationCache[reference])
+        XCTAssertNotNil(context.externalCache[reference])
         
         // Verify that all external links from various directives have been visited.
         XCTAssertEqual(resolver.resolvedExternalPaths.sorted(), [
@@ -752,13 +724,12 @@ Document @1:1-1:35
     
     // Tests that external references are included in task groups, rdar://72119391
     func testExternalResolverIsNotPassedReferencesItDidNotResolve() throws {
-        final class CallCountingReferenceResolver: ExternalReferenceResolver {
+        final class CallCountingReferenceResolver: ExternalDocumentationSource {
             var referencesAskedToResolve: Set<TopicReference> = []
             
             var referencesCreatingEntityFor: Set<ResolvedTopicReference> = []
-            var referencesReadingURLFor: Set<ResolvedTopicReference> = []
             
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+            func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
                 referencesAskedToResolve.insert(reference)
                 
                 // Only resolve a specific, known reference
@@ -774,17 +745,22 @@ Document @1:1-1:35
                 return .success(.init(bundleIdentifier: "com.external.testbundle", path: "/resolved", sourceLanguage: .swift))
             }
             
-            func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+            func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
                 referencesCreatingEntityFor.insert(reference)
                 
                 // Return an empty node
-                return DocumentationNode(reference: reference, kind: .class, sourceLanguage: .swift, name: .conceptual(title: "Resolved"), markup: Document(), semantic: nil)
-            }
-            
-            func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-                referencesReadingURLFor.insert(reference)
-                
-                return URL(string: "http://some.host/path/to/resolved")!
+                return .init(
+                    topicRenderReference: TopicRenderReference(
+                        identifier: .init(reference.absoluteString),
+                        title: "Resolved",
+                        abstract: [],
+                        url: reference.absoluteString,
+                        kind: .symbol,
+                        estimatedTime: nil
+                    ),
+                    renderReferenceDependencies: RenderReferenceDependencies(),
+                    sourceLanguages: [.swift]
+                )
             }
         }
         
@@ -866,9 +842,6 @@ Document @1:1-1:35
         XCTAssertEqual(resolver.referencesCreatingEntityFor.map({ $0.description }).sorted(), [
             "doc://com.external.testbundle/resolved", // Note that this is the resolved reference, not the one from the content.
         ])
-        XCTAssertEqual(resolver.referencesReadingURLFor.map({ $0.description }).sorted(), [
-            "doc://com.external.testbundle/resolved", // Note that this is the resolved reference, not the one from the content.
-        ])
     }
     
     /// Tests that the external resolving handles correctly fragments in URLs.
@@ -906,11 +879,6 @@ Document @1:1-1:35
             return
         }
         XCTAssertEqual(linkReference.absoluteString, "doc://com.external.testbundle/externally/resolved/path#67890")
-
-        // Verify that the final URL is as expected.
-        let urlGenerator = PresentationURLGenerator(context: context, baseURL: URL(fileURLWithPath: "/"))
-        let finalURL = urlGenerator.presentationURLForReference(linkReference)
-        XCTAssertEqual(finalURL.absoluteString, "https://example.com/example/externally/resolved/path#67890")
     }
     
     func testExternalArticlesAreIncludedInAllVariantsTopicsSection() throws {

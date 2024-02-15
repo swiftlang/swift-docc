@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 import XCTest
 import SymbolKit
@@ -1173,75 +1173,29 @@ class SemaToRenderNodeTests: XCTestCase {
     }
 
     func testCompileSymbolWithExternalReferences() throws {
-        class TestSymbolResolver: ExternalSymbolResolver {
-            
-            let bundleIdentifier = "com.test.external.symbols"
-            
-            public func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
-                let symbol = Symbol(
-                    kindVariants: .init(swiftVariant: TestSymbolResolver.symbolKind(forNodeKind: .protocol)),
-                    titleVariants: .init(swiftVariant: "ExternalResolvedSymbolTitle"),
-                    subHeadingVariants: .init(swiftVariant: nil),
-                    navigatorVariants: .init(swiftVariant: nil),
-                    roleHeadingVariants: .init(swiftVariant: "ExternalResolvedSymbolRoleHeading"),
-                    platformNameVariants: .init(swiftVariant: nil),
-                    moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
-                    externalIDVariants: .init(swiftVariant: nil),
-                    accessLevelVariants: .init(swiftVariant: nil),
-                    availabilityVariants: .init(swiftVariant: nil),
-                    deprecatedSummaryVariants: .init(swiftVariant: nil),
-                    mixinsVariants: .init(swiftVariant: nil),
-                    abstractSectionVariants: .init(swiftVariant: nil),
-                    discussionVariants: .init(swiftVariant: nil),
-                    topicsVariants: .init(swiftVariant: nil),
-                    seeAlsoVariants: .init(swiftVariant: nil),
-                    returnsSectionVariants: .init(swiftVariant: nil),
-                    parametersSectionVariants: .init(swiftVariant: nil),
-                    dictionaryKeysSectionVariants: .init(swiftVariant: nil),
-                    httpEndpointSectionVariants: .init(swiftVariant: nil),
-                    httpBodySectionVariants: .init(swiftVariant: nil),
-                    httpParametersSectionVariants: .init(swiftVariant: nil),
-                    httpResponsesSectionVariants: .init(swiftVariant: nil),
-                    redirectsVariants: .init(swiftVariant: nil)
+        class TestSymbolResolver: GlobalExternalSymbolResolver {
+            func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+                let reference = ResolvedTopicReference(bundleIdentifier: "com.test.external.symbols", path: "/\(preciseIdentifier)", sourceLanguage: .objectiveC)
+                
+                let entity = LinkResolver.ExternalEntity(
+                    topicRenderReference: TopicRenderReference(
+                        identifier: .init(reference.absoluteString),
+                        title: "SymbolName ( \(preciseIdentifier) )",
+                        abstract: [],
+                        url: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)",
+                        kind: .symbol,
+                        role: "ExternalResolvedSymbolRoleHeading",
+                        estimatedTime: nil
+                    ),
+                    renderReferenceDependencies: .init(),
+                    sourceLanguages: [.objectiveC]
                 )
-                
-                return DocumentationNode(
-                    reference: ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: "/\(preciseIdentifier)", sourceLanguage: .objectiveC),
-                    kind: .protocol,
-                    sourceLanguage: .objectiveC,
-                    availableSourceLanguages: [.objectiveC],
-                    name: .conceptual(title: "SymbolName ( \(preciseIdentifier) )"),
-                    markup: Paragraph(),
-                    semantic: symbol,
-                    platformNames: nil
-                )
-            }
-            
-            public func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL? {
-                guard reference.bundleIdentifier == bundleIdentifier, let preciseIdentifier = reference.url.pathComponents.last else {
-                    return nil
-                }
-                
-                return URL(string: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)")!
-            }
-            
-            public func preciseIdentifier(forExternalSymbolReference reference: TopicReference) -> String? {
-                let url: URL
-                switch reference {
-                case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
-                    guard unresolved.bundleIdentifier == bundleIdentifier else { return nil }
-                    url = unresolved.topicURL.url
-                case .resolved(.success(let resolved)):
-                    guard resolved.bundleIdentifier == bundleIdentifier else { return nil }
-                    url = resolved.url
-                }
-                
-                return url.pathComponents.last
+                return (reference, entity)
             }
         }
         
-        class TestReferenceResolver: ExternalReferenceResolver {
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+        class TestReferenceResolver: ExternalDocumentationSource {
+            func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
                 .success(
                     ResolvedTopicReference(
                         bundleIdentifier: "com.test.external",
@@ -1251,31 +1205,29 @@ class SemaToRenderNodeTests: XCTestCase {
                 )
             }
             
-            func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
-                DocumentationNode(
-                    reference: reference,
-                    kind: .collection,
-                    sourceLanguage: .swift,
-                    name: .conceptual(title: "Title for \(reference.url.path)"),
-                    markup: Document(
-                        Paragraph(
-                            Text("Abstract for \(reference.url.path)")
-                        )
+            func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+                let (kind, role) = DocumentationContentRenderer.renderKindAndRole(.collection, semantic: nil)
+                return LinkResolver.ExternalEntity(
+                    topicRenderReference: TopicRenderReference(
+                        identifier: .init(reference.absoluteString),
+                        title: "Title for \(reference.url.path)",
+                        abstract: [.text("Abstract for \(reference.url.path)")],
+                        url: reference.url.path,
+                        kind: kind,
+                        role: role,
+                        estimatedTime: nil
                     ),
-                    semantic: nil
+                    renderReferenceDependencies: .init(),
+                    sourceLanguages: [.swift]
                 )
-            }
-            
-            func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-                reference.url
             }
         }
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
         
-        context.externalReferenceResolvers = ["com.test.external": TestReferenceResolver()]
-        context.externalSymbolResolver = TestSymbolResolver()
+        context.externalDocumentationSources = ["com.test.external": TestReferenceResolver()]
+        context.globalExternalSymbolResolver = TestSymbolResolver()
         
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -1285,23 +1237,18 @@ class SemaToRenderNodeTests: XCTestCase {
         let bundle = workspace.bundles.values.first!
         
         // Symbols are loaded
-        XCTAssertFalse(context.symbolIndex.isEmpty)
+        XCTAssertFalse(context.documentationCache.isEmpty)
         
         // MyProtocol is loaded
-        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
-              let myProtocolSymbol = myProtocol.semantic as? Symbol else {
-            XCTFail("`MyProtocol` not found in symbol graph")
-            return
-        }
+        let myProtocol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ProtocolP"], "`MyProtocol` not found in symbol graph")
+        let myProtocolSymbol = try XCTUnwrap(myProtocol.semantic as? Symbol)
         
         // Verify that various symbols that exist are referenced in the symbol graph file have been resolved and added to the symbol index
-        
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("p:hPP"), "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:Si"), "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation3URLV"), "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation4DataV"), "External symbol from declaration was resolved and added to the index")
-        
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:5Foundation0A5NSCodableP"), "External symbol from symbol graph relationship was resolved and added to the index")
+        XCTAssertNotNil(context.externalCache["p:hPP"])
+        XCTAssertNotNil(context.externalCache["s:Si"])
+        XCTAssertNotNil(context.externalCache["s:10Foundation3URLV"])
+        XCTAssertNotNil(context.externalCache["s:10Foundation4DataV"])
+        XCTAssertNotNil(context.externalCache["s:5Foundation0A5NSCodableP"])
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myProtocol.reference, source: nil)
 
@@ -1348,7 +1295,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(
             renderNode.relationshipSections[0].identifiers.sorted(),
             ["doc://com.test.external.symbols/s:5Foundation0A5EarhartP", "doc://com.test.external.symbols/s:5Foundation0A5NSCodableP"],
-            "Since this is a protcol and it has conformsTo relationships to two other protocols, there are two 'Inherits From' references"
+            "Since this is a protocol and it has conformsTo relationships to two other protocols, there are two 'Inherits From' references"
         )
         
         XCTAssertNotNil(renderNode.references["doc://com.test.external.symbols/s:5Foundation0A5EarhartP"] as? TopicRenderReference)

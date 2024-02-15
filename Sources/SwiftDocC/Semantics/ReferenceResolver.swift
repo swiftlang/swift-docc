@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
+func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     var notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
@@ -118,7 +118,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            problems.append(unresolvedReferenceProblem(source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
             return .failure(unresolved, error)
         }
     }
@@ -438,7 +438,7 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newParametersVariants = symbol.parametersSectionVariants.map { parametersSection -> ParametersSection in
             let parameters = parametersSection.parameters.map {
-                Parameter(name: $0.name, contents: $0.contents.map { visitMarkup($0) })
+                Parameter(name: $0.name, nameRange: $0.nameRange, contents: $0.contents.map { visitMarkup($0) }, range: $0.range, isStandalone: $0.isStandalone)
             }
             return ParametersSection(parameters: parameters)
         }
@@ -506,7 +506,8 @@ struct ReferenceResolver: SemanticVisitor {
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
-            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
+            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants,
+            overloadsVariants: symbol.overloadsVariants
         )
     }
     
