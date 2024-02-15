@@ -491,10 +491,9 @@ public struct ConvertAction: Action, RecreatingContext {
         // and provide template content to fix this problem.
         if (
             context.rootTechnologies.isEmpty &&
-            hasTutorial &&
-            !analysisProblems.contains(where: {$0.diagnostic.identifier == "org.swift.docc.HasExactlyOne<Tutorials, Intro>.Missing"})
+            hasTutorial
         ) {
-            let tableOfContentsFilename = "table-of-contents.tutorial"
+            let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
             let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
             var replacements = [Replacement]()
             if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {

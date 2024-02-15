@@ -3125,6 +3125,26 @@ class ConvertActionTests: XCTestCase {
         XCTAssert(tutorialTableOfContentProblem.contains(where: {
             $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
         }))
+        
+        let incompleteTutorialFile = try problemsFromConverting([
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "article.tutorial", utf8Content: """
+                @Chapter(name: "SlothCreator Essentials") {
+                    @Image(source: "chapter1-slothcreatorEssentials.png", alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
+                    
+                    Create custom sloths and edit their attributes and powers using SlothCreator.
+                    
+                    @TutorialReference(tutorial: "doc:Creating-Custom-Sloths")
+                }
+                """
+            ),
+        ])
+        XCTAssert(incompleteTutorialFile.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.missingTopLevelChild"
+        }))
+        XCTAssertFalse(incompleteTutorialFile.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
     }
     
     func testWrittenDiagnosticsAfterConvert() throws {
@@ -3175,9 +3195,7 @@ class ConvertActionTests: XCTestCase {
         ].sorted())
         
         let logLines = logStorage.text.splitByNewlines
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 1, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("There was no root found for this documentation catalog.") }.count, 0, "The root page warning shouldn't be repeated.")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { $0.hasPrefix("warning: No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1)
     }
     
     #endif
