@@ -354,6 +354,29 @@ struct RenderContentCompiler: MarkupVisitor {
         return renderableDirective.render(blockDirective, with: &self)
     }
 
+    mutating func visitDoxygenDiscussion(_ doxygenDiscussion: DoxygenDiscussion) -> [RenderContent] {
+        doxygenDiscussion.children.flatMap { self.visit($0) }
+    }
+
+    mutating func visitDoxygenNote(_ doxygenNote: DoxygenNote) -> [RenderContent] {
+        let content: [RenderBlockContent] = doxygenNote.children
+            .flatMap { self.visit($0) }
+            .map {
+                switch $0 {
+                case let inlineContent as RenderInlineContent:
+                    return .paragraph(.init(inlineContent: [inlineContent]))
+                case let blockContent as RenderBlockContent:
+                    return blockContent
+                default:
+                    fatalError("Unexpected content type in note: \(type(of: $0))")
+                }
+            }
+        return [RenderBlockContent.aside(.init(
+            style: .init(asideKind: .note),
+            content: content
+        ))]
+    }
+
     func defaultVisit(_ markup: Markup) -> [RenderContent] {
         return []
     }
