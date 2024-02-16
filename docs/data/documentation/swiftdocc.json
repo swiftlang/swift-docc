@@ -285,6 +285,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerProtocol",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationService",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DynamicallyIdentifiableMetric",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackAssetResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackReferenceResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Landmark",
@@ -335,6 +337,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPResponse",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPResponsesSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Implementation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation",
@@ -2465,13 +2468,75 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/externallocationreference"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/FallbackAssetResolver": {
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalReferenceResolver": {
   "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
     {
-      "text" : "An asset resolver that can be used to resolve assets that couldn’t be resolved locally.",
-      "type" : "text"
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ExternalReferenceResolver"
     }
   ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ExternalReferenceResolver"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ExternalReferenceResolver",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalreferenceresolver"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalSymbolResolver": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ExternalSymbolResolver"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ExternalSymbolResolver"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ExternalSymbolResolver",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalsymbolresolver"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FallbackAssetResolver": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2501,11 +2566,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackReferenceResolver": {
   "abstract" : [
-    {
-      "text" : "A reference resolver that can be used to resolve references that couldn’t be resolved locally.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -3383,6 +3446,37 @@
   "title" : "Media",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/media"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MentionsRenderSection": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MentionsRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MentionsRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MentionsRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/mentionsrendersection"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata": {
   "abstract" : [

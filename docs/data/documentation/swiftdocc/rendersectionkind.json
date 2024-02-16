@@ -127,6 +127,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/discussion",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/hero",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/intro",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/mentions",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/parameters",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/plistDetails",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/possibleValues",
@@ -746,6 +747,31 @@
   "title" : "RenderSectionKind.intro",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/rendersectionkind\/intro"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/mentions": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mentions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderSectionKind\/mentions",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderSectionKind.mentions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendersectionkind\/mentions"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderSectionKind/parameters": {
   "abstract" : [

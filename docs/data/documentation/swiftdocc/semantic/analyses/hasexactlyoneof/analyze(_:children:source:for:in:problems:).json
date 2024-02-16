@@ -193,7 +193,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasExactlyOne.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L106"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L104"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

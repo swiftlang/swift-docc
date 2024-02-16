@@ -74,7 +74,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodableContentSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/CodableContentSection.swift#L76"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/CodableContentSection.swift#L78"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

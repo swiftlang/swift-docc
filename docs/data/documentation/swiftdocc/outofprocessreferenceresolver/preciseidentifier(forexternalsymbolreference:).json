@@ -1,7 +1,15 @@
 {
   "abstract" : [
     {
-      "text" : "Attempts to find the precise identifier for an authored symbol reference.",
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ExternalSymbolResolver.preciseIdentifier(forExternalSymbolReference:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
       "type" : "text"
     }
   ],
@@ -10,7 +18,8 @@
       [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalSymbolResolver-Implementations"
       ]
     ]
   },
@@ -20,6 +29,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC29OutOfProcessReferenceResolverC17preciseIdentifier017forExternalSymbolF0SSSgAA05TopicF0O_tF",
     "fragments" : [
       {
@@ -70,9 +80,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L339"
+      "fileName" : "OutOfProcessReferenceResolver+DeprecatedResolvers.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/OutOfProcessReferenceResolver+DeprecatedResolvers.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -116,7 +129,7 @@
             },
             {
               "kind" : "internalParam",
-              "text" : "reference"
+              "text" : "_"
             },
             {
               "kind" : "text",
@@ -145,81 +158,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An authored reference to an external symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "reference"
-        }
-      ]
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The precise identifier of the referenced symbol, or ",
-              "type" : "text"
-            },
-            {
-              "code" : "nil",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " if the reference is not for a resolved external symbol.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "The symbol resolver assumes that the precise identifier is valid and exist when creating a symbol node. You should pass authored",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "symbol references to this method to check if they exist before creating a documentation node for that symbol.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -306,13 +244,22 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/ExternalSymbolResolver-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalSymbolResolver-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExternalSymbolResolver Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/externalsymbolresolver-implementations"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/OutOfProcessReferenceResolver/preciseIdentifier(forExternalSymbolReference:)": {
   "abstract" : [
-    {
-      "text" : "Attempts to find the precise identifier for an authored symbol reference.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

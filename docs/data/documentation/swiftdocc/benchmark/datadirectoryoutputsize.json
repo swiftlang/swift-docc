@@ -395,7 +395,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/ExternalTopicsHash": {
   "abstract" : [
     {
-      "text" : "A hash metric produced off the externally resolved links and symbols.",
+      "text" : "A hash metric produced off the externally resolved links.",
       "type" : "text"
     }
   ],

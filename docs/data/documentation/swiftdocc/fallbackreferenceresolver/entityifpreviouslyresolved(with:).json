@@ -1,16 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Creates a new documentation node with the documentation content for the external reference, if the given reference was",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "resolved by this resolver.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'ConvertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -85,9 +82,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "FallbackReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/FallbackReferenceResolver.swift#L43"
+      "fileName" : "OutOfProcessReferenceResolver+DeprecatedResolvers.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/OutOfProcessReferenceResolver+DeprecatedResolvers.swift#L81"
     },
     "required" : true,
     "role" : "symbol",
@@ -170,61 +170,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The external reference that this resolver may have previously resolved.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "reference"
-        }
-      ]
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "A node with the documentation content for the referenced topic, or ",
-              "type" : "text"
-            },
-            {
-              "code" : "nil",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " if the reference wasn’t previously",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "resolved by this resolver.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -234,14 +179,6 @@
   },
   "sections" : [
 
-  ],
-  "seeAlsoSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver\/resolve(_:sourceLanguage:)"
-      ],
-      "title" : "Related Documentation"
-    }
   ],
   "variants" : [
     {
@@ -305,77 +242,11 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationnode"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalReferenceResolver/resolve(_:sourceLanguage:)": {
-  "abstract" : [
-    {
-      "text" : "Attempts to resolve an unresolved reference for an external topic.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "resolve"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14TopicReferenceO",
-      "text" : "TopicReference"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "sourceLanguage"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguageV",
-      "text" : "SourceLanguage"
-    },
-    {
-      "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC30TopicReferenceResolutionResultO",
-      "text" : "TopicReferenceResolutionResult"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver\/resolve(_:sourceLanguage:)",
-  "kind" : "symbol",
-  "required" : true,
-  "role" : "symbol",
-  "title" : "resolve(_:sourceLanguage:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externalreferenceresolver\/resolve(_:sourcelanguage:)"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackReferenceResolver": {
   "abstract" : [
-    {
-      "text" : "A reference resolver that can be used to resolve references that couldn’t be resolved locally.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -405,19 +276,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackReferenceResolver/entityIfPreviouslyResolved(with:)": {
   "abstract" : [
-    {
-      "text" : "Creates a new documentation node with the documentation content for the external reference, if the given reference was",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "resolved by this resolver.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

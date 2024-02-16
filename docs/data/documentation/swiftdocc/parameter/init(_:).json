@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Parameter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Parameter.swift#L32"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Parameter.swift#L41"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

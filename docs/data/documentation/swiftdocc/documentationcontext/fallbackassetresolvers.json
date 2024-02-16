@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The dictionary mapping known documentation bundle identifiers to fallback reference resolvers.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'convertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20DocumentationContextC22fallbackAssetResolversSDySSAA08FallbackF8Resolver_pGvp",
     "fragments" : [
       {
@@ -62,9 +68,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L244"
+      "fileName" : "DocumentationContext+DeprecatedResolvers.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/DocumentationContext+DeprecatedResolvers.swift#L39"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -116,57 +125,28 @@
             },
             {
               "kind" : "text",
-              "text" : "]"
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "In situations where the local documentation context doesn’t contain all the assets of a registered bundle—for example, when",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "using a ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertService",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " that contains partial contents of a bundle—the documentation context will look up locally",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "unresolvable asset references using a fallback resolver (if one is set for the reference’s bundle identifier.)",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -239,40 +219,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/bundleidentifier"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ConvertService": {
-  "abstract" : [
-    {
-      "text" : "A service that converts documentation.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ConvertService"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertService",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ConvertService"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ConvertService",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/convertservice"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
   "abstract" : [
     {
@@ -309,11 +255,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/fallbackAssetResolvers": {
   "abstract" : [
-    {
-      "text" : "The dictionary mapping known documentation bundle identifiers to fallback reference resolvers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -373,11 +317,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackAssetResolver": {
   "abstract" : [
-    {
-      "text" : "An asset resolver that can be used to resolve assets that couldn’t be resolved locally.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

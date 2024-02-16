@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A hash metric produced off the externally resolved links and symbols.",
+      "text" : "A hash metric produced off the externally resolved links.",
       "type" : "text"
     }
   ],
@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalTopicsHash.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/ExternalTopicsHash.swift#L18"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/ExternalTopicsHash.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -94,15 +94,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "Use this metric to verify that your code changes",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "did not affect external resolving.",
+              "text" : "Use this metric to verify that your code changes did not affect external link resolution.",
               "type" : "text"
             }
           ],
@@ -263,7 +255,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/ExternalTopicsHash": {
   "abstract" : [
     {
-      "text" : "A hash metric produced off the externally resolved links and symbols.",
+      "text" : "A hash metric produced off the externally resolved links.",
       "type" : "text"
     }
   ],
@@ -381,7 +373,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/ExternalTopicsHash/init(context:)": {
   "abstract" : [
     {
-      "text" : "Creates a new metric and stores the checksum of the given documentation context external topics.",
+      "text" : "Creates a new metric that stores the checksum of the successfully externally resolved links.",
       "type" : "text"
     }
   ],

@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "An asset resolver that can be used to resolve assets that couldn’t be resolved locally.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'ConvertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -44,9 +49,12 @@
         "text" : "FallbackAssetResolver"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
-      "fileName" : "FallbackAssetResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/FallbackAssetResolver.swift#L14"
+      "fileName" : "OutOfProcessReferenceResolver+DeprecatedResolvers.swift",
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/OutOfProcessReferenceResolver+DeprecatedResolvers.swift#L101"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -138,11 +146,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackAssetResolver": {
   "abstract" : [
-    {
-      "text" : "An asset resolver that can be used to resolve assets that couldn’t be resolved locally.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -172,11 +178,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FallbackAssetResolver/resolve(assetNamed:bundleIdentifier:)": {
   "abstract" : [
-    {
-      "text" : "Attempts to resolve an asset that couldn’t be resolved externally given its name and the bundle it’s apart of.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

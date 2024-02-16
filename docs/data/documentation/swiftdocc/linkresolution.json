@@ -296,9 +296,9 @@
           "type" : "codeListing"
         },
         {
-          "anchor" : "Resolving-Links-Outside-the-Documentation-Catalog",
+          "anchor" : "Resolving-Links-to-Other-Documentation-Sources",
           "level" : 2,
-          "text" : "Resolving Links Outside the Documentation Catalog",
+          "text" : "Resolving Links to Other Documentation Sources",
           "type" : "heading"
         },
         {
@@ -317,7 +317,7 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalReferenceResolvers",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
               "isActive" : true,
               "type" : "reference"
             },
@@ -326,12 +326,29 @@
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
               "isActive" : true,
               "type" : "reference"
             },
             {
-              "text" : ". External documentation links need to be written with a bundle ID in the URI to identify which external resolver should handle the request.",
+              "text" : ". Links to external documentation sources need to be written with a bundle ID in the URI to identify which external resolver should handle the request.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the other documentation source represents DocC content for another module or project, it is preferred to use ",
+              "type" : "text"
+            },
+            {
+              "code" : "LinkResolver\/dependencyArchives",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " instead. This provides richer diagnostics with solutions and supports symbol links to external symbols.",
               "type" : "text"
             }
           ],
@@ -411,10 +428,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalReferenceResolvers": {
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
   "abstract" : [
     {
-      "text" : "The dictionary mapping external documentation bundle identifiers to external reference resolvers.",
+      "text" : "The lookup of external documentation sources by their bundle identifiers.",
       "type" : "text"
     }
   ],
@@ -429,7 +446,7 @@
     },
     {
       "kind" : "identifier",
-      "text" : "externalReferenceResolvers"
+      "text" : "externalDocumentationSources"
     },
     {
       "kind" : "text",
@@ -446,25 +463,25 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC25ExternalReferenceResolverP",
-      "text" : "ExternalReferenceResolver"
+      "preciseIdentifier" : "s:9SwiftDocC27ExternalDocumentationSourceP",
+      "text" : "ExternalDocumentationSource"
     },
     {
       "kind" : "text",
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalReferenceResolvers",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "externalReferenceResolvers",
+  "title" : "externalDocumentationSources",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationcontext\/externalreferenceresolvers"
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/externaldocumentationsources"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalReferenceResolver": {
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalDocumentationSource": {
   "abstract" : [
     {
-      "text" : "A type that resolves references to documentation outside of the documentation bundle, and creates documentation nodes with basic information about the resolved references.",
+      "text" : "A type that resolves references to documentation from other sources.",
       "type" : "text"
     }
   ],
@@ -479,21 +496,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "ExternalReferenceResolver"
+      "text" : "ExternalDocumentationSource"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "ExternalReferenceResolver"
+      "text" : "ExternalDocumentationSource"
     }
   ],
   "role" : "symbol",
-  "title" : "ExternalReferenceResolver",
+  "title" : "ExternalDocumentationSource",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externalreferenceresolver"
+  "url" : "\/documentation\/swiftdocc\/externaldocumentationsource"
 }
 }
 }

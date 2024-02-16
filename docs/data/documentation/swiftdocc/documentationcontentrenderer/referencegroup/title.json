@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContentRenderer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L462"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L456"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

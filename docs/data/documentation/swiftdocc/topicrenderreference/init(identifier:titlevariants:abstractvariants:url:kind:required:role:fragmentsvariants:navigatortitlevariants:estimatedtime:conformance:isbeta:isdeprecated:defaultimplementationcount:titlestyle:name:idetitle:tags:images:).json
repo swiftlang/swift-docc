@@ -702,7 +702,7 @@
             },
             {
               "kind" : "text",
-              "text" : "?, "
+              "text" : "? = nil, "
             },
             {
               "kind" : "externalParam",

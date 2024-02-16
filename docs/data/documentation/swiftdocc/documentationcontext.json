@@ -207,11 +207,13 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/diagnosticEngine",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalMetadata",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalReferenceResolvers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalSymbolResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/fallbackAssetResolvers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/fallbackReferenceResolvers",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/globalExternalSymbolResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/knownIdentifiers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/knownPages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/linkResolver",
@@ -1104,6 +1106,56 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/entity(with:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalDocumentationSources": {
+  "abstract" : [
+    {
+      "text" : "The lookup of external documentation sources by their bundle identifiers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalDocumentationSources"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16BundleIdentifiera",
+      "text" : "BundleIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : " : any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC27ExternalDocumentationSourceP",
+      "text" : "ExternalDocumentationSource"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "externalDocumentationSources",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/externaldocumentationsources"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalMetadata": {
   "abstract" : [
     {
@@ -1143,11 +1195,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalReferenceResolvers": {
   "abstract" : [
-    {
-      "text" : "The dictionary mapping external documentation bundle identifiers to external reference resolvers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1193,11 +1243,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/externalSymbolResolver": {
   "abstract" : [
-    {
-      "text" : "A type that resolves symbols that are references from a symbol graph file but isn’t included in any of the processed symbol graph files.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1234,11 +1282,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/fallbackAssetResolvers": {
   "abstract" : [
-    {
-      "text" : "The dictionary mapping known documentation bundle identifiers to fallback reference resolvers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1284,11 +1330,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/fallbackReferenceResolvers": {
   "abstract" : [
-    {
-      "text" : "The dictionary mapping known documentation bundle identifiers to fallback reference resolvers.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1331,6 +1375,47 @@
   "title" : "fallbackReferenceResolvers",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationcontext\/fallbackreferenceresolvers"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/globalExternalSymbolResolver": {
+  "abstract" : [
+    {
+      "text" : "A type that resolves all symbols that are referenced in symbol graph files but can’t be found in any of the locally available symbol graph files.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "globalExternalSymbolResolver"
+    },
+    {
+      "kind" : "text",
+      "text" : ": (any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC28GlobalExternalSymbolResolverP",
+      "text" : "GlobalExternalSymbolResolver"
+    },
+    {
+      "kind" : "text",
+      "text" : ")?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/globalExternalSymbolResolver",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "globalExternalSymbolResolver",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/globalexternalsymbolresolver"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/identifier(forAssetName:in:)": {
   "abstract" : [

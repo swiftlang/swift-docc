@@ -107,7 +107,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(_:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(name:contents:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(name:nameRange:contents:range:isStandalone:)"
       ],
       "title" : "Initializers"
     },
@@ -263,7 +263,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/parameter\/init(_:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Parameter/init(name:contents:)": {
+"doc://SwiftDocC/documentation/SwiftDocC/Parameter/init(name:nameRange:contents:range:isStandalone:)": {
   "abstract" : [
     {
       "text" : "Initialize a value to describe documentation about a parameter for a symbol.",
@@ -298,6 +298,23 @@
     },
     {
       "kind" : "externalParam",
+      "text" : "nameRange"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11SourceRangea",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
       "text" : "contents"
     },
     {
@@ -311,15 +328,49 @@
     },
     {
       "kind" : "text",
-      "text" : "])"
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "range"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11SourceRangea",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "isStandalone"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(name:contents:)",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(name:nameRange:contents:range:isStandalone:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "init(name:contents:)",
+  "title" : "init(name:nameRange:contents:range:isStandalone:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/parameter\/init(name:contents:)"
+  "url" : "\/documentation\/swiftdocc\/parameter\/init(name:namerange:contents:range:isstandalone:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Parameter/name": {
   "abstract" : [

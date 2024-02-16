@@ -44,7 +44,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L250"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L248"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Creates a new metric and stores the checksum of the given documentation context external topics.",
+      "text" : "Creates a new metric that stores the checksum of the successfully externally resolved links.",
       "type" : "text"
     }
   ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalTopicsHash.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/ExternalTopicsHash.swift#L24"
+      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/ExternalTopicsHash.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -112,7 +112,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "A documentation context.",
+                  "text" : "A documentation context that the external links were resolved in.",
                   "type" : "text"
                 }
               ],
@@ -163,7 +163,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/ExternalTopicsHash": {
   "abstract" : [
     {
-      "text" : "A hash metric produced off the externally resolved links and symbols.",
+      "text" : "A hash metric produced off the externally resolved links.",
       "type" : "text"
     }
   ],
@@ -197,7 +197,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Benchmark/ExternalTopicsHash/init(context:)": {
   "abstract" : [
     {
-      "text" : "Creates a new metric and stores the checksum of the given documentation context external topics.",
+      "text" : "Creates a new metric that stores the checksum of the successfully externally resolved links.",
       "type" : "text"
     }
   ],

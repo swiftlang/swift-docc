@@ -2326,6 +2326,11 @@
                     "type" : "property"
                   },
                   {
+                    "path" : "\/documentation\/swiftdocc\/documentationcontext\/externaldocumentationsources",
+                    "title" : "var externalDocumentationSources: [BundleIdentifier : any ExternalDocumentationSource]",
+                    "type" : "property"
+                  },
+                  {
                     "path" : "\/documentation\/swiftdocc\/documentationcontext\/externalmetadata",
                     "title" : "var externalMetadata: ExternalMetadata",
                     "type" : "property"
@@ -2348,6 +2353,11 @@
                   {
                     "path" : "\/documentation\/swiftdocc\/documentationcontext\/fallbackreferenceresolvers",
                     "title" : "var fallbackReferenceResolvers: [BundleIdentifier : any FallbackReferenceResolver]",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/documentationcontext\/globalexternalsymbolresolver",
+                    "title" : "var globalExternalSymbolResolver: (any GlobalExternalSymbolResolver)?",
                     "type" : "property"
                   },
                   {
@@ -4158,7 +4168,7 @@
                 "type" : "struct"
               },
               {
-                "title" : "External Documentation",
+                "title" : "External Documentation Sources",
                 "type" : "groupMarker"
               },
               {
@@ -4168,49 +4178,18 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/swiftdocc\/externalreferenceresolver\/entity(with:)",
-                    "title" : "func entity(with: ResolvedTopicReference) throws -> DocumentationNode",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/externalreferenceresolver\/resolve(_:sourcelanguage:)",
-                    "title" : "func resolve(TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/externalreferenceresolver\/urlforresolvedreference(_:)",
-                    "title" : "func urlForResolvedReference(ResolvedTopicReference) -> URL",
+                    "path" : "\/documentation\/swiftdocc\/externaldocumentationsource\/resolve(_:)",
+                    "title" : "func resolve(TopicReference) -> TopicReferenceResolutionResult",
                     "type" : "method"
                   }
                 ],
-                "path" : "\/documentation\/swiftdocc\/externalreferenceresolver",
-                "title" : "ExternalReferenceResolver",
+                "path" : "\/documentation\/swiftdocc\/externaldocumentationsource",
+                "title" : "ExternalDocumentationSource",
                 "type" : "protocol"
               },
               {
-                "children" : [
-                  {
-                    "title" : "Instance Methods",
-                    "type" : "groupMarker"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/externalsymbolresolver\/preciseidentifier(forexternalsymbolreference:)",
-                    "title" : "func preciseIdentifier(forExternalSymbolReference: TopicReference) -> String?",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/externalsymbolresolver\/symbolentity(withpreciseidentifier:)",
-                    "title" : "func symbolEntity(withPreciseIdentifier: String) throws -> DocumentationNode",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/externalsymbolresolver\/urlforresolvedsymbol(reference:)",
-                    "title" : "func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL?",
-                    "type" : "method"
-                  }
-                ],
-                "path" : "\/documentation\/swiftdocc\/externalsymbolresolver",
-                "title" : "ExternalSymbolResolver",
+                "path" : "\/documentation\/swiftdocc\/globalexternalsymbolresolver",
+                "title" : "GlobalExternalSymbolResolver",
                 "type" : "protocol"
               },
               {
@@ -4450,48 +4429,8 @@
                     "type" : "groupMarker"
                   },
                   {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/entity(with:)",
-                    "title" : "func entity(with: ResolvedTopicReference) throws -> DocumentationNode",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/entityifpreviouslyresolved(with:)",
-                    "title" : "func entityIfPreviouslyResolved(with: ResolvedTopicReference) throws -> DocumentationNode?",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/preciseidentifier(forexternalsymbolreference:)",
-                    "title" : "func preciseIdentifier(forExternalSymbolReference: TopicReference) -> String?",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolve(_:sourcelanguage:)",
-                    "title" : "func resolve(TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolve(assetnamed:bundleidentifier:)",
-                    "title" : "func resolve(assetNamed: String, bundleIdentifier: String) -> DataAsset?",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/symbolentity(withpreciseidentifier:)",
-                    "title" : "func symbolEntity(withPreciseIdentifier: String) throws -> DocumentationNode",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/urlforresolvedreference(_:)",
-                    "title" : "func urlForResolvedReference(ResolvedTopicReference) -> URL",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/urlforresolvedreferenceifpreviouslyresolved(_:)",
-                    "title" : "func urlForResolvedReferenceIfPreviouslyResolved(ResolvedTopicReference) -> URL?",
-                    "type" : "method"
-                  },
-                  {
-                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/urlforresolvedsymbol(reference:)",
-                    "title" : "func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL?",
+                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolve(_:)",
+                    "title" : "func resolve(TopicReference) -> TopicReferenceResolutionResult",
                     "type" : "method"
                   },
                   {
@@ -4599,6 +4538,99 @@
                     "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/response",
                     "title" : "OutOfProcessReferenceResolver.Response",
                     "type" : "enum"
+                  },
+                  {
+                    "title" : "Default Implementations",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/entity(with:)",
+                        "title" : "func entity(with: ResolvedTopicReference) throws -> DocumentationNode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolve(_:sourcelanguage:)",
+                        "title" : "func resolve(TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/urlforresolvedreference(_:)",
+                        "title" : "func urlForResolvedReference(ResolvedTopicReference) -> URL",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/externalreferenceresolver-implementations",
+                    "title" : "ExternalReferenceResolver Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/preciseidentifier(forexternalsymbolreference:)",
+                        "title" : "func preciseIdentifier(forExternalSymbolReference: TopicReference) -> String?",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/symbolentity(withpreciseidentifier:)",
+                        "title" : "func symbolEntity(withPreciseIdentifier: String) throws -> DocumentationNode",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/urlforresolvedsymbol(reference:)",
+                        "title" : "func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL?",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/externalsymbolresolver-implementations",
+                    "title" : "ExternalSymbolResolver Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolve(assetnamed:bundleidentifier:)",
+                        "title" : "func resolve(assetNamed: String, bundleIdentifier: String) -> DataAsset?",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/fallbackassetresolver-implementations",
+                    "title" : "FallbackAssetResolver Implementations",
+                    "type" : "symbol"
+                  },
+                  {
+                    "children" : [
+                      {
+                        "title" : "Instance Methods",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/entityifpreviouslyresolved(with:)",
+                        "title" : "func entityIfPreviouslyResolved(with: ResolvedTopicReference) throws -> DocumentationNode?",
+                        "type" : "method"
+                      },
+                      {
+                        "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/urlforresolvedreferenceifpreviouslyresolved(_:)",
+                        "title" : "func urlForResolvedReferenceIfPreviouslyResolved(ResolvedTopicReference) -> URL?",
+                        "type" : "method"
+                      }
+                    ],
+                    "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/fallbackreferenceresolver-implementations",
+                    "title" : "FallbackReferenceResolver Implementations",
+                    "type" : "symbol"
                   }
                 ],
                 "path" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver",
@@ -6176,6 +6208,11 @@
                     "type" : "case"
                   },
                   {
+                    "path" : "\/documentation\/swiftdocc\/rendersectionkind\/mentions",
+                    "title" : "case mentions",
+                    "type" : "case"
+                  },
+                  {
                     "path" : "\/documentation\/swiftdocc\/rendersectionkind\/parameters",
                     "title" : "case parameters",
                     "type" : "case"
@@ -7267,6 +7304,11 @@
                   {
                     "title" : "Instance Methods",
                     "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/presentationurlgenerator\/presentationurlforreference(_:)",
+                    "title" : "func presentationURLForReference(ResolvedTopicReference) -> URL",
+                    "type" : "method"
                   },
                   {
                     "path" : "\/documentation\/swiftdocc\/presentationurlgenerator\/presentationurlforreference(_:requirerelativeurl:)",
@@ -12564,8 +12606,8 @@
                         "type" : "init"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/parameter\/init(name:contents:)",
-                        "title" : "init(name: String, contents: [any Markup])",
+                        "path" : "\/documentation\/swiftdocc\/parameter\/init(name:namerange:contents:range:isstandalone:)",
+                        "title" : "init(name: String, nameRange: SourceRange?, contents: [any Markup], range: SourceRange?, isStandalone: Bool)",
                         "type" : "init"
                       },
                       {
@@ -12599,8 +12641,8 @@
                         "type" : "init"
                       },
                       {
-                        "path" : "\/documentation\/swiftdocc\/return\/init(contents:)",
-                        "title" : "init(contents: [any Markup])",
+                        "path" : "\/documentation\/swiftdocc\/return\/init(contents:range:)",
+                        "title" : "init(contents: [any Markup], range: SourceRange?)",
                         "type" : "init"
                       },
                       {
@@ -24522,8 +24564,18 @@
                     "type" : "property"
                   },
                   {
+                    "path" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalmentionedinenabled",
+                    "title" : "var isExperimentalMentionedInEnabled: Bool",
+                    "type" : "property"
+                  },
+                  {
                     "path" : "\/documentation\/swiftdocc\/featureflags\/isexperimentaloverloadedsymbolpresentationenabled",
                     "title" : "var isExperimentalOverloadedSymbolPresentationEnabled: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/featureflags\/isexperimentalparametersandreturnsvalidationenabled",
+                    "title" : "var isExperimentalParametersAndReturnsValidationEnabled: Bool",
                     "type" : "property"
                   },
                   {
@@ -26481,13 +26533,6 @@
                   {
                     "children" : [
                       {
-                        "children" : [
-                          {
-                            "path" : "\/documentation\/swiftdocc\/directiveconvertible\/canconvertdirective(_:)-3fj6w",
-                            "title" : "static func canConvertDirective(BlockDirective) -> Bool",
-                            "type" : "method"
-                          }
-                        ],
                         "title" : "DirectiveConvertible Implementations",
                         "type" : "groupMarker"
                       }
@@ -38088,13 +38133,6 @@
               {
                 "children" : [
                   {
-                    "children" : [
-                      {
-                        "path" : "\/documentation\/swiftdocc\/directiveconvertible\/canconvertdirective(_:)-3fj6w",
-                        "title" : "static func canConvertDirective(BlockDirective) -> Bool",
-                        "type" : "method"
-                      }
-                    ],
                     "title" : "DirectiveConvertible Implementations",
                     "type" : "groupMarker"
                   }
@@ -38215,6 +38253,58 @@
             ],
             "path" : "\/documentation\/swiftdocc\/dynamicallyidentifiablemetric",
             "title" : "DynamicallyIdentifiableMetric",
+            "type" : "protocol"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/externalreferenceresolver\/entity(with:)",
+                "title" : "func entity(with: ResolvedTopicReference) throws -> DocumentationNode",
+                "type" : "method"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/externalreferenceresolver\/resolve(_:sourcelanguage:)",
+                "title" : "func resolve(TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult",
+                "type" : "method"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/externalreferenceresolver\/urlforresolvedreference(_:)",
+                "title" : "func urlForResolvedReference(ResolvedTopicReference) -> URL",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/swiftdocc\/externalreferenceresolver",
+            "title" : "ExternalReferenceResolver",
+            "type" : "protocol"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Instance Methods",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/externalsymbolresolver\/preciseidentifier(forexternalsymbolreference:)",
+                "title" : "func preciseIdentifier(forExternalSymbolReference: TopicReference) -> String?",
+                "type" : "method"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/externalsymbolresolver\/symbolentity(withpreciseidentifier:)",
+                "title" : "func symbolEntity(withPreciseIdentifier: String) throws -> DocumentationNode",
+                "type" : "method"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/externalsymbolresolver\/urlforresolvedsymbol(reference:)",
+                "title" : "func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL?",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/swiftdocc\/externalsymbolresolver",
+            "title" : "ExternalSymbolResolver",
             "type" : "protocol"
           },
           {
@@ -41306,6 +41396,86 @@
           {
             "children" : [
               {
+                "title" : "Initializers",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/init(from:)",
+                "title" : "init(from: any Decoder) throws",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/init(mentions:)",
+                "title" : "init(mentions: [URL])",
+                "type" : "init"
+              },
+              {
+                "title" : "Instance Properties",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/kind",
+                "title" : "var kind: RenderSectionKind",
+                "type" : "property"
+              },
+              {
+                "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/mentions",
+                "title" : "var mentions: [URL]",
+                "type" : "property"
+              },
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Operators",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/!=(_:_:)",
+                    "title" : "static func != (Self, Self) -> Bool",
+                    "type" : "op"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/equatable-implementations",
+                "title" : "Equatable Implementations",
+                "type" : "symbol"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Properties",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/headings",
+                    "title" : "var headings: [String]",
+                    "type" : "property"
+                  },
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/rawindexabletextcontent(references:)",
+                    "title" : "func rawIndexableTextContent(references: [String : any RenderReference]) -> String",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/swiftdocc\/mentionsrendersection\/textindexing-implementations",
+                "title" : "TextIndexing Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/swiftdocc\/mentionsrendersection",
+            "title" : "MentionsRenderSection",
+            "type" : "struct"
+          },
+          {
+            "children" : [
+              {
                 "title" : "Operators",
                 "type" : "groupMarker"
               },
@@ -42690,8 +42860,18 @@
                     "type" : "property"
                   },
                   {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentalmentionedin",
+                    "title" : "var enableExperimentalMentionedIn: Bool",
+                    "type" : "property"
+                  },
+                  {
                     "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentaloverloadedsymbolpresentation",
                     "title" : "var enableExperimentalOverloadedSymbolPresentation: Bool",
+                    "type" : "property"
+                  },
+                  {
+                    "path" : "\/documentation\/swiftdoccutilities\/docc\/convert\/enableexperimentalparametersandreturnsvalidation",
+                    "title" : "var enableExperimentalParametersAndReturnsValidation: Bool",
                     "type" : "property"
                   },
                   {

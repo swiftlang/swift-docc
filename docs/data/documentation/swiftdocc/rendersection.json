@@ -129,6 +129,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationsRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IntroRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertiesRenderSection",
@@ -573,6 +574,37 @@
   "title" : "IntroRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/introrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MentionsRenderSection": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MentionsRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MentionsRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MentionsRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MentionsRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/mentionsrendersection"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ParametersRenderSection": {
   "abstract" : [

@@ -91,11 +91,11 @@
                 {
                   "inlineContent" : [
                     {
-                      "text" : "Resolving links to external documentation via ",
+                      "text" : "Resolving links to external documentation sources via ",
                       "type" : "text"
                     },
                     {
-                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
                       "isActive" : true,
                       "type" : "reference"
                     },
@@ -104,7 +104,7 @@
                       "type" : "text"
                     },
                     {
-                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
                       "isActive" : true,
                       "type" : "reference"
                     },
@@ -274,11 +274,11 @@
     },
     {
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver"
       ],
-      "title" : "External Documentation"
+      "title" : "External Documentation Sources"
     },
     {
       "identifiers" : [
@@ -632,10 +632,10 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalReferenceResolver": {
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalDocumentationSource": {
   "abstract" : [
     {
-      "text" : "A type that resolves references to documentation outside of the documentation bundle, and creates documentation nodes with basic information about the resolved references.",
+      "text" : "A type that resolves references to documentation from other sources.",
       "type" : "text"
     }
   ],
@@ -650,26 +650,26 @@
     },
     {
       "kind" : "identifier",
-      "text" : "ExternalReferenceResolver"
+      "text" : "ExternalDocumentationSource"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalReferenceResolver",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "ExternalReferenceResolver"
+      "text" : "ExternalDocumentationSource"
     }
   ],
   "role" : "symbol",
-  "title" : "ExternalReferenceResolver",
+  "title" : "ExternalDocumentationSource",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externalreferenceresolver"
+  "url" : "\/documentation\/swiftdocc\/externaldocumentationsource"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalSymbolResolver": {
+"doc://SwiftDocC/documentation/SwiftDocC/GlobalExternalSymbolResolver": {
   "abstract" : [
     {
-      "text" : "A type that resolves references to symbols outside of the documentation bundle and creates documentation nodes with basic information about the resolved symbol.",
+      "text" : "A type that resolves symbol identifiers for symbols in all non-local modules.",
       "type" : "text"
     }
   ],
@@ -684,21 +684,21 @@
     },
     {
       "kind" : "identifier",
-      "text" : "ExternalSymbolResolver"
+      "text" : "GlobalExternalSymbolResolver"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
   "kind" : "symbol",
   "navigatorTitle" : [
     {
       "kind" : "identifier",
-      "text" : "ExternalSymbolResolver"
+      "text" : "GlobalExternalSymbolResolver"
     }
   ],
   "role" : "symbol",
-  "title" : "ExternalSymbolResolver",
+  "title" : "GlobalExternalSymbolResolver",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externalsymbolresolver"
+  "url" : "\/documentation\/swiftdocc\/globalexternalsymbolresolver"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NodeURLGenerator": {
   "abstract" : [
