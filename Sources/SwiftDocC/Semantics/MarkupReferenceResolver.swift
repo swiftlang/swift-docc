@@ -40,7 +40,7 @@ fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference
 }
 
 /**
- Rewrites a ``Markup`` tree to resolve ``UnresolvedTopicReference`s using a ``DocumentationContext``.
+ Rewrites a ``Markup`` tree to resolve ``UnresolvedTopicReference``s using a ``DocumentationContext``.
  */
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
