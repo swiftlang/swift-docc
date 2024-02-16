@@ -41,7 +41,7 @@ struct MergeAction: Action {
         var combinedJSONIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
         
         for archive in archives.dropFirst() {
-            for directoryToCopy in ["data/documentation", "data/tutorials", "documentation", "tutorials", "images", "videos", "downloads"] {
+            for directoryToCopy in ["data", "documentation", "tutorials", "images", "videos", "downloads"] {
                 let fromDirectory = archive.appendingPathComponent(directoryToCopy, isDirectory: true)
                 let toDirectory = targetURL.appendingPathComponent(directoryToCopy, isDirectory: true)
                 
@@ -70,42 +70,39 @@ struct MergeAction: Action {
     
     private func validateThatArchivesHaveDisjointData() throws {
         // Check that the archives don't have overlapping data
-        typealias ArchivesByDirectoryName = [String: Set<String>]
+        typealias ArchivesByDirectoryName = [String: [String: Set<String>]]
         
-        var archivesByTopLevelDocumentationDirectory = ArchivesByDirectoryName()
-        var archivesByTopLevelTutorialDirectory = ArchivesByDirectoryName()
+        var archivesByTopLevelDirectory = ArchivesByDirectoryName()
         
         // Gather all the top level /data/documentation and /data/tutorials directories to ensure that the different archives don't have overlapping data
         for archive in archives {
-            for topLevelDocumentation in (try? fileManager.contentsOfDirectory(at: archive.appendingPathComponent("data/documentation", isDirectory: true), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
-                archivesByTopLevelDocumentationDirectory[topLevelDocumentation.deletingPathExtension().lastPathComponent, default: []].insert(archive.lastPathComponent)
-            }
-            for topLevelDocumentation in (try? fileManager.contentsOfDirectory(at: archive.appendingPathComponent("data/tutorials", isDirectory: true), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
-                archivesByTopLevelTutorialDirectory[topLevelDocumentation.deletingPathExtension().lastPathComponent, default: []].insert(archive.lastPathComponent)
+            for typeOfDocumentation in (try? fileManager.contentsOfDirectory(at: archive.appendingPathComponent("data", isDirectory: true), includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
+                for moduleOrTechnologyName in (try? fileManager.contentsOfDirectory(at: typeOfDocumentation, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
+                    archivesByTopLevelDirectory[typeOfDocumentation.lastPathComponent, default: [:]][moduleOrTechnologyName.deletingPathExtension().lastPathComponent, default: []].insert(archive.lastPathComponent)
+                }
             }
         }
         
         // Only data directories found in a multiple archives is a problem
-        archivesByTopLevelDocumentationDirectory = archivesByTopLevelDocumentationDirectory.filter({ $0.value.count > 1 })
-        archivesByTopLevelTutorialDirectory = archivesByTopLevelTutorialDirectory.filter({ $0.value.count > 1 })
+        archivesByTopLevelDirectory = archivesByTopLevelDirectory.mapValues { collected in
+            collected.filter { $0.value.count > 1 }
+        }
         
-        guard archivesByTopLevelDocumentationDirectory.isEmpty, archivesByTopLevelTutorialDirectory.isEmpty else {
+        guard archivesByTopLevelDirectory.allSatisfy({ $0.value.isEmpty }) else {
             struct OverlappingDataError: DescribedError {
-                var archivesByDocumentationData: ArchivesByDirectoryName
-                var archivesByTutorialData: ArchivesByDirectoryName
+                var archivesByTopLevelDirectory: ArchivesByDirectoryName
                 
                 var errorDescription: String {
                     var message = "Input archives contain overlapping data"
-                    if let overlappingDocumentationDescription = overlapDescription(archivesByData: archivesByDocumentationData, pathComponentName: "documentation") {
-                        message.append(overlappingDocumentationDescription)
-                    }
-                    if let overlappingDocumentationDescription = overlapDescription(archivesByData: archivesByTutorialData, pathComponentName: "tutorials") {
-                        message.append(overlappingDocumentationDescription)
+                    for (typeOfDocumentation, archivesByData) in archivesByTopLevelDirectory.sorted(by: { $0.key < $1.key }) {
+                        if let overlappingDocumentationDescription = overlapDescription(archivesByData: archivesByData, pathComponentName: typeOfDocumentation) {
+                            message.append(overlappingDocumentationDescription)
+                        }
                     }
                     return message
                 }
                 
-                private func overlapDescription(archivesByData: ArchivesByDirectoryName, pathComponentName: String) -> String? {
+                private func overlapDescription(archivesByData: ArchivesByDirectoryName.Value, pathComponentName: String) -> String? {
                     guard !archivesByData.isEmpty else {
                         return nil
                     }
@@ -123,10 +120,7 @@ struct MergeAction: Action {
                 }
             }
             
-            throw OverlappingDataError(
-                archivesByDocumentationData: archivesByTopLevelDocumentationDirectory,
-                archivesByTutorialData: archivesByTopLevelTutorialDirectory
-            )
+            throw OverlappingDataError(archivesByTopLevelDirectory: archivesByTopLevelDirectory)
         }
     }
     
