@@ -1250,6 +1250,7 @@ Root
         XCTAssertEqual(PageType(symbolKind: "union"), .union)
         XCTAssertEqual(PageType(symbolKind: "property"), .instanceProperty)
         XCTAssertEqual(PageType(symbolKind: "dict"), .dictionarySymbol)
+        XCTAssertEqual(PageType(symbolKind: "namespace"), .namespace)
         
         func verifySymbolKind(_ inputs: [String], _ result: PageType) {
             for input in inputs {

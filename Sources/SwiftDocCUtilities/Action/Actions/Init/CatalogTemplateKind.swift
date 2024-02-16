@@ -48,9 +48,10 @@ extension CatalogTemplateKind {
     }
     
     /// Content of the 'tutorial' template
+    static var tutorialTopLevelFilename: String { "table-of-contents.tutorial" }
     static func tutorialTemplateFiles(_ title: String) -> [String: String] {
         [
-            "table-of-contents.tutorial": """
+            tutorialTopLevelFilename: """
             @Tutorials(name: "\(title)") {
                 @Intro(title: "Tutorial Introduction") {
                     Add one or more paragraphs that introduce your tutorial.

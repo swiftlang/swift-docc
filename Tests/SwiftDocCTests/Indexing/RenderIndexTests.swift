@@ -561,6 +561,29 @@ final class RenderIndexTests: XCTestCase {
             XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isBeta)
         }
     }
+
+    func testRenderIndexGenerationWithNamespaceNode() throws {
+        try testRenderIndexGenerationFromJSON("""
+        {
+            "interfaceLanguages": {
+                "occ": [
+                    {
+                        "path": "/documentation/framework/foo",
+                        "title": "Foo",
+                        "type": "namespace"
+                    }
+                ]
+            },
+            "schemaVersion": {
+                "major": 0,
+                "minor": 1,
+                "patch": 0
+            }
+        }
+        """) { renderIndex in
+            XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["occ"])[0].type == "namespace")
+        }
+    }
     
     func makeRenderIndexJSONSingleNode(withOptionalProperty property: String) -> String {
         return """
