@@ -3070,31 +3070,79 @@ class ConvertActionTests: XCTestCase {
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
     func testConvertWithNoTechnologyRoot() throws {
-        let bundle = Folder(name: "unit-test.docc", content: [
+        func problemsFromConverting(_ catalogContent: [File]) throws -> [Problem] {
+            let catalog = Folder(name: "unit-test.docc", content: catalogContent)
+            let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
+            let engine = DiagnosticEngine()
+            var action = try ConvertAction(
+                documentationBundleURL: catalog.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: URL(fileURLWithPath: "/output"),
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+                diagnosticEngine: engine
+            )
+            _ = try action.perform(logHandle: .none)
+            return engine.problems
+        }
+        
+        let onlyTutorialArticleProblems = try problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            TextFile(name: "Documentation.md", utf8Content: "")
+            TextFile(name: "Article.tutorial", utf8Content: """
+                @Article(time: 20) {
+                   @Intro(title: "Slothy Tutorials") {
+                      This is an abstract for the intro.
+                   }
+                }
+                """
+            ),
         ])
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        let engine = DiagnosticEngine()
-        var action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: true,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            dataProvider: testDataProvider,
-            fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
-            diagnosticEngine: engine
-        )
-        let _ = try action.perform(logHandle: .none)
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
-        XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+        XCTAssert(onlyTutorialArticleProblems.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
+        
+        let tutorialTableOfContentProblem = try problemsFromConverting([
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "table-of-contents.tutorial", utf8Content: """
+                """
+            ),
+            TextFile(name: "article.tutorial", utf8Content: """
+                @Article(time: 20) {
+                   @Intro(title: "Slothy Tutorials") {
+                      This is an abstract for the intro.
+                   }
+                }
+                """
+            ),
+        ])
+        XCTAssert(tutorialTableOfContentProblem.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
+        
+        let incompleteTutorialFile = try problemsFromConverting([
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "article.tutorial", utf8Content: """
+                @Chapter(name: "SlothCreator Essentials") {
+                    @Image(source: "chapter1-slothcreatorEssentials.png", alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
+                    
+                    Create custom sloths and edit their attributes and powers using SlothCreator.
+                    
+                    @TutorialReference(tutorial: "doc:Creating-Custom-Sloths")
+                }
+                """
+            ),
+        ])
+        XCTAssert(incompleteTutorialFile.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.missingTopLevelChild"
+        }))
+        XCTAssertFalse(incompleteTutorialFile.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
     }
     
     func testWrittenDiagnosticsAfterConvert() throws {
@@ -3133,22 +3181,19 @@ class ConvertActionTests: XCTestCase {
         )
         
         let _ = try action.perform(logHandle: .none)
-        XCTAssertEqual(engine.problems.count, 2)
+        XCTAssertEqual(engine.problems.count, 1)
         
         XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
         
         let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
-        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
+        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 1)
         
         XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
-            "No TechnologyRoot to organize article-only documentation.",
             "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
-        ])
+        ].sorted())
         
         let logLines = logStorage.text.splitByNewlines
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize article-only documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { $0.hasPrefix("warning: No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1)
     }
     
     #endif
