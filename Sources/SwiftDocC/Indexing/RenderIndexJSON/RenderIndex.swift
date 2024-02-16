@@ -364,6 +364,8 @@ extension NavigatorIndex.PageType {
             return "httpRequest"
         case .dictionarySymbol:
             return "dictionarySymbol"
+        case .namespace:
+            return SymbolGraph.Symbol.KindIdentifier.namespace.renderingIdentifier
         case .propertyListKeyReference:
             return "propertyListKeyReference"
         case .languageGroup:
