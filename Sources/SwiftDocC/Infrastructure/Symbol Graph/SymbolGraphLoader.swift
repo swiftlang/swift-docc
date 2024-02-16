@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,10 +50,8 @@ struct SymbolGraphLoader {
 
     /// Loads all symbol graphs in the given bundle.
     ///
-    /// - Parameter decoder: A potentially customized `JSONDecoder` to be used for decoding. This decoder is only
-    /// used if the `decodingStrategy` is set to `concurrentlyAllFiles`!
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
-    mutating func loadAll(using decoder: JSONDecoder = JSONDecoder()) throws {
+    mutating func loadAll() throws {
         let loadingLock = Lock()
 
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
@@ -73,9 +71,9 @@ struct SymbolGraphLoader {
                 
                 switch decodingStrategy {
                 case .concurrentlyAllFiles:
-                    symbolGraph = try decoder.decode(SymbolGraph.self, from: data)
+                    symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: data)
                 case .concurrentlyEachFileInBatches:
-                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data, using: decoder)
+                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
                 }
                 
                 configureSymbolGraph?(&symbolGraph)

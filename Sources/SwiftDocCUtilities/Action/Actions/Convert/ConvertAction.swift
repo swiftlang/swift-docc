@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,10 @@
 */
 
 import Foundation
-@_spi(ExternalLinks) import SwiftDocC // SPI to set `context.linkResolver.dependencyArchives`
+
+@_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
+@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
+import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {
@@ -77,6 +80,7 @@ public struct ConvertAction: Action, RecreatingContext {
     var converter: DocumentationConverter
     
     private var durationMetric: Benchmark.Duration?
+    private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     /// - Parameter buildIndex: Whether or not the convert action should emit an LMDB representation
@@ -145,6 +149,11 @@ public struct ConvertAction: Action, RecreatingContext {
         } else {
             formattingOptions = []
         }
+        self.diagnosticWriterOptions = (
+            formattingOptions,
+            documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
+        )
+        
         self.inheritDocs = inheritDocs
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
@@ -153,12 +162,6 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        engine.add(
-            DiagnosticConsoleWriter(
-                formattingOptions: formattingOptions,
-                baseURL: documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
-            )
-        )
         if let diagnosticFilePath = diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }
@@ -369,8 +372,19 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+        // Add the default diagnostic console writer now that we know what log handle it should write to.
+        if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
+            diagnosticEngine.add(
+                DiagnosticConsoleWriter(
+                    logHandle,
+                    formattingOptions: diagnosticWriterOptions.formatting,
+                    baseURL: diagnosticWriterOptions.baseURL,
+                    fileManager: fileManager
+                )
+            )
+        }
         
-        // The converter has already emitted its problems to the diagnostic engine. 
+        // The converter has already emitted its problems to the diagnostic engine.
         // Track additional problems separately to avoid repeating the converter's problems.
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
@@ -385,9 +399,8 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         if let outOfProcessResolver = outOfProcessResolver {
-            context.externalReferenceResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
-            context.externalSymbolResolver = outOfProcessResolver
-            context._externalAssetResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.globalExternalSymbolResolver = outOfProcessResolver
         }
         
         let temporaryFolder = try createTempFolder(
@@ -469,15 +482,42 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
-        if try context.renderRootModules.isEmpty {
+        let hasTutorial = context.knownPages.contains(where: {
+            guard let kind = try? context.entity(with: $0).kind else { return false }
+            return kind == .tutorial || kind == .tutorialArticle
+        })
+        // Warn the user if the catalog is a tutorial but does not contains a table of contents
+        // and provide template content to fix this problem.
+        if (
+            context.rootTechnologies.isEmpty &&
+            hasTutorial
+        ) {
+            let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
+            let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
+            var replacements = [Replacement]()
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {
+                replacements.append(
+                    Replacement(
+                        range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
+                        replacement: tableOfContentsTemplate
+                    )
+                )
+            }
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
+                        source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTechnologyRoot",
-                         summary: "No TechnologyRoot to organize article-only documentation.",
-                         explanation: "Article-only documentation needs a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
-                     )
+                        identifier: "org.swift.docc.MissingTableOfContents",
+                        summary: "Missing tutorial table of contents page.",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                    ),
+                    possibleSolutions: [
+                        Solution(
+                            summary: "Create a `@Tutorials` table of content page.",
+                            replacements: replacements
+                        )
+                    ]
                 )
             )
         }

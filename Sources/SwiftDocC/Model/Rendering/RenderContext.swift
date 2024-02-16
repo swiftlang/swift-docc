@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -81,14 +81,17 @@ public struct RenderContext {
         
         let assets = documentationContext.assetManagers
             .reduce(into: [AssetReference: DataAsset]()) { (storage, element) in
-                let (bundleIdentifer, assetManager) = element
+                let (bundleIdentifier, assetManager) = element
             
                 for (name, asset) in assetManager.storage {
-                    storage[
-                        AssetReference(assetName: name, bundleIdentifier: bundleIdentifer)
-                    ] = asset
+                    storage[AssetReference(assetName: name, bundleIdentifier: bundleIdentifier)] = asset
                 }
             }
+        
+        // Add all the external content to the topic store
+        for (reference, entity) in documentationContext.externalCache {
+            topics[reference] = entity.topicContent()
+        }
         
         self.store = RenderReferenceStore(topics: topics, assets: assets)
     }

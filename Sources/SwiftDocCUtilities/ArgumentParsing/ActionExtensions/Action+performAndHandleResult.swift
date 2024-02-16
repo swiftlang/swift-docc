@@ -13,14 +13,11 @@ import Foundation
 
 extension Action {
     /// Performs the action and checks for any problems in the result.
+    /// 
+    /// - Parameter logHandle: The log handle to write encountered warnings and errors to.
     ///
-    /// If any warnings or errors are found, they will be printed to standard output.
-    ///
-    /// - throws: `ErrorsEncountered` if any errors are produced while performing the action.
-    public mutating func performAndHandleResult() throws {
-        /// A log handle used for printing to standard out in a terminal.
-        let logHandle = LogHandle.standardOutput
-
+    /// - Throws: `ErrorsEncountered` if any errors are produced while performing the action.
+    public mutating func performAndHandleResult(logHandle: LogHandle = .standardOutput) throws {
         // Perform the Action and collect the result
         let result = try perform(logHandle: logHandle)
 

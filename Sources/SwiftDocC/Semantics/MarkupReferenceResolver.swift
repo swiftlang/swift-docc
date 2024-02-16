@@ -40,7 +40,7 @@ fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference
 }
 
 /**
- Rewrites a ``Markup`` tree to resolve ``UnresolvedTopicReference`s using a ``DocumentationContext``.
+ Rewrites a ``Markup`` tree to resolve ``UnresolvedTopicReference``s using a ``DocumentationContext``.
  */
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
@@ -94,7 +94,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
+            problems.append(unresolvedReferenceProblem(source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }

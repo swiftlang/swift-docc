@@ -1,4 +1,4 @@
-# ``docc/Resources``
+# ``Resources``
 
 Displays a set of links to related resources, like downloads, sample code, and videos.
 
@@ -8,7 +8,7 @@ Displays a set of links to related resources, like downloads, sample code, and v
 
 ## Overview
 
-Use the `Resources` directive to include a Resources section at the bottom of a tutorial's table of contents page. This optional section can offer links to helpful material for continued learning. Provide some text for the top of the section, then add directives,  for example``Documentation``, ``Downloads``, ``Forums``, ``SampleCode``, and ``Videos`) for the resource types you want to share.
+Use the `Resources` directive to include a Resources section at the bottom of a tutorial's table of contents page. This optional section can offer links to helpful material for continued learning. Provide some text for the top of the section, then add directives, for example ``Documentation``, ``Downloads``, ``Forums``, ``SampleCode``, and ``Videos``) for the resource types you want to share.
 
 ```
 @Tutorials(name: "SlothCreator") {
@@ -59,4 +59,4 @@ The following pages can include a Resources section:
 - ``SampleCode``
 - ``Videos``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
