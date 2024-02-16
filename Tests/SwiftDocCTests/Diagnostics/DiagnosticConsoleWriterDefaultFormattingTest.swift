@@ -389,4 +389,105 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             """)
         }
     }
+    
+    func testEmitAdditionReplacementSolution() throws {
+        func problemsLoggerOutput(possibleSolutions: [Solution]) -> String {
+            let logger = Logger()
+            let consumer = DiagnosticConsoleWriter(logger, highlight: true)
+            let problem = Problem(diagnostic: Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: possibleSolutions)
+            consumer.receive([problem])
+            try? consumer.flush()
+            return logger.output
+        }
+        let sourcelocation = SourceLocation(line: 1, column: 1, source: nil)
+        let range = sourcelocation..<sourcelocation
+        XCTAssertEqual(
+            problemsLoggerOutput(possibleSolutions: [
+                Solution(summary: "Create a sloth.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = "slothy"
+                        var slothDiet = .vegetarian
+                        """
+                    )
+                ])
+            ]),
+            """
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            --> /path/to/file.md
+            Create a sloth.
+            suggestion:
+            0 + var slothName = \"slothy\"
+            1 + var slothDiet = .vegetarian
+            """
+        )
+        
+        XCTAssertEqual(
+            problemsLoggerOutput(possibleSolutions: [
+                Solution(summary: "Create a sloth.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = "slothy"
+                        var slothDiet = .vegetarian
+                        """
+                    ),
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = SlothGenerator().generateName()
+                        var slothDiet = SlothGenerator().generateDiet()
+                        """
+                    )
+                ])
+            ]),
+            """
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            --> /path/to/file.md
+            Create a sloth.
+            suggestion:
+            0 + var slothName = "slothy"
+            1 + var slothDiet = .vegetarian
+            suggestion:
+            0 + var slothName = SlothGenerator().generateName()
+            1 + var slothDiet = SlothGenerator().generateDiet()
+            """
+        )
+        
+        XCTAssertEqual(
+            problemsLoggerOutput(possibleSolutions: [
+                Solution(summary: "Create a sloth.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = "slothy"
+                        var slothDiet = .vegetarian
+                        """
+                    ),
+                ]),
+                Solution(summary: "Create a bee.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var beeName = "Bee"
+                        var beeDiet = .vegetarian
+                        """
+                    )
+                ])
+            ]),
+            """
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            --> /path/to/file.md
+            Create a sloth.
+            suggestion:
+            0 + var slothName = "slothy"
+            1 + var slothDiet = .vegetarian
+            Create a bee.
+            suggestion:
+            0 + var beeName = "Bee"
+            1 + var beeDiet = .vegetarian
+            """
+        )
+    }
 }
