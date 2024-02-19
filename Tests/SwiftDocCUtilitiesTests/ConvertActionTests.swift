@@ -3196,6 +3196,78 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(logLines.filter { $0.hasPrefix("warning: No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1)
     }
     
+    func testEncodedImagePaths() throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Something.md", utf8Content: """
+            # Something
+            
+            This article links to some assets
+            
+            ![Some alt text](image-name)
+            """),
+            
+            // Image variants
+            DataFile(name: "image-name.png", data: Data()),
+            DataFile(name: "image-name~dark.png", data: Data()),
+            DataFile(name: "image-name@2x.png", data: Data()),
+            DataFile(name: "image-name~dark@2x.png", data: Data()),
+        ])
+    
+        let fileSystem = try TestFileSystem(folders: [catalog])
+        let targetURL = URL(fileURLWithPath: "/Output.doccarchive")
+        
+        var action = try ConvertAction(
+            documentationBundleURL: catalog.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetURL,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: fileSystem,
+            fileManager: fileSystem,
+            temporaryDirectory: fileSystem.temporaryDirectory
+        )
+        
+        let result = try action.perform(logHandle: .none)
+        XCTAssertEqual(result.outputs, [targetURL])
+        
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: targetURL.path), """
+        Output.doccarchive/
+        ├─ data/
+        │  ╰─ documentation/
+        │     ╰─ something.json
+        ├─ downloads/
+        │  ╰─ unit-test/
+        ├─ images/
+        │  ╰─ unit-test/
+        │     ├─ image-name.png
+        │     ├─ image-name@2x.png
+        │     ├─ image-name~dark.png
+        │     ╰─ image-name~dark@2x.png
+        ├─ metadata.json
+        ╰─ videos/
+           ╰─ unit-test/
+        """)
+        
+        XCTAssert(fileSystem.fileExists(atPath: targetURL.appendingPathComponent("images/unit-test/image-name.png").path))
+        let pageURL = targetURL.appendingPathComponent("data/documentation/something.json")
+        XCTAssert(fileSystem.fileExists(atPath: pageURL.path))
+        
+        let renderNode = try JSONDecoder().decode(RenderNode.self, from: fileSystem.contentsOfURL(pageURL))
+        
+        XCTAssertEqual(renderNode.references.keys.sorted(), ["image-name"])
+        let imageReference = try XCTUnwrap(renderNode.references["image-name"] as? ImageReference)
+        
+        XCTAssertEqual(imageReference.altText, "Some alt text")
+        XCTAssertEqual(imageReference.asset.variants.values.map(\.absoluteString).sorted(), [
+            "/images/unit-test/image-name.png",
+            "/images/unit-test/image-name@2x.png",
+            "/images/unit-test/image-name~dark.png",
+            "/images/unit-test/image-name~dark@2x.png"
+        ])
+    }
+    
     #endif
 }
 
