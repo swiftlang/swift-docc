@@ -166,18 +166,27 @@ path in either source language.
 ### Navigate to an Article
 
 To add a link to an article, use the less-than symbol (`<`), the `doc` keyword, 
-a colon (`:`), the name of the article, and a greater-than symbol 
-(`>`). Don't include the article's file extension in the name. 
+a colon (`:`), the article's file name without file extension, and a greater-than symbol 
+(`>`).  
 
-```
+```markdown
 <doc:GettingStarted>
 ```
 
 When DocC resolves the link, it uses the article's page title as the link's 
-text, and the article's filename as the link's URL. Links to tutorials follow 
-the same format, except you must add the `/tutorials/` prefix to the path: 
+text. Links to tutorials follow the same format. 
 
+```markdown
+<doc:SlothCreator>
 ```
+
+If you have an article file and a tutorial file with the same base name you can add a leading `documentation` or `tutorials` component to the path, with or without a leading slash: 
+
+```markdown
+<doc:documentation/SlothCreator>
+<doc:tutorials/SlothCreator>
+
+<doc:/documentation/SlothCreator>
 <doc:/tutorials/SlothCreator>
 ```
 
@@ -196,4 +205,4 @@ add the link's URL within the parentheses.
 [Apple](https://www.apple.com)
 ```
 
-<!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2023-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
