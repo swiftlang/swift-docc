@@ -145,6 +145,80 @@ class MergeActionTests: XCTestCase {
         """)
     }
     
+    func testCreatesDataDirectoryWhenMergingSingleEmptyArchive() throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "Empty",
+                    documentationPages: [],
+                    tutorialPages: [],
+                    images: [],
+                    videos: [],
+                    downloads: []
+                ),
+                
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/Empty.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        _ = try action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        
+        // The empty archive doesn't have a "data" subdirectory
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Empty.doccarchive"), """
+        Empty.doccarchive/
+        ├─ css/
+        │  ╰─ something.css
+        ├─ downloads/
+        │  ╰─ com.example.empty/
+        ├─ favicon.svg
+        ├─ images/
+        │  ╰─ com.example.empty/
+        ├─ img/
+        │  ╰─ something.svg
+        ├─ index/
+        │  ╰─ index.json
+        ├─ js/
+        │  ╰─ something.js
+        ├─ metadata.json
+        ╰─ videos/
+           ╰─ com.example.empty/
+        """)
+        
+        // The combined archive has a "data" subdirectory.
+        // This allows other archives to copy their documentation and tutorial data without needing to check or create intermediate directories. 
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
+        Output.doccarchive/
+        ├─ css/
+        │  ╰─ something.css
+        ├─ data/
+        ├─ downloads/
+        │  ╰─ com.example.empty/
+        ├─ favicon.svg
+        ├─ images/
+        │  ╰─ com.example.empty/
+        ├─ img/
+        │  ╰─ something.svg
+        ├─ index/
+        │  ╰─ index.json
+        ├─ js/
+        │  ╰─ something.js
+        ├─ metadata.json
+        ╰─ videos/
+           ╰─ com.example.empty/
+        """)
+    }
+    
     func testErrorWhenArchivesContainOverlappingData() throws {
         let fileSystem = try TestFileSystem(
             folders: [

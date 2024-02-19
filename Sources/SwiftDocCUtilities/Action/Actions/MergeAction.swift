@@ -40,18 +40,15 @@ struct MergeAction: Action {
         }
         var combinedJSONIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
         
+        // Ensure that the destination has a data directory in case the first archive didn't have any pages.
+        try? fileManager.createDirectory(at: targetURL.appendingPathComponent("data", isDirectory: true), withIntermediateDirectories: false, attributes: nil)
+        
         for archive in archives.dropFirst() {
             for directoryToCopy in ["data/documentation", "data/tutorials", "documentation", "tutorials", "images", "videos", "downloads"] {
                 let fromDirectory = archive.appendingPathComponent(directoryToCopy, isDirectory: true)
                 let toDirectory = targetURL.appendingPathComponent(directoryToCopy, isDirectory: true)
 
-                var mkdir_p = false
                 for from in (try? fileManager.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
-                    // Create the full path to the destination directory if necessary, once for each directory to copy
-                    if !mkdir_p {
-                        try fileManager.createDirectory(at: toDirectory, withIntermediateDirectories: true, attributes: nil)
-                        mkdir_p = true
-                    }
                     // Copy each file or subdirectory
                     try fileManager.copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
                 }
