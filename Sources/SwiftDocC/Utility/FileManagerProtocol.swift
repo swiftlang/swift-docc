@@ -51,9 +51,6 @@ public protocol FileManagerProtocol {
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
 
-    /// The temporary directory for the current user.
-    var temporaryDirectory: URL { get }
-    
     /// Creates a file with the specified `contents` at the specified location.
     ///
     /// - Parameters:

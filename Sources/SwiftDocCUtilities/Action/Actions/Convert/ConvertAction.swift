@@ -453,8 +453,7 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        let bundleIdentifier = converter.firstAvailableBundle()?.identifier
-        if let bundleIdentifier = bundleIdentifier {
+        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -466,8 +465,7 @@ public struct ConvertAction: Action, RecreatingContext {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundleIdentifier
+            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil
         )
 
         let analysisProblems: [Problem]
@@ -586,8 +584,7 @@ public struct ConvertAction: Action, RecreatingContext {
                 fileManager: fileManager,
                 context: context,
                 indexer: nil,
-                transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundleIdentifier
+                transformForStaticHostingIndexHTML: nil
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
@@ -597,10 +594,38 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
-        return try Self.createUniqueDirectory(inside: temporaryDirectory, template: templateURL, fileManager: fileManager)
+        let targetURL = temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
+        
+        if let templateURL = templateURL {
+            // If a template directory has been provided, create the temporary build folder with
+            // its contents
+            try fileManager.copyItem(at: templateURL, to: targetURL)
+        } else {
+            // Otherwise, just create the temporary build folder
+            try fileManager.createDirectory(
+                at: targetURL,
+                withIntermediateDirectories: true,
+                attributes: nil)
+        }
+        return targetURL
     }
     
     func moveOutput(from: URL, to: URL) throws {
-        return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
+        // We only need to move output if it exists
+        guard fileManager.fileExists(atPath: from.path) else { return }
+        
+        if fileManager.fileExists(atPath: to.path) {
+            try fileManager.removeItem(at: to)
+        }
+        
+        try ensureThatParentFolderExist(for: to)
+        try fileManager.moveItem(at: from, to: to)
+    }
+    
+    private func ensureThatParentFolderExist(for location: URL) throws {
+        let parentFolder = location.deletingLastPathComponent()
+        if !fileManager.directoryExists(atPath: parentFolder.path) {
+            try fileManager.createDirectory(at: parentFolder, withIntermediateDirectories: false, attributes: nil)
+        }
     }
 }

@@ -774,12 +774,9 @@
       }
     ]
   },
-  "includedArchiveIdentifiers": [
-    "org.swift.docc.example"
-  ],
   "schemaVersion" : {
     "major" : 0,
     "minor" : 1,
-    "patch" : 2
+    "patch" : 1
   }
 }

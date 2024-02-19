@@ -42,7 +42,6 @@ import XCTest
 /// - Warning: Use this type for unit testing.
 @_spi(FileManagerProtocol) // This needs to be SPI because it conforms to an SPI protocol
 public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
-    public let temporaryDirectory = URL(fileURLWithPath: "/tmp")
     public let currentDirectoryPath = "/"
     
     public var identifier: String = UUID().uuidString
@@ -55,7 +54,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
     
     /// Thread safe access to the file system.
     private var filesLock = NSRecursiveLock()
-
+    
     /// A plain index of paths and their contents.
     var files = [String: Data]()
     
@@ -83,7 +82,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
             let files = try addFolder(folder)
             
             func asCatalog(_ file: File) -> Folder? {
-                if let folder = file as? Folder, URL(fileURLWithPath: folder.name).pathExtension == "docc" {
+                if let folder = file as? Folder, folder.absoluteURL.pathExtension == "docc" {
                     return folder
                 }
                 return nil
@@ -101,7 +100,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
                 let info = try DocumentationBundle.Info(
                     from: try catalog.recursiveContent.mapFirst(where: { $0 as? InfoPlist })?.data(),
                     bundleDiscoveryOptions: nil,
-                    derivedDisplayName: URL(fileURLWithPath: catalog.name).deletingPathExtension().lastPathComponent
+                    derivedDisplayName: catalog.absoluteURL.deletingPathExtension().lastPathComponent
                 )
                 
                 let bundle = DocumentationBundle(
@@ -335,30 +334,11 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         }
     }
     
-    /// Returns a stable string representation of the file system from a given subpath.
-    ///
-    /// - Parameter path: The path to the sub hierarchy to dump to a string representation.
-    /// - Returns: A stable string representation that can be checked in tests.
-    public func dump(subHierarchyFrom path: String = "/") -> String {
+    func dump() -> String {
         filesLock.lock()
         defer { filesLock.unlock() }
-        
-        let relevantFilePaths: [String]
-        if path == "/" {
-            relevantFilePaths = Array(files.keys)
-        } else {
-            let lengthToRemove = path.distance(from: path.startIndex, to: path.lastIndex(of: "/")!) + 1
-            
-            relevantFilePaths = files.keys
-                .filter { $0.hasPrefix(path) }
-                .map { String($0.dropFirst(lengthToRemove)) }
-        }
-        return Folder.makeStructure(
-            filePaths: relevantFilePaths,
-            isEmptyDirectoryCheck: { files[$0] == Self.folderFixtureData }
-        )
-        .map { $0.dump() }
-        .joined(separator: "\n")
+
+        return files.keys.sorted().joined(separator: "\n")
     }
     
     // This is a convenience utility for testing, not FileManagerProtocol API
