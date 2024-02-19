@@ -152,7 +152,7 @@ class SymbolTests: XCTestCase {
                 # Leading heading is ignored
                 
                 @Metadata {
-                   @DocumentationExtension(mergeBehavior: append)
+                   @DocumentationExtension(mergeBehavior: override)
                 }
                 """
         )

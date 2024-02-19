@@ -23,6 +23,8 @@ Place the `DocumentationExtension` directive within a `Metadata` directive in a 
 }
 ```
 
+> Note:
+> You can specify a `append` merge behavior but it has the same effect as not defining a `@DocumentationExtension` and results in a warning.
 
 ### Containing Elements
 

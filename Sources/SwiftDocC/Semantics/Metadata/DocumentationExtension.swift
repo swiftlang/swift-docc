@@ -49,6 +49,25 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
         case override
     }
     
+    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
+        if behavior == .append {
+            let diagnostic = Diagnostic(
+                source: source,
+                severity: .information,
+                range: originalMarkup.range,
+                identifier: "org.swift.docc.\(Self.directiveName).NoConfiguration",
+                summary: "\(Self.directiveName.singleQuoted) doesn't change default configuration and has no effect"
+            )
+            
+            let solutions = originalMarkup.range.map {
+                [Solution(summary: "Remove this \(Self.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
+            } ?? []
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        }
+        
+        return true
+    }
+    
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
