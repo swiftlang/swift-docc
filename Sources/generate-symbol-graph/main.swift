@@ -581,7 +581,7 @@ func declarationFragments(
     return fragments
 }
 
-let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
+var symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
     let fragments = declarationFragments(
         for: directive.name,
         primaryReference: true,
@@ -633,6 +633,136 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
                     willEventuallyBeDeprecated: false
                 )
             ]),
+        ]
+    )
+}
+
+struct DocumentedCommand {
+    var name: String
+    var introduced: String
+    var deprecated: String?
+    var usage: String
+}
+
+let documentedCommands = [
+    DocumentedCommand(
+        name: "convert",
+        introduced: "5.5",
+        usage: """
+        docc convert \\
+          [<catalog-path>]
+          [--additional-symbol-graph-dir <symbol-graph-dir>] \\
+          [--output-dir <output-dir>]  \\
+          [<availability-options>] \\
+          [<diagnostic-options>] \\
+          [<source-repository-options>] \\
+          [<hosting-options>] \\
+          [<info-plist-fallbacks>] \\
+          [<feature-flags>] \\
+          [<other-options>]
+        """
+    ),
+    
+    DocumentedCommand(
+        name: "preview",
+        introduced: "5.5",
+        usage: """
+        docc preview \\
+          [--port <port-number>] \\
+          [<convert-options>]
+        """
+    ),
+    
+    DocumentedCommand(
+        name: "index",
+        introduced: "5.5",
+        usage: """
+        docc process-archive index \\
+          [<source-archive-path>] \\
+          --bundle-identifier <bundle-identifier> \\
+          [--verbose]
+        """
+    ),
+    
+    DocumentedCommand(
+        name: "transform-for-static-hosting",
+        introduced: "5.6",
+        usage: """
+        docc process-archive transform-for-static-hosting \\
+        [<source-archive-path>] \\
+        [--output-path <output-path>] \\
+        [--hosting-base-path <hosting-base-path>]
+        """
+    ),
+    
+    DocumentedCommand(
+        name: "emit-generated-curation",
+        introduced: "5.11",
+        usage: """
+        docc process-catalog emit-generated-curation \\
+          [<catalog-path>] \\
+          [--additional-symbol-graph-dir <symbol-graph-dir>] \\
+          [--output-path <output-path>] \\
+          [--from-symbol <symbol-link>] \\
+          [--depth <limit>]
+        """
+    ),   
+    
+    DocumentedCommand(
+        name: "init",
+        introduced: "5.11",
+        usage: """
+        docc init \\
+          --name <name> \\
+          --output-dir <output-dir> \\
+          --template <template-name>
+        """
+    ),
+]
+
+symbols += documentedCommands.map { command in
+    var scanner = CommandUsageScanner(command.usage[...])
+    let declarationFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = scanner.scanTokens().map {
+        switch $0.kind {
+        case .command:
+            return .init(kind: .identifier, spelling: $0.text, preciseIdentifier: nil)
+        case .text:
+            return .init(kind: .text, spelling: $0.text, preciseIdentifier: nil)
+        case .flag:
+            return .init(kind: .externalParameter, spelling: $0.text, preciseIdentifier: nil)
+        case .value:
+            return .init(kind: .typeIdentifier, spelling: $0.text, preciseIdentifier: nil)
+        }
+    }
+    
+    let subHeading = declarationFragments
+        .filter { $0.kind == .identifier }
+        .flatMap { [$0, .init(kind: .text, spelling: " ", preciseIdentifier: nil)] }
+        .dropLast() + [.init(kind: .text, spelling: " ...", preciseIdentifier: nil)]
+    
+    return SymbolGraph.Symbol(
+        identifier: SymbolGraph.Symbol.Identifier(precise: "__docc_universal_command_reference_$\(command.name)", interfaceLanguage: "swift"),
+        names: SymbolGraph.Symbol.Names(title: command.name, navigator: nil, subHeading: Array(subHeading), prose: nil),
+        pathComponents: [command.name],
+        docComment: nil,
+        accessLevel: .public,
+        kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Command"),
+        mixins: [
+            SymbolGraph.Symbol.DeclarationFragments.mixinKey: SymbolGraph.Symbol.DeclarationFragments(declarationFragments: declarationFragments),
+            
+            SymbolGraph.Symbol.Availability.mixinKey: SymbolGraph.Symbol.Availability(availability: [
+                .init(
+                    domain: .init(rawValue: "Swift-DocC"),
+                    introducedVersion: .init(string: command.introduced),
+                    deprecatedVersion: command.deprecated.flatMap { .init(string: $0) },
+                    obsoletedVersion: nil,
+                    message: nil,
+                    renamed: nil,
+                    isUnconditionallyDeprecated: false,
+                    isUnconditionallyUnavailable: false,
+                    willEventuallyBeDeprecated: false
+                )
+            ])
         ]
     )
 }

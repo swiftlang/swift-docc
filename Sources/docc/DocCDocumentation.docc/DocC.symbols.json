@@ -40,6 +40,736 @@
       ],
       "declarationFragments" : [
         {
+          "kind" : "identifier",
+          "spelling" : "docc"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "convert"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<catalog-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "]\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--additional-symbol-graph-dir"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<symbol-graph-dir>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--output-dir"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<output-dir>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "]  \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<availability-options>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<diagnostic-options>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<source-repository-options>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<hosting-options>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<info-plist-fallbacks>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<feature-flags>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<other-options>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "]"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_command_reference_$convert"
+      },
+      "kind" : {
+        "displayName" : "Command",
+        "identifier" : "class"
+      },
+      "names" : {
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "docc"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "convert"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " ..."
+          }
+        ],
+        "title" : "convert"
+      },
+      "pathComponents" : [
+        "convert"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 11,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "docc"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "process-catalog"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "emit-generated-curation"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<catalog-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--additional-symbol-graph-dir"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<symbol-graph-dir>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--output-path"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<output-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--from-symbol"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<symbol-link>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--depth"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<limit>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "]"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_command_reference_$emit-generated-curation"
+      },
+      "kind" : {
+        "displayName" : "Command",
+        "identifier" : "class"
+      },
+      "names" : {
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "docc"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "process-catalog"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "emit-generated-curation"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " ..."
+          }
+        ],
+        "title" : "emit-generated-curation"
+      },
+      "pathComponents" : [
+        "emit-generated-curation"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "docc"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "process-archive"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "index"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<source-archive-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  "
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--bundle-identifier"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<bundle-identifier>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--verbose]"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_command_reference_$index"
+      },
+      "kind" : {
+        "displayName" : "Command",
+        "identifier" : "class"
+      },
+      "names" : {
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "docc"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "process-archive"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "index"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " ..."
+          }
+        ],
+        "title" : "index"
+      },
+      "pathComponents" : [
+        "index"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 11,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "docc"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "init"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  "
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--name"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<name>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  "
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--output-dir"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<output-dir>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  "
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--template"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<template-name>"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_command_reference_$init"
+      },
+      "kind" : {
+        "displayName" : "Command",
+        "identifier" : "class"
+      },
+      "names" : {
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "docc"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " ..."
+          }
+        ],
+        "title" : "init"
+      },
+      "pathComponents" : [
+        "init"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "docc"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "preview"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n  ["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--port"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<port-number>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n  ["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<convert-options>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "]"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_command_reference_$preview"
+      },
+      "kind" : {
+        "displayName" : "Command",
+        "identifier" : "class"
+      },
+      "names" : {
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "docc"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "preview"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " ..."
+          }
+        ],
+        "title" : "preview"
+      },
+      "pathComponents" : [
+        "preview"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 6,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "docc"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "process-archive"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "transform-for-static-hosting"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " \\\n["
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<source-archive-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--output-path"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<output-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "] \\\n["
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "--hosting-base-path"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "<hosting-base-path>"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "]"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_command_reference_$transform-for-static-hosting"
+      },
+      "kind" : {
+        "displayName" : "Command",
+        "identifier" : "class"
+      },
+      "names" : {
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "docc"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "process-archive"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "transform-for-static-hosting"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " ..."
+          }
+        ],
+        "title" : "transform-for-static-hosting"
+      },
+      "pathComponents" : [
+        "transform-for-static-hosting"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
           "kind" : "typeIdentifier",
           "spelling" : "@"
         },
@@ -2001,13 +2731,13 @@
             "text" : ""
           },
           {
-            "text" : "When the ``style`` property is ``Style\/conceptual``, the symbol's name is rendered as \"conceptual\"—same as article names or tutorial names —where applicable. The default style is ``Style\/conceptual``."
+            "text" : "When the ``style`` property is ``Style\/conceptual``, the symbol's name is rendered as \"conceptual\"---same as article names or tutorial names---where applicable. The default style is ``Style\/conceptual``."
           },
           {
             "text" : ""
           },
           {
-            "text" : "When the ``style`` property is ``Style\/symbol``, the symbol's name is rendered as \"symbol\"—same as article names or tutorial names —where applicable. The default style is ``Style\/conceptual``."
+            "text" : "When the ``style`` property is ``Style\/symbol``, the symbol's name is rendered as \"symbol\"---same as article names or tutorial names---where applicable. The default style is ``Style\/conceptual``."
           },
           {
             "text" : ""
@@ -4094,7 +4824,22 @@
             "text" : ""
           },
           {
-            "text" : "If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL."
+            "text" : "If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL. For example:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Redirected(from: \"old\/path\/to\/this\/page\")"
+          },
+          {
+            "text" : "@Redirected(from: \"another\/old\/path\/to\/this\/page\")"
+          },
+          {
+            "text" : "```"
           },
           {
             "text" : ""
@@ -4121,10 +4866,19 @@
             "text" : ""
           },
           {
-            "text" : "To find each page's `Redirected` values, pass the `--emit-digest` flag to DocC and read the \"linkable-entities.json\" file that this makes DocC write to the output directory. "
+            "text" : "To find each page’s Redirected values, pass the `--emit-digest` flag to DocC."
           },
           {
-            "text" : "Each \"entity\" in that file has a \"path\"---which represents the current relative path of that page---and an optional list of \"redirects\"---which represent all the `Redirected` values for page as they were authored in the markup. You can write either relative redirect values or absolute redirect values depending on what information you need to set HTTP \"301 Moved Permanently\" redirects on your web server."
+            "text" : "This flag configures DocC to write additional metadata files to the output directory."
+          },
+          {
+            "text" : "One of these files, `linkable-entities.json`, contains summarized information about all pages and on-page landmarks that you can link to from outside the DocC documentation."
+          },
+          {
+            "text" : "Each of these \"entities\" has a `\"path\"`---which represents the current relative path of that page---and an optional list of `\"redirects\"`---which represent all the `Redirected` values for page as they were authored in the markup."
+          },
+          {
+            "text" : "You can write either relative redirect values or absolute redirect values in the markup depending on what information you need when setting up HTTP \"301 Moved Permanently\" redirects on your web server."
           },
           {
             "text" : "- Parameters:"
