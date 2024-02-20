@@ -1051,8 +1051,8 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "documentation/MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
         XCTAssertEqual(try tree.findSymbol(path: "/documentation/MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
         
-        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("documentation", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
-        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
+        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("documentation", nil), ("MixedFramework", nil), ("MyEnum", nil)])
+        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil), ("MixedFramework", nil), ("MyEnum", nil)])
     }
     
     func testTestBundle() throws {
@@ -1841,46 +1841,46 @@ class PathHierarchyTests: XCTestCase {
         // Check path components without disambiguation
         assertParsedPathComponents("", [])
         assertParsedPathComponents("/", [])
-        assertParsedPathComponents("/first", [("first", nil, nil)])
-        assertParsedPathComponents("first", [("first", nil, nil)])
-        assertParsedPathComponents("first/", [("first", nil, nil)])
-        assertParsedPathComponents("first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
-        assertParsedPathComponents("/first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
-        assertParsedPathComponents("first/", [("first", nil, nil)])
-        assertParsedPathComponents("first//second", [("first", nil, nil), ("/second", nil, nil)])
-        assertParsedPathComponents("first/second#third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
-        assertParsedPathComponents("#first", [("first", nil, nil)])
+        assertParsedPathComponents("/first", [("first", nil)])
+        assertParsedPathComponents("first", [("first", nil)])
+        assertParsedPathComponents("first/", [("first", nil)])
+        assertParsedPathComponents("first/second/third", [("first", nil), ("second", nil), ("third", nil)])
+        assertParsedPathComponents("/first/second/third", [("first", nil), ("second", nil), ("third", nil)])
+        assertParsedPathComponents("first/", [("first",  nil)])
+        assertParsedPathComponents("first//second", [("first", nil), ("/second", nil)])
+        assertParsedPathComponents("first/second#third", [("first", nil), ("second", nil), ("third", nil)])
+        assertParsedPathComponents("#first", [("first", nil)])
 
         // Check disambiguation
-        assertParsedPathComponents("path-hash", [("path", nil, "hash")])
-        assertParsedPathComponents("path-struct", [("path", "struct", nil)])
-        assertParsedPathComponents("path-struct-hash", [("path", "struct", "hash")])
+        assertParsedPathComponents("path-hash", [("path", .kindAndHash(kind: nil, hash: "hash"))])
+        assertParsedPathComponents("path-struct", [("path", .kindAndHash(kind: "struct", hash: nil))])
+        assertParsedPathComponents("path-struct-hash", [("path", .kindAndHash(kind: "struct", hash: "hash"))])
         
-        assertParsedPathComponents("path-swift.something", [("path", "something", nil)])
-        assertParsedPathComponents("path-c.something", [("path", "something", nil)])
+        assertParsedPathComponents("path-swift.something", [("path", .kindAndHash(kind: "something", hash: nil))])
+        assertParsedPathComponents("path-c.something", [("path", .kindAndHash(kind: "something", hash: nil))])
         
-        assertParsedPathComponents("path-swift.something-hash", [("path", "something", "hash")])
-        assertParsedPathComponents("path-c.something-hash", [("path", "something", "hash")])
+        assertParsedPathComponents("path-swift.something-hash", [("path", .kindAndHash(kind: "something", hash: "hash"))])
+        assertParsedPathComponents("path-c.something-hash", [("path", .kindAndHash(kind: "something", hash: "hash"))])
         
-        assertParsedPathComponents("path-type.property-hash", [("path", "type.property", "hash")])
-        assertParsedPathComponents("path-swift.type.property-hash", [("path", "type.property", "hash")])
-        assertParsedPathComponents("path-type.property", [("path", "type.property", nil)])
-        assertParsedPathComponents("path-swift.type.property", [("path", "type.property", nil)])
+        assertParsedPathComponents("path-type.property-hash", [("path", .kindAndHash(kind: "type.property", hash: "hash"))])
+        assertParsedPathComponents("path-swift.type.property-hash", [("path", .kindAndHash(kind: "type.property", hash: "hash"))])
+        assertParsedPathComponents("path-type.property", [("path", .kindAndHash(kind: "type.property", hash: nil))])
+        assertParsedPathComponents("path-swift.type.property", [("path", .kindAndHash(kind: "type.property", hash: nil))])
         
-        assertParsedPathComponents("-(_:_:)-hash", [("-(_:_:)", nil, "hash")])
-        assertParsedPathComponents("/=(_:_:)", [("/=(_:_:)", nil, nil)])
-        assertParsedPathComponents("/(_:_:)-func.op", [("/(_:_:)", "func.op", nil)])
-        assertParsedPathComponents("//(_:_:)-hash", [("//(_:_:)", nil, "hash")])
-        assertParsedPathComponents("+/-(_:_:)", [("+/-(_:_:)", nil, nil)])
-        assertParsedPathComponents("+/-(_:_:)-hash", [("+/-(_:_:)", nil, "hash")])
-        assertParsedPathComponents("+/-(_:_:)-func.op", [("+/-(_:_:)", "func.op", nil)])
-        assertParsedPathComponents("+/-(_:_:)-func.op-hash", [("+/-(_:_:)", "func.op", "hash")])
-        assertParsedPathComponents("+/-(_:_:)/+/-(_:_:)/+/-(_:_:)/+/-(_:_:)", [("+/-(_:_:)", nil, nil), ("+/-(_:_:)", nil, nil), ("+/-(_:_:)", nil, nil), ("+/-(_:_:)", nil, nil)])
-        assertParsedPathComponents("+/-(_:_:)-hash/+/-(_:_:)-func.op/+/-(_:_:)-func.op-hash/+/-(_:_:)", [("+/-(_:_:)", nil, "hash"), ("+/-(_:_:)", "func.op", nil), ("+/-(_:_:)", "func.op", "hash"), ("+/-(_:_:)", nil, nil)])
+        assertParsedPathComponents("-(_:_:)-hash", [("-(_:_:)", .kindAndHash(kind: nil, hash: "hash"))])
+        assertParsedPathComponents("/=(_:_:)", [("/=(_:_:)", nil)])
+        assertParsedPathComponents("/(_:_:)-func.op", [("/(_:_:)", .kindAndHash(kind: "func.op", hash: nil))])
+        assertParsedPathComponents("//(_:_:)-hash", [("//(_:_:)", .kindAndHash(kind: nil, hash: "hash"))])
+        assertParsedPathComponents("+/-(_:_:)", [("+/-(_:_:)", nil)])
+        assertParsedPathComponents("+/-(_:_:)-hash", [("+/-(_:_:)", .kindAndHash(kind: nil, hash: "hash"))])
+        assertParsedPathComponents("+/-(_:_:)-func.op", [("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: nil))])
+        assertParsedPathComponents("+/-(_:_:)-func.op-hash", [("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: "hash"))])
+        assertParsedPathComponents("+/-(_:_:)/+/-(_:_:)/+/-(_:_:)/+/-(_:_:)", [("+/-(_:_:)", nil), ("+/-(_:_:)", nil), ("+/-(_:_:)", nil), ("+/-(_:_:)", nil)])
+        assertParsedPathComponents("+/-(_:_:)-hash/+/-(_:_:)-func.op/+/-(_:_:)-func.op-hash/+/-(_:_:)", [("+/-(_:_:)", .kindAndHash(kind: nil, hash: "hash")), ("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: nil)), ("+/-(_:_:)", .kindAndHash(kind: "func.op", hash: "hash")), ("+/-(_:_:)", nil)])
         
-        assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil, nil), ("/=(_:_:)", nil, nil)])
-        assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil, nil), ("///=(_:_:)", nil, nil)])
-        assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil, nil), ("+/-(_:_:)", nil, nil)])
+        assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
+        assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
+        assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
     }
     
     // MARK: Test helpers
@@ -1970,13 +1970,20 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertParsedPathComponents(_ path: String, _ expected: [(String, String?, String?)], file: StaticString = #file, line: UInt = #line) {
+    private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #file, line: UInt = #line) {
         let (actual, _) = PathHierarchy.PathParser.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
             XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component", file: file, line: line)
-            XCTAssertEqual(actualComponents.kind.map(String.init), expectedComponents.1, "Incorrect kind disambiguation", file: file, line: line)
-            XCTAssertEqual(actualComponents.hash.map(String.init), expectedComponents.2, "Incorrect hash disambiguation", file: file, line: line)
+            switch (actualComponents.disambiguation, expectedComponents.1) {
+            case (.kindAndHash(let actualKind, let actualHash), .kindAndHash(let expectedKind, let expectedHash)):
+                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation", file: file, line: line)
+                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation", file: file, line: line)
+            case (nil, nil):
+                continue
+            default:
+                XCTFail("Incorrect type of disambiguation", file: file, line: line)
+            }
         }
     }
 }

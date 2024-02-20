@@ -241,8 +241,3 @@ extension TaskGroup {
     }
 }
 
-private extension SourceRange {
-    var source: URL? {
-        lowerBound.source ?? upperBound.source
-    }
-}

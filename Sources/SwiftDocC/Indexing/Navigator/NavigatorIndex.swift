@@ -304,6 +304,9 @@ public class NavigatorIndex {
 
         // A property list key.
         case propertyListKeyReference = 47
+
+        // C++ symbols
+        case namespace = 48
         
         // Special items
         case languageGroup = 127
@@ -336,6 +339,7 @@ public class NavigatorIndex {
             case "enumcm", "structcm", "clm", "intfcm", "type.method": self = .typeMethod
             case "httpget", "httpput", "httppost", "httppatch", "httpdelete": self = .httpRequest
             case "dict": self = .dictionarySymbol
+            case "namespace": self = .namespace
             default: self = .symbol
             }
         }

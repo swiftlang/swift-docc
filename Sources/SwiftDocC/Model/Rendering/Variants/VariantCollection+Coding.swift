@@ -112,7 +112,9 @@ extension KeyedEncodingContainer {
                 encoder,
                 
                 // Add the index to the encoder's coding path, since the coding path refers to the array.
-                pointer: JSONPointer(from: encoder.codingPath + [key, JSON.IntegerKey(index)])
+                pointer: JSONPointer(from: encoder.codingPath + [key, JSON.IntegerKey(index)]),
+                // Since `nil` default values are filtered out above, we need to know when to `add` instead of `replace` an item.
+                isDefaultValueEncoded: variantCollection.defaultValue != nil
             )
         }
     }
