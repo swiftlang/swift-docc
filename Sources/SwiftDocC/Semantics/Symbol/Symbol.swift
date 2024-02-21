@@ -36,6 +36,7 @@ import SymbolKit
 /// - ``accessLevelVariants``
 /// - ``deprecatedSummaryVariants``
 /// - ``declarationVariants``
+/// - ``attributesVariants``
 /// - ``locationVariants``
 /// - ``constraintsVariants``
 /// - ``originVariants``
@@ -145,9 +146,12 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         defaultVariantValue: [:]
     )
 
-    /// The symbols alternate declarations in each language variant the symbol is available in.
+    /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
+    /// The symbol's possible values in each language variant the symbol is available in.
+    public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
+    
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
 
     /// The symbol's availability or conformance constraints, in each language variant the symbol is available in.
@@ -304,6 +308,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.mixinsVariants = mixinsVariants
         
         for (trait, variant) in mixinsVariants.allValues {
+            var attributesVariants: [RenderAttribute.Kind: Any] = [:]
             for item in variant.values {
                 switch item {
                 case let declaration as SymbolGraph.Symbol.DeclarationFragments:
@@ -317,9 +322,33 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                     self.isSPIVariants[trait] = spi.isSPI
                 case let alternateDeclarations as SymbolGraph.Symbol.AlternateDeclarations:
                     self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
+                
+                case let attribute as SymbolGraph.Symbol.Minimum:
+                    attributesVariants[.minimum] = attribute.value
+                case let attribute as SymbolGraph.Symbol.Maximum:
+                    attributesVariants[.maximum] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MinimumExclusive:
+                    attributesVariants[.minimumExclusive] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MaximumExclusive:
+                    attributesVariants[.maximumExclusive] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MinimumLength:
+                    attributesVariants[.minimumLength] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MaximumLength:
+                    attributesVariants[.maximumLength] = attribute.value
+                case let attribute as SymbolGraph.Symbol.DefaultValue:
+                    attributesVariants[.default] = attribute.value
+                
+                case let attribute as SymbolGraph.Symbol.TypeDetails:
+                    attributesVariants[.allowedTypes] = attribute.value
+                case let attribute as SymbolGraph.Symbol.AllowedValues:
+                    attributesVariants[.allowedValues] = attribute.value
                 default: break;
                 }
             }
+            if attributesVariants.count > 0 {
+                self.attributesVariants[trait] = attributesVariants
+            }
+
         }
         
         if !relationshipsVariants.isEmpty {
@@ -534,6 +563,12 @@ extension Symbol {
     public var declaration: [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
         get { declarationVariants.firstValue! }
         set { declarationVariants.firstValue = newValue }
+    }
+    
+    /// The first variant of the symbol's attributes.
+    public var attributes: [RenderAttribute.Kind: Any]? {
+        get { attributesVariants.firstValue! }
+        set { attributesVariants.firstValue = newValue }
     }
     
     /// The place where the first variant of the symbol was originally declared in a source file.
