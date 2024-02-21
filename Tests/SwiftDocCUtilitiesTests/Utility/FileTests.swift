@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,5 +54,48 @@ class FileTests: XCTestCase {
         // Compare the paths from disk and in the `Folder` are identical
         XCTAssertEqual(diskPaths.count, folderPaths.count)
         XCTAssertEqual(diskPaths, folderPaths)
+    }
+    
+    func testMakingDirectoryStructure() throws {
+        XCTAssertEqual(Folder.makeStructure(filePaths: ["one/two/a.json", "one/two/b.json"]).first!.dump(), """
+        one/
+        ╰─ two/
+           ├─ a.json
+           ╰─ b.json
+        """)
+        
+        XCTAssertEqual(Folder.makeStructure(filePaths: ["one/two.json", "one/two/three.json"]).first!.dump(), """
+        one/
+        ├─ two.json
+        ╰─ two/
+           ╰─ three.json
+        """)
+        
+        XCTAssertEqual(Folder.makeStructure(filePaths: [
+            "documentation/first/index.html",
+            "documentation/first/abc-page/index.html",
+            "documentation/first/xyz-page/index.html",
+        ]).first!.dump(), """
+        documentation/
+        ╰─ first/
+           ├─ abc-page/
+           │  ╰─ index.html
+           ├─ index.html
+           ╰─ xyz-page/
+              ╰─ index.html
+        """)
+        
+        XCTAssertEqual(Folder.makeStructure(filePaths: [
+            "data/documentation/first.json",
+            "data/documentation/first/abc-page.json",
+            "data/documentation/first/xyz-page.json",
+        ]).first!.dump(), """
+        data/
+        ╰─ documentation/
+           ├─ first.json
+           ╰─ first/
+              ├─ abc-page.json
+              ╰─ xyz-page.json
+        """)
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -343,10 +343,13 @@ Root
                 """
                 {
                   "interfaceLanguages": {},
+                  "includedArchiveIdentifiers": [
+                    "org.swift.docc.example"
+                  ],
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                   }
                 }
                 """
@@ -531,10 +534,13 @@ Root
                       }
                     ]
                   },
+                  "includedArchiveIdentifiers": [
+                    "org.swift.docc.example"
+                  ],
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                   }
                 }
                 """#
@@ -1250,6 +1256,7 @@ Root
         XCTAssertEqual(PageType(symbolKind: "union"), .union)
         XCTAssertEqual(PageType(symbolKind: "property"), .instanceProperty)
         XCTAssertEqual(PageType(symbolKind: "dict"), .dictionarySymbol)
+        XCTAssertEqual(PageType(symbolKind: "namespace"), .namespace)
         
         func verifySymbolKind(_ inputs: [String], _ result: PageType) {
             for input in inputs {

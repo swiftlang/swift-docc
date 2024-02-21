@@ -453,7 +453,8 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        let bundleIdentifier = converter.firstAvailableBundle()?.identifier
+        if let bundleIdentifier = bundleIdentifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -465,7 +466,8 @@ public struct ConvertAction: Action, RecreatingContext {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil
+            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
+            bundleIdentifier: bundleIdentifier
         )
 
         let analysisProblems: [Problem]
@@ -482,15 +484,42 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
-        if try context.renderRootModules.isEmpty {
+        let hasTutorial = context.knownPages.contains(where: {
+            guard let kind = try? context.entity(with: $0).kind else { return false }
+            return kind == .tutorial || kind == .tutorialArticle
+        })
+        // Warn the user if the catalog is a tutorial but does not contains a table of contents
+        // and provide template content to fix this problem.
+        if (
+            context.rootTechnologies.isEmpty &&
+            hasTutorial
+        ) {
+            let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
+            let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
+            var replacements = [Replacement]()
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {
+                replacements.append(
+                    Replacement(
+                        range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
+                        replacement: tableOfContentsTemplate
+                    )
+                )
+            }
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
+                        source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTechnologyRoot",
-                         summary: "No TechnologyRoot to organize article-only documentation.",
-                         explanation: "Article-only documentation needs a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
-                     )
+                        identifier: "org.swift.docc.MissingTableOfContents",
+                        summary: "Missing tutorial table of contents page.",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                    ),
+                    possibleSolutions: [
+                        Solution(
+                            summary: "Create a `@Tutorials` table of content page.",
+                            replacements: replacements
+                        )
+                    ]
                 )
             )
         }
@@ -557,7 +586,8 @@ public struct ConvertAction: Action, RecreatingContext {
                 fileManager: fileManager,
                 context: context,
                 indexer: nil,
-                transformForStaticHostingIndexHTML: nil
+                transformForStaticHostingIndexHTML: nil,
+                bundleIdentifier: bundleIdentifier
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
@@ -567,38 +597,10 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
-        let targetURL = temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        if let templateURL = templateURL {
-            // If a template directory has been provided, create the temporary build folder with
-            // its contents
-            try fileManager.copyItem(at: templateURL, to: targetURL)
-        } else {
-            // Otherwise, just create the temporary build folder
-            try fileManager.createDirectory(
-                at: targetURL,
-                withIntermediateDirectories: true,
-                attributes: nil)
-        }
-        return targetURL
+        return try Self.createUniqueDirectory(inside: temporaryDirectory, template: templateURL, fileManager: fileManager)
     }
     
     func moveOutput(from: URL, to: URL) throws {
-        // We only need to move output if it exists
-        guard fileManager.fileExists(atPath: from.path) else { return }
-        
-        if fileManager.fileExists(atPath: to.path) {
-            try fileManager.removeItem(at: to)
-        }
-        
-        try ensureThatParentFolderExist(for: to)
-        try fileManager.moveItem(at: from, to: to)
-    }
-    
-    private func ensureThatParentFolderExist(for location: URL) throws {
-        let parentFolder = location.deletingLastPathComponent()
-        if !fileManager.directoryExists(atPath: parentFolder.path) {
-            try fileManager.createDirectory(at: parentFolder, withIntermediateDirectories: false, attributes: nil)
-        }
+        return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
     }
 }
