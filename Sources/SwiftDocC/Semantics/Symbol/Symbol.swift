@@ -308,7 +308,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.mixinsVariants = mixinsVariants
         
         for (trait, variant) in mixinsVariants.allValues {
-            var attributesVariants: [RenderAttribute.Kind: Any] = [:]
+            var attributes: [RenderAttribute.Kind: Any] = [:]
             for item in variant.values {
                 switch item {
                 case let declaration as SymbolGraph.Symbol.DeclarationFragments:
@@ -324,29 +324,32 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                     self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
                 
                 case let attribute as SymbolGraph.Symbol.Minimum:
-                    attributesVariants[.minimum] = attribute.value
+                    attributes[.minimum] = attribute.value
                 case let attribute as SymbolGraph.Symbol.Maximum:
-                    attributesVariants[.maximum] = attribute.value
+                    attributes[.maximum] = attribute.value
                 case let attribute as SymbolGraph.Symbol.MinimumExclusive:
-                    attributesVariants[.minimumExclusive] = attribute.value
+                    attributes[.minimumExclusive] = attribute.value
                 case let attribute as SymbolGraph.Symbol.MaximumExclusive:
-                    attributesVariants[.maximumExclusive] = attribute.value
+                    attributes[.maximumExclusive] = attribute.value
                 case let attribute as SymbolGraph.Symbol.MinimumLength:
-                    attributesVariants[.minimumLength] = attribute.value
+                    attributes[.minimumLength] = attribute.value
                 case let attribute as SymbolGraph.Symbol.MaximumLength:
-                    attributesVariants[.maximumLength] = attribute.value
+                    attributes[.maximumLength] = attribute.value
                 case let attribute as SymbolGraph.Symbol.DefaultValue:
-                    attributesVariants[.default] = attribute.value
+                    attributes[.default] = attribute.value
                 
                 case let attribute as SymbolGraph.Symbol.TypeDetails:
-                    attributesVariants[.allowedTypes] = attribute.value
+                    attributes[.allowedTypes] = attribute.value
                 case let attribute as SymbolGraph.Symbol.AllowedValues:
-                    attributesVariants[.allowedValues] = attribute.value
+                    // Allowed values are part of a symbol's attributes and listed among the rest,
+                    // but individual values can be optionally documented within a Possible Values section.
+                    self.possibleValuesVariants[trait] = attribute.value
+                    attributes[.allowedValues] = attribute.value
                 default: break;
                 }
             }
-            if attributesVariants.count > 0 {
-                self.attributesVariants[trait] = attributesVariants
+            if !attributes.isEmpty {
+                self.attributesVariants[trait] = attributes
             }
 
         }
@@ -563,12 +566,6 @@ extension Symbol {
     public var declaration: [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
         get { declarationVariants.firstValue! }
         set { declarationVariants.firstValue = newValue }
-    }
-    
-    /// The first variant of the symbol's attributes.
-    public var attributes: [RenderAttribute.Kind: Any]? {
-        get { attributesVariants.firstValue! }
-        set { attributesVariants.firstValue = newValue }
     }
     
     /// The place where the first variant of the symbol was originally declared in a source file.
