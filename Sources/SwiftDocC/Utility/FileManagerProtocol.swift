@@ -50,9 +50,11 @@ public protocol FileManagerProtocol {
     /// Returns a list of items in a directory
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
-
-    /// The temporary directory for the current user.
-    var temporaryDirectory: URL { get }
+    
+    /// Returns a unique temporary directory.
+    ///
+    /// Each call to this function will return a new temporary directory.
+    func uniqueTemporaryDirectory() -> URL // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol
     
     /// Creates a file with the specified `contents` at the specified location.
     ///
@@ -103,5 +105,10 @@ extension FileManager: FileManagerProtocol {
         } else {
             try contents.write(to: location)
         }
+    }
+    
+    // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol/
+    public func uniqueTemporaryDirectory() -> URL {
+        temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
     }
 }
