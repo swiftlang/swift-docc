@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -81,7 +81,7 @@ public struct VideoReference: MediaReference, URLReference, Equatable {
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
         asset.variants.sorted(by: \.value.path).forEach { (key, value) in
-            let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
+            let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent, prefixComponent: encoder.assetPrefixComponent)
             result.append(VariantProxy(url: url, traits: key))
         }
         try container.encode(result, forKey: .variants)
