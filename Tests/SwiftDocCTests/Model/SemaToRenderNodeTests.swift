@@ -2987,6 +2987,10 @@ Document
               "name": "Custom Title"
             }
             """)
+            
+        for style in Aside.Kind.allCases.map({ RenderBlockContent.AsideStyle(asideKind: $0) }) + [.init(displayName: "Custom Title")] {
+            try assertRoundTripCoding(RenderBlockContent.aside(.init(style: style, content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))])))
+        }
     }
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.
