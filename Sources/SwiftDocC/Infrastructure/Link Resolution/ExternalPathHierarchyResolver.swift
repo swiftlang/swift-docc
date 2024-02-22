@@ -207,7 +207,7 @@ private extension LinkDestinationSummary {
             identifier: .init(referenceURL.absoluteString),
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
-            url: referenceURL.absoluteString,
+            url: relativePresentationURL.absoluteString,
             kind: kind,
             required: false,
             role: role,
