@@ -391,7 +391,8 @@ extension DefaultDiagnosticConsoleFormatter {
             let highlightedSource = highlightSource(
                 sourceLine: sourceLine,
                 lineNumber: lineNumber,
-                range: diagnosticRange
+                range: diagnosticRange, 
+                _diagnostic: diagnostic
             )
             
             let separator: String
@@ -469,42 +470,46 @@ extension DefaultDiagnosticConsoleFormatter {
     private func highlightSource(
         sourceLine: String,
         lineNumber: Int,
-        range: SourceRange
+        range: SourceRange,
+        _diagnostic: Diagnostic // used in a debug assertion to identify diagnostics with incorrect source ranges
     ) -> String {
         guard highlight,
               lineNumber >= range.lowerBound.line && lineNumber <= range.upperBound.line,
               !sourceLine.isEmpty
-        else { return sourceLine }
-        
-        var startColumn: Int
-        if lineNumber == range.lowerBound.line {
-            startColumn = range.lowerBound.column
-        } else {
-            startColumn = 1
+        else {
+            return sourceLine
         }
         
-        var endColumn: Int
-        if lineNumber == range.upperBound.line {
-            endColumn = range.upperBound.column
-        } else {
-            endColumn = sourceLine.count + 1
+        guard range.lowerBound.line == range.upperBound.line else {
+            // When highlighting multiple lines, highlight the full line
+            return ANSIAnnotation.sourceHighlight.applied(to: sourceLine)
         }
 
         let sourceLineUTF8 = sourceLine.utf8
-
-        let columnRange = startColumn..<endColumn
-        let startIndex = sourceLineUTF8.index(sourceLineUTF8.startIndex, offsetBy: columnRange.lowerBound - 1)
-        let endIndex = sourceLineUTF8.index(startIndex, offsetBy: columnRange.count)
-        let highlightRange = startIndex..<endIndex
         
-        let ansiAnnotation = ANSIAnnotation.sourceHighlight
-
-        var result = ""
-        result += sourceLine[sourceLine.startIndex..<highlightRange.lowerBound]
-        result += ansiAnnotation.applied(to: String(sourceLine[highlightRange]))
-        result += sourceLine[highlightRange.upperBound..<sourceLine.endIndex]
+        let highlightStart = range.lowerBound.column - 1
+        let highlightEnd = range.upperBound.column - 1
         
-        return result
+        assert(highlightStart <= sourceLineUTF8.count, {
+            """
+            Received diagnostic with incorrect source range; (\(range.lowerBound.column) ..< \(range.upperBound.column)) extends beyond the text on line \(lineNumber) (\(sourceLineUTF8.count) characters)
+             █\(sourceLine)
+             █\(String(repeating: " ", count: range.lowerBound.column))\(String(repeating: "~", count: range.upperBound.column - range.lowerBound.column))
+            Use this diagnostic information to reproduce the issue and correct the diagnostic range where it's emitted.
+             ID      : \(_diagnostic.identifier)
+             SUMMARY : \(_diagnostic.summary)
+             SOURCE  : \(_diagnostic.source?.path ?? _diagnostic.range?.source?.path ?? "<nil>")
+            """
+        }())
+        
+        guard let before = String(sourceLineUTF8.prefix(highlightStart)),
+              let highlighted = String(sourceLineUTF8.dropFirst(highlightStart).prefix(highlightEnd - highlightStart)),
+              let after = String(sourceLineUTF8.dropFirst(highlightEnd))
+        else {
+            return sourceLine
+        }
+        
+        return "\(before)\(ANSIAnnotation.sourceHighlight.applied(to: highlighted))\(after)"
     }
 
     private func readSourceLines(_ url: URL) -> [String] {
