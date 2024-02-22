@@ -36,6 +36,7 @@ import SymbolKit
 /// - ``accessLevelVariants``
 /// - ``deprecatedSummaryVariants``
 /// - ``declarationVariants``
+/// - ``possibleValuesVariants``
 /// - ``attributesVariants``
 /// - ``locationVariants``
 /// - ``constraintsVariants``
@@ -149,6 +150,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
+    /// The symbol's possible values in each language variant the symbol is available in.
+    public var possibleValuesVariants = DocumentationDataVariants<[SymbolGraph.AnyScalar]>()
+    
     /// The symbol's possible values in each language variant the symbol is available in.
     public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
     
@@ -341,9 +345,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                 case let attribute as SymbolGraph.Symbol.TypeDetails:
                     attributes[.allowedTypes] = attribute.value
                 case let attribute as SymbolGraph.Symbol.AllowedValues:
-                    // Allowed values are part of a symbol's attributes and listed among the rest,
-                    // but individual values can be optionally documented within a Possible Values section.
-                    self.possibleValuesVariants[trait] = attribute.value
                     attributes[.allowedValues] = attribute.value
                 default: break;
                 }
