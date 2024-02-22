@@ -107,7 +107,17 @@ public struct DocumentationNode {
         } else if let discussionVariants = (semantic as? Symbol)?.discussionVariants {
             discussionSections = discussionVariants.allValues.map(\.variant)
         } else {
-            return
+            discussionSections = []
+        }
+        
+        var seenAnchorTitles = Set<String>()
+        
+        func addAnchorSection(title: String) {
+            guard !title.isEmpty, !seenAnchorTitles.contains(title) else { return }
+            seenAnchorTitles.insert(title)
+            anchorSections.append(
+                AnchorSection(reference: reference.withFragment(title), title: title)
+            )
         }
         
         for discussion in discussionSections {
@@ -116,11 +126,22 @@ public struct DocumentationNode {
                 // create an `AnchorSection` and add it to `anchorSections`
                 // so we can index all anchors found in the bundle for link resolution.
                 if let heading = child as? Heading, heading.level > 1 {
-                    anchorSections.append(
-                        AnchorSection(reference: reference.withFragment(heading.plainText), title: heading.plainText)
-                    )
+                    addAnchorSection(title: heading.plainText)
                 }
             }
+        }
+        
+        let taskGroups: [TaskGroup]?
+        if let article = semantic as? Article {
+            taskGroups = article.topics?.taskGroups
+        } else if let symbol = semantic as? Symbol {
+            taskGroups = symbol.topics?.taskGroups
+        } else {
+            taskGroups = nil
+        }
+        
+        for taskGroup in taskGroups ?? [] {
+            addAnchorSection(title: taskGroup.heading?.plainText ?? "Topics")
         }
     }
     
