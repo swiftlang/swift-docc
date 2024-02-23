@@ -93,7 +93,7 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String, identifier: String? = nil, versionString: String = "1.0") {
+    public init(displayName: String? = nil, identifier: String? = nil, versionString: String = "1.0") {
         self.content = Content(
             displayName: displayName,
             identifier: identifier,
@@ -102,11 +102,11 @@ public struct InfoPlist: File, DataRepresentable {
     }
 
     public struct Content: Codable, Equatable {
-        public let displayName: String
+        public let displayName: String?
         public let identifier: String?
         public let versionString: String?
 
-        fileprivate init(displayName: String, identifier: String?, versionString: String) {
+        fileprivate init(displayName: String?, identifier: String?, versionString: String) {
             self.displayName = displayName
             self.identifier = identifier
             self.versionString = versionString
