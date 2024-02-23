@@ -905,7 +905,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.heading?.detachedFromParent.debugDescription(),
                         """
                         Heading level: 3
-                        └─ Text "Task Group Excercising Symbol Links"
+                        └─ Text "Task Group Exercising Symbol Links"
                         """)
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links.count, 3)
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[0].destination, "doc://com.example.documentation/documentation/MyKit/MyClass")

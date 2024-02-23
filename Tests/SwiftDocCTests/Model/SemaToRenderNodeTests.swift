@@ -1050,7 +1050,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
-        XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Excercising Symbol Links")
+        XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Exercising Symbol Links")
         XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(.init(inlineContent: [$0])) }.paragraphText.joined(), "Task Group abstract text.")
         
         guard let discussion = renderNode.topicSections[0].discussion as? ContentRenderSection else {
@@ -1062,7 +1062,7 @@ class SemaToRenderNodeTests: XCTestCase {
         // Test childrenRelationships are handled correctly
         let children = renderNode.childrenRelationship()
         XCTAssertEqual(children.count, renderNode.topicSections.count)
-        XCTAssertEqual(children.first?.name, "Task Group Excercising Symbol Links")
+        XCTAssertEqual(children.first?.name, "Task Group Exercising Symbol Links")
         XCTAssertEqual(children.first?.references.count, 3)
         
         let groupDiscussionParagraphPrefixes = discussion.content.paragraphText

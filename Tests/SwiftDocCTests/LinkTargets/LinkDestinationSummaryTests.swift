@@ -217,7 +217,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
             XCTAssertEqual(summary.taskGroups, [
                 .init(
-                    title: "Task Group Excercising Symbol Links",
+                    title: "Task Group Exercising Symbol Links",
                     identifiers: [
                         // MyClass is curated 3 times using different syntax.
                         summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,

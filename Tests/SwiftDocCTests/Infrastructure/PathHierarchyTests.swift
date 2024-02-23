@@ -1116,9 +1116,9 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertNil(tree.lookup[modulePageTaskGroupID]!.symbol)
         XCTAssertEqual(tree.lookup[modulePageTaskGroupID]!.name, "Extensions-to-other-frameworks")
         
-        let symbolPageTaskGroupID = try tree.find(path: "/MyKit/MyProtocol#Task-Group-Excercising-Symbol-Links", onlyFindSymbols: false)
+        let symbolPageTaskGroupID = try tree.find(path: "/MyKit/MyProtocol#Task-Group-Exercising-Symbol-Links", onlyFindSymbols: false)
         XCTAssertNil(tree.lookup[symbolPageTaskGroupID]!.symbol)
-        XCTAssertEqual(tree.lookup[symbolPageTaskGroupID]!.name, "Task-Group-Excercising-Symbol-Links")
+        XCTAssertEqual(tree.lookup[symbolPageTaskGroupID]!.name, "Task-Group-Exercising-Symbol-Links")
     }
     
     func testMixedLanguageFramework() throws {
