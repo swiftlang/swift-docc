@@ -245,26 +245,6 @@
         null
       ],
       "maximumLength": 40,
-      "typeDetails" : [
-        {
-          "baseType" : "string",
-          "fragments" : [
-            {
-              "kind" : "text",
-              "spelling" : "string"
-            }
-          ]
-        },
-        {
-          "baseType" : "string",
-          "fragments" : [
-            {
-              "kind" : "text",
-              "spelling" : "GENCODE"
-            }
-          ]
-        }
-      ],
       "declarationFragments": [
         {
           "kind": "text",
@@ -302,6 +282,21 @@
       "typeDetails": [
         {
           "baseType": "string",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "string"
+            }
+          ]
+        },
+        {
+          "baseType": "string",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "GENCODE"
+            }
+          ]
         }
       ]
     },
