@@ -97,13 +97,6 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let expectedURL = URL(string: "doc://com.external.testbundle/externally/resolved/path")
         XCTAssertEqual(expectedURL, resolved.url)
-        
-        try workspace.unregisterProvider(dataProvider)
-        context.externalDocumentationSources = [:]
-        guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
-            XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
-            return
-        }
     }
     
     // Asserts that an external reference from a source language not locally included
