@@ -36,7 +36,6 @@ import SymbolKit
 /// - ``accessLevelVariants``
 /// - ``deprecatedSummaryVariants``
 /// - ``declarationVariants``
-/// - ``possibleValuesVariants``
 /// - ``attributesVariants``
 /// - ``locationVariants``
 /// - ``constraintsVariants``
@@ -150,9 +149,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
-    /// The symbol's possible values in each language variant the symbol is available in.
-    public var possibleValuesVariants = DocumentationDataVariants<[SymbolGraph.AnyScalar]>()
-    
     /// The symbol's possible values in each language variant the symbol is available in.
     public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
     
