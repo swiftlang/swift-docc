@@ -14,7 +14,7 @@ import Foundation
 // concurrency in the Collection extensions in this file and have tests expect
 // them to work serially on Linux. rdar://75794062
 
-#if os(macOS) || os(iOS)
+#if os(macOS) || os(iOS) || os(visionOS)
 private let useConcurrentCollectionExtensions = true
 #else
 private let useConcurrentCollectionExtensions = false

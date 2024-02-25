@@ -26,7 +26,7 @@ extension Benchmark {
             memoryPeak = Self.peakMemory()
         }
         
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         private static func peakMemory() -> Int64? {
             // On macOS we use the Kernel framework to read a pretty accurate
             // memory footprint for the current task. The value reported here
