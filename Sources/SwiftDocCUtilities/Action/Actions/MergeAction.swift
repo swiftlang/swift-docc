@@ -27,7 +27,7 @@ struct MergeAction: Action {
         try validateThatOutputIsEmpty()
         try validateThatArchivesHaveDisjointData()
         
-        let targetURL = try Self.createUniqueDirectory(inside: fileManager.temporaryDirectory, template: firstArchive, fileManager: fileManager)
+        let targetURL = try Self.createUniqueDirectory(inside: fileManager.uniqueTemporaryDirectory(), template: firstArchive, fileManager: fileManager)
         defer {
             try? fileManager.removeItem(at: targetURL)
         }

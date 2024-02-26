@@ -224,7 +224,9 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
         let genreRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Genre")
         
-        print(genreRenderNode)
+        let type1 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "string", preciseIdentifier: nil), identifier: nil)
+        let type2 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "GENCODE", preciseIdentifier: nil), identifier: nil)
+        
         assertExpectedContent(
             genreRenderNode,
             sourceLanguage: "data",
@@ -232,6 +234,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             title: "Genre",
             navigatorTitle: nil,
             abstract: nil,
+            attributes: [.maximumLength("40"), .allowedTypes([[type1], [type2]]), .allowedValues(["Classic Rock", "Folk", "null"])],
             declarationTokens: [
                 "string ",
                 "Genre"
