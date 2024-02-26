@@ -1379,6 +1379,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
+                    AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
                     MentionsSectionTranslator(referencingSymbol: identifier),
                     DiscussionSectionTranslator(),

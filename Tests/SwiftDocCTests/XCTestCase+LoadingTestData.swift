@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import Markdown
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 extension XCTestCase {
     
@@ -39,6 +40,30 @@ extension XCTestCase {
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         return (bundleURL, bundle, context)
+    }
+    
+    /// Loads a documentation catalog from an in-memory test file system.
+    /// 
+    /// - Parameters:
+    ///   - catalog: The directory structure of the documentation catalog
+    ///   - otherFileSystemDirectories: Any other directories in the test file system.
+    ///   - configureContext: A closure where the caller can configure the context before registering the data provider with the context.
+    /// - Returns: The loaded documentation bundle and context for the given catalog input.
+    func loadBundle(
+        catalog: Folder,
+        otherFileSystemDirectories: [Folder] = [],
+        configureContext: (DocumentationContext) throws -> Void = { _ in }
+    ) throws -> (DocumentationBundle, DocumentationContext) {
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        try configureContext(context)
+        
+        let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
+        context.linkResolver.fileManager = fileSystem
+        
+        try workspace.registerProvider(fileSystem)
+        let bundle = try XCTUnwrap(context.registeredBundles.first)
+        return (bundle, context)
     }
     
     func testBundleAndContext(copying name: String,

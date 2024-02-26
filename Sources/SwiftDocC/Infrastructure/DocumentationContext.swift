@@ -1546,7 +1546,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         in symbols: [String: UnifiedSymbolGraph.Symbol],
         relationships: [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]
     ) throws {
-        guard let symbolResolver = globalExternalSymbolResolver else {
+        if globalExternalSymbolResolver == nil, linkResolver.externalResolvers.isEmpty {
+            // Context has no mechanism for resolving external symbol links. No reason to gather any symbols to resolve.
             return
         }
         
@@ -1576,9 +1577,21 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // TODO: When the symbol graph includes the precise identifiers for conditional availability, those symbols should also be resolved (rdar://63768609).
         
+        func resolveSymbol(symbolID: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+            if let globalResult = globalExternalSymbolResolver?.symbolReferenceAndEntity(withPreciseIdentifier: symbolID) {
+                return globalResult
+            }
+            for externalResolver in linkResolver.externalResolvers.values {
+                if let result = externalResolver.symbolReferenceAndEntity(symbolID: symbolID) {
+                    return result
+                }
+            }
+            return nil
+        }
+        
         // Resolve all the collected symbol identifiers and add them do the topic graph.
         for symbolID in symbolsToResolve {
-            if let (reference, entity) = symbolResolver.symbolReferenceAndEntity(withPreciseIdentifier: symbolID) {
+            if let (reference, entity) = resolveSymbol(symbolID: symbolID) {
                 externalCache.add(entity, reference: reference, symbolID: symbolID)
             } else {
                 diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.ReferenceSymbolNotFound", summary: "Symbol with identifier \(symbolID.singleQuoted) was referenced in the combined symbol graph but couldn't be found in the symbol graph or externally."), possibleSolutions: []))
