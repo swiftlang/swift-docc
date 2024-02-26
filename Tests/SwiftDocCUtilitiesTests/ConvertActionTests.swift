@@ -3226,7 +3226,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: fileSystem,
             fileManager: fileSystem,
-            temporaryDirectory: fileSystem.temporaryDirectory
+            temporaryDirectory: fileSystem.uniqueTemporaryDirectory()
         )
         
         let result = try action.perform(logHandle: .none)
