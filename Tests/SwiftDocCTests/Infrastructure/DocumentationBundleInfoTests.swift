@@ -238,7 +238,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                     "MyModule": [
                         DefaultAvailability.ModuleAvailability(
                             platformName: .iOS,
-                            platformState: .available(version: "7.0.0")
+                            platformVersion: "7.0.0"
                         )
                     ]
                 ]
@@ -259,7 +259,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                         "MyModule": [
                             DefaultAvailability.ModuleAvailability(
                                 platformName: .iOS,
-                                platformState: .available(version: "7.0.0")
+                                platformVersion: "7.0.0"
                             )
                         ]
                     ]
@@ -280,7 +280,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                     "MyModule": [
                         DefaultAvailability.ModuleAvailability(
                             platformName: .iOS,
-                            platformState: .available(version: "7.0.0")
+                            platformVersion: "7.0.0"
                         )
                     ]
                 ]

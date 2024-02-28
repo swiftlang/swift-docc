@@ -1557,10 +1557,11 @@ class SemaToRenderNodeTests: XCTestCase {
         // Ensure the availability has platform and version.
         let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
         
-        // Verify there are 4 availability items in the symbol graph
-        XCTAssertEqual(symbol.availability?.availability.count, 4)
+        // Verify there are 6 availability items in the symbol graph
+        XCTAssertEqual(symbol.availability?.availability.count, 6)
 
-        // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid.
+        // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid
+        // and therefore Catalyst and iPadOS are also invalid.
         XCTAssertEqual(platforms.count, 3)
         
         XCTAssertEqual(platforms[0].name, "macOS")
@@ -1617,20 +1618,26 @@ class SemaToRenderNodeTests: XCTestCase {
             // Ensure the availability has platform and version.
             let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
             
-            XCTAssertEqual(platforms.count, 4)
+            XCTAssertEqual(platforms.count,6)
             let versionString = version.stringRepresentation(precisionUpToNonsignificant: .patch)
             
-            XCTAssertEqual(platforms[0].name, "iOS")
+            XCTAssertEqual(platforms[0].name, "Mac Catalyst")
             XCTAssertEqual(platforms[0].introduced, versionString)
             
-            XCTAssertEqual(platforms[1].name, "macOS")
+            XCTAssertEqual(platforms[1].name, "iOS")
             XCTAssertEqual(platforms[1].introduced, versionString)
             
-            XCTAssertEqual(platforms[2].name, "tvOS")
+            XCTAssertEqual(platforms[2].name, "iPadOS")
             XCTAssertEqual(platforms[2].introduced, versionString)
             
-            XCTAssertEqual(platforms[3].name, "watchOS")
+            XCTAssertEqual(platforms[3].name, "macOS")
             XCTAssertEqual(platforms[3].introduced, versionString)
+            
+            XCTAssertEqual(platforms[4].name, "tvOS")
+            XCTAssertEqual(platforms[4].introduced, versionString)
+            
+            XCTAssertEqual(platforms[5].name, "watchOS")
+            XCTAssertEqual(platforms[5].introduced, versionString)
         }
     }
     

@@ -49,7 +49,7 @@ public struct DefaultAvailability: Codable, Equatable {
         
         /// The diferent availability states that can be declared.
         /// Unavailable or Available with an introduced version.
-        public enum State: Equatable, Hashable, Encodable {
+        internal enum State: Equatable, Hashable, Encodable {
             case unavailable
             case available(version: String)
         }
@@ -58,10 +58,10 @@ public struct DefaultAvailability: Codable, Equatable {
         public var platformName: PlatformName
         
         /// The availability state, e.g unavailable
-        public var state: State
+        internal var state: State
 
         /// A string representation of the version for this platform.
-        @available(*, deprecated, message: "Use `introducedVersion` instead.")
+        @available(*, deprecated, message: "Use `introducedVersion` instead.  This deprecated API will be removed after 5.11 is released", renamed: "introducedVersion")
         public var platformVersion: String {
             return introducedVersion ?? "0.0"
         }
@@ -82,20 +82,18 @@ public struct DefaultAvailability: Codable, Equatable {
         /// - Parameters:
         ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
         ///   - platformVersion: A 2- or 3-component version string, such as `"13.0"` or `"13.1.2"`.
-        @available(*, deprecated, message: "Use `init(platformName:platformState:) instead.")
         public init(platformName: PlatformName, platformVersion: String) {
             self.platformName = platformName
             self.state = .available(version: platformVersion)
         }
         
-        /// Creates a new module availability with a given platform name and platform availability state.
+        /// Creates a new module availability with a given platform name and platform availability set as unavailable.
         ///
         /// - Parameters:
         ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
-        ///   - platformState: A state defining either the unavailability of the platform or the introduced version string, such as `"13.0"` or `"13.1.2"`.
-        public init(platformName: PlatformName, platformState: State) {
-            self.platformName = platformName
-            self.state = platformState
+        public init(unavailablePlatformName: PlatformName) {
+            self.platformName = unavailablePlatformName
+            self.state = .unavailable
         }
 
         public init(from decoder: Decoder) throws {
@@ -127,26 +125,28 @@ public struct DefaultAvailability: Codable, Equatable {
     ///
     /// For example: "ModuleName" -> ["macOS 10.15", "iOS 13.0"]
     var modules: [String: [ModuleAvailability]]
+    
+    /// Fallback availability information for platforms we either don't emit SGFs for
+    /// or have the same availability information as another platform.
+    static let fallbackPlatforms: [PlatformName : PlatformName] = [
+        .catalyst:.iOS,
+        PlatformName(operatingSystemName: "iPadOS"):.iOS
+    ]
 
     /// Creates a default availability module.
     /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
     public init(with modules: [String: [ModuleAvailability]]) {
-        let fallbackPlatforms: [PlatformName : PlatformName] = [
-            .catalyst:.iOS,
-            PlatformName(operatingSystemName: "iPadOS"):.iOS
-        ]
-        self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
-            // If a module doesn't contain default availability information for any of the fallbackPlatforms,
+            self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
+            // If a module doesn't contain default availability information for any of the fallback platforms,
             // infer it from the corresponding mapped value.
-            // For iPadOS and Catalyst, their platform versions are always the same as iOS.
-            platformAvailabilities + fallbackPlatforms.compactMap { (platform, fallbackPlatform) in
+            platformAvailabilities + DefaultAvailability.fallbackPlatforms.compactMap { (platform, fallbackPlatform) in
                 if !platformAvailabilities.contains(where: { $0.platformName == platform }),
                    let fallbackAvailability = platformAvailabilities.first(where: { $0.platformName == fallbackPlatform }),
                    let fallbackIntroducedVersion = fallbackAvailability.introducedVersion
                 {
                     return DefaultAvailability.ModuleAvailability(
                         platformName: platform,
-                        platformState: .available(version: fallbackIntroducedVersion)
+                        platformVersion: fallbackIntroducedVersion
                     )
                 }
                 return nil

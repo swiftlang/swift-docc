@@ -468,6 +468,22 @@ extension Symbol {
             }
         }
     }
+    
+    /// Merge the different availability variants defined in the unified symbol,
+    /// and update the availability of the canonical symbol to consider all the different availability mixins instead of only the first one.
+    func mergeAvailabilities(unifiedSymbol: UnifiedSymbolGraph.Symbol) throws {
+        for (selector, mixins) in unifiedSymbol.mixins {
+            let trait = DocumentationDataVariantsTrait(for: selector)
+            if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
+                unifiedSymbolAvailability.availability.forEach { availabilityItem in
+                    if (availabilityVariants[trait]!.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                        return
+                    }
+                    availabilityVariants[trait]?.availability.append(availabilityItem)
+                }
+            }
+        }
+    }
 }
 
 extension Dictionary where Key == String, Value == Mixin {

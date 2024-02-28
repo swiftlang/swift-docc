@@ -1745,9 +1745,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
+        guard let introducedVersion = moduleAvailability.introducedVersion else { return false }
         guard
             // Check if we have a symbol availability version and a target platform version
-            let moduleVersion = Version(versionString: moduleAvailability.introducedVersion),
+            let moduleVersion = Version(versionString: introducedVersion),
             // We require at least two components for a platform version (e.g. 10.15 or 10.15.1)
             moduleVersion.count >= 2,
             // Verify we're building against this platform

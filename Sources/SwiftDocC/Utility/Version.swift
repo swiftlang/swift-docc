@@ -35,8 +35,7 @@ public struct Version: Codable, RandomAccessCollection, ExpressibleByArrayLitera
     /// - warning: Returns `nil` if the version string contains non-integer or
     ///   negative numeric components; for example the strings "1.2.3-beta6" and "1.-2.3"
     ///   are invalid inputs.
-    public init?(versionString: String?) {
-        guard let versionString = versionString else { return nil }
+    public init?(versionString: String) {
         let stringComponents = versionString.components(separatedBy: ".")
         let intComponents = stringComponents.compactMap { Int($0) }
         guard intComponents.count == stringComponents.count,
