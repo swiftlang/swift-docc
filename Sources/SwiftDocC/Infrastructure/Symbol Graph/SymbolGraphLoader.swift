@@ -242,7 +242,7 @@ struct SymbolGraphLoader {
                             symbolAvailability.availability.forEach {
                                 // Add the platform fallback to the availability mixin the platform is inheriting from.
                                 // The added availability only copies the introduced version.
-                                if $0.domain?.rawValue == inheritedPlatform.rawValue {
+                                if $0.domain?.rawValue.lowercased() == inheritedPlatform.rawValue.lowercased() {
                                     var fallbackAvailability = $0
                                     fallbackAvailability.deprecatedVersion = nil
                                     fallbackAvailability.obsoletedVersion = nil

@@ -883,15 +883,19 @@ Root
         
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
-        XCTAssertEqual(availabilities.count, 1)
+        XCTAssertEqual(availabilities.count, 3)
         
         // Extract availability and check it against some queries.
-        let availabilityInfo = availabilities[0]
+        var availabilityInfo = availabilities[0]
         XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
         XCTAssertTrue(availabilityInfo.belongs(to: .iOS))
         XCTAssertFalse(availabilityInfo.isDeprecated(on: Platform(name: .iOS, version: Platform.Version(string: "13.0")!)))
         XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "13.0")!)))
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
+        availabilityInfo = availabilities[1]
+        XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
+        XCTAssertTrue(availabilityInfo.belongs(to: .macCatalyst))
+        XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .macCatalyst, version: Platform.Version(string: "13.0")!)))
         
         // Ensure we can't write to an index which is read-only.
         let availabilityDB = try XCTUnwrap(navigatorIndex.environment).openDatabase(named: "availability")
@@ -954,7 +958,7 @@ Root
         
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
-        XCTAssertEqual(availabilities.count, 1)
+        XCTAssertEqual(availabilities.count, 3)
     }
     
     func testPlatformVersion() {
