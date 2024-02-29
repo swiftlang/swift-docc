@@ -1154,6 +1154,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
+                        var overloadGroups = [String: [String]]()
+
                         for relationship in relationships {
                             // Check for an origin key.
                             if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
@@ -1167,8 +1169,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                     localCache: documentationCache,
                                     moduleName: moduleName
                                 )
+                            } else if relationship.kind == .overloadOf {
+                                // An 'overloadOf' relationship points from symbol -> group
+                                overloadGroups[relationship.target, default: []].append(relationship.source)
                             }
                         }
+
+                        try addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
                     
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1283,8 +1290,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
-
-            try groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -2328,33 +2333,65 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    /// Handles overloaded symbols by grouping them together into one page.
-    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) throws {
+    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) throws {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         
-        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+        for (overloadGroupId, var overloadSymbolIds) in overloadGroups {
+            guard overloadSymbolIds.count > 1 else {
+                assertionFailure("SymbolKit should only create overload groups of more than one symbol")
+                continue
+            }
+            guard let overloadGroupReference = documentationCache.reference(symbolID: overloadGroupId) else {
+                preconditionFailure("Overload group symbol should already be in the cache")
+            }
 
-            // Tell each symbol what other symbols overload it.
-            for (index, symbolReference) in overloadedSymbolReferences.indexed() {
-                let documentationNode = try entity(with: symbolReference)
+            // SymbolKit has already cloned the overload group symbol from an existing overload. The
+            // symbol identifier it gave the symbol starts with the cloned symbol's ID, followed by
+            // the fixed string '::OverloadGroup'. Since we want the cloned overload info to be
+            // first in the display list, scan through the list of symbol IDs and swap indices if
+            // necessary.
+            guard let clonedIdIndex = overloadSymbolIds.firstIndex(where: { $0 + "::OverloadGroup" == overloadGroupId }) else {
+                continue
+            }
+            overloadSymbolIds.swapAt(clonedIdIndex, overloadSymbolIds.startIndex)
+
+            let overloadSymbolReferences = overloadSymbolIds.map {
+                guard let reference = documentationCache.reference(symbolID: $0) else {
+                    preconditionFailure("Symbols should already be in the cache")
+                }
+                return reference
+            }
+
+            func addOverloadReferences(
+                to nodeReference: ResolvedTopicReference,
+                at index: Int,
+                overloadSymbolReferences: [ResolvedTopicReference]
+            ) throws {
+                let documentationNode = try entity(with: nodeReference)
 
                 guard let symbol = documentationNode.semantic as? Symbol else {
                     preconditionFailure("""
-                    Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
+                    Only symbols can be overloads. Found non-symbol overload for \(nodeReference.absoluteString.singleQuoted).
                     Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
                     """)
                 }
-                guard symbolReference.sourceLanguage == .swift else {
+                guard nodeReference.sourceLanguage == .swift else {
                     assertionFailure("Overload groups is only supported for Swift symbols.")
-                    continue
+                    return
                 }
 
-                var otherOverloadedSymbolReferences = overloadedSymbolReferences
+                var otherOverloadedSymbolReferences = overloadSymbolReferences
                 otherOverloadedSymbolReferences.remove(at: index)
                 let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
+            }
+
+            try addOverloadReferences(to: overloadGroupReference, at: 0, overloadSymbolReferences: overloadSymbolReferences)
+
+            for (index, symbolReference) in overloadSymbolReferences.indexed() {
+                try addOverloadReferences(to: symbolReference, at: index, overloadSymbolReferences: overloadSymbolReferences)
             }
         }
     }

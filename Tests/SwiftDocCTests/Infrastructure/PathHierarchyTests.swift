@@ -1239,7 +1239,25 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
     }
-    
+
+    func testOverloadGroupSymbolsResolveLinksWithoutHash() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        // The enum case should continue to resolve by kind, since it has no hash collision
+        XCTAssertNoThrow(try tree.findNode(path: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case", onlyFindSymbols: true))
+
+        // The overloaded enum method should now be able to resolve by kind, which will point to the overload group
+        let overloadedEnumMethod = try tree.findNode(path: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-method", onlyFindSymbols: true)
+        XCTAssert(overloadedEnumMethod.symbol?.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) == true)
+
+        // This overloaded protocol method should be able to resolve without a suffix at all, since it doesn't conflict with anything
+        let overloadedProtocolMethod = try tree.findNode(path: "/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)", onlyFindSymbols: true)
+        XCTAssert(overloadedProtocolMethod.symbol?.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) == true)
+    }
+
     func testSymbolsWithSameNameAsModule() throws {
         let (_, context) = try testBundleAndContext(named: "SymbolsWithSameNameAsModule")
         let tree = context.linkResolver.localResolver.pathHierarchy

@@ -78,6 +78,10 @@ struct SymbolGraphLoader {
                 
                 configureSymbolGraph?(&symbolGraph)
 
+                if FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled {
+                    symbolGraph.createOverloadGroupSymbols()
+                }
+
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)

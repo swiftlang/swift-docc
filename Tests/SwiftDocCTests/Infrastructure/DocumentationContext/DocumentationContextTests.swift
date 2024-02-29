@@ -3808,6 +3808,7 @@ let expected = """
             
             let symbolReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "s:12Minimal_docs4TestV"))
             
+
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
                 switch context.resolve(unresolved, in: parent) {
@@ -4226,14 +4227,30 @@ let expected = """
                 ))
             ])
         ])
-        let (_, _, context) = try loadBundle(from: tempURL)
-        
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
         for kindID in overloadableKindIDs {
             var seenIndices = Set<Int>()
             // Find the 4 symbols of this specific kind
             let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
                 .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
-            
+
+            let overloadGroupNode: DocumentationNode
+            let overloadGroupSymbol: Symbol
+            let overloadGroupReferences: Symbol.Overloads
+            switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName-\(kindID.identifier)"))), in: moduleReference, fromSymbolLink: true) {
+            case let .failure(_, errorMessage):
+                XCTFail("Could not resolve overload group page for \(kindID.identifier). Error message: \(errorMessage)")
+                continue
+            case let .success(overloadGroupReference):
+                overloadGroupNode = try context.entity(with: overloadGroupReference)
+                overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+                overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+                XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+            }
+
             // Check that each symbol lists the other 3 overloads
             for (index, reference) in overloadedReferences.indexed() {
                 let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
@@ -4248,9 +4265,17 @@ let expected = """
                 }
                 
                 // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
-                let displayIndex = try XCTUnwrap(overloads.displayIndex)
-                XCTAssertFalse(seenIndices.contains(displayIndex))
-                seenIndices.insert(displayIndex)
+                XCTAssertFalse(seenIndices.contains(overloads.displayIndex))
+                seenIndices.insert(overloads.displayIndex)
+
+                if overloads.displayIndex == 0 {
+                    // The first declaration in the display list should be the same declaration as
+                    // the overload group page
+                    XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+                } else {
+                    // Otherwise, this reference should also be referenced by the overload group
+                    XCTAssert(overloadGroupReferences.references.contains(reference))
+                }
             }
             // Check that all the overloads was encountered
             for index in overloadedReferences.indices {
@@ -4295,13 +4320,17 @@ let expected = """
             }
         }
     }
-    
+
     // A test helper that creates a symbol with a given identifier and kind.
-    private func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+    private func makeSymbol(
+        name: String = "SymbolName",
+        identifier: String,
+        kind: SymbolGraph.Symbol.KindIdentifier
+    ) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
             identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-            names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: ["SymbolName"],
+            names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: [name],
             docComment: nil,
             accessLevel: .public,
             kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
