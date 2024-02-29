@@ -44,12 +44,12 @@ public struct DefaultAvailability: Codable, Equatable {
         enum CodingKeys: String, CodingKey {
             case platformName = "name"
             case platformVersion = "version"
-            case unavailable = "unavailable"
+            case unavailable
         }
         
         /// The diferent availability states that can be declared.
         /// Unavailable or Available with an introduced version.
-        internal enum State: Equatable, Hashable, Encodable {
+        internal enum State: Hashable {
             case unavailable
             case available(version: String)
         }
