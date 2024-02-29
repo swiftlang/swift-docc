@@ -30,7 +30,7 @@ import Foundation
 ///         </dict>
 ///         <dict>
 ///             <key>name</key>
-///             <string>Platform Name</string>
+///             <string>Other Platform Name</string>
 ///             <key>unavailable</key>
 ///             <true/>
 ///         </dict>
