@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -108,8 +108,8 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         XCTAssertEqual(Version(major: 13, minor: 0, patch: 0), iOSOnlyIntroduced.introducedVersion)
     }
 
-    /// Tests that the `introduced` availability version does
-    /// come from the iOS version in the Info.plist via a fallback mechanism.
+    /// Tests that the `introduced` availability version comes from
+    /// the iOS version in the Info.plist via a fallback mechanism.
     func testCatalystOnlyDeprecated() {
         let catalystOnlyDeprecated =
             context.nodeWithSymbolIdentifier("s:14FillIntroduced25macCatalystOnlyDeprecatedyyF")!

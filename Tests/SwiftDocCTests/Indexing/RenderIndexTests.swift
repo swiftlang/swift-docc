@@ -23,9 +23,6 @@ final class RenderIndexTests: XCTestCase {
             )
         )
         
-        let generatedRenderIdx = try generatedRenderIndex(for: "TestBundle", with: "org.swift.docc.example")
-        let renderIdx = try RenderIndex.fromURL(expectedIndexURL)
-        
         try XCTAssertEqual(
             generatedRenderIndex(for: "TestBundle", with: "org.swift.docc.example"),
             RenderIndex.fromURL(expectedIndexURL)

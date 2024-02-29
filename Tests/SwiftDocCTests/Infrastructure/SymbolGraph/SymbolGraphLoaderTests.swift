@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -604,9 +604,9 @@ class SymbolGraphLoaderTests: XCTestCase {
         // Verify we get the availability for the fallback platforms with the same version as iOS.
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })!.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })!.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })!.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
     }
     
     func testFallbackPlatformsDontOverrideSourceAvailability() throws {
@@ -742,8 +742,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                       "domain" : "iOS",
                       "introduced" : {
                         "major" : 12,
-                        "minor" : 0,
-                        "patch" : 0
+                        "minor" : 0
                       }
                     }
                 ]
@@ -753,8 +752,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             "operatingSystem" : {
                "minimumVersion" : {
                  "major" : 12,
-                 "minor" : 0,
-                 "patch" : 0
+                 "minor" : 0
                },
                "name" : "ios"
              }
@@ -784,8 +782,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                       "domain" : "macCatalyst",
                       "introduced" : {
                         "major" : 6,
-                        "minor" : 5,
-                        "patch" : 0
+                        "minor" : 5
                       }
                     }
                 ]
@@ -795,8 +792,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             "operatingSystem" : {
                "minimumVersion" : {
                  "major" : 6,
-                 "minor" : 5,
-                 "patch" : 0
+                 "minor" : 5
                },
                "name" : "macCatalyst"
              }
@@ -882,8 +878,13 @@ class SymbolGraphLoaderTests: XCTestCase {
             },
             "accessLevel": "public",
             "availability" : [
-                {"domain" : "macCatalyst"},
-                {"domain" : "iOS"}
+                {
+                   "domain" : "tvos",
+                   "introduced" : {
+                        "major" : 10,
+                        "minor" : 0
+                   }
+                }
             ]
         }
         """
@@ -893,11 +894,10 @@ class SymbolGraphLoaderTests: XCTestCase {
             platform: """
             "operatingSystem" : {
                "minimumVersion" : {
-                 "major" : 12,
-                 "minor" : 0,
-                 "patch" : 0
+                 "major" : 10,
+                 "minor" : 0
                },
-               "name" : "ios"
+               "name" : "tvos"
              }
             """
         )
@@ -952,11 +952,11 @@ class SymbolGraphLoaderTests: XCTestCase {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
         }
-        // Verify we fill the missing source availability using the default availability information from the Info.plsit.
+        // Verify we fill the missing source availability using the default availability information from the Info.plist.
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })!.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })!.introducedVersion, SymbolGraph.SemanticVersion(major: 7, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 7, minor: 0, patch: 0))
     }
     
     func testUnconditionallyunavailablePlatforms() throws {
@@ -986,8 +986,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "domain" : "iOS",
                     "introduced" : {
                         "major" : 10,
-                        "minor" : 0,
-                        "patch" : 0
+                        "minor" : 0
                     }
                 }]
             }
@@ -996,8 +995,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             "operatingSystem" : {
                "minimumVersion" : {
                  "major" : 12,
-                 "minor" : 0,
-                 "patch" : 0
+                 "minor" : 0
                },
                "name" : "ios"
              }
@@ -1026,8 +1024,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "domain" : "maccatalyst",
                     "introduced" : {
                         "major" : 12,
-                        "minor" : 0,
-                        "patch" : 0
+                        "minor" : 0
                     }
                 }]
             }
@@ -1145,8 +1142,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "domain" : "iOS",
                     "introduced" : {
                         "major" : 10,
-                        "minor" : 0,
-                        "patch" : 0
+                        "minor" : 0
                     }
                 }]
             }
@@ -1185,8 +1181,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                     "domain" : "macCatalyst",
                     "introduced" : {
                         "major" : 12,
-                        "minor" : 0,
-                        "patch" : 0
+                        "minor" : 0
                     }
                 }]
             },
@@ -1220,8 +1215,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             "operatingSystem" : {
                "minimumVersion" : {
                  "major" : 12,
-                 "minor" : 0,
-                 "patch" : 0
+                 "minor" : 0
                },
                "name" : "maccatalyst"
              }

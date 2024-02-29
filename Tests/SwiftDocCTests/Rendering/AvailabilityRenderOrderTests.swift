@@ -38,8 +38,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
             "tvOS 12.0", "tvOS App Extension 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2",
-            "iPadOS 12.0"
+            "Swift 4.2"
         ])
         
         // Test roundtrip to verify availability items are correctly
@@ -55,8 +54,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
             "tvOS 12.0", "tvOS App Extension 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2",
-            "iPadOS 12.0"
+            "Swift 4.2"
         ])
     }
 }

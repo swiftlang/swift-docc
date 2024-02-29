@@ -152,38 +152,31 @@ struct SymbolGraphLoader {
         unifiedGraphs.forEach { (_, unifiedGraph) in
             var unifiedGraph = unifiedGraph
             var defaultUnconditionallyUnavailablePlatforms = [PlatformName]()
-            
-            // Availability platforms declared in the Info.plist as `available`
+            var defaultAvailableAvailabilities = [DefaultAvailability.ModuleAvailability]()
+
             if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
+                // Availability platforms declared in the Info.plist as `unavailable`.
                 defaultUnconditionallyUnavailablePlatforms = defaultAvailabilities.filter {
                     $0.state == .unavailable
                 }.map(\.platformName)
-            }
-            // Platform names registered across the SGFs for each module.
-            var registeredPlatforms: [PlatformName] {
-                var registeredPlatforms = [PlatformName]()
-                unifiedGraph.symbols.forEach { (_, symbol) in
-                    for (selector, _) in symbol.mixins {
-                        if let symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
-                            registeredPlatforms.append(contentsOf: symbolAvailability.availability.compactMap {
-                                guard let domain = $0.domain else { return nil }
-                                return PlatformName(operatingSystemName: domain.rawValue)
-                            })
-                        }
-                    }
+                // Availability platforms declared in the Info.plist as `available`.
+                defaultAvailableAvailabilities = defaultAvailabilities.filter {
+                    $0.state != .unavailable
                 }
-                return registeredPlatforms
             }
-            // Add fallback availability platforms.
-            addFallbackAvailability(
+            
+            // Platform names registered across the SGFs for each module.
+            let registeredPlatforms: [PlatformName] = unifiedGraph.moduleData.compactMap {
+                guard let platformName = $0.value.platform.name else { return nil }
+                return PlatformName(operatingSystemName: platformName)
+            }
+
+            addMissingAvailability(
                 unifiedGraph: &unifiedGraph,
                 unconditionallyUnavailablePlatformNames: defaultUnconditionallyUnavailablePlatforms,
-                registeredPlatforms: registeredPlatforms
+                registeredPlatforms: registeredPlatforms,
+                defaultAvailabilities: defaultAvailableAvailabilities
             )
-            // Add platforms declared in the Info.plist that don't have SGFs.
-            if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
-                addMissingPlatformsAvailability(unifiedGraph: &unifiedGraph, defaultAvailabilities: defaultAvailabilities, unconditionallyUnavailablePlatformNames: defaultUnconditionallyUnavailablePlatforms, registeredPlatforms: registeredPlatforms)
-            }
         }
     }
     
@@ -216,36 +209,54 @@ struct SymbolGraphLoader {
         return (symbolGraph, isMainSymbolGraph)
     }
     
-    /// Adds the fallback availability information to the unified symbol graph
+    /// Adds the missing fallback and default availability information to the unified symbol graph
     /// in case it didn't exists in the loaded symbol graphs.
-    private func addFallbackAvailability(
+    private func addMissingAvailability(
         unifiedGraph: inout UnifiedSymbolGraph,
         unconditionallyUnavailablePlatformNames: [PlatformName],
-        registeredPlatforms: [PlatformName]
+        registeredPlatforms: [PlatformName],
+        defaultAvailabilities: [DefaultAvailability.ModuleAvailability]
     ) {
-        // The fallback platforms that are missing from
-        // the unified graph.
+        // The fallback platforms that are missing from the unified graph correspond to
+        // the fallback platforms that have not been registered yet,
+        // are not marked as unavailable,
+        // and the corresponding inheritance platform has a SGF (has been registered).
         let missingFallbackPlatforms = DefaultAvailability.fallbackPlatforms.filter {
-            !registeredPlatforms.contains($0.key) && !unconditionallyUnavailablePlatformNames.contains($0.key)
+            !registeredPlatforms.contains($0.key) &&
+            !unconditionallyUnavailablePlatformNames.contains($0.key) &&
+            registeredPlatforms.contains($0.value)
         }
-        // Map through all the symbols of the unified graph adding
-        // the missing fallback availability.
+        // Platforms that are defined in the Info.plist that had no corresponding SGF
+        // and are not being added as fallback of another platform.
+        let missingAvailabilities = defaultAvailabilities.filter {
+                !missingFallbackPlatforms.keys.contains($0.platformName) &&
+                !registeredPlatforms.contains($0.platformName)
+        }
         let symbolsWithFallbackAvailability = unifiedGraph.symbols.compactMapValues { symbol  -> UnifiedSymbolGraph.Symbol in
             for (selector, _) in symbol.mixins {
-                if let symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
+                if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
                     guard !symbolAvailability.availability.isEmpty else { continue }
-                    var symbolAvailability = symbolAvailability
+                    // Add fallback availability.
                     for (fallbackPlatform, inheritedPlatform) in missingFallbackPlatforms {
-                        symbolAvailability.availability.forEach {
-                            // Add the platform fallback to the availability mixin the platform is inheriting from.
-                            // The added availability only copies the introduced version.
-                            if $0.domain?.rawValue == inheritedPlatform.rawValue {
-                                var fallbackAvailability = $0
-                                fallbackAvailability.deprecatedVersion = nil
-                                fallbackAvailability.obsoletedVersion = nil
-                                fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
-                                symbolAvailability.availability.append(fallbackAvailability)
+                        if !symbolAvailability.availability.contains(where: { $0.domain?.rawValue == fallbackPlatform.rawValue }) {
+                            symbolAvailability.availability.forEach {
+                                // Add the platform fallback to the availability mixin the platform is inheriting from.
+                                // The added availability only copies the introduced version.
+                                if $0.domain?.rawValue == inheritedPlatform.rawValue {
+                                    var fallbackAvailability = $0
+                                    fallbackAvailability.deprecatedVersion = nil
+                                    fallbackAvailability.obsoletedVersion = nil
+                                    fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
+                                    symbolAvailability.availability.append(fallbackAvailability)
+                                }
                             }
+                        }
+                    }
+                    // Add the missing default platform availability.
+                    missingAvailabilities.forEach { missingAvailability in
+                        if !symbolAvailability.availability.contains(where: { $0.domain?.rawValue == missingAvailability.platformName.rawValue }) {
+                            guard let defaultAvailability = AvailabilityItem(missingAvailability) else { return }
+                            symbolAvailability.availability.append(defaultAvailability)
                         }
                     }
                     symbol.mixins[selector]!["availability"] = symbolAvailability
@@ -254,38 +265,7 @@ struct SymbolGraphLoader {
             return symbol
         }
         unifiedGraph.symbols = symbolsWithFallbackAvailability
-    }
-    
-    /// Adds the platforms defined in the Info.plist default availability
-    /// and don't have a corresponding symbol graph.
-    private func addMissingPlatformsAvailability(
-        unifiedGraph: inout UnifiedSymbolGraph,
-        defaultAvailabilities: [DefaultAvailability.ModuleAvailability],
-        unconditionallyUnavailablePlatformNames: [PlatformName],
-        registeredPlatforms: [PlatformName]
-    ) {
-        // The missing platforms that are missing from
-        // the unified graph.
-        let missingAvailabilities = defaultAvailabilities.filter {
-            !registeredPlatforms.contains($0.platformName) && !unconditionallyUnavailablePlatformNames.contains($0.platformName)
-        }
-        // Map through all the symbols of the unified graph adding
-        // the missing availability.
-        let symbolsWithDefaultAvailability = unifiedGraph.symbols.compactMapValues { symbol  -> UnifiedSymbolGraph.Symbol in
-            for (selector, _) in symbol.mixins {
-                if let symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
-                    var symbolAvailability = symbolAvailability
-                    missingAvailabilities.forEach {
-                        guard let defaultAvailability = AvailabilityItem($0) else { return }
-                        symbolAvailability.availability.append(defaultAvailability)
-                    }
-                    symbol.mixins[selector]?["availability"] = symbolAvailability
-                }
-            }
-            return symbol
-        }
-        unifiedGraph.symbols = symbolsWithDefaultAvailability
-    }
+    }    
 
     /// If the bundle defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
