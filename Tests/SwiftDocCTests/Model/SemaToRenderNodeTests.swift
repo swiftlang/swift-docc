@@ -2963,9 +2963,41 @@ Document
             {"type":"aside", "style":"note", "name":"See Also",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"And this other thing."}]}]},
             {"type":"aside", "style":"note", "name":"Throws",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]}
+                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]},
             ]
             """)
+
+        // While decoding, overwrite the style with the name, if both are specified. We expect the style's raw value
+        // to be "Custom Title", not "important" in this example.
+        try assertJSONRepresentation(
+            RenderBlockContent.aside(
+                .init(
+                    style: .init(rawValue: "Custom Title"),
+                    content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))]
+                )
+            ),
+            """
+            {
+              "type": "aside",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "inlineContent": [
+                    {
+                      "type": "text",
+                      "text": "This is a custom title..."
+                    }
+                  ]
+                }
+              ],
+              "style": "important",
+              "name": "Custom Title"
+            }
+            """)
+            
+        for style in Aside.Kind.allCases.map({ RenderBlockContent.AsideStyle(asideKind: $0) }) + [.init(displayName: "Custom Title")] {
+            try assertRoundTripCoding(RenderBlockContent.aside(.init(style: style, content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))])))
+        }
     }
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.

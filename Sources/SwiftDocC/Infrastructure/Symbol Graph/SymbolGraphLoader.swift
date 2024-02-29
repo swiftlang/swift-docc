@@ -410,30 +410,35 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
         guard let domain = self.domain else {
             return self
         }
+        
+        var newValue = self
+        // To ensure the uniformity of platform availability names derived from SGFs,
+        // we replace the original domain value with a value from the platform's name
+        // since the platform name maps aliases to the canonical name.
+        let platformName = PlatformName(operatingSystemName: domain.rawValue)
+        newValue.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue)
 
         // If a symbol is unconditionally unavailable for a given domain,
         // don't add an introduced version here as it may cause it to
         // incorrectly display availability information
         guard !isUnconditionallyUnavailable else {
-            return self
+            return newValue
         }
 
         // If this had an explicit introduced version from source, don't replace it.
         guard introducedVersion == nil else {
-            return self
+            return newValue
         }
 
-        let platformName = PlatformName(operatingSystemName: domain.rawValue)
         let fallbackPlatformName = fallbackPlatform.map(PlatformName.init(operatingSystemName:))
         
         // Try to find a default version string for this availability
         // item's platform (a.k.a. domain)
         guard let platformVersion = defaults[platformName] ??
             fallbackPlatformName.flatMap({ defaults[$0] }) else {
-            return self
+            return newValue
         }
 
-        var newValue = self
         newValue.introducedVersion = platformVersion
         return newValue
     }

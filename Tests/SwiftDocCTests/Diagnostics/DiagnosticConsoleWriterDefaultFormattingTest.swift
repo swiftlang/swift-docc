@@ -270,7 +270,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let bundle = try XCTUnwrap(fs.bundles().first)
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
-        let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 32, source: source)
+        let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 36, source: source)
 
         let logStorage = LogHandle.LogStorage()
         let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
@@ -282,10 +282,10 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         XCTAssertEqual(logStorage.text, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
-         --> Something.docc/Nested folder/Article.md:3:18-3:32
+         --> Something.docc/Nested folder/Article.md:3:18-3:36
         1 | # Title
         2 |
-        3 + A short abstract \u{001B}[1;32mwith emoji \u{001B}[0;0m💻 in it.
+        3 + A short abstract \u{001B}[1;32mwith emoji 💻 in\u{001B}[0;0m it.
         4 |
         5 | @Metadata {
         """)
