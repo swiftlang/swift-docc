@@ -387,8 +387,6 @@ class DefaultAvailabilityTests: XCTestCase {
         let infoPlist = """
             <plist version="1.0">
             <dict>
-                <key>CFBundleName</key>
-                <string>MyModule</string>
                 <key>CFBundleDisplayName</key>
                 <string>MyModule</string>
                 <key>CFBundleIdentifier</key>
