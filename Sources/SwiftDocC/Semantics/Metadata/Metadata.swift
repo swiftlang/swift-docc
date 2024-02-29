@@ -74,7 +74,10 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective
     var titleHeading: TitleHeading? = nil
-    
+
+    @ChildDirective
+    var redirects: [Redirect]? = nil
+
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
@@ -87,6 +90,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "supportedLanguages"    : \Metadata._supportedLanguages,
         "_pageColor"            : \Metadata.__pageColor,
         "titleHeading"          : \Metadata._titleHeading,
+        "redirects"             : \Metadata._redirects,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
@@ -96,7 +100,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
@@ -187,77 +191,6 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         }
         
         return true
-    }
-    
-    // MARK: Private API for OutOfProcessReferenceResolver
-    
-    /// Don't use this outside of ``OutOfProcessReferenceResolver/entity(with:)`` .
-    ///
-    /// Directives aren't meant to be created from non-markup but the out-of-process resolver needs to create a ``Metadata`` to hold the ``PageImage``
-    /// values that it creates to associate topic images with external pages. This is because DocC renders external content in the local context. (rdar://78718811)
-    /// https://github.com/apple/swift-docc/issues/468
-    ///
-    /// This is intentionally defined as an underscore prefixed static function instead of an initializer to make it less likely that it's used in other places.
-    static func _make(
-        originalMarkup: BlockDirective,
-        documentationOptions: DocumentationExtension? = nil,
-        technologyRoot: TechnologyRoot? = nil,
-        displayName: DisplayName? = nil,
-        pageImages: [PageImage] = [],
-        customMetadata: [CustomMetadata] = [],
-        callToAction: CallToAction? = nil,
-        availability: [Metadata.Availability] = [],
-        pageKind: Metadata.PageKind? = nil,
-        supportedLanguages: [SupportedLanguage] = [],
-        _pageColor: PageColor? = nil,
-        titleHeading: TitleHeading? = nil
-    ) -> Metadata {
-        // FIXME: https://github.com/apple/swift-docc/issues/468
-        return Metadata(
-            originalMarkup: originalMarkup,
-            documentationOptions: documentationOptions,
-            technologyRoot: technologyRoot,
-            displayName: displayName,
-            pageImages: pageImages,
-            customMetadata: customMetadata,
-            callToAction: callToAction,
-            availability: availability,
-            pageKind: pageKind,
-            supportedLanguages: supportedLanguages,
-            _pageColor: _pageColor,
-            titleHeading: titleHeading
-        )
-    }
-    
-    // This initializer only exists to be called by `_make` above.
-    private init(
-        originalMarkup: BlockDirective,
-        documentationOptions: DocumentationExtension?,
-        technologyRoot: TechnologyRoot?,
-        displayName: DisplayName?,
-        pageImages: [PageImage],
-        customMetadata: [CustomMetadata],
-        callToAction: CallToAction?,
-        availability: [Metadata.Availability],
-        pageKind: Metadata.PageKind?,
-        supportedLanguages: [SupportedLanguage],
-        _pageColor: PageColor?,
-        titleHeading: TitleHeading?
-    ) {
-        self.originalMarkup = originalMarkup
-        self.documentationOptions = documentationOptions
-        self.technologyRoot = technologyRoot
-        self.displayName = displayName
-        self.callToAction = callToAction
-        self._pageColor = _pageColor
-        self.pageKind = pageKind
-        self.titleHeading = titleHeading
-        // Non-optional child directives need to be set after `super.init()`.
-        super.init()
-        self.customMetadata = customMetadata
-        self.pageImages = pageImages
-        self.availability = availability
-        self.supportedLanguages = supportedLanguages
     }
 }
 

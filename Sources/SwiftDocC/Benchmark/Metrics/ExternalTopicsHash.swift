@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,19 +11,18 @@
 import Foundation
 
 extension Benchmark {
-    /// A hash metric produced off the externally resolved links and symbols.
+    /// A hash metric produced off the externally resolved links.
     ///
-    /// Use this metric to verify that your code changes
-    /// did not affect external resolving.
+    /// Use this metric to verify that your code changes did not affect external link resolution.
     public class ExternalTopicsHash: BenchmarkMetric {
         public static let identifier = "external-topics-hash"
         public static let displayName = "External Topics Checksum"
         
-        /// Creates a new metric and stores the checksum of the given documentation context external topics.
-        /// - Parameter context: A documentation context.
+        /// Creates a new metric that stores the checksum of the successfully externally resolved links.
+        /// - Parameter context: A documentation context that the external links were resolved in.
         public init(context: DocumentationContext) {
             // If there are no externally resolved topics return quickly.
-            guard !context.externallyResolvedLinks.isEmpty || !context.externallyResolvedSymbols.isEmpty else {
+            guard !context.externallyResolvedLinks.isEmpty else {
                 return
             }
             
@@ -37,7 +36,6 @@ extension Benchmark {
                     return nil
                 }
             }).sorted().joined()
-                + context.externallyResolvedSymbols.map({ $0.absoluteString }).sorted().joined()
 
             result = .checksum(Checksum.md5(of: Data(sourceString.utf8)))
         }

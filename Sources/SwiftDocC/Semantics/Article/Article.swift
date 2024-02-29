@@ -121,7 +121,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         }
         
         var remainder: [Markup]
-        let redirects: [Redirect]
+        var redirects: [Redirect]
         (redirects, remainder) = markup.children.categorize { child -> Redirect? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
@@ -142,7 +142,13 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         }
         
         var optionalMetadata = metadata.first
-        
+
+        // Append any redirects found in the metadata to the redirects
+        // found in the main content.
+        if let redirectsFromMetadata = optionalMetadata?.redirects {
+            redirects.append(contentsOf: redirectsFromMetadata)
+        }
+
         let options: [Options]
         (options, remainder) = remainder.categorize { child -> Options? in
             guard let childDirective = child as? BlockDirective, childDirective.name == Options.directiveName else {

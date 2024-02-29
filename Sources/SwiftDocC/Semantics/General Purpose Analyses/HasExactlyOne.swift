@@ -94,9 +94,7 @@ extension Semantic.Analyses {
         return (childType.init(from: candidate, source: source, for: bundle, in: context, problems: &problems), MarkupContainer(remainder))
     }
     
-    /**
-     Checks a parent directive for the presence of exactly one of two child directives—but not both—to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
-     */
+    /// Checks a parent directive for the presence of exactly one of two child directives---but not both---to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
     public struct HasExactlyOneOf<Parent: Semantic & DirectiveConvertible, Child1: Semantic & DirectiveConvertible, Child2: Semantic & DirectiveConvertible>: SemanticAnalysis {
         let severityIfNotFound: DiagnosticSeverity?
         public init(severityIfNotFound: DiagnosticSeverity?) {

@@ -25,20 +25,18 @@ public struct JSONPatchApplier {
     /// - Returns: The JSON data with the patch applied.
     /// - Throws: This function throws an ``Error`` if the application was not successful.
     public func apply(_ patch: JSONPatch, to jsonData: Data) throws -> Data {
-        let json = try JSONDecoder().decode(JSON.self, from: jsonData)
+        var json = try JSONDecoder().decode(JSON.self, from: jsonData)
         
-        // Apply each patch operation one-by-one to the JSON, and throw an error if one of the patches could not
-        // be applied.
-        let appliedJSON = try patch.reduce(json) { json, operation in
+        for operation in patch {
             guard let newValue = try apply(operation, to: json, originalPointer: operation.pointer) else {
                 // If the application of the operation onto the top-level JSON element results in a `nil` value (i.e.,
                 // the entire value was removed), throw an error since this is not supported.
                 throw Error.invalidPatch
             }
-            return newValue
+            json = newValue
         }
         
-        return try JSONEncoder().encode(appliedJSON)
+        return try JSONEncoder().encode(json)
     }
     
     private func apply(_ operation: JSONPatchOperation, to json: JSON, originalPointer: JSONPointer) throws -> JSON? {

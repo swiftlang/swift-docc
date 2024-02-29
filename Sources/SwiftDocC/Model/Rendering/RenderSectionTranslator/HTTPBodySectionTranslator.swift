@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,13 +31,16 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
             
             let renderedTokens = symbol.declarationFragments?.map { token -> DeclarationRenderSection.Token in
                 // Create a reference if one found
-                var reference: ResolvedTopicReference?
+                let reference: ResolvedTopicReference?
                 if let preciseIdentifier = token.preciseIdentifier,
-                   let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
+                    let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                {
                     reference = resolved
                     
                     // Add relationship to render references
                     renderNodeTranslator.collectedTopicReferences.append(resolved)
+                } else {
+                    reference = nil
                 }
                 
                 // Add the declaration token

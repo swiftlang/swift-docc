@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -206,7 +206,7 @@ extension PathHierarchy {
             let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
             
             do {
-                guard let child = try children.find(pathComponent.kind, pathComponent.hash) else {
+                guard let child = try children.find(pathComponent.disambiguation) else {
                     // The search has ended with a node that doesn't have a child matching the next path component.
                     throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
                 }
@@ -252,7 +252,7 @@ extension PathHierarchy {
                 // Look ahead one path component to narrow down the list of collisions. 
                 // For each collision where the next path component can be found unambiguously, return that matching node one level down.
                 let possibleMatchesOneLevelDown = collisions.compactMap {
-                    return try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.kind, nextPathComponent.hash)
+                    return try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
                 }
                 let onlyPossibleMatch: Node?
                 
@@ -382,8 +382,7 @@ extension PathHierarchy {
         if let match = node.children[pathComponent.full] {
             // The path component parsing may treat dash separated words as disambiguation information.
             // If the parsed name didn't match, also try the original.
-            pathComponent.kind = nil
-            pathComponent.hash = nil
+            pathComponent.disambiguation = nil
             return (match, pathComponent)
         } else if let match = node.children[String(pathComponent.name)] {
             return (match, pathComponent)
@@ -404,16 +403,24 @@ extension PathHierarchy.DisambiguationContainer {
         case lookupCollision([(node: PathHierarchy.Node, disambiguation: String)])
     }
     
-    fileprivate func find(_ kind: Substring?, _ hash: Substring?) throws -> PathHierarchy.Node? {
-        try find(kind.map(String.init), hash.map(String.init))
-    }
     /// Attempts to find a value in the disambiguation tree based on partial disambiguation information.
     ///
     /// There are 3 possible results:
     ///  - No match is found; indicated by a `nil` return value.
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
-    func find(_ kind: String?, _ hash: String?) throws -> PathHierarchy.Node? {
+    func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
+        var kind: String?
+        var hash: String?
+        switch disambiguation {
+        case .kindAndHash(kind: let maybeKind, hash: let maybeHash):
+            kind = maybeKind.map(String.init)
+            hash = maybeHash.map(String.init)
+        case nil:
+            kind = nil
+            hash = nil
+        }
+        
         if let kind = kind {
             // Need to match the provided kind
             guard let subtree = storage[kind] else { return nil }
@@ -480,17 +487,13 @@ private extension PathHierarchy.Node {
             return true
         }
         // Otherwise, check if the node's symbol matches the provided disambiguation
-        else if let symbol = symbol {
-            guard name == component.name else {
-                return false
+        else if let symbol = symbol, let disambiguation = component.disambiguation {
+            switch disambiguation {
+            case .kindAndHash(let kind, let hash):
+                return name == component.name
+                    && (kind == nil || kind! == symbol.kind.identifier.identifier)
+                    && (hash == nil || hash! == symbol.identifier.precise.stableHashString)
             }
-            if let kind = component.kind, kind != symbol.kind.identifier.identifier {
-                return false
-            }
-            if let hash = component.hash, hash != symbol.identifier.precise.stableHashString {
-                return false
-            }
-            return true
         }
         
         return false

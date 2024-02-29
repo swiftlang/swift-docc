@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Specification of the Swift-DocC Index.json file.",
-        "version": "0.1.0",
+        "version": "0.1.2",
         "title": "RenderIndex"
     },
     "paths": {},
@@ -33,6 +33,12 @@
                             "$ref": "#/components/schemas/ImageRenderReference"
                         }
                     },
+                    "includedArchiveIdentifiers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
                 }
             },
             "Node": {

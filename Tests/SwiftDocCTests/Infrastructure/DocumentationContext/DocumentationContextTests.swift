@@ -746,10 +746,10 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // Symbols are loaded
-        XCTAssertFalse(context.symbolIndex.isEmpty)
+        XCTAssertFalse(context.documentationCache.isEmpty)
         
         // MyClass is loaded
-        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC") else {
+        guard let myClass = context.documentationCache["s:5MyKit0A5ClassC"] else {
             XCTFail("`MyClass` not found in symbol graph")
             return
         }
@@ -820,7 +820,7 @@ class DocumentationContextTests: XCTestCase {
         //
         
         // MyProtocol is loaded
-        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
+        guard let myProtocol = context.documentationCache["s:5MyKit0A5ProtocolP"],
             let myProtocolSymbol = myProtocol.semantic as? Symbol else {
             XCTFail("`MyProtocol` not found in symbol graph")
             return
@@ -995,7 +995,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
-        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC"),
+        guard let myClass = context.documentationCache["s:5MyKit0A5ClassC"],
             let myClassSymbol = myClass.semantic as? Symbol else {
             XCTFail("`MyClass` not found in symbol graph")
             return
@@ -1058,12 +1058,12 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyFunction is loaded
-        XCTAssertNotNil(context.symbolIndex[myFunctionSymbolPreciseIdentifier], "myFunction which only exist on iOS should be found in the graph")
-        XCTAssertNotNil(context.symbolIndex[myPlatformSpecificFunctionSymbol.identifier.precise], "The new platform specific function should be found in the graph")
+        XCTAssertNotNil(context.documentationCache[myFunctionSymbolPreciseIdentifier], "myFunction which only exist on iOS should be found in the graph")
+        XCTAssertNotNil(context.documentationCache[myPlatformSpecificFunctionSymbol.identifier.precise], "The new platform specific function should be found in the graph")
         
         XCTAssertEqual(
-            context.symbolIndex.count,
-            graph.symbols.count + 1 /* for the module */ + 1 /* for the new plaform specific function */,
+            context.documentationCache.count,
+            graph.symbols.count + 1 /* for the module */ + 1 /* for the new platform specific function */,
             "Together the two graphs contain one symbol more than they do individually"
         )
     }
@@ -1092,7 +1092,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // SideClass is loaded
-        guard let sideClass = context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC"),
+        guard let sideClass = context.documentationCache["s:7SideKit0A5ClassC"],
             let sideClassSymbol = sideClass.semantic as? Symbol else {
             XCTFail("`SideClass` not found in symbol graph")
             return
@@ -1129,7 +1129,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
-        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC"),
+        guard let myClass = context.documentationCache["s:5MyKit0A5ClassC"],
             let myClassSymbol = myClass.semantic as? Symbol else {
             XCTFail("`MyClass` not found in symbol graph")
             return
@@ -2327,12 +2327,12 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
         
         // Verify that the symbol index has been updated with the rewritten collision-corrected symbol paths
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
+        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:7SideKit0A5ClassC10testnEE")?.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
+        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:7SideKit0A5ClassC10testEE")?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
+        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:7SideKit0A5ClassC10tEstPP")?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
         
-        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
-        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
+        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5MyProtocol0Afunc()")?.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
+        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5MyProtocol0Afunc()DefaultImp")?.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
     }
 
     func testResolvingArticleLinkBeforeCuratingIt() throws {
@@ -2856,7 +2856,7 @@ let expected = """
         XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
         XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
 
-        let functionNode = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC10myFunctionyyF"))
+        let functionNode = try XCTUnwrap(context.documentationCache["s:7SideKit0A5ClassC10myFunctionyyF"])
         XCTAssertEqual(functionNode.docChunks.count, 2)
         let docCommentChunks = functionNode.docChunks.compactMap { chunk -> DocumentationNode.DocumentationChunk? in
             switch chunk.source {
@@ -3806,7 +3806,7 @@ let expected = """
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
             
-            let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"])
+            let symbolReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "s:12Minimal_docs4TestV"))
             
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
@@ -4002,7 +4002,7 @@ let expected = """
         let (bundle, context) = try testBundleAndContext(named: "BundleWithExecutableModuleKind")
         XCTAssertEqual(bundle.info.defaultModuleKind, "Executable")
         
-        let moduleSymbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("ExampleDocumentedExecutable")?.symbol)
+        let moduleSymbol = try XCTUnwrap(context.documentationCache["ExampleDocumentedExecutable"]?.symbol)
         XCTAssertEqual(moduleSymbol.kind.identifier.identifier, "module")
         XCTAssertEqual(moduleSymbol.kind.displayName, "Executable")
     }
@@ -4049,61 +4049,10 @@ let expected = """
         try workspace.registerProvider(dataProvider)
         
         XCTAssertEqual(
-            context.symbolIndex.count,
-            1001,
-            "Expected 1000 symbols from the symbol graph + 1 for the module."
-        )
-        
-        XCTAssertEqual(
             context.documentationCache.count,
             1001,
             "Expected 1000 nodes for each symbol of the symbol graph + 1 for the module."
         )
-        
-        // Create ObjectIdentifier values for the symbols stored in the documentationCache and symbolIndex dictionaries,
-        // and verify that the dictionaries contain the same set of Symbol objects.
-        
-        let symbolsInDocumentationCache = Set(
-            context.documentationCache.values
-                .lazy
-                .compactMap { $0.semantic as? Symbol }
-                .map(ObjectIdentifier.init)
-        )
-        
-        let symbolsInSymbolIndex = Set(
-            context.symbolIndex.values.compactMap { reference -> ObjectIdentifier? in
-                guard let symbol = context.documentationCache[reference]?.semantic as? Symbol else {
-                    XCTFail("Node in symbolIndex doesn't have a symbol.")
-                    return nil
-                }
-                return ObjectIdentifier(symbol)
-            }
-        )
-        
-        XCTAssertEqual(
-            symbolsInDocumentationCache,
-            symbolsInSymbolIndex,
-            "Expected the symbol instances in the documentationCache and symbolIndex dictionaries to be the same"
-        )
-    }
-    
-    func testAllReferencesInSymbolsIndexExistInDocumentationCache() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
-        
-        let referencesInSymbolIndex = Set(context.symbolIndex.values)
-        let referencesInDocumentationCache = Set(context.documentationCache.keys)
-        
-        let extraReferencesInSymbolIndex = referencesInSymbolIndex.subtracting(referencesInDocumentationCache)
-        XCTAssert(extraReferencesInSymbolIndex.isEmpty, "Some symbols in the symbol index don't exist in the documentation cache: \(extraReferencesInSymbolIndex.map(\.path).sorted())")
-
-        
-        var referencesToSymbolsInDocumentationCache = Set<ResolvedTopicReference>()
-        for (reference, node) in context.documentationCache where node.semantic is Symbol {
-            referencesToSymbolsInDocumentationCache.insert(reference)
-        }
-            
-        let missingReferencesInSymbolIndex = referencesToSymbolsInDocumentationCache.subtracting(referencesInSymbolIndex)
-        XCTAssert(missingReferencesInSymbolIndex.isEmpty, "Some symbol references in the documentation cache don't exist in the symbol index: \(missingReferencesInSymbolIndex.map(\.path).sorted())")
     }
     
     func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {
@@ -4140,9 +4089,7 @@ let expected = """
         )
     }
 
-    func testAddingProtocolExtensionMemberConstraint() throws
-    {
-
+    func testAddingProtocolExtensionMemberConstraint() throws {
         // This fixture contains a protocol extension:
         // extension Swift.Collection {
         //   public func fixture() -> String {
@@ -4154,8 +4101,7 @@ let expected = """
         // The member function of the protocol extension
         // should have a constraint: Self is Collection
         var memberIdentifier = "s:Sl28ModuleWithProtocolExtensionsE7fixtureSSyF"
-        var memberRef = try XCTUnwrap(context.symbolIndex[memberIdentifier])
-        var memberNode = try XCTUnwrap(context.documentationCache[memberRef])
+        var memberNode = try XCTUnwrap(context.documentationCache[memberIdentifier])
         var memberSymbol = memberNode.semantic as! Symbol
         var constraints = try XCTUnwrap(memberSymbol.constraints)
         XCTAssertEqual(1, constraints.count)
@@ -4176,8 +4122,7 @@ let expected = """
         // make sense for a structure or for any types other
         // than protocols: Self is Set.Iterator
         memberIdentifier = "s:Sh8IteratorV28ModuleWithProtocolExtensionsE7fixtureSSyF"
-        memberRef = try XCTUnwrap(context.symbolIndex[memberIdentifier])
-        memberNode = try XCTUnwrap(context.documentationCache[memberRef])
+        memberNode = try XCTUnwrap(context.documentationCache[memberIdentifier])
         memberSymbol = memberNode.semantic as! Symbol
         constraints = try XCTUnwrap(memberSymbol.constraints)
         // Contains existing constraint Element conforms to Hashable,
@@ -4196,10 +4141,14 @@ let expected = """
         // One doc comment in the Obj-C header file contains an invalid doc
         // link on line 24, columns 56-63:
         // "Log a hello world message. This line contains an ``invalid`` link."
-        let (_, _, context) = try testBundleAndContext(copying: "ObjCFrameworkWithInvalidLink")
+        let (_, context) = try testBundleAndContext(named: "ObjCFrameworkWithInvalidLink")
         let problems = context.problems
-        XCTAssertEqual(1, problems.count)
-        let problem = try XCTUnwrap(problems.first)
+        if FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled {
+            XCTAssertEqual(5, problems.count)
+        } else {
+            XCTAssertEqual(1, problems.count)
+        }
+        let problem = try XCTUnwrap(problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
         let basename = try XCTUnwrap(problem.diagnostic.source?.lastPathComponent)
         XCTAssertEqual("HelloWorldFramework.h", basename)
         let start = Markdown.SourceLocation(line: 24, column: 56, source: nil)
@@ -4255,6 +4204,109 @@ let expected = """
         XCTAssertEqual(linkResolutionProblems.count, 1)
         problem = try XCTUnwrap(linkResolutionProblems.last)
         XCTAssertEqual(problem.diagnostic.summary, "\'NonExistingDoc\' doesn\'t exist at \'/BestBook/MyArticle\'")
+    }
+    
+    func testContextRecognizesOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        
+        for kindID in overloadableKindIDs {
+            var seenIndices = Set<Int>()
+            // Find the 4 symbols of this specific kind
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+                .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
+            
+            // Check that each symbol lists the other 3 overloads
+            for (index, reference) in overloadedReferences.indexed() {
+                let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+                
+                let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+                
+                // Make sure that each symbol contains all of its sibling overloads.
+                XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+                for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                    XCTAssert(overloads.references.contains(otherReference))
+                }
+                
+                // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
+                let displayIndex = try XCTUnwrap(overloads.displayIndex)
+                XCTAssertFalse(seenIndices.contains(displayIndex))
+                seenIndices.insert(displayIndex)
+            }
+            // Check that all the overloads was encountered
+            for index in overloadedReferences.indices {
+                XCTAssert(seenIndices.contains(index))
+            }
+        }
+    }
+    
+    // The overload behavior doesn't apply to symbol kinds that don't support overloading
+    func testContextDoesNotRecognizeNonOverloadableSymbolKinds() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        
+        let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every non overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                ))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        
+        for kindID in nonOverloadableKindIDs {
+            // Find the 4 symbols of this specific kind
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+                .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
+            
+            // Check that none of the symbols lists any overloads
+            for reference in overloadedReferences {
+                let documentationNode = try XCTUnwrap(context.documentationCache[reference])
+                let overloadedSymbol = try XCTUnwrap(documentationNode.semantic as? Symbol)
+                XCTAssertNil(overloadedSymbol.overloadsVariants.firstValue)
+            }
+        }
+    }
+    
+    // A test helper that creates a symbol with a given identifier and kind.
+    private func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+        return SymbolGraph.Symbol(
+            identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+            names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["SymbolName"],
+            docComment: nil,
+            accessLevel: .public,
+            kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
+            mixins: [:]
+        )
     }
 }
 

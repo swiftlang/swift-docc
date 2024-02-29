@@ -15,6 +15,7 @@ Use documentation markup, a custom variant of Markdown, to add in-source documen
 - ``Options``
 - ``Metadata``
 - ``TechnologyRoot``
+- ``Redirected``
 
 ### Creating Custom Page Layouts
 

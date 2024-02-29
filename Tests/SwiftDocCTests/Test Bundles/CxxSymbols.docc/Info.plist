@@ -7,8 +7,8 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.swift.docc.example</string>
 	<key>CFBundleDisplayName</key>
-	<string>C++ Namespaces</string>
+	<string>C++ Symbols</string>
 	<key>CFBundleName</key>
-	<string>CxxNamespaces</string>
+	<string>CxxSymbols</string>
 </dict>
 </plist>

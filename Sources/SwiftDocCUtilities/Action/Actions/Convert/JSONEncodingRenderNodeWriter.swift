@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+@_spi(FileManagerProtocol) import SwiftDocC
 
 /// An object that writes render nodes, as JSON files, into a target folder.
 ///
@@ -43,8 +43,10 @@ class JSONEncodingRenderNodeWriter {
     /// If the target path to the JSON file includes intermediate folders that don't exist, the writer object will ask the file manager, with which it was created, to
     /// create those intermediate folders before writing the JSON file.
     ///
-    /// - Parameter renderNode: The node which the writer object writes to a JSON file.
-    func write(_ renderNode: RenderNode) throws {
+    /// - Parameters:
+    ///   - renderNode: The node which the writer object writes to a JSON file.
+    ///   - encoder: The encoder to serialize the render node with.
+    func write(_ renderNode: RenderNode, encoder: JSONEncoder) throws {
         let fileSafePath = NodeURLGenerator.fileSafeReferencePath(
             renderNode.identifier,
             lowercased: true

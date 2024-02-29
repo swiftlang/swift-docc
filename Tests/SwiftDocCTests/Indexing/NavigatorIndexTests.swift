@@ -345,10 +345,13 @@ Root
                 """
                 {
                   "interfaceLanguages": {},
+                  "includedArchiveIdentifiers": [
+                    "org.swift.docc.example"
+                  ],
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                   }
                 }
                 """
@@ -535,10 +538,13 @@ Root
                       }
                     ]
                   },
+                  "includedArchiveIdentifiers": [
+                    "org.swift.docc.example"
+                  ],
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                   }
                 }
                 """#
@@ -1258,6 +1264,7 @@ Root
         XCTAssertEqual(PageType(symbolKind: "union"), .union)
         XCTAssertEqual(PageType(symbolKind: "property"), .instanceProperty)
         XCTAssertEqual(PageType(symbolKind: "dict"), .dictionarySymbol)
+        XCTAssertEqual(PageType(symbolKind: "namespace"), .namespace)
         
         func verifySymbolKind(_ inputs: [String], _ result: PageType) {
             for input in inputs {
