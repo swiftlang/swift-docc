@@ -2346,52 +2346,67 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard let overloadGroupReference = documentationCache.reference(symbolID: overloadGroupId) else {
                 preconditionFailure("Overload group symbol should already be in the cache")
             }
+            let overloadGroupNode = try entity(with: overloadGroupReference)
 
-            // SymbolKit has already cloned the overload group symbol from an existing overload. The
-            // symbol identifier it gave the symbol starts with the cloned symbol's ID, followed by
-            // the fixed string '::OverloadGroup'. Since we want the cloned overload info to be
-            // first in the display list, scan through the list of symbol IDs and swap indices if
-            // necessary.
-            guard let clonedIdIndex = overloadSymbolIds.firstIndex(where: { $0 + "::OverloadGroup" == overloadGroupId }) else {
-                continue
-            }
-            overloadSymbolIds.swapAt(clonedIdIndex, overloadSymbolIds.startIndex)
-
-            let overloadSymbolReferences = overloadSymbolIds.map {
+            var overloadSymbolNodes = try overloadSymbolIds.map {
                 guard let reference = documentationCache.reference(symbolID: $0) else {
                     preconditionFailure("Symbols should already be in the cache")
                 }
-                return reference
+                return try entity(with: reference)
+            }
+            if overloadSymbolNodes.allSatisfy({ node in
+                (node.semantic as? Symbol)?.overloadsVariants.firstValue != nil
+            }) {
+                // If SymbolKit saved its sort of the symbols, use that ordering here
+                overloadSymbolNodes.sort(by: { lhs, rhs in
+                    let lhsIndex = (lhs.semantic as! Symbol).overloadsVariants.firstValue!.displayIndex
+                    let rhsIndex = (rhs.semantic as! Symbol).overloadsVariants.firstValue!.displayIndex
+                    return lhsIndex < rhsIndex
+                })
+            } else {
+                assertionFailure("Failed to find the overload data from SymbolKit.")
+                // SymbolKit has already cloned the overload group symbol from an existing overload. The
+                // symbol identifier it gave the symbol starts with the cloned symbol's ID, followed by
+                // the fixed string '::OverloadGroup'. Since we want the cloned overload info to be
+                // first in the display list, scan through the list of symbol IDs and swap indices if
+                // necessary.
+                if let clonedIdIndex = overloadSymbolIds.firstIndex(where: { $0 + SymbolGraph.Symbol.overloadGroupIdentifierSuffix == overloadGroupId }) {
+                    overloadSymbolIds.swapAt(clonedIdIndex, overloadSymbolIds.startIndex)
+                }
             }
 
             func addOverloadReferences(
-                to nodeReference: ResolvedTopicReference,
+                to documentationNode: DocumentationNode,
                 at index: Int,
-                overloadSymbolReferences: [ResolvedTopicReference]
+                overloadSymbolReferences: [DocumentationNode]
             ) throws {
-                let documentationNode = try entity(with: nodeReference)
-
                 guard let symbol = documentationNode.semantic as? Symbol else {
                     preconditionFailure("""
-                    Only symbols can be overloads. Found non-symbol overload for \(nodeReference.absoluteString.singleQuoted).
-                    Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
+                    Only symbols can be overloads. Found non-symbol overload for \(documentationNode.reference.absoluteString.singleQuoted).
+                    Non-symbols should already have been filtered out by SymbolKit.
                     """)
                 }
-                guard nodeReference.sourceLanguage == .swift else {
+                guard documentationNode.reference.sourceLanguage == .swift else {
                     assertionFailure("Overload groups is only supported for Swift symbols.")
                     return
                 }
 
-                var otherOverloadedSymbolReferences = overloadSymbolReferences
+                var otherOverloadedSymbolReferences = overloadSymbolReferences.map(\.reference)
                 otherOverloadedSymbolReferences.remove(at: index)
-                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                let displayIndex: Int
+                if let symbolIndex = symbol.overloadsVariants.firstValue?.displayIndex {
+                    displayIndex = symbolIndex
+                } else {
+                    displayIndex = index
+                }
+                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: displayIndex)
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
             }
 
-            try addOverloadReferences(to: overloadGroupReference, at: 0, overloadSymbolReferences: overloadSymbolReferences)
+            try addOverloadReferences(to: overloadGroupNode, at: 0, overloadSymbolReferences: overloadSymbolNodes)
 
-            for (index, symbolReference) in overloadSymbolReferences.indexed() {
-                try addOverloadReferences(to: symbolReference, at: index, overloadSymbolReferences: overloadSymbolReferences)
+            for (index, node) in overloadSymbolNodes.indexed() {
+                try addOverloadReferences(to: node, at: index, overloadSymbolReferences: overloadSymbolNodes)
             }
         }
     }

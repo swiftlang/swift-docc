@@ -202,7 +202,17 @@ public struct DocumentationNode {
             }
             return nil
         }
-        
+
+        let overloadVariants = DocumentationDataVariants(
+            symbolData: unifiedSymbol.mixins,
+            platformName: platformName
+        ) { mixins -> Symbol.Overloads? in
+            guard let overloadData = mixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData else {
+                return nil
+            }
+            return .init(references: [], displayIndex: overloadData.overloadGroupIndex)
+        }
+
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
@@ -279,7 +289,8 @@ public struct DocumentationNode {
             httpParametersSectionVariants: .empty,
             httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty,
-            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
+            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) }),
+            overloadsVariants: overloadVariants
         )
 
         try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)

@@ -4232,8 +4232,9 @@ let expected = """
 
         for kindID in overloadableKindIDs {
             var seenIndices = Set<Int>()
-            // Find the 4 symbols of this specific kind
-            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+            // Find the 4 symbols of this specific kind. SymbolKit will have assigned a display
+            // index based on their sorted USRs, so sort them ahead of time based on that
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }.sorted(by: \.identifier.precise)
                 .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
 
             let overloadGroupNode: DocumentationNode
@@ -4266,6 +4267,7 @@ let expected = """
                 
                 // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
                 XCTAssertFalse(seenIndices.contains(overloads.displayIndex))
+                XCTAssertEqual(overloads.displayIndex, index)
                 seenIndices.insert(overloads.displayIndex)
 
                 if overloads.displayIndex == 0 {
