@@ -998,7 +998,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             # Article
             
             @DeprecationSummary {
-              Use <doc://com.external.testbundle/something> instead.
+              Use <doc://com.external.testbundle/something-else> instead.
             }
             
             Link to external content in an article deprecation message.
