@@ -192,6 +192,9 @@ struct PathHierarchy {
                 var parent = moduleNode
                 var components = { (symbol: SymbolGraph.Symbol) -> [String] in
                     let original = symbol.pathComponents
+                    // The `ConvertService` may pass a lookup of "known disambiguated path components" per symbol that the path hierarchy
+                    // wouldn't be able to compute itself because the "partial" symbol graph doesn't contain all the symbols to accurately
+                    // determine the minimal required disambiguation per path.
                     if let disambiguated = knownDisambiguatedPathComponents?[node.symbol!.identifier.precise], disambiguated.count == original.count {
                         return disambiguated
                     } else {
@@ -208,17 +211,18 @@ struct PathHierarchy {
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
                     guard knownDisambiguatedPathComponents != nil else {
+                        // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
                         let nodeWithoutSymbol = Node(name: component)
                         nodeWithoutSymbol.isDisfavoredInCollision = true
                         parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
                         parent = nodeWithoutSymbol
                         continue
                     }
-                    // If the path hierarchy was passed any known disambiguated path components, then it may need to parse the disambiguation when creating sparse nodes.
+                    // If the path hierarchy was passed a lookup of "known disambiguation" path components", then it's possible that each path component could contain disambiguation that needs to be parsed.
                     let component = PathParser.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: String(component.name))
                     nodeWithoutSymbol.isDisfavoredInCollision = true
-                    // If 'known disambiguated path components' was provided, then
+                    // Create a spare/placeholder node with the parsed disambiguation for this path component.
                     switch component.disambiguation {
                     case .kindAndHash(kind: let kind, hash: let hash):
                         parent.add(child: nodeWithoutSymbol, kind: kind.map(String.init), hash: hash.map(String.init))
@@ -526,6 +530,9 @@ extension PathHierarchy {
         // It's very rare to have more than 10 values and 20+ values is extremely rare.
         //
         // Given this expected amount of data, linear searches through an array performs well.
+        //
+        // Even though the container only stores one element per unique hash and kind pair, using a `Set` wouldn't
+        // help since any colliding elements need to be merged.
         private(set) var storage = ContiguousArray<Element>()
     }
 }
@@ -540,6 +547,14 @@ extension PathHierarchy.DisambiguationContainer {
             // The 'hash' is more unique than the 'kind', so compare the 'hash' first.
             self.hash == hash && self.kind == kind
         }
+        /// Placeholder values, also called "unfindable elements" or "sparse nodes", are created when constructing a path hierarchy for a "partial" symbol graph file.
+        ///
+        /// When the `ConvertService` builds documentation for a single symbol with multiple path components, the path hierarchy fills in placeholder nodes
+        /// for the other path components. This ensures that the nodes in the hierarchy are connected and that there's the same number of nodes—with the same
+        /// names—between the module node and the non-placeholder node as there would be in the full symbol graph.
+        ///
+        /// The placeholder nodes can be traversed up and down while resolving a link—to reach a non-placeholder node—but the link will be considered "not found"
+        /// if it ends at a placeholder node.
         var isPlaceholderValue: Bool {
             // Only symbols have 'hash' disambiguation, so check the 'kind' first.
             kind == nil && hash == nil
@@ -555,6 +570,7 @@ extension PathHierarchy.DisambiguationContainer {
     mutating func add(_ value: PathHierarchy.Node, kind: String?, hash: String?) {
         // When adding new elements to the container, it's sufficient to check if the hash and kind match.
         if let existing = storage.first(where: { $0.matches(kind: kind, hash: hash) }) {
+            // If the container already has a version of this node, merge the new value with the existing value.
             existing.node.merge(with: value)
         } else if storage.count == 1, storage.first!.isPlaceholderValue {
             // It is possible for articles and other non-symbols to collide with "unfindable" symbol placeholder nodes.
