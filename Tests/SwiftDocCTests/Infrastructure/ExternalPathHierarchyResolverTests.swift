@@ -199,33 +199,33 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         //     public func something(argument: String) -> Int { 0 }
         // }
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments")
+        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp")
+        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2")
+        
         try linkResolvers.assertSuccessfullyResolves(
-            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp",
-            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)"
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp"
         )
         try linkResolvers.assertSuccessfullyResolves(
-            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2",
-            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)"
+            authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2"
         )
-       
-        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)")
-        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)")
         
         try linkResolvers.assertSuccessfullyResolves(
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)->Int",
-            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)"
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp"
         )
         try linkResolvers.assertSuccessfullyResolves(
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)->Int",
-            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)"
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2"
         )
         try linkResolvers.assertSuccessfullyResolves(
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)->_",
-            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)"
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp"
         )
         try linkResolvers.assertSuccessfullyResolves(
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)->_",
-            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)"
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2"
         )
         
         // public enum CollisionsWithDifferentSubscriptArguments {
