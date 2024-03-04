@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -179,7 +179,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
-            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -199,7 +199,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
-            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -379,6 +379,140 @@ class SymbolGraphLoaderTests: XCTestCase {
                 .formatVersion.description,
             "9.9.9"
         )
+    }
+    
+    func testCanonicalPlatformNameUniformity() throws {
+        
+        let testBundle = Folder(name: "TestBundle.docc", content: [
+            TextFile(name: "Info.plist", utf8Content: """
+            <plist version="1.0">
+            <dict>
+                <key>CFBundleDisplayName</key>
+                <string>MyModule</string>
+                <key>CFBundleIdentifier</key>
+                <string>com.apple.MyModule</string>
+                <key>CFBundleVersion</key>
+                <string>0.1.0</string>
+                <key>CDAppleDefaultAvailability</key>
+                <dict>
+                    <key>MyModule</key>
+                    <array>
+                        <dict>
+                            <key>name</key>
+                            <string>Mac Catalyst</string>
+                            <key>version</key>
+                            <string>1.0</string>
+                        </dict>
+                    </array>
+                </dict>
+            </dict>
+            </plist>
+            """),
+            Folder(name: "Symbols", content: [
+                TextFile(name: "MyModule-tvos-objc.symbols.json", utf8Content: makeSymbolGraphString(
+                    moduleName: "MyModule",
+                   symbols: """
+                  {
+                    "accessLevel" : "public",
+                    "availability" : [
+                        {
+                          "domain" : "tvos",
+                          "introduced" : {
+                            "major" : 15,
+                            "minor" : 2,
+                            "patch" : 0
+                          }
+                        },
+                    ],
+                    "declarationFragments" : [],
+                    "functionSignature" : {
+                      "parameters" : [],
+                      "returns" : []
+                    },
+                    "identifier" : {
+                      "interfaceLanguage" : "objective-c",
+                      "precise" : "c:@F@A"
+                    },
+                    "kind" : {
+                        "displayName" : "Instance Property",
+                        "identifier" : "objective-c.property"
+                    },
+                    "names" : {
+                      "subHeading" : [],
+                      "title" : "A"
+                    },
+                    "pathComponents" : ["A"]
+                  }
+                """,
+                patform: """
+                 "operatingSystem" : {
+                   "minimumVersion" : {
+                     "major" : 12,
+                     "minor" : 0,
+                     "patch" : 0
+                   },
+                   "name" : "tvos"
+                 }
+                """
+                )),
+                TextFile(name: "MyModule-catalyst-objc.symbols.json", utf8Content: makeSymbolGraphString(moduleName: "MyModule", symbols: """
+                  {
+                    "accessLevel" : "public",
+                    "availability" : [
+                        {
+                          "domain" : "maccatalyst",
+                          "introduced" : {
+                            "major" : 15,
+                            "minor" : 2,
+                            "patch" : 0
+                          }
+                        },
+                    ],
+                    "declarationFragments" : [],
+                    "functionSignature" : {
+                      "parameters" : [],
+                      "returns" : []
+                    },
+                    "identifier" : {
+                      "interfaceLanguage" : "objective-c",
+                      "precise" : "c:@F@A"
+                    },
+                    "kind" : {
+                        "displayName" : "Instance Property",
+                        "identifier" : "objective-c.property"
+                    },
+                    "names" : {
+                      "subHeading" : [],
+                      "title" : "A"
+                    },
+                    "pathComponents" : ["A"]
+                  }
+                """,
+                 patform: """
+                 "operatingSystem" : {
+                   "minimumVersion" : {
+                     "major" : 12,
+                     "minor" : 0,
+                     "patch" : 0
+                   },
+                   "name" : "ios"
+                 }
+                 """)),
+            ]),
+        ])
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try testBundle.write(inside: tempURL)
+        let (_, _, context) = try loadBundle(from: bundleURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we use one canonical platform name 'macCatalyst' for both
+        // 'Mac Catalyst' (info.plist) and 'maccatalyst' (SGF).
+        XCTAssertTrue(availability.count == 2)
+        XCTAssertTrue(availability.filter({ $0.domain?.rawValue == "macCatalyst" }).count == 1)
+        XCTAssertTrue(availability.filter({ $0.domain?.rawValue == "maccatalyst" }).count == 0)
+        
     }
     
     // MARK: - Helpers

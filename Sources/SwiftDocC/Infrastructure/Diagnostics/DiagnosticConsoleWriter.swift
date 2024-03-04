@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,18 +27,30 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     ///   - formattingOptions: The formatting options for the diagnostics.
     ///   - baseUrl: A url to be used as a base url when formatting diagnostic source path.
     ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
-    public init(
+    public convenience init(
         _ stream: TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
         highlight: Bool? = nil
+    ) {
+        self.init(stream, formattingOptions: options, baseURL: baseURL, highlight: highlight, fileManager: FileManager.default)
+    }
+    
+    @_spi(FileManagerProtocol)
+    public init(
+        _ stream: TextOutputStream = LogHandle.standardError,
+        formattingOptions options: DiagnosticFormattingOptions = [],
+        baseURL: URL? = nil,
+        highlight: Bool? = nil,
+        fileManager: FileManagerProtocol = FileManager.default
     ) {
         outputStream = stream
         formattingOptions = options
         diagnosticFormatter = Self.makeDiagnosticFormatter(
             options,
             baseURL: baseURL,
-            highlight: highlight ?? TerminalHelper.isConnectedToTerminal
+            highlight: highlight ?? TerminalHelper.isConnectedToTerminal,
+            fileManager: fileManager
         )
     }
 
@@ -72,12 +84,13 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     private static func makeDiagnosticFormatter(
         _ options: DiagnosticFormattingOptions,
         baseURL: URL?,
-        highlight: Bool
+        highlight: Bool,
+        fileManager: FileManagerProtocol
     ) -> DiagnosticConsoleFormatter {
         if options.contains(.formatConsoleOutputForTools) {
             return IDEDiagnosticConsoleFormatter(options: options)
         } else {
-            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options)
+            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options, fileManager: fileManager)
         }
     }
 }
@@ -85,18 +98,29 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 // MARK: Formatted descriptions
 
 extension DiagnosticConsoleWriter {
-    
     public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
-        return problems.map { formattedDescription(for: $0, options: options) }.joined(separator: "\n")
+        formattedDescription(for: problems, options: options, fileManager: FileManager.default)
+    }
+    @_spi(FileManagerProtocol)
+    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
     
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal)
+        formattedDescription(for: problem, options: options, fileManager: FileManager.default)
+    }
+    @_spi(FileManagerProtocol)
+    public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
     
     public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal)
+        formattedDescription(for: diagnostic, options: options, fileManager: FileManager.default)
+    }
+    @_spi(FileManagerProtocol)
+    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
 }
@@ -205,6 +229,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     private let baseUrl: URL?
     private let highlight: Bool
     private var sourceLines: [URL: [String]] = [:]
+    private var fileManager: FileManagerProtocol
 
     /// The number of additional lines from the source file that should be displayed both before and after the diagnostic source line.
     private static let contextSize = 2
@@ -212,11 +237,13 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     init(
         baseUrl: URL?,
         highlight: Bool,
-        options: DiagnosticFormattingOptions
+        options: DiagnosticFormattingOptions,
+        fileManager: FileManagerProtocol
     ) {
         self.baseUrl = baseUrl
         self.highlight = highlight
         self.options = options
+        self.fileManager = fileManager
     }
     
     func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
@@ -294,9 +321,29 @@ extension DefaultDiagnosticConsoleFormatter {
         
         guard let url = diagnostic.source
         else { return "" }
-        
         guard let diagnosticRange = diagnostic.range
-        else { return "\n--> \(formattedSourcePath(url))" }
+        else {
+            // If the replacement operation involves adding new files,
+            // emit the file content as an addition instead of a replacement.
+            //
+            // Example:
+            // --> /path/to/new/file.md
+            // Summary
+            // suggestion:
+            // 0 + Addition file and
+            // 1 + multiline file content.
+            var addition = ""
+            solutions.forEach { solution in
+                addition.append("\n" + solution.summary)
+                solution.replacements.forEach { replacement in
+                    let solutionFragments = replacement.replacement.split(separator: "\n")
+                    addition += "\nsuggestion:\n" + solutionFragments.enumerated().map {
+                        "\($0.offset) + \($0.element)"
+                    }.joined(separator: "\n")
+                }
+            }
+            return "\n--> \(formattedSourcePath(url))\(addition)"
+        }
         
         let sourceLines = readSourceLines(url)
 
@@ -344,7 +391,8 @@ extension DefaultDiagnosticConsoleFormatter {
             let highlightedSource = highlightSource(
                 sourceLine: sourceLine,
                 lineNumber: lineNumber,
-                range: diagnosticRange
+                range: diagnosticRange, 
+                _diagnostic: diagnostic
             )
             
             let separator: String
@@ -360,7 +408,7 @@ extension DefaultDiagnosticConsoleFormatter {
             // Example:
             // 9  | A line outside the diagnostic range.
             // 10 + A line inside the diagnostic range.
-            result.append("\n\(linePrefix) \(separator) \(highlightedSource)")
+            result.append("\n\(linePrefix) \(separator) \(highlightedSource)".removingTrailingWhitespace())
 
             var suggestionsPerColumn = [Int: [String]]()
 
@@ -422,42 +470,46 @@ extension DefaultDiagnosticConsoleFormatter {
     private func highlightSource(
         sourceLine: String,
         lineNumber: Int,
-        range: SourceRange
+        range: SourceRange,
+        _diagnostic: Diagnostic // used in a debug assertion to identify diagnostics with incorrect source ranges
     ) -> String {
         guard highlight,
               lineNumber >= range.lowerBound.line && lineNumber <= range.upperBound.line,
               !sourceLine.isEmpty
-        else { return sourceLine }
-        
-        var startColumn: Int
-        if lineNumber == range.lowerBound.line {
-            startColumn = range.lowerBound.column
-        } else {
-            startColumn = 1
+        else {
+            return sourceLine
         }
         
-        var endColumn: Int
-        if lineNumber == range.upperBound.line {
-            endColumn = range.upperBound.column
-        } else {
-            endColumn = sourceLine.count + 1
+        guard range.lowerBound.line == range.upperBound.line else {
+            // When highlighting multiple lines, highlight the full line
+            return ANSIAnnotation.sourceHighlight.applied(to: sourceLine)
         }
 
         let sourceLineUTF8 = sourceLine.utf8
-
-        let columnRange = startColumn..<endColumn
-        let startIndex = sourceLineUTF8.index(sourceLineUTF8.startIndex, offsetBy: columnRange.lowerBound - 1)
-        let endIndex = sourceLineUTF8.index(startIndex, offsetBy: columnRange.count)
-        let highlightRange = startIndex..<endIndex
         
-        let ansiAnnotation = ANSIAnnotation.sourceHighlight
-
-        var result = ""
-        result += sourceLine[sourceLine.startIndex..<highlightRange.lowerBound]
-        result += ansiAnnotation.applied(to: String(sourceLine[highlightRange]))
-        result += sourceLine[highlightRange.upperBound..<sourceLine.endIndex]
+        let highlightStart = range.lowerBound.column - 1
+        let highlightEnd = range.upperBound.column - 1
         
-        return result
+        assert(highlightStart <= sourceLineUTF8.count, {
+            """
+            Received diagnostic with incorrect source range; (\(range.lowerBound.column) ..< \(range.upperBound.column)) extends beyond the text on line \(lineNumber) (\(sourceLineUTF8.count) characters)
+             █\(sourceLine)
+             █\(String(repeating: " ", count: range.lowerBound.column))\(String(repeating: "~", count: range.upperBound.column - range.lowerBound.column))
+            Use this diagnostic information to reproduce the issue and correct the diagnostic range where it's emitted.
+             ID      : \(_diagnostic.identifier)
+             SUMMARY : \(_diagnostic.summary)
+             SOURCE  : \(_diagnostic.source?.path ?? _diagnostic.range?.source?.path ?? "<nil>")
+            """
+        }())
+        
+        guard let before = String(sourceLineUTF8.prefix(highlightStart)),
+              let highlighted = String(sourceLineUTF8.dropFirst(highlightStart).prefix(highlightEnd - highlightStart)),
+              let after = String(sourceLineUTF8.dropFirst(highlightEnd))
+        else {
+            return sourceLine
+        }
+        
+        return "\(before)\(ANSIAnnotation.sourceHighlight.applied(to: highlighted))\(after)"
     }
 
     private func readSourceLines(_ url: URL) -> [String] {
@@ -466,8 +518,11 @@ extension DefaultDiagnosticConsoleFormatter {
         }
 
         // TODO: Add support for also getting the source lines from the symbol graph files.
-        guard let content = try? String(contentsOf: url)
-        else { return [] }
+        guard let data = fileManager.contents(atPath: url.path),
+              let content = String(data: data, encoding: .utf8)
+        else { 
+            return []
+        }
         
         let lines = content.splitByNewlines
         sourceLines[url] = lines

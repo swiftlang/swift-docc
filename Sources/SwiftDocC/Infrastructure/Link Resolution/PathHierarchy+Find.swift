@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -88,12 +88,12 @@ extension PathHierarchy {
         // A function to avoid repeating the
         func searchForNodeInModules() throws -> Node {
             // Note: This captures `parentID`, `remaining`, and `rawPathForError`.
-            if let moduleMatch = modules[firstComponent.full]  ?? modules[String(firstComponent.name)] {
+            if let moduleMatch = modules.first(where: { $0.matches(firstComponent) }) {
                 return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
             }
             if modules.count == 1 {
                 do {
-                    return try searchForNode(descendingFrom: modules.first!.value, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
+                    return try searchForNode(descendingFrom: modules.first!, pathComponents: remaining, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                 } catch let error as PathHierarchy.Error {
                     switch error {
                     case .notFound:
@@ -118,13 +118,13 @@ extension PathHierarchy {
                     }
                 }
             }
-            let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
+            let topLevelNames = Set(modules.map(\.name) + [articlesContainer.name, tutorialContainer.name])
             
             if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
                 throw Error.moduleNotFound(
                     pathPrefix: pathForError(of: rawPath, droppingLast: remaining.count),
                     remaining: Array(remaining),
-                    availableChildren: Set(modules.keys)
+                    availableChildren: Set(modules.map(\.name))
                 )
             } else {
                 throw Error.notFound(
@@ -209,7 +209,7 @@ extension PathHierarchy {
             let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
             
             do {
-                guard let child = try children.find(pathComponent) else {
+                guard let child = try children.find(pathComponent.disambiguation) else {
                     // The search has ended with a node that doesn't have a child matching the next path component.
                     throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
                 }
@@ -256,7 +256,7 @@ extension PathHierarchy {
                 // Look ahead one path component to narrow down the list of collisions. 
                 // For each collision where the next path component can be found unambiguously, return that matching node one level down.
                 let possibleMatchesOneLevelDown = collisions.compactMap {
-                    return try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent)
+                    return try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
                 }
                 let onlyPossibleMatch: Node?
                 
@@ -413,12 +413,12 @@ extension PathHierarchy.DisambiguationContainer {
     ///  - No match is found; indicated by a `nil` return value.
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
-    func find(_ component: PathHierarchy.PathComponent?) throws -> PathHierarchy.Node? {
-        if storage.count <= 1, component?.disambiguation == nil {
+    func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
+        if storage.count <= 1, disambiguation == nil {
             return storage.first?.node
         }
         
-        switch component?.disambiguation {
+        switch disambiguation {
         case .kindAndHash(let kind, let hash):
             switch (kind, hash) {
             case (let kind?, let hash?):
@@ -468,6 +468,7 @@ extension PathHierarchy.DisambiguationContainer {
 }
 
 // MARK: Private helper extensions
+// Allow optional substrings to be compared to non-optional strings
 
 private func formattedTypes(_ types: [String]?) -> String? {
     guard let types = types else { return nil }
@@ -504,21 +505,26 @@ private extension Sequence {
 
 private extension PathHierarchy.Node {
     func matches(_ component: PathHierarchy.PathComponent) -> Bool {
+        // Check the full path component first in case the node's name has a suffix that could be mistaken for a hash disambiguation.
+        if name == component.full {
+            return true
+        }
+        // Otherwise, check if the node's symbol matches the provided disambiguation
         if let symbol = symbol, let disambiguation = component.disambiguation {
             switch disambiguation {
             case .kindAndHash(let kind, let hash):
                 return name == component.name
-                    && (kind == nil || kind == symbol.kind.identifier.identifier)
-                    && (hash == nil || hash == symbol.identifier.precise.stableHashString)
+                    && (kind == nil || kind! == symbol.kind.identifier.identifier)
+                    && (hash == nil || hash! == symbol.identifier.precise.stableHashString)
             case .typeSignature(let parameterTypes, let returnTypes):
                 let functionSignatureTypeNames = PathHierarchy.functionSignatureTypeNames(for: symbol)
                 return name == component.name
                     && (parameterTypes == nil || typesMatch(provided: parameterTypes!, actual: functionSignatureTypeNames?.parameterTypeNames))
                     && (returnTypes    == nil || typesMatch(provided: returnTypes!,    actual: functionSignatureTypeNames?.returnTypeNames))
             }
-        } else {
-            return name == component.full
         }
+        
+        return false
     }
     
     func anyChildMatches(_ component: PathHierarchy.PathComponent) -> Bool {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,10 +50,8 @@ struct SymbolGraphLoader {
 
     /// Loads all symbol graphs in the given bundle.
     ///
-    /// - Parameter decoder: A potentially customized `JSONDecoder` to be used for decoding. This decoder is only
-    /// used if the `decodingStrategy` is set to `concurrentlyAllFiles`!
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
-    mutating func loadAll(using decoder: JSONDecoder = JSONDecoder()) throws {
+    mutating func loadAll() throws {
         let loadingLock = Lock()
 
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
@@ -73,9 +71,9 @@ struct SymbolGraphLoader {
                 
                 switch decodingStrategy {
                 case .concurrentlyAllFiles:
-                    symbolGraph = try decoder.decode(SymbolGraph.self, from: data)
+                    symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: data)
                 case .concurrentlyEachFileInBatches:
-                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data, using: decoder)
+                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
                 }
                 
                 configureSymbolGraph?(&symbolGraph)
@@ -364,30 +362,35 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
         guard let domain = self.domain else {
             return self
         }
+        
+        var newValue = self
+        // To ensure the uniformity of platform availability names derived from SGFs,
+        // we replace the original domain value with a value from the platform's name
+        // since the platform name maps aliases to the canonical name.
+        let platformName = PlatformName(operatingSystemName: domain.rawValue)
+        newValue.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue)
 
         // If a symbol is unconditionally unavailable for a given domain,
         // don't add an introduced version here as it may cause it to
         // incorrectly display availability information
         guard !isUnconditionallyUnavailable else {
-            return self
+            return newValue
         }
 
         // If this had an explicit introduced version from source, don't replace it.
         guard introducedVersion == nil else {
-            return self
+            return newValue
         }
 
-        let platformName = PlatformName(operatingSystemName: domain.rawValue)
         let fallbackPlatformName = fallbackPlatform.map(PlatformName.init(operatingSystemName:))
         
         // Try to find a default version string for this availability
         // item's platform (a.k.a. domain)
         guard let platformVersion = defaults[platformName] ??
             fallbackPlatformName.flatMap({ defaults[$0] }) else {
-            return self
+            return newValue
         }
 
-        var newValue = self
         newValue.introducedVersion = platformVersion
         return newValue
     }

@@ -50,7 +50,7 @@ public struct VariantCollection<Value: Codable>: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(defaultValue)
-        addVariantsToEncoder(encoder)
+        addVariantsToEncoder(encoder, isDefaultValueEncoded: true)
     }
     
     /// Adds the variants of the collection to the given encoder.
@@ -63,7 +63,7 @@ public struct VariantCollection<Value: Codable>: Codable {
     func addVariantsToEncoder(
         _ encoder: Encoder,
         pointer: JSONPointer? = nil,
-        isDefaultValueEncoded: Bool = true
+        isDefaultValueEncoded: Bool
     ) {
         let overrides = variants.map { variant in
             VariantOverride(

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,9 @@
 
 import XCTest
 import Markdown
-@testable import SwiftDocC
+import SymbolKit
+@testable @_spi(ExternalLinks) import SwiftDocC
+import SwiftDocCTestUtilities
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
@@ -18,14 +20,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        originalFeatureFlagsState = FeatureFlags.current
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = true
-    }
-    
-    override func tearDown() {
-        FeatureFlags.current = originalFeatureFlagsState
-        originalFeatureFlagsState = nil
-        super.tearDown()
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
     }
     
     // These tests resolve absolute symbol links in both a local and external context to verify that external links work the same local links.
@@ -665,6 +660,171 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework-module-9r7pl/myTopLevelVariable-var-520ez",
             to: "doc://org.swift.MixedFramework/documentation/MixedFramework/myTopLevelVariable"
         )
+    }
+    
+    func testSymbolLinksInDeclarationsAndRelationships() throws {
+        // Build documentation for the dependency first
+        let symbols = [("First", .class), ("Second", .protocol), ("Third", .struct), ("Fourth", .enum)].map { (name: String, kind: SymbolGraph.Symbol.KindIdentifier) in
+            return SymbolGraph.Symbol(
+                identifier: .init(precise: "dependency-\(name.lowercased())-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: [name],
+                docComment: nil,
+                accessLevel: .public,
+                kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
+                mixins: [:]
+            )
+        }
+        
+        let (dependencyBundle, dependencyContext) = try loadBundle(
+            catalog: Folder(name: "Dependency.docc", content: [
+                InfoPlist(identifier: "com.example.dependency"), // This isn't necessary but makes it easier to distinguish the identifier from the module name in the external references.
+                JSONFile(name: "Dependency.symbols.json", content: makeSymbolGraph(moduleName: "Dependency", symbols: symbols))
+            ])
+        )
+        
+        // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
+        let dependencyConverter = DocumentationContextConverter(bundle: dependencyBundle, context: dependencyContext, renderContext: .init(documentationContext: dependencyContext, bundle: dependencyBundle))
+        
+        let linkSummaries: [LinkDestinationSummary] = try dependencyContext.knownPages.flatMap { reference in
+            let entity = try dependencyContext.entity(with: reference)
+            let renderNode = try XCTUnwrap(dependencyConverter.renderNode(for: entity, at: nil))
+            
+            return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
+        }
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.identifier)
+        
+        XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
+        XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
+        
+        // After building the dependency,
+        let (mainBundle, mainContext) = try loadBundle(
+            catalog: Folder(name: "Main.docc", content: [
+                JSONFile(name: "Main.symbols.json", content: makeSymbolGraph(
+                    moduleName: "Main",
+                    symbols: [
+                        // import Dependency
+                        //
+                        // public class SomeClass: Dependency.First, Dependency.Second {
+                        //     public func someFunction(parameter: Dependency.Third) -> Dependency.Fourth {}
+                        // }
+                        SymbolGraph.Symbol(
+                            identifier: .init(precise: "main-container-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                            names: .init(title: "SomeClass", navigator: nil, subHeading: nil, prose: nil),
+                            pathComponents: ["SomeClass"],
+                            docComment: nil,
+                            accessLevel: .public,
+                            kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                            mixins: [
+                                // "class SomeClass"
+                                SymbolGraph.Symbol.DeclarationFragments.mixinKey: SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .identifier, spelling: "SomeClass", preciseIdentifier: nil),
+                                ])
+                            ]
+                        ),
+                        SymbolGraph.Symbol(
+                            identifier: .init(precise: "main-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                            names: .init(title: "someFunction(parameter:)", navigator: nil, subHeading: nil, prose: nil),
+                            pathComponents: ["SomeClass", "someFunction(parameter:)"],
+                            docComment: nil,
+                            accessLevel: .public,
+                            kind: .init(parsedIdentifier: .func, displayName: "Kind Display Name"),
+                            mixins: [
+                                // "func someFunction(parameter: Third) -> Fourth"
+                                SymbolGraph.Symbol.DeclarationFragments.mixinKey: SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                                    .init(kind: .identifier, spelling: "someFunction", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                                    .init(kind: .externalParameter, spelling: "paramater", preciseIdentifier: nil),
+                                    .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier, spelling: "Third", preciseIdentifier: "dependency-third-symbol-id"),
+                                    .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                                    .init(kind: .typeIdentifier, spelling: "Fourth", preciseIdentifier: "dependency-fourth-symbol-id"),
+                                ])
+                            ]
+                        ),
+                    ],
+                    relationships: [
+                        // 'someFunction(parameter:)' is a member of 'SomeClass'
+                        .init(source: "main-member-symbol-id", target: "main-container-symbol-id", kind: .memberOf, targetFallback: nil),
+                        // 'SomeClass' inherits from 'Dependency.First'
+                        .init(source: "main-container-symbol-id", target: "dependency-first-symbol-id", kind: .inheritsFrom, targetFallback: "Dependency.First"),
+                        // 'SomeClass' conforms to 'Dependency.Second'
+                        .init(source: "main-container-symbol-id", target: "dependency-second-symbol-id", kind: .conformsTo, targetFallback: "Dependency.Second"),
+                    ]
+                ))
+            ]),
+            otherFileSystemDirectories: [
+                Folder(name: "Dependency.doccarchive", content: [
+                    JSONFile(name: "linkable-entities.json", content: linkSummaries),
+                    JSONFile(name: "link-hierarchy.json", content: linkResolutionInformation),
+                ])
+            ],
+            configureContext: {
+                $0.linkResolver.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
+            }
+        )
+        
+        XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
+        
+        let mainConverter = DocumentationContextConverter(bundle: mainBundle, context: mainContext, renderContext: .init(documentationContext: mainContext, bundle: mainBundle))
+        
+        // Check the relationships of 'SomeClass'
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: mainBundle.identifier, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let entity = try mainContext.entity(with: reference)
+            let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity, at: nil))
+            
+            XCTAssertEqual(renderNode.relationshipSections.count, 2)
+            let inheritsFromSection = try XCTUnwrap(renderNode.relationshipSections.first)
+            XCTAssertEqual(inheritsFromSection.title, "Inherits From")
+            XCTAssertEqual(inheritsFromSection.identifiers, ["doc://com.example.dependency/documentation/Dependency/First"])
+            
+            let conformsToSection = try XCTUnwrap(renderNode.relationshipSections.last)
+            XCTAssertEqual(conformsToSection.title, "Conforms To")
+            XCTAssertEqual(conformsToSection.identifiers, ["doc://com.example.dependency/documentation/Dependency/Second"])
+            
+            let firstReference = try XCTUnwrap(renderNode.references["doc://com.example.dependency/documentation/Dependency/First"] as? TopicRenderReference)
+            XCTAssertEqual(firstReference.title, "First")
+            XCTAssertEqual(firstReference.role, RenderMetadata.Role.symbol.rawValue)
+            
+            let secondReference = try XCTUnwrap(renderNode.references["doc://com.example.dependency/documentation/Dependency/Second"] as? TopicRenderReference)
+            XCTAssertEqual(secondReference.title, "Second")
+            XCTAssertEqual(secondReference.role, RenderMetadata.Role.symbol.rawValue)
+        }
+        
+        // Check the declaration of 'someFunction'
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: mainBundle.identifier, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let entity = try mainContext.entity(with: reference)
+            let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity, at: nil))
+            
+            XCTAssertEqual(renderNode.primaryContentSections.count, 1)
+            let declarationSection = try XCTUnwrap(renderNode.primaryContentSections.first as? DeclarationsRenderSection)
+            XCTAssertEqual(declarationSection.declarations.count, 1)
+            XCTAssertEqual(declarationSection.declarations.first?.tokens, [
+                .init(text: "func", kind: .keyword),
+                .init(text: " ", kind: .text),
+                .init(text: "someFunction", kind: .identifier),
+                .init(text: "(", kind: .text),
+                .init(text: "paramater", kind: .externalParam),
+                .init(text: ": ", kind: .text),
+                .init(text: "Third", kind: .typeIdentifier, identifier: "doc://com.example.dependency/documentation/Dependency/Third", preciseIdentifier: "dependency-third-symbol-id"),
+                .init(text: ") -> ", kind: .text),
+                .init(text: "Fourth", kind: .typeIdentifier, identifier: "doc://com.example.dependency/documentation/Dependency/Fourth", preciseIdentifier: "dependency-fourth-symbol-id"),
+            ])
+            
+            let thirdReference = try XCTUnwrap(renderNode.references["doc://com.example.dependency/documentation/Dependency/Third"] as? TopicRenderReference)
+            XCTAssertEqual(thirdReference.title, "Third")
+            XCTAssertEqual(thirdReference.role, RenderMetadata.Role.symbol.rawValue)
+            
+            let fourthReference = try XCTUnwrap(renderNode.references["doc://com.example.dependency/documentation/Dependency/Fourth"] as? TopicRenderReference)
+            XCTAssertEqual(fourthReference.title, "Fourth")
+            XCTAssertEqual(fourthReference.role, RenderMetadata.Role.symbol.rawValue)
+        }
     }
     
     // MARK: Test helpers

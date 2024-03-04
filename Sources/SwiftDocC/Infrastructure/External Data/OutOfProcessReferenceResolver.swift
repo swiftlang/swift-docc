@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,21 +42,17 @@ import SymbolKit
 /// with a ``OutOfProcessReferenceResolver/Response`` payload.
 ///
 /// ## See Also
-/// - ``DocumentationContext/externalReferenceResolvers``
-/// - ``DocumentationContext/fallbackReferenceResolvers``
-/// - ``DocumentationContext/externalSymbolResolver``
+/// - ``ExternalDocumentationSource``
+/// - ``GlobalExternalSymbolResolver``
+/// - ``DocumentationContext/externalDocumentationSources``
+/// - ``DocumentationContext/globalExternalSymbolResolver``
 /// - ``Request``
 /// - ``Response``
-public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver, ExternalSymbolResolver, FallbackAssetResolver {
-    
+public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
     private let externalLinkResolvingClient: ExternalLinkResolving
     
     /// The bundle identifier for the reference resolver in the other process.
     public let bundleIdentifier: String
-    /// The bundle identifier to use for symbol references.
-    ///
-    ///
-    private let symbolBundleIdentifier = "com.externally.resolved.symbol"
     
     /// Creates a new reference resolver that interacts with another executable.
     ///
@@ -65,7 +61,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     /// - Parameters:
     ///   - processLocation: The location of the other executable.
     ///   - errorOutputHandler: A callback to process error messages from the other executable.
-    /// - Throws:
+    /// - Throws: If the other executable failed to launch.
     public init(processLocation: URL, errorOutputHandler: @escaping (String) -> Void) throws {
         let fileManager = FileManager.default
         guard fileManager.fileExists(atPath: processLocation.path) else {
@@ -100,21 +96,13 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     
     // MARK: External Reference Resolver
     
-    /// Attempts to resolve an unresolved reference using a reference resolver in another process.
-    ///
-    /// - Note: The other reference resolver methods expect to only be passed resolved references that are returned from this method.
-    ///
-    /// - Parameters:
-    ///   - reference: The unresolved reference.
-    ///   - sourceLanguage: The source language of the reference (in case the reference exists in multiple languages)
-    /// - Returns: The resolved reference for the topic, or information about why the other process failed to resolve the reference.
-    public func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+    public func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
         switch reference {
         case .resolved(let resolved):
             return resolved
             
         case let .unresolved(unresolvedReference):
-            guard let bundleIdentifier = unresolvedReference.bundleIdentifier else {
+            guard unresolvedReference.bundleIdentifier == bundleIdentifier else {
                 fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
                     DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
@@ -125,239 +113,76 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                     // Return the unresolved reference if the underlying URL is not valid
                     return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
                 }
-                let metadata = try resolveInformationForTopicURL(unresolvedTopicURL)
-                // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
-                return .success(
-                    ResolvedTopicReference(
-                        bundleIdentifier: bundleIdentifier,
-                        path: unresolvedReference.path,
-                        fragment: unresolvedReference.fragment,
-                        sourceLanguages: sourceLanguages(for: metadata)
-                    )
-                )
+                let resolvedInformation = try resolveInformationForTopicURL(unresolvedTopicURL)
+                return .success( resolvedReference(for: resolvedInformation) )
             } catch let error {
                 return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo(error))
             }
         }
     }
     
-    /// Creates a new documentation node for the external reference by calling a reference resolver in another process.
-    ///
-    /// - Important: The resolver can only return information about references that it itself resolved. Passing a reference
-    ///   that this resolver didn't resolve is considered a programming error and will raise a fatal error.
-    ///
-    /// - Precondition: The `reference` was previously resolved by this resolver.
-    ///
-    /// - Parameter reference: The external reference that this resolver previously resolved.
-    /// - Returns: A node with the documentation content for the referenced topic.
-    public func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+    @_spi(ExternalLinks)  // LinkResolver.ExternalEntity isn't stable API yet
+    public func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
         guard let resolvedInformation = referenceCache[reference.url] else {
             fatalError("A topic reference that has already been resolved should always exist in the cache.")
         }
-        
-        let maybeSymbol = OutOfProcessReferenceResolver.symbolSemantic(
-            kind: resolvedInformation.kind,
-            language: resolvedInformation.language,
-            title: resolvedInformation.title,
-            abstract: resolvedInformation.abstract,
-            declarationFragments: resolvedInformation.declarationFragments,
-            platforms: resolvedInformation.platforms,
-            variants: resolvedInformation.variants
-        )
-        
-        let name: DocumentationNode.Name
-        if maybeSymbol != nil {
-            name = .symbol(declaration: .init([.plain(resolvedInformation.title)]))
-        } else {
-            name = .conceptual(title: resolvedInformation.title)
-        }
-        
-        var node = DocumentationNode(
-            reference: reference,
-            kind: resolvedInformation.kind,
-            sourceLanguage: resolvedInformation.language,
-            availableSourceLanguages: sourceLanguages(for: resolvedInformation),
-            name: name,
-            markup: Document(parsing: resolvedInformation.abstract, options: []),
-            semantic: maybeSymbol,
-            platformNames: resolvedInformation.platformNames
-        )
-        
-        addImagesAndCacheMediaReferences(to: &node, from: resolvedInformation)
-        
-        return node
+        return makeEntity(with: resolvedInformation, reference: reference.absoluteString)
     }
     
-    /// Returns the web URL for the external topic.
-    ///
-    /// Some links may add query parameters, for example to link to a specific language variant of the topic.
-    ///
-    /// - Important: The resolver can only return information about references that it itself resolved. Passing a reference
-    ///   that this resolver didn't resolve is considered a programming error and will raise a fatal error.
-    ///
-    /// - Precondition: The `reference` was previously resolved by this resolver.
-    ///
-    /// - Parameter reference: The external reference that this resolver previously resolved.
-    /// - Returns: The web URL for the resolved external reference.
-    public func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-        guard let resolvedInformation = referenceCache[reference.url] else {
-            fatalError("A topic reference that has already been resolved should always exist in the cache.")
-        }
-        return resolvedInformation.url
-    }
-    
-    // MARK: Fallback Reference Resolver
-    
-    public func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) throws -> DocumentationNode? {
-        hasResolvedReference(reference) ? try entity(with: reference) : nil
-    }
-    
-    public func urlForResolvedReferenceIfPreviouslyResolved(_ reference: ResolvedTopicReference) -> URL? {
-        hasResolvedReference(reference) ? urlForResolvedReference(reference) : nil
-    }
-    
-    private func hasResolvedReference(_ reference: ResolvedTopicReference) -> Bool {
-        referenceCache.keys.contains(reference.url)
-    }
-    
-    // MARK: External Symbol Resolver
-    
-    /// Creates a documentation node with a subset of the documentation content for the external symbol based on its precise identifier.
-    ///
-    /// The precise identifier is assumed to be valid and to exist since it either comes from a trusted source, like a symbol graph file, or was
-    /// returned from the external symbol resolver or an authored symbol reference.
-    ///
-    /// - Parameter preciseIdentifier: The precise identifier for an external symbol.
-    /// - Returns: A sparse documentation node with basic information about the symbol.
-    /// - Throws: If no external symbol has this precise identifier.
-    public func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
-        let resolvedInformation = try resolveInformationForSymbolIdentifier(preciseIdentifier)
+    @_spi(ExternalLinks)  // LinkResolver.ExternalEntity isn't stable API yet
+    public func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+        guard let resolvedInformation = try? resolveInformationForSymbolIdentifier(preciseIdentifier) else { return nil }
         
-        // Construct a resolved reference for this symbol. It uses a known bundle identifier and the symbol's precise identifier so that the
-        // already resolved information can be looked up when determining the URL for this symbol.
         let reference = ResolvedTopicReference(
-            bundleIdentifier: symbolBundleIdentifier,
-            path: "/" + preciseIdentifier,
+            bundleIdentifier: "com.externally.resolved.symbol",
+            path: "/\(preciseIdentifier)",
             sourceLanguages: sourceLanguages(for: resolvedInformation)
         )
-        
-        let symbol = OutOfProcessReferenceResolver.symbolSemantic(
-            kind: resolvedInformation.kind,
-            language: resolvedInformation.language,
-            title: resolvedInformation.title,
-            abstract: resolvedInformation.abstract,
-            declarationFragments: resolvedInformation.declarationFragments,
-            platforms: resolvedInformation.platforms,
-            variants: resolvedInformation.variants
-        )! // This entity was resolved from a symbol USR and is known to be a symbol.
-        
-        var node = DocumentationNode(
-            reference: reference,
-            kind: resolvedInformation.kind,
-            sourceLanguage: resolvedInformation.language,
-            availableSourceLanguages: sourceLanguages(for: resolvedInformation),
-            name: .symbol(declaration: .init([.plain(resolvedInformation.title)])),
-            markup: Document(parsing: resolvedInformation.abstract, options: [.parseBlockDirectives, .parseSymbolLinks]),
-            semantic: symbol,
-            platformNames: resolvedInformation.platformNames
-        )
-        
-        addImagesAndCacheMediaReferences(to: &node, from: resolvedInformation)
-        
-        return node
+        let entity =  makeEntity(with: resolvedInformation, reference: reference.absoluteString)
+        return (reference, entity)
     }
     
-    private func addImagesAndCacheMediaReferences(to node: inout DocumentationNode, from resolvedInformation: ResolvedInformation) {
-        // Because DocC renders external content in the local context, external media also needs to be added to the local context.
-        // If the external content was treated as pre-rendered then this wouldn't be necessary. (rdar://78718811)
-        // FIXME: https://github.com/apple/swift-docc/issues/468
+    private func makeEntity(with resolvedInformation: ResolvedInformation, reference: String) -> LinkResolver.ExternalEntity {
+        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedInformation.kind, semantic: nil)
         
-        // `@PageImage` directives isn't meant to be created in code like this but it's the only way to associate topic images
-        // with a render node.
-        
-        if let topicImages = resolvedInformation.topicImages, !topicImages.isEmpty {
-            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
-            
-            metadata.pageImages = topicImages.map { topicImage in
-                let purpose: PageImage.Purpose
-                switch topicImage.type {
-                case .card: purpose = .card
-                case .icon: purpose = .icon
-                }
-                
-                return PageImage._make(
-                    purpose: purpose,
-                    source: ResourceReference(bundleIdentifier: node.reference.bundleIdentifier, path: topicImage.identifier.identifier),
-                    alt: (resolvedInformation.references?.first(where: { $0.identifier == topicImage.identifier }) as? ImageReference)?.altText
+        var renderReference = TopicRenderReference(
+            identifier: .init(reference),
+            title: resolvedInformation.title,
+            // The resolved information only stores the plain text abstract https://github.com/apple/swift-docc/issues/802
+            abstract: [.text(resolvedInformation.abstract)],
+            url: resolvedInformation.url.path,
+            kind: kind,
+            role: role,
+            fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
+            isBeta: (resolvedInformation.platforms ?? []).contains(where: { $0.isBeta == true }),
+            isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
+            titleStyle: resolvedInformation.kind.isSymbol ? .symbol : .title,
+            images: resolvedInformation.topicImages ?? []
+        )
+        for variant in resolvedInformation.variants ?? [] {
+            if let title = variant.title {
+                renderReference.titleVariants.variants.append(
+                    .init(traits: variant.traits, patch: [.replace(value: title)])
                 )
             }
-            
-            node.metadata = metadata
+            if let abstract = variant.abstract {
+                renderReference.abstractVariants.variants.append(
+                    .init(traits: variant.traits, patch: [.replace(value: [.text(abstract)])])
+                )
+            }
+            if let declarationFragments = variant.declarationFragments {
+                renderReference.fragmentsVariants.variants.append(
+                    .init(traits: variant.traits, patch: [.replace(value: declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) })])
+                )
+            }
         }
+        let dependencies = RenderReferenceDependencies(
+            topicReferences: [],
+            linkReferences: (resolvedInformation.references ?? []).compactMap { $0 as? LinkReference },
+            imageReferences: (resolvedInformation.references ?? []).compactMap { $0 as? ImageReference }
+        )
         
-        // Since the DocumentationNode doesn't have any media references, the external media references can't be returned with the node.
-        // Instead they are added to the cache so that they are returned from later requests.
-        
-        for reference in (resolvedInformation.references ?? []) {
-            guard let mediaReference = reference as? MediaReference else { continue }
-            
-            assetCache[.init(assetName: mediaReference.identifier.identifier, bundleIdentifier: node.reference.bundleIdentifier)] = mediaReference.asset
-        }
-        
-    }
-    
-    /// Returns the web URL for the external symbol.
-    ///
-    /// Some links may add query parameters, for example to link to a specific language variant of the topic.
-    ///
-    /// - Important: The resolver can only return information about symbol references that it itself resolved. Passing a reference
-    ///   that this resolver didn't resolve is considered a programming error and will raise a fatal error.
-    ///
-    /// - Precondition: The `reference` was previously resolved by this resolver.
-    ///
-    /// - Parameter reference:The external symbol reference that this resolver previously resolved.
-    /// - Returns: The web URL for the resolved external symbol.
-    public func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL? {
-        guard reference.bundleIdentifier == symbolBundleIdentifier, let preciseIdentifier = reference.pathComponents.last else {
-            return nil
-        }
-        guard let resolvedInformation = symbolCache[preciseIdentifier] else {
-            // Any non-symbol reference would return `nil` above.
-            // Any symbol reference would come from a resolved symbol entity, so it will always exist in the cache.
-            fatalError("A symbol reference that has already been resolved should always exist in the cache.")
-        }
-        return resolvedInformation.url
-    }
-    
-    /// Attempts to find the precise identifier for an authored symbol reference.
-    ///
-    /// The symbol resolver assumes that the precise identifier is valid and exist when creating a symbol node. You should pass authored
-    /// symbol references to this method to check if they exist before creating a documentation node for that symbol.
-    ///
-    /// - Parameter reference: An authored reference to an external symbol.
-    /// - Returns: The precise identifier of the referenced symbol, or `nil` if the reference is not for a resolved external symbol.
-    public func preciseIdentifier(forExternalSymbolReference reference: TopicReference) -> String? {
-        let url: URL
-        switch reference {
-        case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
-            guard unresolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
-            url = unresolved.topicURL.url
-        case .resolved(.success(let resolved)):
-            guard resolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
-            url = resolved.url
-        }
-        
-        return url.pathComponents.last
-    }
-    
-    // MARK: Fallback Asset Resolver
-    
-    public func resolve(assetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
-        do {
-            return try resolveInformationForAsset(named: assetName, bundleIdentifier: bundleIdentifier)
-        } catch {
-            return nil
-        }
+        return LinkResolver.ExternalEntity(topicRenderReference: renderReference, renderReferenceDependencies: dependencies, sourceLanguages: resolvedInformation.availableLanguages)
     }
     
     // MARK: Implementation
@@ -382,8 +207,10 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
             
         case .resolvedInformation(let resolvedInformation):
-             referenceCache[topicURL] = resolvedInformation
-             return resolvedInformation
+            // Cache the information for the resolved reference, that's what's will be used when returning the entity later.
+            let resolvedReference = resolvedReference(for: resolvedInformation)
+            referenceCache[resolvedReference.url] = resolvedInformation
+            return resolvedInformation
             
         default:
             throw Error.unexpectedResponse(response: response, requestDescription: "topic URL")
@@ -391,7 +218,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     }
     
     /// Makes a call to the other process to resolve information about a symbol based on its precise identifier.
-    func resolveInformationForSymbolIdentifier(_ preciseIdentifier: String) throws -> ResolvedInformation {
+    private func resolveInformationForSymbolIdentifier(_ preciseIdentifier: String) throws -> ResolvedInformation {
         if let cachedInformation = symbolCache[preciseIdentifier] {
             return cachedInformation
         }
@@ -410,48 +237,22 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
              return resolvedInformation
             
         default:
-            throw Error.unexpectedResponse(response: response, requestDescription: "topic URL")
+            throw Error.unexpectedResponse(response: response, requestDescription: "symbol ID")
         }
     }
     
-    func resolveInformationForAsset(named assetName: String, bundleIdentifier: String) throws -> DataAsset {
-        let assetReference = AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)
-        if let asset = assetCache[assetReference] {
-            return asset
-        }
-        
-        let response = try externalLinkResolvingClient.sendAndWait(
-            request: Request.asset(
-                AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)
-            )
-        ) as Response
-        
-        switch response {
-        case .asset(let asset):
-            assetCache[assetReference] = asset
-            return asset
-        case .errorMessage(let errorMessage):
-            throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
-        default:
-            throw Error.unexpectedResponse(response: response, requestDescription: "asset")
-        }
+    private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
+        return ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: resolvedInformation.url.path,
+            fragment: resolvedInformation.url.fragment,
+            sourceLanguages: sourceLanguages(for: resolvedInformation)
+        )
     }
     
     private func sourceLanguages(for resolvedInformation: ResolvedInformation) -> Set<SourceLanguage> {
-        if !resolvedInformation.availableLanguages.isEmpty {
-            return resolvedInformation.availableLanguages
-        }
-        
-        // Fall back to the `language` property if `availableLanguages` is empty.
-        return [resolvedInformation.language]
-    }
-}
-
-extension OutOfProcessReferenceResolver: _ExternalAssetResolver {
-    public func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
-        // We don't want to make additional requests for these external assets.
-        // If they were already resolved, return them from the cache.
-        return assetCache[AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)]
+        // It is expected that the available languages contains the main language
+        return resolvedInformation.availableLanguages.union(CollectionOfOne(resolvedInformation.language))
     }
 }
 
@@ -461,7 +262,6 @@ private protocol ExternalLinkResolving {
 
 private class LongRunningService: ExternalLinkResolving {
     var client: ExternalReferenceResolverServiceClient
-    var convertRequestIdentifier: String?
     
     init(server: DocumentationServer, convertRequestIdentifier: String?) {
         self.client = ExternalReferenceResolverServiceClient(
@@ -592,8 +392,9 @@ extension OutOfProcessReferenceResolver {
         case unableToDecodeResponseFromClient(Data, Swift.Error)
         /// Unable to encode the request to send to the external reference resolver.
         case unableToEncodeRequestToClient(requestDescription: String)
-        /// The "request" message has an invalid type (neither 'topic' nor 'symbol').
+        /// The request type was not known (neither 'topic' nor 'symbol').
         case unknownTypeOfRequest
+        /// Received an unknown type of response to sent request.
         case unexpectedResponse(response: Response, requestDescription: String)
         
         /// A plain text representation of the error message.
@@ -746,7 +547,7 @@ extension OutOfProcessReferenceResolver {
     public struct ResolvedInformation: Codable {
         // This type is duplicating the information from LinkDestinationSummary with some minor differences.
         // Changes generally need to be made in both places. It would be good to replace this with LinkDestinationSummary.
-        // FIXME: https://github.com/apple/swift-docc/issues/468
+        // FIXME: https://github.com/apple/swift-docc/issues/802
         
         /// Information about the resolved kind.
         public let kind: DocumentationNode.Kind
@@ -881,115 +682,6 @@ extension OutOfProcessReferenceResolver {
             }
         }
     }
-    
-    /// Creates a new symbol semantic from the resolved kind, title, declaration, and platform information, iff the kind is a symbol.
-    ///
-    /// - Parameters:
-    ///   - kind: The kind of the resolved node.
-    ///   - language: The source language for the resolved node.
-    ///   - title: The title of the resolved node.
-    ///   - abstract: The abstract of the resolved node.
-    ///   - declarationFragments: The declaration fragments, if any, from the resolved node.
-    ///   - platforms: The platform availability information, if any, from the resolved node.
-    ///   - variants: The content variants for the resolved node.
-    /// - Returns: A new symbol semantic, or `nil` if the kind is not a symbol.
-    private static func symbolSemantic(
-        kind: DocumentationNode.Kind,
-        language: SourceLanguage,
-        title: String,
-        abstract: String?,
-        declarationFragments: ResolvedInformation.DeclarationFragments?,
-        platforms: [ResolvedInformation.PlatformAvailability]?,
-        variants: [ResolvedInformation.Variant]?
-    ) -> Symbol? {
-        guard kind.isSymbol else {
-            return nil
-        }
-        
-        // The symbol semantic is created in three steps.
-        
-        // First, compute the common availability for all variants.
-        let availability = platforms.map { platforms in
-            return SymbolGraph.Symbol.Availability(availability: platforms.map {
-                let domain = $0.name.map { name in
-                    return SymbolGraph.Symbol.Availability.Domain(
-                        rawValue: name == "Mac Catalyst" ? SymbolGraph.Symbol.Availability.Domain.macCatalyst : name
-                    )
-                }
-                
-                // Only the `domain` and `introducedVersion` matter for external symbols. This information is used to determine if the symbol
-                // is currently in beta or not, which displays a beta indicator next to the symbols title and abstract where it is curated.
-                return SymbolGraph.Symbol.Availability.AvailabilityItem(
-                    domain: domain,
-                    introducedVersion: $0.introduced.flatMap { SymbolGraph.SemanticVersion(string: $0) },
-                    deprecatedVersion: $0.deprecated.flatMap { SymbolGraph.SemanticVersion(string: $0) },
-                    obsoletedVersion: $0.obsoleted.flatMap { SymbolGraph.SemanticVersion(string: $0) },
-                    message: nil,
-                    renamed: $0.renamed,
-                    isUnconditionallyDeprecated: $0.unconditionallyDeprecated ?? false,
-                    isUnconditionallyUnavailable: $0.unconditionallyUnavailable ?? false,
-                    willEventuallyBeDeprecated: false // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
-                )
-            })
-        }
-        
-        // Second, create data variants values with the main resolved information, as values for the main language variant trait.
-        let mainTrait = DocumentationDataVariantsTrait(interfaceLanguage: language.id)
-        var kindVariants = [mainTrait: symbolKind(forNodeKind: kind)]
-        var titleVariants = [mainTrait: title]
-        var subHeadingVariants = [DocumentationDataVariantsTrait: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
-        subHeadingVariants[mainTrait] = declarationFragments?.declarationFragments
-        var abstractVariants = [DocumentationDataVariantsTrait: AbstractSection]()
-        abstractVariants[mainTrait] = abstract.map { AbstractSection(paragraph: Paragraph([Text($0)])) }
-        
-        // Third, add additional values for each variant's resolved information.
-        for variant in variants ?? [] {
-            guard case .interfaceLanguage(let language) = variant.traits.first else { continue }
-            let trait = DocumentationDataVariantsTrait(interfaceLanguage: language)
-            
-            if let variantKind = variant.kind {
-                kindVariants[trait] = symbolKind(forNodeKind: variantKind)
-            }
-            if let variantTitle = variant.title {
-                titleVariants[trait] = variantTitle
-            }
-            if let variantAbstract = variant.abstract {
-                abstractVariants[trait] = AbstractSection(paragraph: Paragraph([Text(variantAbstract)]))
-            }
-            if let variantDeclarationFragments = variant.declarationFragments {
-                // The declaration fragments is an optional value. If the resolved information contains an explicit `nil` value we set that as the variant value.
-                // This behavior enables a symbol's variant to not have a declaration when the main symbol does have a declaration.
-                subHeadingVariants[trait] = variantDeclarationFragments?.declarationFragments
-            }
-        }
-        
-        return Symbol(
-            kindVariants: .init(values: kindVariants),
-            titleVariants:  .init(values: titleVariants),
-            subHeadingVariants: .init(values: subHeadingVariants),
-            navigatorVariants: .empty,
-            roleHeadingVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
-            platformNameVariants: .empty,
-            moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: language), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
-            externalIDVariants: .empty,
-            accessLevelVariants: .empty,
-            availabilityVariants: .init(values: [:], defaultVariantValue: availability),
-            deprecatedSummaryVariants: .empty,
-            mixinsVariants: .empty,
-            abstractSectionVariants: .init(values: abstractVariants),
-            discussionVariants: .empty,
-            topicsVariants: .empty,
-            seeAlsoVariants: .empty,
-            returnsSectionVariants: .empty,
-            parametersSectionVariants: .empty,
-            dictionaryKeysSectionVariants: .empty,
-            httpEndpointSectionVariants: .empty,
-            httpBodySectionVariants: .empty,
-            httpParametersSectionVariants: .empty,
-            httpResponsesSectionVariants: .empty,
-            redirectsVariants: .empty
-        )
-    }
 }
 
 extension OutOfProcessReferenceResolver.ResolvedInformation {
@@ -1043,3 +735,44 @@ extension OutOfProcessReferenceResolver.ResolvedInformation {
     }
 }
 
+extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
+    @_spi(ExternalLinks)
+    public func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
+        guard referenceCache.keys.contains(reference.url) else { return nil }
+        
+        var entity = entity(with: reference)
+        // The entity response doesn't include the assets that it references.
+        // Before returning the entity, make sure that its references assets are included among the image dependencies.
+        for image in entity.topicRenderReference.images {
+            if let asset = resolve(assetNamed: image.identifier.identifier) {
+                entity.renderReferenceDependencies.imageReferences.append(ImageReference(identifier: image.identifier, imageAsset: asset))
+            }
+        }
+        return entity
+    }
+    
+    func resolve(assetNamed assetName: String) -> DataAsset? {
+        return try? resolveInformationForAsset(named: assetName)
+    }
+    
+    func resolveInformationForAsset(named assetName: String) throws -> DataAsset {
+        let assetReference = AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)
+        if let asset = assetCache[assetReference] {
+            return asset
+        }
+        
+        let response = try externalLinkResolvingClient.sendAndWait(
+            request: Request.asset(AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier))
+        ) as Response
+        
+        switch response {
+        case .asset(let asset):
+            assetCache[assetReference] = asset
+            return asset
+        case .errorMessage(let errorMessage):
+            throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
+        default:
+            throw Error.unexpectedResponse(response: response, requestDescription: "asset")
+        }
+    }
+}

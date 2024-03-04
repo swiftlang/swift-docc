@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,18 +14,17 @@ import SymbolKit
 /// All known symbol kind identifiers.
 ///
 /// This is used to identify parsed path components as kind information.
-private let knownSymbolKinds: Set<Substring> = {
-    // We don't want to register these extended symbol kinds because that makes them available for decoding from symbol graphs which isn't expected.
-    return Set(
-        (SymbolGraph.Symbol.KindIdentifier.allCases + [
-            .extendedProtocol,
-            .extendedStructure,
-            .extendedClass,
-            .extendedEnumeration,
-            .unknownExtendedType,
-            .extendedModule
-        ]).map { $0.identifier[...] }
-    )
+private let knownSymbolKinds: Set<String> = {
+    // We don't want to register these extended symbol kinds because that makes them available for decoding from symbol graphs which is unexpected.
+    let knownKinds = SymbolGraph.Symbol.KindIdentifier.allCases + [
+        .extendedProtocol,
+        .extendedStructure,
+        .extendedClass,
+        .extendedEnumeration,
+        .unknownExtendedType,
+        .extendedModule
+    ]
+    return Set(knownKinds.map(\.identifier))
 }()
 
 /// All known source language identifiers.
@@ -40,7 +39,7 @@ extension PathHierarchy {
         let full: String
         /// The parsed entity name
         let name: Substring
-        /// The parsed disambiguation information.
+        /// The parsed disambiguation information, if any.
         var disambiguation: Disambiguation?
         
         enum Disambiguation {
@@ -89,7 +88,7 @@ extension PathHierarchy.PathParser {
             return index > 0
         }
         
-        if knownSymbolKinds.contains(disambiguation) {
+        if knownSymbolKinds.contains(String(disambiguation)) {
             // The parsed hash value is a symbol kind. If the last disambiguation is a kind, then the path component doesn't contain a hash disambiguation.
             return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: disambiguation, hash: nil))
         }
@@ -101,7 +100,7 @@ extension PathHierarchy.PathParser {
             if let dashIndex = name.lastIndex(of: "-") {
                 let kind = name[dashIndex...].dropFirst()
                 let name = name[..<dashIndex]
-                if knownSymbolKinds.contains(kind) {
+                if knownSymbolKinds.contains(String(kind)) {
                     return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kind, hash: disambiguation))
                 } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
                     let kindWithoutLanguage = kind.dropFirst(languagePrefix.count)

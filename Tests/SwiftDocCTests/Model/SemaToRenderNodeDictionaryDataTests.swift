@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -51,10 +51,10 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         ]
         
         // Verify we have the right number of cached nodes.
-        XCTAssertEqual(context.documentationCache.values.count, expectedPageUSRsAndLangs.count + expectedNonpageUSRs.count)
+        XCTAssertEqual(context.documentationCache.count, expectedPageUSRsAndLangs.count + expectedNonpageUSRs.count)
         
         // Verify each node matches the expectations.
-        for documentationNode in context.documentationCache.values {
+        for (_, documentationNode) in context.documentationCache {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
             
             if documentationNode.kind.isPage {
@@ -80,7 +80,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         
         assertExpectedContent(
             frameworkRenderNode,
-            sourceLanguage: "swift",  // Swift wins default when multiple langauges present
+            sourceLanguage: "swift",  // Swift wins default when multiple languages present
             symbolKind: "module",
             title: "DictionaryData",
             navigatorTitle: nil,
@@ -224,7 +224,9 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
         let genreRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Genre")
         
-        print(genreRenderNode)
+        let type1 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "string", preciseIdentifier: nil), identifier: nil)
+        let type2 = DeclarationRenderSection.Token(fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .text, spelling: "GENCODE", preciseIdentifier: nil), identifier: nil)
+        
         assertExpectedContent(
             genreRenderNode,
             sourceLanguage: "data",
@@ -232,6 +234,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             title: "Genre",
             navigatorTitle: nil,
             abstract: nil,
+            attributes: [.maximumLength("40"), .allowedTypes([[type1], [type2]]), .allowedValues(["Classic Rock", "Folk", "null"])],
             declarationTokens: [
                 "string ",
                 "Genre"

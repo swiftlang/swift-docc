@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,9 +15,9 @@ import Markdown
 ///
 /// The ``name`` property will override the symbol's default display name.
 ///
-/// When the ``style`` property is ``Style/conceptual``, the symbol's name is rendered as "conceptual"—same as article names or tutorial names —where applicable. The default style is ``Style/conceptual``.
+/// When the ``style`` property is ``Style/conceptual``, the symbol's name is rendered as "conceptual"---same as article names or tutorial names---where applicable. The default style is ``Style/conceptual``.
 ///
-/// When the ``style`` property is ``Style/symbol``, the symbol's name is rendered as "symbol"—same as article names or tutorial names —where applicable. The default style is ``Style/conceptual``.
+/// When the ``style`` property is ``Style/symbol``, the symbol's name is rendered as "symbol"---same as article names or tutorial names---where applicable. The default style is ``Style/conceptual``.
 ///
 /// This directive is only valid within a ``Metadata`` directive:
 /// ```

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,31 +23,37 @@ import SymbolKit
 /// `Sources/SwiftDocC/SwiftDocC.docc/Resources/RenderIndex.spec.json`.
 public struct RenderIndex: Codable, Equatable {
     /// The current schema version of the Index JSON spec.
-    public static let currentSchemaVersion = SemanticVersion(major: 0, minor: 1, patch: 1)
+    public static let currentSchemaVersion = SemanticVersion(major: 0, minor: 1, patch: 2)
     
     /// The version of the RenderIndex spec that was followed when creating this index.
     public let schemaVersion: SemanticVersion
     
     /// A mapping of interface languages to the index nodes they contain.
-    public let interfaceLanguages: [String: [Node]]
+    public private(set) var interfaceLanguages: [String: [Node]]
     
     /// The values of the image references used in the documentation index.
     public private(set) var references: [String: ImageReference]
+    
+    /// The unique identifiers of the archives that are included in the documentation index.
+    public private(set) var includedArchiveIdentifiers: [String]
     
     enum CodingKeys: CodingKey {
         case schemaVersion
         case interfaceLanguages
         case references
+        case includedArchiveIdentifiers
     }
     
     /// Creates a new render index with the given interface language to node mapping.
     public init(
         interfaceLanguages: [String: [Node]],
-        references: [String: ImageReference] = [:]
+        references: [String: ImageReference] = [:],
+        includedArchiveIdentifiers: [String]
     ) {
         self.schemaVersion = Self.currentSchemaVersion
         self.interfaceLanguages = interfaceLanguages
         self.references = references
+        self.includedArchiveIdentifiers = includedArchiveIdentifiers
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -55,6 +61,7 @@ public struct RenderIndex: Codable, Equatable {
         try container.encode(self.schemaVersion, forKey: .schemaVersion)
         try container.encode(self.interfaceLanguages, forKey: .interfaceLanguages)
         try container.encodeIfNotEmpty(self.references, forKey: .references)
+        try container.encodeIfNotEmpty(self.includedArchiveIdentifiers, forKey: .includedArchiveIdentifiers)
     }
 
     public init(from decoder: Decoder) throws {
@@ -62,6 +69,28 @@ public struct RenderIndex: Codable, Equatable {
         self.schemaVersion = try container.decode(SemanticVersion.self, forKey: .schemaVersion)
         self.interfaceLanguages = try container.decode([String : [RenderIndex.Node]].self, forKey: .interfaceLanguages)
         self.references = try container.decodeIfPresent([String : ImageReference].self, forKey: .references) ?? [:]
+        self.includedArchiveIdentifiers = try container.decodeIfPresent([String].self.self, forKey: .includedArchiveIdentifiers) ?? []
+    }
+    
+    public mutating func merge(_ other: RenderIndex) throws {
+        for (languageID, nodes) in other.interfaceLanguages {
+            interfaceLanguages[languageID, default: []].append(contentsOf: nodes)
+        }
+        
+        try references.merge(other.references) { _, new in throw MergeError.referenceCollision(new.identifier.identifier) }
+        
+        includedArchiveIdentifiers.append(contentsOf: other.includedArchiveIdentifiers)
+    }
+    
+    enum MergeError: DescribedError {
+        case referenceCollision(String)
+        
+        var errorDescription: String {
+            switch self {
+            case .referenceCollision(let reference):
+                return "Collision merging image references. Reference \(reference.singleQuoted) exists in more than one input archive."
+            }
+        }
     }
 }
 
@@ -254,7 +283,8 @@ extension RenderIndex {
                 },
                 uniquingKeysWith: +
             ),
-            references: builder.iconReferences
+            references: builder.iconReferences,
+            includedArchiveIdentifiers: [builder.bundleIdentifier]
         )
     }
 }
@@ -364,6 +394,8 @@ extension NavigatorIndex.PageType {
             return "httpRequest"
         case .dictionarySymbol:
             return "dictionarySymbol"
+        case .namespace:
+            return SymbolGraph.Symbol.KindIdentifier.namespace.renderingIdentifier
         case .propertyListKeyReference:
             return "propertyListKeyReference"
         case .languageGroup:

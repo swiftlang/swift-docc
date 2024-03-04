@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
+func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     var notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
@@ -118,7 +118,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            problems.append(unresolvedReferenceProblem(source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
             return .failure(unresolved, error)
         }
     }
@@ -438,9 +438,12 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newParametersVariants = symbol.parametersSectionVariants.map { parametersSection -> ParametersSection in
             let parameters = parametersSection.parameters.map {
-                Parameter(name: $0.name, contents: $0.contents.map { visitMarkup($0) })
+                Parameter(name: $0.name, nameRange: $0.nameRange, contents: $0.contents.map { visitMarkup($0) }, range: $0.range, isStandalone: $0.isStandalone)
             }
             return ParametersSection(parameters: parameters)
+        }
+        let newDeprecatedSummaryVariants = symbol.deprecatedSummaryVariants.map {
+            return DeprecatedSection(content: $0.content.map { visitMarkup($0) })
         }
         let newDictionaryKeysVariants = symbol.dictionaryKeysSectionVariants.map { dictionaryKeysSection -> DictionaryKeysSection in
             let keys = dictionaryKeysSection.dictionaryKeys.map {
@@ -484,7 +487,7 @@ struct ReferenceResolver: SemanticVisitor {
             externalIDVariants: symbol.externalIDVariants,
             accessLevelVariants: symbol.accessLevelVariants,
             availabilityVariants: symbol.availabilityVariants,
-            deprecatedSummaryVariants: symbol.deprecatedSummaryVariants,
+            deprecatedSummaryVariants: newDeprecatedSummaryVariants,
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,
             defaultImplementationsVariants: symbol.defaultImplementationsVariants,
@@ -503,7 +506,8 @@ struct ReferenceResolver: SemanticVisitor {
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
-            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
+            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants,
+            overloadsVariants: symbol.overloadsVariants
         )
     }
     

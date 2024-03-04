@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,11 +10,11 @@
 
 import XCTest
 import Foundation
-@testable import SwiftDocC
+@testable @_spi(FileManagerProtocol) @_spi(ExternalLinks) import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
-import SwiftDocCTestUtilities
+@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
@@ -97,20 +97,22 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: testImageName),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: testImageName),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
         // Verify that the copied image has the same capitalization as the original
         let copiedImageOutput = testDataProvider.files.keys
-            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("images").path + "/") })
-            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("images").path + "/", with: "") })
+            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("images/com.test.example").path + "/") })
+            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("images/com.test.example").path + "/", with: "") })
         
         XCTAssertEqual(copiedImageOutput, [testImageName])
     }
@@ -144,20 +146,22 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "videos", content: [
-               CopyOfFile(original: videoFile, newName: testVideoName),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: videoFile, newName: testVideoName),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
         // Verify that the copied video has the same capitalization as the original
         let copiedVideoOutput = testDataProvider.files.keys
-            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("videos").path + "/") })
-            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("videos").path + "/", with: "") })
+            .filter({ $0.hasPrefix(result.outputs[0].appendingPathComponent("videos/com.test.example").path + "/") })
+            .map({ $0.replacingOccurrences(of: result.outputs[0].appendingPathComponent("videos/com.test.example").path + "/", with: "") })
         
         XCTAssertEqual(copiedVideoOutput, [testVideoName])
     }
@@ -203,12 +207,14 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "downloads", content: [
-               CopyOfFile(original: downloadFile),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: downloadFile),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
@@ -237,7 +243,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -270,7 +276,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         XCTAssertEqual(result.problems.count, 0)
     }
     
@@ -309,7 +315,7 @@ class ConvertActionTests: XCTestCase {
             )
         )
         
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         XCTAssertEqual(result.problems.count, 0)
         XCTAssertEqual(result.outputs, [outputLocation.absoluteURL])
         
@@ -434,15 +440,19 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: "TEST.png"),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: "TEST.png"),
+                ]),
             ]),
             Folder(name: "videos", content: [
-               CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
+                ]),
             ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
@@ -631,14 +641,17 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
+                Folder(name: "com.test.example", content: [
+                    CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
+                ]),
             ]),
             Folder(name: "videos", content: [
+                Folder(name: "com.test.example", content: []),
             ]),
             JSONFile(name: "diagnostics.json", content: [
                 Digest.Diagnostic(
@@ -689,7 +702,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -770,7 +783,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -855,7 +868,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             
             XCTAssertFalse(
                 result.didEncounterError,
@@ -885,7 +898,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssert(
                 result.didEncounterError,
@@ -924,7 +937,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
@@ -1027,7 +1040,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
         let indexingRecords: [IndexingRecord] = action.context.knownPages.compactMap { reference in
@@ -1298,7 +1311,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
             guard let data = testDataProvider.contents(atPath: url.path) else {
@@ -1388,7 +1401,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory())
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
         let indexingRecords: [IndexingRecord] = action.context.knownPages.compactMap { reference in
@@ -1550,7 +1563,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
@@ -1575,7 +1588,7 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory())
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("diagnostics.json").path))
@@ -1640,7 +1653,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: .noCoverage)
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
 
@@ -1667,7 +1680,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .brief))
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
 
@@ -1695,7 +1708,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .detailed))
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
 
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
 
@@ -1769,9 +1782,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        ResolvedTopicReference.sharedPool.sync { sharedPool in
-            XCTAssertEqual(sharedPool[#function]?.count, 8)
-        }
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 8)
     }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
@@ -1798,7 +1809,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 diagnosticEngine: engine)
-            let result = try action.perform(logHandle: .standardOutput)
+            let result = try action.perform(logHandle: .none)
             XCTAssertFalse(result.didEncounterError)
             return engine.problems
         }
@@ -1825,28 +1836,13 @@ class ConvertActionTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         let bundle = try Folder.createFromDisk(url: testBundleURL)
 
-        struct TestReferenceResolver: ExternalReferenceResolver {
-            let customResolvedURL = URL(string: "https://resolved.com/resolved/path?query=item")!
-
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+        struct TestReferenceResolver: ExternalDocumentationSource {
+            func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
                 return .success(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: reference.url!.path, sourceLanguage: .swift))
             }
 
-            func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
-                return DocumentationNode(
-                    reference: reference,
-                    kind: .article,
-                    sourceLanguage: .swift,
-                    availableSourceLanguages: nil,
-                    name: .conceptual(title: reference.url.pathComponents.last!.capitalized),
-                    markup: Paragraph(),
-                    semantic: nil,
-                    platformNames: nil
-                )
-            }
-
-            func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-                return URL(string: "https://resolved.com\(reference.path)")!
+            func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+                fatalError("This test never asks for the external entity.")
             }
         }
         
@@ -1866,9 +1862,9 @@ class ConvertActionTests: XCTestCase {
             
             action.converter.batchNodeCount = batchSize
             
-            action.context.externalReferenceResolvers["com.example.test"] = TestReferenceResolver()
+            action.context.externalDocumentationSources["com.example.test"] = TestReferenceResolver()
             
-            return try action.perform(logHandle: .standardOutput)
+            return try action.perform(logHandle: .none)
         }
 
         for withDigest in [false, true] {
@@ -1944,6 +1940,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testFileSystem,
                 temporaryDirectory: createTemporaryDirectory()
             )
+            action.diagnosticEngine.consumers.sync { $0.removeAll() } 
             
             _ = try action.perform(logHandle: .none)
         }
@@ -2019,7 +2016,7 @@ class ConvertActionTests: XCTestCase {
             buildIndex: true,
             temporaryDirectory: createTemporaryDirectory() // Create an index
         )
-        _ = try action.perform(logHandle: .standardOutput)
+        _ = try action.perform(logHandle: .none)
         
         let indexURL = targetURL.appendingPathComponent("index")
         
@@ -2036,7 +2033,7 @@ class ConvertActionTests: XCTestCase {
             outputURL: indexURL,
             bundleIdentifier: indexFromConvertAction.bundleIdentifier
         )
-        _ = try indexAction.perform(logHandle: .standardOutput)
+        _ = try indexAction.perform(logHandle: .none)
         
         let indexFromIndexAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromIndexAction.count, 37)
@@ -2358,7 +2355,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "error"
         )
-        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
     }
@@ -2398,7 +2395,7 @@ class ConvertActionTests: XCTestCase {
         )
         
         XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
-        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
         XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
@@ -2473,7 +2470,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory()
         )
         
-        XCTAssertThrowsError(try action.performAndHandleResult(), "The test bundle should have thrown an error about an incomplete symbol graph file")
+        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none), "The test bundle should have thrown an error about an incomplete symbol graph file")
         XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path), "The digest file should have been written even though compilation errors occurred")
         
         let data = try testDataProvider.contentsOfURL(digestFileURL)
@@ -2507,12 +2504,12 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory()
         )
         
-        try action.performAndHandleResult()
+        try action.performAndHandleResult(logHandle: .none)
         
         let indexDirectory = targetDirectory.appendingPathComponent("index", isDirectory: true)
         let renderIndexJSON = indexDirectory.appendingPathComponent("index.json", isDirectory: false)
         
-        try action.performAndHandleResult()
+        try action.performAndHandleResult(logHandle: .none)
         XCTAssertTrue(FileManager.default.directoryExists(atPath: indexDirectory.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: renderIndexJSON.path))
         try XCTAssertEqual(FileManager.default.contentsOfDirectory(at: indexDirectory, includingPropertiesForKeys: nil).count, 1)
@@ -2541,7 +2538,7 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: createTemporaryDirectory()
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
         
         let expectedOutput = Folder(name: ".docc-build", content: [
             JSONFile(
@@ -2648,7 +2645,7 @@ class ConvertActionTests: XCTestCase {
             transformForStaticHosting: true
         )
         
-        XCTAssertNoThrow(try action.performAndHandleResult())
+        XCTAssertNoThrow(try action.performAndHandleResult(logHandle: .none))
     }
     func testConvertWithCustomTemplates() throws {
         let info = InfoPlist(displayName: "TestConvertWithCustomTemplates", identifier: "com.test.example")
@@ -2701,7 +2698,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // The custom template contents should be wrapped in <template> tags and
         // prepended to the <body>
@@ -2783,7 +2780,7 @@ class ConvertActionTests: XCTestCase {
             experimentalEnableCustomTemplates: true,
             transformForStaticHosting: true
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         // The custom template contents should be wrapped in <template> tags and
         // prepended to the <body>
@@ -2852,7 +2849,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
-        let result = try action.perform(logHandle: .standardOutput)
+        let result = try action.perform(logHandle: .none)
 
         let expectedOutput = Folder(name: ".docc-build", content: [
             index,
@@ -2970,7 +2967,7 @@ class ConvertActionTests: XCTestCase {
         )
         
         XCTAssert(action.context.registeredBundles.isEmpty)
-        XCTAssertNoThrow(try action.perform(logHandle: .standardOutput))
+        XCTAssertNoThrow(try action.perform(logHandle: .none))
 
         XCTAssertEqual(action.context.registeredBundles.count, 1)
         let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
@@ -3054,7 +3051,7 @@ class ConvertActionTests: XCTestCase {
             )
         )
         XCTAssert(action.context.registeredBundles.isEmpty)
-        XCTAssertNoThrow(try action.perform(logHandle: .standardOutput))
+        XCTAssertNoThrow(try action.perform(logHandle: .none))
 
         XCTAssertEqual(action.context.registeredBundles.count, 1)
         let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
@@ -3073,31 +3070,79 @@ class ConvertActionTests: XCTestCase {
     
     // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
     func testConvertWithNoTechnologyRoot() throws {
-        let bundle = Folder(name: "unit-test.docc", content: [
+        func problemsFromConverting(_ catalogContent: [File]) throws -> [Problem] {
+            let catalog = Folder(name: "unit-test.docc", content: catalogContent)
+            let testDataProvider = try TestFileSystem(folders: [catalog, Folder.emptyHTMLTemplateDirectory])
+            let engine = DiagnosticEngine()
+            var action = try ConvertAction(
+                documentationBundleURL: catalog.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: URL(fileURLWithPath: "/output"),
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: URL(fileURLWithPath: "/tmp"),
+                diagnosticEngine: engine
+            )
+            _ = try action.perform(logHandle: .none)
+            return engine.problems
+        }
+        
+        let onlyTutorialArticleProblems = try problemsFromConverting([
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            TextFile(name: "Documentation.md", utf8Content: "")
+            TextFile(name: "Article.tutorial", utf8Content: """
+                @Article(time: 20) {
+                   @Intro(title: "Slothy Tutorials") {
+                      This is an abstract for the intro.
+                   }
+                }
+                """
+            ),
         ])
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-        let engine = DiagnosticEngine()
-        var action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: true,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            dataProvider: testDataProvider,
-            fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
-            diagnosticEngine: engine
-        )
-        let _ = try action.perform(logHandle: .standardOutput)
-        XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
-        XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+        XCTAssert(onlyTutorialArticleProblems.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
+        
+        let tutorialTableOfContentProblem = try problemsFromConverting([
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "table-of-contents.tutorial", utf8Content: """
+                """
+            ),
+            TextFile(name: "article.tutorial", utf8Content: """
+                @Article(time: 20) {
+                   @Intro(title: "Slothy Tutorials") {
+                      This is an abstract for the intro.
+                   }
+                }
+                """
+            ),
+        ])
+        XCTAssert(tutorialTableOfContentProblem.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
+        
+        let incompleteTutorialFile = try problemsFromConverting([
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "article.tutorial", utf8Content: """
+                @Chapter(name: "SlothCreator Essentials") {
+                    @Image(source: "chapter1-slothcreatorEssentials.png", alt: "A wireframe of an app interface that has an outline of a sloth and four buttons below the sloth. The buttons display the following symbols, from left to right: snowflake, fire, wind, and lightning.")
+                    
+                    Create custom sloths and edit their attributes and powers using SlothCreator.
+                    
+                    @TutorialReference(tutorial: "doc:Creating-Custom-Sloths")
+                }
+                """
+            ),
+        ])
+        XCTAssert(incompleteTutorialFile.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.missingTopLevelChild"
+        }))
+        XCTAssertFalse(incompleteTutorialFile.contains(where: {
+            $0.diagnostic.identifier == "org.swift.docc.MissingTableOfContents"
+        }))
     }
     
     func testWrittenDiagnosticsAfterConvert() throws {
@@ -3135,23 +3180,92 @@ class ConvertActionTests: XCTestCase {
             diagnosticEngine: engine
         )
         
-        let _ = try action.perform(logHandle: .standardOutput)
-        XCTAssertEqual(engine.problems.count, 2)
+        let _ = try action.perform(logHandle: .none)
+        XCTAssertEqual(engine.problems.count, 1)
         
         XCTAssert(FileManager.default.fileExists(atPath: diagnosticFile.path))
         
         let diagnosticFileContent = try JSONDecoder().decode(DiagnosticFile.self, from: Data(contentsOf: diagnosticFile))
-        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 2)
+        XCTAssertEqual(diagnosticFileContent.diagnostics.count, 1)
         
         XCTAssertEqual(diagnosticFileContent.diagnostics.map(\.summary).sorted(), [
-            "No TechnologyRoot to organize article-only documentation.",
             "No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'."
-        ])
+        ].sorted())
         
         let logLines = logStorage.text.splitByNewlines
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("warning:") }.count, 2, "There should be two warnings printed to the console")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No TechnologyRoot to organize article-only documentation.") }.count, 1, "The root page warning shouldn't be repeated.")
-        XCTAssertEqual(logLines.filter { ($0 as NSString).contains("No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1, "The link warning shouldn't be repeated.")
+        XCTAssertEqual(logLines.filter { $0.hasPrefix("warning: No symbol matched 'ModuleThatDoesNotExist'. Can't resolve 'ModuleThatDoesNotExist'.") }.count, 1)
+    }
+    
+    func testEncodedImagePaths() throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Something.md", utf8Content: """
+            # Something
+            
+            This article links to some assets
+            
+            ![Some alt text](image-name)
+            """),
+            
+            // Image variants
+            DataFile(name: "image-name.png", data: Data()),
+            DataFile(name: "image-name~dark.png", data: Data()),
+            DataFile(name: "image-name@2x.png", data: Data()),
+            DataFile(name: "image-name~dark@2x.png", data: Data()),
+        ])
+    
+        let fileSystem = try TestFileSystem(folders: [catalog])
+        let targetURL = URL(fileURLWithPath: "/Output.doccarchive")
+        
+        var action = try ConvertAction(
+            documentationBundleURL: catalog.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetURL,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: fileSystem,
+            fileManager: fileSystem,
+            temporaryDirectory: fileSystem.uniqueTemporaryDirectory()
+        )
+        
+        let result = try action.perform(logHandle: .none)
+        XCTAssertEqual(result.outputs, [targetURL])
+        
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: targetURL.path), """
+        Output.doccarchive/
+        ├─ data/
+        │  ╰─ documentation/
+        │     ╰─ something.json
+        ├─ downloads/
+        │  ╰─ unit-test/
+        ├─ images/
+        │  ╰─ unit-test/
+        │     ├─ image-name.png
+        │     ├─ image-name@2x.png
+        │     ├─ image-name~dark.png
+        │     ╰─ image-name~dark@2x.png
+        ├─ metadata.json
+        ╰─ videos/
+           ╰─ unit-test/
+        """)
+        
+        XCTAssert(fileSystem.fileExists(atPath: targetURL.appendingPathComponent("images/unit-test/image-name.png").path))
+        let pageURL = targetURL.appendingPathComponent("data/documentation/something.json")
+        XCTAssert(fileSystem.fileExists(atPath: pageURL.path))
+        
+        let renderNode = try JSONDecoder().decode(RenderNode.self, from: fileSystem.contentsOfURL(pageURL))
+        
+        XCTAssertEqual(renderNode.references.keys.sorted(), ["image-name"])
+        let imageReference = try XCTUnwrap(renderNode.references["image-name"] as? ImageReference)
+        
+        XCTAssertEqual(imageReference.altText, "Some alt text")
+        XCTAssertEqual(imageReference.asset.variants.values.map(\.absoluteString).sorted(), [
+            "/images/unit-test/image-name.png",
+            "/images/unit-test/image-name@2x.png",
+            "/images/unit-test/image-name~dark.png",
+            "/images/unit-test/image-name~dark@2x.png"
+        ])
     }
     
     #endif

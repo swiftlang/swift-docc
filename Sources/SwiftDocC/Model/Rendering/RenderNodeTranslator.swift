@@ -493,7 +493,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> RenderTree? {
-        return createAndRegisterRenderReference(forMedia: videoMedia.source, poster: videoMedia.poster)
+        return createAndRegisterRenderReference(
+            forMedia: videoMedia.source,
+            poster: videoMedia.poster,
+            altText: videoMedia.altText
+        )
     }
     
     public mutating func visitChapter(_ chapter: Chapter) -> RenderTree? {
@@ -598,7 +602,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     public mutating func visitArticle(_ article: Article) -> RenderTree? {
         var node = RenderNode(identifier: identifier, kind: .article)
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        // Contains symbol references declared in the Topics section.
+        var topicSectionContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
         
         node.metadata.title = article.title!.plainText
         
@@ -674,7 +679,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         allowExternalLinks: false,
                         allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -685,7 +690,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -714,7 +719,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 
                 // Collect all child topic references.
-                contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
+                topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
                 // Add the final groups to the node.
                 sections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
             }
@@ -725,7 +730,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 sections.append(
                     contentsOf: renderAutomaticTaskGroupsSection(
                         article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
@@ -736,11 +741,30 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
-            if node.topicSections.isEmpty {
-                // Set an eyebrow for articles
+            
+            let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
+            node.metadata.role = role.rawValue
+            
+            switch role {
+            case .article:
+                // If there are no links to other nodes from the article,
+                // set the eyebrow for articles.
                 node.metadata.roleHeading = "Article"
+            case .collectionGroup:
+                // If the article links to other nodes, set the eyebrow for
+                // API Collections if any linked node is a symbol.
+                //
+                // If none of the linked nodes are symbols (it's a plain collection),
+                // don't display anything as the eyebrow title.
+                let curatesSymbols = topicSectionContentCompiler.collectedTopicReferences.contains { topicReference in
+                    context.topicGraph.nodeWithReference(topicReference)?.kind.isSymbol ?? false
+                }
+                if curatesSymbols {
+                    node.metadata.roleHeading = "API Collection"
+                }
+            default:
+                break
             }
-            node.metadata.role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         }
        
         if let pageImages = documentationNode.metadata?.pageImages {
@@ -780,13 +804,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         allowExternalLinks: true,
                         allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
-                        contentCompiler: &contentCompiler
+                        contentCompiler: &topicSectionContentCompiler
                     )
                 )
             }
             
             // Automatic See Also section
-            if let seeAlso = try! AutomaticCuration.seeAlso(
+            if let seeAlso = AutomaticCuration.seeAlso(
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
@@ -794,7 +818,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
-                contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
+                topicSectionContentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
                 seeAlsoSections.append(TaskGroupRenderSection(taskGroup: seeAlso))
             }
             
@@ -845,7 +869,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.metadata.roleHeading = titleHeading.heading
         } 
         
-        collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
+        collectedTopicReferences.append(contentsOf: topicSectionContentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
 
         addReferences(imageReferences, to: &node)
@@ -854,7 +878,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(downloadReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
-        addReferences(contentCompiler.linkReferences, to: &node)
+        addReferences(topicSectionContentCompiler.linkReferences, to: &node)
 
         return node
     }
@@ -1355,7 +1379,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
+                    AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
+                    MentionsSectionTranslator(referencingSymbol: identifier),
                     DiscussionSectionTranslator(),
                 ]
             )
@@ -1419,10 +1445,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             var groupSections = [RelationshipsRenderSection]()
             
-            let eligibleGroups = relationships.groups
-                .sorted(by: { (group1, group2) -> Bool in
-                    return group1.sectionOrder < group2.sectionOrder
-                })
+            let eligibleGroups = relationships.groups.sorted(by: \.sectionOrder)
             
             for group in eligibleGroups {
                 // destination url → symbol title
@@ -1435,23 +1458,29 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     
                     switch destination {
                     case .resolved(.success(let resolved)):
-                        let node = try! context.entity(with: resolved)
-                        let resolver = LinkTitleResolver(context: context, source: resolved.url)
-                        let resolvedTitle = resolver.title(for: node)
-                        destinationsMap[destination] = resolvedTitle?[trait]
-
-                        let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
-
-                        if !dropLink {
-                            // Add relationship to render references
+                        if let node = context.documentationCache[resolved] {
+                            let resolver = LinkTitleResolver(context: context, source: resolved.url)
+                            let resolvedTitle = resolver.title(for: node)
+                            destinationsMap[destination] = resolvedTitle?[trait]
+                            
+                            let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
+                            
+                            if !dropLink {
+                                // Add relationship to render references
+                                collectedTopicReferences.append(resolved)
+                            } else if let topicUrl = ValidatedURL(resolved.url) {
+                                // If the topic isn't linkable (e.g. an extended type), then we shouldn't
+                                // add a resolved relationship - deconstruct the resolved reference so
+                                // we can still display it, though
+                                let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
+                                let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
+                                collectedUnresolvedTopicReferences.append(reference)
+                            }
+                        } else if let entity = context.externalCache[resolved] {
                             collectedTopicReferences.append(resolved)
-                        } else if let topicUrl = ValidatedURL(resolved.url) {
-                            // If the topic isn't linkable (e.g. an extended type), then we shouldn't
-                            // add a resolved relationship - deconstruct the resolved reference so
-                            // we can still display it, though
-                            let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
-                            let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
-                            collectedUnresolvedTopicReferences.append(reference)
+                            destinationsMap[destination] = entity.topicRenderReference.title
+                        } else {
+                            fatalError("A successfully resolved reference should have either local or external content.")
                         }
 
                     case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
@@ -1607,7 +1636,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             
             // Curate the current node's siblings as further See Also groups.
-            if let seeAlso = try! AutomaticCuration.seeAlso(
+            if let seeAlso = AutomaticCuration.seeAlso(
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
@@ -1807,17 +1836,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
     }
     
-    private mutating func convert_fragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
+    private mutating func convertFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
         return fragments.map { token -> DeclarationRenderSection.Token in
-            
-            // Create a reference if one found
-            var reference: ResolvedTopicReference?
+            let reference: ResolvedTopicReference?
             if let preciseIdentifier = token.preciseIdentifier,
-               let resolved = self.context.symbolIndex[preciseIdentifier] {
+               let resolved = self.context.localOrExternalReference(symbolID: preciseIdentifier)
+            {
                 reference = resolved
                 
                 // Add relationship to render references
                 self.collectedTopicReferences.append(resolved)
+            } else {
+                reference = nil
             }
             
             // Add the declaration token
@@ -1841,7 +1871,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let symbol = symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = symbol.declarationFragments {
-                renderedTokens = convert_fragments(fragments)
+                renderedTokens = convertFragments(fragments)
             }
                 
             // Populate attributes
@@ -1880,7 +1910,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // If there is only 1 type declaration found, it would be redundant with declaration, so skip it.
                 let typeDeclarations = constraint.compactMap { $0.fragments }
                 if typeDeclarations.count > 1 {
-                    let allowedTypes = typeDeclarations.map { convert_fragments($0) }
+                    let allowedTypes = typeDeclarations.map { convertFragments($0) }
                     attributes.append(RenderAttribute.allowedTypes(allowedTypes))
                 }
             }

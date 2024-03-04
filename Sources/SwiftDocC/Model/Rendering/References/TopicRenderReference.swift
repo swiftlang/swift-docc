@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -138,7 +138,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         role: String? = nil,
         fragments: [DeclarationRenderSection.Token]? = nil,
         navigatorTitle: [DeclarationRenderSection.Token]? = nil,
-        estimatedTime: String?,
+        estimatedTime: String? = nil,
         conformance: ConformanceSection? = nil,
         isBeta: Bool = false,
         isDeprecated: Bool = false,
@@ -203,7 +203,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         role: String? = nil,
         fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil),
         navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil),
-        estimatedTime: String?,
+        estimatedTime: String? = nil,
         conformance: ConformanceSection? = nil,
         isBeta: Bool = false,
         isDeprecated: Bool = false,

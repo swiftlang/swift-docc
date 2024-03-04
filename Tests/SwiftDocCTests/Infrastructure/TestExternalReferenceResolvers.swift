@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,14 +9,14 @@
 */
 
 import Foundation
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import SymbolKit
 import Markdown
 
 // Most tests use a simpler test resolver that always returns the same value. For some of them there could be value in using this test resolver
 // instead to verify a mix of successes and failures in the same test.
 
-class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver, FallbackAssetResolver, _ExternalAssetResolver {
+class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
     var bundleIdentifier = "com.external.testbundle"
     
     // The minimal information that the test resolver needs to create a resolved reference and documentation node
@@ -37,15 +37,11 @@ class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, Fallb
     
     var assetsToReturn: [String: DataAsset] = [:]
     
-    enum Error: Swift.Error {
-        case testErrorRaisedForWrongBundleIdentifier
-    }
-    
     var resolvedExternalPaths = [String]()
     
     // MARK: [Reference|Asset]Resolver conformances
     
-    func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+    func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
         switch reference {
         case .resolved(let resolved):
             return resolved // Don't re-resolve the same reference
@@ -61,39 +57,11 @@ class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, Fallb
         }
     }
     
-    func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+    func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
         guard reference.bundleIdentifier == bundleIdentifier else {
-            throw Error.testErrorRaisedForWrongBundleIdentifier
+            fatalError("It is a programming mistake to retrieve an entity for a reference that the external resolver didn't resolve.")
         }
         return makeNode(for: entityInfo(path: reference.path), reference: reference)
-    }
-    
-    let testBaseURL: String = "https://example.com/example"
-    func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-        let entity = entityInfo(path: reference.path)
-        
-        let fragment = entity.fragment.map {"#\($0)"} ?? ""
-        return URL(string: "\(testBaseURL)\(reference.path)\(fragment)")!
-    }
-    
-    func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) throws -> DocumentationNode? {
-        hasResolvedReference(reference) ? try entity(with: reference) : nil
-    }
-    
-    func urlForResolvedReferenceIfPreviouslyResolved(_ reference: ResolvedTopicReference) -> URL? {
-        hasResolvedReference(reference) ? urlForResolvedReference(reference) : nil
-    }
-    
-    func hasResolvedReference(_ reference: ResolvedTopicReference) -> Bool {
-        return resolvedExternalPaths.contains(reference.path)
-    }
-    
-    func resolve(assetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
-        return assetsToReturn[assetName]
-    }
-    
-    func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
-        return assetsToReturn[assetName]
     }
     
     // MARK: Private helper functions
@@ -114,69 +82,34 @@ class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, Fallb
         }
     }
     
-    private func makeNode(for entityInfo: EntityInfo, reference: ResolvedTopicReference) -> DocumentationNode {
-        let semantic: Semantic?
-        if let declaration = entityInfo.declarationFragments {
-            semantic = Symbol(
-                kindVariants: .init(swiftVariant: OutOfProcessReferenceResolver.symbolKind(forNodeKind: entityInfo.kind)),
-                titleVariants: .init(swiftVariant: entityInfo.title),
-                subHeadingVariants: .init(swiftVariant: declaration.declarationFragments),
-                navigatorVariants: .init(swiftVariant: nil),
-                roleHeadingVariants: .init(swiftVariant: ""), // This information isn't used anywhere.
-                platformNameVariants: .init(swiftVariant: nil),
-                moduleReference: reference, // This information isn't used anywhere.
-                externalIDVariants: .init(swiftVariant: nil),
-                accessLevelVariants: .init(swiftVariant: nil),
-                availabilityVariants: .init(swiftVariant: nil),
-                deprecatedSummaryVariants: .init(swiftVariant: nil),
-                mixinsVariants: .init(swiftVariant: nil),
-                abstractSectionVariants: .init(swiftVariant: nil),
-                discussionVariants: .init(swiftVariant: nil),
-                topicsVariants: .init(swiftVariant: nil),
-                seeAlsoVariants: .init(swiftVariant: nil),
-                returnsSectionVariants: .init(swiftVariant: nil),
-                parametersSectionVariants: .init(swiftVariant: nil),
-                dictionaryKeysSectionVariants: .init(swiftVariant: nil),
-                httpEndpointSectionVariants: .init(swiftVariant: nil),
-                httpBodySectionVariants: .init(swiftVariant: nil),
-                httpParametersSectionVariants: .init(swiftVariant: nil),
-                httpResponsesSectionVariants: .init(swiftVariant: nil),
-                redirectsVariants: .init(swiftVariant: nil)
-            )
-        } else {
-            semantic = nil
-        }
+    private func makeNode(for entityInfo: EntityInfo, reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+        let (kind, role) = DocumentationContentRenderer.renderKindAndRole(entityInfo.kind, semantic: nil)
         
-        var node = DocumentationNode(
-            reference: reference,
-            kind: entityInfo.kind,
-            sourceLanguage: entityInfo.language,
-            name: .conceptual(title: entityInfo.title),
-            markup: entityInfo.abstract,
-            semantic: semantic
-        )
-        
-        // This is a workaround for how external content is processed. See details in OutOfProcessReferenceResolver.addImagesAndCacheMediaReferences(to:from:)
-        
+        let dependencies: RenderReferenceDependencies
         if let topicImages = entityInfo.topicImages {
-            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
-            
-            metadata.pageImages = topicImages.map { topicImage, alt in
-                let purpose: PageImage.Purpose
-                switch topicImage.type {
-                case .card: purpose = .card
-                case .icon: purpose = .icon
-                }
-                return PageImage._make(
-                    purpose: purpose,
-                    source: ResourceReference(bundleIdentifier: reference.bundleIdentifier, path: topicImage.identifier.identifier),
-                    alt: alt
-                )
-            }
-            
-            node.metadata = metadata
+            dependencies = .init(imageReferences: topicImages.map { topicImage, altText in
+                return ImageReference(identifier: topicImage.identifier, altText: altText, imageAsset: assetsToReturn[topicImage.identifier.identifier] ?? .init())
+            })
+        } else {
+            dependencies = .init()
         }
-          
-        return node
+        
+        return LinkResolver.ExternalEntity(
+            topicRenderReference: TopicRenderReference(
+                identifier: .init(reference.absoluteString),
+                title: entityInfo.title,
+                abstract: [.text(entityInfo.abstract.format())],
+                url: "/example" + reference.path,
+                kind: kind,
+                role: role,
+                fragments: entityInfo.declarationFragments?.declarationFragments.map { fragment in
+                    return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
+                },
+                titleStyle: entityInfo.kind.isSymbol ? .symbol : .title,
+                images: entityInfo.topicImages?.map(\.0) ?? []
+            ),
+            renderReferenceDependencies: dependencies,
+            sourceLanguages: [entityInfo.language]
+        )
     }
 }

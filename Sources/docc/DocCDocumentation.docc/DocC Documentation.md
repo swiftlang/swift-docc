@@ -23,21 +23,16 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 ### Documentation Content
 
 - <doc:writing-symbol-documentation-in-your-source-files>
-
 - <doc:adding-supplemental-content-to-a-documentation-catalog>
-
 - <doc:linking-to-symbols-and-other-content>
 
 ### Structure and Formatting
 
 - <doc:formatting-your-documentation-content>
-
+- <doc:adding-tables-of-data>
 - <doc:other-formatting-options>
-
 - <doc:adding-images>
-
 - <doc:adding-structure-to-your-documentation-pages>
-
 - <doc:customizing-the-appearance-of-your-documentation-pages>
 
 ### Distribution
@@ -47,11 +42,10 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 ### Documentation Types
 
 - <doc:api-reference-syntax>
-
 - <doc:tutorial-syntax>
 
 ### Shared Syntax
 
 - ``Comment``
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

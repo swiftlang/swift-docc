@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,10 @@
 */
 
 import Foundation
-@_spi(ExternalLinks) import SwiftDocC // SPI to set `context.linkResolver.dependencyArchives`
+
+@_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
+@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
+import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {
@@ -39,6 +42,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let inheritDocs: Bool
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
+    let experimentalModifyCatalogWithGeneratedCuration: Bool
     let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
@@ -76,6 +80,7 @@ public struct ConvertAction: Action, RecreatingContext {
     var converter: DocumentationConverter
     
     private var durationMetric: Benchmark.Duration?
+    private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     /// - Parameter buildIndex: Whether or not the convert action should emit an LMDB representation
@@ -107,6 +112,7 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
@@ -143,19 +149,19 @@ public struct ConvertAction: Action, RecreatingContext {
         } else {
             formattingOptions = []
         }
+        self.diagnosticWriterOptions = (
+            formattingOptions,
+            documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
+        )
+        
         self.inheritDocs = inheritDocs
         self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
+        self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        engine.add(
-            DiagnosticConsoleWriter(
-                formattingOptions: formattingOptions,
-                baseURL: documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
-            )
-        )
         if let diagnosticFilePath = diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }
@@ -207,7 +213,8 @@ public struct ConvertAction: Action, RecreatingContext {
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
             isCancelled: isCancelled,
-            diagnosticEngine: self.diagnosticEngine
+            diagnosticEngine: self.diagnosticEngine,
+            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
         )
     }
     
@@ -250,6 +257,7 @@ public struct ConvertAction: Action, RecreatingContext {
             formatConsoleOutputForTools: emitFixits,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: false,
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository,
@@ -279,6 +287,7 @@ public struct ConvertAction: Action, RecreatingContext {
         formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
+        experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool,
         allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String?,
@@ -314,6 +323,7 @@ public struct ConvertAction: Action, RecreatingContext {
             formatConsoleOutputForTools: formatConsoleOutputForTools,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: transformForStaticHosting,
             allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
             hostingBasePath: hostingBasePath,
@@ -362,8 +372,19 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+        // Add the default diagnostic console writer now that we know what log handle it should write to.
+        if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
+            diagnosticEngine.add(
+                DiagnosticConsoleWriter(
+                    logHandle,
+                    formattingOptions: diagnosticWriterOptions.formatting,
+                    baseURL: diagnosticWriterOptions.baseURL,
+                    fileManager: fileManager
+                )
+            )
+        }
         
-        // The converter has already emitted its problems to the diagnostic engine. 
+        // The converter has already emitted its problems to the diagnostic engine.
         // Track additional problems separately to avoid repeating the converter's problems.
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
@@ -378,9 +399,8 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         if let outOfProcessResolver = outOfProcessResolver {
-            context.externalReferenceResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
-            context.externalSymbolResolver = outOfProcessResolver
-            context._externalAssetResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.globalExternalSymbolResolver = outOfProcessResolver
         }
         
         let temporaryFolder = try createTempFolder(
@@ -433,7 +453,8 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        let bundleIdentifier = converter.firstAvailableBundle()?.identifier
+        if let bundleIdentifier = bundleIdentifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -445,7 +466,8 @@ public struct ConvertAction: Action, RecreatingContext {
             context: context,
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
-            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil
+            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
+            bundleIdentifier: bundleIdentifier
         )
 
         let analysisProblems: [Problem]
@@ -462,15 +484,42 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var didEncounterError = analysisProblems.containsErrors || conversionProblems.containsErrors
-        if try context.renderRootModules.isEmpty {
+        let hasTutorial = context.knownPages.contains(where: {
+            guard let kind = try? context.entity(with: $0).kind else { return false }
+            return kind == .tutorial || kind == .tutorialArticle
+        })
+        // Warn the user if the catalog is a tutorial but does not contains a table of contents
+        // and provide template content to fix this problem.
+        if (
+            context.rootTechnologies.isEmpty &&
+            hasTutorial
+        ) {
+            let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename
+            let source = rootURL?.appendingPathComponent(tableOfContentsFilename)
+            var replacements = [Replacement]()
+            if let tableOfContentsTemplate = CatalogTemplateKind.tutorialTemplateFiles(converter.firstAvailableBundle()?.displayName ?? "Tutorial Name")[tableOfContentsFilename] {
+                replacements.append(
+                    Replacement(
+                        range: .init(line: 1, column: 1, source: source) ..< .init(line: 1, column: 1, source: source),
+                        replacement: tableOfContentsTemplate
+                    )
+                )
+            }
             postConversionProblems.append(
                 Problem(
                     diagnostic: Diagnostic(
+                        source: source,
                         severity: .warning,
-                        identifier: "org.swift.docc.MissingTechnologyRoot",
-                         summary: "No TechnologyRoot to organize article-only documentation.",
-                         explanation: "Article-only documentation needs a TechnologyRoot page (indicated by a `TechnologyRoot` directive within a `Metadata` directive) to define the root of the documentation hierarchy."
-                     )
+                        identifier: "org.swift.docc.MissingTableOfContents",
+                        summary: "Missing tutorial table of contents page.",
+                        explanation: "`@Tutorial` and `@Article` pages require a `@Tutorials` table of content page to define the documentation hierarchy."
+                    ),
+                    possibleSolutions: [
+                        Solution(
+                            summary: "Create a `@Tutorials` table of content page.",
+                            replacements: replacements
+                        )
+                    ]
                 )
             )
         }
@@ -537,7 +586,8 @@ public struct ConvertAction: Action, RecreatingContext {
                 fileManager: fileManager,
                 context: context,
                 indexer: nil,
-                transformForStaticHostingIndexHTML: nil
+                transformForStaticHostingIndexHTML: nil,
+                bundleIdentifier: bundleIdentifier
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
@@ -547,38 +597,10 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
-        let targetURL = temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        if let templateURL = templateURL {
-            // If a template directory has been provided, create the temporary build folder with
-            // its contents
-            try fileManager.copyItem(at: templateURL, to: targetURL)
-        } else {
-            // Otherwise, just create the temporary build folder
-            try fileManager.createDirectory(
-                at: targetURL,
-                withIntermediateDirectories: true,
-                attributes: nil)
-        }
-        return targetURL
+        return try Self.createUniqueDirectory(inside: temporaryDirectory, template: templateURL, fileManager: fileManager)
     }
     
     func moveOutput(from: URL, to: URL) throws {
-        // We only need to move output if it exists
-        guard fileManager.fileExists(atPath: from.path) else { return }
-        
-        if fileManager.fileExists(atPath: to.path) {
-            try fileManager.removeItem(at: to)
-        }
-        
-        try ensureThatParentFolderExist(for: to)
-        try fileManager.moveItem(at: from, to: to)
-    }
-    
-    private func ensureThatParentFolderExist(for location: URL) throws {
-        let parentFolder = location.deletingLastPathComponent()
-        if !fileManager.directoryExists(atPath: parentFolder.path) {
-            try fileManager.createDirectory(at: parentFolder, withIntermediateDirectories: false, attributes: nil)
-        }
+        return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
     }
 }

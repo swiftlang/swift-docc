@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -74,7 +74,10 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective
     var titleHeading: TitleHeading? = nil
-    
+
+    @ChildDirective
+    var redirects: [Redirect]? = nil
+
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
@@ -87,22 +90,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "supportedLanguages"    : \Metadata._supportedLanguages,
         "_pageColor"            : \Metadata.__pageColor,
         "titleHeading"          : \Metadata._titleHeading,
+        "redirects"             : \Metadata._redirects,
     ]
-    
-    /// Creates a metadata object with a given markup, documentation extension, and technology root.
-    /// - Parameters:
-    ///   - originalMarkup: The original markup for this metadata directive.
-    ///   - documentationExtension: Optional configuration that describes how this documentation extension file merges or overrides the in-source documentation.
-    ///   - technologyRoot: Optional configuration to make this page root-level documentation.
-    ///   - displayName: Optional configuration to customize this page's symbol's display name.
-    ///   - titleHeading: Optional configuration to customize the text of this page's title heading.
-    init(originalMarkup: BlockDirective, documentationExtension: DocumentationExtension?, technologyRoot: TechnologyRoot?, displayName: DisplayName?, titleHeading: TitleHeading?) {
-        self.originalMarkup = originalMarkup
-        self.documentationOptions = documentationExtension
-        self.technologyRoot = technologyRoot
-        self.displayName = displayName
-        self.titleHeading = titleHeading
-    }
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
@@ -111,7 +100,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil && redirects == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,

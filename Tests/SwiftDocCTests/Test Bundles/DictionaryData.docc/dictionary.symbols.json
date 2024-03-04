@@ -239,6 +239,12 @@
     },
     {
       "accessLevel": "public",
+      "allowedValues": [
+        "Classic Rock",
+        "Folk",
+        null
+      ],
+      "maximumLength": 40,
       "declarationFragments": [
         {
           "kind": "text",
@@ -276,6 +282,21 @@
       "typeDetails": [
         {
           "baseType": "string",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "string"
+            }
+          ]
+        },
+        {
+          "baseType": "string",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "GENCODE"
+            }
+          ]
         }
       ]
     },
