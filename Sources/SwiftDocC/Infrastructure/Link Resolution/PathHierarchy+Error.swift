@@ -152,7 +152,9 @@ extension PathHierarchy.Error {
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
                     let toDisplay = disambiguation.first == ">" ? ("-" + disambiguation) : disambiguation
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                    // In contexts that display the solution message on a single line, this extra whitespace makes it look correct ────────╮
+                    //                                                                                                                     ▼
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for \n\(fullNameOfNode(node).singleQuoted)", replacements: [
                         Replacement(range: replacementRange, replacement: "-" + disambiguation)
                     ])
                 }
@@ -211,7 +213,9 @@ extension PathHierarchy.Error {
             
             let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
                 let toDisplay = disambiguation.first == ">" ? ("-" + disambiguation) : disambiguation
-                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                // In contexts that display the solution message on a single line, this extra whitespace makes it look correct ────────╮
+                //                                                                                                                     ▼
+                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: toDisplay)) for \n\(fullNameOfNode(node).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + disambiguation)
                 ])
             }
