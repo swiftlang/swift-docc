@@ -192,6 +192,9 @@ struct PathHierarchy {
                 var parent = moduleNode
                 var components = { (symbol: SymbolGraph.Symbol) -> [String] in
                     let original = symbol.pathComponents
+                    // The `ConvertService` may pass a lookup of "known disambiguated path components" per symbol that the path hierarchy
+                    // wouldn't be able to compute itself because the "partial" symbol graph doesn't contain all the symbols to accurately
+                    // determine the minimal required disambiguation per path.
                     if let disambiguated = knownDisambiguatedPathComponents?[node.symbol!.identifier.precise], disambiguated.count == original.count {
                         return disambiguated
                     } else {
@@ -207,9 +210,19 @@ struct PathHierarchy {
                         parent.children[components.first!] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
+                    guard knownDisambiguatedPathComponents != nil else {
+                        // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
+                        let nodeWithoutSymbol = Node(name: component)
+                        nodeWithoutSymbol.isDisfavoredInCollision = true
+                        parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
+                        parent = nodeWithoutSymbol
+                        continue
+                    }
+                    // If the path hierarchy was passed a lookup of "known disambiguation" path components", then it's possible that each path component could contain disambiguation that needs to be parsed.
                     let component = PathParser.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: String(component.name))
                     nodeWithoutSymbol.isDisfavoredInCollision = true
+                    // Create a spare/placeholder node with the parsed disambiguation for this path component.
                     switch component.disambiguation {
                     case .kindAndHash(kind: let kind, hash: let hash):
                         parent.add(child: nodeWithoutSymbol, kind: kind.map(String.init), hash: hash.map(String.init))
@@ -253,23 +266,21 @@ struct PathHierarchy {
                 lookup[node.identifier] = node
             }
             for tree in node.children.values {
-                for (_, subtree) in tree.storage {
-                    for (_, childNode) in subtree {
-                        assert(childNode.parent === node, {
-                            func describe(_ node: Node?) -> String {
-                                guard let node = node else { return "<nil>" }
-                                guard let identifier = node.symbol?.identifier else { return node.name }
-                                return "\(identifier.precise) (\(identifier.interfaceLanguage))"
-                            }
-                            return """
+                for element in tree.storage {
+                    assert(element.node.parent === node, {
+                        func describe(_ node: Node?) -> String {
+                            guard let node = node else { return "<nil>" }
+                            guard let identifier = node.symbol?.identifier else { return node.name }
+                            return "\(identifier.precise) (\(identifier.interfaceLanguage))"
+                        }
+                        return """
                             Every child node should point back to its parent so that the tree can be traversed both up and down without any dead-ends. \
-                            This wasn't true for '\(describe(childNode))' which pointed to '\(describe(childNode.parent))' but should have pointed to '\(describe(node))'.
+                            This wasn't true for '\(describe(element.node))' which pointed to '\(describe(element.node.parent))' but should have pointed to '\(describe(node))'.
                             """ }()
-                        )
-                        // In release builds we close off any dead-ends in the tree as a precaution for what shouldn't happen.
-                        childNode.parent = node
-                        descend(childNode)
-                    }
+                    )
+                    // In release builds we close off any dead-ends in the tree as a precaution for what shouldn't happen.
+                    element.node.parent = node
+                    descend(element.node)
                 }
             }
         }
@@ -437,7 +448,7 @@ extension PathHierarchy {
             }
             // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
-            children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
+            children[child.name, default: .init()].add(child, kind: kind, hash: hash)
             
             assert(child.parent === self, "Potentially merging nodes shouldn't break the child node's reference to its parent.")
         }
@@ -448,10 +459,8 @@ extension PathHierarchy {
             self.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in self.children {
-                for subtree in tree.storage.values {
-                    for node in subtree.values {
-                        node.parent = self
-                    }
+                for element in tree.storage {
+                    element.node.parent = self
                 }
             }
         }
@@ -467,10 +476,8 @@ extension PathHierarchy {
         // Roots represent modules and only have direct symbol descendants.
         for root in modules {
             for (_, tree) in root.children {
-                for subtree in tree.storage.values {
-                    for node in subtree.values where node.symbol != nil {
-                        result.insert(node.identifier)
-                    }
+                for element in tree.storage where element.node.symbol != nil {
+                    result.insert(element.node.identifier)
                 }
             }
         }
@@ -480,10 +487,15 @@ extension PathHierarchy {
     func traverseOverloadedSymbolGroups(observe: (_ overloadedSymbols: [ResolvedIdentifier]) throws -> Void) rethrows {
         for node in lookup.values where node.symbol != nil {
             for disambiguation in node.children.values {
-                for (kind, innerStorage) in disambiguation.storage where innerStorage.count > 1 && SymbolGraph.Symbol.KindIdentifier(identifier: kind).isOverloadableKind {
-                    assert(innerStorage.values.allSatisfy { $0.symbol != nil }, "Only symbols should have symbol kind identifiers (\(kind))")
-
-                    try observe(innerStorage.values.map(\.identifier))
+                var overloadGroups = [SymbolGraph.Symbol.KindIdentifier: [ResolvedIdentifier]]()
+                for element in disambiguation.storage {
+                    guard let kind = element.node.symbol?.kind.identifier, kind.isOverloadableKind else {
+                        continue
+                    }
+                    overloadGroups[kind, default: []].append(element.node.identifier)
+                }
+                for overloads in overloadGroups.values where overloads.count > 1 {
+                    try observe(overloads)
                 }
             }
         }
@@ -510,46 +522,74 @@ extension PathHierarchy {
 // MARK: Disambiguation container
 
 extension PathHierarchy {
-    /// A fixed-depth tree that stores disambiguation information and finds values based on partial disambiguation.
+    /// A container that stores values and their disambiguation information and find values based on partial disambiguation.
     struct DisambiguationContainer {
-        // Each disambiguation tree is fixed at two levels and stores a limited number of values.
-        // In practice, almost all trees store either 1, 2, or 3 elements with 1 being the most common.
+        // Each disambiguation container stores its elements in a flat list, which is very short in practice.
+        //
+        // Almost all containers store either 1, 2, or 3 elements with 1 being the most common case.
         // It's very rare to have more than 10 values and 20+ values is extremely rare.
         //
-        // Given this expected amount of data, a nested dictionary implementation performs well.
-        private(set) var storage: [String: [String: PathHierarchy.Node]] = [:]
+        // Given this expected amount of data, linear searches through an array performs well.
+        //
+        // Even though the container only stores one element per unique hash and kind pair, using a `Set` wouldn't
+        // help since any colliding elements need to be merged.
+        private(set) var storage = ContiguousArray<Element>()
     }
 }
 
 extension PathHierarchy.DisambiguationContainer {
+    struct Element {
+        let node: PathHierarchy.Node
+        let kind: String?
+        let hash: String?
+        
+        func matches(kind: String?, hash: String?) -> Bool {
+            // The 'hash' is more unique than the 'kind', so compare the 'hash' first.
+            self.hash == hash && self.kind == kind
+        }
+        /// Placeholder values, also called "unfindable elements" or "sparse nodes", are created when constructing a path hierarchy for a "partial" symbol graph file.
+        ///
+        /// When the `ConvertService` builds documentation for a single symbol with multiple path components, the path hierarchy fills in placeholder nodes
+        /// for the other path components. This ensures that the nodes in the hierarchy are connected and that there's the same number of nodes—with the same
+        /// names—between the module node and the non-placeholder node as there would be in the full symbol graph.
+        ///
+        /// The placeholder nodes can be traversed up and down while resolving a link—to reach a non-placeholder node—but the link will be considered "not found"
+        /// if it ends at a placeholder node.
+        var isPlaceholderValue: Bool {
+            // Only symbols have 'hash' disambiguation, so check the 'kind' first.
+            kind == nil && hash == nil
+        }
+    }
+    
     /// Add a new value to the tree for a given pair of kind and hash disambiguations.
     /// - Parameters:
+    ///   - value: The new value
     ///   - kind: The kind disambiguation for this value.
     ///   - hash: The hash disambiguation for this value.
-    ///   - value: The new value
     /// - Returns: If a value already exist with the same pair of kind and hash disambiguations.
-    mutating func add(_ kind: String, _ hash: String, _ value: PathHierarchy.Node) {
-        if let existing = storage[kind]?[hash] {
-            existing.merge(with: value)
-        } else if storage.count == 1, let existing = storage["_"]?["_"] {
-            // It is possible for articles and other non-symbols to collide with unfindable symbol placeholder nodes.
+    mutating func add(_ value: PathHierarchy.Node, kind: String?, hash: String?) {
+        // When adding new elements to the container, it's sufficient to check if the hash and kind match.
+        if let existing = storage.first(where: { $0.matches(kind: kind, hash: hash) }) {
+            // If the container already has a version of this node, merge the new value with the existing value.
+            existing.node.merge(with: value)
+        } else if storage.count == 1, storage.first!.isPlaceholderValue {
+            // It is possible for articles and other non-symbols to collide with "unfindable" symbol placeholder nodes.
             // When this happens, remove the placeholder node and move its children to the real (non-symbol) node.
-            value.merge(with: existing)
-            storage = [kind: [hash: value]]
+            let existing = storage.removeFirst()
+            value.merge(with: existing.node)
+            storage = [Element(node: value, kind: kind, hash: hash)]
         } else {
-            storage[kind, default: [:]][hash] = value
+            storage.append(Element(node: value, kind: kind, hash: hash))
         }
     }
     
     /// Combines the data from this tree with another tree to form a new, merged disambiguation tree.
     func merge(with other: Self) -> Self {
-        return .init(storage: self.storage.merging(other.storage, uniquingKeysWith: { lhs, rhs in
-            lhs.merging(rhs, uniquingKeysWith: {
-                lhsValue, rhsValue in
-                assert(lhsValue.symbol!.identifier.precise == rhsValue.symbol!.identifier.precise)
-                return lhsValue
-            })
-        }))
+        var newStorage = storage
+        for element in other.storage where !storage.contains(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
+            newStorage.append(element)
+        }
+        return .init(storage: newStorage)
     }
 }
 
