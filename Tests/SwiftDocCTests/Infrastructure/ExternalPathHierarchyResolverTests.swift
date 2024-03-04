@@ -232,10 +232,35 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
-        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments")
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
         try linkResolvers.assertSuccessfullyResolves(authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj")
+        
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj"
+        )
+        
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)->Int",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)->Int",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)->_",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l"
+        )
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)->_",
+            to: "doc://org.swift.MixedFramework/documentation/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj"
+        )
         
         // @objc(MySwiftClassObjectiveCName)
         // public class MySwiftClassSwiftName: NSObject {
@@ -540,16 +565,16 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)",
             errorMessage: "'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'",
             solutions: [
-                .init(summary: "Insert '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacement: ("-4fd0l", 71, 71)),
-                .init(summary: "Insert '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-757cj", 71, 71)),
+                .init(summary: "Insert '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacement: ("-(Int)", 71, 71)),
+                .init(summary: "Insert '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-(String)", 71, 71)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-subscript",
             errorMessage: "'subscript(_:)-subscript' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'",
             solutions: [
-                .init(summary: "Replace 'subscript' with '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacement: ("-4fd0l", 71, 81)),
-                .init(summary: "Replace 'subscript' with '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-757cj", 71, 81)),
+                .init(summary: "Replace 'subscript' with '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacement: ("-(Int)", 71, 81)),
+                .init(summary: "Replace 'subscript' with '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-(String)", 71, 81)),
             ]
         )
     }

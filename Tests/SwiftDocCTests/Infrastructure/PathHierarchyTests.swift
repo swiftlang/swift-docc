@@ -173,10 +173,12 @@ class PathHierarchyTests: XCTestCase {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
-        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsO")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip")
+        
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip")
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip")
         
         // @objc(MySwiftClassObjectiveCName)
         // public class MySwiftClassSwiftName: NSObject {
@@ -477,17 +479,16 @@ class PathHierarchyTests: XCTestCase {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
-        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "4fd0l"),
-            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "757cj"),
+            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "(Int)"),
+            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "(String)"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
         'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 71)]),
-                .init(summary: "Insert '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 71)]),
+                .init(summary: "Insert '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 71)]),
+                .init(summary: "Insert '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 71)]),
             ])
         }
         
@@ -495,8 +496,8 @@ class PathHierarchyTests: XCTestCase {
         'subscript(_:)-subscript' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'subscript' with '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 81)]),
-                .init(summary: "Replace 'subscript' with '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 81)]),
             ])
         }
         
@@ -837,7 +838,13 @@ class PathHierarchyTests: XCTestCase {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
-        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)        
+        XCTAssertEqual(
+            paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip"],
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(Int)")
+        XCTAssertEqual(
+            paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip"],
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-(String)")
+        
         XCTAssertEqual(
             hashAndKindDisambiguatedPaths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip"],
             "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
