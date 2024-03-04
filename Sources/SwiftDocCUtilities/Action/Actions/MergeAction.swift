@@ -26,6 +26,7 @@ struct MergeAction: Action {
         
         try validateThatOutputIsEmpty()
         try validateThatArchivesHaveDisjointData()
+        try validateThatAllArchivesOrNoArchivesSupportStaticHosting()
         
         let targetURL = try Self.createUniqueDirectory(inside: fileManager.uniqueTemporaryDirectory(), template: firstArchive, fileManager: fileManager)
         defer {
@@ -157,6 +158,40 @@ struct MergeAction: Action {
             }
         
             throw NonEmptyOutputError(existingContents: existingContents, fileManager: fileManager)
+        }
+    }
+    
+    private func validateThatAllArchivesOrNoArchivesSupportStaticHosting() throws {
+        let nonEmptyArchives = archives.filter {
+            fileManager.directoryExists(atPath: $0.appendingPathComponent("data").path)
+        }
+        
+        let archivesWithStaticHostingSupport = nonEmptyArchives.filter {
+            return fileManager.directoryExists(atPath: $0.appendingPathComponent("documentation").path)
+                || fileManager.directoryExists(atPath: $0.appendingPathComponent("tutorials").path)
+        }
+        
+        guard archivesWithStaticHostingSupport.count == nonEmptyArchives.count else {
+            struct DifferentStaticHostingSupportError: DescribedError {
+                var withSupport: Set<String>
+                var withoutSupport: Set<String>
+                
+                var errorDescription: String {
+                    """
+                    Different static hosting support in different archives.
+                    
+                    \(withSupport.sorted().joined(separator: ", ")) support\(withSupport.count == 1 ? "s" : "") static hosting \
+                    but \(withoutSupport.sorted().joined(separator: ", ")) do\(withoutSupport.count == 1 ? "es" : "")n't.
+                    """
+                }
+            }
+            let allArchiveNames = Set(nonEmptyArchives.map(\.lastPathComponent))
+            let archiveNamesWithStaticHostingSupport = Set(archivesWithStaticHostingSupport.map(\.lastPathComponent))
+            
+            throw DifferentStaticHostingSupportError(
+                withSupport: archiveNamesWithStaticHostingSupport,
+                withoutSupport: allArchiveNames.subtracting(archiveNamesWithStaticHostingSupport)
+            )
         }
     }
 }

@@ -333,6 +333,63 @@ class MergeActionTests: XCTestCase {
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
     }
     
+    func testErrorWhenSomeArchivesDoNotSupportStaticHosting() throws {
+        let fileSystem = try TestFileSystem(folders: [
+            Self.makeArchive(
+                name: "First",
+                documentationPages: [
+                    "First",
+                    "First/SomeClass",
+                    "First/SomeClass/someProperty",
+                    "First/SomeClass/someFunction(:_)",
+                ],
+                tutorialPages: [
+                    "First",
+                    "First/SomeTutorial",
+                ],
+                images: ["something.png"],
+                videos: ["something.mov"],
+                downloads: ["something.zip"]
+            ),
+            Self.makeArchive(
+                name: "Second",
+                documentationPages: [
+                    "Second",
+                    "Second/SomeStruct",
+                    "Second/SomeStruct/someProperty",
+                    "Second/SomeStruct/someFunction(:_)",
+                ],
+                tutorialPages: [
+                    "Second",
+                    "Second/SomeTutorial",
+                ],
+                images: ["something.png"],
+                videos: ["something.mov"],
+                downloads: ["something.zip"],
+                supportsStaticHosting: false
+            ),
+        ])
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
+            XCTAssertEqual(error.localizedDescription, """
+            Different static hosting support in different archives.
+
+            First.doccarchive supports static hosting but Second.doccarchive doesn't.
+            """)
+        }
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+    }
+    
     // MARK: Test helpers
     
     func testMakeArchive() throws {
@@ -420,6 +477,58 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.something/
               ╰─ some-video.mov
         """)
+        
+        XCTAssertEqual(Self.makeArchive(
+            name: "Something",
+            documentationPages: [
+                "Something",
+                "Something/SomeClass",
+                "Something/SomeClass/someProperty",
+                "Something/SomeClass/someFunction(:_)",
+            ],
+            tutorialPages: [
+                "Something",
+                "Something/SomeTutorial",
+            ],
+            images: ["first-image.png", "second-image.png"],
+            videos: ["some-video.mov"],
+            downloads: ["some-download.zip"],
+            supportsStaticHosting: false
+        ).dump(), """
+        Something.doccarchive/
+        ├─ css/
+        │  ╰─ something.css
+        ├─ data/
+        │  ├─ documentation/
+        │  │  ├─ something.json
+        │  │  ╰─ something/
+        │  │     ├─ someclass.json
+        │  │     ╰─ someclass/
+        │  │        ├─ somefunction(:_).json
+        │  │        ╰─ someproperty.json
+        │  ╰─ tutorials/
+        │     ├─ something.json
+        │     ╰─ something/
+        │        ╰─ sometutorial.json
+        ├─ downloads/
+        │  ╰─ com.example.something/
+        │     ╰─ some-download.zip
+        ├─ favicon.svg
+        ├─ images/
+        │  ╰─ com.example.something/
+        │     ├─ first-image.png
+        │     ╰─ second-image.png
+        ├─ img/
+        │  ╰─ something.svg
+        ├─ index/
+        │  ╰─ index.json
+        ├─ js/
+        │  ╰─ something.js
+        ├─ metadata.json
+        ╰─ videos/
+           ╰─ com.example.something/
+              ╰─ some-video.mov
+        """)
     }
     
     static func makeArchive(
@@ -428,7 +537,8 @@ class MergeActionTests: XCTestCase {
         tutorialPages: [String],
         images: [String] = [],
         videos: [String] = [],
-        downloads: [String] = []
+        downloads: [String] = [],
+        supportsStaticHosting: Bool = true
     ) -> Folder {
         let identifier = "com.example.\(name.lowercased())"
         
@@ -449,17 +559,21 @@ class MergeActionTests: XCTestCase {
         // Content
         var dataContent: [File] = []
         if !documentationPages.isEmpty {
-            content += [
-                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased())/index.html" })),
-            ]
+            if supportsStaticHosting {
+                content += [
+                    Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased())/index.html" })),
+                ]
+            }
             dataContent += [
                 Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" })),
             ]
         }
         if !tutorialPages.isEmpty {
-            content += [
-                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased())/index.html" })),
-            ]
+            if supportsStaticHosting {
+                content += [
+                    Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased())/index.html" })),
+                ]
+            }
             dataContent += [
                 Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" })),
             ]
