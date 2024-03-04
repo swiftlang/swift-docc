@@ -209,6 +209,7 @@ struct PathHierarchy {
                     )
                     guard knownDisambiguatedPathComponents != nil else {
                         let nodeWithoutSymbol = Node(name: component)
+                        nodeWithoutSymbol.isDisfavoredInCollision = true
                         parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
                         parent = nodeWithoutSymbol
                         continue
