@@ -1791,10 +1791,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Prepare for rendering
         let renderedAvailability = moduleAvailability
             .filter({ $0.state != .unavailable })
-            .map({ availability -> AvailabilityRenderItem in
+            .compactMap({ availability -> AvailabilityRenderItem? in
+                guard let availabilityIntroducedVersion = availability.introducedVersion else { return nil }
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
-                    introduced: availability.introducedVersion,
+                    introduced: availabilityIntroducedVersion,
                     isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
                 )
             })

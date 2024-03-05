@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -154,7 +154,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     ///   - name: A platform name.
     ///   - introduced: A version string.
     ///   - isBeta: If `true`, the symbol is introduced in a beta version of the platform.
-    init(name: String, introduced: String?, isBeta: Bool) {
+    init(name: String, introduced: String, isBeta: Bool) {
         self.name = name
         self.introduced = introduced
         self.isBeta = isBeta
