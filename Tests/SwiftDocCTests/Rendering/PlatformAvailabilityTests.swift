@@ -165,7 +165,7 @@ class PlatformAvailabilityTests: XCTestCase {
             platform.name == "Mac Catalyst" && platform.deprecated != nil
         }))
         XCTAssert(availability.contains(where: { platform in
-            platform.name == "iPadOS" && platform.deprecated == nil
+            platform.name == "iPadOS" && platform.deprecated != nil
         }))
         XCTAssertFalse(availability.contains(where: { platform in
             platform.name == "tvOS"
