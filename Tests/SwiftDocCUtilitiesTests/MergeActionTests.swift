@@ -219,6 +219,112 @@ class MergeActionTests: XCTestCase {
         """)
     }
     
+    func testSupportsArchivesWithoutStaticHosting() throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: [
+                        "First",
+                        "First/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"],
+                    supportsStaticHosting: false
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [
+                        "Second",
+                        "Second/SomeStruct",
+                        "Second/SomeStruct/someProperty",
+                        "Second/SomeStruct/someFunction(:_)",
+                    ],
+                    tutorialPages: [
+                        "Second",
+                        "Second/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"],
+                    supportsStaticHosting: false
+                ),
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        _ = try action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        // The combined archive as the data and assets from the input archives but only one set of archive template files
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
+        Output.doccarchive/
+        ├─ css/
+        │  ╰─ something.css
+        ├─ data/
+        │  ├─ documentation/
+        │  │  ├─ first.json
+        │  │  ├─ first/
+        │  │  │  ├─ someclass.json
+        │  │  │  ╰─ someclass/
+        │  │  │     ├─ somefunction(:_).json
+        │  │  │     ╰─ someproperty.json
+        │  │  ├─ second.json
+        │  │  ╰─ second/
+        │  │     ├─ somestruct.json
+        │  │     ╰─ somestruct/
+        │  │        ├─ somefunction(:_).json
+        │  │        ╰─ someproperty.json
+        │  ╰─ tutorials/
+        │     ├─ first.json
+        │     ├─ first/
+        │     │  ╰─ sometutorial.json
+        │     ├─ second.json
+        │     ╰─ second/
+        │        ╰─ sometutorial.json
+        ├─ downloads/
+        │  ├─ com.example.first/
+        │  │  ╰─ something.zip
+        │  ╰─ com.example.second/
+        │     ╰─ something.zip
+        ├─ favicon.svg
+        ├─ images/
+        │  ├─ com.example.first/
+        │  │  ╰─ something.png
+        │  ╰─ com.example.second/
+        │     ╰─ something.png
+        ├─ img/
+        │  ╰─ something.svg
+        ├─ index/
+        │  ╰─ index.json
+        ├─ js/
+        │  ╰─ something.js
+        ├─ metadata.json
+        ╰─ videos/
+           ├─ com.example.first/
+           │  ╰─ something.mov
+           ╰─ com.example.second/
+              ╰─ something.mov
+        """)
+    }
+    
     func testErrorWhenArchivesContainOverlappingData() throws {
         let fileSystem = try TestFileSystem(
             folders: [

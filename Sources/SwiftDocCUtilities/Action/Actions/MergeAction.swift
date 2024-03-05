@@ -171,7 +171,9 @@ struct MergeAction: Action {
                 || fileManager.directoryExists(atPath: $0.appendingPathComponent("tutorials").path)
         }
         
-        guard archivesWithStaticHostingSupport.count == nonEmptyArchives.count else {
+        guard archivesWithStaticHostingSupport.count == nonEmptyArchives.count // All archives support static hosting
+           || archivesWithStaticHostingSupport.count == 0 // No archives support static hosting
+        else {
             struct DifferentStaticHostingSupportError: DescribedError {
                 var withSupport: Set<String>
                 var withoutSupport: Set<String>
