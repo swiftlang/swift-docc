@@ -444,19 +444,19 @@ class DefaultAvailabilityTests: XCTestCase {
         let module = try XCTUnwrap(defaultAvailability.modules["MyModule"])
         XCTAssertEqual(module.count, 7)
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "visionOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "visionOS" }).first?.versionInformation,
             .unavailable
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "Catalyst" }).first?.state,
+            module.filter({ $0.platformName.displayName == "Catalyst" }).first?.versionInformation,
             .unavailable
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "tvOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "tvOS" }).first?.versionInformation,
             .unavailable
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "watchOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "watchOS" }).first?.versionInformation,
             .available(version: "1.0")
         )
         XCTAssertEqual(
@@ -508,11 +508,11 @@ class DefaultAvailabilityTests: XCTestCase {
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "iPadOS" }).count, 1)
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
             .available(version: "8.0")
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.state,
+            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.versionInformation,
             .available(version: "8.0")
         )
         // When there is iOS availability test that Catalyst and iPadOS
@@ -531,11 +531,11 @@ class DefaultAvailabilityTests: XCTestCase {
         ]
         module = try unwrapModuleDefaultAvailability(plistEntries)
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
             .available(version: "8.0")
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.state,
+            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.versionInformation,
             .available(version: "9.0")
         )
         // When there is iOS availability test that Catalyst and iPadOS
@@ -558,15 +558,15 @@ class DefaultAvailabilityTests: XCTestCase {
         ]
         module = try unwrapModuleDefaultAvailability(plistEntries)
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "iOS" }).first?.versionInformation,
             .available(version: "8.0")
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.state,
+            module.filter({ $0.platformName.displayName == "Mac Catalyst" }).first?.versionInformation,
             .available(version: "9.0")
         )
         XCTAssertEqual(
-            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.state,
+            module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
             .available(version: "10.0")
         )
         

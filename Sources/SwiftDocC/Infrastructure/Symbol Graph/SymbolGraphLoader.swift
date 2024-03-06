@@ -147,33 +147,26 @@ struct SymbolGraphLoader {
         self.symbolGraphs = loadedGraphs.mapValues(\.graph)
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading()
         
-        unifiedGraphs.forEach { (_, unifiedGraph) in
-            var unifiedGraph = unifiedGraph
-            var defaultUnconditionallyUnavailablePlatforms = [PlatformName]()
-            var defaultAvailableAvailabilities = [DefaultAvailability.ModuleAvailability]()
+        for var unifiedGraph in unifiedGraphs.values {
+            var defaultUnavailablePlatforms = [PlatformName]()
+            var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
 
             if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
-                // Availability platforms declared in the Info.plist as `unavailable`.
-                defaultUnconditionallyUnavailablePlatforms = defaultAvailabilities.filter {
-                    $0.state == .unavailable
-                }.map(\.platformName)
-                // Availability platforms declared in the Info.plist as `available`.
-                defaultAvailableAvailabilities = defaultAvailabilities.filter {
-                    $0.state != .unavailable
-                }
+                let (unavailablePlatforms, availablePlatforms) = defaultAvailabilities.categorize(where: { $0.versionInformation == .unavailable })
+                defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
+                defaultAvailableInformation = availablePlatforms
             }
             
-            // Platform names registered across the SGFs for each module.
-            let registeredPlatforms: [PlatformName] = unifiedGraph.moduleData.compactMap {
+            let platformsFoundInSymbolGraphs: [PlatformName] = unifiedGraph.moduleData.compactMap {
                 guard let platformName = $0.value.platform.name else { return nil }
                 return PlatformName(operatingSystemName: platformName)
             }
 
             addMissingAvailability(
                 unifiedGraph: &unifiedGraph,
-                unconditionallyUnavailablePlatformNames: defaultUnconditionallyUnavailablePlatforms,
-                registeredPlatforms: registeredPlatforms,
-                defaultAvailabilities: defaultAvailableAvailabilities
+                unconditionallyUnavailablePlatformNames: defaultUnavailablePlatforms,
+                registeredPlatforms: platformsFoundInSymbolGraphs,
+                defaultAvailabilities: defaultAvailableInformation
             )
         }
     }
@@ -230,19 +223,18 @@ struct SymbolGraphLoader {
                 !missingFallbackPlatforms.keys.contains($0.platformName) &&
                 !registeredPlatforms.contains($0.platformName)
         }
-        let symbolsWithFallbackAvailability = unifiedGraph.symbols.compactMapValues { symbol  -> UnifiedSymbolGraph.Symbol in
+        unifiedGraph.symbols.values.forEach { symbol in
             for (selector, _) in symbol.mixins {
                 if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
                     guard !symbolAvailability.availability.isEmpty else { continue }
                     // Add fallback availability.
                     for (fallbackPlatform, inheritedPlatform) in missingFallbackPlatforms {
-                        if !symbolAvailability.availability.contains(where: { $0.domain?.rawValue == fallbackPlatform.rawValue }) {
-                            symbolAvailability.availability.forEach {
+                        if !symbolAvailability.contains(fallbackPlatform) {
+                            for var fallbackAvailability in symbolAvailability.availability {
                                 // Add the platform fallback to the availability mixin the platform is inheriting from.
                                 // The added availability copies the entire availability information,
                                 // including deprecated and obsolete versions.
-                                if $0.domain?.rawValue.lowercased() == inheritedPlatform.rawValue.lowercased() {
-                                    var fallbackAvailability = $0
+                                if fallbackAvailability.matches(inheritedPlatform) {
                                     fallbackAvailability.domain = SymbolGraph.Symbol.Availability.Domain(rawValue: fallbackPlatform.rawValue)
                                     symbolAvailability.availability.append(fallbackAvailability)
                                 }
@@ -251,17 +243,15 @@ struct SymbolGraphLoader {
                     }
                     // Add the missing default platform availability.
                     missingAvailabilities.forEach { missingAvailability in
-                        if !symbolAvailability.availability.contains(where: { $0.domain?.rawValue == missingAvailability.platformName.rawValue }) {
+                        if !symbolAvailability.contains(missingAvailability.platformName) {
                             guard let defaultAvailability = AvailabilityItem(missingAvailability) else { return }
                             symbolAvailability.availability.append(defaultAvailability)
                         }
                     }
-                    symbol.mixins[selector]!["availability"] = symbolAvailability
+                    symbol.mixins[selector]![SymbolGraph.Symbol.Availability.mixinKey] = symbolAvailability
                 }
             }
-            return symbol
         }
-        unifiedGraph.symbols = symbolsWithFallbackAvailability
     }    
 
     /// If the bundle defines default availability for the symbols in the given symbol graph
@@ -440,5 +430,17 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
 
         newValue.introducedVersion = platformVersion
         return newValue
+    }
+}
+
+private extension SymbolGraph.Symbol.Availability {
+    func contains(_ platform: PlatformName) -> Bool {
+        availability.contains(where: { $0.matches(platform) })
+    }
+}
+
+private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    func matches(_ platform: PlatformName) -> Bool {
+        domain?.rawValue.lowercased() == platform.rawValue.lowercased()
     }
 }

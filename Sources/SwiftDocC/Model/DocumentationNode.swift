@@ -283,7 +283,7 @@ public struct DocumentationNode {
         )
 
         try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)
-        try! semanticSymbol.mergeAvailabilities(unifiedSymbol: unifiedSymbol)
+        semanticSymbol.mergeAvailabilities(unifiedSymbol: unifiedSymbol)
         self.semantic = semanticSymbol
     }
 

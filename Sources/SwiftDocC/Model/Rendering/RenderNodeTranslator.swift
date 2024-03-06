@@ -1790,7 +1790,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Prepare for rendering
         let renderedAvailability = moduleAvailability
-            .filter({ $0.state != .unavailable })
+            .filter({ $0.versionInformation != .unavailable })
             .compactMap({ availability -> AvailabilityRenderItem? in
                 guard let availabilityIntroducedVersion = availability.introducedVersion else { return nil }
                 return AvailabilityRenderItem(

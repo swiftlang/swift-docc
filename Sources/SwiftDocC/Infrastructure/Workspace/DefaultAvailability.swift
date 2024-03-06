@@ -15,7 +15,7 @@ import Foundation
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
 /// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs,
-/// or in the case where the platform in uncodinionally unavailable, "name" and "unavailable" pairs:
+/// or in the case where the platform in unconditionally unavailable, "name" and "unavailable" pairs:
 ///
 /// ```
 /// <key>CDAppleDefaultAvailability</key>
@@ -49,7 +49,7 @@ public struct DefaultAvailability: Codable, Equatable {
         
         /// The diferent availability states that can be declared.
         /// Unavailable or Available with an introduced version.
-        internal enum State: Hashable {
+        enum VersionInformation: Hashable {
             case unavailable
             case available(version: String)
         }
@@ -57,8 +57,8 @@ public struct DefaultAvailability: Codable, Equatable {
         /// The name of the platform, e.g. "macOS".
         public var platformName: PlatformName
         
-        /// The availability state, e.g unavailable
-        internal var state: State
+        /// The availability version state information, e.g unavailable
+        internal var versionInformation: VersionInformation
 
         /// A string representation of the version for this platform.
         @available(*, deprecated, message: "Use `introducedVersion` instead.  This deprecated API will be removed after 5.11 is released", renamed: "introducedVersion")
@@ -69,7 +69,7 @@ public struct DefaultAvailability: Codable, Equatable {
         /// A string representation of the version for this platform
         /// or nil if it's unavailable.
         public var introducedVersion: String? {
-            switch state {
+            switch versionInformation {
             case .available(let introduced):
                 return introduced.description
             case .unavailable:
@@ -84,7 +84,7 @@ public struct DefaultAvailability: Codable, Equatable {
         ///   - platformVersion: A 2- or 3-component version string, such as `"13.0"` or `"13.1.2"`.
         public init(platformName: PlatformName, platformVersion: String) {
             self.platformName = platformName
-            self.state = .available(version: platformVersion)
+            self.versionInformation = .available(version: platformVersion)
         }
         
         /// Creates a new module availability with a given platform name and platform availability set as unavailable.
@@ -93,18 +93,18 @@ public struct DefaultAvailability: Codable, Equatable {
         ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
         public init(unavailablePlatformName: PlatformName) {
             self.platformName = unavailablePlatformName
-            self.state = .unavailable
+            self.versionInformation = .unavailable
         }
 
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             platformName = try values.decode(PlatformName.self, forKey: .platformName)
             if let unavailable = try values.decodeIfPresent(Bool.self, forKey: .unavailable), unavailable == true {
-                state = .unavailable
+                versionInformation = .unavailable
                 return
             }
             let introducedVersion = try values.decode(String.self, forKey: .platformVersion)
-            state = .available(version: introducedVersion)
+            versionInformation = .available(version: introducedVersion)
             guard let version = Version(versionString: introducedVersion), (2...3).contains(version.count) else {
                 throw DocumentationBundle.PropertyListError.invalidVersionString(introducedVersion)
             }
@@ -113,11 +113,12 @@ public struct DefaultAvailability: Codable, Equatable {
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(platformName, forKey: .platformName)
-            guard let introducedVersion = introducedVersion else {
+            switch versionInformation {
+            case .available(let introducedVersion):
+                try container.encode(introducedVersion, forKey: .platformVersion)
+            case .unavailable:
                 try container.encode(true, forKey: .unavailable)
-                return
             }
-            try container.encode(introducedVersion, forKey: .platformVersion)
         }
     }
 
