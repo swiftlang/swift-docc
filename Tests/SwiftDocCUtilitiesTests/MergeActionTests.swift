@@ -219,6 +219,196 @@ class MergeActionTests: XCTestCase {
         """)
     }
     
+    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchive() throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: [],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [],
+                    tutorialPages: [
+                        "Second",
+                        "Second/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"]
+                ),
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        _ = try action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        // The combined archive as the data, documentation, tutorials, and assets from the both input archives.
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
+        Output.doccarchive/
+        ├─ css/
+        │  ╰─ something.css
+        ├─ data/
+        │  ├─ documentation/
+        │  │  ├─ first.json
+        │  │  ╰─ first/
+        │  │     ├─ someclass.json
+        │  │     ╰─ someclass/
+        │  │        ├─ somefunction(:_).json
+        │  │        ╰─ someproperty.json
+        │  ╰─ tutorials/
+        │     ├─ second.json
+        │     ╰─ second/
+        │        ╰─ sometutorial.json
+        ├─ documentation/
+        │  ╰─ first/
+        │     ├─ index.html
+        │     ╰─ someclass/
+        │        ├─ index.html
+        │        ├─ somefunction(:_)/
+        │        │  ╰─ index.html
+        │        ╰─ someproperty/
+        │           ╰─ index.html
+        ├─ downloads/
+        │  ├─ com.example.first/
+        │  │  ╰─ something.zip
+        │  ╰─ com.example.second/
+        │     ╰─ something.zip
+        ├─ favicon.svg
+        ├─ images/
+        │  ├─ com.example.first/
+        │  │  ╰─ something.png
+        │  ╰─ com.example.second/
+        │     ╰─ something.png
+        ├─ img/
+        │  ╰─ something.svg
+        ├─ index/
+        │  ╰─ index.json
+        ├─ js/
+        │  ╰─ something.js
+        ├─ metadata.json
+        ├─ tutorials/
+        │  ╰─ second/
+        │     ├─ index.html
+        │     ╰─ sometutorial/
+        │        ╰─ index.html
+        ╰─ videos/
+           ├─ com.example.first/
+           │  ╰─ something.mov
+           ╰─ com.example.second/
+              ╰─ something.mov
+        """)
+    }
+    
+    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchiveWithoutStaticHosting() throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: [],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"],
+                    supportsStaticHosting: false
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [],
+                    tutorialPages: [
+                        "Second",
+                        "Second/SomeTutorial",
+                    ],
+                    images: ["something.png"],
+                    videos: ["something.mov"],
+                    downloads: ["something.zip"],
+                    supportsStaticHosting: false
+                ),
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        _ = try action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
+        XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
+        Output.doccarchive/
+        ├─ css/
+        │  ╰─ something.css
+        ├─ data/
+        │  ├─ documentation/
+        │  │  ├─ first.json
+        │  │  ╰─ first/
+        │  │     ├─ someclass.json
+        │  │     ╰─ someclass/
+        │  │        ├─ somefunction(:_).json
+        │  │        ╰─ someproperty.json
+        │  ╰─ tutorials/
+        │     ├─ second.json
+        │     ╰─ second/
+        │        ╰─ sometutorial.json
+        ├─ downloads/
+        │  ├─ com.example.first/
+        │  │  ╰─ something.zip
+        │  ╰─ com.example.second/
+        │     ╰─ something.zip
+        ├─ favicon.svg
+        ├─ images/
+        │  ├─ com.example.first/
+        │  │  ╰─ something.png
+        │  ╰─ com.example.second/
+        │     ╰─ something.png
+        ├─ img/
+        │  ╰─ something.svg
+        ├─ index/
+        │  ╰─ index.json
+        ├─ js/
+        │  ╰─ something.js
+        ├─ metadata.json
+        ╰─ videos/
+           ├─ com.example.first/
+           │  ╰─ something.mov
+           ╰─ com.example.second/
+              ╰─ something.mov
+        """)
+    }
+    
     func testSupportsArchivesWithoutStaticHosting() throws {
         let fileSystem = try TestFileSystem(
             folders: [
@@ -273,7 +463,7 @@ class MergeActionTests: XCTestCase {
         _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
-        // The combined archive as the data and assets from the input archives but only one set of archive template files
+        // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), """
         Output.doccarchive/
         ├─ css/

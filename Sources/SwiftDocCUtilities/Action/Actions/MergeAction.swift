@@ -26,7 +26,7 @@ struct MergeAction: Action {
         
         try validateThatOutputIsEmpty()
         try validateThatArchivesHaveDisjointData()
-        try validateThatAllArchivesOrNoArchivesSupportStaticHosting()
+        let supportsStaticHosting = try validateThatAllArchivesOrNoArchivesSupportStaticHosting()
         
         let targetURL = try Self.createUniqueDirectory(inside: fileManager.uniqueTemporaryDirectory(), template: firstArchive, fileManager: fileManager)
         defer {
@@ -44,11 +44,15 @@ struct MergeAction: Action {
         // Ensure that the destination has a data directory in case the first archive didn't have any pages.
         try? fileManager.createDirectory(at: targetURL.appendingPathComponent("data", isDirectory: true), withIntermediateDirectories: false, attributes: nil)
         
+        let directoriesToCopy = ["data/documentation", "data/tutorials", "images", "videos", "downloads"] + (supportsStaticHosting ? ["documentation", "tutorials"] : [])
         for archive in archives.dropFirst() {
-            for directoryToCopy in ["data/documentation", "data/tutorials", "documentation", "tutorials", "images", "videos", "downloads"] {
+            for directoryToCopy in directoriesToCopy {
                 let fromDirectory = archive.appendingPathComponent(directoryToCopy, isDirectory: true)
                 let toDirectory = targetURL.appendingPathComponent(directoryToCopy, isDirectory: true)
 
+                // Ensure that the destination directory exist in case the first archive didn't have that kind of pages.
+                // This is necessary when merging a reference-only archive with a tutorial-only archive.
+                try? fileManager.createDirectory(at: toDirectory, withIntermediateDirectories: false, attributes: nil)
                 for from in (try? fileManager.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
                     // Copy each file or subdirectory
                     try fileManager.copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
@@ -73,6 +77,7 @@ struct MergeAction: Action {
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
     
+    /// Validate that the different archives don't have overlapping data.
     private func validateThatArchivesHaveDisjointData() throws {
         // Check that the archives don't have overlapping data
         typealias ArchivesByDirectoryName = [String: [String: Set<String>]]
@@ -129,6 +134,7 @@ struct MergeAction: Action {
         }
     }
     
+    /// Validate that the output directory is empty.
     private func validateThatOutputIsEmpty() throws {
         guard fileManager.directoryExists(atPath: outputURL.path) else {
             return
@@ -161,7 +167,9 @@ struct MergeAction: Action {
         }
     }
     
-    private func validateThatAllArchivesOrNoArchivesSupportStaticHosting() throws {
+    /// Validate that either all archives support static hosting or that no archives support static hosting.
+    /// - Returns: `true` if all archives support static hosting; `false` otherwise.
+    private func validateThatAllArchivesOrNoArchivesSupportStaticHosting() throws -> Bool {
         let nonEmptyArchives = archives.filter {
             fileManager.directoryExists(atPath: $0.appendingPathComponent("data").path)
         }
@@ -195,5 +203,7 @@ struct MergeAction: Action {
                 withoutSupport: allArchiveNames.subtracting(archiveNamesWithStaticHostingSupport)
             )
         }
+        
+        return !archivesWithStaticHostingSupport.isEmpty
     }
 }
