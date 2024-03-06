@@ -170,7 +170,8 @@ private final class FallbackResolverBasedLinkResolver {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
         guard let fallbackResolver = context.convertServiceFallbackResolver,
-              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier
+              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
+              fallbackResolver.bundleIdentifier == knownBundleIdentifier
         else {
             return nil
         }

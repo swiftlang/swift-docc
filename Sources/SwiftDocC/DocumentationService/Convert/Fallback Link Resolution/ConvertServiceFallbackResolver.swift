@@ -23,6 +23,11 @@ import Foundation
 /// "external" content, even if it represents pages that would be "local" if the full project was built together.
 protocol ConvertServiceFallbackResolver {
     
+    /// The bundle identifier for the fallback resolver.
+    ///
+    /// The fallback resolver will only resolve links with this bundle identifier.
+    var bundleIdentifier: String { get }
+    
     // MARK: References
     
     /// Attempts to resolve an unresolved reference for a page that couldn't be resolved locally.
