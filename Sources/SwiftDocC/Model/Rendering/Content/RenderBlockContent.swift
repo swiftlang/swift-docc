@@ -711,7 +711,7 @@ extension RenderBlockContent: Codable {
             self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
         case .aside:
             var style = try container.decode(AsideStyle.self, forKey: .style)
-            if style.renderKind == "note", let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
+            if let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
                 style = AsideStyle(displayName: displayName)
             }
             self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))

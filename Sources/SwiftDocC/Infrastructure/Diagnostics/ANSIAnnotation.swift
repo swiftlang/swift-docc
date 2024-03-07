@@ -38,8 +38,11 @@ struct ANSIAnnotation {
         self.trait = trait
     }
     
-    func applied(to message: String) -> String {
-        "\(code)\(message)\(ANSIAnnotation.normal.code)"
+    func applied<S: StringProtocol>(to message: S) -> String {
+        guard !message.isEmpty else {
+            return ""
+        }
+        return "\(code)\(message)\(ANSIAnnotation.normal.code)"
     }
     
     static var normal: ANSIAnnotation {

@@ -29,7 +29,7 @@ extension XCTestCase {
         )
     }
     
-    public func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "") -> String {
+    public func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "", patform: String = "") -> String {
         return """
         {
           "metadata": {
@@ -42,7 +42,7 @@ extension XCTestCase {
           },
           "module": {
               "name": "\(moduleName)",
-              "platform": { }
+              "platform": { \(patform) }
           },
           "relationships" : [
             \(relationships)

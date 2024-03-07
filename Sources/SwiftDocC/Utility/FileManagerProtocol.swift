@@ -50,9 +50,11 @@ public protocol FileManagerProtocol {
     /// Returns a list of items in a directory
     func contentsOfDirectory(atPath path: String) throws -> [String]
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
-
-    /// The temporary directory for the current user.
-    var temporaryDirectory: URL { get }
+    
+    /// Returns a unique temporary directory.
+    ///
+    /// Each call to this function will return a new temporary directory.
+    func uniqueTemporaryDirectory() -> URL // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol
     
     /// Creates a file with the specified `contents` at the specified location.
     ///
@@ -65,6 +67,17 @@ public protocol FileManagerProtocol {
     ///
     /// - Throws: If the file couldn't be created with the specified contents.
     func createFile(at: URL, contents: Data) throws
+    
+    /// Returns the data content of a file at the given URL.
+    ///
+    /// - Parameters:
+    ///   - url: The location to create the file
+    ///
+    /// - Note: This method doesn't exist on ``FileManager``.
+    ///         There is a similar looking method but it doesn't provide information about potential errors.
+    ///
+    /// - Throws: If the file couldn't be read.
+    func contents(of url: URL) throws -> Data
     
     /// Creates a file with the given contents at the given url with the specified
     /// writing options.
@@ -91,6 +104,10 @@ extension FileManagerProtocol {
 /// most of the methods are already implemented in Foundation.
 @_spi(FileManagerProtocol)
 extension FileManager: FileManagerProtocol {
+    // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
+    public func contents(of url: URL) throws -> Data {
+        return try Data(contentsOf: url)
+    }
     
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
     public func createFile(at location: URL, contents: Data) throws {
@@ -103,5 +120,10 @@ extension FileManager: FileManagerProtocol {
         } else {
             try contents.write(to: location)
         }
+    }
+    
+    // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol/
+    public func uniqueTemporaryDirectory() -> URL {
+        temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
     }
 }
