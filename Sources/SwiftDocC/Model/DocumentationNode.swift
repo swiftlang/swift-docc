@@ -110,9 +110,12 @@ public struct DocumentationNode {
             discussionSections = []
         }
         
+        anchorSections.removeAll()
         var seenAnchorTitles = Set<String>()
         
         func addAnchorSection(title: String) {
+            // To preserve the order of headings and task groups in the content, we use *both* a `Set` and
+            // an `Array` to ensure unique titles and to accumulate the linkable anchor section elements.
             guard !title.isEmpty, !seenAnchorTitles.contains(title) else { return }
             seenAnchorTitles.insert(title)
             anchorSections.append(
@@ -122,9 +125,6 @@ public struct DocumentationNode {
         
         for discussion in discussionSections {
             for child in discussion.content {
-                // For any non-H1 Heading sections found in the topic's discussion
-                // create an `AnchorSection` and add it to `anchorSections`
-                // so we can index all anchors found in the bundle for link resolution.
                 if let heading = child as? Heading, heading.level > 1 {
                     addAnchorSection(title: heading.plainText)
                 }
