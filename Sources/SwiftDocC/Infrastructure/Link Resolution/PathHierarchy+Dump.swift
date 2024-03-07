@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,17 +23,17 @@ private extension PathHierarchy.Node {
         // Each node is printed as 3-layer hierarchy with the child names, their kind disambiguation, and their hash disambiguation.
         return DumpableNode(
             name: symbol.map { "{ \($0.identifier.precise) : \($0.identifier.interfaceLanguage).\($0.kind.identifier.identifier) }" } ?? "[ \(name) ]",
-            children:
-                children.sorted(by: \.key).map { (key, disambiguationTree) -> DumpableNode in
-                DumpableNode(
+            children: children.sorted(by: \.key).map { (key, disambiguationTree) -> DumpableNode in
+                let grouped = [String: [PathHierarchy.DisambiguationContainer.Element]](grouping: disambiguationTree.storage, by: { $0.kind ?? "_" })
+                return DumpableNode(
                     name: key,
-                    children: disambiguationTree.storage.sorted(by: \.key).map { (kind, kindTree) -> DumpableNode in
+                    children: grouped.sorted(by: \.key).map { (kind, kindTree) -> DumpableNode in
                         DumpableNode(
                             name: kind,
-                            children: kindTree.sorted(by: \.key).map { (usr, node) -> DumpableNode in
+                            children: kindTree.sorted(by: { lhs, rhs in (lhs.hash ?? "_") < (rhs.hash ?? "_") }).map { (element) -> DumpableNode in
                                 DumpableNode(
-                                    name: usr,
-                                    children: [node.dumpableNode()]
+                                    name: element.hash ?? "_",
+                                    children: [element.node.dumpableNode()]
                                 )
                             }
                         )

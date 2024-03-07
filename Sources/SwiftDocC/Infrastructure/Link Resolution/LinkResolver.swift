@@ -17,6 +17,7 @@ public class LinkResolver {
     @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
     public var dependencyArchives: [URL] = []
     
+    var fileManager: FileManagerProtocol = FileManager.default
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
     /// A fallback resolver to use when the local resolver fails to resolve a link.
@@ -29,7 +30,7 @@ public class LinkResolver {
     /// Create link resolvers for all documentation archive dependencies.
     func loadExternalResolvers() throws {
         let resolvers = try dependencyArchives.compactMap {
-            try ExternalPathHierarchyResolver(dependencyArchive: $0)
+            try ExternalPathHierarchyResolver(dependencyArchive: $0, fileManager: fileManager)
         }
         for resolver in resolvers {
             for moduleNode in resolver.pathHierarchy.modules {
@@ -84,22 +85,16 @@ public class LinkResolver {
     ///   - context: The documentation context to resolve the link in.
     /// - Returns: The result of resolving the reference.
     func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult {
-        // Check if the unresolved reference is external
-        if let bundleID = unresolvedReference.bundleIdentifier,
-           !context.registeredBundles.contains(where: { bundle in
-               bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
-           }) {
-            if context.externalDocumentationSources[bundleID] != nil,
-               let resolvedExternalReference = context.externallyResolvedLinks[unresolvedReference.topicURL] {
-                // Return the successful or failed externally resolved reference.
-                return resolvedExternalReference
-            } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
-            }
+        // Check if this is an external link that has previously been resolved, either successfully or not.
+        if let previousExternalResult = contextExternalLinksLock.sync({ context.externallyResolvedLinks[unresolvedReference.topicURL] }) {
+            return previousExternalResult
         }
         
-        if let previousExternalResult = context.externallyResolvedLinks[unresolvedReference.topicURL] {
-            return previousExternalResult
+        // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
+        if let bundleID = unresolvedReference.bundleIdentifier,
+           !context.registeredBundles.contains(where: { $0.identifier == bundleID || urlReadablePath($0.displayName) == bundleID })
+        {
+            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
         }
         
         do {
@@ -108,9 +103,11 @@ public class LinkResolver {
             // Check if there's a known external resolver for this module.
             if case .moduleNotFound(_, let remainingPathComponents, _) = error, let resolver = externalResolvers[remainingPathComponents.first!.full] {
                 let result = resolver.resolve(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink)
-                context.externallyResolvedLinks[unresolvedReference.topicURL] = result
-                if case .success(let resolved) = result {
-                    context.externalCache[resolved] = resolver.entity(resolved)
+                contextExternalLinksLock.sync {
+                    context.externallyResolvedLinks[unresolvedReference.topicURL] = result
+                    if case .success(let resolved) = result {
+                        context.externalCache[resolved] = resolver.entity(resolved)
+                    }
                 }
                 return result
             }
@@ -125,6 +122,15 @@ public class LinkResolver {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
         }
     }
+    
+    /// The context resolves links concurrently for different pages.
+    ///
+    /// Since the link resolver may both read and write to the context to cache externally resolved references, it needs to synchronize those accesses to avoid data races.
+    ///
+    /// > Note:
+    /// > We don't generally want to require a lock around these properties because the context will also render pages in parallel and during rendering the external content
+    /// > is only read, so requiring synchronization would add unnecessary overhead during rendering.
+    private var contextExternalLinksLock = Lock()
 }
 
 // MARK: Fallback resolver
@@ -164,7 +170,8 @@ private final class FallbackResolverBasedLinkResolver {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
         guard let fallbackResolver = context.convertServiceFallbackResolver,
-              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier
+              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
+              fallbackResolver.bundleIdentifier == knownBundleIdentifier
         else {
             return nil
         }

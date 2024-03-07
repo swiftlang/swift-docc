@@ -97,13 +97,6 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let expectedURL = URL(string: "doc://com.external.testbundle/externally/resolved/path")
         XCTAssertEqual(expectedURL, resolved.url)
-        
-        try workspace.unregisterProvider(dataProvider)
-        context.externalDocumentationSources = [:]
-        guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
-            XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
-            return
-        }
     }
     
     // Asserts that an external reference from a source language not locally included
@@ -199,6 +192,12 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         do {
             class TestFallbackResolver: ConvertServiceFallbackResolver {
+                init(bundleIdentifier: String) {
+                    resolver.bundleIdentifier = bundleIdentifier
+                }
+                var bundleIdentifier: String {
+                    resolver.bundleIdentifier
+                }
                 private var resolver = TestExternalReferenceResolver()
                 func resolve(_ reference: SwiftDocC.TopicReference) -> TopicReferenceResolutionResult {
                     TestExternalReferenceResolver().resolve(reference)
@@ -212,7 +211,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             }
             
             context.externalDocumentationSources = [:]
-            context.convertServiceFallbackResolver = TestFallbackResolver()
+            context.convertServiceFallbackResolver = TestFallbackResolver(bundleIdentifier: "org.swift.docc.example")
             
             guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("The reference was unexpectedly unresolved.")
