@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 import Markdown
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class TermListTests: XCTestCase {
     
@@ -44,6 +45,112 @@ class TermListTests: XCTestCase {
         }
         
         XCTAssertEqual(l.items.count, 4)
+    }
+    
+    func testLinksAndCodeVoiceAsTerms() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "Article.md", utf8Content: """
+                # Article
+                
+                An article with a term definition list with links as terms.
+                
+                - term ``someFunction(_:)``: First definition
+                - term <doc:ModuleName>: Second definition
+                - term `someFunction(_:)`: Third definition
+                - term <doc://unit-test/documentation/ModuleName>: Fourth definition
+                - term <doc://com.external.testbundle/path/to/something>: Fifth definition
+                                                
+                """),
+            
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        .init(
+                            identifier: .init(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                            names: .init(title: "someFunction(_:)", navigator: nil, subHeading: nil, prose: nil),
+                            pathComponents: ["someFunction(_:)"],
+                            docComment: nil,
+                            accessLevel: .public,
+                            kind: .init(parsedIdentifier: .func, displayName: "Kind Display Name"),
+                            mixins: [:]
+                        )
+                    ]
+                )),
+            ]),
+        ])
+            
+        let resolver = TestMultiResultExternalReferenceResolver()
+        resolver.entitiesToReturn["/path/to/something"] = .success(
+            .init(referencePath: "/path/to/something")
+        )
+        
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: ["com.external.testbundle": resolver])
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+        let entity = try context.entity(with: reference)
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(entity, at: nil)
+        
+        let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        
+        guard case RenderBlockContent.termList(let termList) = try XCTUnwrap(overviewSection.content.dropFirst(/* the "Overview" heading */).first) else {
+            XCTFail("Unexpected kind of rendered content. Expected term list. Got \(overviewSection.content.dropFirst().first ?? "<nil>")")
+            return
+        }
+        
+        XCTAssertEqual(termList.items.count, 5)
+        
+        do {
+            let item = termList.items.first
+            XCTAssertEqual(item?.term.inlineContent, [
+                .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName/someFunction(_:)"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+            ])
+            XCTAssertEqual(item?.definition.content, [
+                .paragraph(.init(inlineContent: [.text("First definition")]))
+            ])
+        }
+        
+        do {
+            let item = termList.items.dropFirst().first
+            XCTAssertEqual(item?.term.inlineContent, [
+                .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+            ])
+            XCTAssertEqual(item?.definition.content, [
+                .paragraph(.init(inlineContent: [.text("Second definition")]))
+            ])
+        }
+        
+        do {
+            let item = termList.items.dropFirst(2).first
+            XCTAssertEqual(item?.term.inlineContent, [
+                .codeVoice(code: "someFunction(_:)")
+            ])
+            XCTAssertEqual(item?.definition.content, [
+                .paragraph(.init(inlineContent: [.text("Third definition")]))
+            ])
+        }
+        
+        do {
+            let item = termList.items.dropFirst(3).first
+            XCTAssertEqual(item?.term.inlineContent, [
+                .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+            ])
+            XCTAssertEqual(item?.definition.content, [
+                .paragraph(.init(inlineContent: [.text("Fourth definition")]))
+            ])
+        }
+        
+        do {
+            let item = termList.items.dropFirst(4).first
+            XCTAssertEqual(item?.term.inlineContent, [
+                .reference(identifier: RenderReferenceIdentifier("doc://com.external.testbundle/path/to/something"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+            ])
+            XCTAssertEqual(item?.definition.content, [
+                .paragraph(.init(inlineContent: [.text("Fifth definition")]))
+            ])
+        }
     }
     
     func testRenderingListWithAllTermListItems() throws {

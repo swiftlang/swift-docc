@@ -112,12 +112,11 @@ extension PathHierarchy {
                         // When descending through placeholder nodes, we trust that the known disambiguation
                         // that they were created with is necessary.
                         var knownDisambiguation = ""
-                        let (kind, subtree) = tree.storage.first!
-                        if kind != "_" {
+                        let element = tree.storage.first!
+                        if let kind = element.kind {
                             knownDisambiguation += "-\(kind)"
                         }
-                        let hash = subtree.keys.first!
-                        if hash != "_" {
+                        if let hash = element.hash {
                             knownDisambiguation += "-\(hash)"
                         }
                         path = accumulatedPath + "/" + nameTransform(node.name) + knownDisambiguation
@@ -170,33 +169,45 @@ extension PathHierarchy {
 }
 
 extension PathHierarchy.DisambiguationContainer {
+    
+    static func disambiguatedValues<E: Sequence>(
+        for elements: E,
+        includeLanguage: Bool = false
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] where E.Element == Element {
+        var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        
+        var remainingIDs = Set(elements.map(\.node.identifier))
+        
+        // Kind disambiguation is the most readable, so we start by checking if any element has a unique kind.
+        let groupedByKind = [String?: [Element]](grouping: elements, by: \.kind)
+        for (kind, elements) in groupedByKind where elements.count == 1 && kind != nil {
+            let element = elements.first!
+            if includeLanguage, let symbol = element.node.symbol {
+                collisions.append((value: element.node, disambiguation: .kind("\(SourceLanguage(id: symbol.identifier.interfaceLanguage).linkDisambiguationID).\(kind!)")))
+            } else {
+                collisions.append((value: element.node, disambiguation: .kind(kind!)))
+            }
+            remainingIDs.remove(element.node.identifier)
+        }
+        if remainingIDs.isEmpty {
+            return collisions
+        }
+        
+        for element in elements where remainingIDs.contains(element.node.identifier) {
+            collisions.append((value: element.node, disambiguation: element.hash.map { .hash($0) } ?? .none))
+        }
+        return collisions
+    }
+    
     /// Returns all values paired with their disambiguation suffixes.
     ///
     /// - Parameter includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
     func disambiguatedValues(includeLanguage: Bool = false) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         if storage.count == 1 {
-            let tree = storage.values.first!
-            if tree.count == 1 {
-                return [(tree.values.first!, .none)]
-            }
+            return [(storage.first!.node, .none)]
         }
         
-        var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
-        for (kind, kindTree) in storage {
-            if kindTree.count == 1 {
-                // No other match has this kind
-                if includeLanguage, let symbol = kindTree.first!.value.symbol {
-                    collisions.append((value: kindTree.first!.value, disambiguation: .kind("\(SourceLanguage(id: symbol.identifier.interfaceLanguage).linkDisambiguationID).\(kind)")))
-                } else {
-                    collisions.append((value: kindTree.first!.value, disambiguation: .kind(kind)))
-                }
-                continue
-            }
-            for (usr, value) in kindTree {
-                collisions.append((value: value, disambiguation: .hash(usr)))
-            }
-        }
-        return collisions
+        return Self.disambiguatedValues(for: storage, includeLanguage: includeLanguage)
     }
     
     /// Returns all values paired with their disambiguation suffixes without needing to disambiguate between two different versions of the same symbol.
@@ -205,31 +216,29 @@ extension PathHierarchy.DisambiguationContainer {
     func disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: Bool) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         typealias DisambiguationPair = (String, String)
         
-        var uniqueSymbolIDs = [String: [DisambiguationPair]]()
-        var nonSymbols = [DisambiguationPair]()
-        for (kind, kindTree) in storage {
-            for (hash, value) in kindTree {
-                guard let symbol = value.symbol else {
-                    nonSymbols.append((kind, hash))
-                    continue
-                }
-                if symbol.identifier.interfaceLanguage == "swift" {
-                    uniqueSymbolIDs[symbol.identifier.precise, default: []].insert((kind, hash), at: 0)
-                } else {
-                    uniqueSymbolIDs[symbol.identifier.precise, default: []].append((kind, hash))
-                }
+        var uniqueSymbolIDs = [String: [Element]]()
+        var nonSymbols = [Element]()
+        for element in storage {
+            guard let symbol = element.node.symbol else {
+                nonSymbols.append(element)
+                continue
+            }
+            if symbol.identifier.interfaceLanguage == "swift" {
+                uniqueSymbolIDs[symbol.identifier.precise, default: []].insert(element, at: 0)
+            } else {
+                uniqueSymbolIDs[symbol.identifier.precise, default: []].append(element)
             }
         }
         
-        var duplicateSymbols = [String: ArraySlice<DisambiguationPair>]()
+        var duplicateSymbols = [String: ArraySlice<Element>]()
         
-        var new = Self()
-        for (kind, hash) in nonSymbols {
-            new.add(kind, hash, storage[kind]![hash]!)
+        var new = PathHierarchy.DisambiguationContainer()
+        for element in nonSymbols {
+            new.add(element.node, kind: element.kind, hash: element.hash)
         }
         for (id, symbolDisambiguations) in uniqueSymbolIDs {
-            let (kind, hash) = symbolDisambiguations[0]
-            new.add(kind, hash, storage[kind]![hash]!)
+            let element = symbolDisambiguations.first!
+            new.add(element.node, kind: element.kind, hash: element.hash)
             
             if symbolDisambiguations.count > 1 {
                 duplicateSymbols[id] = symbolDisambiguations.dropFirst()
@@ -243,8 +252,8 @@ extension PathHierarchy.DisambiguationContainer {
         
         for (id, disambiguations) in duplicateSymbols {
             let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == id })!.disambiguation
-            for (kind, hash) in disambiguations {
-                disambiguated.append((storage[kind]![hash]!, primaryDisambiguation.updated(kind: kind, hash: hash)))
+            for element in disambiguations {
+                disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
         }
         
@@ -280,14 +289,14 @@ extension PathHierarchy.DisambiguationContainer {
         }
         
         /// Creates a new disambiguation with a new kind or hash value.
-        func updated(kind: String, hash: String) -> Self {
+        func updated(kind: String?, hash: String?) -> Self {
             switch self {
             case .none:
                 return .none
             case .kind:
-                return .kind(kind)
+                return kind.map { .kind($0) } ?? self
             case .hash:
-                return .hash(hash)
+                return hash.map { .hash($0) } ?? self
             }
         }
     }

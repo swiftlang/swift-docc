@@ -45,11 +45,9 @@ extension PathHierarchy.FileRepresentation {
                         isDisfavoredInCollision: node.isDisfavoredInCollision,
                         children: node.children.values.flatMap({ tree in
                             var disambiguations = [Node.Disambiguation]()
-                            for (kind, kindTree) in tree.storage {
-                                for (hash, childNode) in kindTree where childNode.identifier != nil { // nodes without identifiers can't be found in the tree
-                                    disambiguations.append(.init(kind: kind, hash: hash, nodeID: identifierMap[childNode.identifier]!))
+                            for element in tree.storage where element.node.identifier != nil { // nodes without identifiers can't be found in the tree
+                                disambiguations.append(.init(kind: element.kind, hash: element.hash, nodeID: identifierMap[element.node.identifier]!))
                                 }
-                            }
                             return disambiguations
                         }),
                         symbolID: node.symbol?.identifier
@@ -101,7 +99,7 @@ extension PathHierarchy {
         /// The container of tutorial overview pages.
         var tutorialOverviewContainer: Int
         
-        /// A node in the
+        /// A node in the hierarchy.
         struct Node: Codable {
             var name: String
             var isDisfavoredInCollision: Bool = false
