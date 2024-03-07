@@ -180,14 +180,11 @@ text. Links to tutorials follow the same format.
 <doc:SlothCreator>
 ```
 
-If you have an article file and a tutorial file with the same base name you can add a leading `documentation` or `tutorials` component to the path, with or without a leading slash: 
+If you have an article file and a tutorial file with the same base name, DocC will resolve the `<doc:BaseName>` link to the article. To refer to the tutorial instead you can add a leading `tutorials` component to the path, with or without a leading slash: 
 
 ```markdown
-<doc:documentation/SlothCreator>
-<doc:tutorials/SlothCreator>
-
-<doc:/documentation/SlothCreator>
-<doc:/tutorials/SlothCreator>
+<doc:tutorials/BaseName>
+<doc:/tutorials/BaseName>
 ```
 
 > Tip: You can also link to symbols using the `<doc:>` syntax. Just insert the 
