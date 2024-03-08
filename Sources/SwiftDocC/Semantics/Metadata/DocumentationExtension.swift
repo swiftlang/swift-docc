@@ -53,7 +53,7 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
         if behavior == .append {
             let diagnostic = Diagnostic(
                 source: source,
-                severity: .information,
+                severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(Self.directiveName).NoConfiguration",
                 summary: "\(Self.directiveName.singleQuoted) doesn't change default configuration and has no effect"
