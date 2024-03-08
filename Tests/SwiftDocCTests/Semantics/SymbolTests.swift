@@ -150,10 +150,6 @@ class SymbolTests: XCTestCase {
                 """,
             articleContent: """
                 # Leading heading is ignored
-                
-                @Metadata {
-                   @DocumentationExtension(mergeBehavior: override)
-                }
                 """
         )
         XCTAssert(problems.isEmpty)
