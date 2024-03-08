@@ -18,7 +18,7 @@ Use the `Metadata` directive with other directives to configure how certain docu
 }
 ````
 
-Use the `Metadata` directive with the ``TechnologyRoot`` directive to configure a documentation page that's not associated with a particular framework, so that page appears as a top-level page.
+Use the `Metadata` directive with the ``TechnologyRoot`` directive to customize which article is the top-level page for a documentation catalog ('.docc' directory) without any framework documentation or other top-level pages.
 
 Use the `Metadata` directive with the ``DisplayName`` directive to configure a symbol's documentation page to use a custom display name.
 
