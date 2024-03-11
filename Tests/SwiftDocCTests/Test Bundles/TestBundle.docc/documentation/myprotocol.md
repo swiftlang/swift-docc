@@ -32,7 +32,7 @@ Exercise external references: <doc://com.test.external/ExternalPage>
 
 ## Topics
 
-### Task Group Excercising Symbol Links
+### Task Group Exercising Symbol Links
 
 Task Group abstract text.
 
