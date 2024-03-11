@@ -173,6 +173,13 @@ a colon (`:`), the name of the article, and a greater-than symbol
 <doc:GettingStarted>
 ```
 
+If the article's file name contains whitespace characters, replace each consecutive sequence of whitespace characters with a dash. 
+For example, the link to an article with a file name "Getting Started.md" is
+
+```
+<doc:Getting-Started>
+```
+
 When DocC resolves the link, it uses the article's page title as the link's 
 text, and the article's filename as the link's URL. Links to tutorials follow 
 the same format, except you must add the `/tutorials/` prefix to the path: 
@@ -185,6 +192,41 @@ the same format, except you must add the `/tutorials/` prefix to the path:
 symbol's path between the colon (`:`) and the terminating greater-than 
 symbol (`>`).
 `<doc:Sloth/init(name:color:power:)>`
+
+### Navigate to a Heading or Task Group
+
+To add a link to heading or task group on another page, use a `<doc:>` link to the page and end the link with a hash (`#`) followed by the name of the heading. 
+If the heading text contains whitespace or punctuation characters, replace each consecutive sequence of whitespace characters with a dash and optionally remove the punctuation characters. 
+
+For example, consider this level 3 heading with a handful of punctuation characters:
+
+```
+### (1) "Example": Sloth's diet.
+```
+
+A link to this heading can either include all the punctuation characters from the heading text or remove some or all of the punctuation characters.
+
+```
+<doc:OtherPage#(1)-"Example":-Sloth's-diet.>
+<doc:OtherPage#1-Example-Sloths-diet>
+```
+
+> Note:
+> Links to headings or task groups on symbol pages use `<doc:>` syntax. 
+
+To add a link to heading or task group on the current page, use a `<doc:>` link that starts with the name of the heading. If you prefer you can include the hash (`#`) prefix before the heading name. For example, both these links resolve to a heading named "Some heading title" on the current page:
+
+```
+<doc:#Some-heading-title>
+<doc:Some-heading-title>
+```
+
+If a task group is empty or none of its links resolve successfully, it's not possible to link to that task group because it will be omitted from the rendered page. Linking to generated per-symbol-kind task groups is not supported.
+
+> Earlier Versions:
+> Before Swift-DocC 6.0, links to task groups isn't supported. The syntax above only works for links to general headings.
+>
+> Before Swift-DocC 5.9, links to same-page headings don't support a leading hash (`#`) character.
 
 ### Include web links
 

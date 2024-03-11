@@ -571,7 +571,7 @@ class SymbolTests: XCTestCase {
 
             ## Topics
 
-            ### Unresolvable curation
+            ### Curation that won't resolve
 
             - ``UnresolvableClassInMyClassTopicCuration``
             - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -641,7 +641,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -689,7 +689,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -737,7 +737,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -782,7 +782,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -829,7 +829,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -876,7 +876,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -923,7 +923,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
