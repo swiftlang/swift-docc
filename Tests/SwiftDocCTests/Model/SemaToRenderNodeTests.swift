@@ -2819,7 +2819,7 @@ Document
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
                 
-                graph.symbols["s:7SideKit0A5::SYNTESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
+                graph.symbols["s:7SideKit0A5::SYNTHESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
                 
                 try JSONEncoder().encode(graph)
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
