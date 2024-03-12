@@ -773,7 +773,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 )
             },
             assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 3)
+                XCTAssertEqual(renderNode.topicSections.count, 1 /* all initializers and functions are already manually curated elsewhere */)
                 let taskGroup = try XCTUnwrap(renderNode.topicSections.first)
                 XCTAssertEqual(taskGroup.title, "Swift Task Group")
                 
@@ -959,7 +959,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.topicsVariants[.objectiveC] = nil
             },
             assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 2)
+                XCTAssertEqual(renderNode.topicSections.count, 0 /* all the initializer and functions are manually curated elsewhere */)
             },
             assertAfterApplyingVariant: { renderNode in
                 XCTAssert(
