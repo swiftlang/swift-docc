@@ -2320,7 +2320,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
                   let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
                   // Check that the node hasn't got any parents from manual curation
-                  topicGraph.reverseEdges[reference] == nil
+                  !topicGraphNode.isManuallyCurated
             else { return }
             topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
             automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
@@ -2386,6 +2386,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 of: reference,
                 relateNodes: {
                     self.topicGraph.unsafelyAddEdge(source: $0, target: $1)
+                    self.topicGraph.nodes[$1]?.isManuallyCurated = true
                 }
             )
         }
