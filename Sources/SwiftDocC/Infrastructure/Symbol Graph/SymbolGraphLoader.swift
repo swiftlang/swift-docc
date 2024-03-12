@@ -283,6 +283,11 @@ struct SymbolGraphLoader {
                             fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
                         )
                     }
+                    // Add the module availability information to each of the symbols availability mixin.
+                    if !availability.contains(platformName), let defaultModuleVersion = defaultAvailabilityVersionByPlatform[platformName]  {
+                        let modulePlatformAvailability = AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue), introducedVersion: defaultModuleVersion, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
+                        availability.availability.append(modulePlatformAvailability)
+                    }
                     symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
                 }
                 return symbol

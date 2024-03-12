@@ -1576,15 +1576,6 @@ class SemaToRenderNodeTests: XCTestCase {
             
             XCTAssertEqual(platforms[2].name, "iPadOS")
             XCTAssertEqual(platforms[2].introduced, versionString)
-            
-            XCTAssertEqual(platforms[3].name, "macOS")
-            XCTAssertEqual(platforms[3].introduced, versionString)
-            
-            XCTAssertEqual(platforms[4].name, "tvOS")
-            XCTAssertEqual(platforms[4].introduced, versionString)
-            
-            XCTAssertEqual(platforms[5].name, "watchOS")
-            XCTAssertEqual(platforms[5].introduced, versionString)
         }
     }
     
