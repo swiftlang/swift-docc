@@ -1812,8 +1812,6 @@ class PathHierarchyTests: XCTestCase {
         let (_, _, context) = try loadBundle(from: tempURL)
         let tree = context.linkResolver.localResolver.pathHierarchy
         
-        print(tree.dump())
-        
         let moduleID = try tree.find(path: "/ModuleName", onlyFindSymbols: true)
         // Relative link from the module to a topic section
         do {
