@@ -12,7 +12,7 @@
   ┣╸MyKit
   ┃ ┣╸Basics
   ┃ ┣╸MyProtocol
-  ┃ ┃ ┣╸Task Group Excercising Symbol Links
+  ┃ ┃ ┣╸Task Group Exercising Symbol Links
   ┃ ┃ ┣╸MyClass
   ┃ ┃ ┃ ┣╸MyClass members (relative)
   ┃ ┃ ┃ ┣╸init()
