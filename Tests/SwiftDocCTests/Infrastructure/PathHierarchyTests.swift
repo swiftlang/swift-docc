@@ -1610,6 +1610,30 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    func testGeometricalShapes() throws {
+        let (_, context) = try testBundleAndContext(named: "GeometricalShapes")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths().values.sorted()
+        XCTAssertEqual(paths, [
+            "/GeometricalShapes",
+            "/GeometricalShapes/Circle",
+            "/GeometricalShapes/Circle/center",
+            "/GeometricalShapes/Circle/debugDescription",
+            "/GeometricalShapes/Circle/defaultRadius",
+            "/GeometricalShapes/Circle/init()",
+            "/GeometricalShapes/Circle/init(center:radius:)",
+            "/GeometricalShapes/Circle/init(string:)",
+            "/GeometricalShapes/Circle/intersects(_:)",
+            "/GeometricalShapes/Circle/isEmpty",
+            "/GeometricalShapes/Circle/isNull",
+            "/GeometricalShapes/Circle/null",
+            "/GeometricalShapes/Circle/radius",
+            "/GeometricalShapes/Circle/zero",
+            "/GeometricalShapes/TLACircleMake",
+        ])
+    }
+    
     func testPartialSymbolGraphPaths() throws {
         let symbolPaths = [
             ["A", "B", "C"],

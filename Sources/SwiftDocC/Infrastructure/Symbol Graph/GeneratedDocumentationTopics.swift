@@ -277,4 +277,10 @@ enum GeneratedDocumentationTopics {
         }
     }
     
+    static func isInheritedSymbolsAPICollectionNode(_ reference: ResolvedTopicReference, in topicGraph: TopicGraph) -> Bool {
+        guard let node = topicGraph.nodeWithReference(reference) else { return false }
+        return !node.isResolvable
+            && node.kind == .collection
+            && node.source == .external
+    }
 }
