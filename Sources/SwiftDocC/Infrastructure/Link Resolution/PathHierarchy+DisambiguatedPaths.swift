@@ -44,21 +44,29 @@ extension PathHierarchy {
         let node = lookup[nodeID]!
         
         var gathered = [(symbolID: String, (link: String, hasDisambiguation: Bool, id: ResolvedIdentifier, isSwift: Bool))]()
-        for (_, tree) in node.children {
-            let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false)
-            
-            for (node, disambiguation) in disambiguatedChildren {
-                guard let id = node.identifier, let symbolID = node.symbol?.identifier.precise else { continue }
-                let suffix = disambiguation.makeSuffix()
-                gathered.append((
-                    symbolID: symbolID, (
-                        link: node.name + suffix,
-                        hasDisambiguation: !suffix.isEmpty,
-                        id: id,
-                        isSwift: node.symbol?.identifier.interfaceLanguage == "swift"
-                    )
-                ))
+        
+        func gatherLinksFrom(_ containers: some Sequence<DisambiguationContainer>) {
+            for container in containers {
+                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false)
+                
+                for (node, disambiguation) in disambiguatedChildren {
+                    guard let id = node.identifier, let symbolID = node.symbol?.identifier.precise else { continue }
+                    let suffix = disambiguation.makeSuffix()
+                    gathered.append((
+                        symbolID: symbolID, (
+                            link: node.name + suffix,
+                            hasDisambiguation: !suffix.isEmpty,
+                            id: id,
+                            isSwift: node.symbol?.identifier.interfaceLanguage == "swift"
+                        )
+                    ))
+                }
             }
+        }
+        
+        gatherLinksFrom(node.children.values)
+        if let counterpart = node.counterpart {
+            gatherLinksFrom(counterpart.children.values)
         }
         
         // If a symbol node exist in multiple languages, prioritize the Swift variant.
