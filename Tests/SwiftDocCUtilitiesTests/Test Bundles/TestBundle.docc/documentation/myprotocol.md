@@ -26,7 +26,7 @@ Excercise known unresolvable symbols: know unresolvable ``NSCodable``.
 
 ## Topics
 
-### Task Group Excercising Symbol Links
+### Task Group Exercising Symbol Links
 
 Task Group abstract text.
 

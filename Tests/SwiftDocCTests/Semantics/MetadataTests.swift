@@ -83,7 +83,7 @@ class MetadataTests: XCTestCase {
     func testDocumentationExtensionSupport() throws {
         let source = """
         @Metadata {
-           @DocumentationExtension(mergeBehavior: append)
+           @DocumentationExtension(mergeBehavior: override)
         }
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -93,7 +93,7 @@ class MetadataTests: XCTestCase {
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
         XCTAssertEqual(0, problems.count)
-        XCTAssertEqual(metadata?.documentationOptions?.behavior, .append)
+        XCTAssertEqual(metadata?.documentationOptions?.behavior, .override)
     }
     
     func testRepeatDocumentationExtension() throws {
@@ -109,8 +109,11 @@ class MetadataTests: XCTestCase {
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
-        XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.HasAtMostOne<Metadata, DocumentationExtension>.DuplicateChildren", problems.first?.diagnostic.identifier)
+        XCTAssertEqual(2, problems.count)
+        XCTAssertEqual(problems.map(\.diagnostic.identifier).sorted(), [
+            "org.swift.docc.DocumentationExtension.NoConfiguration",
+            "org.swift.docc.HasAtMostOne<Metadata, DocumentationExtension>.DuplicateChildren",
+        ])
         XCTAssertEqual(metadata?.documentationOptions?.behavior, .append)
     }
     
