@@ -199,7 +199,7 @@ public struct GeneratedCurationWriter {
         
         guard topicsByLanguage.count > 1 else {
             // If this node doesn't have curation in more than one language, return that curation _without_ a language filter.
-            return topicsByLanguage.first?.value.map { .init(title: $0.title ?? "Symbols", references: $0.references) }
+            return topicsByLanguage.first?.value.map { .init(title: $0.title! /* Automatically-generated task groups always have a title. */, references: $0.references) }
         }
         
         // Checks if a node for the given reference is only available in the given source language.
@@ -214,7 +214,8 @@ public struct GeneratedCurationWriter {
                 topicsByLanguage[language]?
                     .first(where: { $0.title == title })
                     .map { (title, references) in
-                        GeneratedTaskGroup(title: title ?? "Symbols", references: references, languageFilter: language)
+                        // Automatically-generated task groups always have a title.
+                        GeneratedTaskGroup(title: title!, references: references, languageFilter: language)
                     }
             }
             guard taskGroups.count > 1 else {
