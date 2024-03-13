@@ -1322,21 +1322,7 @@ class SymbolGraphLoaderTests: XCTestCase {
                 "names": {
                     "title": "Foo",
                 },
-                "accessLevel": "public",
-                "availability" : [
-                    {
-                      "domain" : "ios",
-                      "isUnconditionallyUnavailable" : true
-                    },
-                    {
-                      "domain" : "tvos",
-                      "isUnconditionallyUnavailable" : true
-                    },
-                    {
-                      "domain" : "watchos",
-                      "isUnconditionallyUnavailable" : true
-                    }
-                ],
+                "accessLevel": "public"
             }
             """,
             platform: """

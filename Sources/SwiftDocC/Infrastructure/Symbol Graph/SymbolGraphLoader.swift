@@ -257,6 +257,7 @@ struct SymbolGraphLoader {
     /// If the bundle defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
+        let selector = UnifiedSymbolGraph.Selector(forSymbolGraph: symbolGraph)
         // Check if there are defined default availabilities for the current module
         if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
@@ -272,7 +273,9 @@ struct SymbolGraphLoader {
             // Map all symbols and add default availability for any missing platforms
             let symbolsWithFilledIntroducedVersions = symbolGraph.symbols.mapValues { symbol -> SymbolGraph.Symbol in
                 var symbol = symbol
-                
+                let defaultModuleVersion = defaultAvailabilityVersionByPlatform[platformName]
+                // The availability item for each symbol of the given module.
+                let modulePlatformAvailabilityItem = AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue), introducedVersion: defaultModuleVersion, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
                 // Check if the symbol has existing availabilities from source
                 if var availability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
 
@@ -284,11 +287,16 @@ struct SymbolGraphLoader {
                         )
                     }
                     // Add the module availability information to each of the symbols availability mixin.
-                    if !availability.contains(platformName), let defaultModuleVersion = defaultAvailabilityVersionByPlatform[platformName]  {
-                        let modulePlatformAvailability = AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue), introducedVersion: defaultModuleVersion, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
-                        availability.availability.append(modulePlatformAvailability)
+                    if !availability.contains(platformName) {
+                        availability.availability.append(modulePlatformAvailabilityItem)
                     }
                     symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
+                } else {
+                    // ObjC doesn't propagate symbol availability to their children properties,
+                    // so only add the default availability to the Swift variant of the symbols.
+                    if !(selector?.interfaceLanguage == InterfaceLanguage.objc.name.lowercased()) {
+                        symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = SymbolGraph.Symbol.Availability(availability: [modulePlatformAvailabilityItem])
+                    }
                 }
                 return symbol
             }
