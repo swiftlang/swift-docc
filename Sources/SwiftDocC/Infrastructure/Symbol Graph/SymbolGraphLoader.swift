@@ -220,9 +220,10 @@ struct SymbolGraphLoader {
         // Platforms that are defined in the Info.plist that had no corresponding SGF
         // and are not being added as fallback of another platform.
         let missingAvailabilities = defaultAvailabilities.filter {
-                !missingFallbackPlatforms.keys.contains($0.platformName) &&
-                !registeredPlatforms.contains($0.platformName)
+            !missingFallbackPlatforms.keys.contains($0.platformName) &&
+            !registeredPlatforms.contains($0.platformName)
         }
+        
         unifiedGraph.symbols.values.forEach { symbol in
             for (selector, _) in symbol.mixins {
                 if var symbolAvailability = (symbol.mixins[selector]?["availability"] as? SymbolGraph.Symbol.Availability) {
