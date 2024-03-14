@@ -74,7 +74,7 @@ final class PathHierarchyBasedLinkResolver {
                 container.storage.compactMap { element in
                     guard let childID = element.node.identifier, // Don't include sparse nodes
                           !element.node.specialBehaviors.contains(.excludeFromAutomaticCuration),
-                          languagesFilter.isEmpty || !element.node.languages.isDisjoint(with: languagesFilter)
+                          element.node.matches(languagesFilter: languagesFilter)
                     else {
                         return nil
                     }
@@ -84,10 +84,10 @@ final class PathHierarchyBasedLinkResolver {
         }
         
         var results = Set<ResolvedTopicReference>()
-        if node.languages.isSuperset(of: languagesFilter) {
+        if node.matches(languagesFilter: languagesFilter) {
             results.formUnion(directDescendants(of: node))
         }
-        if let counterpart = node.counterpart, counterpart.languages.isSuperset(of: languagesFilter) {
+        if let counterpart = node.counterpart, counterpart.matches(languagesFilter: languagesFilter) {
             results.formUnion(directDescendants(of: counterpart))
         }
         return results
@@ -350,3 +350,9 @@ private func linkName<S: StringProtocol>(filename: S) -> String {
 
 private let whitespaceAndDashes = CharacterSet.whitespaces
     .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+
+private extension PathHierarchy.Node {
+    func matches(languagesFilter: Set<SourceLanguage>) -> Bool {
+        languagesFilter.isEmpty || !self.languages.isDisjoint(with: languagesFilter)
+    }
+}
