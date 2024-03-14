@@ -293,7 +293,7 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        if let favoredMatch = collisions.singleMatch({ $0.node.isDisfavoredInCollision == false }) {
+        if let favoredMatch = collisions.singleMatch({ $0.node.specialBehaviors.contains(.disfavorInLinkCollision) == false }) {
             return favoredMatch.node
         }
         // If a module has the same name as the article root (which is named after the bundle display name) then its possible

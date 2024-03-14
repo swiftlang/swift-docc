@@ -122,7 +122,9 @@ struct PathHierarchy {
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
-                    node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
+                    if symbol.identifier.precise.contains("::SYNTHESIZED::") {
+                        node.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
+                    }
                     nodes[id] = node
                     
                     if let existing = allNodes[id] {
@@ -169,7 +171,7 @@ struct PathHierarchy {
                 }
                 // Default implementations collide with the protocol requirement that they implement.
                 // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
-                sourceNode.isDisfavoredInCollision = true
+                sourceNode.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
                 
                 guard sourceNode.parent == nil else {
                     // This node already has a direct member-of parent. No need to go via the default-implementation-of relationship to find its location in the hierarchy.
@@ -228,7 +230,7 @@ struct PathHierarchy {
                     guard knownDisambiguatedPathComponents != nil else {
                         // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
                         let nodeWithoutSymbol = Node(name: component)
-                        nodeWithoutSymbol.isDisfavoredInCollision = true
+                        nodeWithoutSymbol.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
                         parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
                         parent = nodeWithoutSymbol
                         continue
@@ -236,7 +238,7 @@ struct PathHierarchy {
                     // If the path hierarchy was passed a lookup of "known disambiguation" path components", then it's possible that each path component could contain disambiguation that needs to be parsed.
                     let component = PathParser.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: String(component.name))
-                    nodeWithoutSymbol.isDisfavoredInCollision = true
+                    nodeWithoutSymbol.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
                     // Create a spare/placeholder node with the parsed disambiguation for this path component.
                     switch component.disambiguation {
                     case .kindAndHash(kind: let kind, hash: let hash):
@@ -424,20 +426,29 @@ extension PathHierarchy {
         /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
         fileprivate(set) unowned var counterpart: Node?
         
-        /// If the path hierarchy should disfavor this node in a link collision.
-        ///
-        /// By default, nodes are not disfavored.
-        ///
-        /// If a favored node collides with a disfavored node the link will resolve to the favored node without
-        /// requiring any disambiguation. Referencing the disfavored node requires disambiguation.
-        var isDisfavoredInCollision: Bool
+        /// A set of non-standard behaviors that apply to this node.
+        fileprivate(set) var specialBehaviors: SpecialBehaviors
+        
+        /// Options that specify non-standard behaviors of a node.
+        struct SpecialBehaviors: OptionSet {
+            let rawValue: Int
+            
+            /// This node is disfavored in the the case of a link collision.
+            ///
+            /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
+            /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
+            static let disfavorInLinkCollision = SpecialBehaviors(rawValue: 1 << 0)
+            
+            /// This node is excluded from automatic curation.
+            static let excludeFromAutomaticCuration = SpecialBehaviors(rawValue: 1 << 1)
+        }
         
         /// Initializes a symbol node.
         fileprivate init(symbol: SymbolGraph.Symbol!, name: String) {
             self.symbol = symbol
             self.name = name
             self.children = [:]
-            self.isDisfavoredInCollision = false
+            self.specialBehaviors = []
             self.languages = [SourceLanguage(id: symbol.identifier.interfaceLanguage)]
         }
         
@@ -446,7 +457,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
-            self.isDisfavoredInCollision = false
+            self.specialBehaviors = []
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
@@ -666,7 +677,7 @@ extension PathHierarchy {
             } else {
                 node = Node(name: fileNode.name)
             }
-            node.isDisfavoredInCollision = fileNode.isDisfavoredInCollision
+            node.specialBehaviors = .init(rawValue: fileNode.rawSpecialBehavior)
             node.identifier = identifiers[index]
             lookup[node.identifier] = node
         }
