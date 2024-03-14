@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -506,6 +506,23 @@ extension Symbol {
                 let availability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
 
                 try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, selector: selector)
+            }
+        }
+    }
+    
+    /// Merge the different availability variants defined in the unified symbol,
+    /// and update the availability of the canonical symbol to consider all the different availability mixins instead of only the first one.
+    func mergeAvailabilities(unifiedSymbol: UnifiedSymbolGraph.Symbol) {
+        for (selector, mixins) in unifiedSymbol.mixins {
+            let trait = DocumentationDataVariantsTrait(for: selector)
+            if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
+                unifiedSymbolAvailability.availability.forEach { availabilityItem in
+                    guard let availabilityVariantTrait = availabilityVariants[trait] else { return }
+                    if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                        return
+                    }
+                    availabilityVariants[trait]?.availability.append(availabilityItem)
+                }
             }
         }
     }
