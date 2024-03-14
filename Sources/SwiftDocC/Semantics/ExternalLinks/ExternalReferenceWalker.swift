@@ -174,22 +174,28 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
 
     mutating func visitComment(_ comment: Comment) { }
-    
+
+    mutating func visitMarkups(_ markups: [Markup]?) {
+        markups?.forEach { visitMarkup($0) }
+    }
+
     mutating func visitSymbol(_ symbol: Symbol) {
-        symbol.abstractSection.unwrap { visitMarkup($0.paragraph) }
-        symbol.discussion.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.topics.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.seeAlso.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.returnsSection.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.deprecatedSummary.unwrap { $0.content.forEach { visitMarkup($0) }}
-        
-        symbol.parametersSection.unwrap {
-            $0.parameters.forEach {
-                $0.contents.forEach { visitMarkup($0) }
-            }
+        visitMarkups(symbol.abstractSection?.content)
+        visitMarkups(symbol.discussion?.content)
+        visitMarkups(symbol.topics?.content)
+        visitMarkups(symbol.seeAlso?.content)
+        visitMarkups(symbol.returnsSection?.content)
+        visitMarkups(symbol.deprecatedSummary?.content)
+        visitMarkups(symbol.parametersSection?.parameters.flatMap{ $0.contents })
+        visitMarkups(symbol.httpParametersSection?.parameters.flatMap{ $0.contents })
+        visitMarkups(symbol.httpResponsesSection?.responses.flatMap{ $0.contents })
+        visitMarkups(symbol.dictionaryKeysSection?.dictionaryKeys.flatMap{ $0.contents })
+        if let httpBody = symbol.httpBodySection?.body {
+            visitMarkups(httpBody.contents)
+            visitMarkups(httpBody.parameters.flatMap{ $0.contents })
         }
     }
-    
+
     mutating func visitDeprecationSummary(_ summary: DeprecationSummary) {
         visit(summary.content)
     }

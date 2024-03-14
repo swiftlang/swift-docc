@@ -1155,4 +1155,232 @@ class ExternalReferenceResolverTests: XCTestCase {
             "doc://com.external.testbundle/externally/resolved/path",
         ])
     }
+
+    func assertMarkupHasResolvedLink(markupsWithResolvedLink: [String], actualMarkup: [Markup]) throws {
+        let value: String = try XCTUnwrap(actualMarkup.first?.format().trimmingCharacters(in: .whitespaces))
+        XCTAssert(
+            markupsWithResolvedLink.contains(value),
+            "Markup does not have resolved link\nActual markdown: \(value)\nExpected markdown options:\n\(markupsWithResolvedLink.joined(separator: "\n"))"
+        )
+    }
+
+    func withExampleDocumentation(_ files: [any File], path: String, block: (Symbol) throws -> Void) throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: files)
+
+        let resolver = TestExternalReferenceResolver()
+
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleIdentifier: resolver])
+        XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
+
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        try block(symbol)
+    }
+
+    func withExampleSymbolDocumentation(_ files: File..., block: (Symbol) throws -> Void) throws {
+        let symbolGraph = JSONFile(
+            name: "ModuleName.symbols.json",
+            content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    SymbolGraph.Symbol(
+                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                        names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["SymbolName"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    )
+                ]
+            )
+        )
+        try withExampleDocumentation(
+            [symbolGraph] + files,
+            path: "/documentation/ModuleName/SymbolName",
+            block: block
+        )
+    }
+
+    func testParametersWithExternalLink() throws {
+        try withExampleSymbolDocumentation(
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``SymbolName``
+
+            This is about some symbol.
+
+            - Parameters:
+              - one: The first parameter has a link: <doc://com.external.testbundle/something/related/to/this/param>.
+              - two: The second parameter also has a link: <doc://com.external.testbundle/something/related/to/this/param>.
+
+            """)
+        ) { symbol in
+            let expectedMarkupsWithResolvedLink = [
+                "The first parameter has a link: <doc://com.external.testbundle/externally/resolved/path>.",
+                "The second parameter also has a link: <doc://com.external.testbundle/externally/resolved/path>."
+            ]
+            let parametersSection = try XCTUnwrap(symbol.parametersSection)
+            XCTAssertEqual(parametersSection.parameters.count, 2)
+            try parametersSection.parameters.forEach {
+                try assertMarkupHasResolvedLink(markupsWithResolvedLink: expectedMarkupsWithResolvedLink, actualMarkup: $0.contents)
+            }
+        }
+    }
+
+    func testDictionaryKeysWithExternalLink() throws {
+        try withExampleSymbolDocumentation(
+            TextFile(name: "Extension.md", utf8Content: """
+            # ``SymbolName``
+
+            This is about some symbol.
+
+            - DictionaryKeys:
+              - key1: The first key has a link: <doc://com.external.testbundle/something/related/to/this/key>.
+              - key2: The second key also has a link: <doc://com.external.testbundle/something/related/to/this/key>.
+
+            """)
+        ) { symbol in
+            let expectedMarkupsWithResolvedLink = [
+                "The first key has a link: <doc://com.external.testbundle/externally/resolved/path>.",
+                "The second key also has a link: <doc://com.external.testbundle/externally/resolved/path>."
+            ]
+            let dictionaryKeySection = try XCTUnwrap(symbol.dictionaryKeysSection)
+            XCTAssertEqual(dictionaryKeySection.dictionaryKeys.count, 2)
+            try dictionaryKeySection.dictionaryKeys.forEach {
+                try assertMarkupHasResolvedLink(markupsWithResolvedLink: expectedMarkupsWithResolvedLink, actualMarkup: $0.contents)
+            }
+        }
+    }
+
+    func withExampleRESTAPIDocumentation(_ files: File..., block: (Symbol) throws -> Void) throws {
+        let symbolGraph = JSONFile(name: "SomeRestAPI.symbols.json", content: makeSymbolGraph(
+            moduleName: "SomeRestAPI",
+            symbols: [
+                SymbolGraph.Symbol(
+                    identifier: .init(
+                        precise: "rest:some_api:get:some_data",
+                        interfaceLanguage: "data"
+                    ),
+                    names: .init(
+                        title: "Some Data",
+                        navigator: .init(
+                            [
+                                .init(
+                                    kind: .init(rawValue: "identifier")!,
+                                    spelling: "Some Data",
+                                    preciseIdentifier: nil
+                                )
+                            ]
+                        ),
+                        subHeading: nil,
+                        prose: nil
+                    ),
+                    pathComponents: ["Some-Data"],
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: .init(parsedIdentifier: .httpRequest, displayName: "Web Endpoint"),
+                    mixins: [:]
+                )
+            ]
+        ))
+        try withExampleDocumentation(
+            [symbolGraph] + files,
+            path: "/documentation/SomeRestAPI/Some-Data",
+            block: block
+        )
+    }
+
+    func testHTTPParametersWithExternalLink() throws {
+        try withExampleRESTAPIDocumentation(
+            TextFile(name: "Some-Data.md", utf8Content: """
+            # ``Some-Data``
+
+            Retrieve some data from our database.
+
+            - HTTPParameters:
+              - value: For more information about this value, see <doc://com.external.testbundle/something> instead.
+              - another_value: For more information about this other value, see <doc://com.external.testbundle/other> instead.
+            """)
+        ) { symbol in
+            let expectedMarkupsWithResolvedLink = [
+                "For more information about this value, see <doc://com.external.testbundle/externally/resolved/path> instead.",
+                "For more information about this other value, see <doc://com.external.testbundle/externally/resolved/path> instead."
+            ]
+            let httpParametersSection = try XCTUnwrap(symbol.httpParametersSection)
+            XCTAssertEqual(httpParametersSection.parameters.count, 2)
+            try httpParametersSection.parameters.forEach {
+                try assertMarkupHasResolvedLink(markupsWithResolvedLink: expectedMarkupsWithResolvedLink, actualMarkup: $0.contents)
+            }
+        }
+    }
+
+    func testHTTPBodyWithExternalLink() throws {
+        try withExampleRESTAPIDocumentation(
+            TextFile(name: "Some-Data.md", utf8Content: """
+            # ``Some-Data``
+
+            Retrieve some data from our database.
+
+            - HTTPBody: Read this instead: <doc://com.external.testbundle/something-else>.
+
+            """)
+        ) { symbol in
+            let expectedMarkupsWithResolvedLink = "Read this instead: <doc://com.external.testbundle/externally/resolved/path>."
+            let httpBodySection = try XCTUnwrap(symbol.httpBodySection)
+            try assertMarkupHasResolvedLink(markupsWithResolvedLink: [expectedMarkupsWithResolvedLink], actualMarkup: httpBodySection.body.contents)
+        }
+    }
+
+    func testHTTPBodyParametersWithExternalLink() throws {
+        try withExampleRESTAPIDocumentation(
+            TextFile(name: "Some-Data.md", utf8Content: """
+            # ``Some-Data``
+
+            Retrieve some data from our database.
+
+            - HTTPBodyParameters:
+                - artist: Read more about artists: <doc://com.external.testbundle/artists>.
+                - userName: Read more about user names: <doc://com.external.testbundle/user-names>.
+
+            """)
+        ) { symbol in
+            let expectedMarkupsWithResolvedLink = [
+                "Read more about artists: <doc://com.external.testbundle/externally/resolved/path>.",
+                "Read more about user names: <doc://com.external.testbundle/externally/resolved/path>."
+            ]
+            let httpBodySection = try XCTUnwrap(symbol.httpBodySection)
+            XCTAssertEqual(httpBodySection.body.parameters.count, 2)
+            try httpBodySection.body.parameters.forEach {
+                try assertMarkupHasResolvedLink(markupsWithResolvedLink: expectedMarkupsWithResolvedLink, actualMarkup: $0.contents)
+            }
+        }
+    }
+
+    func testHTTPResponsesWithExternalLink() throws {
+        try withExampleRESTAPIDocumentation(
+            TextFile(name: "Some-Data.md", utf8Content: """
+            # ``Some-Data``
+
+            Retrieve some data from our database.
+
+            - HTTPResponses:
+              - 201: More information here: <doc://com.external.testbundle/more-info>.
+              - 204: Even more information here: <doc://com.external.testbundle/more-info2>.
+              - 887: Much more information here: <doc://com.external.testbundle/more-info3>.
+
+            """)
+        ) { symbol in
+            let expectedMarkupsWithResolvedLink = [
+                "More information here: <doc://com.external.testbundle/externally/resolved/path>.",
+                "Even more information here: <doc://com.external.testbundle/externally/resolved/path>.",
+                "Much more information here: <doc://com.external.testbundle/externally/resolved/path>."
+            ]
+            let httpResponsesSection = try XCTUnwrap(symbol.httpResponsesSection)
+            try httpResponsesSection.responses.forEach {
+                try assertMarkupHasResolvedLink(markupsWithResolvedLink: expectedMarkupsWithResolvedLink, actualMarkup: $0.contents)
+            }
+        }
+    }
 }

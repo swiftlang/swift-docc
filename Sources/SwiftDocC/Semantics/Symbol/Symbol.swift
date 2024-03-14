@@ -669,10 +669,34 @@ extension Symbol {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }
-    
+
     /// Any automatically created task groups of the first variant of the symbol.
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
+    }
+
+    /// Any HTTP parameters of the first variant of the symbol.
+    var httpParametersSection: HTTPParametersSection? {
+        get { httpParametersSectionVariants.firstValue }
+        set { httpParametersSectionVariants.firstValue = newValue }
+    }
+
+    /// Any HTTP body of the first variant of the symbol.
+    var httpBodySection: HTTPBodySection? {
+        get { httpBodySectionVariants.firstValue }
+        set { httpBodySectionVariants.firstValue = newValue }
+    }
+
+    /// Any HTTP responses of the first variant of the symbol.
+    var httpResponsesSection: HTTPResponsesSection? {
+        get { httpResponsesSectionVariants.firstValue }
+        set { httpResponsesSectionVariants.firstValue = newValue }
+    }
+
+    /// Any HTTP responses of the first variant of the symbol.
+    var dictionaryKeysSection: DictionaryKeysSection? {
+        get { dictionaryKeysSectionVariants.firstValue }
+        set { dictionaryKeysSectionVariants.firstValue = newValue }
     }
 }
