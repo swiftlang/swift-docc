@@ -59,7 +59,7 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Returns the direct descendants of the given page that match the given source language filter.
     ///
-    /// A descendant it included if it has a language representation in at least one of the languages in the given language filter.
+    /// A descendant is included if it has a language representation in at least one of the languages in the given language filter or if the language filter is empty.
     ///
     /// - Parameters:
     ///   - reference: The identifier of the page whose descendants to return.
@@ -73,8 +73,8 @@ final class PathHierarchyBasedLinkResolver {
             return node.children.flatMap { _, container in
                 container.storage.compactMap { element in
                     guard let childID = element.node.identifier, // Don't include sparse nodes
-                          !element.node.languages.isDisjoint(with: languagesFilter)
                           !element.node.specialBehaviors.contains(.excludeFromAutomaticCuration),
+                          languagesFilter.isEmpty || !element.node.languages.isDisjoint(with: languagesFilter)
                     else {
                         return nil
                     }
@@ -87,7 +87,7 @@ final class PathHierarchyBasedLinkResolver {
         if node.languages.isSuperset(of: languagesFilter) {
             results.formUnion(directDescendants(of: node))
         }
-        if let counterpart = node.counterpart, counterpart.languages.isSubset(of: languagesFilter) {
+        if let counterpart = node.counterpart, counterpart.languages.isSuperset(of: languagesFilter) {
             results.formUnion(directDescendants(of: counterpart))
         }
         return results
