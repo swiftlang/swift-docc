@@ -124,10 +124,7 @@ struct PathHierarchy {
                 // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
                 // individual overload symbols in favor of resolving links to their overload group
                 // symbol.
-                guard let sourceNode = nodes[relationship.source] else {
-                    continue
-                }
-                sourceNode.isDisfavoredInCollision = true
+                nodes[relationship.source]?.isDisfavoredInCollision = true
             }
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
