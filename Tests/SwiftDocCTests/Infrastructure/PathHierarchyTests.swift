@@ -1078,7 +1078,7 @@ class PathHierarchyTests: XCTestCase {
         let sideKidModuleID = try tree.find(path: "/SideKit", onlyFindSymbols: true)
         XCTAssertEqual(try tree.findSymbol(path: "UncuratedClass/angle", parent: sideKidModuleID).identifier.precise, "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp")
         try assertFindsPath("/SideKit/SideClass/Element", in: tree, asSymbolID: "s:7SideKit0A5ClassC7Elementa")
-        try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTESIZED::inheritedFF")
+        try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTHESIZED::inheritedFF")
         
         // Test disfavoring a default implementation in a symbol collision
         try assertFindsPath("/SideKit/SideProtocol/func()", in: tree, asSymbolID: "s:5MyKit0A5MyProtocol0Afunc()")
@@ -1608,6 +1608,30 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertNil(articleNode.symbol)
             XCTAssertEqual(articleNode.name, "OtherStruct-abcd")
         }
+    }
+    
+    func testGeometricalShapes() throws {
+        let (_, context) = try testBundleAndContext(named: "GeometricalShapes")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths().values.sorted()
+        XCTAssertEqual(paths, [
+            "/GeometricalShapes",
+            "/GeometricalShapes/Circle",
+            "/GeometricalShapes/Circle/center",
+            "/GeometricalShapes/Circle/debugDescription",
+            "/GeometricalShapes/Circle/defaultRadius",
+            "/GeometricalShapes/Circle/init()",
+            "/GeometricalShapes/Circle/init(center:radius:)",
+            "/GeometricalShapes/Circle/init(string:)",
+            "/GeometricalShapes/Circle/intersects(_:)",
+            "/GeometricalShapes/Circle/isEmpty",
+            "/GeometricalShapes/Circle/isNull",
+            "/GeometricalShapes/Circle/null",
+            "/GeometricalShapes/Circle/radius",
+            "/GeometricalShapes/Circle/zero",
+            "/GeometricalShapes/TLACircleMake",
+        ])
     }
     
     func testPartialSymbolGraphPaths() throws {

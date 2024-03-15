@@ -2817,7 +2817,7 @@ Document
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
                 
-                graph.symbols["s:7SideKit0A5::SYNTESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
+                graph.symbols["s:7SideKit0A5::SYNTHESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
                 
                 try JSONEncoder().encode(graph)
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
@@ -3374,5 +3374,82 @@ Document
         XCTAssertEqual(topicSection.first?.identifiers, [
             "doc://unit-test/documentation/unit-test/article"
         ])
+    }
+    
+    func testAutomaticCurationForRefinedSymbols() throws {
+        let (_, bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+        
+        do {
+            let root = try XCTUnwrap(context.soleRootModuleReference)
+            let node = try context.entity(with: root)
+            
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node, at: nil)
+            
+            let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
+            XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Structures",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+            ])
+            
+            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
+            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Structures",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+                
+                "Variables",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero",
+                
+                "Functions",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake"
+            ])
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/GeometricalShapes/Circle", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node, at: nil)
+            
+            let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
+            XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Initializers",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init()",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
+                
+                "Instance Properties",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
+                
+                "Instance Methods", 
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
+                
+                "Type Properties", 
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
+            ])
+            
+            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
+            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Instance Properties",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
+            ])
+        }
     }
 }
