@@ -181,6 +181,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
         symbol.topics.unwrap { $0.content.forEach { visitMarkup($0) }}
         symbol.seeAlso.unwrap { $0.content.forEach { visitMarkup($0) }}
         symbol.returnsSection.unwrap { $0.content.forEach { visitMarkup($0) }}
+        symbol.deprecatedSummary.unwrap { $0.content.forEach { visitMarkup($0) }}
         
         symbol.parametersSection.unwrap {
             $0.parameters.forEach {
