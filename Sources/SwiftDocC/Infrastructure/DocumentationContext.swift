@@ -2391,12 +2391,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                 var otherOverloadedSymbolReferences = overloadSymbolReferences.map(\.reference)
                 otherOverloadedSymbolReferences.remove(at: index)
-                let displayIndex: Int
-                if let symbolIndex = symbol.overloadsVariants.firstValue?.displayIndex {
-                    displayIndex = symbolIndex
-                } else {
-                    displayIndex = index
-                }
+                let displayIndex = symbol.overloadsVariants.firstValue?.displayIndex ?? index
                 let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: displayIndex)
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
             }
