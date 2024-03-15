@@ -470,9 +470,9 @@ class AutomaticCurationTests: XCTestCase {
             },
             [
                 "Classes",
-                "/documentation/MixedLanguageFramework/Bar",
+                // 'Bar' is manually curated in a task group titled "Some Swift-only APIs, some Objective-C–only APIs, some mixed" in MixedLanguageFramework.md.
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
-                "/documentation/MixedLanguageFramework/SwiftOnlyClass",
+                // 'SwiftOnlyClass' is manually curated in a task group titled "Some Swift-only APIs, some Objective-C–only APIs, some mixed" in MixedLanguageFramework.md.
 
                 "Protocols",
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
@@ -480,8 +480,7 @@ class AutomaticCurationTests: XCTestCase {
                 "Structures",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
                 
-                // SwiftOnlyStruct is manually curated in APICollection.md.
-                // "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                // 'SwiftOnlyStruct' is manually curated in a task group titled "Swift-only APIs" in MixedLanguageFramework.md.
             ]
         )
         
@@ -497,19 +496,15 @@ class AutomaticCurationTests: XCTestCase {
             },
             [
                 "Classes",
-                "/documentation/MixedLanguageFramework/Bar",
+                // 'Bar' is manually curated in a task group titled "Some Swift-only APIs, some Objective-C–only APIs, some mixed" in MixedLanguageFramework.md.
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
                 
                 "Protocols",
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 
-                "Variables",
-                
-                // _MixedLanguageFrameworkVersionNumber is manually curated in APICollection.md.
-                // "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
-                
-                "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
-                
+                // "Variables",
+                // '_MixedLanguageFrameworkVersionNumber is manually curated in a task group titled "Objective-C–only APIs" in MixedLanguageFramework.md.
+                // '_MixedLanguageFrameworkVersionString' is manually curated in a task group titled "Some Swift-only APIs, some Objective-C–only APIs, some mixed" in MixedLanguageFramework.md.
                 // 'MixedLanguageFramework/Foo-c.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'
                 
                 "Enumerations",

@@ -38,6 +38,8 @@ public struct SourceLanguage: Hashable, Codable {
         switch id {
         case "swift": self = .swift
         case "occ", "objc", "objective-c", "c": self = .objectiveC
+        // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/apple/swift-docc/issues/767)
+        case "occ++", "objc++", "objective-c++", "c++": self = .objectiveC
         case "javascript": self = .javaScript
         case "data": self = .data
         case "metal": self = .metal

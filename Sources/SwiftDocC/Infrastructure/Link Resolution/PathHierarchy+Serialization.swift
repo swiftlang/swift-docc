@@ -42,7 +42,7 @@ extension PathHierarchy.FileRepresentation {
                     at: identifierMap[node.identifier]!,
                     to: Node(
                         name: node.name,
-                        isDisfavoredInCollision: node.isDisfavoredInCollision,
+                        rawSpecialBehavior: node.specialBehaviors.rawValue,
                         children: node.children.values.flatMap({ tree in
                             var disambiguations = [Node.Disambiguation]()
                             for element in tree.storage where element.node.identifier != nil { // nodes without identifiers can't be found in the tree
@@ -102,7 +102,7 @@ extension PathHierarchy {
         /// A node in the hierarchy.
         struct Node: Codable {
             var name: String
-            var isDisfavoredInCollision: Bool = false
+            var rawSpecialBehavior: Int = 0
             var children: [Disambiguation] = []
             var symbolID: SymbolGraph.Symbol.Identifier?
             
@@ -118,7 +118,7 @@ extension PathHierarchy {
 extension PathHierarchy.FileRepresentation.Node {
     enum CodingKeys: String, CodingKey {
         case name
-        case isDisfavoredInCollision = "disfavored"
+        case rawSpecialBehavior = "disfavored"
         case children
         case symbolID
     }
@@ -127,7 +127,7 @@ extension PathHierarchy.FileRepresentation.Node {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
-        self.isDisfavoredInCollision = try container.decodeIfPresent(Bool.self, forKey: .isDisfavoredInCollision) ?? false
+        self.rawSpecialBehavior = try container.decodeIfPresent(Int.self, forKey: .rawSpecialBehavior) ?? 0
         self.children = try container.decodeIfPresent([Disambiguation].self, forKey: .children) ?? []
         self.symbolID = try container.decodeIfPresent(SymbolGraph.Symbol.Identifier.self, forKey: .symbolID)
     }
@@ -136,7 +136,9 @@ extension PathHierarchy.FileRepresentation.Node {
         var container: KeyedEncodingContainer = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.name, forKey: .name)
-        try container.encodeIfTrue(self.isDisfavoredInCollision, forKey: .isDisfavoredInCollision)
+        if rawSpecialBehavior > 0 {
+            try container.encode(rawSpecialBehavior, forKey: .rawSpecialBehavior)
+        }
         try container.encodeIfNotEmpty(self.children, forKey: .children)
         try container.encodeIfPresent(symbolID, forKey: .symbolID)
     }

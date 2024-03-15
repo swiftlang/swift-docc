@@ -341,29 +341,6 @@
       "pathComponents": [
         "Artist"
       ]
-    },
-    {
-      "accessLevel": "public",
-      "declarationFragments": [
-        {
-          "kind": "text",
-          "spelling": "class FooSwift"
-        }
-      ],
-      "identifier": {
-        "interfaceLanguage": "swift",
-        "precise": "s:FooSwift"
-      },
-      "kind": {
-        "displayName": "Class",
-        "identifier": "class"
-      },
-      "names": {
-        "title": "FooSwift"
-      },
-      "pathComponents": [
-        "FooSwift"
-      ]
     }
   ]
 }

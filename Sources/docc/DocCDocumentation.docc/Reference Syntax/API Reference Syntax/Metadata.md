@@ -8,15 +8,17 @@ Use metadata directives to instruct DocC how to build certain documentation file
 
 ## Overview
 
-Use the `Metadata` directive with other directives to configure how certain documentation files build. Place the directive after the documentation page's title. Use it with the ``DocumentationExtension`` directive to indicate whether content in a documentation extension file amends or replaces in-source documentation.
+Use the `Metadata` directive with other directives to configure how certain documentation files build. Place the directive after the documentation page's title. 
+
+Use it with the ``DocumentationExtension`` directive to replace in-source documentation with the documentation extension file's content. 
 
 ```
 # ``SlothCreator/Sloth``
 
 @Metadata {
-    @DocumentationExtension(mergeBehavior: append)
+    @DocumentationExtension(mergeBehavior: override)
 }
-````
+```
 
 Use the `Metadata` directive with the ``TechnologyRoot`` directive to configure a documentation page that's not associated with a particular framework, so that page appears as a top-level page.
 
@@ -88,4 +90,4 @@ previous versions, @Redirected must be used as a top level directive.
 > Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In
 previous versions, @Redirected must be used as a top level directive.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
