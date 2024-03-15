@@ -295,6 +295,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             dictionaryKeysSectionVariants: .empty,
+            possibleValuesSectionVariants: .empty,
             httpEndpointSectionVariants: endpointVariants,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,
@@ -387,6 +388,12 @@ public struct DocumentationNode {
         if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
             // Record the keys extracted from the markdown
             semantic.dictionaryKeysSectionVariants[.fallback] = DictionaryKeysSection(dictionaryKeys:keys)
+        }
+        
+        if let values = markupModel.discussionTags?.possibleValues, !values.isEmpty {
+            // Record the values extracted from the markdown and the complete set defined by the symbol
+            let section = PossibleValuesSection(documentedValues: values, definedValues: symbol?.allowedValues ?? [])
+            semantic.possibleValuesSectionVariants[.fallback] = section
         }
         
         if let parameters = markupModel.discussionTags?.httpParameters, !parameters.isEmpty {
@@ -654,6 +661,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
+            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possibleValues.isEmpty ? nil : PossibleValuesSection(documentedValues: $0.possibleValues, definedValues: []) })),
             httpEndpointSectionVariants: .empty,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,

@@ -451,6 +451,12 @@ struct ReferenceResolver: SemanticVisitor {
             }
             return DictionaryKeysSection(dictionaryKeys: keys)
         }
+        let newPossibleValuesVariants = symbol.possibleValuesSectionVariants.map { possibleValuesSection -> PossibleValuesSection in
+            let keys = possibleValuesSection.documentedValues.map {
+                PossibleValue(value: $0.value, contents: $0.contents.map { visitMarkup($0) })
+            }
+            return PossibleValuesSection(documentedValues: keys, definedValues: possibleValuesSection.definedValues)
+        }
         let newHTTPEndpointVariants = symbol.httpEndpointSectionVariants.map { httpEndpointSection -> HTTPEndpointSection in
             return HTTPEndpointSection(endpoint: httpEndpointSection.endpoint)
         }
@@ -499,6 +505,7 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             dictionaryKeysSectionVariants: newDictionaryKeysVariants,
+            possibleValuesSectionVariants: newPossibleValuesVariants,
             httpEndpointSectionVariants: newHTTPEndpointVariants,
             httpBodySectionVariants: newHTTPBodyVariants,
             httpParametersSectionVariants: newHTTPParametersVariants,

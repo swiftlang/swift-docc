@@ -24,6 +24,7 @@ extension XCTestCase {
         navigatorTitle expectedNavigatorTitle: String?,
         abstract expectedAbstract: String?,
         attributes expectedAttributes: [RenderAttribute]? = nil,
+        possibleValues expectedPossibleValues: [String]? = nil,
         declarationTokens expectedDeclarationTokens: [String]?,
         endpointTokens expectedEndpointTokens: [String]? = nil,
         httpParameters expectedHTTPParameters: [String]? = nil,
@@ -68,6 +69,15 @@ extension XCTestCase {
             attributesSection?.attributes,
             expectedAttributes,
             failureMessageForField("attributes"),
+            file: file,
+            line: line
+        )
+        
+        let possibleValuesSection = renderNode.primaryContentSections.compactMap { $0 as? PossibleValuesRenderSection }.first
+        XCTAssertEqual(
+            possibleValuesSection?.values.map { $0.name },
+            expectedPossibleValues,
+            failureMessageForField("possibleValues"),
             file: file,
             line: line
         )

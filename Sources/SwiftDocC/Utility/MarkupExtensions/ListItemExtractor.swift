@@ -49,7 +49,7 @@ let simpleListItemTags = [
 ]
 
 extension Sequence where Element == InlineMarkup {
-    private func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [Markup], range: SourceRange?)? {
+    private func splitNameAndContent(skipStartingTag: Bool = false) -> (name: String, nameRange: SourceRange?, content: [Markup], range: SourceRange?)? {
         var iterator = makeIterator()
         guard let initialTextNode = iterator.next() as? Text else {
             return nil
@@ -59,8 +59,16 @@ extension Sequence where Element == InlineMarkup {
         guard let colonIndex = initialText.firstIndex(of: ":") else {
             return nil
         }
-
-        let nameStartIndex = initialText[...colonIndex].lastIndex(of: " ").map { initialText.index(after: $0) } ?? initialText.startIndex
+        
+        let nameStartIndex: String.Index
+        if skipStartingTag == true, var spaceIndex = initialText[...colonIndex].firstIndex(of: " ") {
+            while initialText[spaceIndex] == " " {
+                spaceIndex = initialText.index(spaceIndex, offsetBy: 1)
+            }
+            nameStartIndex = spaceIndex
+        } else {
+            nameStartIndex = initialText.startIndex
+        }
         let parameterName = initialText[nameStartIndex..<colonIndex]
         guard !parameterName.isEmpty else {
             return nil
@@ -93,7 +101,7 @@ extension Sequence where Element == InlineMarkup {
     }
     
     func extractParameter(standalone: Bool) -> Parameter? {
-        if let (name, nameRange, content, itemRange) = splitNameAndContent() {
+        if let (name, nameRange, content, itemRange) = splitNameAndContent(skipStartingTag: standalone == true) {
             return Parameter(name: name, nameRange: nameRange, contents: content, range: itemRange, isStandalone: standalone)
         }
         return nil
@@ -102,6 +110,13 @@ extension Sequence where Element == InlineMarkup {
     func extractDictionaryKey() -> DictionaryKey? {
         if let (name, _, content, _) = splitNameAndContent() {
             return DictionaryKey(name: name, contents: content)
+        }
+        return nil
+    }
+    
+    func extractPossibleValue() -> PossibleValue? {
+        if let (value, _, content, _) = splitNameAndContent() {
+            return PossibleValue(value: value, contents: content)
         }
         return nil
     }
@@ -235,6 +250,65 @@ extension ListItem {
             }
         }
         return dictionaryKeys
+    }
+
+    /**
+     Extract a standalone possible value description from this list item.
+
+     Expected form:
+
+     ```markdown
+     - possibleValue x: The meaning of x
+     ```
+     */
+    func extractStandalonePossibleValue() -> PossibleValue? {
+        guard let remainder = extractTag(TaggedListItemExtractor.possibleValueTag) else {
+            return nil
+        }
+        return remainder.extractPossibleValue()
+    }
+
+    /**
+     Extracts an outline of possible values from a sublist underneath this list item.
+
+     Expected form:
+
+     ```markdown
+     - PossibleValues:
+       - x: Meaning of x
+       - y: Meaning of y
+     ```
+
+     > Warning: Content underneath `- PossibleValues` that doesn't match this form will be dropped.
+     */
+    func extractPossibleValueOutline() -> [PossibleValue]? {
+        guard extractTag(TaggedListItemExtractor.possibleValuesTag + ":") != nil else {
+            return nil
+        }
+
+        var possibleValues = [PossibleValue]()
+
+        for child in children {
+            // The list `- PossibleValues:` should have one child, a list of values.
+            guard let possibleValuesList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` possible value form or else they are dropped.
+            for child in possibleValuesList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let possibleValue = Array(firstParagraph.inlineChildren).extractPossibleValue() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this possible value list item.
+                let contents = possibleValue.contents + Array(listItem.children.dropFirst(1))
+
+                possibleValues.append(PossibleValue(value: possibleValue.value, contents: contents))
+            }
+        }
+        return possibleValues
     }
 
     /**
@@ -530,6 +604,8 @@ struct TaggedListItemExtractor: MarkupRewriter {
     static let parametersTag = "parameters"
     static let dictionaryKeyTag = "dictionarykey"
     static let dictionaryKeysTag = "dictionarykeys"
+    static let possibleValueTag = "possiblevalue"
+    static let possibleValuesTag = "possiblevalues"
     
     static let httpBodyTag = "httpbody"
     static let httpResponseTag = "httpresponse"
@@ -540,6 +616,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
     static let httpBodyParametersTag = "httpbodyparameters"
 
     var parameters = [Parameter]()
+    var possibleValues = [PossibleValue]()
     var dictionaryKeys = [DictionaryKey]()
     var httpResponses = [HTTPResponse]()
     var httpParameters = [HTTPParameter]()
@@ -642,6 +719,16 @@ struct TaggedListItemExtractor: MarkupRewriter {
         } else if let dictionaryKeyDescription = listItem.extractStandaloneDictionaryKey() {
             // - dictionaryKey x: ...
             dictionaryKeys.append(dictionaryKeyDescription)
+            return nil
+        } else if let possibleValueDescription = listItem.extractPossibleValueOutline() {
+            // - PossibleValues:
+            //   - x: ...
+            //   - y: ...
+            possibleValues.append(contentsOf: possibleValueDescription)
+            return nil
+        } else if let possibleValueDescription = listItem.extractStandalonePossibleValue() {
+            // - possibleValue x: ...
+            possibleValues.append(possibleValueDescription)
             return nil
         } else if let httpParameterDescription = listItem.extractHTTPParameterOutline() {
             // - HTTPParameters:
