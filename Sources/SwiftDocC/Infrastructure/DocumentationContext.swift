@@ -2338,7 +2338,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return
         }
         
-        for (overloadGroupID, var overloadSymbolIDs) in overloadGroups {
+        for (overloadGroupID, overloadSymbolIDs) in overloadGroups {
             guard overloadSymbolIDs.count > 1 else {
                 assertionFailure("Overload group \(overloadGroupID) contained \(overloadSymbolIDs.count) symbols, but should have more than one symbol to be valid.")
                 continue
@@ -2367,14 +2367,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     Overload group \(overloadGroupNode.reference.absoluteString.singleQuoted) was not properly initialized with overload data from SymbolKit.
                     Symbols without overload data: \(Array(overloadSymbolNodes.filter({ ($0.semantic as? Symbol)?.overloadsVariants.firstValue == nil }).map(\.reference.absoluteString.singleQuoted)))
                     """)
-                // SymbolKit has already cloned the overload group symbol from an existing overload. The
-                // symbol identifier it gave the symbol starts with the cloned symbol's ID, followed by
-                // the fixed string '::OverloadGroup'. Since we want the cloned overload info to be
-                // first in the display list, scan through the list of symbol IDs and swap indices if
-                // necessary.
-                if let clonedIdIndex = overloadSymbolIDs.firstIndex(where: { $0 + SymbolGraph.Symbol.overloadGroupIdentifierSuffix == overloadGroupID }) {
-                    overloadSymbolIDs.swapAt(clonedIdIndex, overloadSymbolIDs.startIndex)
-                }
+                return
             }
 
             func addOverloadReferences(
