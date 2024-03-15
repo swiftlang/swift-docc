@@ -2401,6 +2401,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
             }
 
+            // The overload group node itself is a clone of the first symbol, so the code above can
+            // swap out the first element in the overload references to create the alternate
+            // declarations section properly. However, it is also a distinct symbol, node, and page,
+            // so the first overload itself should also be handled separately in the loop below.
             try addOverloadReferences(to: overloadGroupNode, at: 0, overloadSymbolReferences: overloadSymbolNodes)
 
             for (index, node) in overloadSymbolNodes.indexed() {
