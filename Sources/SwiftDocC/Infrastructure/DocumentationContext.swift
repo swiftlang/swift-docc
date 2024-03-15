@@ -2340,19 +2340,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         for (overloadGroupID, var overloadSymbolIDs) in overloadGroups {
             guard overloadSymbolIDs.count > 1 else {
-                assertionFailure("SymbolKit should only create overload groups of more than one symbol")
+                assertionFailure("Overload group \(overloadGroupID) contained \(overloadSymbolIDs.count) symbols, but should have more than one symbol to be valid.")
                 continue
             }
-            guard let overloadGroupReference = documentationCache.reference(symbolID: overloadGroupID) else {
-                preconditionFailure("Overload group symbol should already be in the cache")
+            guard let overloadGroupNode = documentationCache[overloadGroupID] else {
+                preconditionFailure("Overload group \(overloadGroupID) doesn't have a local entity")
             }
-            let overloadGroupNode = try entity(with: overloadGroupReference)
 
-            var overloadSymbolNodes = try overloadSymbolIDs.map {
-                guard let reference = documentationCache.reference(symbolID: $0) else {
-                    preconditionFailure("Symbols should already be in the cache")
+            var overloadSymbolNodes = overloadSymbolIDs.map {
+                guard let node = documentationCache[$0] else {
+                    preconditionFailure("Overloaded symbol \($0) doesn't have a local entity")
                 }
-                return try entity(with: reference)
+                return node
             }
             if overloadSymbolNodes.allSatisfy({ node in
                 (node.semantic as? Symbol)?.overloadsVariants.firstValue != nil
@@ -2364,7 +2363,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     return lhsIndex < rhsIndex
                 })
             } else {
-                assertionFailure("Failed to find the overload data from SymbolKit.")
+                assertionFailure("""
+                    Overload group \(overloadGroupNode.reference.absoluteString.singleQuoted) was not properly initialized with overload data from SymbolKit.
+                    Symbols without overload data: \(Array(overloadSymbolNodes.filter({ ($0.semantic as? Symbol)?.overloadsVariants.firstValue == nil }).map(\.reference.absoluteString.singleQuoted)))
+                    """)
                 // SymbolKit has already cloned the overload group symbol from an existing overload. The
                 // symbol identifier it gave the symbol starts with the cloned symbol's ID, followed by
                 // the fixed string '::OverloadGroup'. Since we want the cloned overload info to be
@@ -2387,7 +2389,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     """)
                 }
                 guard documentationNode.reference.sourceLanguage == .swift else {
-                    assertionFailure("Overload groups is only supported for Swift symbols.")
+                    assertionFailure("""
+                    Overload groups are only supported for Swift symbols.
+                    The symbol at \(documentationNode.reference.absoluteString.singleQuoted) is listed as \(documentationNode.reference.sourceLanguage.name).
+                    """)
                     return
                 }
 
