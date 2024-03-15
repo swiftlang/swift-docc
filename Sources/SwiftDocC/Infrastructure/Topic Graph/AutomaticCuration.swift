@@ -50,34 +50,59 @@ public struct AutomaticCuration {
         withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext
     ) throws -> [TaskGroup] {
-        // Get any default implementation relationships for this symbol
-        //
-        // It's okay to include all variants here because we just use this set to filter
-        // out these values from automatic curation.
-        let defaultImplementationReferences = Set<String>(
-            (node.semantic as? Symbol)?.defaultImplementationsVariants.allValues
-                .lazy
-                .map(\.variant)
-                .flatMap(\.implementations)
-                .compactMap { implementation in
-                    implementation.reference.url?.absoluteString
-                } ?? []
-        )
+        let languagesFilter = Set(variantsTraits.compactMap {
+            $0.interfaceLanguage.map { SourceLanguage(id: $0) }
+        })
         
-        return try context.children(of: node.reference)
-            // Remove any default implementations
-            .filter({ (reference, kind) -> Bool in
-                return !defaultImplementationReferences.contains(reference.absoluteString)
-            })
+        let children: [ResolvedTopicReference]
+        if languagesFilter.isEmpty {
+            // If the caller requests a combined topic section for all source languages, then the results from the `TopicGraph` will be accurate.
+            
+            // Get any default implementation relationships for this symbol
+            //
+            // It's okay to include all variants here because we just use this set to filter
+            // out these values from automatic curation.
+            let defaultImplementationReferences = Set<String>(
+                (node.semantic as? Symbol)?.defaultImplementationsVariants.allValues
+                    .lazy
+                    .map(\.variant)
+                    .flatMap(\.implementations)
+                    .compactMap { implementation in
+                        implementation.reference.url?.absoluteString
+                    } ?? []
+            )
+            
+            children = context.children(of: node.reference)
+                // Remove any default implementations
+                .filter({ reference, _ -> Bool in
+                    return !defaultImplementationReferences.contains(reference.absoluteString)
+                })
+                .map(\.reference)
+        } else {
+            // If the caller requests topic section for a subset of source languages, then the `TopicGraph` is incapable of producing correct results
+            // because it considers all relationships in all languages. Instead we ask the `PathHierarchy` which is source-language-aware.
+            children = context.linkResolver.localResolver.directDescendants(of: node.reference, languagesFilter: languagesFilter)
+                .sorted(by: \.path)
+        }
+        
+        return try children
             // Force unwrapping as all nodes need to be valid in the rendering phase of the pipeline.
-            .reduce(into: AutomaticCuration.groups) { groupsIndex, child in
-                
-                guard context.parents(of: child.reference).count == 1 else {
-                    // There are other parents than `node` - the child is curated via markdown.
+            .reduce(into: AutomaticCuration.groups) { groupsIndex, reference in
+                guard let topicNode = context.topicGraph.nodeWithReference(reference),
+                      !topicNode.isEmptyExtension,
+                      !topicNode.isManuallyCurated
+                else {
                     return
                 }
                 
-                let childNode = try context.entity(with: child.reference)
+                // Skip members of "inherited" API collections unless this node is an Inherited API collection.
+                guard GeneratedDocumentationTopics.isInheritedSymbolsAPICollectionNode(node.reference, in: context.topicGraph)
+                   || !(context.topicGraph.reverseEdges[reference] ?? []).contains(where: { GeneratedDocumentationTopics.isInheritedSymbolsAPICollectionNode($0, in: context.topicGraph) })
+                else {
+                    return
+                }
+                
+                let childNode = try context.entity(with: reference)
                 guard let childSymbol = childNode.semantic as? Symbol else {
                     return
                 }
@@ -87,7 +112,7 @@ public struct AutomaticCuration {
                 //
                 // Otherwise, we'll fall back to the first kind variant.
                 let childSymbolKindIdentifier: SymbolGraph.Symbol.KindIdentifier?
-                if variantsTraits.count > 0 {
+                if !variantsTraits.isEmpty {
                     if let matchingTrait = variantsTraits.first(where: { childSymbol.kindVariants[$0] != nil }) {
                         childSymbolKindIdentifier = childSymbol.kindVariants[matchingTrait]?.identifier
                     } else {
@@ -98,7 +123,7 @@ public struct AutomaticCuration {
                 }
                 
                 if let childSymbolKindIdentifier = childSymbolKindIdentifier {
-                    groupsIndex[childSymbolKindIdentifier]?.references.append(child.reference)
+                    groupsIndex[childSymbolKindIdentifier]?.references.append(reference)
                 }
             }
             .lazy

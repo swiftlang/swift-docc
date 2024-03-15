@@ -485,7 +485,7 @@
       },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "s:7SideKit0A5::SYNTESIZED::inheritedFF"
+        "precise" : "s:7SideKit0A5::SYNTHESIZED::inheritedFF"
       },
       "kind" : {
         "displayName" : "Instance Method",
@@ -699,7 +699,7 @@
     },
     {
       "kind" : "memberOf",
-      "source" : "s:7SideKit0A5::SYNTESIZED::inheritedFF",
+      "source" : "s:7SideKit0A5::SYNTHESIZED::inheritedFF",
       "target" : "s:7SideKit0A5ClassC7Elementa",
       "sourceOrigin": {
           "identifier" : "s:OriginalUSR",

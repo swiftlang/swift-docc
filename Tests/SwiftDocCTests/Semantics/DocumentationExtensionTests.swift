@@ -36,7 +36,8 @@ class DocumentationExtensionTests: XCTestCase {
         var problems = [Problem]()
         let options = DocumentationExtension(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(options)
-        XCTAssertTrue(problems.isEmpty)
+        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoConfiguration", problems.first?.diagnostic.identifier)
         XCTAssertEqual(options?.behavior, .append)
     }
     
@@ -66,7 +67,7 @@ class DocumentationExtensionTests: XCTestCase {
     }
     
     func testExtraArguments() throws {
-        let source = "@DocumentationExtension(mergeBehavior: append, argument: value)"
+        let source = "@DocumentationExtension(mergeBehavior: override, argument: value)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")

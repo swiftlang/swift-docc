@@ -919,7 +919,6 @@ class ConvertServiceTests: XCTestCase {
                     )
                     
                 case .asset(let assetReference):
-                    print(assetReference)
                     switch (assetReference.assetName, assetReference.bundleIdentifier) {
                     case (let assetName, "identifier") where ["before.swift", "after.swift"].contains(assetName):
                         var asset = DataAsset()
