@@ -2338,17 +2338,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return
         }
         
-        for (overloadGroupId, var overloadSymbolIds) in overloadGroups {
-            guard overloadSymbolIds.count > 1 else {
+        for (overloadGroupID, var overloadSymbolIDs) in overloadGroups {
+            guard overloadSymbolIDs.count > 1 else {
                 assertionFailure("SymbolKit should only create overload groups of more than one symbol")
                 continue
             }
-            guard let overloadGroupReference = documentationCache.reference(symbolID: overloadGroupId) else {
+            guard let overloadGroupReference = documentationCache.reference(symbolID: overloadGroupID) else {
                 preconditionFailure("Overload group symbol should already be in the cache")
             }
             let overloadGroupNode = try entity(with: overloadGroupReference)
 
-            var overloadSymbolNodes = try overloadSymbolIds.map {
+            var overloadSymbolNodes = try overloadSymbolIDs.map {
                 guard let reference = documentationCache.reference(symbolID: $0) else {
                     preconditionFailure("Symbols should already be in the cache")
                 }
@@ -2370,8 +2370,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // the fixed string '::OverloadGroup'. Since we want the cloned overload info to be
                 // first in the display list, scan through the list of symbol IDs and swap indices if
                 // necessary.
-                if let clonedIdIndex = overloadSymbolIds.firstIndex(where: { $0 + SymbolGraph.Symbol.overloadGroupIdentifierSuffix == overloadGroupId }) {
-                    overloadSymbolIds.swapAt(clonedIdIndex, overloadSymbolIds.startIndex)
+                if let clonedIdIndex = overloadSymbolIDs.firstIndex(where: { $0 + SymbolGraph.Symbol.overloadGroupIdentifierSuffix == overloadGroupID }) {
+                    overloadSymbolIDs.swapAt(clonedIdIndex, overloadSymbolIDs.startIndex)
                 }
             }
 
