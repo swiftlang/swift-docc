@@ -293,7 +293,7 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        if let favoredMatch = collisions.singleMatch({ $0.node.isDisfavoredInCollision == false }) {
+        if let favoredMatch = collisions.singleMatch({ $0.node.specialBehaviors.contains(.disfavorInLinkCollision) == false }) {
             return favoredMatch.node
         }
         // If a module has the same name as the article root (which is named after the bundle display name) then its possible
@@ -410,49 +410,33 @@ extension PathHierarchy.DisambiguationContainer {
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
     func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
-        var kind: String?
-        var hash: String?
-        switch disambiguation {
-        case .kindAndHash(kind: let maybeKind, hash: let maybeHash):
-            kind = maybeKind.map(String.init)
-            hash = maybeHash.map(String.init)
-        case nil:
-            kind = nil
-            hash = nil
+        if storage.count <= 1, disambiguation == nil {
+            return storage.first?.node
         }
         
-        if let kind = kind {
-            // Need to match the provided kind
-            guard let subtree = storage[kind] else { return nil }
-            if let hash = hash {
-                return subtree[hash]
-            } else if subtree.count == 1 {
-                return subtree.values.first
-            } else {
-                // Subtree contains more than one match.
-                throw Error.lookupCollision(subtree.map { ($0.value, $0.key) })
+        switch disambiguation {
+        case .kindAndHash(let kind, let hash):
+            switch (kind, hash) {
+            case (let kind?, let hash?):
+                return storage.first(where: { $0.kind == kind && $0.hash == hash })?.node
+            case (let kind?, nil):
+                let matches = storage.filter({ $0.kind == kind })
+                guard matches.count <= 1 else {
+                    // Suggest not only hash disambiguation, but also type signature disambiguation.
+                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.value()) })
+                }
+                return matches.first?.node
+            case (nil, let hash?):
+                let matches = storage.filter({ $0.hash == hash })
+                guard matches.count <= 1 else {
+                    throw Error.lookupCollision(matches.map { ($0.node, $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
+                }
+                return matches.first?.node
+            case (nil, nil):
+                break
             }
-        } else if storage.count == 1, let subtree = storage.values.first {
-            // Tree only contains one kind subtree
-            if let hash = hash {
-                return subtree[hash]
-            } else if subtree.count == 1 {
-                return subtree.values.first
-            } else {
-                // Subtree contains more than one match.
-                throw Error.lookupCollision(subtree.map { ($0.value, $0.key) })
-            }
-        } else if let hash = hash {
-            // Need to match the provided hash
-            let kinds = storage.filter { $0.value.keys.contains(hash) }
-            if kinds.isEmpty {
-                return nil
-            } else if kinds.count == 1 {
-                return kinds.first!.value[hash]
-            } else {
-                // Subtree contains more than one match
-                throw Error.lookupCollision(kinds.map { ($0.value[hash]!, $0.key) })
-            }
+        case nil:
+            break
         }
         // Disambiguate by a mix of kinds and USRs
         throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.value()) })
@@ -460,6 +444,12 @@ extension PathHierarchy.DisambiguationContainer {
 }
 
 // MARK: Private helper extensions
+
+// Allow optional substrings to be compared to non-optional strings
+private func == <S1: StringProtocol, S2: StringProtocol>(lhs: S1?, rhs: S2) -> Bool {
+     guard let lhs = lhs else { return false }
+     return lhs == rhs
+ }
 
 private extension Sequence {
     /// Returns the only element of the sequence that satisfies the given predicate.

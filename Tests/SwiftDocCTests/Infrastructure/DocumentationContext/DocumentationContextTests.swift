@@ -12,7 +12,7 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 import Markdown
-import SwiftDocCTestUtilities
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)
@@ -905,7 +905,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.heading?.detachedFromParent.debugDescription(),
                         """
                         Heading level: 3
-                        └─ Text "Task Group Excercising Symbol Links"
+                        └─ Text "Task Group Exercising Symbol Links"
                         """)
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links.count, 3)
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[0].destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
@@ -2986,7 +2986,7 @@ let expected = """
         XCTAssertEqual(taskGroup.links.count, 16)
         
         XCTAssertEqual(node.anchorSections.first?.title, "Overview")
-        for (index, anchor) in node.anchorSections.dropFirst().enumerated() {
+        for (index, anchor) in node.anchorSections.dropFirst().dropLast().enumerated() {
             XCTAssertEqual(taskGroup.links.dropFirst(index * 2 + 0).first?.destination, anchor.reference.absoluteString)
             XCTAssertEqual(taskGroup.links.dropFirst(index * 2 + 1).first?.destination, anchor.reference.absoluteString)
         }
@@ -2995,11 +2995,141 @@ let expected = """
         XCTAssertEqual(node.anchorSections.dropFirst(2).first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Apostrophe-firsts-second")
         XCTAssertEqual(node.anchorSections.dropFirst(3).first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Prime-firsts-second")
         
-        XCTAssertEqual(node.anchorSections.dropLast(2).last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Em-dash-first-second")
-        XCTAssertEqual(node.anchorSections.dropLast().last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Triple-hyphen-first-second")
-        XCTAssertEqual(node.anchorSections.last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Emoji-%F0%9F%92%BB")
+        XCTAssertEqual(node.anchorSections.dropLast(3).last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Em-dash-first-second")
+        XCTAssertEqual(node.anchorSections.dropLast(2).last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Triple-hyphen-first-second")
+        XCTAssertEqual(node.anchorSections.dropLast().last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Emoji-%F0%9F%92%BB")
     }
 
+    func testResolvingLinksToTopicSections() throws {
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
+                
+                TextFile(name: "ModuleName.md", utf8Content: """
+                # ``ModuleName``
+                
+                A symbol with two topic section
+                
+                ## Topics
+                
+                ### One
+                
+                - <doc:First>
+                
+                ### Two
+                
+                - <doc:Second>
+                """),
+                
+                TextFile(name: "First.md", utf8Content: """
+                # The first article
+                
+                An article with a top-level topic section
+                
+                ## Topics
+                
+                - <doc:Third>
+                """),
+                
+                TextFile(name: "Second.md", utf8Content: """
+                # The second article
+                
+                An article with a named topic section
+                
+                ## Topics
+                
+                ### Some topic section
+                
+                - <doc:Third>
+                """),
+                
+                TextFile(name: "Third.md", utf8Content: """
+                # The third article
+                
+                An article that links to the various topic sections
+                
+                - <doc:ModuleName#One>
+                - <doc:ModuleName#Two>
+                - <doc:First#Topics>
+                - <doc:Second#Some-topic-section>
+                - <doc:Third#Another-topic-section>
+                - <doc:#Another-topic-section>
+                
+                ## Topics
+                
+                ### Another topic section
+                
+                - <doc:Fourth>
+                """),
+                
+                TextFile(name: "Fourth.md", utf8Content: """
+                # The fourth article
+                
+                An article that only exists to be linked to
+                """),
+            ])
+        ])
+        
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        try workspace.registerProvider(fileSystem)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).sorted())")
+        
+        let reference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "Third" }))
+        let entity = try context.entity(with: reference)
+        
+        struct LinkAggregator: MarkupWalker {
+            var destinations: [String] = []
+            
+            mutating func visitLink(_ link: Link) -> () {
+                if let destination = link.destination {
+                    destinations.append(destination)
+                }
+            }
+            mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> () {
+                if let destination = symbolLink.destination {
+                    destinations.append(destination)
+                }
+            }
+        }
+        
+        // Verify that the links are resolved in the in-memory model
+        
+        var linkAggregator = LinkAggregator()
+        let list = try XCTUnwrap((entity.semantic as? Article)?.discussion?.content.first as? UnorderedList)
+        linkAggregator.visit(list)
+        
+        XCTAssertEqual(linkAggregator.destinations, [
+            "doc://unit-test/documentation/ModuleName#One",
+            "doc://unit-test/documentation/ModuleName#Two",
+            "doc://unit-test/documentation/unit-test/First#Topics",
+            "doc://unit-test/documentation/unit-test/Second#Some-topic-section",
+            "doc://unit-test/documentation/unit-test/Third#Another-topic-section",
+            "doc://unit-test/documentation/unit-test/Third#Another-topic-section",
+        ])
+        
+        // Verify that the links are resolved in the render model.
+        let bundle = try XCTUnwrap(context.registeredBundles.first)
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(entity, at: nil)
+        
+        let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        guard case .unorderedList(let unorderedList) = overviewSection.content.dropFirst().first else {
+            XCTFail("The first element of the Overview section (after the heading) should be an unordered list")
+            return
+        }
+        
+        XCTAssertEqual(unorderedList.items.map(\.content.firstParagraph.first), [
+            .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName#One"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/ModuleName#Two"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/First#Topics"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/Second#Some-topic-section"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/Third#Another-topic-section"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            .reference(identifier: RenderReferenceIdentifier("doc://unit-test/documentation/unit-test/Third#Another-topic-section"), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+        ])
+    }
+    
     func testWarnOnMultipleMarkdownExtensions() throws {
         let fileContent = """
         # ``MyKit/MyClass/myFunction()``

@@ -1078,7 +1078,7 @@ class PathHierarchyTests: XCTestCase {
         let sideKidModuleID = try tree.find(path: "/SideKit", onlyFindSymbols: true)
         XCTAssertEqual(try tree.findSymbol(path: "UncuratedClass/angle", parent: sideKidModuleID).identifier.precise, "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp")
         try assertFindsPath("/SideKit/SideClass/Element", in: tree, asSymbolID: "s:7SideKit0A5ClassC7Elementa")
-        try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTESIZED::inheritedFF")
+        try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTHESIZED::inheritedFF")
         
         // Test disfavoring a default implementation in a symbol collision
         try assertFindsPath("/SideKit/SideProtocol/func()", in: tree, asSymbolID: "s:5MyKit0A5MyProtocol0Afunc()")
@@ -1111,6 +1111,14 @@ class PathHierarchyTests: XCTestCase {
         let articleID = try tree.find(path: "/Test-Bundle/Default-Code-Listing-Syntax", onlyFindSymbols: false)
         XCTAssertNil(tree.lookup[articleID]!.symbol)
         XCTAssertEqual(tree.lookup[articleID]!.name, "Default-Code-Listing-Syntax")
+        
+        let modulePageTaskGroupID = try tree.find(path: "/MyKit#Extensions-to-other-frameworks", onlyFindSymbols: false)
+        XCTAssertNil(tree.lookup[modulePageTaskGroupID]!.symbol)
+        XCTAssertEqual(tree.lookup[modulePageTaskGroupID]!.name, "Extensions-to-other-frameworks")
+        
+        let symbolPageTaskGroupID = try tree.find(path: "/MyKit/MyProtocol#Task-Group-Exercising-Symbol-Links", onlyFindSymbols: false)
+        XCTAssertNil(tree.lookup[symbolPageTaskGroupID]!.symbol)
+        XCTAssertEqual(tree.lookup[symbolPageTaskGroupID]!.name, "Task-Group-Exercising-Symbol-Links")
     }
     
     func testMixedLanguageFramework() throws {
@@ -1620,6 +1628,30 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    func testGeometricalShapes() throws {
+        let (_, context) = try testBundleAndContext(named: "GeometricalShapes")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths().values.sorted()
+        XCTAssertEqual(paths, [
+            "/GeometricalShapes",
+            "/GeometricalShapes/Circle",
+            "/GeometricalShapes/Circle/center",
+            "/GeometricalShapes/Circle/debugDescription",
+            "/GeometricalShapes/Circle/defaultRadius",
+            "/GeometricalShapes/Circle/init()",
+            "/GeometricalShapes/Circle/init(center:radius:)",
+            "/GeometricalShapes/Circle/init(string:)",
+            "/GeometricalShapes/Circle/intersects(_:)",
+            "/GeometricalShapes/Circle/isEmpty",
+            "/GeometricalShapes/Circle/isNull",
+            "/GeometricalShapes/Circle/null",
+            "/GeometricalShapes/Circle/radius",
+            "/GeometricalShapes/Circle/zero",
+            "/GeometricalShapes/TLACircleMake",
+        ])
+    }
+    
     func testPartialSymbolGraphPaths() throws {
         let symbolPaths = [
             ["A", "B", "C"],
@@ -1771,6 +1803,103 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[otherID], "/ModuleName/ContainerName-2vaqf")
         XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName-qwwf")
         XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName-qwwf/MemberName1")
+    }
+    
+    func testLinkToTopicSection() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName",
+                symbols: [
+                    ("some-symbol-id", .swift, ["SymbolName"]),
+                ],
+                relationships: []
+            )),
+            
+            TextFile(name: "ModuleName.md", utf8Content: """
+            # ``ModuleName``
+            
+            A module with some named topic sections
+            
+            ## Other level 2 heading
+            
+            Some content
+            
+            ### Other level 3 heading
+            
+            Some more content
+            
+            ## Topics
+            
+            ### My classes
+            
+            - ``SymbolName``
+            
+            ### My articles
+            
+            - <doc:Article>
+            """),
+            
+            TextFile(name: "Article.md", utf8Content: """
+            # Some Article
+            
+            An article with a top-level topic section
+            
+            ## Topics
+            
+            - ``SymbolName``
+            """)
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let moduleID = try tree.find(path: "/ModuleName", onlyFindSymbols: true)
+        // Relative link from the module to a topic section
+        do {
+            let topicSectionID = try tree.find(path: "#My-classes", parent: moduleID, onlyFindSymbols: false)
+            let node = try XCTUnwrap(tree.lookup[topicSectionID])
+            XCTAssertNil(node.symbol)
+            XCTAssertEqual(node.name, "My-classes")
+        }
+        
+        // Absolute link to a topic section on the module page
+        do {
+            let topicSectionID = try tree.find(path: "/ModuleName#My-classes", parent: nil, onlyFindSymbols: false)
+            let node = try XCTUnwrap(tree.lookup[topicSectionID])
+            XCTAssertNil(node.symbol)
+            XCTAssertEqual(node.name, "My-classes")
+        }
+        
+        // Absolute link to a heading on the module page
+        do {
+            let headingID = try tree.find(path: "/ModuleName#Other-level-2-heading", parent: nil, onlyFindSymbols: false)
+            let node = try XCTUnwrap(tree.lookup[headingID])
+            XCTAssertNil(node.symbol)
+            XCTAssertEqual(node.name, "Other-level-2-heading")
+        }
+        
+        // Relative link to a heading on the module page
+        do {
+            let headingID = try tree.find(path: "#Other-level-3-heading", parent: moduleID, onlyFindSymbols: false)
+            let node = try XCTUnwrap(tree.lookup[headingID])
+            XCTAssertNil(node.symbol)
+            XCTAssertEqual(node.name, "Other-level-3-heading")
+        }
+        
+        // Relative link to a top-level topic section on another page
+        do {
+            let topicSectionID = try tree.find(path: "Article#Topics", parent: moduleID, onlyFindSymbols: false)
+            let node = try XCTUnwrap(tree.lookup[topicSectionID])
+            XCTAssertNil(node.symbol)
+            XCTAssertEqual(node.name, "Topics")
+        }
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true)
+        XCTAssertEqual(paths.values.sorted(), [
+            "/ModuleName",
+            "/ModuleName/SymbolName",
+        ], "The hierarchy only computes paths for symbols, not for headings or topic sections")
     }
     
     func testModuleAndCollidingTechnologyRootHasPathsForItsSymbols() throws {

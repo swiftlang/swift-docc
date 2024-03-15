@@ -70,6 +70,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         
         // Default system paths
         files["/"] = Self.folderFixtureData
+        files["/tmp"] = Self.folderFixtureData
  
         // Import given folders
         try updateDocumentationBundles(withFolders: folders)
@@ -121,7 +122,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         defer { filesLock.unlock() }
 
         guard let file = files[url.path] else {
-            throw CocoaError.error(.fileReadNoSuchFile)
+            throw makeFileNotFoundError(url)
         }
         return file
     }
@@ -190,7 +191,9 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         
         filesLock.lock()
         defer { filesLock.unlock() }
-
+        
+        try ensureParentDirectoryExists(for: dstURL)
+        
         let srcPath = srcURL.path
         let dstPath = dstURL.path
         
@@ -222,13 +225,12 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        let parent = URL(fileURLWithPath: path).deletingLastPathComponent()
+        let url = URL(fileURLWithPath: path)
+        let parent = url.deletingLastPathComponent()
         if parent.pathComponents.count > 1 {
             // If it's not the root folder, check if parents exist
             if createIntermediates == false {
-                guard files.keys.contains(parent.path) else {
-                    throw CocoaError.error(.fileReadNoSuchFile)
-                }
+                try ensureParentDirectoryExists(for: url)
             } else {
                 // Create missing parent directories
                 try createDirectory(atPath: parent.path, withIntermediateDirectories: true)
@@ -266,16 +268,14 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         }
     }
     
-    public func createFile(at: URL, contents: Data) throws {
+    public func createFile(at url: URL, contents: Data) throws {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        guard files.keys.contains(at.deletingLastPathComponent().path) else {
-            throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSFilePathErrorKey: at.path])
-        }
+        try ensureParentDirectoryExists(for: url)
         
         if !disableWriting {
-            files[at.path] = contents
+            files[url.path] = contents
         }
     }
     
@@ -376,6 +376,17 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
             allSubpaths.append(contentsOf: innerContents.map({ "\(subpath)/\($0)" }))
         }
         return allSubpaths
+    }
+    
+    private func ensureParentDirectoryExists(for url: URL) throws {
+        let parentURL = url.deletingLastPathComponent()
+        guard directoryExists(atPath: parentURL.path) else {
+            throw makeFileNotFoundError(parentURL)
+        }
+    }
+    
+    private func makeFileNotFoundError(_ url: URL) -> Error {
+        return CocoaError(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: url.path])
     }
 }
 

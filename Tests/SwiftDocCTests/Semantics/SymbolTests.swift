@@ -150,10 +150,6 @@ class SymbolTests: XCTestCase {
                 """,
             articleContent: """
                 # Leading heading is ignored
-                
-                @Metadata {
-                   @DocumentationExtension(mergeBehavior: append)
-                }
                 """
         )
         XCTAssert(problems.isEmpty)
@@ -571,7 +567,7 @@ class SymbolTests: XCTestCase {
 
             ## Topics
 
-            ### Unresolvable curation
+            ### Curation that won't resolve
 
             - ``UnresolvableClassInMyClassTopicCuration``
             - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -641,7 +637,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -689,7 +685,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -737,7 +733,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -782,7 +778,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -829,7 +825,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -876,7 +872,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -923,7 +919,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``

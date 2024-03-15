@@ -20,7 +20,7 @@ class TestFileSystemTests: XCTestCase {
         XCTAssertTrue(try fs.bundles().isEmpty)
         var isDirectory = ObjCBool(false)
         XCTAssertTrue(fs.fileExists(atPath: "/", isDirectory: &isDirectory))
-        XCTAssertEqual(fs.files.keys.sorted(), ["/"], "The root (/) should be the only existing path.")
+        XCTAssertEqual(fs.files.keys.sorted(), ["/", "/tmp"], "The root (/) should be the only existing path.")
         XCTAssertTrue(isDirectory.boolValue)
         XCTAssertFalse(fs.disableWriting)
     }
@@ -50,9 +50,10 @@ class TestFileSystemTests: XCTestCase {
         XCTAssertEqual(fs.dump(), """
         /
         ├─ additional/
-        ╰─ main/
-           ╰─ nested/
-              ╰─ myfile.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ╰─ myfile.txt
+        ╰─ tmp/
         """)
     }
 
@@ -68,10 +69,11 @@ class TestFileSystemTests: XCTestCase {
         
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ nested/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
 
         return fs
@@ -81,10 +83,11 @@ class TestFileSystemTests: XCTestCase {
         let fs = try makeTestFS()
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ nested/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
         
         XCTAssertEqual(fs.dump(subHierarchyFrom: "/main"), """
@@ -107,11 +110,12 @@ class TestFileSystemTests: XCTestCase {
         try fs.copyItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ├─ myfile1.txt
-           ╰─ nested/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ├─ myfile1.txt
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -124,10 +128,11 @@ class TestFileSystemTests: XCTestCase {
         ├─ copy/
         │  ├─ myfile1.txt
         │  ╰─ myfile2.txt
-        ╰─ main/
-           ╰─ nested/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -138,10 +143,11 @@ class TestFileSystemTests: XCTestCase {
         try fs.moveItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ├─ myfile1.txt
-           ╰─ nested/
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ├─ myfile1.txt
+        │  ╰─ nested/
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -151,10 +157,11 @@ class TestFileSystemTests: XCTestCase {
         try fs.moveItem(at: URL(string: "/main/nested")!, to: URL(string: "/main/new")!)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ new/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ new/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
     
@@ -164,9 +171,10 @@ class TestFileSystemTests: XCTestCase {
         try fs.removeItem(at: URL(string: "/main/nested/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ nested/
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -176,7 +184,8 @@ class TestFileSystemTests: XCTestCase {
         try fs.removeItem(at: URL(string: "/main/nested")!)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
+        ├─ main/
+        ╰─ tmp/
         """)
     }
 
@@ -194,22 +203,24 @@ class TestFileSystemTests: XCTestCase {
         try fs.createDirectory(at: URL(string: "/main/nested/inner")!, withIntermediateDirectories: false)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ nested/
-              ├─ inner/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ inner/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
 
         try fs.createDirectory(at: URL(string: "/main/nested/inner2")!, withIntermediateDirectories: true)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ nested/
-              ├─ inner/
-              ├─ inner2/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ inner/
+        │     ├─ inner2/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
 
         // Test it throws when parent folder is missing
@@ -219,14 +230,15 @@ class TestFileSystemTests: XCTestCase {
         try fs.createDirectory(at: URL(string: "/main/nested/missing/inner4")!, withIntermediateDirectories: true)
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ main/
-           ╰─ nested/
-              ├─ inner/
-              ├─ inner2/
-              ├─ missing/
-              │  ╰─ inner4/
-              ├─ myfile1.txt
-              ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ inner/
+        │     ├─ inner2/
+        │     ├─ missing/
+        │     │  ╰─ inner4/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
     
@@ -238,12 +250,13 @@ class TestFileSystemTests: XCTestCase {
         
         XCTAssertEqual(fs.dump(), """
         /
-        ╰─ one/
-           ╰─ two/
-              ╰─ three/
-                 ╰─ four/
-                    ╰─ five/
-                       ╰─ six/
+        ├─ one/
+        │  ╰─ two/
+        │     ╰─ three/
+        │        ╰─ four/
+        │           ╰─ five/
+        │              ╰─ six/
+        ╰─ tmp/
         """)
     }
     

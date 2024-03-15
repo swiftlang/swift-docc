@@ -192,6 +192,12 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         do {
             class TestFallbackResolver: ConvertServiceFallbackResolver {
+                init(bundleIdentifier: String) {
+                    resolver.bundleIdentifier = bundleIdentifier
+                }
+                var bundleIdentifier: String {
+                    resolver.bundleIdentifier
+                }
                 private var resolver = TestExternalReferenceResolver()
                 func resolve(_ reference: SwiftDocC.TopicReference) -> TopicReferenceResolutionResult {
                     TestExternalReferenceResolver().resolve(reference)
@@ -205,7 +211,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             }
             
             context.externalDocumentationSources = [:]
-            context.convertServiceFallbackResolver = TestFallbackResolver()
+            context.convertServiceFallbackResolver = TestFallbackResolver(bundleIdentifier: "org.swift.docc.example")
             
             guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("The reference was unexpectedly unresolved.")
@@ -998,7 +1004,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             # Article
             
             @DeprecationSummary {
-              Use <doc://com.external.testbundle/something> instead.
+              Use <doc://com.external.testbundle/something-else> instead.
             }
             
             Link to external content in an article deprecation message.

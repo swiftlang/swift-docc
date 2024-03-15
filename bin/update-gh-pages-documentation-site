@@ -76,6 +76,9 @@ swift package \
 
 echo -e "\033[34;1m Merging docs \033q[0m"
 
+# Remove the output directory so that the merge command can output there
+rm -rf "$SWIFT_DOCC_ROOT/gh-pages/docs"
+
 # Merge the SwiftDocCUtilities docs into the primary SwiftDocC docs
 swift run docc merge \
     "$DOCC_OUTPUT_DIR" \

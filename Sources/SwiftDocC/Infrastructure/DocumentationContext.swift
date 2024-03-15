@@ -117,6 +117,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     var dataProvider: DocumentationContextDataProvider
     
     /// The graph of all the documentation content and their relationships to each other.
+    ///
+    /// > Important: The topic graph has no awareness of source language specific edges.
     var topicGraph = TopicGraph()
     
     /// User-provided global options for this documentation conversion.
@@ -2325,7 +2327,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
                   let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
                   // Check that the node hasn't got any parents from manual curation
-                  topicGraph.reverseEdges[reference] == nil
+                  !topicGraphNode.isManuallyCurated
             else { return }
             topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
             automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
@@ -2435,6 +2437,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 of: reference,
                 relateNodes: {
                     self.topicGraph.unsafelyAddEdge(source: $0, target: $1)
+                    self.topicGraph.nodes[$1]?.isManuallyCurated = true
                 }
             )
         }
@@ -2621,6 +2624,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     // MARK: - Relationship queries
     
     /// Fetch the child nodes of a documentation node with the given `reference`, optionally filtering to only children of the given `kind`.
+    ///
+    /// > Important: The returned list can't be used to determine source language specific children.
     ///
     /// - Parameters:
     ///   - reference: The reference of the node to fetch children for.

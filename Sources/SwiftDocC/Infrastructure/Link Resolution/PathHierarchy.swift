@@ -68,11 +68,15 @@ struct PathHierarchy {
         var allNodes: [String: [Node]] = [:]
         
         let symbolGraphs = loader.symbolGraphs
-            .sorted(by: { lhs, _ in
-                return !lhs.key.lastPathComponent.contains("@")
+            .map { url, graph in
+                // Only compute the source language for each symbol graph once.
+                (url: url, graph: graph, language: graph.symbols.values.mapFirst(where: { SourceLanguage(id: $0.identifier.interfaceLanguage) }))
+            }
+            .sorted(by: { lhs, rhs in
+                return !lhs.url.lastPathComponent.contains("@")
             })
         
-        for (url, graph) in symbolGraphs {
+        for (url, graph, language) in symbolGraphs {
             let moduleName = graph.module.name
             let moduleNode: Node
             
@@ -84,11 +88,11 @@ struct PathHierarchy {
             } else if let existingModuleNode = roots[moduleName] {
                 moduleNode = existingModuleNode
             } else {
-                let moduleIdentifierLanguage = graph.symbols.values.first?.identifier.interfaceLanguage ?? SourceLanguage.swift.id
+                let moduleIdentifierLanguage = language ?? .swift
                 let moduleSymbol = SymbolGraph.Symbol(
-                    identifier: .init(precise: moduleName, interfaceLanguage: moduleIdentifierLanguage),
+                    identifier: .init(precise: moduleName, interfaceLanguage: moduleIdentifierLanguage.id),
                     names: SymbolGraph.Symbol.Names(title: moduleName, navigator: nil, subHeading: nil, prose: nil),
-                    pathComponents: [moduleName],
+                    pathComponents: [], // Other symbols don't include the module name in their path components.
                     docComment: nil,
                     accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
                     kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
@@ -98,24 +102,37 @@ struct PathHierarchy {
                 moduleNode = newModuleNode
                 allNodes[moduleName] = [moduleNode]
             }
+            if let language = language {
+                moduleNode.languages.insert(language)
+            }
             
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
                 if let existingNode = allNodes[id]?.first(where: {
-                    // If both identifiers are in the same language, they are the same symbol
+                    // If both identifiers are in the same language, they are the same symbol.
                     $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
-                    // Otherwise, if both have the same name and kind their differences doesn't matter for link resolution purposes
-                    || ($0.name == symbol.pathComponents.last && $0.symbol!.kind.identifier == symbol.kind.identifier)
+                    // If both have the same path components and kind, their differences don't matter for link resolution purposes.
+                    || ($0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier)
                 }) {
                     nodes[id] = existingNode
+                    existingNode.languages.insert(language!) // If we have symbols in this graph we have a language as well
                 } else {
                     assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
-                    node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
+                    if symbol.identifier.precise.contains("::SYNTHESIZED::") {
+                        node.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
+                    }
                     nodes[id] = node
+                    
+                    if let existing = allNodes[id] {
+                        node.counterpart = existing.first
+                        for other in existing {
+                            other.counterpart = node
+                        }
+                    }
                     allNodes[id, default: []].append(node)
                 }
             }
@@ -124,7 +141,7 @@ struct PathHierarchy {
                 // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
                 // individual overload symbols in favor of resolving links to their overload group
                 // symbol.
-                nodes[relationship.source]?.isDisfavoredInCollision = true
+                nodes[relationship.source]?.specialBehaviors.insert(.disfavorInLinkCollision)
             }
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
@@ -161,7 +178,7 @@ struct PathHierarchy {
                 }
                 // Default implementations collide with the protocol requirement that they implement.
                 // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
-                sourceNode.isDisfavoredInCollision = true
+                sourceNode.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
                 
                 guard sourceNode.parent == nil else {
                     // This node already has a direct member-of parent. No need to go via the default-implementation-of relationship to find its location in the hierarchy.
@@ -199,6 +216,9 @@ struct PathHierarchy {
                 var parent = moduleNode
                 var components = { (symbol: SymbolGraph.Symbol) -> [String] in
                     let original = symbol.pathComponents
+                    // The `ConvertService` may pass a lookup of "known disambiguated path components" per symbol that the path hierarchy
+                    // wouldn't be able to compute itself because the "partial" symbol graph doesn't contain all the symbols to accurately
+                    // determine the minimal required disambiguation per path.
                     if let disambiguated = knownDisambiguatedPathComponents?[node.symbol!.identifier.precise], disambiguated.count == original.count {
                         return disambiguated
                     } else {
@@ -214,9 +234,19 @@ struct PathHierarchy {
                         parent.children[components.first!] == nil,
                         "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
                     )
+                    guard knownDisambiguatedPathComponents != nil else {
+                        // If the path hierarchy wasn't passed any "known disambiguated path components" then the sparse/placeholder nodes won't contain any disambiguation.
+                        let nodeWithoutSymbol = Node(name: component)
+                        nodeWithoutSymbol.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
+                        parent.add(child: nodeWithoutSymbol, kind: nil, hash: nil)
+                        parent = nodeWithoutSymbol
+                        continue
+                    }
+                    // If the path hierarchy was passed a lookup of "known disambiguation" path components", then it's possible that each path component could contain disambiguation that needs to be parsed.
                     let component = PathParser.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: String(component.name))
-                    nodeWithoutSymbol.isDisfavoredInCollision = true
+                    nodeWithoutSymbol.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
+                    // Create a spare/placeholder node with the parsed disambiguation for this path component.
                     switch component.disambiguation {
                     case .kindAndHash(kind: let kind, hash: let hash):
                         parent.add(child: nodeWithoutSymbol, kind: kind.map(String.init), hash: hash.map(String.init))
@@ -259,24 +289,22 @@ struct PathHierarchy {
                 node.identifier = ResolvedIdentifier()
                 lookup[node.identifier] = node
             }
-            for tree in node.children.values {
-                for (_, subtree) in tree.storage {
-                    for (_, childNode) in subtree {
-                        assert(childNode.parent === node, {
-                            func describe(_ node: Node?) -> String {
-                                guard let node = node else { return "<nil>" }
-                                guard let identifier = node.symbol?.identifier else { return node.name }
-                                return "\(identifier.precise) (\(identifier.interfaceLanguage))"
-                            }
-                            return """
+            for container in node.children.values {
+                for element in container.storage {
+                    assert(element.node.parent === node, {
+                        func describe(_ node: Node?) -> String {
+                            guard let node = node else { return "<nil>" }
+                            guard let identifier = node.symbol?.identifier else { return node.name }
+                            return "\(identifier.precise) (\(identifier.interfaceLanguage))"
+                        }
+                        return """
                             Every child node should point back to its parent so that the tree can be traversed both up and down without any dead-ends. \
-                            This wasn't true for '\(describe(childNode))' which pointed to '\(describe(childNode.parent))' but should have pointed to '\(describe(node))'.
+                            This wasn't true for '\(describe(element.node))' which pointed to '\(describe(element.node.parent))' but should have pointed to '\(describe(node))'.
                             """ }()
-                        )
-                        // In release builds we close off any dead-ends in the tree as a precaution for what shouldn't happen.
-                        childNode.parent = node
-                        descend(childNode)
-                    }
+                    )
+                    // In release builds we close off any dead-ends in the tree as a precaution for what shouldn't happen.
+                    element.node.parent = node
+                    descend(element.node)
                 }
             }
         }
@@ -398,21 +426,37 @@ extension PathHierarchy {
         fileprivate(set) unowned var parent: Node?
         /// The symbol, if a node has one.
         fileprivate(set) var symbol: SymbolGraph.Symbol?
+        /// The languages where this node's symbol is represented.
+        fileprivate(set) var languages: Set<SourceLanguage> = []
+        /// The other language representation of this symbol.
+        ///
+        /// > Note: Swift currently only supports one other language representation (either Objective-C or C++ but not both).
+        fileprivate(set) unowned var counterpart: Node?
         
-        /// If the path hierarchy should disfavor this node in a link collision.
-        ///
-        /// By default, nodes are not disfavored.
-        ///
-        /// If a favored node collides with a disfavored node the link will resolve to the favored node without
-        /// requiring any disambiguation. Referencing the disfavored node requires disambiguation.
-        var isDisfavoredInCollision: Bool
+        /// A set of non-standard behaviors that apply to this node.
+        fileprivate(set) var specialBehaviors: SpecialBehaviors
+        
+        /// Options that specify non-standard behaviors of a node.
+        struct SpecialBehaviors: OptionSet {
+            let rawValue: Int
+            
+            /// This node is disfavored in the the case of a link collision.
+            ///
+            /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
+            /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
+            static let disfavorInLinkCollision = SpecialBehaviors(rawValue: 1 << 0)
+            
+            /// This node is excluded from automatic curation.
+            static let excludeFromAutomaticCuration = SpecialBehaviors(rawValue: 1 << 1)
+        }
         
         /// Initializes a symbol node.
         fileprivate init(symbol: SymbolGraph.Symbol!, name: String) {
             self.symbol = symbol
             self.name = name
             self.children = [:]
-            self.isDisfavoredInCollision = false
+            self.specialBehaviors = []
+            self.languages = [SourceLanguage(id: symbol.identifier.interfaceLanguage)]
         }
         
         /// Initializes a non-symbol node with a given name.
@@ -420,7 +464,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
-            self.isDisfavoredInCollision = false
+            self.specialBehaviors = []
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
@@ -444,7 +488,7 @@ extension PathHierarchy {
             }
             // If the name was passed explicitly, then the node could have spaces in its name
             child.parent = self
-            children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
+            children[child.name, default: .init()].add(child, kind: kind, hash: hash)
             
             assert(child.parent === self, "Potentially merging nodes shouldn't break the child node's reference to its parent.")
         }
@@ -455,11 +499,13 @@ extension PathHierarchy {
             self.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in self.children {
-                for subtree in tree.storage.values {
-                    for node in subtree.values {
-                        node.parent = self
-                    }
+                for element in tree.storage {
+                    element.node.parent = self
                 }
+            }
+            
+            if let otherSymbol = other.symbol {
+                languages.insert(SourceLanguage(id: otherSymbol.identifier.interfaceLanguage))
             }
         }
     }
@@ -474,10 +520,8 @@ extension PathHierarchy {
         // Roots represent modules and only have direct symbol descendants.
         for root in modules {
             for (_, tree) in root.children {
-                for subtree in tree.storage.values {
-                    for node in subtree.values where node.symbol != nil {
-                        result.insert(node.identifier)
-                    }
+                for element in tree.storage where element.node.symbol != nil {
+                    result.insert(element.node.identifier)
                 }
             }
         }
@@ -505,46 +549,74 @@ extension PathHierarchy {
 // MARK: Disambiguation container
 
 extension PathHierarchy {
-    /// A fixed-depth tree that stores disambiguation information and finds values based on partial disambiguation.
+    /// A container that stores values and their disambiguation information and find values based on partial disambiguation.
     struct DisambiguationContainer {
-        // Each disambiguation tree is fixed at two levels and stores a limited number of values.
-        // In practice, almost all trees store either 1, 2, or 3 elements with 1 being the most common.
+        // Each disambiguation container stores its elements in a flat list, which is very short in practice.
+        //
+        // Almost all containers store either 1, 2, or 3 elements with 1 being the most common case.
         // It's very rare to have more than 10 values and 20+ values is extremely rare.
         //
-        // Given this expected amount of data, a nested dictionary implementation performs well.
-        private(set) var storage: [String: [String: PathHierarchy.Node]] = [:]
+        // Given this expected amount of data, linear searches through an array performs well.
+        //
+        // Even though the container only stores one element per unique hash and kind pair, using a `Set` wouldn't
+        // help since any colliding elements need to be merged.
+        private(set) var storage = ContiguousArray<Element>()
     }
 }
 
 extension PathHierarchy.DisambiguationContainer {
+    struct Element {
+        let node: PathHierarchy.Node
+        let kind: String?
+        let hash: String?
+        
+        func matches(kind: String?, hash: String?) -> Bool {
+            // The 'hash' is more unique than the 'kind', so compare the 'hash' first.
+            self.hash == hash && self.kind == kind
+        }
+        /// Placeholder values, also called "unfindable elements" or "sparse nodes", are created when constructing a path hierarchy for a "partial" symbol graph file.
+        ///
+        /// When the `ConvertService` builds documentation for a single symbol with multiple path components, the path hierarchy fills in placeholder nodes
+        /// for the other path components. This ensures that the nodes in the hierarchy are connected and that there's the same number of nodes—with the same
+        /// names—between the module node and the non-placeholder node as there would be in the full symbol graph.
+        ///
+        /// The placeholder nodes can be traversed up and down while resolving a link—to reach a non-placeholder node—but the link will be considered "not found"
+        /// if it ends at a placeholder node.
+        var isPlaceholderValue: Bool {
+            // Only symbols have 'hash' disambiguation, so check the 'kind' first.
+            kind == nil && hash == nil
+        }
+    }
+    
     /// Add a new value to the tree for a given pair of kind and hash disambiguations.
     /// - Parameters:
+    ///   - value: The new value
     ///   - kind: The kind disambiguation for this value.
     ///   - hash: The hash disambiguation for this value.
-    ///   - value: The new value
     /// - Returns: If a value already exist with the same pair of kind and hash disambiguations.
-    mutating func add(_ kind: String, _ hash: String, _ value: PathHierarchy.Node) {
-        if let existing = storage[kind]?[hash] {
-            existing.merge(with: value)
-        } else if storage.count == 1, let existing = storage["_"]?["_"] {
-            // It is possible for articles and other non-symbols to collide with unfindable symbol placeholder nodes.
+    mutating func add(_ value: PathHierarchy.Node, kind: String?, hash: String?) {
+        // When adding new elements to the container, it's sufficient to check if the hash and kind match.
+        if let existing = storage.first(where: { $0.matches(kind: kind, hash: hash) }) {
+            // If the container already has a version of this node, merge the new value with the existing value.
+            existing.node.merge(with: value)
+        } else if storage.count == 1, storage.first!.isPlaceholderValue {
+            // It is possible for articles and other non-symbols to collide with "unfindable" symbol placeholder nodes.
             // When this happens, remove the placeholder node and move its children to the real (non-symbol) node.
-            value.merge(with: existing)
-            storage = [kind: [hash: value]]
+            let existing = storage.removeFirst()
+            value.merge(with: existing.node)
+            storage = [Element(node: value, kind: kind, hash: hash)]
         } else {
-            storage[kind, default: [:]][hash] = value
+            storage.append(Element(node: value, kind: kind, hash: hash))
         }
     }
     
     /// Combines the data from this tree with another tree to form a new, merged disambiguation tree.
     func merge(with other: Self) -> Self {
-        return .init(storage: self.storage.merging(other.storage, uniquingKeysWith: { lhs, rhs in
-            lhs.merging(rhs, uniquingKeysWith: {
-                lhsValue, rhsValue in
-                assert(lhsValue.symbol!.identifier.precise == rhsValue.symbol!.identifier.precise)
-                return lhsValue
-            })
-        }))
+        var newStorage = storage
+        for element in other.storage where !storage.contains(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
+            newStorage.append(element)
+        }
+        return .init(storage: newStorage)
     }
 }
 
@@ -595,7 +667,7 @@ extension PathHierarchy {
             } else {
                 node = Node(name: fileNode.name)
             }
-            node.isDisfavoredInCollision = fileNode.isDisfavoredInCollision
+            node.specialBehaviors = .init(rawValue: fileNode.rawSpecialBehavior)
             node.identifier = identifiers[index]
             lookup[node.identifier] = node
         }
