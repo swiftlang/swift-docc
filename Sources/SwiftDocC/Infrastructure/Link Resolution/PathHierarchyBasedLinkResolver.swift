@@ -56,7 +56,7 @@ final class PathHierarchyBasedLinkResolver {
             observe(reference, parentReference)
         }
     }
-    
+
     /// Returns the direct descendants of the given page that match the given source language filter.
     ///
     /// A descendant is included if it has a language representation in at least one of the languages in the given language filter or if the language filter is empty.
@@ -92,14 +92,7 @@ final class PathHierarchyBasedLinkResolver {
         }
         return results
     }
-    
-    /// Traverse all symbols of the same kind that have collisions.
-    func traverseOverloadedSymbols(_ observe: (_ overloadedSymbols: [ResolvedTopicReference]) throws -> Void) rethrows {
-        try pathHierarchy.traverseOverloadedSymbolGroups() { overloadedSymbols in
-            try observe(overloadedSymbols.map { resolvedReferenceMap[$0]! })
-        }
-    }
-    
+
     /// Returns a list of all the top level symbols.
     func topLevelSymbols() -> [ResolvedTopicReference] {
         return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }

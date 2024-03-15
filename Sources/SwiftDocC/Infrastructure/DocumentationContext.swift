@@ -1156,6 +1156,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
+                        var overloadGroups = [String: [String]]()
+
                         for relationship in relationships {
                             // Check for an origin key.
                             if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
@@ -1169,8 +1171,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                     localCache: documentationCache,
                                     moduleName: moduleName
                                 )
+                            } else if relationship.kind == .overloadOf {
+                                // An 'overloadOf' relationship points from symbol -> group
+                                overloadGroups[relationship.target, default: []].append(relationship.source)
                             }
                         }
+
+                        addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
                     
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1285,8 +1292,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
-
-            try groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -2330,33 +2335,77 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    /// Handles overloaded symbols by grouping them together into one page.
-    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) throws {
+    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         
-        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+        for (overloadGroupID, overloadSymbolIDs) in overloadGroups {
+            guard overloadSymbolIDs.count > 1 else {
+                assertionFailure("Overload group \(overloadGroupID) contained \(overloadSymbolIDs.count) symbols, but should have more than one symbol to be valid.")
+                continue
+            }
+            guard let overloadGroupNode = documentationCache[overloadGroupID] else {
+                preconditionFailure("Overload group \(overloadGroupID) doesn't have a local entity")
+            }
 
-            // Tell each symbol what other symbols overload it.
-            for (index, symbolReference) in overloadedSymbolReferences.indexed() {
-                let documentationNode = try entity(with: symbolReference)
+            var overloadSymbolNodes = overloadSymbolIDs.map {
+                guard let node = documentationCache[$0] else {
+                    preconditionFailure("Overloaded symbol \($0) doesn't have a local entity")
+                }
+                return node
+            }
+            if overloadSymbolNodes.allSatisfy({ node in
+                (node.semantic as? Symbol)?.overloadsVariants.firstValue != nil
+            }) {
+                // If SymbolKit saved its sort of the symbols, use that ordering here
+                overloadSymbolNodes.sort(by: { lhs, rhs in
+                    let lhsIndex = (lhs.semantic as! Symbol).overloadsVariants.firstValue!.displayIndex
+                    let rhsIndex = (rhs.semantic as! Symbol).overloadsVariants.firstValue!.displayIndex
+                    return lhsIndex < rhsIndex
+                })
+            } else {
+                assertionFailure("""
+                    Overload group \(overloadGroupNode.reference.absoluteString.singleQuoted) was not properly initialized with overload data from SymbolKit.
+                    Symbols without overload data: \(Array(overloadSymbolNodes.filter({ ($0.semantic as? Symbol)?.overloadsVariants.firstValue == nil }).map(\.reference.absoluteString.singleQuoted)))
+                    """)
+                return
+            }
 
+            func addOverloadReferences(
+                to documentationNode: DocumentationNode,
+                at index: Int,
+                overloadSymbolReferences: [DocumentationNode]
+            ) {
                 guard let symbol = documentationNode.semantic as? Symbol else {
                     preconditionFailure("""
-                    Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
-                    Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
+                    Only symbols can be overloads. Found non-symbol overload for \(documentationNode.reference.absoluteString.singleQuoted).
+                    Non-symbols should already have been filtered out by SymbolKit.
                     """)
                 }
-                guard symbolReference.sourceLanguage == .swift else {
-                    assertionFailure("Overload groups is only supported for Swift symbols.")
-                    continue
+                guard documentationNode.reference.sourceLanguage == .swift else {
+                    assertionFailure("""
+                    Overload groups are only supported for Swift symbols.
+                    The symbol at \(documentationNode.reference.absoluteString.singleQuoted) is listed as \(documentationNode.reference.sourceLanguage.name).
+                    """)
+                    return
                 }
 
-                var otherOverloadedSymbolReferences = overloadedSymbolReferences
+                var otherOverloadedSymbolReferences = overloadSymbolReferences.map(\.reference)
                 otherOverloadedSymbolReferences.remove(at: index)
-                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                let displayIndex = symbol.overloadsVariants.firstValue?.displayIndex ?? index
+                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: displayIndex)
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
+            }
+
+            // The overload group node itself is a clone of the first symbol, so the code above can
+            // swap out the first element in the overload references to create the alternate
+            // declarations section properly. However, it is also a distinct symbol, node, and page,
+            // so the first overload itself should also be handled separately in the loop below.
+            addOverloadReferences(to: overloadGroupNode, at: 0, overloadSymbolReferences: overloadSymbolNodes)
+
+            for (index, node) in overloadSymbolNodes.indexed() {
+                addOverloadReferences(to: node, at: index, overloadSymbolReferences: overloadSymbolNodes)
             }
         }
     }

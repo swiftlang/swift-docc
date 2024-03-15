@@ -136,7 +136,14 @@ struct PathHierarchy {
                     allNodes[id, default: []].append(node)
                 }
             }
-            
+
+            for relationship in graph.relationships where relationship.kind == .overloadOf {
+                // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
+                // individual overload symbols in favor of resolving links to their overload group
+                // symbol.
+                nodes[relationship.source]?.specialBehaviors.insert(.disfavorInLinkCollision)
+            }
+
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
             var topLevelCandidates = nodes.filter { _, node in node.parent == nil }
             for relationship in graph.relationships where relationship.kind.formsHierarchy {
@@ -192,7 +199,7 @@ struct PathHierarchy {
                 }
                 topLevelCandidates.removeValue(forKey: relationship.source)
             }
-            
+
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
                 moduleNode.add(symbolChild: topLevelNode)
@@ -519,23 +526,6 @@ extension PathHierarchy {
             }
         }
         return Array(result) + modules.map { $0.identifier }
-    }
-
-    func traverseOverloadedSymbolGroups(observe: (_ overloadedSymbols: [ResolvedIdentifier]) throws -> Void) rethrows {
-        for node in lookup.values where node.symbol != nil {
-            for disambiguation in node.children.values {
-                var overloadGroups = [SymbolGraph.Symbol.KindIdentifier: [ResolvedIdentifier]]()
-                for element in disambiguation.storage {
-                    guard let kind = element.node.symbol?.kind.identifier, kind.isOverloadableKind else {
-                        continue
-                    }
-                    overloadGroups[kind, default: []].append(element.node.identifier)
-                }
-                for overloads in overloadGroups.values where overloads.count > 1 {
-                    try observe(overloads)
-                }
-            }
-        }
     }
 }
 
