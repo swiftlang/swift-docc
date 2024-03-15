@@ -1175,7 +1175,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             }
                         }
 
-                        try addOverloadGroupReferences(overloadGroups: overloadGroups)
+                        addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
                     
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -2333,7 +2333,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) throws {
+    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
@@ -2374,7 +2374,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 to documentationNode: DocumentationNode,
                 at index: Int,
                 overloadSymbolReferences: [DocumentationNode]
-            ) throws {
+            ) {
                 guard let symbol = documentationNode.semantic as? Symbol else {
                     preconditionFailure("""
                     Only symbols can be overloads. Found non-symbol overload for \(documentationNode.reference.absoluteString.singleQuoted).
@@ -2405,10 +2405,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // swap out the first element in the overload references to create the alternate
             // declarations section properly. However, it is also a distinct symbol, node, and page,
             // so the first overload itself should also be handled separately in the loop below.
-            try addOverloadReferences(to: overloadGroupNode, at: 0, overloadSymbolReferences: overloadSymbolNodes)
+            addOverloadReferences(to: overloadGroupNode, at: 0, overloadSymbolReferences: overloadSymbolNodes)
 
             for (index, node) in overloadSymbolNodes.indexed() {
-                try addOverloadReferences(to: node, at: index, overloadSymbolReferences: overloadSymbolNodes)
+                addOverloadReferences(to: node, at: index, overloadSymbolReferences: overloadSymbolNodes)
             }
         }
     }
