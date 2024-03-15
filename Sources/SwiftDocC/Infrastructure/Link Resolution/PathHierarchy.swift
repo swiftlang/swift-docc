@@ -110,9 +110,9 @@ struct PathHierarchy {
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
                 if let existingNode = allNodes[id]?.first(where: {
-                    // If both identifiers are in the same language, they are the same symbol
+                    // If both identifiers are in the same language, they are the same symbol.
                     $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
-                    // Otherwise, if both have the same path components and kind their differences doesn't matter for link resolution purposes
+                    // If both have the same path components and kind, their differences don't matter for link resolution purposes.
                     || ($0.symbol!.pathComponents == symbol.pathComponents && $0.symbol!.kind.identifier == symbol.kind.identifier)
                 }) {
                     nodes[id] = existingNode
