@@ -152,7 +152,7 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent<MarkupCollection: Sequence>(from markup: MarkupCollection, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [MarkupLayout] where MarkupCollection.Element == Markup {
+    static func topLevelContent(from markup: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [MarkupLayout] {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,

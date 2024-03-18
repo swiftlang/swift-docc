@@ -16,7 +16,7 @@ import Foundation
 enum NearMiss {
     
     /// Returns the "best matches" among a list of possibilities based on how "similar" they are to a given string.
-    static func bestMatches<Possibilities: Sequence>(for possibilities: Possibilities, against authored: String) -> [String] where Possibilities.Element == String {
+    static func bestMatches(for possibilities: some Sequence<String>, against authored: String) -> [String] {
         // There is no single right or wrong way to score changes. This implementation is completely arbitrary.
         // It's chosen because the relative scores that it computes provide "best match" results that are close
         // to what a person would expect. See ``NearMissTests``.

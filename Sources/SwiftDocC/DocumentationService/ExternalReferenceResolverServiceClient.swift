@@ -35,7 +35,7 @@ class ExternalReferenceResolverServiceClient {
         self.convertRequestIdentifier = convertRequestIdentifier
     }
     
-    func sendAndWait<Request: Codable>(_ request: Request) throws -> Data {
+    func sendAndWait(_ request: some Codable) throws -> Data {
         let resultGroup = DispatchGroup()
         
         var result: Result<Data?, Error>?

@@ -178,8 +178,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         return bundles.sorted(by: \.identifier)
     }
     
-    mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
-        outputConsumer: OutputConsumer
+    mutating public func convert(
+        outputConsumer: some ConvertOutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
         defer {
             diagnosticEngine.flush()

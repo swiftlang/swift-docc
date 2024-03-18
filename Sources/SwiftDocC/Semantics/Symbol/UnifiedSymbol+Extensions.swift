@@ -17,9 +17,9 @@ extension UnifiedSymbolGraph.Symbol {
         return defaultSelector(in: mainGraphSelectors) ?? defaultSelector(in: pathComponents.keys)
     }
     
-    private func defaultSelector<Selectors: Sequence>(
-        in selectors: Selectors
-    ) -> UnifiedSymbolGraph.Selector? where Selectors.Element == UnifiedSymbolGraph.Selector {
+    private func defaultSelector(
+        in selectors: some Sequence<UnifiedSymbolGraph.Selector>
+    ) -> UnifiedSymbolGraph.Selector? {
         // Return the default selector based on the ordering defined below.
         return selectors.sorted { lhsSelector, rhsSelector in
             switch (lhsSelector.interfaceLanguage, rhsSelector.interfaceLanguage) {

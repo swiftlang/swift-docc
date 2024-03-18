@@ -132,10 +132,10 @@ public struct SymbolReference {
     /// - Parameters:
     ///   - pathComponents: The relative path components from the module or framework to the symbol.
     ///   - interfaceLanguages: The source languages of the symbol.
-    public init<SourceLanguages: Collection>(
+    public init(
         pathComponents: [String],
-        interfaceLanguages: SourceLanguages
-    ) where SourceLanguages.Element == SourceLanguage {
+        interfaceLanguages: some Collection<SourceLanguage>
+    ) {
         self.path = pathComponents.joinedSymbolPathComponents
         self.interfaceLanguages = Set(interfaceLanguages)
     }

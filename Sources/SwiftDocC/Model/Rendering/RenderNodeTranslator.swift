@@ -476,7 +476,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return renderReferences
     }
     
-    private func addReferences<Reference>(_ references: [String: Reference], to node: inout RenderNode) where Reference: RenderReference {
+    private func addReferences(_ references: [String: some RenderReference], to node: inout RenderNode) {
         node.references.merge(references) { _, new in new }
     }
 
@@ -957,7 +957,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return node
     }
     
-    private mutating func contentLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) -> [ContentLayout] where MarkupLayouts.Element == MarkupLayout {
+    private mutating func contentLayouts(_ markupLayouts: some Sequence<MarkupLayout>) -> [ContentLayout] {
         return markupLayouts.map { content in
             switch content {
             case .markup(let markup):

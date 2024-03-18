@@ -104,7 +104,7 @@ public class DocumentationServer: DocumentationServerProtocol {
     /// Encodes the given value.
     ///
     /// The value is encoded in JSON format.
-    func encode<Value: Encodable>(_ value: Value) throws -> Data {
+    func encode(_ value: some Encodable) throws -> Data {
         try encoder.encode(value)
     }
     

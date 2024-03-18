@@ -233,11 +233,11 @@ extension ExtendedTypeFormatTransformation {
     /// Iterates over all `targets` calling the `source` method to obtain a list of symbols that should serve as sources for the target's `docComment`.
     /// If there is more than one symbol containing a `docComment` in the compound list of target and the list returned by `source`, `onConflict` is
     /// called iteratively on the (modified) target and the next source element.
-    private static func attachDocComments<T: MutableCollection>(to targets: inout T,
-                                                                using source: (T.Element) -> [SymbolGraph.Symbol],
-                                                                onConflict resolveConflict: (_ old: T.Element, _ new: SymbolGraph.Symbol)
-                                                 -> SymbolGraph.LineList? = { _, _ in nil })
-    where T.Element == SymbolGraph.Symbol {
+    private static func attachDocComments(
+        to targets: inout some MutableCollection<SymbolGraph.Symbol>,
+        using source: (SymbolGraph.Symbol) -> [SymbolGraph.Symbol],
+        onConflict resolveConflict: (_ old: SymbolGraph.Symbol, _ new: SymbolGraph.Symbol) -> SymbolGraph.LineList? = { _, _ in nil }
+    ) {
         for index in targets.indices {
             var target = targets[index]
             
@@ -258,7 +258,7 @@ extension ExtendedTypeFormatTransformation {
     }
     
     /// Adds the `extendedModule` name from the `swiftExtension` mixin to the beginning of the `pathComponents` array of all `symbols`.
-    private static func prependModuleNameToPathComponents<S: MutableCollection>(_ symbols: inout S, moduleName: String) where S.Element == SymbolGraph.Symbol {
+    private static func prependModuleNameToPathComponents(_ symbols: inout some MutableCollection<SymbolGraph.Symbol>, moduleName: String) {
         for i in symbols.indices {
             let symbol = symbols[i]
             
@@ -344,12 +344,12 @@ extension ExtendedTypeFormatTransformation {
     ///
     /// - Returns: - the created extended type symbols keyed by their precise identifier, along with a bidirectional
     /// mapping between the extended type symbols and the `.extension` symbols
-    private static func synthesizePrimaryExtendedTypeSymbols<RS: Sequence>(using extensionBlockSymbols: [String: SymbolGraph.Symbol],
-                                                                           _ extensionToRelationships: RS)
+    private static func synthesizePrimaryExtendedTypeSymbols(using extensionBlockSymbols: [String: SymbolGraph.Symbol],
+                                                                           _ extensionToRelationships: some Sequence<SymbolGraph.Relationship>)
     -> (extendedTypeSymbols: [String: SymbolGraph.Symbol],
         extensionBlockToExtendedTypeMapping: [String: String],
         extendedTypeToExtensionBlockMapping: [String: [String]])
-    where RS.Element == SymbolGraph.Relationship {
+    {
             
         var extendedTypeSymbols: [String: SymbolGraph.Symbol] = [:]
         var extensionBlockToExtendedTypeMapping: [String: String] = [:]
@@ -510,9 +510,11 @@ extension ExtendedTypeFormatTransformation {
     /// - Parameter anchor: usually either `\.source` or `\.target`
     /// - Parameter relationships: the relationships to redirect
     /// - Parameter keyMap: the mapping of old to new ids
-    private static func redirect<RC: MutableCollection>(_ anchor: WritableKeyPath<SymbolGraph.Relationship, String>,
-                                  of relationships: inout RC,
-                                  using keyMap: [String: String]) where RC.Element == SymbolGraph.Relationship {
+    private static func redirect(
+        _ anchor: WritableKeyPath<SymbolGraph.Relationship, String>,
+        of relationships: inout some MutableCollection<SymbolGraph.Relationship>,
+        using keyMap: [String: String]
+    ) {
         for index in relationships.indices {
             let relationship = relationships[index]
             
@@ -529,8 +531,8 @@ extension ExtendedTypeFormatTransformation {
     /// Creates one symbol of kind ``SymbolKit/SymbolGraph/Symbol/KindIdentifier/extendedModule`` with the given name.
     /// The extended type symbols are connected with the extended module symbol using relationships of kind
     /// ``SymbolKit/SymbolGraph/Relationship/declaredIn``.
-    private static func synthesizeExtendedModuleSymbolAndDeclaredInRelationships<S: Sequence>(on symbolGraph: inout SymbolGraph, using extendedTypeSymbolIds: S, moduleName: String) throws
-    where S.Element == String {
+    private static func synthesizeExtendedModuleSymbolAndDeclaredInRelationships(on symbolGraph: inout SymbolGraph, using extendedTypeSymbolIds: some Sequence<String>, moduleName: String) throws
+    {
         var extendedModuleId: String?
         
         // we sort the symbols here because their order is not guaranteed to stay the same

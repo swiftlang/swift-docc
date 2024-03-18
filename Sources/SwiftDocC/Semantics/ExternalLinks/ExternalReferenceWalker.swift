@@ -159,7 +159,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
         article.deprecationSummary.unwrap { visitMarkupContainer($0) }
     }
 
-    private mutating func visitMarkupLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) where MarkupLayouts.Element == MarkupLayout {
+    private mutating func visitMarkupLayouts(_ markupLayouts: some Sequence<MarkupLayout>) {
         markupLayouts.forEach { content in
             switch content {
             case .markup(let markup): visitMarkupContainer(markup)

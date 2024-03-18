@@ -21,14 +21,14 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze<Children: Sequence>(
+        public func analyze(
             _ directive: BlockDirective,
-            children: Children,
+            children: some Sequence<Markup>,
             source: URL?,
             for bundle: DocumentationBundle,
             in context: DocumentationContext,
             problems: inout [Problem]
-        ) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
+        ) -> ([Child], remainder: MarkupContainer) {
             Semantic.Analyses.extractAtLeastOne(
                 childType: Child.self,
                 parentDirective: directive,
@@ -42,16 +42,16 @@ extension Semantic.Analyses {
         }
     }
     
-    static func extractAtLeastOne<Children: Sequence>(
+    static func extractAtLeastOne(
         childType: DirectiveConvertible.Type,
         parentDirective: BlockDirective,
-        children: Children,
+        children: some Sequence<Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
         in context: DocumentationContext,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
-    ) -> ([DirectiveConvertible], remainder: MarkupContainer) where Children.Element == Markup {
+    ) -> ([DirectiveConvertible], remainder: MarkupContainer) {
         let (matches, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective)

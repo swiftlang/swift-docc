@@ -385,7 +385,7 @@ struct ReferenceResolver: SemanticVisitor {
         )
     }
 
-    private mutating func visitMarkupLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) -> [MarkupLayout] where MarkupLayouts.Element == MarkupLayout {
+    private mutating func visitMarkupLayouts(_ markupLayouts: some Sequence<MarkupLayout>) -> [MarkupLayout] {
         return markupLayouts.map { content in
             switch content {
             case .markup(let markup): return .markup(visitMarkupContainer(markup) as! MarkupContainer)

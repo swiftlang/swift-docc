@@ -446,7 +446,7 @@ extension PathHierarchy.DisambiguationContainer {
 // MARK: Private helper extensions
 
 // Allow optional substrings to be compared to non-optional strings
-private func == <S1: StringProtocol, S2: StringProtocol>(lhs: S1?, rhs: S2) -> Bool {
+private func == (lhs: (some StringProtocol)?, rhs: some StringProtocol) -> Bool {
      guard let lhs else { return false }
      return lhs == rhs
  }

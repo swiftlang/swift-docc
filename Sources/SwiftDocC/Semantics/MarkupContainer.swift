@@ -37,7 +37,7 @@ public final class MarkupContainer: Semantic {
     /// Creates a new general-purpose markup container with the elements of a sequence.
     ///
     /// - Parameter elements: A sequence of markup elements.
-    public init<S: Sequence>(_ elements: S) where S.Element == Markup {
+    public init(_ elements: some Sequence<Markup>) {
         self.elements = Array(elements)
     }
         

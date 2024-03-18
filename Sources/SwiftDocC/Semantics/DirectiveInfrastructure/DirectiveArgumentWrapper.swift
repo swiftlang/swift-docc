@@ -20,11 +20,11 @@ protocol _DirectiveArgumentProtocol {
     
     var parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?) { get }
     
-    func setProperty<T>(
+    func setProperty<T: AutomaticDirectiveConvertible>(
         on containingDirective: T,
         named propertyName: String,
         to any: Any
-    ) where T: AutomaticDirectiveConvertible
+    )
 }
 
 enum _DirectiveArgumentName {
@@ -382,6 +382,6 @@ private func typeDisplayNameDescription<Value>(defaultValue: Value?, required: B
     return name
 }
 
-private func typeDisplayNameDescription<Value: _OptionalDirectiveArgument>(optionalDefaultValue: Value?, required: Bool) -> String {
+private func typeDisplayNameDescription(optionalDefaultValue: (some _OptionalDirectiveArgument)?, required: Bool) -> String {
     return typeDisplayNameDescription(defaultValue: optionalDefaultValue?.wrapped, required: required)
 }

@@ -134,8 +134,8 @@ class DirectiveMirrorTests: XCTestCase {
 
 fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedArgument {
     /// Look for an argument named `name` or log an XCTest failure.
-    subscript<S: StringProtocol>(
-        _ name: S,
+    subscript(
+        _ name: some StringProtocol,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DirectiveMirror.ReflectedArgument? {
@@ -160,8 +160,8 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
 
 fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedChildDirective {
     /// Look for an argument named `name` or log an XCTest failure.
-    subscript<S: StringProtocol>(
-        _ name: S,
+    subscript(
+        _ name: some StringProtocol,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DirectiveMirror.ReflectedChildDirective? {

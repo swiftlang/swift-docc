@@ -19,7 +19,7 @@ public struct Problem {
     
     /// The possible solutions to the problem if there are any.
     public var possibleSolutions: [Solution]
-    public init<Solutions: Sequence>(diagnostic: Diagnostic, possibleSolutions: Solutions) where Solutions.Element == Solution {
+    public init(diagnostic: Diagnostic, possibleSolutions: some Sequence<Solution>) {
         self.diagnostic = diagnostic
         self.possibleSolutions = Array(possibleSolutions)
     }

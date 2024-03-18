@@ -62,8 +62,8 @@ extension SymbolGraph.Symbol.DeclarationFragments.Fragment: ExpressibleByStringI
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
     }
     
-    init<S: StringProtocol>(
-        _ value: S,
+    init(
+        _ value: some StringProtocol,
         kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind = .text,
         preciseIdentifier: String? = nil
     ) {

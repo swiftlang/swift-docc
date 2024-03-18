@@ -38,7 +38,7 @@ extension Semantic.Analyses {
             self.allowsMarkup = allowsMarkup
         }
         
-        public func analyze<Children>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) where Children: Sequence, Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
             if let severity = severityIfFound {
                 let allowedDirectivesList = allowedDirectives.sorted().map { "'\($0)'" }.joined(separator: ", ")
                 

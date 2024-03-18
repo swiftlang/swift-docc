@@ -612,7 +612,7 @@ public struct ResourceReference: Hashable {
 /// If this step is not performed, the disallowed characters are instead percent escape encoded instead which is less readable.
 /// For example, a path like `"hello world/example project"` is converted to `"hello-world/example-project"`
 /// instead of `"hello%20world/example%20project"`.
-func urlReadablePath<S: StringProtocol>(_ path: S) -> String {
+func urlReadablePath(_ path: some StringProtocol) -> String {
     return path.components(separatedBy: .urlPathNotAllowed).joined(separator: "-")
 }
 
@@ -629,7 +629,7 @@ private extension CharacterSet {
 ///
 /// If this step is not performed, the disallowed characters are instead percent escape encoded, which is less readable.
 /// For example, a fragment like `"#hello world"` is converted to `"#hello-world"` instead of `"#hello%20world"`.
-func urlReadableFragment<S: StringProtocol>(_ fragment: S) -> String {
+func urlReadableFragment(_ fragment: some StringProtocol) -> String {
     var fragment = fragment
         // Trim leading/trailing whitespace
         .trimmingCharacters(in: .whitespaces)

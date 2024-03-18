@@ -445,7 +445,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
     
     /// Converts a semantic result to a referenced semantic object by removing the generic constraint.
-    private func referencedSemanticObject<S: Semantic>(from: SemanticResult<S>) -> ReferencedSemanticObject {
+    private func referencedSemanticObject(from: SemanticResult<some Semantic>) -> ReferencedSemanticObject {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
     
@@ -947,7 +947,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
-    private func insertLandmarks<Landmarks: Sequence>(_ landmarks: Landmarks, from topicGraphNode: TopicGraph.Node, source url: URL) where Landmarks.Element == Landmark {
+    private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue

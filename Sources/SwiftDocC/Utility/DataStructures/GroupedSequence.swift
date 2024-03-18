@@ -63,7 +63,7 @@ struct GroupedSequence<Key: Hashable, Element>: Sequence, CustomStringConvertibl
     /// Adds the contents of a sequence to the group sequence.
     ///
     /// Existing elements with the same derived key will be replaced with the new element.
-    mutating func append<S: Sequence>(contentsOf newElements: S) where S.Element == Element {
+    mutating func append(contentsOf newElements: some Sequence<Element>) {
         for element in newElements {
             append(element)
         }
