@@ -10,8 +10,8 @@
 
 import XCTest
 import Markdown
-@testable @_spi(FileManagerProtocol) import SwiftDocC
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+@testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
