@@ -302,11 +302,6 @@ extension Docc {
             set { diagnosticOptions.formatConsoleOutputForTools = newValue }
         }
         
-        @available(*, deprecated, renamed: "formatConsoleOutputForTools", message: "Use 'formatConsoleOutputForTools' instead. This deprecated API will be removed after 5.10 is released")
-        public var emitFixits: Bool {
-            formatConsoleOutputForTools
-        }
-        
         /// A user-provided location where the convert action writes the diagnostics file.
         public var diagnosticsOutputPath: URL? {
             get { diagnosticOptions.diagnosticsOutputPath }
@@ -515,10 +510,6 @@ extension Docc {
             @Flag(help: "Inherit documentation for inherited symbols")
             var enableInheritedDocs = false
 
-            @Flag(help: .hidden)
-            @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
-            var experimentalParseDoxygenCommands = false
-        
             @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
             var allowArbitraryCatalogDirectories = false
             
@@ -603,15 +594,6 @@ extension Docc {
         public var enableInheritedDocs: Bool {
             get { featureFlags.enableInheritedDocs }
             set { featureFlags.enableInheritedDocs = newValue }
-        }
-
-        /// A user-provided value that is true if experimental Doxygen support should be enabled.
-        ///
-        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
-        @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
-        public var experimentalParseDoxygenCommands: Bool {
-            get { featureFlags.experimentalParseDoxygenCommands }
-            set { featureFlags.experimentalParseDoxygenCommands = newValue }
         }
         
         /// A user-provided value that is true if additional metadata files should be produced.
