@@ -314,7 +314,7 @@ private extension DocumentationDataVariants {
     }
 }
 
-private extension Set where Element == DocumentationDataVariantsTrait {
+private extension Set<DocumentationDataVariantsTrait> {
     /// Removes and returns the trait that should be considered as the default value
     /// for rendering.
     ///

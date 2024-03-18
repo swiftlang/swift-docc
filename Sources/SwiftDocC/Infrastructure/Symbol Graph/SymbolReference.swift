@@ -157,7 +157,7 @@ public struct SymbolReference {
     public let interfaceLanguages: Set<SourceLanguage>
 }
 
-private extension Array where Element == String {
+private extension [String] {
     var joinedSymbolPathComponents: String {
         return joined(separator: "/").components(
             separatedBy: CharacterSet.urlPathAllowed.inverted

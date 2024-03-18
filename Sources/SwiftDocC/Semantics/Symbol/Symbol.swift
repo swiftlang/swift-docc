@@ -528,7 +528,7 @@ extension Symbol {
     }
 }
 
-extension Dictionary where Key == String, Value == Mixin {
+extension [String: Mixin] {
     func getValueIfPresent<T>(for mixinType: T.Type) -> T? where T: Mixin {
         return self[mixinType.mixinKey] as? T
     }

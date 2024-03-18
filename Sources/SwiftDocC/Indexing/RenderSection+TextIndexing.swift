@@ -363,7 +363,7 @@ extension SampleDownloadSection {
     }
 }
 
-extension Sequence where Element == ContentLayout {
+extension Sequence<ContentLayout> {
     func rawIndexableTextContent(references: [String: RenderReference]) -> String {
         return map { layout -> String in
             switch layout {

@@ -157,7 +157,7 @@ public struct DocumentationDataVariantsTrait: Hashable {
     }
 }
 
-extension Set where Element == DocumentationDataVariantsTrait {
+extension Set<DocumentationDataVariantsTrait> {
     /// Filters set to a subset of language traits that can coexist together.
     /// 
     /// - Parameter trait: The language variant being processed.

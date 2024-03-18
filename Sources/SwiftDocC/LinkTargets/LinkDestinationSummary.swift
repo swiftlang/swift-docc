@@ -491,7 +491,7 @@ extension LinkDestinationSummary {
     }
 }
 
-private extension Dictionary where Key == [PlatformName?], Value == SymbolGraph.Symbol.DeclarationFragments {
+private extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
     func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
         guard count > 1 else {
             return first?.value

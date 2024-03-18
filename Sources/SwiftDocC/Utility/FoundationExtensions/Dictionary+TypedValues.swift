@@ -10,7 +10,7 @@
 
 import Foundation
 
-extension Dictionary where Key == String, Value == Any {
+extension [String: Any] {
     /// Returns the value for the given key decoded as the requested type.
     func decode<T>(_ expectedType: T.Type, forKey key: String) throws -> T where T : Decodable {
         guard let value = self[key] else {

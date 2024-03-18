@@ -44,7 +44,7 @@ extension Problem {
     }
 }
 
-extension Sequence where Element == Problem {
+extension Sequence<Problem> {
     /// Returns `true` if there are problems with diagnostics with `error` severity.
     public var containsErrors: Bool {
         return self.contains {
@@ -67,7 +67,7 @@ extension Problem {
     }
 }
 
-extension Sequence where Element == Problem {
+extension Sequence<Problem> {
     @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released")
     public var localizedDescription: String {
         return map { $0.localizedDescription }.joined(separator: "\n")

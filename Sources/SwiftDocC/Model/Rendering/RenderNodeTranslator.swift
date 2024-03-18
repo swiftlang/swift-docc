@@ -2001,7 +2001,7 @@ extension ContentLayout: RenderTree {}
 
 extension ContentRenderSection: RenderTree {}
 
-private extension Sequence where Element == SourceLanguage {
+private extension Sequence<SourceLanguage> {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
         traits.contains(where: {
             guard let languageID = $0.interfaceLanguage,

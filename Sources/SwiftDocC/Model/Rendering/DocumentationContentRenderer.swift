@@ -545,7 +545,7 @@ extension DocumentationContentRenderer {
 
 }
 
-private extension Array where Element == DeclarationRenderSection.Token {
+private extension [DeclarationRenderSection.Token] {
     // Replaces kind "typeIdentifier" with "identifier" if the fragments matches the pattern:
     // [keyword=_] [text=" "] [(typeIdentifier|identifier)=Name_0] ( [text="."] [typeIdentifier=Name_i] )*
     // where the Name_i from typeIdentifier tokens joined with separator "." equal the `symbolTitle`

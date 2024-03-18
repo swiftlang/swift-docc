@@ -132,7 +132,7 @@ class DirectiveMirrorTests: XCTestCase {
     }
 }
 
-fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedArgument {
+private extension RandomAccessCollection<DirectiveMirror.ReflectedArgument> {
     /// Look for an argument named `name` or log an XCTest failure.
     subscript(
         _ name: some StringProtocol,
@@ -158,7 +158,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
     }
 }
 
-fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedChildDirective {
+private extension RandomAccessCollection<DirectiveMirror.ReflectedChildDirective> {
     /// Look for an argument named `name` or log an XCTest failure.
     subscript(
         _ name: some StringProtocol,

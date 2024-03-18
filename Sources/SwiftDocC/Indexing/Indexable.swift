@@ -47,7 +47,7 @@ extension Sequence where Element: TextIndexing {
     }
 }
 
-extension Sequence where Element == RenderBlockContent {
+extension Sequence<RenderBlockContent> {
     var headings: [String] {
         return self.flatMap { $0.headings }
     }
@@ -57,7 +57,7 @@ extension Sequence where Element == RenderBlockContent {
     }
 }
 
-extension Sequence where Element == RenderInlineContent {
+extension Sequence<RenderInlineContent> {
     func rawIndexableTextContent(references: [String: RenderReference]) -> String {
         return self.map { $0.rawIndexableTextContent(references: references) }.joined()
     }
