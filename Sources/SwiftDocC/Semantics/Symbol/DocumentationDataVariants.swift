@@ -93,7 +93,7 @@ public struct DocumentationDataVariants<Variant> {
 extension DocumentationDataVariants {
     /// Convenience initializer to initialize a variants value with a Swift variant only.
     init(swiftVariant: Variant?) {
-        if let swiftVariant = swiftVariant {
+        if let swiftVariant {
             self.init(values: [.swift: swiftVariant])
         } else {
             self.init()

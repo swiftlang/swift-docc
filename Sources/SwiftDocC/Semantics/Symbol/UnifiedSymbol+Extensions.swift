@@ -60,7 +60,7 @@ extension UnifiedSymbolGraph.Symbol {
     }
 
     func symbol(forSelector selector: UnifiedSymbolGraph.Selector?) -> SymbolGraph.Symbol? {
-        guard let selector = selector,
+        guard let selector,
               let kind = self.kind[selector],
               let pathComponents = self.pathComponents[selector],
               let names = self.names[selector],

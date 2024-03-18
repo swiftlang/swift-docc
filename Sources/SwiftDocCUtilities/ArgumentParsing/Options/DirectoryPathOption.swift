@@ -26,7 +26,7 @@ extension DirectoryPathOption {
     }
 
     public mutating func validate() throws {
-        guard let url = url else {
+        guard let url else {
             return
         }
 

@@ -18,7 +18,7 @@ extension Semantic.Analyses {
     public struct HasContent<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
         let additionalContext: String
         public init(additionalContext: String? = nil) {
-            if let additionalContext = additionalContext,
+            if let additionalContext,
                 !additionalContext.isEmpty {
                 self.additionalContext = "; \(additionalContext)"
             } else {

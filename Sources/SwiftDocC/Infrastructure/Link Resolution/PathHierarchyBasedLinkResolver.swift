@@ -300,7 +300,7 @@ final class PathHierarchyBasedLinkResolver {
                 )
             }
             for (symbol, reference) in zip(symbolGraph.symbols.values, paths) {
-                guard let reference = reference else { continue }
+                guard let reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
         }

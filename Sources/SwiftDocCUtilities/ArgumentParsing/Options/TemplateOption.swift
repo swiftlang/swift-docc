@@ -88,7 +88,7 @@ public struct TemplateOption: ParsableArguments {
             """)
 
         // Only perform further validation if a templateURL has been provided
-        guard let templateURL = templateURL else {
+        guard let templateURL else {
             if FileManager.default.fileExists(atPath: defaultTemplateURL.appendingPathComponent(HTMLTemplate.indexFileName.rawValue).path) {
                 self.templateURL = defaultTemplateURL
             }

@@ -56,7 +56,7 @@ extension Semantic.Analyses {
                         summary = nil
                     }
                     
-                    if let summary = summary {
+                    if let summary {
                         let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlyKnownDirectives", summary: summary, explanation: "These directives are allowed: \(allowedDirectivesList)")
                         
                         var solution: Solution?

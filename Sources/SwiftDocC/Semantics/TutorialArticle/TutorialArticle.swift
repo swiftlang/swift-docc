@@ -57,7 +57,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
     override var children: [Semantic] {
         var semanticContent: [Semantic] = []
         
-        if let intro = intro {
+        if let intro {
             semanticContent.append(intro)
         }
         
@@ -71,7 +71,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         
         semanticContent.append(contentsOf: bodyContent)
         
-        if let assessments = assessments {
+        if let assessments {
             semanticContent.append(assessments)
         }
         

@@ -130,7 +130,7 @@ struct DifferenceBuilder<T> {
         let currentProperty = current[keyPath: keyPath]
         let otherProperty = other[keyPath: keyPath]
         
-        if let currentProperty = currentProperty, let otherProperty = otherProperty {
+        if let currentProperty, let otherProperty {
             let anyCurrent = AnyRenderSection(currentProperty)
             let anyOther = AnyRenderSection(otherProperty)
             if anyCurrent.isSimilar(to: anyOther) {

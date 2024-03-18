@@ -14,7 +14,7 @@ import Markdown
 fileprivate extension Optional {
     /// If self is not `nil`, run the given block.
     func unwrap(_ block: (Wrapped) -> Void) {
-        if let self = self {
+        if let self {
             block(self)
         }
     }

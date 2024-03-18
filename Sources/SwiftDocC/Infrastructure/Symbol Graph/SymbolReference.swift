@@ -50,7 +50,7 @@ public struct SymbolReference {
     ) {
         self.interfaceLanguages = Set(interfaceLanguages)
         
-        guard let symbol = symbol else {
+        guard let symbol else {
             path = shouldAddHash ?
                 identifier.appendingHashedIdentifier(identifier) :
                 identifier

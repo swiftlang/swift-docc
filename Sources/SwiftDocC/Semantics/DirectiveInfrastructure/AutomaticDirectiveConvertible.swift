@@ -164,7 +164,7 @@ extension AutomaticDirectiveConvertible {
             )
             .analyze(directive, arguments: arguments, problems: &problems)
             
-            if let parsedValue = parsedValue {
+            if let parsedValue {
                 reflectedArgument.setValue(on: self, to: parsedValue)
             } else if !reflectedArgument.storedAsOptional {
                 unableToCreateParentDirective = true
@@ -212,7 +212,7 @@ extension AutomaticDirectiveConvertible {
                     problems: &problems
                 )
                 
-                guard let parsedDirective = parsedDirective else {
+                guard let parsedDirective else {
                     if !childDirective.storedAsArray && !childDirective.storedAsOptional {
                         unableToCreateParentDirective = true
                     }
@@ -237,7 +237,7 @@ extension AutomaticDirectiveConvertible {
                     problems: &problems
                 )
                 
-                guard let parsedDirective = parsedDirective else {
+                guard let parsedDirective else {
                     if childDirective.storedAsArray && !childDirective.storedAsOptional {
                         childDirective.setValue(on: self, to: [DirectiveConvertible.Type]())
                     }

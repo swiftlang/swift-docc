@@ -448,7 +448,7 @@ extension Symbol {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
-        if let platformName = platformName,
+        if let platformName,
             let existingKey = declarationVariants[trait]?.first(
                 where: { pair in
                     return pair.value.declarationFragments == mergingDeclaration.declarationFragments
@@ -475,7 +475,7 @@ extension Symbol {
         }
 
         // Merge the new symbol with the existing availability. If a value already exist, only override if it's for this platform.
-        if let symbolAvailability = symbolAvailability,
+        if let symbolAvailability,
             symbolAvailability.availability.isEmpty == false || availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
         {
             var items = availabilityVariants[trait]?.availability ?? []

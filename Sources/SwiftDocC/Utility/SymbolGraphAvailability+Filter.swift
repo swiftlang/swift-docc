@@ -29,7 +29,7 @@ private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// - Parameter platformName: The platform name to check if the item applies to.
     /// - Returns: If the item applies to the platform or not.
     func appliesTo(_ platformName: PlatformName) -> Bool {
-        if let domain = domain {
+        if let domain {
             return PlatformName(operatingSystemName: domain.rawValue) == platformName
         } else {
             // Items without a domain apply to all platforms

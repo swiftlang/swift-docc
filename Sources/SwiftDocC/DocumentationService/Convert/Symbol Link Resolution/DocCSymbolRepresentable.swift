@@ -139,7 +139,7 @@ public extension Collection where Element: DocCSymbolRepresentable {
     /// Given a collection of colliding symbols, returns the disambiguation suffix required
     /// for each symbol to disambiguate it from the others in the collection.
     var requiredDisambiguationSuffixes: [(shouldAddIdHash: Bool, shouldAddKind: Bool)] {
-        guard let first = first else {
+        guard let first else {
             return []
         }
         

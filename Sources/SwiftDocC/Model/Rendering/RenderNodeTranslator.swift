@@ -234,7 +234,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Find the tutorial or article that comes after the current page, if one exists.
         let nextTopicIndex = surroundingTopics.firstIndex(where: { $0.reference == identifier }).map { $0 + 1 }
-        if let nextTopicIndex = nextTopicIndex, nextTopicIndex < surroundingTopics.count {
+        if let nextTopicIndex, nextTopicIndex < surroundingTopics.count {
             let nextTopicReference = surroundingTopics[nextTopicIndex]
             let nextTopicReferenceIdentifier = visitResolvedTopicReference(nextTopicReference.reference) as! RenderReferenceIdentifier
             let nextTopic = try! context.entity(with: nextTopicReference.reference).semantic as! Abstracted & Titled
@@ -428,7 +428,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             var renderReference: TopicRenderReference
             var dependencies: RenderReferenceDependencies
             
-            if let renderContext = renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
+            if let renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
                 let renderReferenceDependencies = renderContext.store.content(for: reference)?.renderReferenceDependencies {
                 renderReference = prerendered
                 dependencies = renderReferenceDependencies
@@ -448,7 +448,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
-                if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
+                if let renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
                     dependencyRenderReference = prerendered
                 } else {
                     var dependencies = RenderReferenceDependencies()
@@ -1405,7 +1405,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
         
-        if let sourceRepository = sourceRepository {
+        if let sourceRepository {
             node.metadata.remoteSourceVariants = VariantCollection<RenderMetadata.RemoteSource?>(
                 from: symbol.locationVariants
             ) { _, location in
@@ -1430,7 +1430,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         if let externalID = symbol.externalID,
-           let symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+           let symbolIdentifiersWithExpandedDocumentation
         {
             node.metadata.hasNoExpandedDocumentation = !symbolIdentifiersWithExpandedDocumentation.contains(externalID)
         }
@@ -1520,7 +1520,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let topics = symbol.topicsVariants[trait]
             
             var sections = [TaskGroupRenderSection]()
-            if let topics = topics, !topics.taskGroups.isEmpty {
+            if let topics, !topics.taskGroups.isEmpty {
                 // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
@@ -1871,7 +1871,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var introducedVersion: String? = nil 
         var typeDetails: [TypeDetails]? = nil
         
-        if let symbol = symbol {
+        if let symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = symbol.declarationFragments {
                 renderedTokens = convertFragments(fragments)

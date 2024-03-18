@@ -187,7 +187,7 @@ extension RelationshipsRenderSection {
 
 extension TaskGroupRenderSection {
     public var headings: [String] {
-        guard let title = title else { return [] }
+        guard let title else { return [] }
         return [title]
     }
     

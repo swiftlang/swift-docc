@@ -54,7 +54,7 @@ extension Semantic.Analyses {
         }
         
         guard let candidate = candidates.first else {
-            if let severityIfNotFound = severityIfNotFound {
+            if let severityIfNotFound {
                 let diagnostic = Diagnostic(
                     source: source,
                     severity: severityIfNotFound,
@@ -74,7 +74,7 @@ extension Semantic.Analyses {
         // Even if a single child is optional, having duplicates is thus far always a warning
         // because it would become ambiguous which child to choose as the one.
         
-        if let severityIfNotFound = severityIfNotFound {
+        if let severityIfNotFound {
             for candidate in candidates.suffix(from: 1) {
                 let diagnostic = Diagnostic(
                     source: source,

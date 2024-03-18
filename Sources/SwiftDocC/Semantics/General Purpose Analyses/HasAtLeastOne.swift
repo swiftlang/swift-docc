@@ -61,7 +61,7 @@ extension Semantic.Analyses {
             return childDirective
         }
         
-        if matches.isEmpty, let severityIfNotFound = severityIfNotFound {
+        if matches.isEmpty, let severityIfNotFound {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: severityIfNotFound,

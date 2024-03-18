@@ -33,8 +33,8 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     }
     
     var solutions: [Solution] = []
-    if let referenceSourceRange = referenceSourceRange {
-        if let note = errorInfo.note, let source = source {
+    if let referenceSourceRange {
+        if let note = errorInfo.note, let source {
             notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
         }
         
@@ -42,7 +42,7 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
     }
     
     let diagnosticRange: SourceRange?
-    if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange = referenceSourceRange {
+    if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange {
         rangeAdjustment.offsetWithRange(referenceSourceRange)
         diagnosticRange = rangeAdjustment
     } else {
@@ -62,7 +62,7 @@ func unresolvedResourceProblem(
 ) -> Problem {
     let summary: String
     let identifier: String
-    if let expectedType = expectedType {
+    if let expectedType {
         identifier = "org.swift.docc.unresolvedResource.\(expectedType)"
         summary = "\(expectedType) resource \(resource.path.singleQuoted) couldn't be found"
     } else {
@@ -220,7 +220,7 @@ struct ReferenceResolver: SemanticVisitor {
         markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
-            if let parent = parent, let range = range {
+            if let parent, let range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
@@ -519,7 +519,7 @@ struct ReferenceResolver: SemanticVisitor {
 
 fileprivate extension URL {
     var isLikelyWebURL: Bool {
-        if let scheme = scheme, scheme.hasPrefix("http") {
+        if let scheme, scheme.hasPrefix("http") {
             return true
         }
         return false
@@ -528,7 +528,7 @@ fileprivate extension URL {
 
 extension Image {
     func reference(in bundle: DocumentationBundle) -> ResourceReference? {
-        guard let source = source else {
+        guard let source else {
             return ResourceReference(bundleIdentifier: bundle.identifier, path: "")
         }
         

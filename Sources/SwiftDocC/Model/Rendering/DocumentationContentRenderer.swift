@@ -240,7 +240,7 @@ public class DocumentationContentRenderer {
     }
 
     static func renderKindAndRole(_ kind: DocumentationNode.Kind?, semantic: Semantic?) -> (RenderNode.Kind, String) {
-        guard let kind = kind else {
+        guard let kind else {
             return (.article, role(for: .article).rawValue)
         }
         let role = role(for: kind).rawValue
@@ -286,7 +286,7 @@ public class DocumentationContentRenderer {
         let titleVariants: DocumentationDataVariants<String>
         let node = try? overridingDocumentationNode ?? documentationContext.entity(with: reference)
         
-        if let node = node, let resolvedTitle = resolver.title(for: node) {
+        if let node, let resolvedTitle = resolver.title(for: node) {
             titleVariants = resolvedTitle
         } else if let anchorSection = documentationContext.nodeAnchorSections[reference] {
             // No need to continue, return a section topic reference

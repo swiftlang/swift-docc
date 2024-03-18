@@ -44,7 +44,7 @@ class DirectoryMonitorTests: XCTestCase {
             
             guard !hasFulfilledExpectation else { return }
             
-            if let expectedChangeOrigin = expectedChangeOrigin {
+            if let expectedChangeOrigin {
                 XCTAssertTrue(fileURLsAreEqual(expectedChangeOrigin, url), "'\(expectedChangeOrigin.path)' is not equal to \(url.path)", file: (file), line: line)
             }
 

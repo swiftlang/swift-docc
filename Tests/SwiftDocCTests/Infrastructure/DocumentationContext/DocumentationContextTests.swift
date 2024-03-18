@@ -555,7 +555,7 @@ class DocumentationContextTests: XCTestCase {
         
         let image = context.resolveAsset(named: "https://example.com/figure.png", in: bundle.rootReference)
         XCTAssertNotNil(image)
-        guard let image = image else {
+        guard let image else {
             return
         }
         XCTAssertEqual(image.context, .display)
@@ -563,7 +563,7 @@ class DocumentationContextTests: XCTestCase {
         
         let video = context.resolveAsset(named: "https://example.com/introvideo.mp4", in: bundle.rootReference)
         XCTAssertNotNil(video)
-        guard let video = video else { return }
+        guard let video else { return }
         XCTAssertEqual(video.context, .display)
         XCTAssertEqual(video.variants, [DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "https://example.com/introvideo.mp4")!])
     }
@@ -1889,7 +1889,7 @@ let expected = """
         XCTAssertEqual(list.items.count, 6, "Unexpected list items: \(list.items.map(\.content))")
         
         func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
-            guard let listItem = listItem else {
+            guard let listItem else {
                 XCTFail("Missing list item")
                 return
             }
@@ -3770,7 +3770,7 @@ let expected = """
         }
 
         let mapRangeAsString: (Optional<SourceRange>) -> String? = { range in
-            guard let range = range else { return nil }
+            guard let range else { return nil }
             return "\(range.lowerBound.line):\(range.lowerBound.column) - \(range.upperBound.line):\(range.upperBound.column)"
         }
         

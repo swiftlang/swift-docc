@@ -373,7 +373,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
 private func typeDisplayNameDescription<Value>(defaultValue: Value?, required: Bool) -> String {
     var name = "\(Value.self)"
     
-    if let defaultValue = defaultValue {
+    if let defaultValue {
         name += " = \(defaultValue)"
     } else if !required {
         name += "?"

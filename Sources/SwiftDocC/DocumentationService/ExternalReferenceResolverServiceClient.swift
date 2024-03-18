@@ -43,7 +43,7 @@ class ExternalReferenceResolverServiceClient {
         resultGroup.enter()
         
         serverResponseQueue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             
             do {
                 let encodedRequest = try self.encoder.encode(

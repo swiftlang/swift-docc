@@ -506,7 +506,7 @@ func declarationFragments(
             $0 == " " || $0 == "?"
         }
         
-        if let splitLocation = splitLocation {
+        if let splitLocation {
             fragments.append(
                 .init(
                     argument.typeDisplayName.prefix(upTo: splitLocation),

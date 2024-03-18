@@ -149,7 +149,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
             }
         }
         
-        guard let match = match else {
+        guard let match else {
             XCTFail("Expected argument named \(name.singleQuoted)", file: file, line: line)
             return nil
         }
@@ -169,7 +169,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
             return childDirective.name == name
         }
         
-        guard let match = match else {
+        guard let match else {
             XCTFail("Expected child directive named \(name.singleQuoted)", file: file, line: line)
             return nil
         }

@@ -158,7 +158,7 @@ extension Optional: RenderJSONDiffable where Wrapped: RenderJSONDiffable & Equat
     @_disfavoredOverload func difference(from other: Optional<Wrapped>, at path: CodablePath) -> JSONPatchDifferences {
         var difference = JSONPatchDifferences()
         
-        if let current = self, let other = other {
+        if let current = self, let other {
             difference.append(contentsOf: current.difference(from: other, at: path))
         } else if other != nil {
             difference.append(JSONPatchOperation.remove(
@@ -177,7 +177,7 @@ extension Optional: RenderJSONDiffable where Wrapped: RenderJSONDiffable & Equat
     ) -> JSONPatchDifferences where Element : RenderJSONDiffable & Equatable & Encodable {
         var difference = JSONPatchDifferences()
         
-        if let current = self, let other = other {
+        if let current = self, let other {
             difference.append(contentsOf: (current as! Array<Element>).difference(from: other, at: path))
         } else if other != nil {
             difference.append(JSONPatchOperation.remove(
