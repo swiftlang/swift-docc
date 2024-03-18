@@ -43,7 +43,7 @@ public struct RenderNodeVariantOverridesApplier {
         var variantOverrides: VariantOverrides?
     }
     
-    @available(*, deprecated, message: "This error is never raised. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, message: "This error is never raised. This deprecated API will be removed after 6.0 is released")
     public enum Error: DescribedError {
         case corruptedRenderNode
         public var errorDescription: String {
