@@ -11,7 +11,6 @@
 import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
-@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.

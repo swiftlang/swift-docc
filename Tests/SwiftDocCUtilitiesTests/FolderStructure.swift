@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-@testable @_spi(FileManagerProtocol) import SwiftDocC
+@testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import XCTest
 import SwiftDocCTestUtilities

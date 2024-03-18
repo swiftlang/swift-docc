@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 #if !os(Linux) && !os(Android) && !os(Windows)
 import Darwin

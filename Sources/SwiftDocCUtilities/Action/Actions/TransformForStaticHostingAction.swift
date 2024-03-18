@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 /// An action that emits a static hostable website from a DocC Archive.
 struct TransformForStaticHostingAction: Action {
