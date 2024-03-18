@@ -3769,7 +3769,7 @@ let expected = """
                 && p.diagnostic.source?.path.hasSuffix("sideclass.md") == true
         }
 
-        let mapRangeAsString: (Optional<SourceRange>) -> String? = { range in
+        let mapRangeAsString: (SourceRange?) -> String? = { range in
             guard let range else { return nil }
             return "\(range.lowerBound.line):\(range.lowerBound.column) - \(range.upperBound.line):\(range.upperBound.column)"
         }

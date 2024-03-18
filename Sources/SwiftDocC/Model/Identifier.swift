@@ -409,7 +409,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         try container.encode(url.absoluteString, forKey: .url)
         
         let sourceLanguageIDVariants = DocumentationDataVariants<String>(
-            values: Dictionary<DocumentationDataVariantsTrait, String>(
+            values: [DocumentationDataVariantsTrait: String](
                 uniqueKeysWithValues: sourceLanguages.map { language in
                     (DocumentationDataVariantsTrait(interfaceLanguage: language.id), language.id)
                 }

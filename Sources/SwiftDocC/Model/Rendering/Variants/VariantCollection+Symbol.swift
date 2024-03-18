@@ -353,10 +353,10 @@ private extension Set<DocumentationDataVariantsTrait> {
 private func zipPairsByKey<Key, Value1, Value2>(
     _ pairs1: some Sequence<(Key, Value1)>,
     _ pairs2: some Sequence<(Key, Value2)>
-) -> Dictionary<Key, (Value1, Value2)>
+) -> [Key: (Value1, Value2)]
 {
-    let dictionary1 = Dictionary<Key, Value1>(uniqueKeysWithValues: pairs1)
-    let dictionary2 = Dictionary<Key, Value2>(uniqueKeysWithValues: pairs2)
+    let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
+    let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
     
     return Dictionary(
         uniqueKeysWithValues: dictionary1.compactMap { key, value1 -> (Key, (Value1, Value2))? in
@@ -388,9 +388,9 @@ private func zipPairsByKey<Key, Value1, Value2>(
 private func zipPairsByKey<Key, Value1, Value2>(
     _ pairs1: [(Key, Value1)],
     optionalPairs2 pairs2: [(Key, Value2)]
-) -> Dictionary<Key, (Value1, Value2?)> {
-    let dictionary1 = Dictionary<Key, Value1>(uniqueKeysWithValues: pairs1)
-    let dictionary2 = Dictionary<Key, Value2>(uniqueKeysWithValues: pairs2)
+) -> [Key: (Value1, Value2?)] {
+    let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
+    let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
     
     return Dictionary(
         uniqueKeysWithValues: dictionary1.map { key, value1 -> (Key, (Value1, Value2?)) in
@@ -424,10 +424,10 @@ private func zipTriplesByKey<Key, Value1, Value2, Value3>(
     _ pairs1: [(Key, Value1)],
     _ pairs2: [(Key, Value2)],
     _ pairs3: [(Key, Value3)]
-) -> Dictionary<Key, (Value1, Value2, Value3)> {
-    let dictionary1 = Dictionary<Key, Value1>(uniqueKeysWithValues: pairs1)
-    let dictionary2 = Dictionary<Key, Value2>(uniqueKeysWithValues: pairs2)
-    let dictionary3 = Dictionary<Key, Value3>(uniqueKeysWithValues: pairs3)
+) -> [Key: (Value1, Value2, Value3)] {
+    let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
+    let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
+    let dictionary3 = [Key: Value3](uniqueKeysWithValues: pairs3)
     
     return Dictionary(
         uniqueKeysWithValues: dictionary1.compactMap { key, value1 -> (Key, (Value1, Value2, Value3))? in

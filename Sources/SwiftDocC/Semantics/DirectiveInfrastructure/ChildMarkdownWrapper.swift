@@ -107,7 +107,7 @@ extension ChildMarkup where Value == MarkupContainer {
     }
 }
 
-extension ChildMarkup where Value == Optional<MarkupContainer> {
+extension ChildMarkup where Value == MarkupContainer? {
     init(
         value: Value,
         numberOfParagraphs: _ChildMarkupParagraphs = .zeroOrMore,

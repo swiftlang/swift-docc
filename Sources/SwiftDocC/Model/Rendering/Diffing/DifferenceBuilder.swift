@@ -57,7 +57,7 @@ struct DifferenceBuilder<T> {
     }
     
     /// Determines the difference between the two arrays of diffable objects at the KeyPaths given.
-    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, Dictionary<String, some RenderJSONDiffable & Equatable & Encodable>>, forKey codingKey: CodingKey)
+    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, [String: some RenderJSONDiffable & Equatable & Encodable]>, forKey codingKey: CodingKey)
     {
         let currentProperty = current[keyPath: keyPath]
         let otherProperty = other[keyPath: keyPath]
@@ -108,7 +108,7 @@ struct DifferenceBuilder<T> {
     }
     
     /// Determines the difference between the two dictionaries mapping strings to arrays of diffable objects at the KeyPaths given.
-    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, Dictionary<String, [some RenderJSONDiffable & Equatable & Encodable]>>, forKey codingKey: CodingKey)
+    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, [String: [some RenderJSONDiffable & Equatable & Encodable]]>, forKey codingKey: CodingKey)
     {
         let currentProperty = current[keyPath: keyPath]
         let otherProperty = other[keyPath: keyPath]
@@ -125,7 +125,7 @@ struct DifferenceBuilder<T> {
     }
     
     /// Unwraps and adds the difference between two optional RenderSections.
-    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, Optional<RenderSection>>, forKey key: CodingKey) {
+    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, RenderSection?>, forKey key: CodingKey) {
         
         let currentProperty = current[keyPath: keyPath]
         let otherProperty = other[keyPath: keyPath]
@@ -146,7 +146,7 @@ struct DifferenceBuilder<T> {
     }
     
     /// Determines the difference between the two diffable Arrays of RenderSections at the KeyPaths given.
-    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, Array<RenderSection>>, forKey codingKey: CodingKey) {
+    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, [RenderSection]>, forKey codingKey: CodingKey) {
         let currentArray = current[keyPath: keyPath]
         let otherArray = other[keyPath: keyPath]
         
@@ -169,7 +169,7 @@ struct DifferenceBuilder<T> {
     }
     
     /// Determines the difference between the two dictionaries of RenderReferences at the KeyPaths given.
-    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, Dictionary<String, RenderReference>>, forKey codingKey: CodingKey) {
+    mutating func addDifferences(atKeyPath keyPath: KeyPath<T, [String: RenderReference]>, forKey codingKey: CodingKey) {
         let currentDict = current[keyPath: keyPath].mapValues { section in
             return AnyRenderReference(section)
         }

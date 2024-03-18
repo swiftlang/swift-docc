@@ -35,7 +35,7 @@ extension RenderJSONDiffable where Self: Equatable {
 
 extension Array: RenderJSONDiffable where Element: Equatable & Encodable {
     /// Returns the differences between this array and the given one.
-    func difference(from other: Array<Element>, at path: CodablePath) -> JSONPatchDifferences {
+    func difference(from other: [Element], at path: CodablePath) -> JSONPatchDifferences {
         let arrayDiffs = self.difference(from: other)
         var differences = arrayDiffs.removals
         
@@ -56,7 +56,7 @@ extension Array: RenderJSONDiffable where Element: Equatable & Encodable {
     
     /// Returns the differences between two arrays with diffable values.
     func difference(
-        from other: Array<Element>,
+        from other: [Element],
         at path: CodablePath
     ) -> JSONPatchDifferences where Element: RenderJSONDiffable {
         // This implementation computes both the insertions and deletions of significantly different elements
@@ -90,14 +90,14 @@ extension Array: RenderJSONDiffable where Element: Equatable & Encodable {
     }
     
     // For now, whole arrays should not be replaced.
-    func isSimilar(to other: Array<Element>) -> Bool {
+    func isSimilar(to other: [Element]) -> Bool {
         return true
     }
 }
 
 extension Dictionary: RenderJSONDiffable where Key == String, Value: Encodable & Equatable {
     /// Returns the differences between this dictionary and the given one.
-    func difference(from other: Dictionary<Key, Value>, at path: CodablePath) -> JSONPatchDifferences {
+    func difference(from other: [Key: Value], at path: CodablePath) -> JSONPatchDifferences {
         var differences = JSONPatchDifferences()
         let uniqueKeysSet = Set(self.keys).union(Set(other.keys))
         
@@ -118,7 +118,7 @@ extension Dictionary: RenderJSONDiffable where Key == String, Value: Encodable &
     
     /// Returns the differences between two dictionaries with diffable values.
     func difference(
-        from other: Dictionary<Key, Value>,
+        from other: [Key: Value],
         at path: CodablePath
     ) -> JSONPatchDifferences where Value: RenderJSONDiffable {
         var differences = JSONPatchDifferences()
@@ -133,14 +133,14 @@ extension Dictionary: RenderJSONDiffable where Key == String, Value: Encodable &
     
     /// Returns the differences between two dictionaries of arrays with diffable values.
     func arrayValueDifference<Element>(
-        from other: Dictionary<Key, [Element]>,
+        from other: [Key: [Element]],
         at path: CodablePath
     ) -> JSONPatchDifferences where Element: RenderJSONDiffable & Equatable & Encodable {
         var differences = JSONPatchDifferences()
         let uniqueKeysSet = Set(self.keys).union(Set(other.keys))
         
         for key in uniqueKeysSet {
-            differences.append(contentsOf: (self[key] as! Array<Element>?).difference(from: other[key],
+            differences.append(contentsOf: (self[key] as! [Element]?).difference(from: other[key],
                                                                                       at: path + [JSON.IntegerKey(key)]))
         }
         
@@ -148,14 +148,14 @@ extension Dictionary: RenderJSONDiffable where Key == String, Value: Encodable &
     }
     
     // For now, we are not replacing whole dictionaries.
-    func isSimilar(to other: Dictionary<String, Value>) -> Bool {
+    func isSimilar(to other: [String: Value]) -> Bool {
         return true
     }
 }
 
 extension Optional: RenderJSONDiffable where Wrapped: RenderJSONDiffable & Equatable & Encodable {
     /// Returns the differences between this optional and the given one.
-    @_disfavoredOverload func difference(from other: Optional<Wrapped>, at path: CodablePath) -> JSONPatchDifferences {
+    @_disfavoredOverload func difference(from other: Wrapped?, at path: CodablePath) -> JSONPatchDifferences {
         var difference = JSONPatchDifferences()
         
         if let current = self, let other {
@@ -172,13 +172,13 @@ extension Optional: RenderJSONDiffable where Wrapped: RenderJSONDiffable & Equat
     
     /// Returns the differences between this array of optional elements and the given one.
     func difference<Element>(
-        from other: Optional<Array<Element>>,
+        from other: [Element]?,
         at path: CodablePath
     ) -> JSONPatchDifferences where Element : RenderJSONDiffable & Equatable & Encodable {
         var difference = JSONPatchDifferences()
         
         if let current = self, let other {
-            difference.append(contentsOf: (current as! Array<Element>).difference(from: other, at: path))
+            difference.append(contentsOf: (current as! [Element]).difference(from: other, at: path))
         } else if other != nil {
             difference.append(JSONPatchOperation.remove(
                 pointer: JSONPointer(from: path)))
@@ -190,7 +190,7 @@ extension Optional: RenderJSONDiffable where Wrapped: RenderJSONDiffable & Equat
     }
     
     // Optionals should deal with replacements on their own.
-    func isSimilar(to other: Optional<Wrapped>) -> Bool {
+    func isSimilar(to other: Wrapped?) -> Bool {
         return true
     }
 }
