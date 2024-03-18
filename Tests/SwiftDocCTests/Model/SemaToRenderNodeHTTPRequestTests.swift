@@ -85,7 +85,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         
         assertExpectedContent(
             frameworkRenderNode,
-            sourceLanguage: "swift",  // Swift wins default when multiple langauges present
+            sourceLanguage: "swift",  // Swift wins default when multiple languages present
             symbolKind: "module",
             title: "HTTPRequests",
             navigatorTitle: nil,
