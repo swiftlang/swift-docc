@@ -65,7 +65,7 @@ public class NavigatorIndex {
         /// Missing bundle identifier.
         case missingBundleIdentifier
         
-        @available(*, deprecated, renamed: "missingBundleIdentifier", message: "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 5.11 is released")
+        @available(*, deprecated, renamed: "missingBundleIdentifier", message: "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 6.0 is released")
         case missingBundleIndentifier
         
         /// A RenderNode has no title and won't be indexed.

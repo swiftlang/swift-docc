@@ -556,7 +556,7 @@ extension Symbol {
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
     /// The first variant of the symbol's extended module, if available
-    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 5.12 is released")
+    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 6.0 is released")
     public var extendedModule: String? { extendedModuleVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.

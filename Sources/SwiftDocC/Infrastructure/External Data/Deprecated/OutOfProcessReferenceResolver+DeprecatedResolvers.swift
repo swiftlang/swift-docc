@@ -23,7 +23,7 @@ private struct DeprecatedAPIError: DescribedError {
 
 // MARK: External Symbol Resolver
 
-@available(*, deprecated, renamed: "GlobalExternalSymbolResolver", message: "Use 'GlobalExternalSymbolResolver' instead. This deprecated API will be removed after 5.11 is released")
+@available(*, deprecated, renamed: "GlobalExternalSymbolResolver", message: "Use 'GlobalExternalSymbolResolver' instead. This deprecated API will be removed after 6.0 is released")
 public protocol ExternalSymbolResolver {
     func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode
     func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL?
@@ -49,7 +49,7 @@ extension OutOfProcessReferenceResolver: ExternalSymbolResolver {
 
 // MARK: External Reference Resolver
 
-@available(*, deprecated, renamed: "ExternalDocumentationSource", message: "Use 'ExternalDocumentationSource' instead. This deprecated API will be removed after 5.11 is released")
+@available(*, deprecated, renamed: "ExternalDocumentationSource", message: "Use 'ExternalDocumentationSource' instead. This deprecated API will be removed after 6.0 is released")
 public protocol ExternalReferenceResolver {
     func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult
     func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode
@@ -75,7 +75,7 @@ extension OutOfProcessReferenceResolver: ExternalReferenceResolver {
 
 // MARK: Fallback Reference Resolver
 
-@available(*, deprecated, renamed: "ConvertServiceFallbackResolver", message: "Use 'ConvertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released")
+@available(*, deprecated, renamed: "ConvertServiceFallbackResolver", message: "Use 'ConvertServiceFallbackResolver' instead. This deprecated API will be removed after 6.0 is released")
 public protocol FallbackReferenceResolver {
     func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult
     func entityIfPreviouslyResolved(with reference: ResolvedTopicReference) throws -> DocumentationNode?
@@ -97,7 +97,7 @@ extension OutOfProcessReferenceResolver: FallbackReferenceResolver {
 
 // MARK: Fallback Asset Resolver
 
-@available(*, deprecated, renamed: "ConvertServiceFallbackResolver", message: "Use 'ConvertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released")
+@available(*, deprecated, renamed: "ConvertServiceFallbackResolver", message: "Use 'ConvertServiceFallbackResolver' instead. This deprecated API will be removed after 6.0 is released")
 public protocol FallbackAssetResolver {
     func resolve(assetNamed assetName: String, bundleIdentifier: String) -> DataAsset?
 }
@@ -112,7 +112,7 @@ extension OutOfProcessReferenceResolver: FallbackAssetResolver {
 
 // MARK: External Asset Resolver
 
-@available(*, deprecated, message: "This protocol is not used. This deprecated API will be removed after 5.11 is released")
+@available(*, deprecated, message: "This protocol is not used. This deprecated API will be removed after 6.0 is released")
 public protocol _ExternalAssetResolver {
     func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset?
 }
