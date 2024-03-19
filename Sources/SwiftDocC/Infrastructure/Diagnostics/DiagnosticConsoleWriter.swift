@@ -124,7 +124,7 @@ extension DiagnosticConsoleWriter {
 protocol DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions { get set }
     
-    func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem
+    func formattedDescription(for problems: some Sequence<Problem>) -> String
     func formattedDescription(for problem: Problem) -> String
     func formattedDescription(for diagnostic: Diagnostic) -> String
     func finalize()

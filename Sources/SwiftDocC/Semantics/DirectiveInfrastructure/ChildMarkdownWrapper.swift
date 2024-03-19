@@ -18,11 +18,11 @@ protocol _ChildMarkupProtocol {
     
     var supportsStructuredMarkup: Bool { get }
     
-    func setProperty<T>(
-        on containingDirective: T,
+    func setProperty(
+        on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
         to any: Any
-    ) where T: AutomaticDirectiveConvertible
+    )
 }
 
 enum _ChildMarkupParagraphs {

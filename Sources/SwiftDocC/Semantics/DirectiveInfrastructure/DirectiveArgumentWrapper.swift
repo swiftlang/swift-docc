@@ -20,8 +20,8 @@ protocol _DirectiveArgumentProtocol {
     
     var parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?) { get }
     
-    func setProperty<T: AutomaticDirectiveConvertible>(
-        on containingDirective: T,
+    func setProperty(
+        on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
         to any: Any
     )

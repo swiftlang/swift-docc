@@ -24,8 +24,8 @@ public protocol DocumentationConverterProtocol {
     /// - Throws: Throws an error if the conversion process was not able to start at all, for example if the bundle could not be read.
     /// Partial failures, such as failing to consume a single render node, are returned in the `conversionProblems` component
     /// of the returned tuple.
-    mutating func convert<OutputConsumer: ConvertOutputConsumer>(
-        outputConsumer: OutputConsumer
+    mutating func convert(
+        outputConsumer: some ConvertOutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
 }
 
