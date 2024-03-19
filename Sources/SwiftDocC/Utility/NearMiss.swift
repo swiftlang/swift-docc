@@ -104,7 +104,7 @@ enum NearMiss {
     }
 }
 
-private extension ClosedRange where Bound == Int {
+private extension ClosedRange<Int> {
     func sum() -> Int {
         return (lowerBound + upperBound) * count / 2
     }
