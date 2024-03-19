@@ -16,10 +16,6 @@ public struct DiagnosticFormattingOptions: OptionSet {
         self.rawValue = rawValue
     }
 
-    /// Problem fix-its should be included when printing diagnostics to a file or output stream.
-    @available(*, deprecated, renamed: "formatConsoleOutputForTools" , message: "Use 'formatConsoleOutputForTools' instead. This deprecated API will be removed after 5.10 is released")
-    public static let showFixits = formatConsoleOutputForTools
-
     /// Output to the console should be formatted for an IDE or other tool to parse.
     public static let formatConsoleOutputForTools = DiagnosticFormattingOptions(rawValue: 1 << 0)
 
