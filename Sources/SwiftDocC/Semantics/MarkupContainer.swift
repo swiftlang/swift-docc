@@ -30,7 +30,7 @@ public final class MarkupContainer: Semantic {
     /// Creates a new general-purpose markup container with the elements of a sequence.
     ///
     /// - Parameter elements: A sequence of markup elements.
-    public init<S: Sequence>(_ elements: S) where S.Element: Markup {
+    public init(_ elements: some Sequence<some Markup>) {
         self.elements = Array(elements)
     }
 
@@ -47,15 +47,15 @@ public final class MarkupContainer: Semantic {
 }
 
 extension MarkupContainer: RandomAccessCollection {
-    public subscript(position: Array<Markup>.Index) -> Markup {
+    public subscript(position: [Markup].Index) -> Markup {
         return elements[position]
     }
     
-    public var startIndex: Array<Markup>.Index {
+    public var startIndex: [Markup].Index {
         return elements.startIndex
     }
     
-    public var endIndex: Array<Markup>.Index {
+    public var endIndex: [Markup].Index {
         return elements.endIndex
     }
 }

@@ -64,7 +64,7 @@ struct BidirectionalMap<Value1: Hashable, Value2: Hashable>: Sequence {
         reverse.reserveCapacity(count)
     }
     
-    func makeIterator() -> Dictionary<Value1, Value2>.Iterator {
+    func makeIterator() -> [Value1: Value2].Iterator {
         return forward.makeIterator()
     }
 }
