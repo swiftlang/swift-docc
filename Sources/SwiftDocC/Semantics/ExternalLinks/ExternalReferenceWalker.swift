@@ -175,24 +175,53 @@ struct ExternalReferenceWalker: SemanticVisitor {
 
     mutating func visitComment(_ comment: Comment) { }
 
-    mutating func visitMarkups(_ markups: [Markup]?) {
-        markups?.forEach { visitMarkup($0) }
+    mutating func visitSection(_ section: Section) {
+        for markup in section.content { visitMarkup(markup) }
+    }
+
+    mutating func visitSectionVariants(_ variants: DocumentationDataVariants<some Section>) {
+        for variant in variants.allValues.map(\.variant) {
+            visitSection(variant)
+        }
     }
 
     mutating func visitSymbol(_ symbol: Symbol) {
-        visitMarkups(symbol.abstractSection?.content)
-        visitMarkups(symbol.discussion?.content)
-        visitMarkups(symbol.topics?.content)
-        visitMarkups(symbol.seeAlso?.content)
-        visitMarkups(symbol.returnsSection?.content)
-        visitMarkups(symbol.deprecatedSummary?.content)
-        visitMarkups(symbol.parametersSection?.parameters.flatMap{ $0.contents })
-        visitMarkups(symbol.httpParametersSection?.parameters.flatMap{ $0.contents })
-        visitMarkups(symbol.httpResponsesSection?.responses.flatMap{ $0.contents })
-        visitMarkups(symbol.dictionaryKeysSection?.dictionaryKeys.flatMap{ $0.contents })
-        if let httpBody = symbol.httpBodySection?.body {
-            visitMarkups(httpBody.contents)
-            visitMarkups(httpBody.parameters.flatMap{ $0.contents })
+        visitSectionVariants(symbol.abstractSectionVariants)
+        visitSectionVariants(symbol.discussionVariants)
+        visitSectionVariants(symbol.topicsVariants)
+        visitSectionVariants(symbol.seeAlsoVariants)
+        visitSectionVariants(symbol.returnsSectionVariants)
+        visitSectionVariants(symbol.deprecatedSummaryVariants)
+
+        if let parametersSection = symbol.parametersSection {
+            for parameter in parametersSection.parameters {
+                for markup in parameter.contents { visitMarkup(markup) }
+            }
+        }
+
+        for dictionaryKeysSection in symbol.dictionaryKeysSectionVariants.allValues.map(\.variant) {
+            for dictionaryKeys in dictionaryKeysSection.dictionaryKeys {
+                for markup in dictionaryKeys.contents { visitMarkup(markup) }
+            }
+        }
+
+        for httpParametersSection in symbol.httpParametersSectionVariants.allValues.map(\.variant) {
+            for param in httpParametersSection.parameters {
+                for markup in param.contents { visitMarkup(markup) }
+            }
+        }
+
+        for httpResponsesSection in symbol.httpResponsesSectionVariants.allValues.map(\.variant) {
+            for param in httpResponsesSection.responses {
+                for markup in param.contents { visitMarkup(markup) }
+            }
+        }
+
+        for httpBodySection in symbol.httpBodySectionVariants.allValues.map(\.variant) {
+            for markup in httpBodySection.body.contents { visitMarkup(markup) }
+            for parameter in httpBodySection.body.parameters {
+                for markup in parameter.contents { visitMarkup(markup) }
+            }
         }
     }
 

@@ -519,6 +519,10 @@ extension Dictionary where Key == String, Value == Mixin {
 
 // MARK: Accessors for the first variant of symbol properties.
 
+// Extend the Symbol class to account for legacy code that didn't account for symbols having multiple
+// language representations. New code should be written to work with the variants so that it supports
+// language specific content.
+
 extension Symbol {
     /// The kind of the first variant of this symbol, such as protocol or variable.
     public var kind: SymbolGraph.Symbol.Kind { kindVariants.firstValue! }
@@ -676,27 +680,5 @@ extension Symbol {
         set { automaticTaskGroupsVariants.firstValue = newValue }
     }
 
-    /// Any HTTP parameters of the first variant of the symbol.
-    var httpParametersSection: HTTPParametersSection? {
-        get { httpParametersSectionVariants.firstValue }
-        set { httpParametersSectionVariants.firstValue = newValue }
-    }
-
-    /// Any HTTP body of the first variant of the symbol.
-    var httpBodySection: HTTPBodySection? {
-        get { httpBodySectionVariants.firstValue }
-        set { httpBodySectionVariants.firstValue = newValue }
-    }
-
-    /// Any HTTP responses of the first variant of the symbol.
-    var httpResponsesSection: HTTPResponsesSection? {
-        get { httpResponsesSectionVariants.firstValue }
-        set { httpResponsesSectionVariants.firstValue = newValue }
-    }
-
-    /// Any HTTP responses of the first variant of the symbol.
-    var dictionaryKeysSection: DictionaryKeysSection? {
-        get { dictionaryKeysSectionVariants.firstValue }
-        set { dictionaryKeysSectionVariants.firstValue = newValue }
-    }
+    // Don't add additional functions here. See the comment above about legacy code.
 }
