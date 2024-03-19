@@ -332,7 +332,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The documentation bundles that are currently registered with the context.
-    public var registeredBundles: Dictionary<String, DocumentationBundle>.Values {
+    public var registeredBundles: some Collection<DocumentationBundle> {
         return dataProvider.bundles.values
     }
     
@@ -1301,7 +1301,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             )
 
             // Parse and prepare the nodes' content concurrently.
-            let updatedNodes = documentationCache.symbolReferences.concurrentMap { finalReference in
+            let updatedNodes = Array(documentationCache.symbolReferences).concurrentMap { finalReference in
                 // Match the symbol's documentation extension and initialize the node content.
                 let match = uncuratedDocumentationExtensions[finalReference]
                 let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)

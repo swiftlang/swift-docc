@@ -77,7 +77,7 @@ struct GroupedSequence<Key: Hashable, Element>: Sequence, CustomStringConvertibl
     }
     
     /// Returns an iterator over the members of the sequence.
-    func makeIterator() -> Dictionary<Key, Element>.Values.Iterator {
+    func makeIterator() -> some IteratorProtocol<Element> {
         storage.values.makeIterator()
     }
 }
