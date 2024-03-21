@@ -17,10 +17,6 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
-    /// Whether or not experimental support for parsing Doxygen commands is enabled.
-    @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
-    public var isExperimentalDoxygenSupportEnabled = false
-    
     /// Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.
     public var isExperimentalLinkHierarchySerializationEnabled = false
     

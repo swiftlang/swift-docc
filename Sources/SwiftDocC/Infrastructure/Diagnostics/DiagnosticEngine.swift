@@ -105,7 +105,7 @@ public final class DiagnosticEngine {
         }
     }
     
-    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released")
     public func finalize() {
         flush()
     }

@@ -11,31 +11,31 @@
 import Foundation
 
 extension DocumentationContext {
-    @available(*, deprecated, message: "This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.0 is released")
     public var _externalAssetResolvers: [BundleIdentifier: _ExternalAssetResolver] {
         get { [:] }
         set { /* do nothing */ }
     }
     
-    @available(*, deprecated, renamed: "globalExternalSymbolResolver", message: "Use 'globalExternalSymbolResolver' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "globalExternalSymbolResolver", message: "Use 'globalExternalSymbolResolver' instead. This deprecated API will be removed after 6.0 is released")
     public var externalSymbolResolver: ExternalSymbolResolver? {
         get { nil }
         set { /* do nothing */ }
     }
     
-    @available(*, deprecated, renamed: "externalDocumentationSources", message: "Use 'externalDocumentationSources' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "externalDocumentationSources", message: "Use 'externalDocumentationSources' instead. This deprecated API will be removed after 6.0 is released")
     public var externalReferenceResolvers: [BundleIdentifier: ExternalReferenceResolver] {
         get { [:] }
         set { /* do nothing */ }
     }
     
-    @available(*, deprecated, renamed: "convertServiceFallbackResolver", message: "Use 'convertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "convertServiceFallbackResolver", message: "Use 'convertServiceFallbackResolver' instead. This deprecated API will be removed after 6.0 is released")
     public var fallbackReferenceResolvers: [BundleIdentifier: FallbackReferenceResolver] {
         get { [:] }
         set { /* do nothing */ }
     }
     
-    @available(*, deprecated, renamed: "convertServiceFallbackResolver", message: "Use 'convertServiceFallbackResolver' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "convertServiceFallbackResolver", message: "Use 'convertServiceFallbackResolver' instead. This deprecated API will be removed after 6.0 is released")
     public var fallbackAssetResolvers: [BundleIdentifier: FallbackAssetResolver] {
         get { [:] }
         set { /* do nothing */ }

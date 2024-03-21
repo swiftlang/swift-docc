@@ -186,6 +186,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
 
     mutating func visitSymbol(_ symbol: Symbol) {
+
         visitSectionVariants(symbol.abstractSectionVariants)
         visitSectionVariants(symbol.discussionVariants)
         visitSectionVariants(symbol.topicsVariants)

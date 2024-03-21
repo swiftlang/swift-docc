@@ -26,6 +26,7 @@ struct MergeAction: Action {
         
         try validateThatOutputIsEmpty()
         try validateThatArchivesHaveDisjointData()
+        let supportsStaticHosting = try validateThatAllArchivesOrNoArchivesSupportStaticHosting()
         
         let targetURL = try Self.createUniqueDirectory(inside: fileManager.uniqueTemporaryDirectory(), template: firstArchive, fileManager: fileManager)
         defer {
@@ -40,18 +41,19 @@ struct MergeAction: Action {
         }
         var combinedJSONIndex = try JSONDecoder().decode(RenderIndex.self, from: jsonIndexData)
         
+        // Ensure that the destination has a data directory in case the first archive didn't have any pages.
+        try? fileManager.createDirectory(at: targetURL.appendingPathComponent("data", isDirectory: true), withIntermediateDirectories: false, attributes: nil)
+        
+        let directoriesToCopy = ["data/documentation", "data/tutorials", "images", "videos", "downloads"] + (supportsStaticHosting ? ["documentation", "tutorials"] : [])
         for archive in archives.dropFirst() {
-            for directoryToCopy in ["data/documentation", "data/tutorials", "documentation", "tutorials", "images", "videos", "downloads"] {
+            for directoryToCopy in directoriesToCopy {
                 let fromDirectory = archive.appendingPathComponent(directoryToCopy, isDirectory: true)
                 let toDirectory = targetURL.appendingPathComponent(directoryToCopy, isDirectory: true)
 
-                var mkdir_p = false
+                // Ensure that the destination directory exist in case the first archive didn't have that kind of pages.
+                // This is necessary when merging a reference-only archive with a tutorial-only archive.
+                try? fileManager.createDirectory(at: toDirectory, withIntermediateDirectories: false, attributes: nil)
                 for from in (try? fileManager.contentsOfDirectory(at: fromDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)) ?? [] {
-                    // Create the full path to the destination directory if necessary, once for each directory to copy
-                    if !mkdir_p {
-                        try fileManager.createDirectory(at: toDirectory, withIntermediateDirectories: true, attributes: nil)
-                        mkdir_p = true
-                    }
                     // Copy each file or subdirectory
                     try fileManager.copyItem(at: from, to: toDirectory.appendingPathComponent(from.lastPathComponent))
                 }
@@ -75,6 +77,7 @@ struct MergeAction: Action {
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
     
+    /// Validate that the different archives don't have overlapping data.
     private func validateThatArchivesHaveDisjointData() throws {
         // Check that the archives don't have overlapping data
         typealias ArchivesByDirectoryName = [String: [String: Set<String>]]
@@ -131,6 +134,7 @@ struct MergeAction: Action {
         }
     }
     
+    /// Validate that the output directory is empty.
     private func validateThatOutputIsEmpty() throws {
         guard fileManager.directoryExists(atPath: outputURL.path) else {
             return
@@ -161,5 +165,45 @@ struct MergeAction: Action {
         
             throw NonEmptyOutputError(existingContents: existingContents, fileManager: fileManager)
         }
+    }
+    
+    /// Validate that either all archives support static hosting or that no archives support static hosting.
+    /// - Returns: `true` if all archives support static hosting; `false` otherwise.
+    private func validateThatAllArchivesOrNoArchivesSupportStaticHosting() throws -> Bool {
+        let nonEmptyArchives = archives.filter {
+            fileManager.directoryExists(atPath: $0.appendingPathComponent("data").path)
+        }
+        
+        let archivesWithStaticHostingSupport = nonEmptyArchives.filter {
+            return fileManager.directoryExists(atPath: $0.appendingPathComponent("documentation").path)
+                || fileManager.directoryExists(atPath: $0.appendingPathComponent("tutorials").path)
+        }
+        
+        guard archivesWithStaticHostingSupport.count == nonEmptyArchives.count // All archives support static hosting
+           || archivesWithStaticHostingSupport.count == 0 // No archives support static hosting
+        else {
+            struct DifferentStaticHostingSupportError: DescribedError {
+                var withSupport: Set<String>
+                var withoutSupport: Set<String>
+                
+                var errorDescription: String {
+                    """
+                    Different static hosting support in different archives.
+                    
+                    \(withSupport.sorted().joined(separator: ", ")) support\(withSupport.count == 1 ? "s" : "") static hosting \
+                    but \(withoutSupport.sorted().joined(separator: ", ")) do\(withoutSupport.count == 1 ? "es" : "")n't.
+                    """
+                }
+            }
+            let allArchiveNames = Set(nonEmptyArchives.map(\.lastPathComponent))
+            let archiveNamesWithStaticHostingSupport = Set(archivesWithStaticHostingSupport.map(\.lastPathComponent))
+            
+            throw DifferentStaticHostingSupportError(
+                withSupport: archiveNamesWithStaticHostingSupport,
+                withoutSupport: allArchiveNames.subtracting(archiveNamesWithStaticHostingSupport)
+            )
+        }
+        
+        return !archivesWithStaticHostingSupport.isEmpty
     }
 }

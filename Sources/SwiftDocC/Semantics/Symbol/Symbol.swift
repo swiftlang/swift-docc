@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -509,6 +509,23 @@ extension Symbol {
             }
         }
     }
+    
+    /// Merge the different availability variants defined in the unified symbol,
+    /// and update the availability of the canonical symbol to consider all the different availability mixins instead of only the first one.
+    func mergeAvailabilities(unifiedSymbol: UnifiedSymbolGraph.Symbol) {
+        for (selector, mixins) in unifiedSymbol.mixins {
+            let trait = DocumentationDataVariantsTrait(for: selector)
+            if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
+                unifiedSymbolAvailability.availability.forEach { availabilityItem in
+                    guard let availabilityVariantTrait = availabilityVariants[trait] else { return }
+                    if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                        return
+                    }
+                    availabilityVariants[trait]?.availability.append(availabilityItem)
+                }
+            }
+        }
+    }
 }
 
 extension Dictionary where Key == String, Value == Mixin {
@@ -543,7 +560,7 @@ extension Symbol {
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
     /// The first variant of the symbol's extended module, if available
-    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 5.12 is released")
+    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 6.0 is released")
     public var extendedModule: String? { extendedModuleVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.

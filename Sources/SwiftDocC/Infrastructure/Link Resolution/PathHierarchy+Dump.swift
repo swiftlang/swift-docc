@@ -22,7 +22,7 @@ private extension PathHierarchy.Node {
     func dumpableNode() -> DumpableNode {
         // Each node is printed as 3-layer hierarchy with the child names, their kind disambiguation, and their hash disambiguation.
         return DumpableNode(
-            name: symbol.map { "{ \($0.identifier.precise) : \($0.identifier.interfaceLanguage).\($0.kind.identifier.identifier) }" } ?? "[ \(name) ]",
+            name: symbol.map { "{ \($0.identifier.precise) : \($0.kind.identifier.identifier) [\(languages.map(\.name).joined(separator: ", "))] }" } ?? "[ \(name) ]",
             children: children.sorted(by: \.key).map { (key, disambiguationTree) -> DumpableNode in
                 let grouped = [String: [PathHierarchy.DisambiguationContainer.Element]](grouping: disambiguationTree.storage, by: { $0.kind ?? "_" })
                 return DumpableNode(
