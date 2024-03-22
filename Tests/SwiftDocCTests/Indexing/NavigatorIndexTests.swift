@@ -1621,6 +1621,25 @@ Root
         )
     }
 
+    func testNavigatorDoesNotContainOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let navigatorIndex = try generatedNavigatorIndex(
+            for: "OverloadedSymbols",
+            bundleIdentifier: "com.shapes.ShapeKit")
+
+        let protocolID = try XCTUnwrap(navigatorIndex.id(for: "/documentation/shapekit/overloadedprotocol", with: .swift))
+        let protocolNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { $0.id == protocolID })
+        XCTAssertEqual(protocolNode.children.map(\.item.title), [
+            "Instance Methods",
+            "func fourthTestMemberName(test:)",
+        ])
+
+        let overloadGroupID = try XCTUnwrap(navigatorIndex.id(for: "/documentation/shapekit/overloadedprotocol/fourthtestmembername(test:)-9b6be", with: .swift))
+        let overloadGroupNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { $0.id == overloadGroupID })
+        XCTAssert(overloadGroupNode.children.isEmpty)
+    }
+
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
