@@ -1425,6 +1425,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     localCache: documentationCache,
                     engine: diagnosticEngine
                 )
+            case .overloadOf:
+                // Build overload <-> overloadGroup relationships.
+                SymbolGraphRelationshipsBuilder.addOverloadRelationship(
+                    edge: edge,
+                    context: self,
+                    localCache: documentationCache,
+                    engine: diagnosticEngine
+                )
             default:
                 break
             }
