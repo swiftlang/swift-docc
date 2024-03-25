@@ -98,7 +98,10 @@ struct TopicGraph {
         
         /// If true, the topic has been manually organized into a topic section on some other page.
         var isManuallyCurated: Bool = false
-        
+
+        /// For overloaded symbols, the reference to their overload group node.
+        var overloadGroup: ResolvedTopicReference? = nil
+
         init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, isManuallyCurated: Bool = false) {
             self.reference = reference
             self.kind = kind
@@ -319,6 +322,16 @@ struct TopicGraph {
             }
             seen.insert(node)
         }
+    }
+
+    /// Returns the children of this node that reference it as their overload group.
+    func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference] {
+        edges[groupReference, default: []].filter({ childReference in
+            guard let child = nodes[childReference] else {
+                return false
+            }
+            return child.overloadGroup == groupReference
+        })
     }
 
     /// Returns true if a node exists with the given reference and it's set as linkable.
