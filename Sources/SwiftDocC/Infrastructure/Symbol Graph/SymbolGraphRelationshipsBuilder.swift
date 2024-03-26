@@ -451,7 +451,8 @@ struct SymbolGraphRelationshipsBuilder {
         else {
             return
         }
-        overloadTopicGraphNode.overloadGroup = overloadGroupTopicGraphNode.reference
+        overloadTopicGraphNode.isOverload = true
+        overloadGroupTopicGraphNode.isOverloadGroup = true
         context.topicGraph.addEdge(from: overloadGroupTopicGraphNode, to: overloadTopicGraphNode)
     }
 }

@@ -99,8 +99,11 @@ struct TopicGraph {
         /// If true, the topic has been manually organized into a topic section on some other page.
         var isManuallyCurated: Bool = false
 
-        /// For overloaded symbols, the reference to their overload group node.
-        var overloadGroup: ResolvedTopicReference? = nil
+        /// If true, this topic is an overloaded symbol.
+        var isOverload: Bool = false
+
+        /// If true, this topic is a generated "overload group" symbol page.
+        var isOverloadGroup: Bool = false
 
         init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, isManuallyCurated: Bool = false) {
             self.reference = reference
@@ -325,12 +328,12 @@ struct TopicGraph {
     }
 
     /// Returns the children of this node that reference it as their overload group.
-    func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference] {
-        edges[groupReference, default: []].filter({ childReference in
-            guard let child = nodes[childReference] else {
-                return false
-            }
-            return child.overloadGroup == groupReference
+    func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
+        guard nodes[groupReference]?.isOverloadGroup == true else {
+            return nil
+        }
+        return edges[groupReference, default: []].filter({ childReference in
+            nodes[childReference]?.isOverload == true
         })
     }
 
