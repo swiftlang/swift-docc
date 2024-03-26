@@ -77,6 +77,19 @@ class NodeURLGeneratorTests: XCTestCase {
         XCTAssertEqual(generator.urlForReference(classIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/_privateclass/_privatesubclass")
     }
     
+    func testsafeURLWithEncodableFragment() throws {
+        // This is a realist DerivedData folder.
+        let baseURL = URL(string: "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/")!
+        let generator = NodeURLGenerator(baseURL: baseURL)
+        
+        let basicIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+                                                     path: "/folder/class/symbol",
+                                                     fragment: "テスト", // Non-ASCII; E3 83 86 E3 82 B9 E3 83 88 in UTF-8
+                                                     sourceLanguage: .swift)
+        
+        XCTAssertEqual(generator.urlForReference(basicIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/symbol#%E3%83%86%E3%82%B9%E3%83%88")
+    }
+    
     var inputLongPaths = [
         // Paths within the limits
         "/path/to/symbol.json",

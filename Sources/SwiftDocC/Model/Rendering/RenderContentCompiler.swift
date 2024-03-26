@@ -46,7 +46,11 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {
-        return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText)))]
+        let fragment = urlReadableFragment(heading.plainText)
+        var components = URLComponents()
+        components.fragment = fragment
+        let anchor = components.url?.fragment ?? fragment
+        return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: anchor))]
     }
     
     mutating func visitListItem(_ listItem: ListItem) -> [RenderContent] {
