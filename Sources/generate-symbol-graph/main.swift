@@ -325,10 +325,14 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
             
             var insertedRequirementText = false
             for (index, line) in argumentDocComment.lines.map(\.text).enumerated() {
+                let capitalizedLine = (line.first?.uppercased() ?? "") + line.dropFirst()
+                
+                print(capitalizedLine)
+                
                 if index == 0 {
-                    parametersDocumentation.append("  - \(argumentDisplayName): \(line)")
+                    parametersDocumentation.append("  - \(argumentDisplayName): \(capitalizedLine)") // TODO: INSERT CAPITALIZATION HERE?
                 } else {
-                    parametersDocumentation.append("     \(line)")
+                    parametersDocumentation.append("     \(capitalizedLine)")
                 }
                 
                 guard !insertedRequirementText else {
@@ -380,10 +384,14 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
                 })?.docComment else { continue }
                 
                 for (index, line) in allowedValueDocComment.lines.map(\.text).enumerated() {
+                    let capitalizedLine = (line.first?.uppercased() ?? "") + line.dropFirst()
+                    
+                    print(capitalizedLine)
+                    
                     if index == 0 {
-                        parametersDocumentation.append("     - term `\(allowedValue)`: \(line)")
+                        parametersDocumentation.append("     - term `\(allowedValue)`: \(capitalizedLine)") // TODO: INSERT CAPITALIZATION HERE?
                     } else {
-                        parametersDocumentation.append("        \(line)")
+                        parametersDocumentation.append("        \(capitalizedLine)")
                     }
                 }
             }

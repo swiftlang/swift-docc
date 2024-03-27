@@ -106,12 +106,25 @@ public enum RenderBlockContent: Equatable {
     public struct Aside: Equatable {
         /// The style of this aside block.
         public var style: AsideStyle
+        
+        // `todo; start capitalization by following asides
 
         /// The content inside this aside block.
         public var content: [RenderBlockContent]
 
         public init(style: AsideStyle, content: [RenderBlockContent]) {
             self.style = style
+            
+//            guard content[0] != nil else {
+//                self.content = content
+//            }
+//            
+//            switch content[0] {
+//                case .paragraph:
+//
+//            }
+        
+                
             self.content = content
         }
     }
@@ -327,6 +340,12 @@ public enum RenderBlockContent: Equatable {
             } else {
                 return rawValue.capitalized
             }
+        }
+        
+        /// The content text to use when rendering this style of aside.
+        public var displayContent: String {
+            // TODO: FIND WHERE CONTENT IS
+            return "" // TODO: STUB
         }
 
         /// The style of aside to use when rendering.
