@@ -667,6 +667,68 @@ class DocumentationContextTests: XCTestCase {
         let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.summary)
         XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
     }
+    
+    func testUsesMultipleDocExtensionFilesWithSameName() throws {
+        
+        // Generate 2 different symbols with the same name.
+        let someSymbol = makeSymbol(name: "MyEnum", identifier: "someEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["SomeDirectory", "MyEnum"])
+        let anotherSymbol = makeSymbol(name: "MyEnum", identifier: "anotherEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["AnotherDirectory", "MyEnum"])
+        let symbols: [SymbolGraph.Symbol] = [someSymbol, anotherSymbol]
+        
+        // Create a catalog with doc extension files with the same filename for each symbol.
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                )),
+                
+                Folder(name: "SomeDirectory", content: [
+                    TextFile(name: "MyEnum.md", utf8Content:
+                        """
+                        # ``SomeDirectory/MyEnum``
+                        
+                        A documentation extension for my enum.
+                        """
+                    )
+                ]),
+                
+                Folder(name: "AnotherDirectory", content: [
+                    TextFile(name: "MyEnum.md", utf8Content:
+                        """
+                        # ``AnotherDirectory/MyEnum``
+                        
+                        A documentation extension for an unrelated enum.
+                        """
+                    )
+                ]),
+                
+                // An unrelated article that happens to have the same filename
+                TextFile(name: "MyEnum.md", utf8Content:
+                    """
+                    # MyEnum
+                    
+                    Here is a regular article about MyEnum.
+                    """
+                )
+            ])
+        ])
+        
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        // Since documentation extensions' filenames have no impact on the URL of pages, we should not see warnings enforcing unique filenames for them.
+        let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+        XCTAssertEqual(problemWithDuplicateReference.count, 0)
+        
+        // Ensure the content from both documentation extensions was used.
+        let someEnumNode = try XCTUnwrap(context.documentationCache["someEnumSymbol-id"])
+        let someEnumSymbol = try XCTUnwrap(someEnumNode.semantic as? Symbol)
+        XCTAssertEqual(someEnumSymbol.abstract?.plainText, "A documentation extension for my enum.", "The abstract should be from the symbol's documentation extension.")
+        
+        let anotherEnumNode = try XCTUnwrap(context.documentationCache["anotherEnumSymbol-id"])
+        let anotherEnumSymbol = try XCTUnwrap(anotherEnumNode.semantic as? Symbol)
+        XCTAssertEqual(anotherEnumSymbol.abstract?.plainText, "A documentation extension for an unrelated enum.", "The abstract should be from the symbol's documentation extension.")
+    }
 
     func testGraphChecks() throws {
         let workspace = DocumentationWorkspace()
@@ -4457,12 +4519,13 @@ let expected = """
     private func makeSymbol(
         name: String = "SymbolName",
         identifier: String,
-        kind: SymbolGraph.Symbol.KindIdentifier
+        kind: SymbolGraph.Symbol.KindIdentifier,
+        pathComponents: [String]? = nil
     ) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
             identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
             names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: [name],
+            pathComponents: pathComponents ?? [name],
             docComment: nil,
             accessLevel: .public,
             kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),

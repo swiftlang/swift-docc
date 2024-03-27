@@ -854,7 +854,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
             
-            if let firstFoundAtURL = references[reference] {
+            // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
+            // At this point we consider all articles with an H1 containing link a "documentation extension."
+            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is AnyLink
+            
+            if let firstFoundAtURL = references[reference], !isDocumentationExtension {
                 let problem = Problem(
                     diagnostic: Diagnostic(
                         source: url,
@@ -874,7 +878,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 continue
             }
             
-            references[reference] = url
+            if !isDocumentationExtension {
+                references[reference] = url
+            }
             
             /*
              Add all topic graph nodes up front before resolution starts, because
@@ -907,9 +913,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let result = SemanticResult(value: article, source: url, topicGraphNode: topicGraphNode)
                 
                 // Separate articles that look like documentation extension files from other articles, so that the documentation extension files can be matched up with a symbol.
-                // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
-                // and we will emit warnings for those later on when we finalize the bundle discovery phase.
-                if result.value.title?.child(at: 0) is AnyLink {
+                // Some links might not resolve in the final documentation hierarchy and we will emit warnings for those later on when we finalize the bundle discovery phase.
+                if isDocumentationExtension {
                     documentationExtensions.append(result)
                     
                     // Warn for an incorrect root page metadata directive.
