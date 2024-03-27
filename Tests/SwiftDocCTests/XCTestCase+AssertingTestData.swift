@@ -165,7 +165,7 @@ extension XCTestCase {
             line: line
         )
         
-        if let expectedSeeAlsoSectionIdentifiers = expectedSeeAlsoSectionIdentifiers {
+        if let expectedSeeAlsoSectionIdentifiers {
             XCTAssertEqual(
                 renderNode.seeAlsoSections.flatMap(\.identifiers),
                 expectedSeeAlsoSectionIdentifiers,

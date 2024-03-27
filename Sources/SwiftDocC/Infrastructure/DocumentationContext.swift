@@ -332,7 +332,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The documentation bundles that are currently registered with the context.
-    public var registeredBundles: Dictionary<String, DocumentationBundle>.Values {
+    public var registeredBundles: some Collection<DocumentationBundle> {
         return dataProvider.bundles.values
     }
     
@@ -445,7 +445,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
     
     /// Converts a semantic result to a referenced semantic object by removing the generic constraint.
-    private func referencedSemanticObject<S: Semantic>(from: SemanticResult<S>) -> ReferencedSemanticObject {
+    private func referencedSemanticObject(from: SemanticResult<some Semantic>) -> ReferencedSemanticObject {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
     
@@ -854,7 +854,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
             
-            if let firstFoundAtURL = references[reference] {
+            // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
+            // At this point we consider all articles with an H1 containing link a "documentation extension."
+            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is AnyLink
+            
+            if let firstFoundAtURL = references[reference], !isDocumentationExtension {
                 let problem = Problem(
                     diagnostic: Diagnostic(
                         source: url,
@@ -874,7 +878,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 continue
             }
             
-            references[reference] = url
+            if !isDocumentationExtension {
+                references[reference] = url
+            }
             
             /*
              Add all topic graph nodes up front before resolution starts, because
@@ -907,9 +913,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let result = SemanticResult(value: article, source: url, topicGraphNode: topicGraphNode)
                 
                 // Separate articles that look like documentation extension files from other articles, so that the documentation extension files can be matched up with a symbol.
-                // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
-                // and we will emit warnings for those later on when we finalize the bundle discovery phase.
-                if result.value.title?.child(at: 0) is AnyLink {
+                // Some links might not resolve in the final documentation hierarchy and we will emit warnings for those later on when we finalize the bundle discovery phase.
+                if isDocumentationExtension {
                     documentationExtensions.append(result)
                     
                     // Warn for an incorrect root page metadata directive.
@@ -947,7 +952,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
-    private func insertLandmarks<Landmarks: Sequence>(_ landmarks: Landmarks, from topicGraphNode: TopicGraph.Node, source url: URL) where Landmarks.Element == Landmark {
+    private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue
@@ -981,7 +986,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
-        if let foundDocumentationExtension = foundDocumentationExtension,
+        if let foundDocumentationExtension,
             foundDocumentationExtension.value.deprecationSummary != nil,
             (updatedNode.semantic as? Symbol)?.isDeprecated == false,
             let articleMarkup = foundDocumentationExtension.value.markup,
@@ -1001,7 +1006,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, moduleData: module, moduleReference: moduleReference)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
-        if let symbolGraphURL = symbolGraphURL {
+        if let symbolGraphURL {
             source = .file(url: symbolGraphURL)
         } else {
             source = .external
@@ -1301,7 +1306,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             )
 
             // Parse and prepare the nodes' content concurrently.
-            let updatedNodes = documentationCache.symbolReferences.concurrentMap { finalReference in
+            let updatedNodes = Array(documentationCache.symbolReferences).concurrentMap { finalReference in
                 // Match the symbol's documentation extension and initialize the node content.
                 let match = uncuratedDocumentationExtensions[finalReference]
                 let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
@@ -1704,7 +1709,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         return resources.filter { dataAsset in
             // Filter by file extension.
-            if let extensions = extensions {
+            if let extensions {
                 let fileExtensions = dataAsset.variants.values.map { $0.pathExtension.lowercased() }
                 guard !extensions.intersection(fileExtensions).isEmpty else {
                     return false
@@ -2554,7 +2559,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return false
         }
         
-        guard let expectedAssetType = expectedAssetType, let asset = assetManager.storage[key] else {
+        guard let expectedAssetType, let asset = assetManager.storage[key] else {
             return true
         }
         
@@ -2751,7 +2756,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     func resolveAsset(named name: String, bundleIdentifier: String, withType expectedType: AssetType?) -> DataAsset? {
         if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
-            if let expectedType = expectedType {
+            if let expectedType {
                 guard localAsset.hasVariant(withAssetType: expectedType) else {
                     return nil
                 }

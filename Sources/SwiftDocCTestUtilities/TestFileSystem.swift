@@ -311,7 +311,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
 
     public func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
 
-        if let keys = keys {
+        if let keys {
             XCTAssertTrue(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
         }
         

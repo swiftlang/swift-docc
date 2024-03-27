@@ -219,7 +219,7 @@ extension XCTestCase {
         let bundle: DocumentationBundle
         let context: DocumentationContext
         
-        if let bundleName = bundleName {
+        if let bundleName {
             (bundle, context) = try testBundleAndContext(named: bundleName)
         } else {
             (bundle, context) = try testBundleAndContext()

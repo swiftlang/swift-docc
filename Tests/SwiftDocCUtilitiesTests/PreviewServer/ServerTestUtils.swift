@@ -18,7 +18,7 @@ import XCTest
 /// Makes a request head part with the given URI and headers.
 func makeRequestHead(uri: String, headers: [(String, String)]? = nil) -> HTTPRequestHead {
     var head = HTTPRequestHead(version: .init(major: 1, minor: 1), method: .GET, uri: uri)
-    if let headers = headers {
+    if let headers {
         for header in headers {
             head.headers.add(name: header.0, value: header.1)
         }

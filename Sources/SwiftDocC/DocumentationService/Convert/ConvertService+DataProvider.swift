@@ -66,7 +66,7 @@ extension ConvertService {
         static private func createURL(pathExtension: String? = nil) -> URL {
             var url = URL(string: "docc-service:/\(UUID().uuidString)")!
             
-            if let pathExtension = pathExtension {
+            if let pathExtension {
                 url.appendPathExtension(pathExtension)
             }
             

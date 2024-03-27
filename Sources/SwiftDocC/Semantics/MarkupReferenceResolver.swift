@@ -28,7 +28,7 @@ fileprivate func unknownSnippetSliceProblem(snippetPath: String, slice: String, 
 
 fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     var solutions = [Solution]()
-    if let range = range, reference.pathComponents.count > 3 {
+    if let range, reference.pathComponents.count > 3 {
         // The first three path components are "/", "documentation", and the module name, so drop those
         let pathRemainder = reference.pathComponents[3...]
         solutions.append(.init(summary: "Use a plain code span instead of a symbol link", replacements: [
@@ -82,7 +82,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         case .failure(let unresolved, let error):
             if let rangeLowerBoundSource = range?.lowerBound.source,
                let rangeUpperBoundSource = range?.upperBound.source,
-               let source = source,
+               let source,
                source != rangeLowerBoundSource || source != rangeUpperBoundSource {
                 return nil
             }

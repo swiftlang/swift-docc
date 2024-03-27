@@ -123,7 +123,7 @@ extension RenderNode: Codable {
 
 extension KeyedEncodingContainer {
     /// Encodes the given `Collection<T>` if it contains any elements.
-    mutating func encodeIfNotEmpty<T>(_ value: T, forKey key: KeyedEncodingContainer.Key) throws where T : Encodable, T : Collection {
+    mutating func encodeIfNotEmpty(_ value: some Encodable & Collection, forKey key: KeyedEncodingContainer.Key) throws {
         if !value.isEmpty {
             try encode(value, forKey: key)
         }

@@ -222,7 +222,7 @@ extension PathHierarchy.Error {
         }
     }
     
-    private static func replacementOperationDescription<S1: StringProtocol, S2: StringProtocol>(from: S1, to: S2) -> String {
+    private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {
         if from.isEmpty {
             return "Insert \(to.singleQuoted)"
         }
