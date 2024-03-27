@@ -66,7 +66,7 @@ extension Docc.ProcessCatalog {
             var outputURL: URL?
             
             mutating func validate() throws {
-                if let documentationCatalog = documentationCatalog {
+                if let documentationCatalog {
                     guard documentationCatalog.pathExtension == "docc" else {
                         throw ValidationError("""
                         Missing documentation catalog directory configuration.

@@ -26,9 +26,9 @@ extension RenderInlineContent: TextIndexing {
         case .image(_, let metadata):
             return metadata?.rawIndexableTextContent(references: references) ?? ""
         case let .reference(identifier, _, overridingTitle, overridingTitleInlineContent):
-            if let overridingTitleInlineContent = overridingTitleInlineContent {
+            if let overridingTitleInlineContent {
                 return overridingTitleInlineContent.rawIndexableTextContent(references: references)
-            } else if let overridingTitle = overridingTitle {
+            } else if let overridingTitle {
                 return overridingTitle
             } else if let reference = references[identifier.identifier] as? TopicRenderReference {
                 return reference.title

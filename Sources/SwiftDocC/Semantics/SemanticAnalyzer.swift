@@ -52,7 +52,7 @@ struct SemanticAnalyzer: MarkupVisitor {
             .map { $0.singleQuoted }
             .list(finalConjunction: .or)
         
-        if let source = source {
+        if let source {
             if !topLevelChildren.isEmpty, !DocumentationBundleFileTypes.isTutorialFile(source) {
                 // Only tutorials support top level directives. This document has top level directives but is not a tutorial file.
                 let directiveName = type(of: topLevelChildren.first! as! DirectiveConvertible).directiveName

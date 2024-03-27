@@ -50,7 +50,7 @@ extension Collection where Index == Int {
             guard batchCount > 0 else { return }
 
             // Create a new array to collect results within this batch.
-            var batchResults = Array<Result>()
+            var batchResults = [Result]()
             batchResults.reserveCapacity(batchCount)
             
             // Run serially `block` over the elements
@@ -129,7 +129,7 @@ extension Collection where Index == Int {
             guard batchCount > 0 else { return }
 
             // Create a new array to collect results within this batch.
-            var batchResults = Array<Result>()
+            var batchResults = [Result]()
             batchResults.reserveCapacity(batchCount)
             
             // Run serially `block` over the elements

@@ -78,7 +78,7 @@ public struct GeneratedCurationWriter {
             // Calculate the longest link to nicely align all the comments
             let longestLink = links.map(\.link.count).max()! // `links` are non-empty so it's safe to force-unwrap `.max()` here
             for (link, comment) in links {
-                if let comment = comment {
+                if let comment {
                     text.append(link.padding(toLength: longestLink, withPad: " ", startingAt: 0))
                     text.append(comment)
                 } else {
@@ -127,7 +127,7 @@ public struct GeneratedCurationWriter {
             return [:]
         }
         
-        if let symbolLink = symbolLink {
+        if let symbolLink {
             switch context.linkResolver.resolve(UnresolvedTopicReference(topicURL: .init(symbolPath: symbolLink)), in: curationCrawlRoot, fromSymbolLink: true, context: context) {
             case .success(let foundSymbol):
                 curationCrawlRoot = foundSymbol
@@ -146,7 +146,7 @@ public struct GeneratedCurationWriter {
             }
             
             guard let absoluteLink = allAbsoluteLinks[usr], let curationText = defaultCurationText(for: reference) else { continue }
-            if let catalogURL = catalogURL, let existingURL = context.documentationExtensionURL(for: reference) {
+            if let catalogURL, let existingURL = context.documentationExtensionURL(for: reference) {
                 let updatedFileURL: URL
                 if catalogURL == outputURL {
                     updatedFileURL = existingURL

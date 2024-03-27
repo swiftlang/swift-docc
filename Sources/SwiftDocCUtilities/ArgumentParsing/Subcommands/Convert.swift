@@ -123,7 +123,7 @@ extension Docc {
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
             // If an output location was passed as an argument, use it as-is.
-            if let providedOutputURL = providedOutputURL {
+            if let providedOutputURL {
                 return providedOutputURL
             }
             

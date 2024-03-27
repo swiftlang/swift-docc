@@ -34,7 +34,7 @@ struct SemanticTreeDumper: SemanticWalker {
             let end = range.upperBound
             result += " @\(start.line):\(start.column)-\(end.line):\(end.column)"
         }
-        if let customDescription = customDescription {
+        if let customDescription {
             result += " \(customDescription)"
         }
         increasingDepth(semantic)

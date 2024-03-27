@@ -98,7 +98,7 @@ extension ConvertAction {
 }
 
 private func symbolGraphFiles(in directory: URL?) -> [URL] {
-    guard let directory = directory else { return [] }
+    guard let directory else { return [] }
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }

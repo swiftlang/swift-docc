@@ -35,7 +35,7 @@ public class Throttle {
     /// the previous block is canceled in favor of the latest one.
     public func schedule(block: @escaping ()->Void) {
         throttleQueue.sync {
-            if let currentTimer = currentTimer {
+            if let currentTimer {
                 currentTimer.cancel()
             }
 

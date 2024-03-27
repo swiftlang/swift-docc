@@ -173,7 +173,7 @@ struct RenderContentCompiler: MarkupVisitor {
         let useOverriding: Bool
         if link.isAutolink { // If the link is an auto link, we don't use overriding info
             useOverriding = false
-        } else if let overridingTitle = overridingTitle,
+        } else if let overridingTitle,
                   overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
                   destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
         {

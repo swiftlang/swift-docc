@@ -23,7 +23,7 @@ public struct ContentRenderSection: RenderSection, Equatable {
     public init(kind: RenderSectionKind, content: [RenderBlockContent], heading: String? = nil) {
         self.kind = kind
         self.content = content
-        if let heading = heading {
+        if let heading {
             self.content.insert(RenderBlockContent.heading(.init(level: 2, text: heading, anchor: urlReadableFragment(heading.lowercased()))), at: 0)
         }
     }

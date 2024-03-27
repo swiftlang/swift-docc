@@ -98,7 +98,7 @@ public final class DiagnosticEngine {
 
         workQueue.async { [weak self] in
             // If the engine isn't around then return early
-            guard let self = self else { return }
+            guard let self else { return }
             for consumer in self.consumers.sync({ $0.values }) {
                 consumer.receive(filteredProblems)
             }

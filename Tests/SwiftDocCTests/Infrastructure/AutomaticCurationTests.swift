@@ -746,7 +746,7 @@ private func makeSymbol(
     swiftExtension: SymbolGraph.Symbol.Swift.Extension? = nil
 ) -> SymbolGraph.Symbol {
     var mixins = [String: Mixin]()
-    if let swiftExtension = swiftExtension {
+    if let swiftExtension {
         mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
     }
     return SymbolGraph.Symbol(
