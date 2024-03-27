@@ -20,7 +20,7 @@ class TopicGraphHashTests: XCTestCase {
             return testBenchmark.metrics[0].result
         }
         .compactMap { value -> String? in
-            guard let value = value,
+            guard let value,
                 case MetricValue.checksum(let hash) = value else { return nil }
             return hash
         }

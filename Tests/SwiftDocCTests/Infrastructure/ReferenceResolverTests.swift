@@ -741,7 +741,7 @@ private extension DocumentationDataVariantsTrait {
     static var objectiveC: DocumentationDataVariantsTrait { .init(interfaceLanguage: "occ") }
 }
 
-private extension Collection where Element == RenderBlockContent {
+private extension Collection<RenderBlockContent> {
     func contents(of heading: String) -> Slice<Self> {
         var headingLevel: Int = 1
         

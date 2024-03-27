@@ -71,7 +71,7 @@ public class DocumentationSchemeHandler: NSObject {
     /// Returns a response to a given request.
     public func response(to request: URLRequest) -> (URLResponse, Data?) {
         var (response, data) = fileServer.response(to: request)
-        if data == nil, let fallbackHandler = fallbackHandler,
+        if data == nil, let fallbackHandler,
             let (fallbackResponse, fallbackData) = fallbackHandler(request) {
             response = fallbackResponse
             data = fallbackData
@@ -86,7 +86,7 @@ extension DocumentationSchemeHandler: WKURLSchemeHandler {
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         let (response, data) = self.response(to: urlSchemeTask.request)
         urlSchemeTask.didReceive(response)
-        if let data = data {
+        if let data {
             urlSchemeTask.didReceive(data)
         }
         urlSchemeTask.didFinish()

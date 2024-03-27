@@ -102,7 +102,7 @@ struct PathHierarchy {
                 moduleNode = newModuleNode
                 allNodes[moduleName] = [moduleNode]
             }
-            if let language = language {
+            if let language {
                 moduleNode.languages.insert(language)
             }
             
@@ -293,7 +293,7 @@ struct PathHierarchy {
                 for element in container.storage {
                     assert(element.node.parent === node, {
                         func describe(_ node: Node?) -> String {
-                            guard let node = node else { return "<nil>" }
+                            guard let node else { return "<nil>" }
                             guard let identifier = node.symbol?.identifier else { return node.name }
                             return "\(identifier.precise) (\(identifier.interfaceLanguage))"
                         }

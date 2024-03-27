@@ -172,10 +172,10 @@ extension DirectiveMirror {
         
         let parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?)
         
-        func setValue<T>(
-            on containingDirective: T,
+        func setValue(
+            on containingDirective: some AutomaticDirectiveConvertible,
             to any: Any
-        ) where T: AutomaticDirectiveConvertible {
+        ) {
             argument.setProperty(
                 on: containingDirective,
                 named: propertyLabel,
@@ -211,10 +211,10 @@ extension DirectiveMirror {
         let propertyLabel: String
         let childDirective: _ChildDirectiveProtocol
         
-        func setValue<T>(
-            on containingDirective: T,
+        func setValue(
+            on containingDirective: some AutomaticDirectiveConvertible,
             to any: Any
-        ) where T: AutomaticDirectiveConvertible {
+        ) {
             childDirective.setProperty(
                 on: containingDirective,
                 named: propertyLabel,
@@ -293,10 +293,10 @@ extension DirectiveMirror {
         
         let markup: _ChildMarkupProtocol
         
-        func setValue<T>(
-            on containingDirective: T,
+        func setValue(
+            on containingDirective: some AutomaticDirectiveConvertible,
             to any: Any
-        ) where T: AutomaticDirectiveConvertible {
+        ) {
             markup.setProperty(
                 on: containingDirective,
                 named: propertyLabel,

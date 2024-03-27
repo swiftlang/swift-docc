@@ -74,7 +74,7 @@ public struct DefaultImplementationsSection {
     public private(set) var implementations = Set<Implementation>()
     
     mutating func addImplementation(_ implementation: Implementation, fallbackTarget: (reference: TopicReference, title: String)? = nil) {
-        if let fallbackTarget = fallbackTarget {
+        if let fallbackTarget {
             targetFallbacks[fallbackTarget.reference] = fallbackTarget.title
         }
         implementations.insert(implementation)

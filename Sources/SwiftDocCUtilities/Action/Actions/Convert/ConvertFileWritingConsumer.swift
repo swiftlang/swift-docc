@@ -199,7 +199,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     }
     
     /// Encodes the given value using the default render node JSON encoder.
-    private func encode<E: Encodable>(_ value: E) throws -> Data {
+    private func encode(_ value: some Encodable) throws -> Data {
         try makeEncoder().encode(value)
     }
     

@@ -207,7 +207,7 @@ struct DocumentationMarkup {
                     discussionIndex = index
                 }
                 
-                guard let discussionIndex = discussionIndex else { return }
+                guard let discussionIndex else { return }
                 
                 // Level 2 heading found inside discussion
                 if let heading = child as? Heading, heading.level == 2 {
@@ -243,7 +243,7 @@ struct DocumentationMarkup {
                     if heading.level == 2 {
                         switch heading.plainText {
                         case SeeAlsoSection.title:
-                            if let topicsIndex = topicsIndex, topicsFirstTaskGroupIndex != nil {
+                            if let topicsIndex, topicsFirstTaskGroupIndex != nil {
                                 topicsSection = TopicsSection(content: markup.children(at: topicsIndex ..< index))
                             }
                             currentSection = .seeAlso
@@ -275,7 +275,7 @@ struct DocumentationMarkup {
             if currentSection == .seeAlso {
                 // Level 2 heading found inside See Also
                 if child is Heading {
-                    if let seeAlsoIndex = seeAlsoIndex {
+                    if let seeAlsoIndex {
                         seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex ..< index))
                     }
                     currentSection = .end
