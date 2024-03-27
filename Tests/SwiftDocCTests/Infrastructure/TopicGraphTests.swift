@@ -84,8 +84,6 @@ class TopicGraphTests: XCTestCase {
             graph.addEdge(from: group, to: b)
 
             graph.nodes[group.reference]?.isOverloadGroup = true
-            graph.nodes[a.reference]?.isOverload = true
-            graph.nodes[b.reference]?.isOverload = true
 
             return graph
         }

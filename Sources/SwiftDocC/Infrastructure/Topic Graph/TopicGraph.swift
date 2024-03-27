@@ -99,9 +99,6 @@ struct TopicGraph {
         /// If true, the topic has been manually organized into a topic section on some other page.
         var isManuallyCurated: Bool = false
 
-        /// If true, this topic is an overloaded symbol.
-        var isOverload: Bool = false
-
         /// If true, this topic is a generated "overload group" symbol page.
         var isOverloadGroup: Bool = false
 
@@ -333,7 +330,7 @@ struct TopicGraph {
             return nil
         }
         return edges[groupReference, default: []].filter({ childReference in
-            nodes[childReference]?.isOverload == true
+            nodes[childReference]?.isManuallyCurated == false
         })
     }
 
