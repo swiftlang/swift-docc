@@ -120,7 +120,7 @@ extension AttributedCodeListing.Line {
             case .genericTypeParameterName(let string):
                 return string
             case .attribute(let name, let contents):
-                if let contents = contents {
+                if let contents {
                     return "@\(name)(\(contents))"
                 } else {
                     return "@\(name)"

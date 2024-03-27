@@ -77,7 +77,7 @@ extension LMDB {
            - key: The key of the value associated with.
         - Returns: The value related to the given key, if existing.
         */
-        public func get<Value: LMDBData, Key: LMDBData>(type: Value.Type, forKey key: Key) -> Value? {
+        public func get<Value: LMDBData>(type: Value.Type, forKey key: some LMDBData) -> Value? {
             let result = try? Transaction(environment: environment, readOnly: true).run {
                 $0.get(type: type, forKey: key, from: self)
             }
@@ -93,7 +93,7 @@ extension LMDB {
            - flags: The list of `WriteFlags` to use for the put action.
         - Throws: An error in case a read-only transaction has been used, an invalid parameter has been specified, the database is full or the transaction has too many dirty pages to complete.
         */
-        public func put<Value: LMDBData, Key: LMDBData>(key: Key, value: Value, flags: WriteFlags = []) throws {
+        public func put(key: some LMDBData, value: some LMDBData, flags: WriteFlags = []) throws {
             try Transaction(environment: environment).run {
                 try $0.put(key: key, value: value, in: self, flags: flags)
             }
@@ -106,7 +106,7 @@ extension LMDB {
            - key: The key of the value.
         - Throws: An error in case a read-only transaction has been used or an invalid parameter has been specified.
         */
-        public func delete<Key: LMDBData>(_ key: Key) throws {
+        public func delete(_ key: some LMDBData) throws {
             try Transaction(environment: environment).run {
                 try $0.delete(key, from: self)
             }

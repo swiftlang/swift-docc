@@ -132,7 +132,7 @@ extension LMDB {
             - db: The database to look for the value.
          - Returns: The value related to the given key, if existing.
          */
-        public func get<Value: LMDBData, Key: LMDBData>(type: Value.Type, forKey key: Key, from db: Database) -> Value?{
+        public func get<Value: LMDBData>(type: Value.Type, forKey key: some LMDBData, from db: Database) -> Value?{
             return key.read { (keyPointer) in
                 var keyValue = MDB_val(unsafeRawBufferPointer: keyPointer)
                 var value = MDB_val()
@@ -153,7 +153,7 @@ extension LMDB {
             - db: The database to insert the value into.
          - Throws: An error in case a read-only transaction has been used, an invalid parameter has been specified, the database is full or the transaction has too many dirty pages to complete.
          */
-        public func put<Value: LMDBData, Key: LMDBData>(key: Key, value: Value, in db: Database, flags: Database.WriteFlags = []) throws {
+        public func put(key: some LMDBData, value: some LMDBData, in db: Database, flags: Database.WriteFlags = []) throws {
             try key.read() { (key: UnsafeRawBufferPointer) in
                 try value.read() { (value: UnsafeRawBufferPointer) in
                     var key = MDB_val(unsafeRawBufferPointer: key)
@@ -174,7 +174,7 @@ extension LMDB {
            - db: The database form which the value has to be deleted.
         - Throws: An error in case a read-only transaction has been used or an invalid parameter has been specified.
         */
-        public func delete<Key: LMDBData>(_ key: Key, from db: Database) throws {
+        public func delete(_ key: some LMDBData, from db: Database) throws {
             try key.read() { key in
                 var keyVal = MDB_val(unsafeRawBufferPointer:key)
                 let result = mdb_del(self.opaquePointer, db.handle, &keyVal, nil)

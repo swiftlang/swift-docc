@@ -234,14 +234,14 @@ extension AbsoluteSymbolLink.LinkComponent {
         /// Creates a disambiguation suffix based on the given kind and precise
         /// identifiers.
         init(kindIdentifier: String?, preciseIdentifier: String?) {
-            if let kindIdentifier = kindIdentifier, let preciseIdentifier = preciseIdentifier {
+            if let kindIdentifier, let preciseIdentifier {
                 self = .kindAndPreciseIdentifier(
                     kindIdentifier: kindIdentifier,
                     preciseIdentifierHash: preciseIdentifier.stableHashString
                 )
-            } else if let kindIdentifier = kindIdentifier {
+            } else if let kindIdentifier {
                 self = .kindIdentifier(kindIdentifier)
-            } else if let preciseIdentifier = preciseIdentifier {
+            } else if let preciseIdentifier {
                 self = .preciseIdentifierHash(preciseIdentifier.stableHashString)
             } else {
                 self = .none

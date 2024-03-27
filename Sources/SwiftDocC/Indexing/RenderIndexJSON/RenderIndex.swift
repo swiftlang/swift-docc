@@ -241,7 +241,7 @@ extension RenderIndex {
             self.isBeta = false
             self.icon = icon
             
-            guard let pageType = pageType else {
+            guard let pageType else {
                 self.type = nil
                 self.path = path
                 return

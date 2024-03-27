@@ -212,7 +212,7 @@ struct DocumentationCurator {
                     if let range = link.range {
                         return range
                     }
-                    if let topics = topics,
+                    if let topics,
                         topics.originalLinkRangesByGroup.count > groupIndex,
                         topics.originalLinkRangesByGroup[groupIndex].count > linkIndex {
                         return topics.originalLinkRangesByGroup[groupIndex][linkIndex]

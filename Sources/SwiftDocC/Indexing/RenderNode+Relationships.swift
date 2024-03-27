@@ -68,7 +68,7 @@ extension RenderNode {
     public func projectFiles() -> DownloadReference? {
         // sampleDownload is provided by pages which are of type "sample code".
         // This section provides an action which includes a download reference.
-        if let sampleDownload = sampleDownload, case let RenderInlineContent.reference(identifier, _, _, _) = sampleDownload.action,
+        if let sampleDownload, case let RenderInlineContent.reference(identifier, _, _, _) = sampleDownload.action,
            let reference = references[identifier.identifier] {
             return reference as? DownloadReference
         }

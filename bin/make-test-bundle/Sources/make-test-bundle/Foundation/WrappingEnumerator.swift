@@ -12,7 +12,7 @@ import Foundation
 
 /// Enumerator over an array of items that wraps around.
 struct WrappingEnumerator<Element> {
-    var items: Array<Element> = [] {
+    var items: [Element] = [] {
         didSet { if index >= items.count { index = 0 } }
     }
     private(set) var index: Int = 0

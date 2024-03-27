@@ -36,7 +36,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
     
     override var children: [Semantic] {
         var elements: [Semantic] = [content]
-        if let image = image {
+        if let image {
             elements.append(image)
         }
         elements.append(contentsOf: choices)
@@ -88,7 +88,7 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
                 guard let range = answer.originalMarkup.range else {
                     continue
                 }
-                if let source = source {
+                if let source {
                     let note = DiagnosticNote(source: source, range: range, message: "This `\(Choice.directiveName)` directive is marked as the correct option")
                     diagnostic.notes.append(note)
                 }

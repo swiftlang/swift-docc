@@ -126,7 +126,7 @@ struct MeasureAction {
         print("Result: \(outputLocation.path)".styled(.bold))
         
         // Run a diff command if a base benchmark was provided.
-        guard let baseBenchmark = baseBenchmark else {
+        guard let baseBenchmark else {
             return
         }
         

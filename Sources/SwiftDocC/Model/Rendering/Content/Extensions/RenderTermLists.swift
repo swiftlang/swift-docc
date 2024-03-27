@@ -15,7 +15,7 @@ protocol ListableItem {}
 extension RenderBlockContent.ListItem: ListableItem {}
 extension RenderBlockContent.TermListItem: ListableItem {}
 
-extension Collection where Element == RenderBlockContent.ListItem {
+extension Collection<RenderBlockContent.ListItem> {
     
     /// Detects term list items in a collection of list items and converts
     /// them to term list items for rendering while preserving non-term
@@ -118,7 +118,7 @@ extension RenderBlockContent.TermListItem {
     }
 }
 
-extension Collection where Element == RenderInlineContent {
+extension Collection<RenderInlineContent> {
     
     /// Separate the inline contents into the contents that should be used for the
     /// term and the contents that should be used for the definition.

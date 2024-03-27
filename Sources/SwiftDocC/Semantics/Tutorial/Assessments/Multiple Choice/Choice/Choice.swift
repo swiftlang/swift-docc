@@ -43,7 +43,7 @@ public final class Choice: Semantic, AutomaticDirectiveConvertible {
     
     override var children: [Semantic] {
         var elements: [Semantic] = [content]
-        if let image = image {
+        if let image {
             elements.append(image)
         }
         elements.append(justification)

@@ -93,7 +93,7 @@ struct RenderTrendAction {
             
             // Print the bar
             output += String(repeating: Self.partialBarCharacters[7], count: fullBlocks)
-            if let partialBlockIndex = partialBlockIndex {
+            if let partialBlockIndex {
                 output += Self.partialBarCharacters[partialBlockIndex]
             }
             output += "   \(metric.values.formatted())\n"
