@@ -9,7 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocCTestUtilities
+@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class TestFileSystemTests: XCTestCase {
     

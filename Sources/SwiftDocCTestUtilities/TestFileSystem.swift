@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-@testable import SwiftDocC
+@testable @_spi(FileManagerProtocol) import SwiftDocC
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
 ///
@@ -40,13 +40,14 @@ import XCTest
 ///
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
-package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
-    package let currentDirectoryPath = "/"
+@_spi(FileManagerProtocol) // This needs to be SPI because it conforms to an SPI protocol
+public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
+    public let currentDirectoryPath = "/"
     
-    package var identifier: String = UUID().uuidString
+    public var identifier: String = UUID().uuidString
     
     private var _bundles = [DocumentationBundle]()
-    package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
+    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         // Ignore the bundle discovery options, these test bundles are already built.
         return _bundles
     }
@@ -64,7 +65,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     /// A data fixture to use in the `files` index to mark folders.
     static let folderFixtureData = "Folder".data(using: .utf8)!
     
-    package convenience init(folders: [Folder]) throws {
+    public convenience init(folders: [Folder]) throws {
         self.init()
         
         // Default system paths
@@ -116,7 +117,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         }
     }
 
-    package func contentsOfURL(_ url: URL) throws -> Data {
+    public func contentsOfURL(_ url: URL) throws -> Data {
         filesLock.lock()
         defer { filesLock.unlock() }
 
@@ -126,7 +127,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return file
     }
     
-    package func contents(of url: URL) throws -> Data {
+    public func contents(of url: URL) throws -> Data {
         try contentsOfURL(url)
     }
     
@@ -165,7 +166,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return Array(fileList.keys)
     }
     
-    package func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
+    public func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -178,14 +179,14 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return true
     }
     
-    package func fileExists(atPath path: String) -> Bool {
+    public func fileExists(atPath path: String) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files.keys.contains(path)
     }
     
-    package func copyItem(at srcURL: URL, to dstURL: URL) throws {
+    public func copyItem(at srcURL: URL, to dstURL: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -202,7 +203,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         }
     }
     
-    package func moveItem(at srcURL: URL, to dstURL: URL) throws {
+    public func moveItem(at srcURL: URL, to dstURL: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -239,7 +240,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         files[path] = Self.folderFixtureData
     }
     
-    package func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
+    public func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -248,14 +249,14 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         try createDirectory(atPath: url.path, withIntermediateDirectories: createIntermediates)
     }
     
-    package func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
+    public func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files[path1] == files[path2]
     }
     
-    package func removeItem(at: URL) throws {
+    public func removeItem(at: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -267,7 +268,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         }
     }
     
-    package func createFile(at url: URL, contents: Data) throws {
+    public func createFile(at url: URL, contents: Data) throws {
         filesLock.lock()
         defer { filesLock.unlock() }
 
@@ -278,18 +279,18 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         }
     }
     
-    package func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
+    public func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
         try createFile(at: url, contents: contents)
     }
     
-    package func contents(atPath: String) -> Data? {
+    public func contents(atPath: String) -> Data? {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files[atPath]
     }
     
-    package func contentsOfDirectory(atPath path: String) throws -> [String] {
+    public func contentsOfDirectory(atPath path: String) throws -> [String] {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -308,7 +309,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return Array(results)
     }
 
-    package func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
+    public func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
 
         if let keys {
             XCTAssertTrue(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
@@ -327,7 +328,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return output
     }
 
-    package func uniqueTemporaryDirectory() -> URL {
+    public func uniqueTemporaryDirectory() -> URL {
         URL(fileURLWithPath: "/tmp/\(ProcessInfo.processInfo.globallyUniqueString)", isDirectory: true)
     }
     
@@ -344,7 +345,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     ///
     /// - Parameter path: The path to the sub hierarchy to dump to a string representation.
     /// - Returns: A stable string representation that can be checked in tests.
-    package func dump(subHierarchyFrom path: String = "/") -> String {
+    public func dump(subHierarchyFrom path: String = "/") -> String {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -367,7 +368,7 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     }
     
     // This is a convenience utility for testing, not FileManagerProtocol API
-    package func recursiveContentsOfDirectory(atPath path: String) throws -> [String] {
+    public func recursiveContentsOfDirectory(atPath path: String) throws -> [String] {
         var allSubpaths = try contentsOfDirectory(atPath: path)
         
         for subpath in allSubpaths { // This is iterating over a copy

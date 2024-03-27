@@ -10,11 +10,11 @@
 
 import XCTest
 import Foundation
-@testable @_spi(ExternalLinks) import SwiftDocC
+@testable @_spi(FileManagerProtocol) @_spi(ExternalLinks) import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
-@testable import SwiftDocCTestUtilities
+@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)

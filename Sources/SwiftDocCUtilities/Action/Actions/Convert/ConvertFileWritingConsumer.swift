@@ -9,7 +9,7 @@
 */
 
 import Foundation
-import SwiftDocC
+@_spi(FileManagerProtocol) import SwiftDocC
 
 struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     var targetFolder: URL

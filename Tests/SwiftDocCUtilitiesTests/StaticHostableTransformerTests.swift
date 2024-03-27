@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-@testable import SwiftDocC
+@testable @_spi(FileManagerProtocol) import SwiftDocC
 @testable import SwiftDocCUtilities
 import SwiftDocCTestUtilities
 

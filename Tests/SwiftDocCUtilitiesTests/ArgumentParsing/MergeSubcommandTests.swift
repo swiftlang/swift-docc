@@ -12,7 +12,7 @@ import XCTest
 import ArgumentParser
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
-import SwiftDocCTestUtilities
+@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
 
 class MergeSubcommandTests: XCTestCase {
     func testCommandLineArgumentValidation() throws {
