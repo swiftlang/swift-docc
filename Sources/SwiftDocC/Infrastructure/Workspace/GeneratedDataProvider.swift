@@ -102,7 +102,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
                     The information provided as command line arguments is not enough to generate a documentation bundle:
                     """
                 
-                if let underlyingError = underlyingError {
+                if let underlyingError {
                     errorMessage += """
                     \((underlyingError as? DescribedError)?.errorDescription ?? underlyingError.localizedDescription)
                     

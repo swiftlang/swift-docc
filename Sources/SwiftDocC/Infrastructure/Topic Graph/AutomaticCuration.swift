@@ -122,7 +122,7 @@ public struct AutomaticCuration {
                     childSymbolKindIdentifier = childSymbol.kindVariants.firstValue?.identifier
                 }
                 
-                if let childSymbolKindIdentifier = childSymbolKindIdentifier {
+                if let childSymbolKindIdentifier {
                     groupsIndex[childSymbolKindIdentifier]?.references.append(reference)
                 }
             }

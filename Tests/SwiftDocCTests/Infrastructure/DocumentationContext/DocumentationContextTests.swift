@@ -555,7 +555,7 @@ class DocumentationContextTests: XCTestCase {
         
         let image = context.resolveAsset(named: "https://example.com/figure.png", in: bundle.rootReference)
         XCTAssertNotNil(image)
-        guard let image = image else {
+        guard let image else {
             return
         }
         XCTAssertEqual(image.context, .display)
@@ -563,7 +563,7 @@ class DocumentationContextTests: XCTestCase {
         
         let video = context.resolveAsset(named: "https://example.com/introvideo.mp4", in: bundle.rootReference)
         XCTAssertNotNil(video)
-        guard let video = video else { return }
+        guard let video else { return }
         XCTAssertEqual(video.context, .display)
         XCTAssertEqual(video.variants, [DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "https://example.com/introvideo.mp4")!])
     }
@@ -666,6 +666,68 @@ class DocumentationContextTests: XCTestCase {
 
         let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.summary)
         XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
+    }
+    
+    func testUsesMultipleDocExtensionFilesWithSameName() throws {
+        
+        // Generate 2 different symbols with the same name.
+        let someSymbol = makeSymbol(name: "MyEnum", identifier: "someEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["SomeDirectory", "MyEnum"])
+        let anotherSymbol = makeSymbol(name: "MyEnum", identifier: "anotherEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["AnotherDirectory", "MyEnum"])
+        let symbols: [SymbolGraph.Symbol] = [someSymbol, anotherSymbol]
+        
+        // Create a catalog with doc extension files with the same filename for each symbol.
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                )),
+                
+                Folder(name: "SomeDirectory", content: [
+                    TextFile(name: "MyEnum.md", utf8Content:
+                        """
+                        # ``SomeDirectory/MyEnum``
+                        
+                        A documentation extension for my enum.
+                        """
+                    )
+                ]),
+                
+                Folder(name: "AnotherDirectory", content: [
+                    TextFile(name: "MyEnum.md", utf8Content:
+                        """
+                        # ``AnotherDirectory/MyEnum``
+                        
+                        A documentation extension for an unrelated enum.
+                        """
+                    )
+                ]),
+                
+                // An unrelated article that happens to have the same filename
+                TextFile(name: "MyEnum.md", utf8Content:
+                    """
+                    # MyEnum
+                    
+                    Here is a regular article about MyEnum.
+                    """
+                )
+            ])
+        ])
+        
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        // Since documentation extensions' filenames have no impact on the URL of pages, we should not see warnings enforcing unique filenames for them.
+        let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+        XCTAssertEqual(problemWithDuplicateReference.count, 0)
+        
+        // Ensure the content from both documentation extensions was used.
+        let someEnumNode = try XCTUnwrap(context.documentationCache["someEnumSymbol-id"])
+        let someEnumSymbol = try XCTUnwrap(someEnumNode.semantic as? Symbol)
+        XCTAssertEqual(someEnumSymbol.abstract?.plainText, "A documentation extension for my enum.", "The abstract should be from the symbol's documentation extension.")
+        
+        let anotherEnumNode = try XCTUnwrap(context.documentationCache["anotherEnumSymbol-id"])
+        let anotherEnumSymbol = try XCTUnwrap(anotherEnumNode.semantic as? Symbol)
+        XCTAssertEqual(anotherEnumSymbol.abstract?.plainText, "A documentation extension for an unrelated enum.", "The abstract should be from the symbol's documentation extension.")
     }
 
     func testGraphChecks() throws {
@@ -1889,7 +1951,7 @@ let expected = """
         XCTAssertEqual(list.items.count, 6, "Unexpected list items: \(list.items.map(\.content))")
         
         func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
-            guard let listItem = listItem else {
+            guard let listItem else {
                 XCTFail("Missing list item")
                 return
             }
@@ -3889,8 +3951,8 @@ let expected = """
                 && p.diagnostic.source?.path.hasSuffix("sideclass.md") == true
         }
 
-        let mapRangeAsString: (Optional<SourceRange>) -> String? = { range in
-            guard let range = range else { return nil }
+        let mapRangeAsString: (SourceRange?) -> String? = { range in
+            guard let range else { return nil }
             return "\(range.lowerBound.line):\(range.lowerBound.column) - \(range.upperBound.line):\(range.upperBound.column)"
         }
         
@@ -4058,6 +4120,7 @@ let expected = """
             
             let symbolReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "s:12Minimal_docs4TestV"))
             
+
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
                 switch context.resolve(unresolved, in: parent) {
@@ -4476,14 +4539,31 @@ let expected = """
                 ))
             ])
         ])
-        let (_, _, context) = try loadBundle(from: tempURL)
-        
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
         for kindID in overloadableKindIDs {
             var seenIndices = Set<Int>()
-            // Find the 4 symbols of this specific kind
-            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }
+            // Find the 4 symbols of this specific kind. SymbolKit will have assigned a display
+            // index based on their sorted USRs, so sort them ahead of time based on that
+            let overloadedReferences = try symbols.filter { $0.kind.identifier == kindID }.sorted(by: \.identifier.precise)
                 .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0.identifier.precise)) }
-            
+
+            let overloadGroupNode: DocumentationNode
+            let overloadGroupSymbol: Symbol
+            let overloadGroupReferences: Symbol.Overloads
+            switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName-\(kindID.identifier)"))), in: moduleReference, fromSymbolLink: true) {
+            case let .failure(_, errorMessage):
+                XCTFail("Could not resolve overload group page for \(kindID.identifier). Error message: \(errorMessage)")
+                continue
+            case let .success(overloadGroupReference):
+                overloadGroupNode = try context.entity(with: overloadGroupReference)
+                overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+                overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+                XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+            }
+
             // Check that each symbol lists the other 3 overloads
             for (index, reference) in overloadedReferences.indexed() {
                 let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
@@ -4498,9 +4578,18 @@ let expected = """
                 }
                 
                 // Each symbol needs to tell the renderer where it belongs in the array of overloaded declarations.
-                let displayIndex = try XCTUnwrap(overloads.displayIndex)
-                XCTAssertFalse(seenIndices.contains(displayIndex))
-                seenIndices.insert(displayIndex)
+                XCTAssertFalse(seenIndices.contains(overloads.displayIndex))
+                XCTAssertEqual(overloads.displayIndex, index)
+                seenIndices.insert(overloads.displayIndex)
+
+                if overloads.displayIndex == 0 {
+                    // The first declaration in the display list should be the same declaration as
+                    // the overload group page
+                    XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+                } else {
+                    // Otherwise, this reference should also be referenced by the overload group
+                    XCTAssert(overloadGroupReferences.references.contains(reference))
+                }
             }
             // Check that all the overloads was encountered
             for index in overloadedReferences.indices {
@@ -4545,13 +4634,18 @@ let expected = """
             }
         }
     }
-    
+
     // A test helper that creates a symbol with a given identifier and kind.
-    private func makeSymbol(identifier: String, kind: SymbolGraph.Symbol.KindIdentifier) -> SymbolGraph.Symbol {
+    private func makeSymbol(
+        name: String = "SymbolName",
+        identifier: String,
+        kind: SymbolGraph.Symbol.KindIdentifier,
+        pathComponents: [String]? = nil
+    ) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
             identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-            names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: ["SymbolName"],
+            names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: pathComponents ?? [name],
             docComment: nil,
             accessLevel: .public,
             kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),

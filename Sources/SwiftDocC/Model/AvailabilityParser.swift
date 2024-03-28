@@ -29,7 +29,7 @@ struct AvailabilityParser {
         guard !availability.availability.isEmpty else { return false }
         
         // Check if a specific platform is deprecated
-        if let platform = platform {
+        if let platform {
             return availability.availability.contains(where: { return $0.domain?.rawValue == platform && ( $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil ) })
         }
         
@@ -53,7 +53,7 @@ struct AvailabilityParser {
     func deprecationMessage(platform: String? = nil) -> String? {
         guard !availability.availability.isEmpty else { return nil }
         
-        if let platform = platform {
+        if let platform {
             return availability.availability.mapFirst {
                 guard $0.domain?.rawValue == platform && ( $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil ) else {
                     return nil

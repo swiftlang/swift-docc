@@ -1403,8 +1403,8 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testEncodesOverloadsInRenderNode() throws {
-        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = true
-        
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
         let (bundle, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         let overloadPreciseIdentifiers = ["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF",

@@ -95,7 +95,7 @@ extension VideoMedia: RenderableDirectiveConvertible {
         }
         
         var posterReferenceIdentifier: RenderReferenceIdentifier?
-        if let poster = poster {
+        if let poster {
             posterReferenceIdentifier = contentCompiler.resolveImage(source: poster.path)
         }
         

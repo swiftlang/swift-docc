@@ -112,8 +112,8 @@ extension AbsoluteSymbolLink.LinkComponent {
     /// This means that the element has the same name (case-sensitive)
     /// and, if the symbol link has a disambiguation suffix, the given element has the same
     /// type or usr.
-    private func fullyRepresentsSymbol<SymbolType: DocCSymbolRepresentable>(
-        _ symbol: SymbolType
+    private func fullyRepresentsSymbol(
+        _ symbol: some DocCSymbolRepresentable
     ) -> Bool {
         guard name == symbol.title else {
             return false
@@ -139,7 +139,7 @@ public extension Collection where Element: DocCSymbolRepresentable {
     /// Given a collection of colliding symbols, returns the disambiguation suffix required
     /// for each symbol to disambiguate it from the others in the collection.
     var requiredDisambiguationSuffixes: [(shouldAddIdHash: Bool, shouldAddKind: Bool)] {
-        guard let first = first else {
+        guard let first else {
             return []
         }
         

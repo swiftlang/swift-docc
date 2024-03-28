@@ -26,5 +26,5 @@ public struct DocumentationCatalogOption: DirectoryPathOption {
     public var url: URL?
 }
 
-@available(*, deprecated, renamed: "DocumentationCatalogOption", message: "Use 'DocumentationCatalogOption' instead. This deprecated API will be removed after 5.12 is released")
+@available(*, deprecated, renamed: "DocumentationCatalogOption", message: "Use 'DocumentationCatalogOption' instead. This deprecated API will be removed after 6.0 is released")
 public typealias DocumentationBundleOption = DocumentationCatalogOption

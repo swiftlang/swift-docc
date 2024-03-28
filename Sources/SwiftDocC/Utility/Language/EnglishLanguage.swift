@@ -30,7 +30,7 @@ public struct EnglishLanguage: LanguageConstructible {
                 return [" \(separator) "]
             case 3...:
                 // A list with an Oxford comma.
-                var separators = Array<String>(repeating: ", ", count: itemsCount-2)
+                var separators = [String](repeating: ", ", count: itemsCount-2)
                 separators.append(", \(separator) ")
                 return separators
             default:

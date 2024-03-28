@@ -38,7 +38,7 @@ struct ANSIAnnotation {
         self.trait = trait
     }
     
-    func applied<S: StringProtocol>(to message: S) -> String {
+    func applied(to message: some StringProtocol) -> String {
         guard !message.isEmpty else {
             return ""
         }

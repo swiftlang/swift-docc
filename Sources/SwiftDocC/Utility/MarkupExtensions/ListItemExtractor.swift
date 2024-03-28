@@ -48,7 +48,7 @@ let simpleListItemTags = [
     "recommendedover",
 ]
 
-extension Sequence where Element == InlineMarkup {
+extension Sequence<InlineMarkup> {
     private func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [Markup], range: SourceRange?)? {
         var iterator = makeIterator()
         guard let initialTextNode = iterator.next() as? Text else {

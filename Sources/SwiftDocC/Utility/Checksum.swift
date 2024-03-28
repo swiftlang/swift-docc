@@ -34,7 +34,7 @@ public struct Checksum {
 }
 
 /// Note: this extension is private because it's not meant for general use.
-private extension Sequence where Self.Element == UInt8 {
+private extension Sequence<UInt8> {
     
     /// Creates a lowercase hex string from a sequence of 8-bit unsigned integers.
     func hexString() -> String {

@@ -53,10 +53,10 @@ public struct SemanticVersion: Codable, Equatable, CustomStringConvertible {
 
     public var description: String {
         var result = "\(major).\(minor).\(patch)"
-        if let prerelease = prerelease {
+        if let prerelease {
             result += "-\(prerelease)"
         }
-        if let buildMetadata = buildMetadata {
+        if let buildMetadata {
             result += "+\(buildMetadata)"
         }
         return result

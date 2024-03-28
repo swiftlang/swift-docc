@@ -98,14 +98,14 @@ public final class DiagnosticEngine {
 
         workQueue.async { [weak self] in
             // If the engine isn't around then return early
-            guard let self = self else { return }
+            guard let self else { return }
             for consumer in self.consumers.sync({ $0.values }) {
                 consumer.receive(filteredProblems)
             }
         }
     }
     
-    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released")
     public func finalize() {
         flush()
     }
