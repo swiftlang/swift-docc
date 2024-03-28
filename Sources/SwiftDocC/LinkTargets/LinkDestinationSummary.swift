@@ -333,7 +333,13 @@ public extension DocumentationNode {
             case .tutorial, .tutorialArticle, .technology, .technologyOverview, .chapter, .volume, .onPageLandmark:
                 taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
             default:
-                taskGroups = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
+                var topicSectionGroups: [LinkDestinationSummary.TaskGroup] = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
+
+                if let overloadChildren = context.topicGraph.overloads(of: self.reference), !overloadChildren.isEmpty {
+                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloadChildren.map(\.absoluteString)))
+                }
+
+                taskGroups = topicSectionGroups
                 for variant in renderNode.topicSectionsVariants.variants {
                     taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
                 }
