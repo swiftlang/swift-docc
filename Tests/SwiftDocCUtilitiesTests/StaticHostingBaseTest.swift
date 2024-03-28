@@ -41,7 +41,7 @@ class StaticHostingBaseTests: XCTestCase {
                         }
 
                         // Only check the indexHTML if we have some.
-                        guard let indexHTML = indexHTML else { continue }
+                        guard let indexHTML else { continue }
 
                         let indexFileURL = createdFolder.appendingPathComponent("index.html")
                         let testHTMLString = try String(contentsOf: indexFileURL)

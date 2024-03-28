@@ -50,7 +50,7 @@ public struct SymbolReference {
     ) {
         self.interfaceLanguages = Set(interfaceLanguages)
         
-        guard let symbol = symbol else {
+        guard let symbol else {
             path = shouldAddHash ?
                 identifier.appendingHashedIdentifier(identifier) :
                 identifier
@@ -132,10 +132,10 @@ public struct SymbolReference {
     /// - Parameters:
     ///   - pathComponents: The relative path components from the module or framework to the symbol.
     ///   - interfaceLanguages: The source languages of the symbol.
-    public init<SourceLanguages: Collection>(
+    public init(
         pathComponents: [String],
-        interfaceLanguages: SourceLanguages
-    ) where SourceLanguages.Element == SourceLanguage {
+        interfaceLanguages: some Collection<SourceLanguage>
+    ) {
         self.path = pathComponents.joinedSymbolPathComponents
         self.interfaceLanguages = Set(interfaceLanguages)
     }
@@ -157,7 +157,7 @@ public struct SymbolReference {
     public let interfaceLanguages: Set<SourceLanguage>
 }
 
-private extension Array where Element == String {
+private extension [String] {
     var joinedSymbolPathComponents: String {
         return joined(separator: "/").components(
             separatedBy: CharacterSet.urlPathAllowed.inverted

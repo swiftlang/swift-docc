@@ -143,13 +143,13 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         var arguments: [String] = [testBundleURL.path]
-        if let checkoutPath = checkoutPath {
+        if let checkoutPath {
             arguments.append(contentsOf: ["--checkout-path", checkoutPath])
         }
-        if let sourceService = sourceService {
+        if let sourceService {
             arguments.append(contentsOf: ["--source-service", sourceService])
         }
-        if let sourceServiceBaseURL = sourceServiceBaseURL {
+        if let sourceServiceBaseURL {
             arguments.append(contentsOf: ["--source-service-base-url", sourceServiceBaseURL])
         }
         

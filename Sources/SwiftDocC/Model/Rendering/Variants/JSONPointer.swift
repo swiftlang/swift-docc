@@ -26,7 +26,7 @@ public struct JSONPointer: Codable, CustomStringConvertible, Equatable {
     /// Creates a JSON Pointer given its path components.
     ///
     /// The components are assumed to be properly escaped per [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
-    public init<Components: Sequence>(pathComponents: Components) where Components.Element == String {
+    public init(pathComponents: some Sequence<String>) {
         self.pathComponents = Array(pathComponents)
     }
     

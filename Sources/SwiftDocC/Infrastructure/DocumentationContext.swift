@@ -332,7 +332,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The documentation bundles that are currently registered with the context.
-    public var registeredBundles: Dictionary<String, DocumentationBundle>.Values {
+    public var registeredBundles: some Collection<DocumentationBundle> {
         return dataProvider.bundles.values
     }
     
@@ -445,7 +445,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
     
     /// Converts a semantic result to a referenced semantic object by removing the generic constraint.
-    private func referencedSemanticObject<S: Semantic>(from: SemanticResult<S>) -> ReferencedSemanticObject {
+    private func referencedSemanticObject(from: SemanticResult<some Semantic>) -> ReferencedSemanticObject {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
     
@@ -854,7 +854,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
             
-            if let firstFoundAtURL = references[reference] {
+            // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
+            // At this point we consider all articles with an H1 containing link a "documentation extension."
+            let isDocumentationExtension = (analyzed as? Article)?.title?.child(at: 0) is AnyLink
+            
+            if let firstFoundAtURL = references[reference], !isDocumentationExtension {
                 let problem = Problem(
                     diagnostic: Diagnostic(
                         source: url,
@@ -874,7 +878,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 continue
             }
             
-            references[reference] = url
+            if !isDocumentationExtension {
+                references[reference] = url
+            }
             
             /*
              Add all topic graph nodes up front before resolution starts, because
@@ -907,9 +913,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let result = SemanticResult(value: article, source: url, topicGraphNode: topicGraphNode)
                 
                 // Separate articles that look like documentation extension files from other articles, so that the documentation extension files can be matched up with a symbol.
-                // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
-                // and we will emit warnings for those later on when we finalize the bundle discovery phase.
-                if result.value.title?.child(at: 0) is AnyLink {
+                // Some links might not resolve in the final documentation hierarchy and we will emit warnings for those later on when we finalize the bundle discovery phase.
+                if isDocumentationExtension {
                     documentationExtensions.append(result)
                     
                     // Warn for an incorrect root page metadata directive.
@@ -947,7 +952,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
-    private func insertLandmarks<Landmarks: Sequence>(_ landmarks: Landmarks, from topicGraphNode: TopicGraph.Node, source url: URL) where Landmarks.Element == Landmark {
+    private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue
@@ -981,7 +986,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
-        if let foundDocumentationExtension = foundDocumentationExtension,
+        if let foundDocumentationExtension,
             foundDocumentationExtension.value.deprecationSummary != nil,
             (updatedNode.semantic as? Symbol)?.isDeprecated == false,
             let articleMarkup = foundDocumentationExtension.value.markup,
@@ -1001,7 +1006,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, moduleData: module, moduleReference: moduleReference)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
-        if let symbolGraphURL = symbolGraphURL {
+        if let symbolGraphURL {
             source = .file(url: symbolGraphURL)
         } else {
             source = .external
@@ -1156,6 +1161,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
+                        var overloadGroups = [String: [String]]()
+
                         for relationship in relationships {
                             // Check for an origin key.
                             if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
@@ -1169,8 +1176,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                     localCache: documentationCache,
                                     moduleName: moduleName
                                 )
+                            } else if relationship.kind == .overloadOf {
+                                // An 'overloadOf' relationship points from symbol -> group
+                                overloadGroups[relationship.target, default: []].append(relationship.source)
                             }
                         }
+
+                        addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
                     
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -1285,8 +1297,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
-
-            try groupOverloadedSymbols(with: linkResolver.localResolver)
             
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
@@ -1296,7 +1306,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             )
 
             // Parse and prepare the nodes' content concurrently.
-            let updatedNodes = documentationCache.symbolReferences.concurrentMap { finalReference in
+            let updatedNodes = Array(documentationCache.symbolReferences).concurrentMap { finalReference in
                 // Match the symbol's documentation extension and initialize the node content.
                 let match = uncuratedDocumentationExtensions[finalReference]
                 let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
@@ -1417,6 +1427,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Build optional required member -> protocol relationships.
                 SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(
                     edge: edge,
+                    localCache: documentationCache,
+                    engine: diagnosticEngine
+                )
+            case .overloadOf:
+                // Build overload <-> overloadGroup relationships.
+                SymbolGraphRelationshipsBuilder.addOverloadRelationship(
+                    edge: edge,
+                    context: self,
                     localCache: documentationCache,
                     engine: diagnosticEngine
                 )
@@ -1699,7 +1717,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         return resources.filter { dataAsset in
             // Filter by file extension.
-            if let extensions = extensions {
+            if let extensions {
                 let fileExtensions = dataAsset.variants.values.map { $0.pathExtension.lowercased() }
                 guard !extensions.intersection(fileExtensions).isEmpty else {
                     return false
@@ -2330,33 +2348,77 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    /// Handles overloaded symbols by grouping them together into one page.
-    private func groupOverloadedSymbols(with linkResolver: PathHierarchyBasedLinkResolver) throws {
+    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         
-        try linkResolver.traverseOverloadedSymbols { overloadedSymbolReferences in
+        for (overloadGroupID, overloadSymbolIDs) in overloadGroups {
+            guard overloadSymbolIDs.count > 1 else {
+                assertionFailure("Overload group \(overloadGroupID) contained \(overloadSymbolIDs.count) symbols, but should have more than one symbol to be valid.")
+                continue
+            }
+            guard let overloadGroupNode = documentationCache[overloadGroupID] else {
+                preconditionFailure("Overload group \(overloadGroupID) doesn't have a local entity")
+            }
 
-            // Tell each symbol what other symbols overload it.
-            for (index, symbolReference) in overloadedSymbolReferences.indexed() {
-                let documentationNode = try entity(with: symbolReference)
+            var overloadSymbolNodes = overloadSymbolIDs.map {
+                guard let node = documentationCache[$0] else {
+                    preconditionFailure("Overloaded symbol \($0) doesn't have a local entity")
+                }
+                return node
+            }
+            if overloadSymbolNodes.allSatisfy({ node in
+                (node.semantic as? Symbol)?.overloadsVariants.firstValue != nil
+            }) {
+                // If SymbolKit saved its sort of the symbols, use that ordering here
+                overloadSymbolNodes.sort(by: { lhs, rhs in
+                    let lhsIndex = (lhs.semantic as! Symbol).overloadsVariants.firstValue!.displayIndex
+                    let rhsIndex = (rhs.semantic as! Symbol).overloadsVariants.firstValue!.displayIndex
+                    return lhsIndex < rhsIndex
+                })
+            } else {
+                assertionFailure("""
+                    Overload group \(overloadGroupNode.reference.absoluteString.singleQuoted) was not properly initialized with overload data from SymbolKit.
+                    Symbols without overload data: \(Array(overloadSymbolNodes.filter({ ($0.semantic as? Symbol)?.overloadsVariants.firstValue == nil }).map(\.reference.absoluteString.singleQuoted)))
+                    """)
+                return
+            }
 
+            func addOverloadReferences(
+                to documentationNode: DocumentationNode,
+                at index: Int,
+                overloadSymbolReferences: [DocumentationNode]
+            ) {
                 guard let symbol = documentationNode.semantic as? Symbol else {
                     preconditionFailure("""
-                    Only symbols can be overloads. Found non-symbol overload for \(symbolReference.absoluteString.singleQuoted).
-                    Non-symbols should already have been filtered out in `PathHierarchyBasedLinkResolver.traverseOverloadedSymbols(_:)`.
+                    Only symbols can be overloads. Found non-symbol overload for \(documentationNode.reference.absoluteString.singleQuoted).
+                    Non-symbols should already have been filtered out by SymbolKit.
                     """)
                 }
-                guard symbolReference.sourceLanguage == .swift else {
-                    assertionFailure("Overload groups is only supported for Swift symbols.")
-                    continue
+                guard documentationNode.reference.sourceLanguage == .swift else {
+                    assertionFailure("""
+                    Overload groups are only supported for Swift symbols.
+                    The symbol at \(documentationNode.reference.absoluteString.singleQuoted) is listed as \(documentationNode.reference.sourceLanguage.name).
+                    """)
+                    return
                 }
 
-                var otherOverloadedSymbolReferences = overloadedSymbolReferences
+                var otherOverloadedSymbolReferences = overloadSymbolReferences.map(\.reference)
                 otherOverloadedSymbolReferences.remove(at: index)
-                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: index)
+                let displayIndex = symbol.overloadsVariants.firstValue?.displayIndex ?? index
+                let overloads = Symbol.Overloads(references: otherOverloadedSymbolReferences, displayIndex: displayIndex)
                 symbol.overloadsVariants = .init(swiftVariant: overloads)
+            }
+
+            // The overload group node itself is a clone of the first symbol, so the code above can
+            // swap out the first element in the overload references to create the alternate
+            // declarations section properly. However, it is also a distinct symbol, node, and page,
+            // so the first overload itself should also be handled separately in the loop below.
+            addOverloadReferences(to: overloadGroupNode, at: 0, overloadSymbolReferences: overloadSymbolNodes)
+
+            for (index, node) in overloadSymbolNodes.indexed() {
+                addOverloadReferences(to: node, at: index, overloadSymbolReferences: overloadSymbolNodes)
             }
         }
     }
@@ -2505,7 +2567,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return false
         }
         
-        guard let expectedAssetType = expectedAssetType, let asset = assetManager.storage[key] else {
+        guard let expectedAssetType, let asset = assetManager.storage[key] else {
             return true
         }
         
@@ -2702,7 +2764,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     func resolveAsset(named name: String, bundleIdentifier: String, withType expectedType: AssetType?) -> DataAsset? {
         if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
-            if let expectedType = expectedType {
+            if let expectedType {
                 guard localAsset.hasVariant(withAssetType: expectedType) else {
                     return nil
                 }

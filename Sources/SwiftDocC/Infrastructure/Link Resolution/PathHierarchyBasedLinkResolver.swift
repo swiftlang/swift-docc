@@ -56,7 +56,7 @@ final class PathHierarchyBasedLinkResolver {
             observe(reference, parentReference)
         }
     }
-    
+
     /// Returns the direct descendants of the given page that match the given source language filter.
     ///
     /// A descendant is included if it has a language representation in at least one of the languages in the given language filter or if the language filter is empty.
@@ -92,14 +92,7 @@ final class PathHierarchyBasedLinkResolver {
         }
         return results
     }
-    
-    /// Traverse all symbols of the same kind that have collisions.
-    func traverseOverloadedSymbols(_ observe: (_ overloadedSymbols: [ResolvedTopicReference]) throws -> Void) rethrows {
-        try pathHierarchy.traverseOverloadedSymbolGroups() { overloadedSymbols in
-            try observe(overloadedSymbols.map { resolvedReferenceMap[$0]! })
-        }
-    }
-    
+
     /// Returns a list of all the top level symbols.
     func topLevelSymbols() -> [ResolvedTopicReference] {
         return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }
@@ -307,7 +300,7 @@ final class PathHierarchyBasedLinkResolver {
                 )
             }
             for (symbol, reference) in zip(symbolGraph.symbols.values, paths) {
-                guard let reference = reference else { continue }
+                guard let reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
         }
@@ -338,7 +331,7 @@ final class PathHierarchyBasedLinkResolver {
 /// Creates a more writable version of an articles file name for use in documentation links.
 ///
 /// Compared to `urlReadablePath(_:)` this preserves letters in other written languages.
-private func linkName<S: StringProtocol>(filename: S) -> String {
+private func linkName(filename: some StringProtocol) -> String {
     // It would be a nice enhancement to also remove punctuation from the filename to allow an article in a file named "One, two, & three!"
     // to be referenced with a link as `"One-two-three"` instead of `"One,-two-&-three!"` (rdar://120722917)
     return filename

@@ -251,10 +251,10 @@ final class SwiftLMDBTests: XCTestCase {
             XCTAssertNoThrow(try database.put(key: key, value: array))
         }
             
-        var value = database.get(type: Array<UInt32>.self, forKey: "array-8")
+        var value = database.get(type: [UInt32].self, forKey: "array-8")
         XCTAssertEqual(value, [1,2,3,4,5,6,7,8,9])
         
-        value = database.get(type: Array<UInt32>.self, forKey: "array-13")
+        value = database.get(type: [UInt32].self, forKey: "array-13")
         XCTAssertEqual(value, [1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 #endif
     }

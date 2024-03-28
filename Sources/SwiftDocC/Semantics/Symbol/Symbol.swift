@@ -448,7 +448,7 @@ extension Symbol {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
-        if let platformName = platformName,
+        if let platformName,
             let existingKey = declarationVariants[trait]?.first(
                 where: { pair in
                     return pair.value.declarationFragments == mergingDeclaration.declarationFragments
@@ -475,7 +475,7 @@ extension Symbol {
         }
 
         // Merge the new symbol with the existing availability. If a value already exist, only override if it's for this platform.
-        if let symbolAvailability = symbolAvailability,
+        if let symbolAvailability,
             symbolAvailability.availability.isEmpty == false || availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
         {
             var items = availabilityVariants[trait]?.availability ?? []
@@ -528,13 +528,17 @@ extension Symbol {
     }
 }
 
-extension Dictionary where Key == String, Value == Mixin {
+extension [String: Mixin] {
     func getValueIfPresent<T>(for mixinType: T.Type) -> T? where T: Mixin {
         return self[mixinType.mixinKey] as? T
     }
 }
 
 // MARK: Accessors for the first variant of symbol properties.
+
+// Extend the Symbol class to account for legacy code that didn't account for symbols having multiple
+// language representations. New code should be written to work with the variants so that it supports
+// language specific content.
 
 extension Symbol {
     /// The kind of the first variant of this symbol, such as protocol or variable.
@@ -556,7 +560,7 @@ extension Symbol {
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
     /// The first variant of the symbol's extended module, if available
-    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 5.12 is released")
+    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 6.0 is released")
     public var extendedModule: String? { extendedModuleVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.
@@ -686,10 +690,12 @@ extension Symbol {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }
-    
+
     /// Any automatically created task groups of the first variant of the symbol.
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
     }
+
+    // Don't add additional functions here. See the comment above about legacy code.
 }

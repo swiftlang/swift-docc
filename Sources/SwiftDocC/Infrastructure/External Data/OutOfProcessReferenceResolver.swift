@@ -316,7 +316,7 @@ private class LongRunningProcess: ExternalLinkResolving {
     private let errorReadSource: DispatchSourceRead
         
     func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
-        if let request = request {
+        if let request {
             guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
                   let requestData = requestString.data(using: .utf8)
             else {

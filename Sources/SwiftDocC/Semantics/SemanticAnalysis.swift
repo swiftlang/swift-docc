@@ -44,5 +44,5 @@ public protocol SemanticAnalysis {
      - parameter problems: A container to append ``Problem``s encountered during the analysis
      - returns: A result of the analysis if required, such as a validated parameter or subsection.
      */
-    func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Result where Children.Element == Markup
+    func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Result
 }

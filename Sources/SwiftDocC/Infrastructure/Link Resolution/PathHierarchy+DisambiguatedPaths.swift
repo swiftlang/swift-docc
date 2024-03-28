@@ -180,10 +180,10 @@ extension PathHierarchy {
 
 extension PathHierarchy.DisambiguationContainer {
     
-    static func disambiguatedValues<E: Sequence>(
-        for elements: E,
+    static func disambiguatedValues(
+        for elements: some Sequence<Element>,
         includeLanguage: Bool = false
-    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] where E.Element == Element {
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
         var remainingIDs = Set(elements.map(\.node.identifier))

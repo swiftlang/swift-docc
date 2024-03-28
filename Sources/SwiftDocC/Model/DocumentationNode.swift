@@ -223,7 +223,17 @@ public struct DocumentationNode {
             }
             return nil
         }
-        
+
+        let overloadVariants = DocumentationDataVariants(
+            symbolData: unifiedSymbol.mixins,
+            platformName: platformName
+        ) { mixins -> Symbol.Overloads? in
+            guard let overloadData = mixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData else {
+                return nil
+            }
+            return .init(references: [], displayIndex: overloadData.overloadGroupIndex)
+        }
+
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
@@ -300,7 +310,8 @@ public struct DocumentationNode {
             httpParametersSectionVariants: .empty,
             httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty,
-            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
+            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) }),
+            overloadsVariants: overloadVariants
         )
 
         try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)
@@ -334,7 +345,7 @@ public struct DocumentationNode {
         var deprecated: DeprecatedSection? = markupModel.deprecation.map { DeprecatedSection.init(content: $0.elements) }
 
         // When deprecation is not authored explicitly, try using a deprecation message from annotation.
-        if deprecated == nil, let symbolAvailability = symbolAvailability {
+        if deprecated == nil, let symbolAvailability {
             let availabilityData = AvailabilityParser(symbolAvailability)
             deprecated = availabilityData.deprecationMessage().map(DeprecatedSection.init(text:))
         }
@@ -482,7 +493,7 @@ public struct DocumentationNode {
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
                     
-                    if let offset = offset {
+                    if let offset {
                         problem.offsetWithRange(offset)
                     }
                     
@@ -621,11 +632,11 @@ public struct DocumentationNode {
         platformNames = Set(operatingSystemName.map { PlatformName(operatingSystemName: $0).rawValue })
         availableSourceLanguages = languages
         
-        if let article = article {
+        if let article {
             // Prefer authored deprecation summary over docs.
             deprecated = article.deprecationSummary.map { DeprecatedSection.init(content: $0.elements) }
         }
-        if deprecated == nil, let symbolAvailability = symbolAvailability {
+        if deprecated == nil, let symbolAvailability {
             let availabilityData = AvailabilityParser(symbolAvailability)
             deprecated = availabilityData.deprecationMessage().map(DeprecatedSection.init(text:))
         }

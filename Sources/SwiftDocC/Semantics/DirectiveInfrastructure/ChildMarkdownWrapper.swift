@@ -18,11 +18,11 @@ protocol _ChildMarkupProtocol {
     
     var supportsStructuredMarkup: Bool { get }
     
-    func setProperty<T>(
-        on containingDirective: T,
+    func setProperty(
+        on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
         to any: Any
-    ) where T: AutomaticDirectiveConvertible
+    )
 }
 
 enum _ChildMarkupParagraphs {
@@ -94,7 +94,7 @@ public struct ChildMarkup<Value>: _ChildMarkupProtocol {
     }
 }
 
-extension ChildMarkup where Value == MarkupContainer {
+extension ChildMarkup<MarkupContainer> {
     init(
         numberOfParagraphs: _ChildMarkupParagraphs = .oneOrMore,
         index: Int? = nil,
@@ -107,7 +107,7 @@ extension ChildMarkup where Value == MarkupContainer {
     }
 }
 
-extension ChildMarkup where Value == Optional<MarkupContainer> {
+extension ChildMarkup<MarkupContainer?> {
     init(
         value: Value,
         numberOfParagraphs: _ChildMarkupParagraphs = .zeroOrMore,

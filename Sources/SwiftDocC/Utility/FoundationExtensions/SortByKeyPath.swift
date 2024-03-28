@@ -11,7 +11,7 @@
 import Foundation
 
 extension Array {
-    mutating func sort<T: Comparable>(by propertyKeyPath: KeyPath<Element, T>) {
+    mutating func sort(by propertyKeyPath: KeyPath<Element, some Comparable>) {
         sort { (first, second) in
             return first[keyPath: propertyKeyPath] < second[keyPath: propertyKeyPath]
         }
@@ -19,7 +19,7 @@ extension Array {
 }
 
 extension Sequence {
-    func sorted<T: Comparable>(by propertyKeyPath: KeyPath<Element, T>) -> [Element] {
+    func sorted(by propertyKeyPath: KeyPath<Element, some Comparable>) -> [Element] {
         return sorted { (first, second) in
             return first[keyPath: propertyKeyPath] < second[keyPath: propertyKeyPath]
         }

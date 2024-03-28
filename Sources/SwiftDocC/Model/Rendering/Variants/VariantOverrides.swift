@@ -41,9 +41,9 @@ public class VariantOverrides: Codable {
     }
     
     /// Adds the given overrides.
-    public func add<Overrides>(
-        contentsOf variantOverrides: Overrides
-    ) where Overrides: Collection, Overrides.Element == VariantOverride {
+    public func add(
+        contentsOf variantOverrides: some Collection<VariantOverride>
+    ) {
         for variantOverride in variantOverrides {
             add(variantOverride)
         }

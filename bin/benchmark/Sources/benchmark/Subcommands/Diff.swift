@@ -68,7 +68,7 @@ struct DiffAction {
         let table = DiffResultsTable(results: result)
         print(table.output)
         
-        if let jsonOutputFile = jsonOutputFile {
+        if let jsonOutputFile {
             let encoder = JSONEncoder()
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
             try encoder.encode(result).write(to: jsonOutputFile)

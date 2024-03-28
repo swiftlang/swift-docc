@@ -43,7 +43,7 @@ enum GeneratedDocumentationTopics {
         mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
             let fromType: String
             let typeSimpleName: String
-            if let originSymbol = originSymbol, originSymbol.pathComponents.count > 1 {
+            if let originSymbol, originSymbol.pathComponents.count > 1 {
                 // If we have a resolved symbol for the source origin, use its path components to
                 // find the name of the parent by dropping the last path component.
                 let parentSymbolPathComponents = originSymbol.pathComponents.dropLast()
