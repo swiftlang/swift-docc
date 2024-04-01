@@ -110,14 +110,14 @@ extension DocumentationBundle {
             bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil,
             derivedDisplayName: String? = nil
         ) throws {
-            if let infoPlist = infoPlist {
+            if let infoPlist {
                 let propertyListDecoder = PropertyListDecoder()
                 
-                if let options = options {
+                if let options {
                     propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
                 }
                 
-                if let derivedDisplayName = derivedDisplayName {
+                if let derivedDisplayName {
                     propertyListDecoder.userInfo[.derivedDisplayName] = derivedDisplayName
                 }
                 
@@ -176,10 +176,10 @@ extension DocumentationBundle {
                 _ expectedType: T.Type,
                 with key: CodingKeys
             ) throws -> T where T : Decodable {
-                if let bundleDiscoveryOptions = bundleDiscoveryOptions {
+                if let bundleDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
                     ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
-                } else if let values = values {
+                } else if let values {
                     return try values.decode(T.self, forKey: key)
                 } else {
                     throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)

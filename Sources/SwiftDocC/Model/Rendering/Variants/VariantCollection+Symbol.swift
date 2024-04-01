@@ -314,7 +314,7 @@ private extension DocumentationDataVariants {
     }
 }
 
-private extension Set where Element == DocumentationDataVariantsTrait {
+private extension Set<DocumentationDataVariantsTrait> {
     /// Removes and returns the trait that should be considered as the default value
     /// for rendering.
     ///
@@ -350,13 +350,13 @@ private extension Set where Element == DocumentationDataVariantsTrait {
 ///     - pairs2: The second sequence to zip.
 ///
 /// - Precondition: Each sequence's pairs have distinct keys within that sequence.
-private func zipPairsByKey<Key, Value1, Value2, Pairs1: Sequence, Pairs2: Sequence>(
-    _ pairs1: Pairs1,
-    _ pairs2: Pairs2
-) -> Dictionary<Key, (Value1, Value2)>
-where Pairs1.Element == (Key, Value1), Pairs2.Element == (Key, Value2) {
-    let dictionary1 = Dictionary<Key, Value1>(uniqueKeysWithValues: pairs1)
-    let dictionary2 = Dictionary<Key, Value2>(uniqueKeysWithValues: pairs2)
+private func zipPairsByKey<Key, Value1, Value2>(
+    _ pairs1: some Sequence<(Key, Value1)>,
+    _ pairs2: some Sequence<(Key, Value2)>
+) -> [Key: (Value1, Value2)]
+{
+    let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
+    let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
     
     return Dictionary(
         uniqueKeysWithValues: dictionary1.compactMap { key, value1 -> (Key, (Value1, Value2))? in
@@ -388,9 +388,9 @@ where Pairs1.Element == (Key, Value1), Pairs2.Element == (Key, Value2) {
 private func zipPairsByKey<Key, Value1, Value2>(
     _ pairs1: [(Key, Value1)],
     optionalPairs2 pairs2: [(Key, Value2)]
-) -> Dictionary<Key, (Value1, Value2?)> {
-    let dictionary1 = Dictionary<Key, Value1>(uniqueKeysWithValues: pairs1)
-    let dictionary2 = Dictionary<Key, Value2>(uniqueKeysWithValues: pairs2)
+) -> [Key: (Value1, Value2?)] {
+    let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
+    let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
     
     return Dictionary(
         uniqueKeysWithValues: dictionary1.map { key, value1 -> (Key, (Value1, Value2?)) in
@@ -424,10 +424,10 @@ private func zipTriplesByKey<Key, Value1, Value2, Value3>(
     _ pairs1: [(Key, Value1)],
     _ pairs2: [(Key, Value2)],
     _ pairs3: [(Key, Value3)]
-) -> Dictionary<Key, (Value1, Value2, Value3)> {
-    let dictionary1 = Dictionary<Key, Value1>(uniqueKeysWithValues: pairs1)
-    let dictionary2 = Dictionary<Key, Value2>(uniqueKeysWithValues: pairs2)
-    let dictionary3 = Dictionary<Key, Value3>(uniqueKeysWithValues: pairs3)
+) -> [Key: (Value1, Value2, Value3)] {
+    let dictionary1 = [Key: Value1](uniqueKeysWithValues: pairs1)
+    let dictionary2 = [Key: Value2](uniqueKeysWithValues: pairs2)
+    let dictionary3 = [Key: Value3](uniqueKeysWithValues: pairs3)
     
     return Dictionary(
         uniqueKeysWithValues: dictionary1.compactMap { key, value1 -> (Key, (Value1, Value2, Value3))? in

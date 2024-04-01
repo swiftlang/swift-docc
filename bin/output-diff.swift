@@ -234,7 +234,7 @@ enum OutputDiff {
         guard success else {
             // Print any problems to a log file or the console
             let output = problems.joined(separator: "\n").appending("Total of \(problems.count) problem(s) found.")
-            if let logPath = logPath {
+            if let logPath {
                 try output.write(to: logPath, atomically: true, encoding: .utf8)
             } else {
                 print(output)

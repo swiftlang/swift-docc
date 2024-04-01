@@ -102,7 +102,7 @@ struct PathHierarchy {
                 moduleNode = newModuleNode
                 allNodes[moduleName] = [moduleNode]
             }
-            if let language = language {
+            if let language {
                 moduleNode.languages.insert(language)
             }
             
@@ -141,7 +141,7 @@ struct PathHierarchy {
                 // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
                 // individual overload symbols in favor of resolving links to their overload group
                 // symbol.
-                nodes[relationship.source]?.specialBehaviors.insert(.disfavorInLinkCollision)
+                nodes[relationship.source]?.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
             }
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
@@ -293,7 +293,7 @@ struct PathHierarchy {
                 for element in container.storage {
                     assert(element.node.parent === node, {
                         func describe(_ node: Node?) -> String {
-                            guard let node = node else { return "<nil>" }
+                            guard let node else { return "<nil>" }
                             guard let identifier = node.symbol?.identifier else { return node.name }
                             return "\(identifier.precise) (\(identifier.interfaceLanguage))"
                         }

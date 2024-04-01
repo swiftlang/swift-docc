@@ -115,7 +115,7 @@ extension FileManager: FileManagerProtocol {
     }
     
     public func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
-        if let writingOptions = writingOptions {
+        if let writingOptions {
             try contents.write(to: location, options: writingOptions)
         } else {
             try contents.write(to: location)

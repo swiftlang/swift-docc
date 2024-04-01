@@ -25,7 +25,7 @@ enum URLArgumentValidator {
     /// - Throws: A `ValidationError` that includes the `argumentDescription` and current path.
     static func validateHasDirectoryPath(_ url: URL?, forArgumentDescription argumentDescription: String) throws {
         // Validation is only necessary if a non-optional value has been passed.
-        guard let url = url else { return }
+        guard let url else { return }
         
         guard url.hasDirectoryPath && FileManager.default.fileExists(atPath: url.path) else {
             throw ValidationError(
@@ -47,7 +47,7 @@ enum URLArgumentValidator {
     /// - Throws: A `ValidationError` that includes the `argumentDescription` and current path.
     static func validateFileExists(_ url: URL?, forArgumentDescription argumentDescription: String) throws {
         // Validation is only necessary if a non-optional value has been passed.
-        guard let url = url else { return }
+        guard let url else { return }
         
         guard FileManager.default.fileExists(atPath: url.path) else {
             throw ValidationError(
@@ -69,7 +69,7 @@ enum URLArgumentValidator {
     /// - Throws: A `ValidationError` that includes the `argumentDescription` and current path.
     static func validateIsExecutableFile(_ url: URL?, forArgumentDescription argumentDescription: String) throws {
         // Validation is only necessary if a non-optional value has been passed.
-        guard let url = url else { return }
+        guard let url else { return }
         
         guard FileManager.default.isExecutableFile(atPath: url.path) else {
             throw ValidationError(

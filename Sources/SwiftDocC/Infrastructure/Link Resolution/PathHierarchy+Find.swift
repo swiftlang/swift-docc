@@ -140,7 +140,7 @@ extension PathHierarchy {
                     return try searchForNodeInModules()
                 } catch {
                     // If the node couldn't be found in the modules, search the non-matching parent to achieve a more specific error message
-                    if let parentID = parentID {
+                    if let parentID {
                         return try searchForNode(descendingFrom: lookup[parentID]!, pathComponents: path, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                     }
                     throw error
@@ -179,9 +179,33 @@ extension PathHierarchy {
             }
         }
         
-        if !isAbsolute, let parentID = parentID {
-            // If this is a relative link with a known starting point, search from that node up the hierarchy.
-            return try searchForNodeUpTheHierarchy(from: lookup[parentID]!, path: remaining)
+        if !isAbsolute, let parentID {
+            // If this is a relative link with a known starting point, search from that node (or its language counterpoint) up the hierarchy.
+            var startingPoint = lookup[parentID]!
+            
+            // If the known starting point has multiple language representations, check which language representation to search from.
+            if let firstComponent = remaining.first, let counterpoint = startingPoint.counterpart {
+                switch (startingPoint.anyChildMatches(firstComponent), counterpoint.anyChildMatches(firstComponent)) {
+                // If only one of the language representations match the first path components, use that as the starting point
+                case (true, false):
+                    break
+                case (false, true):
+                    startingPoint = counterpoint
+                    
+                // Otherwise, there isn't a clear starting point. Pick one based on the languages to get stable behavior across builds.
+                case _ where startingPoint.languages.contains(.swift):
+                    break
+                case _ where counterpoint.languages.contains(.swift):
+                    startingPoint = counterpoint
+                default:
+                    // Only symbols have counterpoints which means that each node should always have at least one language
+                    if counterpoint.languages.map(\.id).min()! < startingPoint.languages.map(\.id).min()! {
+                        startingPoint = counterpoint
+                    }
+                }
+            }
+            
+            return try searchForNodeUpTheHierarchy(from: startingPoint, path: remaining)
         }
         return try searchForNodeInModules()
     }
@@ -267,7 +291,7 @@ extension PathHierarchy {
                     onlyPossibleMatch = nil
                 }
                 
-                if let onlyPossibleMatch = onlyPossibleMatch {
+                if let onlyPossibleMatch {
                     // If we found only a single match one level down then we've processed both this path component and the next.
                     remaining = remaining.dropFirst(2)
                     if remaining.isEmpty {
@@ -446,8 +470,8 @@ extension PathHierarchy.DisambiguationContainer {
 // MARK: Private helper extensions
 
 // Allow optional substrings to be compared to non-optional strings
-private func == <S1: StringProtocol, S2: StringProtocol>(lhs: S1?, rhs: S2) -> Bool {
-     guard let lhs = lhs else { return false }
+private func == (lhs: (some StringProtocol)?, rhs: some StringProtocol) -> Bool {
+     guard let lhs else { return false }
      return lhs == rhs
  }
 
@@ -477,7 +501,7 @@ private extension PathHierarchy.Node {
             return true
         }
         // Otherwise, check if the node's symbol matches the provided disambiguation
-        else if let symbol = symbol, let disambiguation = component.disambiguation {
+        else if let symbol, let disambiguation = component.disambiguation {
             switch disambiguation {
             case .kindAndHash(let kind, let hash):
                 return name == component.name

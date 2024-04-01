@@ -106,7 +106,7 @@ struct ParametersAndReturnValidator {
         _ symbolKind: SymbolGraph.Symbol.Kind?,
         hasDocumentedReturnValues: Bool
     ) -> DocumentationDataVariants<ParametersSection> {
-        guard let parameters = parameters, !parameters.isEmpty else {
+        guard let parameters, !parameters.isEmpty else {
             guard hasDocumentedReturnValues, Self.shouldAddObjectiveCErrorParameter(signatures, parameters) else {
                 // The symbol has no parameter documentation or return value documentation and none should be synthesized.
                 return DocumentationDataVariants(defaultVariantValue: nil)
@@ -243,7 +243,7 @@ struct ParametersAndReturnValidator {
         }
         
         // Diagnose if the symbol had documented its return values but all language representations only return void.
-        if let returns = returns, traitsWithNonVoidReturnValues.isEmpty {
+        if let returns, traitsWithNonVoidReturnValues.isEmpty {
             diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: symbolKind))
         }
         return variants
@@ -302,7 +302,7 @@ struct ParametersAndReturnValidator {
     private static func newObjectiveCReturnsContent(_ signatures: Signatures, returns: Return?) -> [Markup]? {
         guard hasSwiftThrowsObjectiveCErrorBridging(signatures) else { return nil }
         
-        guard let returns = returns, !returns.contents.isEmpty else {
+        guard let returns, !returns.contents.isEmpty else {
             if signatures[.objectiveC]?.returns == [.init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")] {
                 // There is no documented return value and the Objective-C signature returns BOOL
                 return objcBoolErrorDescription

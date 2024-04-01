@@ -24,8 +24,8 @@ public protocol DocumentationConverterProtocol {
     /// - Throws: Throws an error if the conversion process was not able to start at all, for example if the bundle could not be read.
     /// Partial failures, such as failing to consume a single render node, are returned in the `conversionProblems` component
     /// of the returned tuple.
-    mutating func convert<OutputConsumer: ConvertOutputConsumer>(
-        outputConsumer: OutputConsumer
+    mutating func convert(
+        outputConsumer: some ConvertOutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
 }
 
@@ -162,7 +162,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         // Inject current platform versions if provided
-        if let currentPlatforms = currentPlatforms {
+        if let currentPlatforms {
             self.context.externalMetadata.currentPlatforms = currentPlatforms
         }
     }
@@ -178,8 +178,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         return bundles.sorted(by: \.identifier)
     }
     
-    mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
-        outputConsumer: OutputConsumer
+    mutating public func convert(
+        outputConsumer: some ConvertOutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
         defer {
             diagnosticEngine.flush()
@@ -239,7 +239,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         let bundles = try sorted(bundles: dataProvider.bundles(options: bundleDiscoveryOptions))
         guard !bundles.isEmpty else {
-            if let rootURL = rootURL {
+            if let rootURL {
                 throw Error.doesNotContainBundle(url: rootURL)
             } else {
                 try outputConsumer.consume(problems: context.problems)
@@ -443,14 +443,14 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         identifier: ResolvedTopicReference
     ) -> Bool {
         let isDocumentPathToConvert: Bool
-        if let documentPathsToConvert = documentPathsToConvert {
+        if let documentPathsToConvert {
             isDocumentPathToConvert = documentPathsToConvert.contains(identifier.path)
         } else {
             isDocumentPathToConvert = true
         }
         
         let isExternalIDToConvert: Bool
-        if let externalIDsToConvert = externalIDsToConvert {
+        if let externalIDsToConvert {
             isExternalIDToConvert = entity.symbol.map {
                 externalIDsToConvert.contains($0.identifier.precise)
             } == true
@@ -511,7 +511,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
 
 extension DocumentationNode {
     func meetsExpandedDocumentationRequirements(_ requirements: ConvertRequest.ExpandedDocumentationRequirements) -> Bool {
-        guard let symbol = symbol else { return false }
+        guard let symbol else { return false }
         
         return requirements.accessControlLevels.contains(symbol.accessLevel.rawValue) && (!symbol.names.title.starts(with: "_") || requirements.canBeUnderscored)
     }
