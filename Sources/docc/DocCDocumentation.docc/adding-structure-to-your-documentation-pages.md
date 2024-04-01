@@ -141,9 +141,14 @@ default organization and provide a more appropriate structure for your symbols.
 
 ![A screenshot showing the rendered documentation containing three topic groups: Creating a Sloth, Activities, and Schedule.](4_topics_2)
 
-To add an extension file to your documentation catalog for a specific symbol, use a text editor to create a new file named `Extension.md`.
+To add an extension file for a specific symbol, use a text editor to create an
+`.md` file within the documentation catalog. If you're working in Xcode, you can
+select the documentation catalog in the project navigator and run the File ->
+New -> File From Template... menu command. Then click "Extension File" under the
+Documentation section. DocC ignores file names of documentation extensions; you
+can choose any file name you would like as long as it uses an `.md` extension.
 
-In the `Extension.md` file, replace the `Symbol` placeholder 
+In the new markdown file, replace the `Symbol` placeholder 
 with the symbol path of the symbol you're organizing and rename the file accordingly.
 
 ```markdown

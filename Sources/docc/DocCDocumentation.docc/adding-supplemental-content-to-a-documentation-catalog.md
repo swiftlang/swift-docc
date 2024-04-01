@@ -62,7 +62,12 @@ habitat.
 ...
 ```
 
-To add an article to your documentation catalog, use a text editor and create a file with an appropriate title and add a `.md` extension.
+To add an article to your documentation catalog, use a text editor and create a
+file with an appropriate title and add an `.md` extension. DocC uses the file
+name you choose to determine the URL path string for the article, converting
+upper case letters to lower case, and converting spaces and punctuation to
+hyphens. DocC always uses the title from the level 1 header as the title of the
+article, and not the file name.
 
 After the Overview section, additional sections and subsections use a double
 hash (##) for a level 2 header, and a triple hash (###) for a level 3 header.
@@ -89,10 +94,16 @@ Although writing documentation comments in source files has many benefits, in so
 * When your source documentation comments focus on the implementation of your
   code, and aren't appropriate for external documentation
 
-To add an extension file to your documentation catalog, create a file within the documentation catalog, then modify the first line of the file to identify the symbol that the file relates to using a symbol link in a level 1 header. 
-For more information on linking to symbols, see <doc:linking-to-symbols-and-other-content>.
+To add an extension file to your documentation catalog, create a file within the
+documentation catalog, then modify the first line of the file to identify the
+symbol that the file relates to using a symbol link in a level 1 header. For
+more information on linking to symbols, see
+<doc:linking-to-symbols-and-other-content>. DocC ignores file names of
+documentation extensions; you can choose any file name you would like as long as
+it uses an `.md` extension. DocC determines the URL path of source documentation
+from the symbol's name, type and parent type among other things.
 
-> Important: The symbol path for the page title of an extension file need to start with the name of a top-level symbol or the name of the framework.
+> Important: The symbol path for the page title of an extension file must start with the name of a top-level symbol or the name of the framework.
 
 By default, the extension file's content adds to the symbol's existing source documentation comment. 
 You can leave key information in the documentation comment---where it's available to people reading the source code---and use the extension file for longer documentation, code examples, images, and for organizing you documentation hierarchy. 
