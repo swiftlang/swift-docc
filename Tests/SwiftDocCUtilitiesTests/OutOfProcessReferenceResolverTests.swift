@@ -114,8 +114,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
 
         XCTAssertEqual(entity.sourceLanguages.count, 3)
 
-        let availableSourceLanguages = entity.sourceLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
-        let expectedLanguages = testMetadata.availableLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
+        let availableSourceLanguages = entity.sourceLanguages.sorted()
+        let expectedLanguages = testMetadata.availableLanguages.sorted()
         
         XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
@@ -289,8 +289,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
 
         XCTAssertEqual(entity.sourceLanguages.count, 3)
 
-        let availableSourceLanguages = entity.sourceLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
-        let expectedLanguages = testMetadata.availableLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
+        let availableSourceLanguages = entity.sourceLanguages.sorted()
+        let expectedLanguages = testMetadata.availableLanguages.sorted()
         
         XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
         XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])

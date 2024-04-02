@@ -182,16 +182,7 @@ public struct GeneratedCurationWriter {
     
     private func taskGroupsToWrite(for node: DocumentationNode) -> [GeneratedTaskGroup]? {
         // Perform source-language specific curation in a stable order
-        let languagesToCurate = node.availableSourceLanguages.sorted(by: { lhs, rhs in
-            // Sort Swift before other languages
-            if lhs == .swift {
-                return true
-            } else if rhs == .swift {
-                return false
-            }
-            // Otherwise, sort by ID for a stable order
-            return lhs.id < rhs.id
-        })
+        let languagesToCurate = node.availableSourceLanguages.sorted()
         var topicsByLanguage = [SourceLanguage: [AutomaticCuration.TaskGroup]]()
         for language in languagesToCurate {
             topicsByLanguage[language] = try? AutomaticCuration.topics(for: node, withTraits: [.init(interfaceLanguage: language.id)], context: context)
