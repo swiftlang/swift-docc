@@ -313,13 +313,13 @@ struct RawStub: LMDBData, Equatable, Codable {
         
         var cursor: Int = 0
         let length = MemoryLayout<Int64>.stride
-        let id = d[cursor..<cursor + length].withUnsafeBytes { $0.load(as: Int64.self) }
+        let id = d[cursor..<cursor + length].withUnsafeBytes { $0.loadUnaligned(as: Int64.self) }
         cursor += length
         
-        let titleLength = d[cursor..<cursor + length].withUnsafeBytes{ $0.load(as: Int64.self) }
+        let titleLength = d[cursor..<cursor + length].withUnsafeBytes{ $0.loadUnaligned(as: Int64.self) }
         cursor += length
         
-        let typeLength = d[cursor..<cursor + length].withUnsafeBytes { $0.load(as: Int64.self) }
+        let typeLength = d[cursor..<cursor + length].withUnsafeBytes { $0.loadUnaligned(as: Int64.self) }
         cursor += length
         
         let titleData = d[cursor..<cursor + Int(titleLength)]
