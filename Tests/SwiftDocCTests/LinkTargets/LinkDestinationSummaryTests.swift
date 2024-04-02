@@ -462,7 +462,7 @@ class ExternalLinkableTests: XCTestCase {
                     ]
                 ),
             ])
-            XCTAssertEqual(summary.availableLanguages.sorted(by: \.id), [.objectiveC, .swift])
+            XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
             
@@ -523,7 +523,7 @@ class ExternalLinkableTests: XCTestCase {
                 """
             )
             
-            XCTAssertEqual(summary.availableLanguages.sorted(by: \.id), [.objectiveC, .swift])
+            XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar(cm)myStringFunction:error:")
             XCTAssertEqual(summary.declarationFragments, [
