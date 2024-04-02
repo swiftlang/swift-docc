@@ -46,6 +46,8 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ### Structures
 
+        @SupportedLanguage(swift)
+
         - ``MyObjectiveCOption``
         - ``MyStruct``
         - ``MyTypedObjectiveCEnum``
@@ -53,9 +55,20 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ### Variables
 
+        @SupportedLanguage(swift)
+
+        - ``myTopLevelVariable``
+
+        ### Variables
+
+        @SupportedLanguage(objc)
+
         - ``MixedFrameworkVersionNumber``
         - ``MixedFrameworkVersionString``
-        - ``myTopLevelVariable``
+        - ``MyTypedObjectiveCEnumFirst``
+        - ``MyTypedObjectiveCEnumSecond``
+        - ``MyTypedObjectiveCExtensibleEnumFirst``
+        - ``MyTypedObjectiveCExtensibleEnumSecond``
 
         ### Functions
 
@@ -63,9 +76,20 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ### Type Aliases
 
+        @SupportedLanguage(swift)
+
         - ``MyTypeAlias``
 
+        ### Type Aliases
+
+        @SupportedLanguage(objc)
+
+        - ``MyTypedObjectiveCEnum``
+        - ``MyTypedObjectiveCExtensibleEnum``
+
         ### Enumerations
+
+        @SupportedLanguage(swift)
 
         - ``CollisionsWithDifferentFunctionArguments``
         - ``CollisionsWithDifferentKinds``
@@ -73,6 +97,15 @@ class GeneratedCurationWriterTests: XCTestCase {
         - ``MyEnum``
         - ``MyObjectiveCEnum``
         - ``MyObjectiveCEnumSwiftName``
+
+        ### Enumerations
+
+        @SupportedLanguage(objc)
+
+        - ``MyEnum``
+        - ``MyObjectiveCEnum``
+        - ``MyObjectiveCEnumSwiftName``
+        - ``MyObjectiveCOption``
         
         """)
     }
@@ -311,6 +344,99 @@ class GeneratedCurationWriterTests: XCTestCase {
         
         """)
     }
+    
+    func testGeneratingLanguageSpecificCuration() throws {
+        let (url, _, context) = try testBundleAndContext(named: "GeometricalShapes")
+        
+        let writer = try XCTUnwrap(GeneratedCurationWriter(context: context, catalogURL: url, outputURL: testOutputURL))
+        let contentsToWrite = try writer.generateDefaultCurationContents()
+        
+        XCTAssertEqual(contentsToWrite.count, 2)
+        
+        // In Objective-C, the Circle API appear as top level variables and functions.
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("GeometricalShapes.md")], """
+        # ``/GeometricalShapes``
+
+        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+
+        ## Topics
+
+        ### Structures
+
+        - ``Circle``
+
+        ### Variables
+
+        @SupportedLanguage(objc)
+
+        - ``TLACircleDefaultRadius``
+        - ``TLACircleNull``
+        - ``TLACircleZero``
+
+        ### Functions
+
+        @SupportedLanguage(objc)
+
+        - ``TLACircleToString``
+        - ``TLACircleFromString``
+        - ``TLACircleIntersects``
+        - ``TLACircleIsEmpty``
+        - ``TLACircleIsNull``
+        - ``TLACircleMake``
+
+        """)
+        
+        // In Swift, the Circle API appear as members of the Circle structure.
+        // There are two "Instance Properties" task groups because both Swift and Objective-C has it and the extra symbols exist in both languages.
+        XCTAssertEqual(contentsToWrite[testOutputURL.appendingPathComponent("GeometricalShapes/Circle.md")], """
+        # ``/GeometricalShapes/Circle``
+
+        <!-- The content below this line is auto-generated and is redundant. You should either incorporate it into your content above this line or delete it. -->
+
+        ## Topics
+
+        ### Initializers
+
+        @SupportedLanguage(swift)
+
+        - ``init()``
+        - ``init(center:radius:)``
+        - ``init(string:)``
+
+        ### Instance Properties
+
+        @SupportedLanguage(swift)
+
+        - ``center``
+        - ``debugDescription``
+        - ``isEmpty``
+        - ``isNull``
+        - ``radius``
+
+        ### Instance Properties
+
+        @SupportedLanguage(objc)
+
+        - ``center``
+        - ``radius``
+
+        ### Instance Methods
+
+        @SupportedLanguage(swift)
+
+        - ``intersects(_:)``
+
+        ### Type Properties
+
+        @SupportedLanguage(swift)
+
+        - ``defaultRadius``
+        - ``null``
+        - ``zero``
+        
+        """)
+    }
+    
     
     func testCustomOutputLocation() throws {
         let (url, _, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")

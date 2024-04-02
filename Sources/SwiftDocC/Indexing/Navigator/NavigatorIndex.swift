@@ -606,7 +606,7 @@ extension NavigatorIndex {
         /// - Parameter renderNode: The render node to be indexed.
         public func index(renderNode: RenderNode) throws {
             
-            guard let navigatorIndex = navigatorIndex else {
+            guard let navigatorIndex else {
                 throw Error.navigatorIndexIsNil
             }
             
@@ -776,7 +776,7 @@ extension NavigatorIndex {
                     }
                 }
                 
-                if let groupIdentifier = groupIdentifier, !nestedChildren.isEmpty {
+                if let groupIdentifier, !nestedChildren.isEmpty {
                     identifierToChildren[groupIdentifier] = nestedChildren
                 }
             }
@@ -851,7 +851,7 @@ extension NavigatorIndex {
         ) {
             precondition(!isCompleted, "Finalizing an already completed index build multiple times is not possible.")
             
-            guard let navigatorIndex = navigatorIndex else {
+            guard let navigatorIndex else {
                 preconditionFailure("The navigatorIndex instance has not been initialized.")
             }
             
@@ -1104,7 +1104,7 @@ extension NavigatorIndex {
             
             do {
                 var records = [Record]()
-                if let estimatedCount = estimatedCount {
+                if let estimatedCount {
                     records.reserveCapacity(estimatedCount)
                 }
                 

@@ -37,7 +37,7 @@ struct BidirectionalMap<Value1: Hashable, Value2: Hashable>: Sequence {
       }
 
       set (newValue) {
-        guard let newValue = newValue else {
+        guard let newValue else {
             preconditionFailure("Nil values are not allowed")
         }
         BidirectionalMap.set(key: key, newValue: newValue, forward: &forward, reverse: &reverse)
@@ -51,7 +51,7 @@ struct BidirectionalMap<Value1: Hashable, Value2: Hashable>: Sequence {
       }
 
       set (newValue) {
-        guard let newValue = newValue else {
+        guard let newValue else {
             preconditionFailure("Nil values are not allowed")
         }
         BidirectionalMap.set(key: key, newValue: newValue, forward: &reverse, reverse: &forward)
@@ -64,7 +64,7 @@ struct BidirectionalMap<Value1: Hashable, Value2: Hashable>: Sequence {
         reverse.reserveCapacity(count)
     }
     
-    func makeIterator() -> Dictionary<Value1, Value2>.Iterator {
+    func makeIterator() -> [Value1: Value2].Iterator {
         return forward.makeIterator()
     }
 }

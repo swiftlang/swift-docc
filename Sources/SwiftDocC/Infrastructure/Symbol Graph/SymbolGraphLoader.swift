@@ -144,7 +144,7 @@ struct SymbolGraphLoader {
         
         // In case any of the symbol graphs errors, re-throw the error.
         // We will not process unexpected file formats.
-        if let loadError = loadError {
+        if let loadError {
             throw loadError
         }
         

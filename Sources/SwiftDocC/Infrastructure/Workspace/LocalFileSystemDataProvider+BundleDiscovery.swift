@@ -141,7 +141,7 @@ extension LocalFileSystemDataProvider {
     }
 }
 
-fileprivate extension Array where Element == FSNode {
+fileprivate extension [FSNode] {
     /// Returns the first file that matches a given predicate.
     /// - Parameter predicate: A closure that takes a file as its argument and returns a Boolean value indicating whether the file should be returned from this function.
     /// - Throws: Any error that the predicate closure raises.

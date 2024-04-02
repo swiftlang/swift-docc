@@ -20,7 +20,7 @@ extension Semantic.Analyses {
             self.allowedArguments = allowedArguments
         }
         
-        public func analyze<Children>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] where Children: Sequence, Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [String: Markdown.DirectiveArgument] {
             let arguments = directive.arguments(problems: &problems)
             if let severity = severityIfFound {
                 let unknownKeys = Set(arguments.keys).subtracting(allowedArguments)

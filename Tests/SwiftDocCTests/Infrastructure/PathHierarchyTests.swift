@@ -999,14 +999,22 @@ class PathHierarchyTests: XCTestCase {
         let mySwiftClassSwiftID = try tree.find(path: "MySwiftClassSwiftName", parent: moduleID, onlyFindSymbols: true)
         XCTAssertEqual(try tree.findSymbol(path: "myPropertySwiftName", parent: mySwiftClassSwiftID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
         XCTAssertEqual(try tree.findSymbol(path: "myMethodSwiftName()", parent: mySwiftClassSwiftID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
-        XCTAssertThrowsError(try tree.findSymbol(path: "myPropertyObjectiveCName", parent: mySwiftClassSwiftID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "myMethodObjectiveCName", parent: mySwiftClassSwiftID))
+        // Relative links can start with either language representation. This enabled documentation extension files to use relative links.
+        XCTAssertEqual(try tree.findSymbol(path: "myPropertyObjectiveCName", parent: mySwiftClassSwiftID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
+        XCTAssertEqual(try tree.findSymbol(path: "myMethodObjectiveCName", parent: mySwiftClassSwiftID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
+        // Links can't mix languages
+        XCTAssertThrowsError(try tree.findSymbol(path: "MySwiftClassSwiftName/myPropertyObjectiveCName", parent: moduleID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MySwiftClassSwiftName/myMethodObjectiveCName", parent: moduleID))
         
         let mySwiftClassObjCID = try tree.find(path: "MySwiftClassObjectiveCName", parent: moduleID, onlyFindSymbols: true)
         XCTAssertEqual(try tree.findSymbol(path: "myPropertyObjectiveCName", parent: mySwiftClassObjCID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
         XCTAssertEqual(try tree.findSymbol(path: "myMethodObjectiveCName", parent: mySwiftClassObjCID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
-        XCTAssertThrowsError(try tree.findSymbol(path: "myPropertySwiftName", parent: mySwiftClassObjCID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "myMethodSwiftName()", parent: mySwiftClassObjCID))
+        // Relative links can use either language representation. This enabled documentation extension files to use relative links.
+        XCTAssertEqual(try tree.findSymbol(path: "myPropertySwiftName", parent: mySwiftClassObjCID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
+        XCTAssertEqual(try tree.findSymbol(path: "myMethodSwiftName()", parent: mySwiftClassObjCID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
+        // Absolute links can't mix languages
+        XCTAssertThrowsError(try tree.findSymbol(path: "myPropertySwiftName", parent: moduleID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "myMethodSwiftName()", parent: moduleID))
         
         // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
         //     MyObjectiveCOptionNone                                      = 0,
@@ -1017,19 +1025,30 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionNone", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone")
         XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionFirst", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
         XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionSecond", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        // These names don't exist in either language representation
         XCTAssertThrowsError(try tree.findSymbol(path: "none", parent: myOptionAsEnumID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "first", parent: myOptionAsEnumID))
         XCTAssertThrowsError(try tree.findSymbol(path: "second", parent: myOptionAsEnumID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "secondCaseSwiftName", parent: myOptionAsEnumID))
+        // Relative links can start with either language representation. This enabled documentation extension files to use relative links.
+        XCTAssertEqual(try tree.findSymbol(path: "first", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
+        XCTAssertEqual(try tree.findSymbol(path: "secondCaseSwiftName", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        // Links can't mix languages
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOption-enum/first", parent: myOptionAsEnumID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOption-enum/secondCaseSwiftName", parent: myOptionAsEnumID))
         
         let myOptionAsStructID = try tree.find(path: "MyObjectiveCOption-struct", parent: moduleID, onlyFindSymbols: true)
         XCTAssertEqual(try tree.findSymbol(path: "first", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
         XCTAssertEqual(try tree.findSymbol(path: "secondCaseSwiftName", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        // These names don't exist in either language representation
         XCTAssertThrowsError(try tree.findSymbol(path: "none", parent: myOptionAsStructID))
         XCTAssertThrowsError(try tree.findSymbol(path: "second", parent: myOptionAsStructID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOptionNone", parent: myOptionAsStructID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOptionFirst", parent: myOptionAsStructID))
-        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOptionSecond", parent: myOptionAsStructID))
+        // Relative links can start with either language representation. This enabled documentation extension files to use relative links.
+        XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionNone", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone")
+        XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionFirst", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
+        XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionSecond", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        // Links can't mix languages
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOption-struct/MyObjectiveCOptionNone", parent: moduleID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOption-struct/MyObjectiveCOptionFirst", parent: moduleID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOption-struct/MyObjectiveCOptionSecond", parent: moduleID))
         
         // typedef NSInteger MyTypedObjectiveCExtensibleEnum NS_TYPED_EXTENSIBLE_ENUM;
         //
@@ -1232,6 +1251,41 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths["s:8ShapeKit22overloadedparentstructV15fifthTestMemberSivp"],
                        "/ShapeKit/overloadedparentstruct-6a7lx/fifthTestMember")
         
+        // This is the only enum case and can be disambiguated as such
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")
+        // These are all methods and can only be disambiguated with the USR hash
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s")
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife")
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0")
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
+    }
+
+    func testOverloadedSymbolsWithOverloadGroups() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+
+        XCTAssertEqual(paths["s:8ShapeKit22OverloadedParentStructV"],
+                       "/ShapeKit/OverloadedParentStruct-1jr3p")
+        XCTAssertEqual(paths["s:8ShapeKit22overloadedparentstructV"],
+                       "/ShapeKit/overloadedparentstruct-6a7lx")
+
+        // These need to be disambiguated in two path components
+        XCTAssertEqual(paths["s:8ShapeKit22OverloadedParentStructV15fifthTestMemberSivpZ"],
+                       "/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember")
+        XCTAssertEqual(paths["s:8ShapeKit22overloadedparentstructV15fifthTestMemberSivp"],
+                       "/ShapeKit/overloadedparentstruct-6a7lx/fifthTestMember")
+
         // This is the only enum case and can be disambiguated as such
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")

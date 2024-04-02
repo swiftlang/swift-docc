@@ -106,7 +106,7 @@ struct DataAssetManager {
     /// Registers a collection of data and determines their trait collection.
     ///
     /// Data objects which have a file name ending with '~dark' are associated to their light variant.
-    mutating func register<Datas: Collection>(data datas: Datas, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws where Datas.Element == URL {
+    mutating func register(data datas: some Collection<URL>, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws {
         for dataURL in datas {
             let meta = try referenceMetaInformationForDataURL(dataURL, dataProvider: dataProvider, bundle: documentationBundle)
 
