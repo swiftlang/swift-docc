@@ -430,4 +430,28 @@ struct SymbolGraphRelationshipsBuilder {
             constraint: newConstraint
         )
     }
+
+    static func addOverloadRelationship(
+        edge: SymbolGraph.Relationship,
+        context: DocumentationContext,
+        localCache: DocumentationContext.LocalCache,
+        engine: DiagnosticEngine
+    ) {
+        guard let overloadNode = localCache[edge.source] else {
+            engine.emit(NodeProblem.notFound(edge.source))
+            return
+        }
+        guard let overloadGroupNode = localCache[edge.target] else {
+            engine.emit(NodeProblem.notFound(edge.target))
+            return
+        }
+
+        guard let overloadTopicGraphNode = context.topicGraph.nodes[overloadNode.reference],
+              let overloadGroupTopicGraphNode = context.topicGraph.nodes[overloadGroupNode.reference]
+        else {
+            return
+        }
+        overloadGroupTopicGraphNode.isOverloadGroup = true
+        context.topicGraph.addEdge(from: overloadGroupTopicGraphNode, to: overloadTopicGraphNode)
+    }
 }
