@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Render Node API",
-        "version": "0.4.0",
+        "version": "0.4.1",
         "title": "Render Node API"
     },
     "paths": { },
@@ -438,6 +438,9 @@
                         "$ref": "#/components/schemas/Video"
                     },
                     {
+                        "$ref": "#/components/schemas/ThematicBreak"
+                    },
+                    {
                         "$ref": "#/components/schemas/Aside"
                     },
                     {
@@ -692,6 +695,20 @@
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "ThematicBreak": {
+                "type": "object",
+                "required": [
+                    "type",
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "thematicBreak"
+                        ]
                     }
                 }
             },

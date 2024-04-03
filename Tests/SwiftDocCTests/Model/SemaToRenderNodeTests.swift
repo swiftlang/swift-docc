@@ -3452,4 +3452,27 @@ Document
             ])
         }
     }
+    
+    func testThematicBreak() throws {
+        let source = """
+
+        ---
+
+        """
+        
+        let markup = Document(parsing: source, options: .parseBlockDirectives)
+        
+        XCTAssertEqual(markup.childCount, 1)
+        
+        let (bundle, context) = try testBundleAndContext()
+        
+        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/TestThematicBreak", sourceLanguage: .swift))
+        
+        let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
+        let expectedContent: [RenderBlockContent] = [
+            .thematicBreak
+        ]
+        
+        XCTAssertEqual(expectedContent, renderContent)
+    }
 }
