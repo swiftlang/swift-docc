@@ -28,7 +28,7 @@ public struct FeatureFlags: Codable {
     public var isExperimentalMentionedInEnabled = false
     
     /// Whether or not experimental support validating parameters and return value documentation is enabled.
-    public var isExperimentalParametersAndReturnsValidationEnabled = false
+    public var isExperimentalParametersAndReturnsValidationEnabled = true
     
     /// Creates a set of feature flags with the given values.
     ///
