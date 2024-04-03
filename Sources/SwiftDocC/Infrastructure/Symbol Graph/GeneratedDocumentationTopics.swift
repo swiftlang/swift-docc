@@ -175,18 +175,7 @@ enum GeneratedDocumentationTopics {
             )
         }
 
-        // Create a temp node in order to generate the automatic curation
-        let temporaryCollectionNode = DocumentationNode(
-            reference: collectionReference,
-            kind: .collectionGroup,
-            sourceLanguage: automaticCurationSourceLanguage,
-            availableSourceLanguages: automaticCurationSourceLanguages,
-            name: DocumentationNode.Name.conceptual(title: title),
-            markup: Document(parsing: ""),
-            semantic: Article(markup: nil, metadata: nil, redirects: nil, options: [:])
-        )
-        
-        let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTraits: [], context: context)
+        let collectionTaskGroups = try AutomaticCuration.topics(for: identifiers, inInheritedSymbolsAPICollection: true, withTraits: [], context: context)
             .map { taskGroup in
                 AutomaticTaskGroupSection(
                     // Force-unwrapping the title since automatically-generated task groups always have a title.
