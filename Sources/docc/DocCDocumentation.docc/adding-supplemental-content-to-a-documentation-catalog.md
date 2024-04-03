@@ -63,11 +63,18 @@ habitat.
 ```
 
 To add an article to your documentation catalog, use a text editor and create a
-file with an appropriate title and add an `.md` extension. DocC uses the file
-name you choose to determine the URL path string for the article, converting
-upper case letters to lower case, and converting spaces and punctuation to
-hyphens. DocC always uses the title from the level 1 header as the title of the
-article, and not the file name.
+file with an appropriate title and add an `.md` extension.
+
+> Important:
+> DocC uses the article's lowercased file name, with consecutive
+> sequences of whitespace and punctuation replaced with a hyphen (`-`), as a
+> path component in the URL for that page.
+>
+> If two or more articles have the same file name, DocC will raise a warning
+> and skip building documentation for all but one of those articles.
+>
+> DocC doesn't display the article file name in content. Instead, it uses the
+> title from the level 1 header in places where the article is referenced.
 
 After the Overview section, additional sections and subsections use a double
 hash (##) for a level 2 header, and a triple hash (###) for a level 3 header.
@@ -98,12 +105,22 @@ To add an extension file to your documentation catalog, create a file within the
 documentation catalog, then modify the first line of the file to identify the
 symbol that the file relates to using a symbol link in a level 1 header. For
 more information on linking to symbols, see
-<doc:linking-to-symbols-and-other-content>. DocC ignores file names of
-documentation extensions; you can choose any file name you would like as long as
-it uses an `.md` extension. DocC determines the URL path of source documentation
-from the symbol's name, type and parent type among other things.
+<doc:linking-to-symbols-and-other-content>.
 
-> Important: The symbol path for the page title of an extension file must start with the name of a top-level symbol or the name of the framework.
+DocC ignores file names of documentation extensions; you can choose any file
+name you would like as long as it uses an `.md` extension. DocC determines the
+URL path of source documentation from the symbol's name, type and parent type
+among other things.
+
+> Important: If DocC can't resolve the symbol link in the level 1 header of the
+> extension file, it will raise a warning about the link and skip the rest of
+> the content of that extension file.
+>
+> DocC resolves symbol links in extension file headers relative to the module.
+> To create an extension file for a nested type or member symbol, start the
+> symbol link with the name of the top-level symbol that contains the nested
+> type or member symbol. You can optionally prefix the symbol link with the
+> name of the module, but DocC does not require this prefix.
 
 By default, the extension file's content adds to the symbol's existing source documentation comment. 
 You can leave key information in the documentation comment---where it's available to people reading the source code---and use the extension file for longer documentation, code examples, images, and for organizing you documentation hierarchy. 
