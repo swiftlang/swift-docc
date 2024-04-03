@@ -30,7 +30,6 @@ import SymbolKit
 /// - ``platformNameVariants``
 /// - ``moduleReference``
 /// - ``extendedModuleVariants``
-/// - ``bystanderModuleNames``
 /// - ``isRequiredVariants``
 /// - ``externalIDVariants``
 /// - ``accessLevelVariants``
