@@ -381,7 +381,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// - Parameters:
     ///    - extendedModule: The name of the extended module.
     ///    - extendedSymbolKind: The kind of the extended symbol.
-    ///    - constraint: The new generic constraints to add.
+    ///    - newConstraint: The new generic constraints to add.
     public func addSwiftExtensionConstraint(
         extendedModule: String,
         extendedSymbolKind: SymbolGraph.Symbol.KindIdentifier? = nil,
