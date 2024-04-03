@@ -669,6 +669,74 @@ class AutomaticCurationTests: XCTestCase {
             ]
         )
     }
+
+    func testOverloadedSymbolsAreCuratedUnderGroup() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let protocolRenderNode = try renderNode(
+            atPath: "/documentation/ShapeKit/OverloadedProtocol",
+            fromTestBundleNamed: "OverloadedSymbols")
+
+        guard protocolRenderNode.topicSections.count == 1, let protocolTopicSection = protocolRenderNode.topicSections.first else {
+            XCTFail("Expected to find 1 topic section, found \(protocolRenderNode.topicSections.count): \(protocolRenderNode.topicSections.map(\.title?.singleQuoted))")
+            return
+        }
+
+        XCTAssertEqual(protocolTopicSection.title, "Instance Methods")
+        XCTAssertEqual(protocolTopicSection.identifiers, [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+        ])
+
+        let overloadGroupRenderNode = try renderNode(
+            atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be",
+            fromTestBundleNamed: "OverloadedSymbols")
+
+        XCTAssertEqual(
+            overloadGroupRenderNode.topicSections.count, 0,
+            "Expected no topic sections, found \(overloadGroupRenderNode.topicSections.map(\.title?.singleQuoted))"
+        )
+    }
+
+    func testAutomaticCurationHandlesOverloadsWithLanguageFilters() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (bundle, context) = try testBundleAndContext(named: "OverloadedSymbols")
+
+        let protocolDocumentationNode = try context.entity(
+            with: .init(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/ShapeKit/OverloadedProtocol",
+                sourceLanguage: .swift))
+
+        func assertAutomaticCuration(
+            variants: Set<DocumentationDataVariantsTrait>,
+            file: StaticString = #file,
+            line: UInt = #line
+        ) throws {
+            let topics = try AutomaticCuration.topics(
+                for: protocolDocumentationNode,
+                withTraits: variants,
+                context: context)
+
+            guard topics.count == 1, let overloadTopic = topics.first else {
+                XCTFail(
+                    "Expected one automatic curation topic, found \(topics.count): \(topics.map(\.title?.singleQuoted))",
+                    file: file, line: line)
+                return
+            }
+
+            XCTAssertEqual(overloadTopic.title, "Instance Methods", file: file, line: line)
+            XCTAssertEqual(overloadTopic.references.map(\.absoluteString), [
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+            ], file: file, line: line)
+        }
+
+        // AutomaticCuration uses a different method for collecting child nodes when the variant
+        // traits set is empty and when it's not. Ensure that in both cases, we only see the
+        // overload group symbol curated under the protocol symbol.
+        try assertAutomaticCuration(variants: [])
+        try assertAutomaticCuration(variants: [.swift])
+    }
 }
 
 private func makeSymbol(
