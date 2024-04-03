@@ -327,7 +327,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
             for (index, line) in argumentDocComment.lines.map(\.text).enumerated() {
                 let capitalizedLine = (line.first?.uppercased() ?? "") + line.dropFirst()
                 
-                print(capitalizedLine)
+//                print(capitalizedLine)
                 
                 if index == 0 {
                     parametersDocumentation.append("  - \(argumentDisplayName): \(capitalizedLine)") // TODO: INSERT CAPITALIZATION HERE?
@@ -386,7 +386,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
                 for (index, line) in allowedValueDocComment.lines.map(\.text).enumerated() {
                     let capitalizedLine = (line.first?.uppercased() ?? "") + line.dropFirst()
                     
-                    print(capitalizedLine)
+//                    print(capitalizedLine)
                     
                     if index == 0 {
                         parametersDocumentation.append("     - term `\(allowedValue)`: \(capitalizedLine)") // TODO: INSERT CAPITALIZATION HERE?
