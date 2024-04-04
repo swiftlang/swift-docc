@@ -274,7 +274,7 @@ extension RESTBodyRenderSection {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")) ?? ""
 
-        return contentText + " " + parametersText // TODO: INSERT CAPITALIZATION HERE?
+        return contentText + " " + parametersText
     }
 }
 

@@ -328,12 +328,6 @@ public enum RenderBlockContent: Equatable {
                 return rawValue.capitalized
             }
         }
-        
-        /// The content text to use when rendering this style of aside.
-        public var displayContent: String {
-            // TODO: FIND WHERE CONTENT IS
-            return "" // TODO: STUB
-        }
 
         /// The style of aside to use when rendering.
         ///

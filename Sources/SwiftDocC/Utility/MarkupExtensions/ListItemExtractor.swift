@@ -148,7 +148,6 @@ extension ListItem {
             guard let scalar = char.unicodeScalars.first else { return false }
             return CharacterSet.whitespaces.contains(scalar)
         }.lowercased()
-//        }.lowercased().capitalizeFirstWord
 
         if trimmedText.starts(with: tag.lowercased()) {
             var newText = text.string.capitalizeFirstWord

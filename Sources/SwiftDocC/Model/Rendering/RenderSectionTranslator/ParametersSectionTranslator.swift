@@ -27,7 +27,7 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
                     .map { parameter in
                         let parameterContent = renderNodeTranslator.visitMarkupContainer(
                             MarkupContainer(parameter.contents)
-                        ) as! [RenderBlockContent] // TODO: add autocap here
+                        ) as! [RenderBlockContent]
                         return ParameterRenderSection(name: parameter.name, content: parameterContent)
                     }
             )

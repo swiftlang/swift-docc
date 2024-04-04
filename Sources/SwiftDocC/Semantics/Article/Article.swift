@@ -39,8 +39,6 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         self.options = options
         self.metadata = metadata
         self.redirects = redirects
-        
-        // todo: process content of discussion for capitalization, and same for symbol.swift and parameters.swift
         self.discussion = markupModel?.discussionSection
         self.abstractSection = markupModel?.abstractSection
         self.topics = markupModel?.topicsSection

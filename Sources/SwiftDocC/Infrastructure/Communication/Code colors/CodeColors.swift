@@ -200,14 +200,6 @@ extension CodeColors: Codable {
         self.buildConfigId = try container.decodeIfPresent(SRGBColor.self, forKey: .buildConfigId)
     }
     
-    /// Encode function.
-    ///
-    ///
-    /// - parameter yes: no way this works
-    /// - parameter hello: ``doesnotexist``
-    /// test reference to image, link
-    ///  if there are any capitalized letters in the first word, don't capitalize the first letter
-    /// > important: text
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(background, forKey: .background)

@@ -1,13 +1,17 @@
-//
-//  RenderBlockContent+Capitalization.swift
-//  
-//
-//  Created by Emily Chen on 04/04/2024.
-//
+/*
+ This source file is part of the Swift.org open source project
 
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+/// For auto capitalizing the first letter of a sentence following a colon (e.g. asides, sections such as parameters, returns).
 protocol AutoCapitalizable {
     
-    /// Any type that conforms to this protocol  needs to have this property
+    /// Any type that conforms to this protocol needs to have this property.
     var capitalizeFirstWord: Self {
         get
     }
@@ -19,7 +23,7 @@ extension AutoCapitalizable {
 }
 
 extension RenderInlineContent: AutoCapitalizable {
-    // Capitalize the first word for content that has emphasis or strong applied as well as normal text.
+    /// Capitalize the first word for normal text content, as well as content that has emphasis or strong applied.
     var capitalizeFirstWord: Self {
         switch self {
         case .text(let text):
@@ -36,6 +40,7 @@ extension RenderInlineContent: AutoCapitalizable {
 
 
 extension RenderBlockContent: AutoCapitalizable {
+    /// Capitalize the first word for paragraphs, asides, and small content.
     var capitalizeFirstWord: Self {
         switch self {
         case .paragraph(let paragraph):
