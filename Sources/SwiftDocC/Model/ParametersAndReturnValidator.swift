@@ -334,7 +334,7 @@ struct ParametersAndReturnValidator {
     }
     
     /// The known declaration fragment alternatives that represents "void" in each programming language.
-    private static var knownVoidReturnValuesByLanguage: [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] = [
+    static var knownVoidReturnValuesByLanguage: [SourceLanguage: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] = [
         .swift: [
             // The Swift symbol graph extractor uses one of these values depending on if the return value is explicitly defined or not.
             .init(kind: .text, spelling: "()", preciseIdentifier: nil),

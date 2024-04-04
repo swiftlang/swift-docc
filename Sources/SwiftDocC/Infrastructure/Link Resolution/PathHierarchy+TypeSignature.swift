@@ -20,13 +20,136 @@ extension PathHierarchy {
             return nil
         }
         
-        let returnTypeSpellings = signature.returns.compactMap {
-            $0.preciseIdentifier != nil ? $0.spelling : nil
+        return (
+            signature.parameters.compactMap { parameterTypeSpellings(for: $0.declarationFragments) },
+            returnTypeSpellings(for: signature.returns).map { [$0] } ?? []
+        )
+    }
+    
+    private static func parameterTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
+        typeSpellings(for: fragments)
+    }
+    
+    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
+        if fragments.count == 1, knownVoidReturnValues.contains(fragments.first!) {
+            // We don't want to list "void" return values as type disambiguation
+            return nil
         }
-        let parameterTypeSpellings = signature.parameters.compactMap({
-            $0.declarationFragments.first(where: { $0.kind == .typeIdentifier })?.spelling
-        })
-        return (parameterTypeSpellings, returnTypeSpellings)
+        return typeSpellings(for: fragments)
+    }
+    
+    private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
+    
+    private static func typeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
+        var accumulated = ""[...]
+        
+        for fragment in fragments {
+            switch fragment.kind {
+            case .identifier,   // Skip the argument label
+                    .keyword,   // Skip keywords ("inout", "consuming", "each", etc.)
+                    .attribute, // Skip attributes ("@escaping", custom result builders, etc.)
+                    .numberLiteral, .stringLiteral, // Skip literals
+                    .externalParameter, .genericParameter, .internalParameter:
+                continue
+
+            default:
+                accumulated += fragment.spelling
+            }
+        }
+        
+        accumulated.removeAll(where: \.isWhitespace)
+        
+        if accumulated.first == ":" {
+            _ = accumulated.removeFirst()
+        }
+        
+        while accumulated.first == "(", accumulated.last == ")", !accumulated.isTuple() {
+            // Remove extra layers of parenthesis unless the type is a tuple
+            accumulated = accumulated.dropFirst().dropLast()
+        }
+        
+        return String(accumulated.withSwiftSyntacticSugar())
+    }
+    
+}
+
+private extension StringProtocol {
+    /// Checks if the string looks like a tuple with comma separated values.
+    ///
+    /// This is used to remove redundant parenthesis around expressions.
+    func isTuple() -> Bool {
+        guard first == "(", last == ")", contains(",")else { return false }
+        var depth = 0
+        for char in self {
+            switch char {
+            case "(": 
+                depth += 1
+            case ")": 
+                depth -= 1
+            case "," where depth == 1:
+                return true
+            default: 
+                continue
+            }
+        }
+        return false
+    }
+    
+    /// Transforms the string to apply Swift syntactic sugar.
+    ///
+    /// The transformed string has all occurrences of `Array<Element>`, `Optional<Wrapped>`, and `Dictionary<Key,Value>` replaced with `[Element]`, `Wrapped?`, and `[Key:Value]`.
+    func withSwiftSyntacticSugar() -> String {
+        // If this type uses known Objective-C types, return the original type name
+        if contains("NSArray<") || contains("NSDictionary<") {
+            return String(self)
+        }
+        // Don't need to do any processing unless this type contains some string that type name that Swift has syntactic sugar for.
+        guard contains("Array<") || contains("Optional<") || contains("Dictionary<") else {
+            return String(self)
+        }
+        
+        var result = ""
+        result.reserveCapacity(count)
+        
+        var scanner = StringScanner(String(self)[...])
+        
+        while let prefix = scanner.scan(until: { $0 == "A" || $0 == "O" || $0 == "D" }) {
+            result += prefix
+            
+            if scanner.hasPrefix("Array<") {
+                _ = scanner.take("Array".count)
+                guard let elementType = scanner.scanGenericSingle() else {
+                    // The type is unexpected. Return the original value.
+                    return String(self)
+                }
+                result.append("[\(elementType.withSwiftSyntacticSugar())]")
+                assert(scanner.peek() == ">")
+                _ = scanner.take()
+            }
+            else if scanner.hasPrefix("Optional<") {
+                _ = scanner.take("Optional".count)
+                guard let wrappedType = scanner.scanGenericSingle() else {
+                    // The type is unexpected. Return the original value.
+                    return String(self)
+                }
+                result.append("\(wrappedType.withSwiftSyntacticSugar())?")
+                assert(scanner.peek() == ">")
+                _ = scanner.take()
+            }
+            else if scanner.hasPrefix("Dictionary<") {
+                _ = scanner.take("Dictionary".count)
+                guard let (keyType, valueType) = scanner.scanGenericPair() else {
+                    // The type is unexpected. Return the original value.
+                    return String(self)
+                }
+                result.append("[\(keyType.withSwiftSyntacticSugar()):\(valueType.withSwiftSyntacticSugar())]")
+                assert(scanner.peek() == ">")
+                _ = scanner.take()
+            }
+        }
+        result += scanner.takeAll()
+        
+        return result
     }
 }
 
@@ -216,5 +339,70 @@ private struct StringScanner {
             return $0 == "," || $0 == ")"
         }
         return scan(until: predicate)
+    }
+    
+    // MARK: Parsing syntactic sugar by scanning
+     
+    mutating func scanGenericSingle() -> Substring? {
+        assert(peek() == "<", "The caller should have checked that this is a generic")
+        _ = take()
+        
+        // The generic may contain any number of nested generics. Keep track of the open and close parenthesis while scanning.
+        var depth = 0
+        let predicate: (Character) -> Bool = {
+            if $0 == "<" {
+                depth += 1
+                return false // keep scanning
+            }
+            if depth > 0 {
+                if $0 == ">" {
+                    depth -= 1
+                }
+                return false // keep scanning
+            }
+            return $0 == ">"
+        }
+        return scan(until: predicate)
+    }
+    
+    mutating func scanGenericPair() -> (Substring, Substring)? {
+        assert(peek() == "<", "The caller should have checked that this is a generic")
+        _ = take() // Discard the opening "<"
+        
+        // The generic may contain any number of nested generics. Keep track of the open and close parenthesis while scanning.
+        var depth = 0
+        let firstPredicate: (Character) -> Bool = {
+            if $0 == "<" || $0 == "(" {
+                depth += 1
+                return false // keep scanning
+            }
+            if depth > 0 {
+                if $0 == ">" || $0 == ")" {
+                    depth -= 1
+                }
+                return false // keep scanning
+            }
+            return $0 == ","
+        }
+        guard let first = scan(until: firstPredicate) else { return nil }
+        _ = take() // Discard the ","
+        
+        assert(depth == 0, "Scanning the first generic should encountered a balanced number of brackets.")
+        let secondPredicate: (Character) -> Bool = {
+            if $0 == "<" || $0 == "(" {
+                depth += 1
+                return false // keep scanning
+            }
+            if depth > 0 {
+                if $0 == ">" || $0 == ")" {
+                    depth -= 1
+                }
+                return false // keep scanning
+            }
+            return $0 == ">"
+        }
+        guard let second = scan(until: secondPredicate) else { return nil }
+        
+        return (first, second)
     }
 }

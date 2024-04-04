@@ -1291,18 +1291,17 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")
         
-        // These 3 methods have different parameter types and use that for disambiguation.
+        // These methods have different parameter types and use that for disambiguation.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Int)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Float)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(String)")
-        // Both these methods have "(Double) -> Double" signatures and can only be disambiguated with the USR hash
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Double)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-([Double])")
         
         let hashAndKindDisambiguatedPaths = tree.caseInsensitiveDisambiguatedPaths(allowAdvancedDisambiguation: false)
         
@@ -1336,20 +1335,381 @@ class PathHierarchyTests: XCTestCase {
         // This is the only enum case and can be disambiguated as such
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")
-        // These 3 methods have different parameter types and use that for disambiguation.
+        // These 4 methods have different parameter types and use that for disambiguation.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Int)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Float)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(String)")
-        // Both these methods have "(Double) -> Double" signatures and can only be disambiguated with the USR hash
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-([Double])")
+        
+        // The overload group is cloned from this symbol and therefore have the same function signature.
+        // Because there are two collisions with the same signature, this method can only be uniquely disambiguated with its hash.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
-        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
     }
-
+    
+    func testApplyingSyntaxSugarToTypeName() {
+        func functionSignatureParameterTypeName(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
+            return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
+                identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                    SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
+                        parameters: [
+                            .init(name: "someName", externalName: "with", declarationFragments: [
+                                .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                                .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                            ] + fragments, children: [])
+                        ],
+                        returns: []
+                    )
+                ])
+            )?.parameterTypeNames.first
+        }
+        
+        // Int
+        XCTAssertEqual("Int", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+        ]))
+        
+        // Array<Int>
+        XCTAssertEqual("[Int]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Array<(Int,Double)>
+        XCTAssertEqual("[(Int,Double)]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ")>", preciseIdentifier: nil),
+        ]))
+        
+        // Optional<Int>
+        XCTAssertEqual("Int?", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Optional<(Int,Double)>
+        XCTAssertEqual("(Int,Double)?", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ")>", preciseIdentifier: nil),
+        ]))
+        
+        // Array<(Array<Int>,Optional<Optional<Double>>)>
+        XCTAssertEqual("[([Int],Double??)]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>)>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Key,Value>
+        XCTAssertEqual("[Double:Int]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<(Optional<Int>,String),Array<Optional<String>>>
+        XCTAssertEqual("[(Int?,String):[Double?]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: "),", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Optional<Dictionary<Int,Dictionary<String,Double>>>,Array<Dictionary<Int,Dictionary<String,Double>>>>
+        XCTAssertEqual("[[Int:[String:Double]]?:[[Int:[String:Double]]]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>>,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ">>>>", preciseIdentifier: nil),
+        ]))
+    }
+    
+    func testTypeNamesFromSymbolSignature() throws {
+        func functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+            return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
+                identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
+                    SymbolGraph.Symbol.FunctionSignature.mixinKey: signature
+                ])
+            )
+        }
+        
+        // Objective-C types
+        do {
+            // - (id)doSomething:(NSString *)someName;
+            let stringArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString"),
+                        .init(kind: .text, spelling: " * )", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .typeIdentifier, spelling: "id", preciseIdentifier: "c:*Qo"),
+                ])
+            )
+            XCTAssertEqual(stringArgument?.parameterTypeNames, ["NSString*"])
+            XCTAssertEqual(stringArgument?.returnTypeNames, ["id"])
+            
+            // - (void)doSomething:(NSArray<NSString *> *)someName;
+            let genericArrayArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSArray<NSString *>", preciseIdentifier: "c:Q$objc(cs)NSArray"),
+                        .init(kind: .text, spelling: " * )", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v"),
+                ])
+            )
+            XCTAssertEqual(genericArrayArgument?.parameterTypeNames, ["NSArray<NSString*>*"])
+            XCTAssertEqual(genericArrayArgument?.returnTypeNames, [])
+            
+            // // - (void)doSomething:(id<MyProtocol>)someName;
+            let protocolArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "id<MyProtocol>", preciseIdentifier: "c:Qoobjc(pl)MyProtocol"),
+                        .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(protocolArgument?.parameterTypeNames, ["id<MyProtocol>"])
+            
+            // - (void)doSomething:(NSError **)someName;
+            let errorArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSError", preciseIdentifier: "c:objc(cs)NSError"),
+                        .init(kind: .text, spelling: " * *)", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "someName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(errorArgument?.parameterTypeNames, ["NSError**"])
+            
+            // - (void)doSomething:(NSString * (^)(CGFloat, NSInteger))blockName;
+            let blockArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "blockName", externalName: nil, declarationFragments: [
+                        .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSString", preciseIdentifier: "c:objc(cs)NSString"),
+                        .init(kind: .text, spelling: " * (^", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ")(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "CGFloat", preciseIdentifier: "c:@T@CGFloat"),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "NSInteger", preciseIdentifier: "c:@T@NSInteger"),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: "))", preciseIdentifier: nil),
+                        .init(kind: .internalParameter, spelling: "blockName", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(blockArgument?.parameterTypeNames, ["NSString*(^)(CGFloat,NSInteger)"])
+        }
+        
+        // Swift types
+        do {
+            // func doSomething(someName: ((Int, String), Date)) -> ([Int, String?])
+            let tupleArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ((", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: "), ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Date", preciseIdentifier: "s:10Foundation4DateV"),
+                        .init(kind: .text, spelling: ")", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .text, spelling: "([", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                    .init(kind: .text, spelling: "], ", preciseIdentifier: nil),
+                    .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                    .init(kind: .text, spelling: "?)", preciseIdentifier: nil),
+                ])
+            )
+            XCTAssertEqual(tupleArgument?.parameterTypeNames, ["((Int,String),Date)"])
+            XCTAssertEqual(tupleArgument?.returnTypeNames, ["([Int],String?)"])
+            
+            // func doSomething(with someName: [Int?: String??])
+            let dictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: "with", declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": [", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: "? : ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: "??]", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [
+                    .init(kind: .typeIdentifier, spelling: "Void", preciseIdentifier: "s:s4Voida"),
+                ])
+            )
+            XCTAssertEqual(dictionaryWithOptionalsArgument?.parameterTypeNames, ["[Int?:String??]"])
+            XCTAssertEqual(dictionaryWithOptionalsArgument?.returnTypeNames, [])
+            
+            // func doSomething(with someName: Dictionary<Optional<Int>, Optional<(Optional<String>, Array<Double>)>>)
+            let unsugaredDictionaryWithOptionalsArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: "with", declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: ">, ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: ">, ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+                        .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                        .init(kind: .text, spelling: ">)>>", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(unsugaredDictionaryWithOptionalsArgument?.parameterTypeNames, ["[Int?:(String?,[Double])?]"])
+            
+            // doSomething<each Value>(someName: repeat each Value) {}
+            let parameterPackArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "repeat", preciseIdentifier: "s:SD"),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "each", preciseIdentifier: "s:Sq"),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxxQp_tRvzlF5ValueL_xmfp"),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(parameterPackArgument?.parameterTypeNames, ["Value"])
+            
+            // func doSomething<Value>(someName: @escaping ((inout Int?, consuming Double, (String, Value)) -> ((Int) -> Value?)))
+            let complicatedClosureArgument = functionSignatureTypeNames(.init(
+                parameters: [
+                    .init(name: "someName", externalName: nil, declarationFragments: [
+                        .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+                        .init(kind: .attribute, spelling: "@escaping", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ((", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "inout", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: "?, ", preciseIdentifier: nil),
+                        .init(kind: .keyword, spelling: "consuming", preciseIdentifier: nil),
+                        .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+                        .init(kind: .text, spelling: ", (", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+                        .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxSgSicSiSgz_SdnSS_xttcSg_tlF5ValueL_xmfp"),
+                        .init(kind: .text, spelling: ")) -> ((", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+                        .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+                        .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxSgSicSiSgz_SdnSS_xttcSg_tlF5ValueL_xmfp"),
+                        .init(kind: .text, spelling: "))", preciseIdentifier: nil),
+                    ], children: [])
+                ],
+                returns: [])
+            )
+            XCTAssertEqual(complicatedClosureArgument?.parameterTypeNames, ["(Int?,Double,(String,Value))->((Int)->Value)"])
+            
+            
+        }
+    }
+    
     func testOverloadGroupSymbolsResolveLinksWithoutHash() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
 
@@ -1510,9 +1870,9 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "/(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1doiyA2C_ACtFZ")
         XCTAssertEqual(try tree.findSymbol(path: "/=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ")
         
-        XCTAssertEqual(try tree.findSymbol(path: "...(_:)->PartialRangeFrom", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:)->PartialRangeFrom<Self>", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-28faz", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
-        XCTAssertEqual(try tree.findSymbol(path: "...(_:)->PartialRangeThrough", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:)->PartialRangeThrough<Self>", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         XCTAssertEqual(try tree.findSymbol(path: "...(_:)-8ooeh", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
         
         XCTAssertEqual(try tree.findSymbol(path: "...(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
@@ -1565,8 +1925,8 @@ class PathHierarchyTests: XCTestCase {
         // Some of these have more human readable disambiguation alternatives
         let humanReadablePaths = tree.caseInsensitiveDisambiguatedPaths()
         
-        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeFrom", humanReadablePaths["s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
-        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeThrough", humanReadablePaths["s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeFrom<Self>", humanReadablePaths["s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeThrough<Self>", humanReadablePaths["s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)-(Self,_)",  /* >(_:_:) */ humanReadablePaths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         
