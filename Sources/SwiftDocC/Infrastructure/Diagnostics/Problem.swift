@@ -19,7 +19,7 @@ public struct Problem {
     
     /// The possible solutions to the problem if there are any.
     public var possibleSolutions: [Solution]
-    public init<Solutions: Sequence>(diagnostic: Diagnostic, possibleSolutions: Solutions) where Solutions.Element == Solution {
+    public init(diagnostic: Diagnostic, possibleSolutions: some Sequence<Solution>) {
         self.diagnostic = diagnostic
         self.possibleSolutions = Array(possibleSolutions)
     }
@@ -44,7 +44,7 @@ extension Problem {
     }
 }
 
-extension Sequence where Element == Problem {
+extension Sequence<Problem> {
     /// Returns `true` if there are problems with diagnostics with `error` severity.
     public var containsErrors: Bool {
         return self.contains {

@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import Markdown
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+import SwiftDocCTestUtilities
 
 extension XCTestCase {
     
@@ -219,7 +219,7 @@ extension XCTestCase {
         let bundle: DocumentationBundle
         let context: DocumentationContext
         
-        if let bundleName = bundleName {
+        if let bundleName {
             (bundle, context) = try testBundleAndContext(named: bundleName)
         } else {
             (bundle, context) = try testBundleAndContext()

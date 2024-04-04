@@ -11,7 +11,6 @@
 import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
-@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
@@ -162,7 +161,7 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        if let diagnosticFilePath = diagnosticFilePath {
+        if let diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }
         
@@ -173,7 +172,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.context.linkResolver.dependencyArchives = dependencies
         
         // Inject current platform versions if provided
-        if let currentPlatforms = currentPlatforms {
+        if let currentPlatforms {
             self.context.externalMetadata.currentPlatforms = currentPlatforms
         }
 
@@ -188,9 +187,9 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         let dataProvider: DocumentationWorkspaceDataProvider
-        if let injectedDataProvider = injectedDataProvider {
+        if let injectedDataProvider {
             dataProvider = injectedDataProvider
-        } else if let rootURL = rootURL {
+        } else if let rootURL {
             dataProvider = try LocalFileSystemDataProvider(
                 rootURL: rootURL,
                 allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
@@ -398,7 +397,7 @@ public struct ConvertAction: Action, RecreatingContext {
             diagnosticEngine.flush()
         }
         
-        if let outOfProcessResolver = outOfProcessResolver {
+        if let outOfProcessResolver {
             context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
             context.globalExternalSymbolResolver = outOfProcessResolver
         }
@@ -412,7 +411,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         let indexHTML: URL?
-        if let htmlTemplateDirectory = htmlTemplateDirectory {
+        if let htmlTemplateDirectory {
             let indexHTMLUrl = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.indexFileName.rawValue,
                 isDirectory: false
@@ -454,7 +453,7 @@ public struct ConvertAction: Action, RecreatingContext {
         var indexer: Indexer? = nil
         
         let bundleIdentifier = converter.firstAvailableBundle()?.identifier
-        if let bundleIdentifier = bundleIdentifier {
+        if let bundleIdentifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -525,7 +524,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
-        if let indexer = indexer {
+        if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             defer {
                 benchmark(end: finalizeNavigationIndexMetric)

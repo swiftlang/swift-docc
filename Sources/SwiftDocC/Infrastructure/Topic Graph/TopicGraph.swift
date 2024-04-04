@@ -169,7 +169,7 @@ struct TopicGraph {
         edges.removeValue(forKey: node.reference)
         
         // 2. Remove reverse edges
-        if let parentReference = parentReference {
+        if let parentReference {
             edges[parentReference]!.removeAll(where: { ref -> Bool in
                 return ref == node.reference
             })
@@ -191,7 +191,7 @@ struct TopicGraph {
         }
 
         // 1. Add the new edges
-        if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
+        if let parentReference, let parentNode = nodeWithReference(parentReference) {
             addEdge(from: parentNode, to: newNode)
         }
     }

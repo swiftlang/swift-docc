@@ -675,7 +675,7 @@ extension RenderBlockContent.Table: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(header, forKey: .header)
-        if let alignments = alignments, !alignments.isEmpty, !alignments.allSatisfy({ $0 == .unset }) {
+        if let alignments, !alignments.isEmpty, !alignments.allSatisfy({ $0 == .unset }) {
             try container.encode(alignments, forKey: .alignments)
         }
         try container.encode(rows, forKey: .rows)

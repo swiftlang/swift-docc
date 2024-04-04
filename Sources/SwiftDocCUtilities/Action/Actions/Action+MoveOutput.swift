@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 extension Action {
     
@@ -22,7 +22,7 @@ extension Action {
     static func createUniqueDirectory(inside container: URL, template: URL?, fileManager: FileManagerProtocol) throws -> URL {
         let targetURL = container.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
         
-        if let template = template {
+        if let template {
             // If a template directory has been provided, create the temporary build folder with its contents
             // Ensure that the container exists
             try? fileManager.createDirectory(at: targetURL.deletingLastPathComponent(), withIntermediateDirectories: false, attributes: nil)

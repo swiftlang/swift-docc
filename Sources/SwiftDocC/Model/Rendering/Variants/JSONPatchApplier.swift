@@ -222,11 +222,11 @@ public struct JSONPatchApplier {
         /// - Parameters:
         ///     - component: The component that's causing the pointer to be invalid in the JSON object.
         ///     - availableObjectKeys: The keys available in the JSON object.
-        public static func invalidObjectPointer<Keys: Collection>(
+        public static func invalidObjectPointer(
             _ pointer: JSONPointer,
             component: String,
-            availableObjectKeys: Keys
-        ) -> Self where Keys.Element == String {
+            availableObjectKeys: some Collection<String>
+        ) -> Self {
             return .invalidObjectPointer(pointer, component: component, availableKeys: Array(availableObjectKeys))
         }
         

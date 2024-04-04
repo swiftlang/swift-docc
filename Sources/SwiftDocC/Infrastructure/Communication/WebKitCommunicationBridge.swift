@@ -26,7 +26,7 @@ public struct WebKitCommunicationBridge: CommunicationBridge {
         with contentController: WKUserContentController? = nil,
         onReceiveMessage: ((Message) -> ())? = nil
     ) {
-        guard let onReceiveMessage = onReceiveMessage else {
+        guard let onReceiveMessage else {
             return
         }
         

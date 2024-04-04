@@ -132,10 +132,10 @@ class DirectiveMirrorTests: XCTestCase {
     }
 }
 
-fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedArgument {
+private extension RandomAccessCollection<DirectiveMirror.ReflectedArgument> {
     /// Look for an argument named `name` or log an XCTest failure.
-    subscript<S: StringProtocol>(
-        _ name: S,
+    subscript(
+        _ name: some StringProtocol,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DirectiveMirror.ReflectedArgument? {
@@ -149,7 +149,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
             }
         }
         
-        guard let match = match else {
+        guard let match else {
             XCTFail("Expected argument named \(name.singleQuoted)", file: file, line: line)
             return nil
         }
@@ -158,10 +158,10 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
     }
 }
 
-fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedChildDirective {
+private extension RandomAccessCollection<DirectiveMirror.ReflectedChildDirective> {
     /// Look for an argument named `name` or log an XCTest failure.
-    subscript<S: StringProtocol>(
-        _ name: S,
+    subscript(
+        _ name: some StringProtocol,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DirectiveMirror.ReflectedChildDirective? {
@@ -169,7 +169,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
             return childDirective.name == name
         }
         
-        guard let match = match else {
+        guard let match else {
             XCTFail("Expected child directive named \(name.singleQuoted)", file: file, line: line)
             return nil
         }

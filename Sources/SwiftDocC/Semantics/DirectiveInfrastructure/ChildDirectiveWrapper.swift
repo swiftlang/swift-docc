@@ -16,11 +16,11 @@ protocol _ChildDirectiveProtocol {
     var requirements: ChildDirectiveRequirements { get }
     var directiveConvertible: DirectiveConvertible.Type { get }
     
-    func setProperty<T>(
-        on containingDirective: T,
+    func setProperty(
+        on containingDirective: some AutomaticDirectiveConvertible,
         named propertyName: String,
         to any: Any
-    ) where T: AutomaticDirectiveConvertible
+    )
 }
 
 enum ChildDirectiveRequirements {

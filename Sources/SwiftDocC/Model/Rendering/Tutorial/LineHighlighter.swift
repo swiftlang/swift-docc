@@ -146,7 +146,7 @@ public struct LineHighlighter {
             return lineHighlights(old: previousFileOverride, new: new.fileReference)
         }
         
-        guard let old = old,
+        guard let old,
             old.fileName == new.fileName,
             !new.shouldResetDiff else {
                 return Result(file: new.fileReference, highlights: [])

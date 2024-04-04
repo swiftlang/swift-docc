@@ -300,7 +300,7 @@ final class PathHierarchyBasedLinkResolver {
                 )
             }
             for (symbol, reference) in zip(symbolGraph.symbols.values, paths) {
-                guard let reference = reference else { continue }
+                guard let reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
         }
@@ -331,7 +331,7 @@ final class PathHierarchyBasedLinkResolver {
 /// Creates a more writable version of an articles file name for use in documentation links.
 ///
 /// Compared to `urlReadablePath(_:)` this preserves letters in other written languages.
-private func linkName<S: StringProtocol>(filename: S) -> String {
+private func linkName(filename: some StringProtocol) -> String {
     // It would be a nice enhancement to also remove punctuation from the filename to allow an article in a file named "One, two, & three!"
     // to be referenced with a link as `"One-two-three"` instead of `"One,-two-&-three!"` (rdar://120722917)
     return filename

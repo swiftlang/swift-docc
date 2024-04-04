@@ -12,7 +12,7 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 import Markdown
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+import SwiftDocCTestUtilities
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)
@@ -555,7 +555,7 @@ class DocumentationContextTests: XCTestCase {
         
         let image = context.resolveAsset(named: "https://example.com/figure.png", in: bundle.rootReference)
         XCTAssertNotNil(image)
-        guard let image = image else {
+        guard let image else {
             return
         }
         XCTAssertEqual(image.context, .display)
@@ -563,7 +563,7 @@ class DocumentationContextTests: XCTestCase {
         
         let video = context.resolveAsset(named: "https://example.com/introvideo.mp4", in: bundle.rootReference)
         XCTAssertNotNil(video)
-        guard let video = video else { return }
+        guard let video else { return }
         XCTAssertEqual(video.context, .display)
         XCTAssertEqual(video.variants, [DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "https://example.com/introvideo.mp4")!])
     }
@@ -1951,7 +1951,7 @@ let expected = """
         XCTAssertEqual(list.items.count, 6, "Unexpected list items: \(list.items.map(\.content))")
         
         func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
-            guard let listItem = listItem else {
+            guard let listItem else {
                 XCTFail("Missing list item")
                 return
             }
@@ -3192,6 +3192,126 @@ let expected = """
         ])
     }
     
+    func testExtensionCanUseLanguageSpecificRelativeLinks() throws {
+        // This test uses a symbol with different names in Swift and Objective-C, each with a member that's only available in that language.
+        let symbolID = "some-symbol-id"
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "unit-test.docc", content: [
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            .init(
+                                identifier: .init(precise: symbolID, interfaceLanguage: SourceLanguage.swift.id),
+                                names: .init(title: "SwiftName", navigator: nil, subHeading: nil, prose: nil),
+                                pathComponents: ["SwiftName"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+                            .init(
+                                identifier: .init(precise: "swift-only-member-id", interfaceLanguage: SourceLanguage.swift.id),
+                                names: .init(title: "swiftOnlyMemberName", navigator: nil, subHeading: nil, prose: nil),
+                                pathComponents: ["SwiftName", "swiftOnlyMemberName"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .property, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+                        ], relationships: [
+                            .init(source: "swift-only-member-id", target: symbolID, kind: .memberOf, targetFallback: nil)
+                        ])
+                    ),
+                ]),
+                
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            .init(
+                                identifier: .init(precise: symbolID, interfaceLanguage: SourceLanguage.objectiveC.id),
+                                names: .init(title: "ObjectiveCName", navigator: nil, subHeading: nil, prose: nil),
+                                pathComponents: ["ObjectiveCName"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+                            .init(
+                                identifier: .init(precise: "objc-only-member-id", interfaceLanguage: SourceLanguage.objectiveC.id),
+                                names: .init(title: "objectiveCOnlyMemberName", navigator: nil, subHeading: nil, prose: nil),
+                                pathComponents: ["ObjectiveCName", "objectiveCOnlyMemberName"],
+                                docComment: nil,
+                                accessLevel: .public,
+                                kind: .init(parsedIdentifier: .property, displayName: "Kind Display Name"),
+                                mixins: [:]
+                            ),
+                        ], relationships: [
+                            .init(source: "objc-only-member-id", target: symbolID, kind: .memberOf, targetFallback: nil)
+                        ])
+                    ),
+                ]),
+                
+                TextFile(name: "Extension.md", utf8Content: """
+                # ``SwiftName``
+                
+                A documentation extension that uses both language's language specific links to curate the same symbol 6 times (2 that fail with warnings)
+                
+                ## Topics
+                
+                ### Relative links
+                
+                - ``swiftOnlyMemberName``
+                - ``objectiveCOnlyMemberName``
+                
+                ### Correct absolute links
+                
+                - ``SwiftName/swiftOnlyMemberName``
+                - ``ObjectiveCName/objectiveCOnlyMemberName``
+                
+                ### Incorrect absolute links
+                
+                - ``ObjectiveCName/swiftOnlyMemberName``
+                - ``SwiftName/objectiveCOnlyMemberName``
+                """),
+            ])
+        ])
+        
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        try workspace.registerProvider(fileSystem)
+        
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
+            "'objectiveCOnlyMemberName' doesn't exist at '/ModuleName/SwiftName'",
+            "'swiftOnlyMemberName' doesn't exist at '/ModuleName/ObjectiveCName'",
+        ])
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: "unit-test", path: "/documentation/ModuleName/SwiftName", sourceLanguage: .swift)
+        let entity = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(entity.semantic as? Symbol)
+        let taskGroups = try XCTUnwrap(symbol.topics).taskGroups
+        
+        XCTAssertEqual(taskGroups.map { $0.links.map(\.destination) }, [
+            // Relative links
+            [
+                "doc://unit-test/documentation/ModuleName/SwiftName/swiftOnlyMemberName",
+                "doc://unit-test/documentation/ModuleName/ObjectiveCName/objectiveCOnlyMemberName",
+            ],
+            // Correct absolute links
+            [
+                "doc://unit-test/documentation/ModuleName/SwiftName/swiftOnlyMemberName",
+                "doc://unit-test/documentation/ModuleName/ObjectiveCName/objectiveCOnlyMemberName",
+            ],
+            // Incorrect absolute links
+            [
+                // This links remain as they were authored because they didn't resolve
+                "ObjectiveCName/swiftOnlyMemberName",
+                "SwiftName/objectiveCOnlyMemberName",
+            ]
+        ])
+    }
+    
     func testWarnOnMultipleMarkdownExtensions() throws {
         let fileContent = """
         # ``MyKit/MyClass/myFunction()``
@@ -3831,8 +3951,8 @@ let expected = """
                 && p.diagnostic.source?.path.hasSuffix("sideclass.md") == true
         }
 
-        let mapRangeAsString: (Optional<SourceRange>) -> String? = { range in
-            guard let range = range else { return nil }
+        let mapRangeAsString: (SourceRange?) -> String? = { range in
+            guard let range else { return nil }
             return "\(range.lowerBound.line):\(range.lowerBound.column) - \(range.upperBound.line):\(range.upperBound.column)"
         }
         
