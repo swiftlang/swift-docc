@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 /// An action that merges a list of documentation archives into a combined archive.
 struct MergeAction: Action {
