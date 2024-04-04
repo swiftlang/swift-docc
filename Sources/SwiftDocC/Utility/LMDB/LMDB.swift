@@ -103,7 +103,7 @@ extension Array: LMDBData where Element: FixedWidthInteger {
     
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     public init?(data: UnsafeRawBufferPointer) {
-        var array = Array<Element>(repeating: 0, count: data.count / MemoryLayout<Element>.stride)
+        var array = [Element](repeating: 0, count: data.count / MemoryLayout<Element>.stride)
         _ = array.withUnsafeMutableBytes { data.copyBytes(to: $0) }
         self = array
     }

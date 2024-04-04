@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 
-fileprivate extension Array where Element == RenderBlockContent {
+fileprivate extension [RenderBlockContent] {
     var firstParagraphText: String? {
         return first(where: { block in
             switch block {

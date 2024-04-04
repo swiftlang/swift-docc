@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 /// An action that emits documentation extension files that reflect the auto-generated curation.
 struct EmitGeneratedCurationAction: Action {
@@ -46,7 +46,7 @@ struct EmitGeneratedCurationAction: Action {
         let context = try DocumentationContext(dataProvider: workspace)
 
         let dataProvider: DocumentationWorkspaceDataProvider
-        if let catalogURL = catalogURL {
+        if let catalogURL {
             dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         } else {
             dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { [fileManager] url in
@@ -72,7 +72,7 @@ struct EmitGeneratedCurationAction: Action {
 }
 
 private func symbolGraphFiles(in directory: URL?) -> [URL] {
-    guard let directory = directory else { return [] }
+    guard let directory else { return [] }
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }

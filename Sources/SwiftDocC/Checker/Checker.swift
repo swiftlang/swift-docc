@@ -181,7 +181,7 @@ public struct AnyChecker: Checker {
     private var box: AnyCheckerBox
     
     /// Creates an instance that type erases the given checker.
-    public init<C: Checker>(_ checker: C) {
+    public init(_ checker: some Checker) {
         self.box = CheckerBox(checker)
     }
     
@@ -270,7 +270,7 @@ public struct CompositeChecker: Checker {
     public var checkers: [AnyChecker]
 
     /// Creates a checker that performs the combined work of the given checkers.
-    public init<Checkers: Sequence>(_ checkers: Checkers) where Checkers.Element: Checker {
+    public init(_ checkers: some Sequence<Checker>) {
         self.checkers = checkers.map { $0.any() }
     }
     

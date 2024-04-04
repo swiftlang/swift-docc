@@ -10,11 +10,11 @@
 
 import XCTest
 import Foundation
-@testable @_spi(FileManagerProtocol) @_spi(ExternalLinks) import SwiftDocC
+@testable @_spi(ExternalLinks) import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
-@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+@testable import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
@@ -96,7 +96,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -145,7 +145,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -206,7 +206,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -242,7 +242,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -275,7 +275,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         XCTAssertEqual(result.problems.count, 0)
     }
@@ -308,7 +308,7 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             bundleDiscoveryOptions: BundleDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
@@ -373,7 +373,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         
         let targetURL = target.absoluteURL.appendingPathComponent("output")
         
@@ -410,7 +410,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         
         let targetURL = target.absoluteURL.appendingPathComponent("target").appendingPathComponent("output")
         
@@ -439,7 +439,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Verify that the following files and folder exist at the output location
@@ -482,7 +482,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Construct the URLs for the produced render json:
@@ -552,7 +552,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Construct the URLs for the produced render json:
@@ -640,7 +640,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
@@ -700,7 +700,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
         let result = try action.perform(logHandle: .none)
 
@@ -781,7 +781,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
         let result = try action.perform(logHandle: .none)
 
@@ -867,7 +867,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory())
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
             let result = try action.perform(logHandle: .none)
             
             XCTAssertFalse(
@@ -897,7 +897,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory())
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
             let result = try action.perform(logHandle: .none)
 
             XCTAssert(
@@ -936,7 +936,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
 
         // Verify that the following files and folder exist at the output location
@@ -1039,7 +1039,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
 
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
@@ -1216,6 +1216,64 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(resultAssets.images.map({ $0.identifier.identifier }).sorted(), images.map({ $0.identifier.identifier }).sorted())
     }
 
+    func testLinkableEntitiesMetadataIncludesOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let bundle = try Folder.createFromDisk(
+            url: Bundle.module.url(
+                forResource: "OverloadedSymbols",
+                withExtension: "docc",
+                subdirectory: "Test Bundles")!
+        )
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
+            guard let data = testDataProvider.contents(atPath: url.path) else {
+                return nil
+            }
+            return try? JSONDecoder().decode(Result.self, from: data)
+        }
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: true,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+        let result = try action.perform(logHandle: .none)
+
+        guard let resultLikableEntities: [LinkDestinationSummary] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("linkable-entities.json")) else {
+            XCTFail("Can't find linkable-entities.json in output")
+            return
+        }
+
+        // Rather than comparing all the linkable entities in the file, pull out one overload group
+        // and check its task groups
+        let overloadGroupEntity = try XCTUnwrap(resultLikableEntities.first(where: { $0.usr == "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSdSS_tF::OverloadGroup" }))
+
+        let taskGroups = try XCTUnwrap(overloadGroupEntity.taskGroups)
+        guard taskGroups.count == 1, let overloadTaskGroup = taskGroups.first else {
+            XCTFail("Expected one task group, found \(taskGroups.count): \(taskGroups.map(\.title?.singleQuoted))")
+            return
+        }
+
+        XCTAssertEqual(overloadTaskGroup.title, "Overloads")
+        XCTAssertEqual(Set(overloadTaskGroup.identifiers), [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-1h173",
+        ])
+    }
+
     func testDownloadMetadataIsWritenToOutputFolder() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: projectZipFile),
@@ -1310,7 +1368,8 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try action.perform(logHandle: .none)
 
         func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
@@ -1400,7 +1459,8 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         let result = try action.perform(logHandle: .none)
         
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
@@ -1562,7 +1622,8 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory())
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            )
             let result = try action.perform(logHandle: .none)
             
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
@@ -1587,7 +1648,8 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory())
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            )
             let result = try action.perform(logHandle: .none)
             
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
@@ -1651,7 +1713,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 documentationCoverageOptions: .noCoverage)
             let result = try action.perform(logHandle: .none)
 
@@ -1678,7 +1740,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .brief))
             let result = try action.perform(logHandle: .none)
 
@@ -1706,7 +1768,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .detailed))
             let result = try action.perform(logHandle: .none)
 
@@ -1747,7 +1809,8 @@ class ConvertActionTests: XCTestCase {
             ],
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         
         XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
             "platform1" : PlatformVersion(.init(10, 11, 12), beta: false),
@@ -1778,7 +1841,8 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: [:],
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
         
         _ = try action.perform(logHandle: .none)
         
@@ -1807,7 +1871,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine)
             let result = try action.perform(logHandle: .none)
             XCTAssertFalse(result.didEncounterError)
@@ -1858,7 +1922,8 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory())
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            )
             
             action.converter.batchNodeCount = batchSize
             
@@ -1938,7 +2003,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testFileSystem,
                 fileManager: testFileSystem,
-                temporaryDirectory: createTemporaryDirectory()
+                temporaryDirectory: testFileSystem.uniqueTemporaryDirectory()
             )
             action.diagnosticEngine.consumers.sync { $0.removeAll() } 
             
@@ -2275,7 +2340,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticEngine: engine
         )
@@ -2313,7 +2378,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticEngine: engine
         )
@@ -2352,7 +2417,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error"
         )
         XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
@@ -2377,6 +2442,7 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
+        // TODO: Support TestFileSystem in DiagnosticFileWriter
         let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
         
         var action = try ConvertAction(
@@ -2389,11 +2455,12 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticFilePath: diagnosticFile
         )
         
+        // TODO: Support TestFileSystem in DiagnosticFileWriter
         XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
         XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
@@ -2424,7 +2491,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 inheritDocs: flag)
             XCTAssertEqual(action.context.externalMetadata.inheritDocs, flag)
         }
@@ -2440,7 +2507,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory())
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         XCTAssertEqual(action.context.externalMetadata.inheritDocs, false)
     }
     
@@ -2467,7 +2534,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory()
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         
         XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none), "The test bundle should have thrown an error about an incomplete symbol graph file")
@@ -2536,7 +2603,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory()
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         let result = try action.perform(logHandle: .none)
         
@@ -2887,7 +2954,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine
             )
             let result = try action.perform(logHandle: .none)
@@ -2909,7 +2976,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine
             )
             let result = try action.perform(logHandle: .none)
@@ -2928,7 +2995,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: nil,
                 treatWarningsAsErrors: true
             )
@@ -2960,7 +3027,7 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             bundleDiscoveryOptions: BundleDiscoveryOptions(
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
@@ -3007,7 +3074,7 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             bundleDiscoveryOptions: BundleDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: [
@@ -3176,7 +3243,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory(),
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticEngine: engine
         )
         

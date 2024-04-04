@@ -1050,7 +1050,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
-        XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Excercising Symbol Links")
+        XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Exercising Symbol Links")
         XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(.init(inlineContent: [$0])) }.paragraphText.joined(), "Task Group abstract text.")
         
         guard let discussion = renderNode.topicSections[0].discussion as? ContentRenderSection else {
@@ -1062,7 +1062,7 @@ class SemaToRenderNodeTests: XCTestCase {
         // Test childrenRelationships are handled correctly
         let children = renderNode.childrenRelationship()
         XCTAssertEqual(children.count, renderNode.topicSections.count)
-        XCTAssertEqual(children.first?.name, "Task Group Excercising Symbol Links")
+        XCTAssertEqual(children.first?.name, "Task Group Exercising Symbol Links")
         XCTAssertEqual(children.first?.references.count, 3)
         
         let groupDiscussionParagraphPrefixes = discussion.content.paragraphText
@@ -1504,10 +1504,11 @@ class SemaToRenderNodeTests: XCTestCase {
         // Ensure the availability has platform and version.
         let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
         
-        // Verify there are 4 availability items in the symbol graph
-        XCTAssertEqual(symbol.availability?.availability.count, 4)
+        // Verify there are 6 availability items in the symbol graph
+        XCTAssertEqual(symbol.availability?.availability.count, 6)
 
-        // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid.
+        // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid
+        // and therefore Catalyst and iPadOS are also invalid.
         XCTAssertEqual(platforms.count, 3)
         
         XCTAssertEqual(platforms[0].name, "macOS")
@@ -1564,20 +1565,17 @@ class SemaToRenderNodeTests: XCTestCase {
             // Ensure the availability has platform and version.
             let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
             
-            XCTAssertEqual(platforms.count, 4)
+            XCTAssertEqual(platforms.count,6)
             let versionString = version.stringRepresentation(precisionUpToNonsignificant: .patch)
             
-            XCTAssertEqual(platforms[0].name, "iOS")
+            XCTAssertEqual(platforms[0].name, "Mac Catalyst")
             XCTAssertEqual(platforms[0].introduced, versionString)
             
-            XCTAssertEqual(platforms[1].name, "macOS")
+            XCTAssertEqual(platforms[1].name, "iOS")
             XCTAssertEqual(platforms[1].introduced, versionString)
             
-            XCTAssertEqual(platforms[2].name, "tvOS")
+            XCTAssertEqual(platforms[2].name, "iPadOS")
             XCTAssertEqual(platforms[2].introduced, versionString)
-            
-            XCTAssertEqual(platforms[3].name, "watchOS")
-            XCTAssertEqual(platforms[3].introduced, versionString)
         }
     }
     
@@ -2819,7 +2817,7 @@ Document
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
                 
-                graph.symbols["s:7SideKit0A5::SYNTESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
+                graph.symbols["s:7SideKit0A5::SYNTHESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
                 
                 try JSONEncoder().encode(graph)
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
@@ -3376,5 +3374,105 @@ Document
         XCTAssertEqual(topicSection.first?.identifiers, [
             "doc://unit-test/documentation/unit-test/article"
         ])
+    }
+    
+    func testAutomaticCurationForRefinedSymbols() throws {
+        let (_, bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+        
+        do {
+            let root = try XCTUnwrap(context.soleRootModuleReference)
+            let node = try context.entity(with: root)
+            
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node, at: nil)
+            
+            let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
+            XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Structures",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+            ])
+            
+            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
+            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Structures",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+                
+                "Variables",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero",
+                
+                "Functions",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake"
+            ])
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/GeometricalShapes/Circle", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node, at: nil)
+            
+            let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
+            XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Initializers",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init()",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
+                
+                "Instance Properties",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
+                
+                "Instance Methods", 
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
+                
+                "Type Properties", 
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
+            ])
+            
+            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
+            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Instance Properties",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
+            ])
+        }
+    }
+    
+    func testThematicBreak() throws {
+        let source = """
+
+        ---
+
+        """
+        
+        let markup = Document(parsing: source, options: .parseBlockDirectives)
+        
+        XCTAssertEqual(markup.childCount, 1)
+        
+        let (bundle, context) = try testBundleAndContext()
+        
+        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/TestThematicBreak", sourceLanguage: .swift))
+        
+        let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
+        let expectedContent: [RenderBlockContent] = [
+            .thematicBreak
+        ]
+        
+        XCTAssertEqual(expectedContent, renderContent)
     }
 }

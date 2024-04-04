@@ -34,7 +34,7 @@ extension Semantic.Analyses {
             // If we got here, the argument exists, so warn about it
             if let severity = severityIfFound {
                 var extraMessage = ""
-                if let message = message {
+                if let message {
                     extraMessage = ": " + message
                 }
                 let diagnostic = Diagnostic(source: source, severity: severity, range: directive.range, identifier: "org.swift.docc.DeprecatedArgument.\(Converter.argumentName)", summary: "\(Converter.argumentName.singleQuoted) is deprecated" + extraMessage)

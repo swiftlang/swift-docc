@@ -155,7 +155,7 @@ extension PathHierarchy.PathParser {
             }
         }
         
-        if let anchorResult = anchorResult{
+        if let anchorResult{
             result.append(anchorResult)
         }
 

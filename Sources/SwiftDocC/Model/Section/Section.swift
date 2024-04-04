@@ -35,7 +35,7 @@ extension Markup {
                 heading.level == level else {
                     return false
             }
-            if let name = name {
+            if let name {
                 guard heading.plainText == name else {
                     return false
                 }

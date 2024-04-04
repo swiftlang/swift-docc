@@ -9,7 +9,7 @@
 */
 
 /// A programming language.
-public struct SourceLanguage: Hashable, Codable {
+public struct SourceLanguage: Hashable, Codable, Comparable {
     /// The display name of the programming language.
     public var name: String
     /// A globally unique identifier for the language.
@@ -38,6 +38,8 @@ public struct SourceLanguage: Hashable, Codable {
         switch id {
         case "swift": self = .swift
         case "occ", "objc", "objective-c", "c": self = .objectiveC
+        // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/apple/swift-docc/issues/767)
+        case "occ++", "objc++", "objective-c++", "c++": self = .objectiveC
         case "javascript": self = .javaScript
         case "data": self = .data
         case "metal": self = .metal
@@ -157,5 +159,16 @@ public struct SourceLanguage: Hashable, Codable {
         try container.encode(self.id, forKey: SourceLanguage.CodingKeys.id)
         try container.encodeIfNotEmpty(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
         try container.encode(self.linkDisambiguationID, forKey: SourceLanguage.CodingKeys.linkDisambiguationID)
+    }
+    
+    public static func < (lhs: SourceLanguage, rhs: SourceLanguage) -> Bool {
+        // Sort Swift before other languages.
+        if lhs == .swift {
+            return true
+        } else if rhs == .swift {
+            return false
+        }
+        // Otherwise, sort by ID for a stable order.
+        return lhs.id < rhs.id
     }
 }

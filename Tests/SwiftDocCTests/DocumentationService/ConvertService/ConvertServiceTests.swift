@@ -919,7 +919,6 @@ class ConvertServiceTests: XCTestCase {
                     )
                     
                 case .asset(let assetReference):
-                    print(assetReference)
                     switch (assetReference.assetName, assetReference.bundleIdentifier) {
                     case (let assetName, "identifier") where ["before.swift", "after.swift"].contains(assetName):
                         var asset = DataAsset()
@@ -2324,6 +2323,45 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testDoesNotResolveLinksUnlessBundleIDMatches() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "SomeExtension.md", utf8Content: """
+                # ``/ModuleName/SymbolName``
+                
+                Some documentation extension
+                """),
+                
+                // This catalog doesn't have any symbol graph files
+                
+                InfoPlist(identifier: "com.example.something")
+            ])
+        ])
+        let bundleURL = tempURL.appendingPathComponent("unit-test.docc")
+        
+        let requestWithDifferentBundleID = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", identifier: "com.example.something-else"),
+            externalIDsToConvert: [],
+            bundleLocation: bundleURL,
+            symbolGraphs: [],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+        XCTAssertEqual(try linkResolutionRequestsForConvertRequest(requestWithDifferentBundleID), [], "Shouldn't make any link resolution requests because the bundle IDs are different.")
+        
+        let requestWithSameBundleID = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(displayName: "DisplayName", identifier: "com.example.something"),
+            externalIDsToConvert: [],
+            bundleLocation: bundleURL,
+            symbolGraphs: [],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+        let linkResolutionRequests = try linkResolutionRequestsForConvertRequest(requestWithSameBundleID)
+        XCTAssertFalse(linkResolutionRequests.isEmpty, "Should have made some link resolution requests to try to match the extension file")
+        XCTAssert(linkResolutionRequests.allSatisfy { $0.hasSuffix("/SymbolName") }, "Should have made some link resolution requests to try to match the extension file")
+    }
+    
     func testReturnsErrorWhenConversionHasProblems() throws {
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
@@ -2430,10 +2468,10 @@ class ConvertServiceTests: XCTestCase {
     struct TestConverter: DocumentationConverterProtocol {
         var convertDelegate: () throws -> ([Problem], [Problem])
         
-        func convert<OutputConsumer>(
-            outputConsumer: OutputConsumer
+        func convert(
+            outputConsumer: some ConvertOutputConsumer
         ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
-        where OutputConsumer : ConvertOutputConsumer {
+        {
             try convertDelegate()
         }
     }

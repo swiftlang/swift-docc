@@ -205,7 +205,7 @@ extension RenderInlineContent {
 }
 
 // Plain text extraction
-extension Sequence where Element == RenderInlineContent {
+extension Sequence<RenderInlineContent> {
     /// Returns a lossy conversion of the formatted content to a plain-text string.
     ///
     /// This implementation is necessarily limited because it doesn't make

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,12 @@ import Markdown
  A directed graph of topics.
  
  Nodes represent a pointer to a `DocumentationNode`, the source of its contents, and a short title.
+ 
+ > Important:
+ > The topic graph has no awareness of source language specific edges.
+ >
+ > If an edge exist between two nodes and those nodes have representations in a given source language it *doesn't* mean that that edge exist in that language.
+ > If you need information about source language specific edged between nodes, you need to query another source of information.
  */
 struct TopicGraph {
     /// A decision about whether to continue a depth-first or breadth-first traversal after visiting a node.
@@ -90,7 +96,13 @@ struct TopicGraph {
         /// If true, the topic has been removed from the hierarchy due to being an extension whose children have been curated elsewhere.
         let isEmptyExtension: Bool
         
-        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false) {
+        /// If true, the topic has been manually organized into a topic section on some other page.
+        var isManuallyCurated: Bool = false
+
+        /// If true, this topic is a generated "overload group" symbol page.
+        var isOverloadGroup: Bool = false
+
+        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, isManuallyCurated: Bool = false) {
             self.reference = reference
             self.kind = kind
             self.source = source
@@ -98,6 +110,7 @@ struct TopicGraph {
             self.isResolvable = isResolvable
             self.isVirtual = isVirtual
             self.isEmptyExtension = isEmptyExtension
+            self.isManuallyCurated = isManuallyCurated
         }
         
         func withReference(_ reference: ResolvedTopicReference) -> Node {
@@ -156,7 +169,7 @@ struct TopicGraph {
         edges.removeValue(forKey: node.reference)
         
         // 2. Remove reverse edges
-        if let parentReference = parentReference {
+        if let parentReference {
             edges[parentReference]!.removeAll(where: { ref -> Bool in
                 return ref == node.reference
             })
@@ -178,7 +191,7 @@ struct TopicGraph {
         }
 
         // 1. Add the new edges
-        if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
+        if let parentReference, let parentNode = nodeWithReference(parentReference) {
             addEdge(from: parentNode, to: newNode)
         }
     }
@@ -215,13 +228,7 @@ struct TopicGraph {
         addNode(source)
         addNode(target)
         
-        // Do not add the edge if it exists already.
-        guard edges[source.reference]?.contains(target.reference) != true else {
-            return
-        }
-        
-        edges[source.reference, default: []].append(target.reference)
-        reverseEdges[target.reference, default: []].append(source.reference)
+        unsafelyAddEdge(source: source.reference, target: target.reference)
     }
     
     /// Removes the edges for a given node.
@@ -315,6 +322,16 @@ struct TopicGraph {
             }
             seen.insert(node)
         }
+    }
+
+    /// Returns the children of this node that reference it as their overload group.
+    func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
+        guard nodes[groupReference]?.isOverloadGroup == true else {
+            return nil
+        }
+        return edges[groupReference, default: []].filter({ childReference in
+            nodes[childReference]?.isManuallyCurated == false
+        })
     }
 
     /// Returns true if a node exists with the given reference and it's set as linkable.

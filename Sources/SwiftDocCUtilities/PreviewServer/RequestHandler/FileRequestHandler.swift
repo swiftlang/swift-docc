@@ -166,7 +166,7 @@ struct FileRequestHandler: RequestHandlerFactory {
                 // Add Range header if neccessary
                 var headers = HTTPHeaders()
                 let range = head.headers["Range"].first.flatMap(RangeHeader.init)
-                if let range = range {
+                if let range {
                     data = data.subdata(in: Range<Data.Index>(uncheckedBounds: (lower: range.min, upper: range.max+1)))
                     headers.add(name: "Content-Range", value: "bytes \(range.min)-\(range.max)/\(totalLength)")
                     headers.add(name: "Accept-Ranges", value: "bytes")

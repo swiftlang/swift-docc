@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "SymbolKit"
+  },
+  "module": {
+    "name": "DictionaryData",
+    "platform": {
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 1,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "test"
+      }
+    }
+  },
+  "relationships": [
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "class FooObjC"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "objc",
+        "precise": "c:FooObjC"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "title": "FooObjC"
+      },
+      "pathComponents": [
+        "FooObjC"
+      ]
+    }
+  ]
+}

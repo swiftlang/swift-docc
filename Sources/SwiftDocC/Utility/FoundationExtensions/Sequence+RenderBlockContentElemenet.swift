@@ -10,7 +10,7 @@
 
 import Foundation
 
-extension Sequence where Element == RenderBlockContent {
+extension Sequence<RenderBlockContent> {
     /// The contents of the first paragraph in this sequence of block content.
     ///
     /// This property is an empty array if the sequence doesn't contain a paragraph.

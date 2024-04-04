@@ -299,7 +299,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         }
         try container.encodeIfPresent(role, forKey: .role)
         try container.encodeVariantCollectionIfNotEmpty(fragmentsVariants, forKey: .fragments, encoder: encoder)
-        try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
+        try container.encodeVariantCollectionIfNotEmpty(navigatorTitleVariants, forKey: .navigatorTitle, encoder: encoder)
         try container.encodeIfPresent(conformance, forKey: .conformance)
         try container.encodeIfPresent(estimatedTime, forKey: .estimatedTime)
         try container.encodeIfPresent(defaultImplementationCount, forKey: .defaultImplementations)

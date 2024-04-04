@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -38,7 +38,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
             "tvOS 12.0", "tvOS App Extension 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2",
+            "Swift 4.2"
         ])
         
         // Test roundtrip to verify availability items are correctly
@@ -54,7 +54,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
             "tvOS 12.0", "tvOS App Extension 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2",
+            "Swift 4.2"
         ])
     }
 }

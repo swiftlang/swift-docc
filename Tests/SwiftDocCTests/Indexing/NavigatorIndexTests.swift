@@ -18,6 +18,8 @@ let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
+    let iPadOSPlatformName = Platform.Name("iPadOS", id: 6)
+    
     struct Language: OptionSet {
         let rawValue: UInt8
         
@@ -428,8 +430,10 @@ Root
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.type, "groupMarker")
             
             let navigatorIndex = builder.navigatorIndex!
-            
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+            XCTAssertEqual(
+                navigatorIndex.availabilityIndex.platforms,
+                [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName]
+            )
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -636,7 +640,7 @@ Root
             
             let navigatorIndex = builder.navigatorIndex!
             
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -686,7 +690,7 @@ Root
             // Read the index back from disk
             let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
             
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -724,7 +728,7 @@ Root
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
         let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
         
-        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
             Platform.Version(string: "13.0")!,
             Platform.Version(string: "10.15")!,
@@ -826,7 +830,7 @@ Root
         
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
         XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
-        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS])
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, iPadOSPlatformName])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .macOS), Set([
             Platform.Version(string: "10.9")!,
             Platform.Version(string: "10.10")!,
@@ -848,7 +852,7 @@ Root
             Platform.Version(string: "13.0")!,
         ]))
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
-        XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS]))
+        XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, iPadOSPlatformName]))
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "macOS"), .macOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "watchOS"), .watchOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "tvOS"), .tvOS)
@@ -885,15 +889,19 @@ Root
         
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
-        XCTAssertEqual(availabilities.count, 1)
+        XCTAssertEqual(availabilities.count, 3)
         
         // Extract availability and check it against some queries.
-        let availabilityInfo = availabilities[0]
+        var availabilityInfo = availabilities[0]
         XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
         XCTAssertTrue(availabilityInfo.belongs(to: .iOS))
         XCTAssertFalse(availabilityInfo.isDeprecated(on: Platform(name: .iOS, version: Platform.Version(string: "13.0")!)))
         XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "13.0")!)))
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
+        availabilityInfo = availabilities[1]
+        XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
+        XCTAssertTrue(availabilityInfo.belongs(to: .macCatalyst))
+        XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .macCatalyst, version: Platform.Version(string: "13.0")!)))
         
         // Ensure we can't write to an index which is read-only.
         let availabilityDB = try XCTUnwrap(navigatorIndex.environment).openDatabase(named: "availability")
@@ -956,7 +964,7 @@ Root
         
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
-        XCTAssertEqual(availabilities.count, 1)
+        XCTAssertEqual(availabilities.count, 3)
     }
     
     func testPlatformVersion() {
@@ -1611,6 +1619,25 @@ Root
                 ┗╸My Article
             """
         )
+    }
+
+    func testNavigatorDoesNotContainOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let navigatorIndex = try generatedNavigatorIndex(
+            for: "OverloadedSymbols",
+            bundleIdentifier: "com.shapes.ShapeKit")
+
+        let protocolID = try XCTUnwrap(navigatorIndex.id(for: "/documentation/shapekit/overloadedprotocol", with: .swift))
+        let protocolNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { $0.id == protocolID })
+        XCTAssertEqual(protocolNode.children.map(\.item.title), [
+            "Instance Methods",
+            "func fourthTestMemberName(test:)",
+        ])
+
+        let overloadGroupID = try XCTUnwrap(navigatorIndex.id(for: "/documentation/shapekit/overloadedprotocol/fourthtestmembername(test:)-9b6be", with: .swift))
+        let overloadGroupNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { $0.id == overloadGroupID })
+        XCTAssert(overloadGroupNode.children.isEmpty)
     }
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {

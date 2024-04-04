@@ -11,7 +11,6 @@
 import Foundation
 
 @_spi(ExternalLinks) // SPI to set `context.linkResolver.dependencyArchives`
-@_spi(FileManagerProtocol) // SPI to initialize `DiagnosticConsoleWriter` with a `FileManagerProtocol`
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
@@ -162,7 +161,7 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        if let diagnosticFilePath = diagnosticFilePath {
+        if let diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }
         
@@ -173,7 +172,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.context.linkResolver.dependencyArchives = dependencies
         
         // Inject current platform versions if provided
-        if let currentPlatforms = currentPlatforms {
+        if let currentPlatforms {
             self.context.externalMetadata.currentPlatforms = currentPlatforms
         }
 
@@ -188,9 +187,9 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         let dataProvider: DocumentationWorkspaceDataProvider
-        if let injectedDataProvider = injectedDataProvider {
+        if let injectedDataProvider {
             dataProvider = injectedDataProvider
-        } else if let rootURL = rootURL {
+        } else if let rootURL {
             dataProvider = try LocalFileSystemDataProvider(
                 rootURL: rootURL,
                 allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
@@ -215,54 +214,6 @@ public struct ConvertAction: Action, RecreatingContext {
             isCancelled: isCancelled,
             diagnosticEngine: self.diagnosticEngine,
             experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
-        )
-    }
-    
-    @available(*, deprecated, renamed: "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:formatConsoleOutputForTools:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:sourceRepository:temporaryDirectory:)", message: "This deprecated API will be removed after 5.10 is released") 
-    public init(
-        documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?,
-        analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
-        currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
-        workspace: DocumentationWorkspace = DocumentationWorkspace(),
-        context: DocumentationContext? = nil,
-        dataProvider: DocumentationWorkspaceDataProvider? = nil,
-        documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
-        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
-        diagnosticLevel: String? = nil,
-        diagnosticEngine: DiagnosticEngine? = nil,
-        emitFixits: Bool, // No default value, this argument has been renamed
-        inheritDocs: Bool = false,
-        experimentalEnableCustomTemplates: Bool = false,
-        transformForStaticHosting: Bool,
-        hostingBasePath: String?,
-        sourceRepository: SourceRepository? = nil,
-        temporaryDirectory: URL
-    ) throws {
-        try self.init(
-            documentationBundleURL: documentationBundleURL,
-            outOfProcessResolver: outOfProcessResolver,
-            analyze: analyze,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: htmlTemplateDirectory,
-            emitDigest: emitDigest,
-            currentPlatforms: currentPlatforms,
-            buildIndex: buildIndex,
-            workspace: workspace,
-            context: context,
-            dataProvider: dataProvider,
-            documentationCoverageOptions: documentationCoverageOptions,
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
-            diagnosticLevel: diagnosticLevel,
-            diagnosticEngine: diagnosticEngine,
-            formatConsoleOutputForTools: emitFixits,
-            inheritDocs: inheritDocs,
-            experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
-            experimentalModifyCatalogWithGeneratedCuration: false,
-            transformForStaticHosting: transformForStaticHosting,
-            hostingBasePath: hostingBasePath,
-            sourceRepository: sourceRepository,
-            temporaryDirectory: temporaryDirectory,
-            dependencies: []
         )
     }
     
@@ -398,7 +349,7 @@ public struct ConvertAction: Action, RecreatingContext {
             diagnosticEngine.flush()
         }
         
-        if let outOfProcessResolver = outOfProcessResolver {
+        if let outOfProcessResolver {
             context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
             context.globalExternalSymbolResolver = outOfProcessResolver
         }
@@ -412,7 +363,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         let indexHTML: URL?
-        if let htmlTemplateDirectory = htmlTemplateDirectory {
+        if let htmlTemplateDirectory {
             let indexHTMLUrl = temporaryFolder.appendingPathComponent(
                 HTMLTemplate.indexFileName.rawValue,
                 isDirectory: false
@@ -454,7 +405,7 @@ public struct ConvertAction: Action, RecreatingContext {
         var indexer: Indexer? = nil
         
         let bundleIdentifier = converter.firstAvailableBundle()?.identifier
-        if let bundleIdentifier = bundleIdentifier {
+        if let bundleIdentifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -525,7 +476,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
-        if let indexer = indexer {
+        if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
             defer {
                 benchmark(end: finalizeNavigationIndexMetric)

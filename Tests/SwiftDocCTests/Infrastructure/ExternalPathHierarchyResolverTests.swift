@@ -851,7 +851,28 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             XCTAssertEqual(fourthReference.role, RenderMetadata.Role.symbol.rawValue)
         }
     }
-    
+
+    func testOverloadGroupSymbolsResolveWithoutHash() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let linkResolvers = try makeLinkResolversForTestBundle(named: "OverloadedSymbols")
+
+        // The enum case should continue to resolve by kind, since it has no hash collision
+        try linkResolvers.assertSuccessfullyResolves(authoredLink: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.enum.case")
+
+        // The overloaded enum method should now be able to resolve by kind, which will point to the overload group
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-method",
+            to: "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-8v5g7"
+        )
+
+        // This overloaded protocol method should be able to resolve without a suffix at all, since it doesn't conflict with anything
+        try linkResolvers.assertSuccessfullyResolves(
+            authoredLink: "/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
+            to: "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+        )
+    }
+
     // MARK: Test helpers
     
     struct LinkResolvers {

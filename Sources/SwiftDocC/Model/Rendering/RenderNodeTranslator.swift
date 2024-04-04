@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -234,7 +234,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Find the tutorial or article that comes after the current page, if one exists.
         let nextTopicIndex = surroundingTopics.firstIndex(where: { $0.reference == identifier }).map { $0 + 1 }
-        if let nextTopicIndex = nextTopicIndex, nextTopicIndex < surroundingTopics.count {
+        if let nextTopicIndex, nextTopicIndex < surroundingTopics.count {
             let nextTopicReference = surroundingTopics[nextTopicIndex]
             let nextTopicReferenceIdentifier = visitResolvedTopicReference(nextTopicReference.reference) as! RenderReferenceIdentifier
             let nextTopic = try! context.entity(with: nextTopicReference.reference).semantic as! Abstracted & Titled
@@ -428,7 +428,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             var renderReference: TopicRenderReference
             var dependencies: RenderReferenceDependencies
             
-            if let renderContext = renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
+            if let renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
                 let renderReferenceDependencies = renderContext.store.content(for: reference)?.renderReferenceDependencies {
                 renderReference = prerendered
                 dependencies = renderReferenceDependencies
@@ -448,7 +448,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
-                if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
+                if let renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
                     dependencyRenderReference = prerendered
                 } else {
                     var dependencies = RenderReferenceDependencies()
@@ -476,7 +476,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return renderReferences
     }
     
-    private func addReferences<Reference>(_ references: [String: Reference], to node: inout RenderNode) where Reference: RenderReference {
+    private func addReferences(_ references: [String: some RenderReference], to node: inout RenderNode) {
         node.references.merge(references) { _, new in new }
     }
 
@@ -957,7 +957,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return node
     }
     
-    private mutating func contentLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) -> [ContentLayout] where MarkupLayouts.Element == MarkupLayout {
+    private mutating func contentLayouts(_ markupLayouts: some Sequence<MarkupLayout>) -> [ContentLayout] {
         return markupLayouts.map { content in
             switch content {
             case .markup(let markup):
@@ -1405,7 +1405,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
         
-        if let sourceRepository = sourceRepository {
+        if let sourceRepository {
             node.metadata.remoteSourceVariants = VariantCollection<RenderMetadata.RemoteSource?>(
                 from: symbol.locationVariants
             ) { _, location in
@@ -1430,7 +1430,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         if let externalID = symbol.externalID,
-           let symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+           let symbolIdentifiersWithExpandedDocumentation
         {
             node.metadata.hasNoExpandedDocumentation = !symbolIdentifiersWithExpandedDocumentation.contains(externalID)
         }
@@ -1520,7 +1520,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let topics = symbol.topicsVariants[trait]
             
             var sections = [TaskGroupRenderSection]()
-            if let topics = topics, !topics.taskGroups.isEmpty {
+            if let topics, !topics.taskGroups.isEmpty {
                 // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
@@ -1754,9 +1754,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
+        guard let introducedVersion = moduleAvailability.introducedVersion else { return false }
         guard
             // Check if we have a symbol availability version and a target platform version
-            let moduleVersion = Version(versionString: moduleAvailability.platformVersion),
+            let moduleVersion = Version(versionString: introducedVersion),
             // We require at least two components for a platform version (e.g. 10.15 or 10.15.1)
             moduleVersion.count >= 2,
             // Verify we're building against this platform
@@ -1789,10 +1790,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Prepare for rendering
         let renderedAvailability = moduleAvailability
-            .map({ availability -> AvailabilityRenderItem in
+            .filter({ $0.versionInformation != .unavailable })
+            .compactMap({ availability -> AvailabilityRenderItem? in
+                guard let availabilityIntroducedVersion = availability.introducedVersion else { return nil }
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
-                    introduced: availability.platformVersion,
+                    introduced: availabilityIntroducedVersion,
                     isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
                 )
             })
@@ -1868,7 +1871,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var introducedVersion: String? = nil 
         var typeDetails: [TypeDetails]? = nil
         
-        if let symbol = symbol {
+        if let symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = symbol.declarationFragments {
                 renderedTokens = convertFragments(fragments)
@@ -1998,7 +2001,7 @@ extension ContentLayout: RenderTree {}
 
 extension ContentRenderSection: RenderTree {}
 
-private extension Sequence where Element == SourceLanguage {
+private extension Sequence<SourceLanguage> {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
         traits.contains(where: {
             guard let languageID = $0.interfaceLanguage,

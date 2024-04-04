@@ -10,7 +10,7 @@
 
 import Foundation
 import XCTest
-@testable @_spi(FileManagerProtocol) import SwiftDocC
+@testable import SwiftDocC
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
 ///
@@ -40,14 +40,13 @@ import XCTest
 ///
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
-@_spi(FileManagerProtocol) // This needs to be SPI because it conforms to an SPI protocol
-public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
-    public let currentDirectoryPath = "/"
+package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
+    package let currentDirectoryPath = "/"
     
-    public var identifier: String = UUID().uuidString
+    package var identifier: String = UUID().uuidString
     
     private var _bundles = [DocumentationBundle]()
-    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
+    package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         // Ignore the bundle discovery options, these test bundles are already built.
         return _bundles
     }
@@ -65,11 +64,12 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
     /// A data fixture to use in the `files` index to mark folders.
     static let folderFixtureData = "Folder".data(using: .utf8)!
     
-    public convenience init(folders: [Folder]) throws {
+    package convenience init(folders: [Folder]) throws {
         self.init()
         
         // Default system paths
         files["/"] = Self.folderFixtureData
+        files["/tmp"] = Self.folderFixtureData
  
         // Import given folders
         try updateDocumentationBundles(withFolders: folders)
@@ -116,17 +116,17 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         }
     }
 
-    public func contentsOfURL(_ url: URL) throws -> Data {
+    package func contentsOfURL(_ url: URL) throws -> Data {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         guard let file = files[url.path] else {
-            throw CocoaError.error(.fileReadNoSuchFile)
+            throw makeFileNotFoundError(url)
         }
         return file
     }
     
-    public func contents(of url: URL) throws -> Data {
+    package func contents(of url: URL) throws -> Data {
         try contentsOfURL(url)
     }
     
@@ -165,7 +165,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         return Array(fileList.keys)
     }
     
-    public func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
+    package func fileExists(atPath path: String, isDirectory: UnsafeMutablePointer<ObjCBool>?) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -178,19 +178,21 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         return true
     }
     
-    public func fileExists(atPath path: String) -> Bool {
+    package func fileExists(atPath path: String) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files.keys.contains(path)
     }
     
-    public func copyItem(at srcURL: URL, to dstURL: URL) throws {
+    package func copyItem(at srcURL: URL, to dstURL: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
         defer { filesLock.unlock() }
-
+        
+        try ensureParentDirectoryExists(for: dstURL)
+        
         let srcPath = srcURL.path
         let dstPath = dstURL.path
         
@@ -200,7 +202,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         }
     }
     
-    public func moveItem(at srcURL: URL, to dstURL: URL) throws {
+    package func moveItem(at srcURL: URL, to dstURL: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -222,13 +224,12 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        let parent = URL(fileURLWithPath: path).deletingLastPathComponent()
+        let url = URL(fileURLWithPath: path)
+        let parent = url.deletingLastPathComponent()
         if parent.pathComponents.count > 1 {
             // If it's not the root folder, check if parents exist
             if createIntermediates == false {
-                guard files.keys.contains(parent.path) else {
-                    throw CocoaError.error(.fileReadNoSuchFile)
-                }
+                try ensureParentDirectoryExists(for: url)
             } else {
                 // Create missing parent directories
                 try createDirectory(atPath: parent.path, withIntermediateDirectories: true)
@@ -238,7 +239,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         files[path] = Self.folderFixtureData
     }
     
-    public func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
+    package func createDirectory(at url: URL, withIntermediateDirectories createIntermediates: Bool, attributes: [FileAttributeKey : Any]? = nil) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -247,14 +248,14 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         try createDirectory(atPath: url.path, withIntermediateDirectories: createIntermediates)
     }
     
-    public func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
+    package func contentsEqual(atPath path1: String, andPath path2: String) -> Bool {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files[path1] == files[path2]
     }
     
-    public func removeItem(at: URL) throws {
+    package func removeItem(at: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
@@ -266,31 +267,29 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         }
     }
     
-    public func createFile(at: URL, contents: Data) throws {
+    package func createFile(at url: URL, contents: Data) throws {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        guard files.keys.contains(at.deletingLastPathComponent().path) else {
-            throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSFilePathErrorKey: at.path])
-        }
+        try ensureParentDirectoryExists(for: url)
         
         if !disableWriting {
-            files[at.path] = contents
+            files[url.path] = contents
         }
     }
     
-    public func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
+    package func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
         try createFile(at: url, contents: contents)
     }
     
-    public func contents(atPath: String) -> Data? {
+    package func contents(atPath: String) -> Data? {
         filesLock.lock()
         defer { filesLock.unlock() }
 
         return files[atPath]
     }
     
-    public func contentsOfDirectory(atPath path: String) throws -> [String] {
+    package func contentsOfDirectory(atPath path: String) throws -> [String] {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -309,9 +308,9 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         return Array(results)
     }
 
-    public func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
+    package func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
 
-        if let keys = keys {
+        if let keys {
             XCTAssertTrue(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
         }
         
@@ -328,7 +327,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
         return output
     }
 
-    public func uniqueTemporaryDirectory() -> URL {
+    package func uniqueTemporaryDirectory() -> URL {
         URL(fileURLWithPath: "/tmp/\(ProcessInfo.processInfo.globallyUniqueString)", isDirectory: true)
     }
     
@@ -345,7 +344,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
     ///
     /// - Parameter path: The path to the sub hierarchy to dump to a string representation.
     /// - Returns: A stable string representation that can be checked in tests.
-    public func dump(subHierarchyFrom path: String = "/") -> String {
+    package func dump(subHierarchyFrom path: String = "/") -> String {
         filesLock.lock()
         defer { filesLock.unlock() }
         
@@ -368,7 +367,7 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
     }
     
     // This is a convenience utility for testing, not FileManagerProtocol API
-    public func recursiveContentsOfDirectory(atPath path: String) throws -> [String] {
+    package func recursiveContentsOfDirectory(atPath path: String) throws -> [String] {
         var allSubpaths = try contentsOfDirectory(atPath: path)
         
         for subpath in allSubpaths { // This is iterating over a copy
@@ -376,6 +375,17 @@ public class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProv
             allSubpaths.append(contentsOf: innerContents.map({ "\(subpath)/\($0)" }))
         }
         return allSubpaths
+    }
+    
+    private func ensureParentDirectoryExists(for url: URL) throws {
+        let parentURL = url.deletingLastPathComponent()
+        guard directoryExists(atPath: parentURL.path) else {
+            throw makeFileNotFoundError(parentURL)
+        }
+    }
+    
+    private func makeFileNotFoundError(_ url: URL) -> Error {
+        return CocoaError(.fileReadNoSuchFile, userInfo: [NSFilePathErrorKey: url.path])
     }
 }
 

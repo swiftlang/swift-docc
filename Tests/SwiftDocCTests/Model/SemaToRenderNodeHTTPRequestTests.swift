@@ -85,7 +85,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         
         assertExpectedContent(
             frameworkRenderNode,
-            sourceLanguage: "swift",  // Swift wins default when multiple langauges present
+            sourceLanguage: "swift",  // Swift wins default when multiple languages present
             symbolKind: "module",
             title: "HTTPRequests",
             navigatorTitle: nil,
@@ -211,7 +211,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         // Confirm docs for request body
         let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
         XCTAssertNotNil(body)
-        if let body = body {
+        if let body {
             XCTAssertEqual(["Simple body."], body.content?.paragraphText)
             XCTAssertEqual("application/json", body.mimeType)
         }
@@ -267,14 +267,14 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         // Confirm docs for request body
         let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
         XCTAssertNotNil(body)
-        if let body = body {
+        if let body {
             XCTAssertEqual(["Uploaded payload."], body.content?.paragraphText)
             XCTAssertEqual("multipart/form-data", body.mimeType)
             
             // Confirm docs for body parameters
             let parameters = body.parameters
             XCTAssertNotNil(parameters)
-            if let parameters = parameters {
+            if let parameters {
                 XCTAssertEqual(2, parameters.count)
                 if parameters.count > 0 {
                     XCTAssertEqual("artist", parameters[0].name)

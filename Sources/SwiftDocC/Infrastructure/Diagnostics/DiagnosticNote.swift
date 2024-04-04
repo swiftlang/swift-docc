@@ -24,12 +24,3 @@ public struct DiagnosticNote {
     /// The message to attach to the document.
     public var message: String
 }
-
-@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released")
-extension DiagnosticNote: CustomStringConvertible {
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead. This deprecated API will be removed after 5.10 is released")
-    public var description: String {
-        let location = "\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)"
-        return "\(location): note: \(message)"
-    }
-}

@@ -50,21 +50,29 @@ extension PathHierarchy {
         let node = lookup[nodeID]!
         
         var gathered = [(symbolID: String, (link: String, hasDisambiguation: Bool, id: ResolvedIdentifier, isSwift: Bool))]()
-        for (_, tree) in node.children {
-            let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false, allowAdvancedDisambiguation: true)
-            
-            for (node, disambiguation) in disambiguatedChildren {
-                guard let id = node.identifier, let symbolID = node.symbol?.identifier.precise else { continue }
-                let suffix = disambiguation.makeSuffix()
-                gathered.append((
-                    symbolID: symbolID, (
-                        link: node.name + suffix,
-                        hasDisambiguation: !suffix.isEmpty,
-                        id: id,
-                        isSwift: node.symbol?.identifier.interfaceLanguage == "swift"
-                    )
-                ))
+        
+        func gatherLinksFrom(_ containers: some Sequence<DisambiguationContainer>) {
+            for container in containers {
+                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false, allowAdvancedDisambiguation: true)
+                
+                for (node, disambiguation) in disambiguatedChildren {
+                    guard let id = node.identifier, let symbolID = node.symbol?.identifier.precise else { continue }
+                    let suffix = disambiguation.makeSuffix()
+                    gathered.append((
+                        symbolID: symbolID, (
+                            link: node.name + suffix,
+                            hasDisambiguation: !suffix.isEmpty,
+                            id: id,
+                            isSwift: node.symbol?.identifier.interfaceLanguage == "swift"
+                        )
+                    ))
+                }
             }
+        }
+        
+        gatherLinksFrom(node.children.values)
+        if let counterpart = node.counterpart {
+            gatherLinksFrom(counterpart.children.values)
         }
         
         // If a symbol node exist in multiple languages, prioritize the Swift variant.
@@ -100,8 +108,8 @@ extension PathHierarchy {
             nameTransform = { $0 }
         }
         
-        func descend(_ node: Node, accumulatedPath: String) -> [(String, (String, Bool))] {
-            var results: [(String, (String, Bool))] = []
+        func descend(_ node: Node, accumulatedPath: String) -> [String: String] {
+            var innerPathsByUSR: [String: String] = [:]
             let children = [String: DisambiguationContainer](node.children.map {
                 var name = $0.key
                 if !caseSensitive {
@@ -110,8 +118,8 @@ extension PathHierarchy {
                 return (nameTransform(name), $0.value)
             }, uniquingKeysWith: { $0.merge(with: $1) })
             
-            for (_, tree) in children {
-                let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
+            for (_, container) in children {
+                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
                 let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation.value() != nil && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 
                 for (node, disambiguation) in disambiguatedChildren {
@@ -120,7 +128,7 @@ extension PathHierarchy {
                         // When descending through placeholder nodes, we trust that the known disambiguation
                         // that they were created with is necessary.
                         var knownDisambiguation = ""
-                        let element = tree.storage.first!
+                        let element = container.storage.first!
                         if let kind = element.kind {
                             knownDisambiguation += "-\(kind)"
                         }
@@ -131,37 +139,39 @@ extension PathHierarchy {
                     } else {
                         path = accumulatedPath + "/" + nameTransform(node.name)
                     }
-                    if let symbol = node.symbol {
-                        results.append(
-                            (symbol.identifier.precise, (path + disambiguation.makeSuffix(), symbol.identifier.interfaceLanguage == "swift"))
-                        )
+                    if let symbol = node.symbol,
+                       // If a symbol node exist in multiple languages, prioritize the Swift variant.
+                       node.counterpart == nil || symbol.identifier.interfaceLanguage == "swift"
+                    {
+                        innerPathsByUSR[symbol.identifier.precise] = path + disambiguation.makeSuffix()
                     }
                     if includeDisambiguationForUnambiguousChildren || uniqueNodesWithChildren.count > 1 {
                         path += disambiguation.makeSuffix()
                     }
-                    results += descend(node, accumulatedPath: path)
+                    innerPathsByUSR.merge(descend(node, accumulatedPath: path), uniquingKeysWith: { currentPath, newPath in
+                        assertionFailure("Should only have gathered one path per symbol ID. Found \(currentPath) and \(newPath) for the same USR.")
+                        return currentPath
+                    })
                 }
             }
-            return results
+            return innerPathsByUSR
         }
         
-        var gathered: [(String, (String, Bool))] = []
+        var pathsByUSR: [String: String] = [:]
         
         for node in modules {
-            let path = "/" + node.name
-            gathered.append(
-                (node.name, (path, node.symbol == nil || node.symbol!.identifier.interfaceLanguage == "swift"))
-            )
-            gathered += descend(node, accumulatedPath: path)
+            let modulePath = "/" + node.name
+            pathsByUSR[node.name] = modulePath
+            pathsByUSR.merge(descend(node, accumulatedPath: modulePath), uniquingKeysWith: { currentPath, newPath in
+                assertionFailure("Should only have gathered one path per symbol ID. Found \(currentPath) and \(newPath) for the same USR.")
+                return currentPath
+            })
         }
         
-        // If a symbol node exist in multiple languages, prioritize the Swift variant.
-        let result = [String: (String, Bool)](gathered, uniquingKeysWith: { lhs, rhs in lhs.1 ? lhs : rhs }).mapValues({ $0.0 })
-        
         assert(
-            Set(result.values).count == result.keys.count,
+            Set(pathsByUSR.values).count == pathsByUSR.keys.count,
             {
-                let collisionDescriptions = result
+                let collisionDescriptions = pathsByUSR
                     .reduce(into: [String: [String]](), { $0[$1.value, default: []].append($1.key) })
                     .filter({ $0.value.count > 1 })
                     .map { "\($0.key)\n\($0.value.map({ "  " + $0 }).joined(separator: "\n"))" }
@@ -172,17 +182,17 @@ extension PathHierarchy {
             }()
         )
         
-        return result
+        return pathsByUSR
     }
 }
 
 extension PathHierarchy.DisambiguationContainer {
     
-    static func disambiguatedValues<E: Sequence>(
-        for elements: E,
+    static func disambiguatedValues(
+        for elements: some Sequence<Element>,
         includeLanguage: Bool = false,
         allowAdvancedDisambiguation: Bool = true
-    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] where E.Element == Element {
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
         var remainingIDs = Set(elements.map(\.node.identifier))

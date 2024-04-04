@@ -773,7 +773,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 )
             },
             assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 3)
+                XCTAssertEqual(renderNode.topicSections.count, 1 /* all initializers and functions are already manually curated elsewhere */)
                 let taskGroup = try XCTUnwrap(renderNode.topicSections.first)
                 XCTAssertEqual(taskGroup.title, "Swift Task Group")
                 
@@ -852,100 +852,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
-    func testArticleAutomaticTaskGroupsForArticleOnlyIncludeTopicsAvailableInTheArticleLanguage() throws {
-        func referenceWithPath(_ path: String) -> ResolvedTopicReference {
-            ResolvedTopicReference(
-                bundleIdentifier: "org.swift.docc.example",
-                path: path,
-                fragment: nil,
-                sourceLanguage: .swift
-            )
-        }
-        
-        try assertMultiVariantArticle(
-            configureContext: { context, reference in
-                let articleTopicGraphNode = TopicGraph.Node(
-                    reference: reference,
-                    kind: .article,
-                    source: .external,
-                    title: "Article"
-                )
-                
-                let myProtocolReference = referenceWithPath("/documentation/MyKit/MyProtocol")
-                let myClassReference = referenceWithPath("/documentation/MyKit/MyClass")
-                
-                let myProtocolTopicGraphNode = TopicGraph.Node(
-                    reference: myProtocolReference,
-                    kind: .protocol,
-                    source: .external,
-                    title: "MyProtocol"
-                )
-                
-                let myClassTopicGraphNode = TopicGraph.Node(
-                    reference: myClassReference,
-                    kind: .protocol,
-                    source: .external,
-                    title: "MyProtocol"
-                )
-                
-                // Remove MyProtocol and MyClass's parents and make them children of the article instead.
-                context.topicGraph.reverseEdges[myProtocolReference] = nil
-                context.topicGraph.reverseEdges[myClassReference] = nil
-                
-                context.topicGraph.addEdge(
-                    from: articleTopicGraphNode,
-                    to: myProtocolTopicGraphNode
-                )
-                
-                context.topicGraph.addEdge(
-                    from: articleTopicGraphNode,
-                    to: myClassTopicGraphNode
-                )
-                
-                try makeSymbolAvailableInSwiftAndObjectiveC(
-                    symbolPath: "/documentation/MyKit/MyProtocol",
-                    bundleIdentifier: reference.bundleIdentifier,
-                    context: context
-                )
-                
-                // Add an Objective-C kind to MyProtocol to make it a multi-language symbol.
-                try XCTUnwrap(context.documentationCache[myProtocolReference]?.semantic as? Symbol)
-                    .kindVariants[.objectiveC] = SymbolGraph.Symbol.Kind(
-                        parsedIdentifier: .protocol,
-                        displayName: "Protocol"
-                    )
-            },
-            configureArticle: { article in
-                article.automaticTaskGroups = []
-                article.topics = nil
-            },
-            assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(
-                    renderNode.topicSections.flatMap { topicSection in
-                        [topicSection.title] + topicSection.identifiers
-                    },
-                    [
-                        "Classes",
-                        "doc://org.swift.docc.example/documentation/MyKit/MyClass",
-                        "Protocols",
-                        "doc://org.swift.docc.example/documentation/MyKit/MyProtocol",
-                    ]
-                )
-            },
-            assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(
-                    renderNode.topicSections.flatMap { topicSection in
-                        [topicSection.title] + topicSection.identifiers
-                    },
-                    [
-                        "Protocols",
-                        "doc://org.swift.docc.example/documentation/MyKit/MyProtocol",
-                    ]
-                )
-            }
-        )
-    }
-    
     func testTopicsSectionVariantsNoUserProvidedTopics() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
@@ -959,7 +865,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.topicsVariants[.objectiveC] = nil
             },
             assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 2)
+                XCTAssertEqual(renderNode.topicSections.count, 0 /* all the initializer and functions are manually curated elsewhere */)
             },
             assertAfterApplyingVariant: { renderNode in
                 XCTAssert(

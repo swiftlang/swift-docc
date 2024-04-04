@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,26 +11,28 @@
 import Foundation
 import Markdown
 
-/// A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.
+/// Defines whether the content in a documentation extension file amends or replaces in-source documentation.
 ///
-/// When the ``behavior`` property is ``Behavior/append``, the content from the documentation-extension file is added after the content from
-/// the in-source documentation for that symbol.
-/// If a documentation-extension file doesn't have a `DocumentationExtension` directive, then it has the ``Behavior/append`` behavior.
+/// By default, content from the documentation-extension file is added after the content from the in-source documentation for that symbol.
 ///
-/// When the ``behavior`` property is ``Behavior/override``, the content from the documentation-extension file completely replaces the content
-/// from the in-source documentation for that symbol
+/// You get this default behavior in two cases:
+/// - when the documentation-extension file doesn't have a `DocumentationExtension` directive
+/// - when the `DocumentationExtension` directive explicitly specifies the ``Behavior/append`` behavior
 ///
-/// This directive is only valid within a ``Metadata`` directive:
+/// The other merge behavior completely replaces the content from the in-source documentation for that symbol with the content from the documentation-extension file. To get this behavior, specify ``Behavior/override`` as the merge behavior.
+///
 /// ```
 /// @Metadata {
 ///    @DocumentationExtension(mergeBehavior: override)
 /// }
 /// ```
+///
+/// The `DocumentationExtension` is only valid within a ``Metadata`` directive.
 public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertible {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
     
-    /// The merge behavior for this documentation extension.
+    /// A value of `append` or `override`, denoting whether an extension file's content amends or replaces the in-source documentation.
     @DirectiveArgumentWrapped(name: .custom("mergeBehavior"))
     public var behavior: Behavior
     
@@ -45,6 +47,25 @@ public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertib
         
         /// Completely override any in-source content with the content from the documentation-extension.
         case override
+    }
+    
+    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
+        if behavior == .append {
+            let diagnostic = Diagnostic(
+                source: source,
+                severity: .warning,
+                range: originalMarkup.range,
+                identifier: "org.swift.docc.\(Self.directiveName).NoConfiguration",
+                summary: "\(Self.directiveName.singleQuoted) doesn't change default configuration and has no effect"
+            )
+            
+            let solutions = originalMarkup.range.map {
+                [Solution(summary: "Remove this \(Self.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
+            } ?? []
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        }
+        
+        return true
     }
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")

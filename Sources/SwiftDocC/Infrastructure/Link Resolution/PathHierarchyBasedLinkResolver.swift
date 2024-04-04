@@ -49,7 +49,6 @@ final class PathHierarchyBasedLinkResolver {
     func traverseSymbolAndParentPairs(_ observe: (_ symbol: ResolvedTopicReference, _ parent: ResolvedTopicReference) -> Void) {
         for (id, node) in pathHierarchy.lookup {
             guard node.symbol != nil else { continue }
-            
             guard let parentID = node.parent?.identifier else { continue }
             
             // Only symbols in the symbol index are added to the reference map.
@@ -57,14 +56,43 @@ final class PathHierarchyBasedLinkResolver {
             observe(reference, parentReference)
         }
     }
-    
-    /// Traverse all symbols of the same kind that have collisions.
-    func traverseOverloadedSymbols(_ observe: (_ overloadedSymbols: [ResolvedTopicReference]) throws -> Void) rethrows {
-        try pathHierarchy.traverseOverloadedSymbolGroups() { overloadedSymbols in
-            try observe(overloadedSymbols.map { resolvedReferenceMap[$0]! })
+
+    /// Returns the direct descendants of the given page that match the given source language filter.
+    ///
+    /// A descendant is included if it has a language representation in at least one of the languages in the given language filter or if the language filter is empty.
+    ///
+    /// - Parameters:
+    ///   - reference: The identifier of the page whose descendants to return.
+    ///   - languagesFilter: A set of source languages to filter descendants against.
+    /// - Returns: The references of each direct descendant that has a language representation in at least one of the given languages.
+    func directDescendants(of reference: ResolvedTopicReference, languagesFilter: Set<SourceLanguage>) -> Set<ResolvedTopicReference> {
+        guard let id = resolvedReferenceMap[reference] else { return [] }
+        let node = pathHierarchy.lookup[id]!
+        
+        func directDescendants(of node: PathHierarchy.Node) -> [ResolvedTopicReference] {
+            return node.children.flatMap { _, container in
+                container.storage.compactMap { element in
+                    guard let childID = element.node.identifier, // Don't include sparse nodes
+                          !element.node.specialBehaviors.contains(.excludeFromAutomaticCuration),
+                          element.node.matches(languagesFilter: languagesFilter)
+                    else {
+                        return nil
+                    }
+                    return resolvedReferenceMap[childID]
+                }
+            }
         }
+        
+        var results = Set<ResolvedTopicReference>()
+        if node.matches(languagesFilter: languagesFilter) {
+            results.formUnion(directDescendants(of: node))
+        }
+        if let counterpart = node.counterpart, counterpart.matches(languagesFilter: languagesFilter) {
+            results.formUnion(directDescendants(of: counterpart))
+        }
+        return results
     }
-    
+
     /// Returns a list of all the top level symbols.
     func topLevelSymbols() -> [ResolvedTopicReference] {
         return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }
@@ -272,7 +300,7 @@ final class PathHierarchyBasedLinkResolver {
                 )
             }
             for (symbol, reference) in zip(symbolGraph.symbols.values, paths) {
-                guard let reference = reference else { continue }
+                guard let reference else { continue }
                 result[symbol.defaultIdentifier] = reference
             }
         }
@@ -303,7 +331,7 @@ final class PathHierarchyBasedLinkResolver {
 /// Creates a more writable version of an articles file name for use in documentation links.
 ///
 /// Compared to `urlReadablePath(_:)` this preserves letters in other written languages.
-private func linkName<S: StringProtocol>(filename: S) -> String {
+private func linkName(filename: some StringProtocol) -> String {
     // It would be a nice enhancement to also remove punctuation from the filename to allow an article in a file named "One, two, & three!"
     // to be referenced with a link as `"One-two-three"` instead of `"One,-two-&-three!"` (rdar://120722917)
     return filename
@@ -315,3 +343,9 @@ private func linkName<S: StringProtocol>(filename: S) -> String {
 
 private let whitespaceAndDashes = CharacterSet.whitespaces
     .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
+
+private extension PathHierarchy.Node {
+    func matches(languagesFilter: Set<SourceLanguage>) -> Bool {
+        languagesFilter.isEmpty || !self.languages.isDisjoint(with: languagesFilter)
+    }
+}

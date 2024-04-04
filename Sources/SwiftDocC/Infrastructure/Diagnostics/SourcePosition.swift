@@ -96,7 +96,7 @@ extension Int {
      
      - Throws: `SourceRange.Error`
      */
-    init?<Source: StringProtocol>(cursor: PrintCursor, in source: Source) {
+    init?(cursor: PrintCursor, in source: some StringProtocol) {
         var line = 1
         var column = 1
         var index = source.utf8.startIndex
