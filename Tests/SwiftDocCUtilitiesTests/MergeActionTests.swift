@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+import SwiftDocCTestUtilities
 
 class MergeActionTests: XCTestCase {
     

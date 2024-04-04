@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 /// An action that creates documentation coverage info for a documentation bundle.
 public struct CoverageAction: Action {

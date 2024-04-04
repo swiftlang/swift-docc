@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 import Markdown
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+import SwiftDocCTestUtilities
 
 extension XCTestCase {
     
