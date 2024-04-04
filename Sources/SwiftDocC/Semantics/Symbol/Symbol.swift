@@ -536,6 +536,10 @@ extension [String: Mixin] {
 
 // MARK: Accessors for the first variant of symbol properties.
 
+// Extend the Symbol class to account for legacy code that didn't account for symbols having multiple
+// language representations. New code should be written to work with the variants so that it supports
+// language specific content.
+
 extension Symbol {
     /// The kind of the first variant of this symbol, such as protocol or variable.
     public var kind: SymbolGraph.Symbol.Kind { kindVariants.firstValue! }
@@ -686,10 +690,12 @@ extension Symbol {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }
-    
+
     /// Any automatically created task groups of the first variant of the symbol.
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
     }
+
+    // Don't add additional functions here. See the comment above about legacy code.
 }
