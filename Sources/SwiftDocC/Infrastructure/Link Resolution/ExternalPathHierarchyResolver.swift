@@ -173,7 +173,7 @@ final class ExternalPathHierarchyResolver {
     }
 }
 
-private extension Sequence where Element == DeclarationRenderSection.Token {
+private extension Sequence<DeclarationRenderSection.Token> {
     func plainTextDeclaration() -> String {
         return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
     }

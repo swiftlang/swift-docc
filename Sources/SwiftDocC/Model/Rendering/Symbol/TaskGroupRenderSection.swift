@@ -22,7 +22,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
             typeErasedSection?.value
         }
         set {
-            if let newValue = newValue {
+            if let newValue {
                 typeErasedSection = AnyRenderSection(newValue)
             } else {
                 typeErasedSection = nil

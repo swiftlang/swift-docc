@@ -251,10 +251,10 @@ final class SwiftLMDBTests: XCTestCase {
             XCTAssertNoThrow(try database.put(key: key, value: array))
         }
             
-        var value = database.get(type: Array<UInt32>.self, forKey: "array-8")
+        var value = database.get(type: [UInt32].self, forKey: "array-8")
         XCTAssertEqual(value, [1,2,3,4,5,6,7,8,9])
         
-        value = database.get(type: Array<UInt32>.self, forKey: "array-13")
+        value = database.get(type: [UInt32].self, forKey: "array-13")
         XCTAssertEqual(value, [1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 #endif
     }
@@ -313,13 +313,13 @@ struct RawStub: LMDBData, Equatable, Codable {
         
         var cursor: Int = 0
         let length = MemoryLayout<Int64>.stride
-        let id = d[cursor..<cursor + length].withUnsafeBytes { $0.load(as: Int64.self) }
+        let id = d[cursor..<cursor + length].withUnsafeBytes { $0.loadUnaligned(as: Int64.self) }
         cursor += length
         
-        let titleLength = d[cursor..<cursor + length].withUnsafeBytes{ $0.load(as: Int64.self) }
+        let titleLength = d[cursor..<cursor + length].withUnsafeBytes{ $0.loadUnaligned(as: Int64.self) }
         cursor += length
         
-        let typeLength = d[cursor..<cursor + length].withUnsafeBytes { $0.load(as: Int64.self) }
+        let typeLength = d[cursor..<cursor + length].withUnsafeBytes { $0.loadUnaligned(as: Int64.self) }
         cursor += length
         
         let titleData = d[cursor..<cursor + Int(titleLength)]

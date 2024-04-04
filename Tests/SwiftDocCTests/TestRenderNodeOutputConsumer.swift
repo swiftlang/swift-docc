@@ -41,7 +41,7 @@ extension TestRenderNodeOutputConsumer {
     func renderNodes(withInterfaceLanguages interfaceLanguages: Set<String>?) -> [RenderNode] {
         renderNodes.sync { renderNodes in
             renderNodes.filter { renderNode in
-                guard let interfaceLanguages = interfaceLanguages else {
+                guard let interfaceLanguages else {
                     // If there are no interface languages set, return the nodes with no variants.
                     return renderNode.variants == nil
                 }

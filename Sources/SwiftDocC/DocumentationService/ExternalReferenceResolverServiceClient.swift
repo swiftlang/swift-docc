@@ -35,7 +35,7 @@ class ExternalReferenceResolverServiceClient {
         self.convertRequestIdentifier = convertRequestIdentifier
     }
     
-    func sendAndWait<Request: Codable>(_ request: Request) throws -> Data {
+    func sendAndWait(_ request: some Codable) throws -> Data {
         let resultGroup = DispatchGroup()
         
         var result: Result<Data?, Error>?
@@ -43,7 +43,7 @@ class ExternalReferenceResolverServiceClient {
         resultGroup.enter()
         
         serverResponseQueue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             
             do {
                 let encodedRequest = try self.encoder.encode(

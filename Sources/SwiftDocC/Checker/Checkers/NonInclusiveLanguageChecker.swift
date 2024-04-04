@@ -110,7 +110,7 @@ public struct NonInclusiveLanguageChecker: Checker {
             explanation: term.message
         )
         var solutions: [Solution] = []
-        if let range = range {
+        if let range {
             let replacement = Replacement(range: range, replacement: term.replacement)
             let solution = Solution(summary: "Replace with \(term.replacement.singleQuoted)", replacements: [replacement])
             solutions.append(solution)

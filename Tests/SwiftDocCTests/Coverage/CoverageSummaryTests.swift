@@ -16,7 +16,7 @@ func ratio(_ x: Int, _ y: Int, length: Int? = nil) -> String {
     let percentage = RatioStatistic.numberFormatter.string(from: NSNumber(value: Double(x) / Double(y)))!
     let result = percentage
         .appending(" (\(x)/\(y))")
-    guard let length = length else { return result }
+    guard let length else { return result }
     
     return result
         .appending(String(repeating: " ", count: length - result.count))

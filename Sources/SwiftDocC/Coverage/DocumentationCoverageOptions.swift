@@ -139,9 +139,7 @@ extension DocumentationCoverageOptions {
 }
 
 extension DocumentationCoverageOptions.KindFilterOptions {
-    public init<List>(bitFlags: List) where
-        List: Collection,
-        List.Element == BitFlagRepresentation {
+    public init(bitFlags: some Collection<BitFlagRepresentation>) {
         let mask = bitFlags.reduce(0) {
             $0 | $1.bitMask
         }

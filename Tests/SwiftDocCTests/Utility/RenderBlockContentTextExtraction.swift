@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-extension Sequence where Element == RenderBlockContent {
+extension Sequence<RenderBlockContent> {
     var paragraphText: [String] {
         compactMap { block in
             switch block {

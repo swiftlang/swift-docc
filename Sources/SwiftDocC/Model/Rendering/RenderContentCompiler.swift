@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -173,7 +173,7 @@ struct RenderContentCompiler: MarkupVisitor {
         let useOverriding: Bool
         if link.isAutolink { // If the link is an auto link, we don't use overriding info
             useOverriding = false
-        } else if let overridingTitle = overridingTitle,
+        } else if let overridingTitle,
                   overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
                   destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
         {
@@ -375,6 +375,10 @@ struct RenderContentCompiler: MarkupVisitor {
             style: .init(asideKind: .note),
             content: content
         ))]
+    }
+    
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> [RenderContent] {
+        return [RenderBlockContent.thematicBreak]
     }
 
     func defaultVisit(_ markup: Markup) -> [RenderContent] {

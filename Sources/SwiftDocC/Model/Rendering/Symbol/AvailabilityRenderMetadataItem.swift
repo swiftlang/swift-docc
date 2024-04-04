@@ -133,7 +133,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         unconditionallyUnavailable = availability.isUnconditionallyUnavailable
         unconditionallyDeprecated = availability.isUnconditionallyDeprecated
         
-        if let introducedVersion = availability.introducedVersion, let current = current, current.beta, introducedVersion.isEqualToVersionTriplet(current.version) {
+        if let introducedVersion = availability.introducedVersion, let current, current.beta, introducedVersion.isEqualToVersionTriplet(current.version) {
             isBeta = true
         } else {
             isBeta = false

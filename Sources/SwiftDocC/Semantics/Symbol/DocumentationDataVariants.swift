@@ -93,7 +93,7 @@ public struct DocumentationDataVariants<Variant> {
 extension DocumentationDataVariants {
     /// Convenience initializer to initialize a variants value with a Swift variant only.
     init(swiftVariant: Variant?) {
-        if let swiftVariant = swiftVariant {
+        if let swiftVariant {
             self.init(values: [.swift: swiftVariant])
         } else {
             self.init()
@@ -157,7 +157,7 @@ public struct DocumentationDataVariantsTrait: Hashable {
     }
 }
 
-extension Set where Element == DocumentationDataVariantsTrait {
+extension Set<DocumentationDataVariantsTrait> {
     /// Filters set to a subset of language traits that can coexist together.
     /// 
     /// - Parameter trait: The language variant being processed.
