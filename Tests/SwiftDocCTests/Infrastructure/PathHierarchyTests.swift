@@ -325,16 +325,16 @@ class PathHierarchyTests: XCTestCase {
         'something' is ambiguous at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'enum.case' for\n'case something'", replacements: [("-enum.case", 54, 54)]),
-                .init(summary: "Insert 'property' for\n'var something: String { get }'", replacements: [("-property", 54, 54)]),
+                .init(summary: "Insert 'enum.case' for \n'case something'", replacements: [("-enum.case", 54, 54)]),
+                .init(summary: "Insert 'property' for \n'var something: String { get }'", replacements: [("-property", 54, 54)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something-class", in: tree, context: context, expectedErrorMessage: """
         'class' isn't a disambiguation for 'something' at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'class' with 'enum.case' for\n'case something'", replacements: [("-enum.case", 54, 60)]),
-                .init(summary: "Replace 'class' with 'property' for\n'var something: String { get }'", replacements: [("-property", 54, 60)]),
+                .init(summary: "Replace 'class' with 'enum.case' for \n'case something'", replacements: [("-enum.case", 54, 60)]),
+                .init(summary: "Replace 'class' with 'property' for \n'var something: String { get }'", replacements: [("-property", 54, 60)]),
             ])
         }
         
@@ -356,18 +356,18 @@ class PathHierarchyTests: XCTestCase {
         'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with 'method' for\n'func `init`()'", replacements: [("-method", 52, 59)]),
-                .init(summary: "Replace 'abc123' with 'init' for\n'init()'", replacements: [("-init", 52, 59)]),
-                .init(summary: "Replace 'abc123' with 'type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'method' for \n'func `init`()'", replacements: [("-method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'init' for \n'init()'", replacements: [("-init", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'type.method' for \n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
         'init()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' for\n'func `init`()'", replacements: [("-method", 52, 52)]),
-                .init(summary: "Insert 'init' for\n'init()'", replacements: [("-init", 52, 52)]),
-                .init(summary: "Insert 'type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
+                .init(summary: "Insert 'method' for \n'func `init`()'", replacements: [("-method", 52, 52)]),
+                .init(summary: "Insert 'init' for \n'init()'", replacements: [("-init", 52, 52)]),
+                .init(summary: "Insert 'type.method' for \n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
@@ -402,9 +402,9 @@ class PathHierarchyTests: XCTestCase {
         'subscript()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' for\n'func `subscript`()'", replacements: [("-method", 57, 57)]),
-                .init(summary: "Insert 'type.method' for\n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
-                .init(summary: "Insert 'subscript' for\n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
+                .init(summary: "Insert 'method' for \n'func `subscript`()'", replacements: [("-method", 57, 57)]),
+                .init(summary: "Insert 'type.method' for \n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
+                .init(summary: "Insert 'subscript' for \n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
             ])
         }
         
@@ -420,8 +420,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 77)]),
-                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 77)]),
+                .init(summary: "Insert '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 77)]),
+                .init(summary: "Insert '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 77)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -429,16 +429,16 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 91)]),
-                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 91)]),
+                .init(summary: "Insert '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 91)]),
+                .init(summary: "Insert '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 91)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
-                .init(summary: "Replace 'abc123' with '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
@@ -461,8 +461,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
-                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
+                .init(summary: "Replace 'method' with '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
+                .init(summary: "Replace 'method' with '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -470,8 +470,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 98)]),
-                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 98)]),
+                .init(summary: "Replace 'method' with '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 98)]),
+                .init(summary: "Replace 'method' with '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 98)]),
             ])
         }
         
@@ -487,8 +487,8 @@ class PathHierarchyTests: XCTestCase {
         'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 71)]),
-                .init(summary: "Insert '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 71)]),
+                .init(summary: "Insert '(Int)' for \n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 71)]),
+                .init(summary: "Insert '(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 71)]),
             ])
         }
         
@@ -496,8 +496,8 @@ class PathHierarchyTests: XCTestCase {
         'subscript(_:)-subscript' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'subscript' with '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 81)]),
-                .init(summary: "Replace 'subscript' with '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '(Int)' for \n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 81)]),
             ])
         }
         
@@ -1165,9 +1165,9 @@ class PathHierarchyTests: XCTestCase {
         'Foo' is ambiguous at '/MixedLanguageFramework'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'struct' for\n'struct Foo'", replacements: [("-struct", 26, 26)]),
-                .init(summary: "Insert 'enum' for\n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
-                .init(summary: "Insert 'typealias' for\n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
+                .init(summary: "Insert 'struct' for \n'struct Foo'", replacements: [("-struct", 26, 26)]),
+                .init(summary: "Insert 'enum' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
+                .init(summary: "Insert 'typealias' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
             ])
         } // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         

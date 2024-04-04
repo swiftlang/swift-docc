@@ -422,8 +422,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentKinds/something",
             errorMessage: "'something' is ambiguous at '/MixedFramework/CollisionsWithDifferentKinds'",
             solutions: [
-                .init(summary: "Insert 'enum.case' for\n'case something'", replacement: ("-enum.case", 54, 54)),
-                .init(summary: "Insert 'property' for\n'var something: String { get }'", replacement: ("-property", 54, 54)),
+                .init(summary: "Insert 'enum.case' for \n'case something'", replacement: ("-enum.case", 54, 54)),
+                .init(summary: "Insert 'property' for \n'var something: String { get }'", replacement: ("-property", 54, 54)),
             ]
         )
         
@@ -431,8 +431,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentKinds/something-class",
             errorMessage: "'class' isn't a disambiguation for 'something' at '/MixedFramework/CollisionsWithDifferentKinds'",
             solutions: [
-                .init(summary: "Replace 'class' with 'enum.case' for\n'case something'", replacement: ("-enum.case", 54, 60)),
-                .init(summary: "Replace 'class' with 'property' for\n'var something: String { get }'", replacement: ("-property", 54, 60)),
+                .init(summary: "Replace 'class' with 'enum.case' for \n'case something'", replacement: ("-enum.case", 54, 60)),
+                .init(summary: "Replace 'class' with 'property' for \n'var something: String { get }'", replacement: ("-property", 54, 60)),
             ]
         )
  
@@ -450,18 +450,18 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithEscapedKeywords/init()",
             errorMessage: "'init()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'",
             solutions: [
-                .init(summary: "Insert 'method' for\n'func `init`()'", replacement: ("-method", 52, 52)),
-                .init(summary: "Insert 'init' for\n'init()'", replacement: ("-init", 52, 52)),
-                .init(summary: "Insert 'type.method' for\n'static func `init`()'", replacement: ("-type.method", 52, 52)),
+                .init(summary: "Insert 'method' for \n'func `init`()'", replacement: ("-method", 52, 52)),
+                .init(summary: "Insert 'init' for \n'init()'", replacement: ("-init", 52, 52)),
+                .init(summary: "Insert 'type.method' for \n'static func `init`()'", replacement: ("-type.method", 52, 52)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/MixedFramework/CollisionsWithEscapedKeywords/init()-abc123",
             errorMessage: "'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'",
             solutions: [
-                .init(summary: "Replace 'abc123' with 'method' for\n'func `init`()'", replacement: ("-method", 52, 59)),
-                .init(summary: "Replace 'abc123' with 'init' for\n'init()'", replacement: ("-init", 52, 59)),
-                .init(summary: "Replace 'abc123' with 'type.method' for\n'static func `init`()'", replacement: ("-type.method", 52, 59)),
+                .init(summary: "Replace 'abc123' with 'method' for \n'func `init`()'", replacement: ("-method", 52, 59)),
+                .init(summary: "Replace 'abc123' with 'init' for \n'init()'", replacement: ("-init", 52, 59)),
+                .init(summary: "Replace 'abc123' with 'type.method' for \n'static func `init`()'", replacement: ("-type.method", 52, 59)),
             ]
         )
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
@@ -491,9 +491,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithEscapedKeywords/subscript()",
             errorMessage: "'subscript()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'",
             solutions: [
-                .init(summary: "Insert 'method' for\n'func `subscript`()'", replacement: ("-method", 57, 57)),
-                .init(summary: "Insert 'type.method' for\n'static func `subscript`()'", replacement: ("-type.method", 57, 57)),
-                .init(summary: "Insert 'subscript' for\n'subscript() -> Int { get }'", replacement: ("-subscript", 57, 57)),
+                .init(summary: "Insert 'method' for \n'func `subscript`()'", replacement: ("-method", 57, 57)),
+                .init(summary: "Insert 'type.method' for \n'static func `subscript`()'", replacement: ("-type.method", 57, 57)),
+                .init(summary: "Insert 'subscript' for \n'subscript() -> Int { get }'", replacement: ("-subscript", 57, 57)),
             ]
         )
         
@@ -505,24 +505,24 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)",
             errorMessage: "'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 77)),
-                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 77)),
+                .init(summary: "Insert '(Int)' for \n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 77)),
+                .init(summary: "Insert '(String)' for \n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 77)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)",
             errorMessage: "'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 91, 91)),
-                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 91, 91)),
+                .init(summary: "Insert '(Int)' for \n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 91, 91)),
+                .init(summary: "Insert '(String)' for \n'func something(argument: String) -> Int'", replacement: ("-(String)", 91, 91)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123",
             errorMessage: "'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'abc123' with '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 84)),
-                .init(summary: "Replace 'abc123' with '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 84)),
+                .init(summary: "Replace 'abc123' with '(Int)' for \n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 84)),
+                .init(summary: "Replace 'abc123' with '(String)' for \n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 84)),
             ]
         )
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
@@ -544,16 +544,16 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method",
             errorMessage: "'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 84)),
-                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 84)),
+                .init(summary: "Replace 'method' with '(Int)' for \n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 77, 84)),
+                .init(summary: "Replace 'method' with '(String)' for \n'func something(argument: String) -> Int'", replacement: ("-(String)", 77, 84)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method",
             errorMessage: "'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 91, 98)),
-                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacement: ("-(String)", 91, 98)),
+                .init(summary: "Replace 'method' with '(Int)' for \n'func something(argument: Int) -> Int'", replacement: ("-(Int)", 91, 98)),
+                .init(summary: "Replace 'method' with '(String)' for \n'func something(argument: String) -> Int'", replacement: ("-(String)", 91, 98)),
             ]
         )
         
@@ -565,16 +565,16 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)",
             errorMessage: "'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'",
             solutions: [
-                .init(summary: "Insert '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacement: ("-(Int)", 71, 71)),
-                .init(summary: "Insert '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-(String)", 71, 71)),
+                .init(summary: "Insert '(Int)' for \n'subscript(something: Int) -> Int { get }'", replacement: ("-(Int)", 71, 71)),
+                .init(summary: "Insert '(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-(String)", 71, 71)),
             ]
         )
         try linkResolvers.assertFailsToResolve(
             authoredLink: "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-subscript",
             errorMessage: "'subscript(_:)-subscript' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'",
             solutions: [
-                .init(summary: "Replace 'subscript' with '(Int)' for\n'subscript(something: Int) -> Int { get }'", replacement: ("-(Int)", 71, 81)),
-                .init(summary: "Replace 'subscript' with '(String)' for\n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-(String)", 71, 81)),
+                .init(summary: "Replace 'subscript' with '(Int)' for \n'subscript(something: Int) -> Int { get }'", replacement: ("-(Int)", 71, 81)),
+                .init(summary: "Replace 'subscript' with '(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacement: ("-(String)", 71, 81)),
             ]
         )
     }
