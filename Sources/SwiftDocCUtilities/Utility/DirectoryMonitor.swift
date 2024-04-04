@@ -157,7 +157,7 @@ class DirectoryMonitor {
         let source = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: events, queue: queue)
         
         source.setEventHandler { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             
             // Throttle multiple events in quick succession.
             throttle.schedule {

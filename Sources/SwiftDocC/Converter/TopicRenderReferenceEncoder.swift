@@ -94,7 +94,7 @@ enum TopicRenderReferenceEncoder {
                 
                 // If a cache key was provided, update the cache with the reference and it's
                 // overrides.
-                if let cacheKey = cacheKey {
+                if let cacheKey {
                     referenceCache.sync { cache in
                         cache[cacheKey] = (
                             encodedReference,

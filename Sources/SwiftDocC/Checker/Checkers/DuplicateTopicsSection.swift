@@ -35,7 +35,7 @@ public struct DuplicateTopicsSections: Checker {
         return duplicates.map { duplicateHeading -> Problem in
             let range = duplicateHeading.range!
             let notes: [DiagnosticNote]
-            if let sourceFile = sourceFile, let range = first.range {
+            if let sourceFile, let range = first.range {
                 notes = [DiagnosticNote(source: sourceFile, range: range, message: "First Topics Section starts here.")]
             } else {
                 notes = []

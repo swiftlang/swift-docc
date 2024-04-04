@@ -2468,10 +2468,10 @@ class ConvertServiceTests: XCTestCase {
     struct TestConverter: DocumentationConverterProtocol {
         var convertDelegate: () throws -> ([Problem], [Problem])
         
-        func convert<OutputConsumer>(
-            outputConsumer: OutputConsumer
+        func convert(
+            outputConsumer: some ConvertOutputConsumer
         ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
-        where OutputConsumer : ConvertOutputConsumer {
+        {
             try convertDelegate()
         }
     }

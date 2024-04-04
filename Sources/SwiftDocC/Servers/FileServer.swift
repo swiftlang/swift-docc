@@ -98,7 +98,7 @@ public class FileServer {
             data = self.data(for: baseURL.appendingPathComponent("/index.html"))
         }
         
-        if let data = data {
+        if let data {
             response = URLResponse(url: url, mimeType: mimeType, expectedContentLength: data.count, textEncodingName: nil)
         } else {
             response = URLResponse(url: url, mimeType: nil, expectedContentLength: 0, textEncodingName: nil)
@@ -131,7 +131,7 @@ public class FileServer {
         return ".\(ext)".withCString(encodedAs: UTF16.self) {
             var pwszMimeOut: UnsafeMutablePointer<WCHAR>?
             guard FindMimeFromData(nil, $0, nil, 0, nil, DWORD(FMFD_URLASFILENAME), &pwszMimeOut, 0) >= 0,
-                    let pwszMimeOut = pwszMimeOut else {
+                    let pwszMimeOut else {
                 return defaultMimeType
             }
             defer { CoTaskMemFree(pwszMimeOut) }

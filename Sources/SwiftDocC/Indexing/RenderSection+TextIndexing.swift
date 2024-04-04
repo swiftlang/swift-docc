@@ -187,7 +187,7 @@ extension RelationshipsRenderSection {
 
 extension TaskGroupRenderSection {
     public var headings: [String] {
-        guard let title = title else { return [] }
+        guard let title else { return [] }
         return [title]
     }
     
@@ -363,7 +363,7 @@ extension SampleDownloadSection {
     }
 }
 
-extension Sequence where Element == ContentLayout {
+extension Sequence<ContentLayout> {
     func rawIndexableTextContent(references: [String: RenderReference]) -> String {
         return map { layout -> String in
             switch layout {

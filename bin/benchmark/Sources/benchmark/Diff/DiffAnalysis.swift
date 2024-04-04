@@ -23,7 +23,7 @@ extension DiffResults {
     }
     
     static func analyze(before beforeMetric: BenchmarkResultSeries.MetricSeries?, after afterMetric: BenchmarkResultSeries.MetricSeries) throws -> DiffResults.MetricAnalysis {
-        guard let beforeMetric = beforeMetric else {
+        guard let beforeMetric else {
             return DiffResults.MetricAnalysis(
                 metricName: afterMetric.displayName,
                 metricID: afterMetric.id,
