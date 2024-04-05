@@ -15,7 +15,7 @@ extension StringProtocol {
     /// Returns the string with the first letter capitalized.
     /// This auto-capitalization only occurs if the first word is all lowercase and contains only characters A-Z.
     /// The first word can also contain punctuation (e.g. a period, comma, hyphen, semi-colon, colon).
-    var capitalizeFirstWord: String {
+    func capitalizeFirstWord() -> String {
         let firstWord = self.components(separatedBy: " ").first ?? ""
         
         let firstWordNoPunctuation = firstWord.components(separatedBy: CharacterSet.punctuationCharacters).joined()

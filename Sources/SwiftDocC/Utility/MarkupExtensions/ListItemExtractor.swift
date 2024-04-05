@@ -67,7 +67,7 @@ extension Sequence<InlineMarkup> {
         }
         let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
         
-        let remainingCapitalizedInitialText = remainingInitialText.capitalizeFirstWord
+        let remainingCapitalizedInitialText = remainingInitialText.capitalizeFirstWord()
 
         var newInlineContent: [InlineMarkup] = [Text(String(remainingCapitalizedInitialText))]
         while let more = iterator.next() {
@@ -150,11 +150,11 @@ extension ListItem {
         }.lowercased()
 
         if trimmedText.starts(with: tag.lowercased()) {
-            var newText = text.string.capitalizeFirstWord
+            var newText = text.string
             if dropTag {
-                newText = String(text.string.dropFirst(text.string.count - trimmedText.count + tag.count).drop(while: { $0 == " " })).capitalizeFirstWord
+                newText = String(text.string.dropFirst(text.string.count - trimmedText.count + tag.count).drop(while: { $0 == " " }))
             }
-            return [Text(newText.capitalizeFirstWord)] + Array(firstParagraph.inlineChildren.dropFirst(1))
+            return [Text(newText.capitalizeFirstWord())] + Array(firstParagraph.inlineChildren.dropFirst(1))
         }
 
         return nil

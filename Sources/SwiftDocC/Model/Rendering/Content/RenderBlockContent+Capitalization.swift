@@ -27,7 +27,7 @@ extension RenderInlineContent: AutoCapitalizable {
     var capitalizeFirstWord: Self {
         switch self {
         case .text(let text):
-            return .text(text.capitalizeFirstWord)
+            return .text(text.capitalizeFirstWord())
         case .emphasis(inlineContent: let embeddedContent):
             return .emphasis(inlineContent: embeddedContent.map(\.capitalizeFirstWord))
         case .strong(inlineContent: let embeddedContent):

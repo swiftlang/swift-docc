@@ -42,7 +42,7 @@ struct RenderContentCompiler: MarkupVisitor {
             content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]
         )
             
-            return [RenderBlockContent.aside(newAside).capitalizeFirstWord]
+        return [RenderBlockContent.aside(newAside).capitalizeFirstWord]
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
