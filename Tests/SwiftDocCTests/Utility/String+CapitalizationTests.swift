@@ -41,4 +41,21 @@ class String_CapitalizationTests: XCTestCase {
         XCTAssertEqual(testString, testString.capitalizeFirstWord)
     }
     
+    func testDifferentAlphabets() {
+        let testString1 = "l'amérique du nord"
+        let testString2 = "ça va?"
+        let testString3 = "à"
+        let testString4 = "チーズ"
+        let testString5 = "牛奶"
+        let testString6 = "i don't like 牛奶"
+        let testString7 = "牛奶 is tasty"
+        XCTAssertEqual("L'amérique du nord", testString1.capitalizeFirstWord)
+        XCTAssertEqual("Ça va?", testString2.capitalizeFirstWord)
+        XCTAssertEqual("À", testString3.capitalizeFirstWord)
+        XCTAssertEqual("チーズ", testString4.capitalizeFirstWord)
+        XCTAssertEqual("牛奶", testString5.capitalizeFirstWord)
+        XCTAssertEqual("I don't like 牛奶", testString6.capitalizeFirstWord)
+        XCTAssertEqual("牛奶 is tasty", testString7.capitalizeFirstWord)
+    }
+    
 }
