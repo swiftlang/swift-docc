@@ -29,9 +29,9 @@ extension RenderInlineContent: AutoCapitalizable {
         case .text(let text):
             return .text(text.capitalizeFirstWord())
         case .emphasis(inlineContent: let embeddedContent):
-            return .emphasis(inlineContent: embeddedContent.map(\.capitalizeFirstWord))
+            return .emphasis(inlineContent: [embeddedContent[0].capitalizeFirstWord])
         case .strong(inlineContent: let embeddedContent):
-            return .strong(inlineContent: embeddedContent.map(\.capitalizeFirstWord))
+            return .strong(inlineContent: [embeddedContent[0].capitalizeFirstWord])
         default:
             return self
         }
@@ -40,7 +40,7 @@ extension RenderInlineContent: AutoCapitalizable {
 
 
 extension RenderBlockContent: AutoCapitalizable {
-    /// Capitalize the first word for paragraphs, asides, and small content.
+    /// Capitalize the first word for paragraphs, asides, headings, and small content.
     var capitalizeFirstWord: Self {
         switch self {
         case .paragraph(let paragraph):
@@ -49,6 +49,8 @@ extension RenderBlockContent: AutoCapitalizable {
             return .aside(aside.capitalizeFirstWord)
         case .small(let small):
             return .small(small.capitalizeFirstWord)
+        case .heading(let heading):
+            return .heading(.init(level: heading.level, text: heading.text.capitalizeFirstWord(), anchor: heading.anchor))
         default:
             return self
         }

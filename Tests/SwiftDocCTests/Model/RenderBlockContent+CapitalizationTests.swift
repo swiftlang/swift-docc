@@ -69,7 +69,7 @@ class RenderBlockContent_CapitalizationTests: XCTestCase {
     }
     
     // MARK: - Blocks
-    // Paragraphs, asides, and small content are all auto-capitalized, and everything else defaults to not capitalized.
+    // Paragraphs, asides, headings, and small content are all auto-capitalized, and everything else defaults to not capitalized.
     
     func testRenderBlockContentParagraph() {
         let paragraph = RenderBlockContent.paragraph(.init(inlineContent: [.text("hello, world!")])).capitalizeFirstWord
@@ -84,6 +84,11 @@ class RenderBlockContent_CapitalizationTests: XCTestCase {
     func testRenderBlockContentSmall() {
         let small = RenderBlockContent.small(.init(inlineContent: [.text("hello, world!")])).capitalizeFirstWord
         XCTAssertEqual("Hello, world!", small.rawIndexableTextContent(references: [:]))
+    }
+    
+    func testRenderBlockContentHeading() {
+        let heading = RenderBlockContent.heading(.init(level: 1, text: "hello, world!", anchor: "hi")).capitalizeFirstWord
+        XCTAssertEqual("Hello, world!", heading.rawIndexableTextContent(references: [:]))
     }
     
     func testRenderBlockContentUnorderedList() {
