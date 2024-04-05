@@ -139,7 +139,7 @@ symbol paths in either source language. For example, consider a `Sloth`
 class with `@objc` attributes:
 
 ```swift
-@objc public class Sloth: NSObject {
+@objc(TLASloth) public class Sloth: NSObject {
     @objc public init(name: String, color: Color, power: Power) {
         self.name = name
         self.color = color
@@ -148,8 +148,7 @@ class with `@objc` attributes:
 }
 ```
 
-A symbol link to the Sloth initializer can be written using the symbol 
-path in either source language.
+You can write a symbol link to the Sloth initializer using the symbol path in either source language.
 
 **Swift name**
 
@@ -160,7 +159,7 @@ path in either source language.
 **Objective-C name**
 
 ```markdown
-``Sloth/initWithName:color:power:``
+``TLASloth/initWithName:color:power:``
 ```
 
 ### Navigate to an Article
