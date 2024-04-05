@@ -22,8 +22,7 @@ import Foundation
 /// Should you need a file system with a different storage, create your own
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
-@_spi(FileManagerProtocol)
-public protocol FileManagerProtocol {
+package protocol FileManagerProtocol {
     
     /// Returns the data content of a file at the given path, if it exists.
     func contents(atPath: String) -> Data?
@@ -90,10 +89,9 @@ public protocol FileManagerProtocol {
     func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws
 }
 
-@_spi(FileManagerProtocol)
 extension FileManagerProtocol {
     /// Returns a Boolean value that indicates whether a directory exists at a specified path.
-    public func directoryExists(atPath path: String) -> Bool {
+    package func directoryExists(atPath path: String) -> Bool {
         var isDirectory = ObjCBool(booleanLiteral: false)
         let fileExistsAtPath = fileExists(atPath: path, isDirectory: &isDirectory)
         return fileExistsAtPath && isDirectory.boolValue
@@ -102,19 +100,18 @@ extension FileManagerProtocol {
 
 /// Add compliance to `FileManagerProtocol` to `FileManager`,
 /// most of the methods are already implemented in Foundation.
-@_spi(FileManagerProtocol)
 extension FileManager: FileManagerProtocol {
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
-    public func contents(of url: URL) throws -> Data {
+    package func contents(of url: URL) throws -> Data {
         return try Data(contentsOf: url)
     }
     
     // This method doesn't exist on `FileManager`. There is a similar looking method but it doesn't provide information about potential errors.
-    public func createFile(at location: URL, contents: Data) throws {
+    package func createFile(at location: URL, contents: Data) throws {
         try contents.write(to: location, options: .atomic)
     }
     
-    public func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
+    package func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
         if let writingOptions {
             try contents.write(to: location, options: writingOptions)
         } else {
@@ -123,7 +120,7 @@ extension FileManager: FileManagerProtocol {
     }
     
     // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol/
-    public func uniqueTemporaryDirectory() -> URL {
+    package func uniqueTemporaryDirectory() -> URL {
         temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
     }
 }
