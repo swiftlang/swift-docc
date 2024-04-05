@@ -91,9 +91,9 @@ By default, each table cell is one column wide and one row tall. To span a table
 
 > Tip: You might find it easier to discern the structure of your table from its markup if you use trailing pipes consistently when spanning cells.  
 
-A spanning cells determines its horizontal alignment from the left-most column that it spans. Going from left to right in the example below:
+A spanning cell determines its horizontal alignment from the left-most column that it spans. Going from left to right in the example below:
 
- - Cells "One" and "Five" uses leading alignment because they both span the first column
+ - Cells "One" and "Five" use leading alignment because they both span the first column
  - Cell "Four" uses center alignment because it spans the second column
  - Cell "Two" uses trailing alignment because it spans the third column
 
