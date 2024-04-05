@@ -101,7 +101,7 @@ A spanning cells determines its horizontal alignment from the left-most column t
   @Column {
     ```md
     Leading | Center | Trailing |
-    ------: | :----: | :------- |
+    :------ | :----: | -------: |
     One             || Two      |
     Three   | Four             ||
     Five                      |||
