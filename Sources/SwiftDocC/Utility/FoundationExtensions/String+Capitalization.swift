@@ -17,7 +17,10 @@ extension StringProtocol {
     /// The first word can also contain punctuation (e.g. a period, comma, hyphen, semi-colon, colon).
     func capitalizeFirstWord() -> String {
         
-        let firstWord = self.prefix(while: { !$0.isWhitespace })
+        let firstWord = self.prefix(while: { !$0.isWhitespace && !$0.isNewline })
+        
+//        let firstWord = self.components(separatedBy: " ").first ?? ""
+        
         let firstWordCharacters = CharacterSet.init(charactersIn: String(firstWord))
         
         let acceptableCharacters = CharacterSet.lowercaseLetters.union(CharacterSet.punctuationCharacters)
