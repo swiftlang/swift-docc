@@ -14,7 +14,7 @@ import SymbolKit
 import SwiftDocCTestUtilities
 @_spi(ExternalLinks) @testable import SwiftDocC
 
-class ListItemExtractorTests: XCTestCase {
+class AutoCapitalizationTests: XCTestCase {
     
     class TestCapitalizationResolver: ExternalDocumentationSource {
         var bundleIdentifier = "com.external.testbundle"
