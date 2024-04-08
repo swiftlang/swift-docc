@@ -16,12 +16,13 @@ extension StringProtocol {
     /// This auto-capitalization only occurs if the first word is all lowercase and contains only characters A-Z.
     /// The first word can also contain punctuation (e.g. a period, comma, hyphen, semi-colon, colon).
     func capitalizeFirstWord() -> String {
-        let firstWord = self.components(separatedBy: " ").first ?? ""
         
-        let firstWordNoPunctuation = firstWord.components(separatedBy: CharacterSet.punctuationCharacters).joined()
-        let firstWordNoLowerCaseOrPunctuation = firstWordNoPunctuation.components(separatedBy: CharacterSet.lowercaseLetters).joined()
+        let firstWord = self.prefix(while: { !$0.isWhitespace })
+        let firstWordCharacters = CharacterSet.init(charactersIn: String(firstWord))
         
-        guard firstWordNoLowerCaseOrPunctuation.isEmpty else {
+        let acceptableCharacters = CharacterSet.lowercaseLetters.union(CharacterSet.punctuationCharacters)
+        
+        guard firstWordCharacters.isSubset(of: acceptableCharacters) else {
             return "\(self)"
         }
         
