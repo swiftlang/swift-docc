@@ -18,10 +18,10 @@ extension String {
     func capitalizeFirstWord() -> String {
         
         guard !self.isEmpty else { return self }
-                
-//        let firstWord = self.components(separatedBy: " ").first ?? ""
         
-        let firstWord = self.prefix(while: { !$0.isWhitespace && !$0.isNewline })
+        let selfTrimmedWhitespace = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        let firstWord = selfTrimmedWhitespace.prefix(while: { !$0.isWhitespace && !$0.isNewline })
         
         guard firstWord.count > 0 else { return self }
         
@@ -33,9 +33,9 @@ extension String {
             return self
         }
         
-//        return String(firstWord).uppercased() + String
+        let firstWordArray = Array(String(firstWord))
+        let returnFirstWordArray = firstWordArray[0].uppercased() + selfTrimmedWhitespace.dropFirst()
         
-//        return firstWordCharacters // TODO: FIGURE OUT
-        return (self.first?.uppercased() ?? "") + self.dropFirst()
+        return String(returnFirstWordArray)
     }
 }
