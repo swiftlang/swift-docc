@@ -11,27 +11,27 @@
 /// For auto capitalizing the first letter of a sentence following a colon (e.g. asides, sections such as parameters, returns).
 protocol AutoCapitalizable {
     
-    /// Any type that conforms to this protocol needs to have this property.
-    var capitalizeFirstWord: Self {
+    /// Any type that conforms to the AutoCapitalizable protocol will have the first letter of the first word capitalized (if applicable).
+    var withFirstWordCapitalized: Self {
         get
     }
     
 }
 
 extension AutoCapitalizable {
-    var capitalizeFirstWord: Self { return self }
+    var withFirstWordCapitalized: Self { return self }
 }
 
 extension RenderInlineContent: AutoCapitalizable {
     /// Capitalize the first word for normal text content, as well as content that has emphasis or strong applied.
-    var capitalizeFirstWord: Self {
+    var withFirstWordCapitalized: Self {
         switch self {
         case .text(let text):
             return .text(text.capitalizeFirstWord())
         case .emphasis(inlineContent: let embeddedContent):
-            return .emphasis(inlineContent: [embeddedContent[0].capitalizeFirstWord])
+            return .emphasis(inlineContent: [embeddedContent[0].withFirstWordCapitalized] + embeddedContent[1...])
         case .strong(inlineContent: let embeddedContent):
-            return .strong(inlineContent: [embeddedContent[0].capitalizeFirstWord])
+            return .strong(inlineContent: [embeddedContent[0].withFirstWordCapitalized] + embeddedContent[1...])
         default:
             return self
         }
@@ -41,14 +41,14 @@ extension RenderInlineContent: AutoCapitalizable {
 
 extension RenderBlockContent: AutoCapitalizable {
     /// Capitalize the first word for paragraphs, asides, headings, and small content.
-    var capitalizeFirstWord: Self {
+    var withFirstWordCapitalized: Self {
         switch self {
         case .paragraph(let paragraph):
-            return .paragraph(paragraph.capitalizeFirstWord)
+            return .paragraph(paragraph.withFirstWordCapitalized)
         case .aside(let aside):
-            return .aside(aside.capitalizeFirstWord)
+            return .aside(aside.withFirstWordCapitalized)
         case .small(let small):
-            return .small(small.capitalizeFirstWord)
+            return .small(small.withFirstWordCapitalized)
         case .heading(let heading):
             return .heading(.init(level: heading.level, text: heading.text.capitalizeFirstWord(), anchor: heading.anchor))
         default:
@@ -58,22 +58,22 @@ extension RenderBlockContent: AutoCapitalizable {
 }
 
 extension RenderBlockContent.Paragraph: AutoCapitalizable {
-    var capitalizeFirstWord: RenderBlockContent.Paragraph {
-        let inlineContent = [self.inlineContent[0].capitalizeFirstWord] + self.inlineContent[1...]
+    var withFirstWordCapitalized: RenderBlockContent.Paragraph {
+        let inlineContent = [self.inlineContent[0].withFirstWordCapitalized] + self.inlineContent[1...]
         return .init(inlineContent: inlineContent)
     }
 }
 
 extension RenderBlockContent.Aside: AutoCapitalizable {
-    var capitalizeFirstWord: RenderBlockContent.Aside {
-        let content = [self.content[0].capitalizeFirstWord] + self.content[1...]
+    var withFirstWordCapitalized: RenderBlockContent.Aside {
+        let content = [self.content[0].withFirstWordCapitalized] + self.content[1...]
         return .init(style: self.style, content: content)
     }
 }
 
 extension RenderBlockContent.Small: AutoCapitalizable {
-    var capitalizeFirstWord: RenderBlockContent.Small {
-        let inlineContent = [self.inlineContent[0].capitalizeFirstWord] + self.inlineContent[1...]
+    var withFirstWordCapitalized: RenderBlockContent.Small {
+        let inlineContent = [self.inlineContent[0].withFirstWordCapitalized] + self.inlineContent[1...]
         return .init(inlineContent: inlineContent)
     }
 }

@@ -10,25 +10,32 @@
 
 import Foundation
 
-extension StringProtocol {
+extension String {
     
     /// Returns the string with the first letter capitalized.
-    /// This auto-capitalization only occurs if the first word is all lowercase and contains only characters A-Z.
+    /// This auto-capitalization only occurs if the first word is all lowercase and contains only lowercase letters.
     /// The first word can also contain punctuation (e.g. a period, comma, hyphen, semi-colon, colon).
     func capitalizeFirstWord() -> String {
         
+        guard !self.isEmpty else { return self }
+                
+//        let firstWord = self.components(separatedBy: " ").first ?? ""
+        
         let firstWord = self.prefix(while: { !$0.isWhitespace && !$0.isNewline })
         
-//        let firstWord = self.components(separatedBy: " ").first ?? ""
+        guard firstWord.count > 0 else { return self }
         
         let firstWordCharacters = CharacterSet.init(charactersIn: String(firstWord))
         
         let acceptableCharacters = CharacterSet.lowercaseLetters.union(CharacterSet.punctuationCharacters)
         
         guard firstWordCharacters.isSubset(of: acceptableCharacters) else {
-            return "\(self)"
+            return self
         }
         
+//        return String(firstWord).uppercased() + String
+        
+//        return firstWordCharacters // TODO: FIGURE OUT
         return (self.first?.uppercased() ?? "") + self.dropFirst()
     }
 }

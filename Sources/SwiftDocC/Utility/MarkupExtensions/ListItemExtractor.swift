@@ -65,12 +65,12 @@ extension Sequence<InlineMarkup> {
         guard !parameterName.isEmpty else {
             return nil
         }
+        
         let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
         
-        let remainingCapitalizedInitialText = remainingInitialText.capitalizeFirstWord()
-//        let remainingCapitalizedInitialText = remainingInitialText
-
-        var newInlineContent: [InlineMarkup] = [Text(String(remainingCapitalizedInitialText))] // todo: call capitalize first word here??
+        var newInlineContent: [InlineMarkup] = [Text(String(remainingInitialText))]
+        
+        
         while let more = iterator.next() {
             newInlineContent.append(more)
         }

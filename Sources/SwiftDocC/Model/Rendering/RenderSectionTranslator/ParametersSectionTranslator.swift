@@ -28,7 +28,10 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
                         let parameterContent = renderNodeTranslator.visitMarkupContainer(
                             MarkupContainer(parameter.contents)
                         ) as! [RenderBlockContent]
-                        return ParameterRenderSection(name: parameter.name, content: parameterContent)
+                        
+                        let capitalizedParameterContent = [parameterContent[0].withFirstWordCapitalized] + parameterContent[1...]
+                        
+                        return ParameterRenderSection(name: parameter.name, content: capitalizedParameterContent)
                     }
             )
         }
