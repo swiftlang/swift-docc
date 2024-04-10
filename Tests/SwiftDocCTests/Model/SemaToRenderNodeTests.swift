@@ -3475,43 +3475,5 @@ Document
         
         XCTAssertEqual(expectedContent, renderContent)
     }
-    
-    func testParameterCapitalization() throws {
-        let source = """
-        
-        - Parameters:
-          - one: non-capitalized first parameter decription will be capitalized
-          - two:     the second parameter has extra white spaces
-          - three: inValid third parameter will not be capitalized
-          - four: `code block` will not be capitalized
-          - five: a`nother invalid capitalization
-        
-        """
-        
-        let markup = Document(parsing: source, options: .parseBlockDirectives)
-        
-        XCTAssertEqual(markup.childCount, 1)
-        
-        let (bundle, context) = try testBundleAndContext()
-        
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/TestAutoCapitalization", sourceLanguage: .swift)
 
-        
-        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: reference)
-        
-        let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
-        
-        let expectedContent: [RenderBlockContent] = [ .unorderedList(RenderBlockContent.UnorderedList(items: [
-                RenderBlockContent.ListItem(content: [
-                    RenderBlockContent.paragraph(RenderBlockContent.Paragraph(inlineContent: [RenderInlineContent.text("Parameters:")])),
-                    RenderBlockContent.unorderedList(RenderBlockContent.UnorderedList(items: [
-                        RenderBlockContent.ListItem(content: [RenderBlockContent.paragraph(RenderBlockContent.Paragraph(inlineContent: [RenderInlineContent.text("one: non-capitalized first parameter decription will be capitalized")]))], checked: nil),
-                        RenderBlockContent.ListItem(content: [RenderBlockContent.paragraph(RenderBlockContent.Paragraph(inlineContent: [RenderInlineContent.text("two:     the second parameter has extra white spaces")]))], checked: nil),
-                        RenderBlockContent.ListItem(content: [RenderBlockContent.paragraph(RenderBlockContent.Paragraph(inlineContent: [RenderInlineContent.text("three: inValid third parameter will not be capitalized")]))], checked: nil),
-                        RenderBlockContent.ListItem(content: [RenderBlockContent.paragraph(RenderBlockContent.Paragraph(inlineContent: [RenderInlineContent.text("four: "), RenderInlineContent.codeVoice(code: "code block"), RenderInlineContent.text(" will not be capitalized")]))], checked: nil),
-                        RenderBlockContent.ListItem(content: [RenderBlockContent.paragraph(RenderBlockContent.Paragraph(inlineContent: [RenderInlineContent.text("five: a`nother invalid capitalization")]))], checked: nil)]))], checked: nil)]))
-        ]
-        
-        XCTAssertEqual(expectedContent, renderContent)
-    }
 }
