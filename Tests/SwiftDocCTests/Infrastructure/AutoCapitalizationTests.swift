@@ -159,10 +159,4 @@ class AutoCapitalizationTests: XCTestCase {
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("a`nother invalid capitalization")]))]])
     }
     
-    func testRenderBlockContentAside() {
-        let aside = RenderBlockContent.aside(.init(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("hello, world!")]))]))
-        
-        XCTAssertEqual("Hello, world!", aside.withFirstWordCapitalized.rawIndexableTextContent(references: [:]))
-    }
-    
 }

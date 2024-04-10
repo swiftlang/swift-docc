@@ -65,12 +65,9 @@ extension Sequence<InlineMarkup> {
         guard !parameterName.isEmpty else {
             return nil
         }
-        
         let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
-        
+
         var newInlineContent: [InlineMarkup] = [Text(String(remainingInitialText))]
-        
-        
         while let more = iterator.next() {
             newInlineContent.append(more)
         }
