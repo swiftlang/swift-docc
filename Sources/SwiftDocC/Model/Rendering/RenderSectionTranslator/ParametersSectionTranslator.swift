@@ -20,7 +20,9 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
         translateSectionToVariantCollection(
             documentationDataVariants: symbol.parametersSectionVariants
         ) { _, parameters in
-            guard !parameters.parameters.isEmpty else { return nil }
+            guard !(parameters.parameters.isEmpty || parameters.parameters.count < 1) else {
+                return ParameterRenderSection(name: "", content: []) as? RenderSection
+            }
             
             return ParametersRenderSection(
                 parameters: parameters.parameters
@@ -29,7 +31,14 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
                             MarkupContainer(parameter.contents)
                         ) as! [RenderBlockContent]
                         
-                        let capitalizedParameterContent = [parameterContent[0].withFirstWordCapitalized] + parameterContent[1...]
+                        guard !parameterContent.isEmpty && parameterContent.count != 0 else {
+                            return ParameterRenderSection(name: parameter.name, content: parameterContent)
+                        }
+                        
+                        var capitalizedParameterContent = [parameterContent[0].withFirstWordCapitalized]
+                        if parameters.parameters.count > 1 {
+                            capitalizedParameterContent = [parameterContent[0].withFirstWordCapitalized] + parameterContent[1...]
+                        }
                         
                         return ParameterRenderSection(name: parameter.name, content: capitalizedParameterContent)
                     }
