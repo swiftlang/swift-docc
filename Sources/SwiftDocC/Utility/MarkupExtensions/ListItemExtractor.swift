@@ -152,7 +152,8 @@ extension ListItem {
             if dropTag {
                 newText = String(text.string.dropFirst(text.string.count - trimmedText.count + tag.count).drop(while: { $0 == " " }))
             }
-            return [Text(newText.capitalizeFirstWord())] + Array(firstParagraph.inlineChildren.dropFirst(1))
+            
+            return [Text(newText)] + Array(firstParagraph.inlineChildren.dropFirst(1))
         }
 
         return nil

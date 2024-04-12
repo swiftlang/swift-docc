@@ -159,4 +159,32 @@ class AutoCapitalizationTests: XCTestCase {
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("a`nother invalid capitalization")]))]])
     }
     
+    func testReturnsCapitalization() throws {
+        let symbolGraph = makeSymbolGraph(docComment: """
+            Some symbol description.
+
+            - Returns: string, first word should have been capitalized here.
+            """)
+        
+        let url = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: symbolGraph)
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: url)
+        
+        XCTAssertEqual(context.problems.count, 0)
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let returnsSectionTranslator = ReturnsSectionTranslator()
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
+        let translatedReturns = returnsSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
+        let returnsRenderSection = translatedReturns?.defaultValue?.section as! ContentRenderSection
+        
+        XCTAssertEqual(returnsRenderSection.content, [SwiftDocC.RenderBlockContent.heading(SwiftDocC.RenderBlockContent.Heading(level: 2, text: "Return Value", anchor: Optional("return-value"))), SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("String, first word should have been capitalized here.")]))])
+    }
 }
