@@ -20,12 +20,12 @@ class String_CapitalizationTests: XCTestCase {
     
     func testAllLowerCaseWithPunctuation() {
         let testString1 = "hello, world"
-        let testString2 = "hello-world"
+        let testString2 = "twenty-one"
         let testString3 = "hello! world"
         let testString4 = "hello: world"
         let testString5 = "l'ocean world"
         XCTAssertEqual("Hello, world", testString1.capitalizeFirstWord())
-        XCTAssertEqual("Hello-world", testString2.capitalizeFirstWord())
+        XCTAssertEqual("Twenty-One", testString2.capitalizeFirstWord())
         XCTAssertEqual("Hello! world", testString3.capitalizeFirstWord())
         XCTAssertEqual("Hello: world", testString4.capitalizeFirstWord())
         XCTAssertEqual("L'ocean world", testString5.capitalizeFirstWord())
@@ -44,8 +44,8 @@ class String_CapitalizationTests: XCTestCase {
     func testWhiteSpaces() {
         let testString1 = "       has many spaces"
         let testString2 = "     has a tab"
-        XCTAssertEqual("Has many spaces", testString1.capitalizeFirstWord())
-        XCTAssertEqual("Has a tab", testString2.capitalizeFirstWord())
+        XCTAssertEqual("       Has many spaces", testString1.capitalizeFirstWord())
+        XCTAssertEqual("     Has a tab", testString2.capitalizeFirstWord())
     }
     
     

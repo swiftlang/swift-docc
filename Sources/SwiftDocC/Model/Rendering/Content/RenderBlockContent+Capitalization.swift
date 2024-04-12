@@ -59,6 +59,10 @@ extension RenderBlockContent: AutoCapitalizable {
 
 extension RenderBlockContent.Paragraph: AutoCapitalizable {
     var withFirstWordCapitalized: RenderBlockContent.Paragraph {
+        guard !self.inlineContent.isEmpty else {
+            return self
+        }
+        
         let inlineContent = [self.inlineContent[0].withFirstWordCapitalized] + self.inlineContent[1...]
         return .init(inlineContent: inlineContent)
     }
@@ -66,6 +70,10 @@ extension RenderBlockContent.Paragraph: AutoCapitalizable {
 
 extension RenderBlockContent.Aside: AutoCapitalizable {
     var withFirstWordCapitalized: RenderBlockContent.Aside {
+        guard !self.content.isEmpty else {
+            return self
+        }
+        
         let content = [self.content[0].withFirstWordCapitalized] + self.content[1...]
         return .init(style: self.style, content: content)
     }
@@ -73,6 +81,10 @@ extension RenderBlockContent.Aside: AutoCapitalizable {
 
 extension RenderBlockContent.Small: AutoCapitalizable {
     var withFirstWordCapitalized: RenderBlockContent.Small {
+        guard !self.inlineContent.isEmpty else {
+            return self
+        }
+        
         let inlineContent = [self.inlineContent[0].withFirstWordCapitalized] + self.inlineContent[1...]
         return .init(inlineContent: inlineContent)
     }

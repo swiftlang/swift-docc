@@ -19,23 +19,33 @@ extension String {
         
         guard !self.isEmpty else { return self }
         
-        let selfTrimmedWhitespace = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let firstWordStartIndex = self.firstIndex(where: { !$0.isWhitespace && !$0.isNewline }) else { return self }
         
-        let firstWord = selfTrimmedWhitespace.prefix(while: { !$0.isWhitespace && !$0.isNewline })
+        // Find where the first word starts: this is additional processing to handle white spaces before the first word.
+        let firstWord = self[firstWordStartIndex...].prefix(while: { !$0.isWhitespace && !$0.isNewline})
+        
         
         guard firstWord.count > 0 else { return self }
-        
         let firstWordCharacters = CharacterSet.init(charactersIn: String(firstWord))
-        
         let acceptableCharacters = CharacterSet.lowercaseLetters.union(CharacterSet.punctuationCharacters)
-        
         guard firstWordCharacters.isSubset(of: acceptableCharacters) else {
             return self
         }
         
-        let firstWordArray = Array(String(firstWord))
-        let returnFirstWordArray = firstWordArray[0].uppercased() + selfTrimmedWhitespace.dropFirst()
+        // Create the result string and make sure it's big enough to contain all the characters
+        var resultString = String()
+        resultString.reserveCapacity(self.count)
         
-        return String(returnFirstWordArray)
+        // Add the white spaces before the first word
+        resultString.append(contentsOf: self[..<firstWordStartIndex])
+        
+        // Add the capitalized first word (based on the locale)
+        resultString.append(contentsOf: String(firstWord).localizedCapitalized)
+        
+        // Add the rest of the string
+        let restStartIndex = self.index(firstWordStartIndex, offsetBy: firstWord.count)
+        resultString.append(contentsOf: self[restStartIndex...])
+        
+        return resultString
     }
 }

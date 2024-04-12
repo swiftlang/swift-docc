@@ -112,7 +112,7 @@ class AutoCapitalizationTests: XCTestCase {
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
         
         XCTAssertEqual(paramsRenderSection.parameters.map(\.content), [
-            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("Upper-cased first parameter description.")]))],
+            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("Upper-Cased first parameter description.")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("The second parameter has extra white spaces")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("inValid third parameter will not be capitalized")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text(""), SwiftDocC.RenderInlineContent.codeVoice(code: "code block"), SwiftDocC.RenderInlineContent.text(" will not be capitalized")]))],
@@ -152,7 +152,7 @@ class AutoCapitalizationTests: XCTestCase {
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
         
         XCTAssertEqual(paramsRenderSection.parameters.map(\.content), [
-            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("Upper-cased first parameter description.")]))],
+            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("Upper-Cased first parameter description.")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("The second parameter has extra white spaces")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("inValid third parameter will not be capitalized")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text(""), SwiftDocC.RenderInlineContent.codeVoice(code: "code block"), SwiftDocC.RenderInlineContent.text(" will not be capitalized")]))],
