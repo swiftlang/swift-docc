@@ -20,7 +20,7 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
         translateSectionToVariantCollection(
             documentationDataVariants: symbol.parametersSectionVariants
         ) { _, parameters in
-            guard !(parameters.parameters.isEmpty || parameters.parameters.count < 1) else {
+            guard !parameters.parameters.isEmpty else {
                 return ParameterRenderSection(name: "", content: []) as? RenderSection
             }
             
