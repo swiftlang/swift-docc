@@ -1318,6 +1318,20 @@ class PathHierarchyTests: XCTestCase {
         // This overloaded protocol method should be able to resolve without a suffix at all, since it doesn't conflict with anything
         let overloadedProtocolMethod = try tree.findNode(path: "/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)", onlyFindSymbols: true)
         XCTAssert(overloadedProtocolMethod.symbol?.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) == true)
+
+    }
+
+    func testAmbiguousPathsForOverloadedGroupSymbols() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
+        'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Remove '-abc123' to use overload group \n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("", 56, 63)]),
+            ])
+        }
     }
 
     func testSymbolsWithSameNameAsModule() throws {

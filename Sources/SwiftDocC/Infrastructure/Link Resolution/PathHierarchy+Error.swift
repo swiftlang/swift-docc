@@ -147,14 +147,30 @@ extension PathHierarchy.Error {
             let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
             let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             
-            let solutions: [Solution] = candidates
-                .sorted(by: collisionIsBefore)
-                .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
-                        Replacement(range: replacementRange, replacement: "-" + disambiguation)
-                    ])
-                }
-            
+            let solutions: [Solution]
+
+            // First check if any of the ambiguous symbols is an overload group.
+            // If one is (and all the others are disfavored) then suggest a single
+            // solution to remove the disambiguation from the path
+            if let overloadGroupNode = overloadGroupNodeFrom(candidates: candidates) {
+                solutions = [
+                    Solution(
+                        summary: "\(Self.replacementOperationDescription(from: "-" + disambiguations.dropFirst(), to: "")) to use overload group \n\(fullNameOfNode(overloadGroupNode).singleQuoted)",
+                        replacements: [ Replacement(range: replacementRange, replacement: "") ]
+                    )
+                ]
+
+            // Normally list all the ambiguous paths, with a replacement solution for each
+            } else {
+                solutions = candidates
+                    .sorted(by: collisionIsBefore)
+                    .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
+                        return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                            Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                        ])
+                    }
+            }
+
             return TopicReferenceResolutionErrorInfo("""
                 \(disambiguations.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
@@ -230,6 +246,20 @@ extension PathHierarchy.Error {
             return "Remove \(from.singleQuoted)"
         }
         return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
+    }
+
+    /// Find an overload group node from an array of disambiguation candidates. Only
+    /// return the overload group if all the remaining candidates are disfavored for link resolution.
+    /// - Parameters:
+    ///   - candidates: An array of candidate node and disambiguation tuples.
+    /// - Returns: The PathHierarchy node for the overload group symbol
+    func overloadGroupNodeFrom(candidates: [(node: PathHierarchy.Node, disambiguation: String)]) -> PathHierarchy.Node? {
+        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled,
+            let favoredCandidate = candidates.singleMatch({ !$0.node.specialBehaviors.contains(.disfavorInLinkCollision) }),
+            favoredCandidate.node.symbol?.isOverloadGroup ?? false else {
+            return nil
+        }
+        return favoredCandidate.node
     }
 }
 
