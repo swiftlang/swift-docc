@@ -44,8 +44,10 @@ class String_CapitalizationTests: XCTestCase {
     func testWhiteSpaces() {
         let testString1 = "       has many spaces"
         let testString2 = "     has a tab"
+        let testString3 = "         has many spaces     "
         XCTAssertEqual("       Has many spaces", testString1.capitalizeFirstWord())
         XCTAssertEqual("     Has a tab", testString2.capitalizeFirstWord())
+        XCTAssertEqual("         Has many spaces     ", testString3.capitalizeFirstWord())
     }
     
     

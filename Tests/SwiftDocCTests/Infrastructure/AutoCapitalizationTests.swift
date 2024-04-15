@@ -111,8 +111,12 @@ class AutoCapitalizationTests: XCTestCase {
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
         
+        // Different locales treat capitalization of hyphenated words differently (e.g. Upper-Cased vs Upper-cased).
+        let hyphenatedString = "upper-cased"
+        let hyphenatedCapitalizedResult = hyphenatedString.localizedCapitalized + " first parameter description."
+        
         XCTAssertEqual(paramsRenderSection.parameters.map(\.content), [
-            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("Upper-Cased first parameter description.")]))],
+            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text(hyphenatedCapitalizedResult)]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("The second parameter has extra white spaces")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("inValid third parameter will not be capitalized")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text(""), SwiftDocC.RenderInlineContent.codeVoice(code: "code block"), SwiftDocC.RenderInlineContent.text(" will not be capitalized")]))],
@@ -151,8 +155,12 @@ class AutoCapitalizationTests: XCTestCase {
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
         
+        // Different locales treat capitalization of hyphenated words differently (e.g. Upper-Cased vs Upper-cased).
+        let hyphenatedString = "upper-cased"
+        let hyphenatedCapitalizedResult = hyphenatedString.localizedCapitalized + " first parameter description."
+        
         XCTAssertEqual(paramsRenderSection.parameters.map(\.content), [
-            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("Upper-Cased first parameter description.")]))],
+            [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text(hyphenatedCapitalizedResult)]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("The second parameter has extra white spaces")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text("inValid third parameter will not be capitalized")]))],
             [SwiftDocC.RenderBlockContent.paragraph(SwiftDocC.RenderBlockContent.Paragraph(inlineContent: [SwiftDocC.RenderInlineContent.text(""), SwiftDocC.RenderInlineContent.codeVoice(code: "code block"), SwiftDocC.RenderInlineContent.text(" will not be capitalized")]))],
