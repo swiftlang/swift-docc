@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,7 +28,9 @@ struct ReturnsSectionTranslator: RenderSectionTranslator {
                 return nil
             }
             
-            return ContentRenderSection(kind: .content, content: returnsContent, heading: "Return Value")
+            let capitalizedReturnsContent = [returnsContent[0].withFirstWordCapitalized] + returnsContent[1...]
+            
+            return ContentRenderSection(kind: .content, content: capitalizedReturnsContent, heading: "Return Value")
         }
     }
 }
