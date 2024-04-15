@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,6 +27,8 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                 return nil
             }
             
+            let capitalizedDiscussionContent = [discussionContent[0].withFirstWordCapitalized] + discussionContent[1...]
+            
             let title: String?
             if let first = discussionContent.first, case RenderBlockContent.heading = first {
                 // There's already an authored heading. Don't add another heading.
@@ -42,7 +44,7 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                 }
             }
                 
-            return ContentRenderSection(kind: .content, content: discussionContent, heading: title)
+            return ContentRenderSection(kind: .content, content: capitalizedDiscussionContent, heading: title)
         }
     }
 }
