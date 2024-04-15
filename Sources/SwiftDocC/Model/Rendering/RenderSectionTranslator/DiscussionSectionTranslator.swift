@@ -27,7 +27,7 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                 return nil
             }
             
-            let capitalizedDiscussionContent = [discussionContent[0].withFirstWordCapitalized] + discussionContent[1...]
+            let capitalizedDiscussionContent = [discussionContent[0].capitalizeFirstWord()] + discussionContent[1...]
             
             let title: String?
             if let first = discussionContent.first, case RenderBlockContent.heading = first {

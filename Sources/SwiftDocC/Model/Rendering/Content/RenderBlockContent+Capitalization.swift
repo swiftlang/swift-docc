@@ -12,26 +12,24 @@
 protocol AutoCapitalizable {
     
     /// Any type that conforms to the AutoCapitalizable protocol will have the first letter of the first word capitalized (if applicable).
-    var withFirstWordCapitalized: Self {
-        get
-    }
+    func capitalizeFirstWord() -> Self
     
 }
 
 extension AutoCapitalizable {
-    var withFirstWordCapitalized: Self { return self }
+    func capitalizeFirstWord() -> Self { return self }
 }
 
 extension RenderInlineContent: AutoCapitalizable {
     /// Capitalize the first word for normal text content, as well as content that has emphasis or strong applied.
-    var withFirstWordCapitalized: Self {
+    func capitalizeFirstWord() -> Self {
         switch self {
         case .text(let text):
             return .text(text.capitalizeFirstWord())
         case .emphasis(inlineContent: let embeddedContent):
-            return .emphasis(inlineContent: [embeddedContent[0].withFirstWordCapitalized] + embeddedContent[1...])
+            return .emphasis(inlineContent: [embeddedContent[0].capitalizeFirstWord()] + embeddedContent[1...])
         case .strong(inlineContent: let embeddedContent):
-            return .strong(inlineContent: [embeddedContent[0].withFirstWordCapitalized] + embeddedContent[1...])
+            return .strong(inlineContent: [embeddedContent[0].capitalizeFirstWord()] + embeddedContent[1...])
         default:
             return self
         }
@@ -41,14 +39,14 @@ extension RenderInlineContent: AutoCapitalizable {
 
 extension RenderBlockContent: AutoCapitalizable {
     /// Capitalize the first word for paragraphs, asides, headings, and small content.
-    var withFirstWordCapitalized: Self {
+    func capitalizeFirstWord() -> Self {
         switch self {
         case .paragraph(let paragraph):
-            return .paragraph(paragraph.withFirstWordCapitalized)
+            return .paragraph(paragraph.capitalizeFirstWord())
         case .aside(let aside):
-            return .aside(aside.withFirstWordCapitalized)
+            return .aside(aside.capitalizeFirstWord())
         case .small(let small):
-            return .small(small.withFirstWordCapitalized)
+            return .small(small.capitalizeFirstWord())
         case .heading(let heading):
             return .heading(.init(level: heading.level, text: heading.text.capitalizeFirstWord(), anchor: heading.anchor))
         default:
@@ -58,34 +56,34 @@ extension RenderBlockContent: AutoCapitalizable {
 }
 
 extension RenderBlockContent.Paragraph: AutoCapitalizable {
-    var withFirstWordCapitalized: RenderBlockContent.Paragraph {
+    func capitalizeFirstWord() -> RenderBlockContent.Paragraph {
         guard !self.inlineContent.isEmpty else {
             return self
         }
         
-        let inlineContent = [self.inlineContent[0].withFirstWordCapitalized] + self.inlineContent[1...]
+        let inlineContent = [self.inlineContent[0].capitalizeFirstWord()] + self.inlineContent[1...]
         return .init(inlineContent: inlineContent)
     }
 }
 
 extension RenderBlockContent.Aside: AutoCapitalizable {
-    var withFirstWordCapitalized: RenderBlockContent.Aside {
+    func capitalizeFirstWord() -> RenderBlockContent.Aside {
         guard !self.content.isEmpty else {
             return self
         }
         
-        let content = [self.content[0].withFirstWordCapitalized] + self.content[1...]
+        let content = [self.content[0].capitalizeFirstWord()] + self.content[1...]
         return .init(style: self.style, content: content)
     }
 }
 
 extension RenderBlockContent.Small: AutoCapitalizable {
-    var withFirstWordCapitalized: RenderBlockContent.Small {
+    func capitalizeFirstWord() -> RenderBlockContent.Small {
         guard !self.inlineContent.isEmpty else {
             return self
         }
         
-        let inlineContent = [self.inlineContent[0].withFirstWordCapitalized] + self.inlineContent[1...]
+        let inlineContent = [self.inlineContent[0].capitalizeFirstWord()] + self.inlineContent[1...]
         return .init(inlineContent: inlineContent)
     }
 }
