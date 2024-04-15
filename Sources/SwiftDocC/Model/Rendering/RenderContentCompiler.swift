@@ -36,8 +36,13 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
         let aside = Aside(blockQuote)
-        return [RenderBlockContent.aside(.init(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
-                                               content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]))]
+        
+        let newAside = RenderBlockContent.Aside(
+            style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
+            content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]
+        )
+            
+        return [RenderBlockContent.aside(newAside.withFirstWordCapitalized)]
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
