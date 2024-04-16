@@ -157,9 +157,18 @@ struct PathHierarchy {
                 if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
                     targetNode.add(symbolChild: sourceNode)
                     topLevelCandidates.removeValue(forKey: relationship.source)
-                } else if let targetNodes = allNodes[relationship.target] {
-                    for targetNode in targetNodes where targetNode.name == expectedContainerName {
+                } else if var targetNodes = allNodes[relationship.target] {
+                    // Only match nodes that have the expected name
+                    targetNodes.removeAll(where: { $0.name != expectedContainerName })
+                    
+                    // If the source was added in an extension symbol graph file, then its target node won't be found in the same symbol graph file (in `nodes`).
+                    if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == language?.id }) {
+                        // Prefer the symbol that matches the relationship's language.
                         targetNode.add(symbolChild: sourceNode)
+                    } else {
+                        for targetNode in targetNodes {
+                            targetNode.add(symbolChild: sourceNode)
+                        }
                     }
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else {
