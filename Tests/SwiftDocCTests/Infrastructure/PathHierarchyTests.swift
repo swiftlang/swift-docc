@@ -1787,6 +1787,47 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/MemberName")
     }
     
+    func testLanguageRepresentationsWithDifferentCapitalization() throws {
+        let containerID = "some-container-symbol-id"
+        let memberID = "some-member-symbol-id"
+        
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            Folder(name: "clang", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName", 
+                    symbols: [
+                        (containerID, .objectiveC, ["ContainerName"]),
+                        (memberID, .objectiveC, ["ContainerName", "MemberName"]), // member starts with uppercase "M"
+                    ],
+                    relationships: [
+                        .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                    ]
+                )),
+            ]),
+            
+            Folder(name: "swift", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        (containerID, .swift, ["ContainerName"]),
+                        (memberID, .swift, ["ContainerName", "memberName"]), // member starts with lowercase "m"
+                    ],
+                    relationships: [
+                        .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
+                    ]
+                )),
+            ])
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, _, context) = try loadBundle(from: tempURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths[containerID], "/ModuleName/ContainerName")
+        XCTAssertEqual(paths[memberID], "/ModuleName/ContainerName/memberName") // The Swift spelling is preferred
+    }
+    
     func testMixedLanguageSymbolAndItsExtendingModuleWithDifferentContainerNames() throws {
         let containerID = "some-container-symbol-id"
         let memberID = "some-member-symbol-id"

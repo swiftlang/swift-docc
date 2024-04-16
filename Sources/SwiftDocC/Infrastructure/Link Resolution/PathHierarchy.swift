@@ -614,8 +614,21 @@ extension PathHierarchy.DisambiguationContainer {
     /// Combines the data from this tree with another tree to form a new, merged disambiguation tree.
     func merge(with other: Self) -> Self {
         var newStorage = storage
-        for element in other.storage where !storage.contains(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
-            newStorage.append(element)
+        for element in other.storage {
+            if let existingIndex = storage.firstIndex(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
+                // If the same element exist in both containers, prefer to keep the Swift counterpart of it.
+                let existing = storage[existingIndex]
+                if existing.node.counterpart === element.node,
+                   element.node.symbol?.identifier.interfaceLanguage == "swift"
+                {
+                    // The "other" element is the Swift counterpart. Replace the existing element with it.
+                    newStorage[existingIndex] = element
+                } else {
+                    // The existing element is the Swift counterpart. Keep it without adding the counterpart element.
+                }
+            } else {
+                newStorage.append(element)
+            }
         }
         return .init(storage: newStorage)
     }
