@@ -1628,16 +1628,51 @@ Root
             for: "OverloadedSymbols",
             bundleIdentifier: "com.shapes.ShapeKit")
 
-        let protocolID = try XCTUnwrap(navigatorIndex.id(for: "/documentation/shapekit/overloadedprotocol", with: .swift))
-        let protocolNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { $0.id == protocolID })
-        XCTAssertEqual(protocolNode.children.map(\.item.title), [
-            "Instance Methods",
-            "func fourthTestMemberName(test:)",
-        ])
-
-        let overloadGroupID = try XCTUnwrap(navigatorIndex.id(for: "/documentation/shapekit/overloadedprotocol/fourthtestmembername(test:)-9b6be", with: .swift))
-        let overloadGroupNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { $0.id == overloadGroupID })
-        XCTAssert(overloadGroupNode.children.isEmpty)
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸Swift
+              ┗╸ShapeKit
+                ┣╸Protocols
+                ┣╸OverloadedProtocol
+                ┃ ┣╸Instance Methods
+                ┃ ┗╸func fourthTestMemberName(test:)
+                ┣╸Structures
+                ┣╸OverloadedByCaseStruct
+                ┃ ┣╸Instance Properties
+                ┃ ┣╸let ThirdTestMemberName: Int
+                ┃ ┣╸let thirdTestMemberNamE: Int
+                ┃ ┣╸let thirdTestMemberName: Int
+                ┃ ┗╸let thirdtestMemberName: Int
+                ┣╸OverloadedParentStruct
+                ┃ ┣╸Type Properties
+                ┃ ┗╸static let fifthTestMember: Int
+                ┣╸OverloadedStruct
+                ┃ ┣╸Instance Properties
+                ┃ ┣╸let secondTestMemberName: Int
+                ┃ ┣╸Type Properties
+                ┃ ┗╸static let secondTestMemberName: Int
+                ┣╸RegularParent
+                ┃ ┣╸Instance Properties
+                ┃ ┣╸let firstMember: Int
+                ┃ ┣╸Instance Methods
+                ┃ ┣╸func secondMember(first: Int, second: String)
+                ┃ ┣╸Type Properties
+                ┃ ┣╸static let thirdMember: Int
+                ┃ ┣╸Enumerations
+                ┃ ┗╸RegularParent.FourthMember
+                ┣╸overloadedparentstruct
+                ┃ ┣╸Instance Properties
+                ┃ ┗╸let fifthTestMember: Int
+                ┣╸Enumerations
+                ┗╸OverloadedEnum
+                  ┣╸Enumeration Cases
+                  ┣╸case firstTestMemberName(String)
+                  ┣╸Instance Methods
+                  ┗╸func firstTestMemberName(_:)
+            """
+        )
     }
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {
