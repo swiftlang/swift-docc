@@ -475,7 +475,7 @@ private func == (lhs: (some StringProtocol)?, rhs: some StringProtocol) -> Bool 
      return lhs == rhs
  }
 
-package extension Sequence {
+internal extension Sequence {
     /// Returns the only element of the sequence that satisfies the given predicate.
     /// - Parameters:
     ///   - predicate: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element is a match.
