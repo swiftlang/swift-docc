@@ -4597,7 +4597,54 @@ let expected = """
             }
         }
     }
-    
+
+    func testContextRecognizesOverloadsFromPlistFlag() throws {
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                )),
+                DataFile(name: "Info.plist", data: Data("""
+                <plist version="1.0">
+                <dict>
+                    <key>CDExperimentalFeatureFlags</key>
+                    <dict>
+                        <key>ExperimentalOverloadedSymbolPresentation</key>
+                        <true/>
+                    </dict>
+                </dict>
+                </plist>
+                """.utf8))
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        for kindID in overloadableKindIDs {
+            switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName-\(kindID.identifier)"))), in: moduleReference, fromSymbolLink: true) {
+            case let .failure(_, errorMessage):
+                XCTFail("Could not resolve overload group page for \(kindID.identifier). Error message: \(errorMessage)")
+                continue
+            case let .success(overloadGroupReference):
+                let overloadGroupNode = try context.entity(with: overloadGroupReference)
+                let overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+                let overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+                XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+            }
+        }
+    }
+
     // The overload behavior doesn't apply to symbol kinds that don't support overloading
     func testContextDoesNotRecognizeNonOverloadableSymbolKinds() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)

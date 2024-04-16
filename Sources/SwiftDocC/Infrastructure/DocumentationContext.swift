@@ -1182,7 +1182,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             }
                         }
 
-                        addOverloadGroupReferences(overloadGroups: overloadGroups)
+                        addOverloadGroupReferences(from: bundle, overloadGroups: overloadGroups)
                     }
                     
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -2348,8 +2348,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
-        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
+    private func addOverloadGroupReferences(from bundle: DocumentationBundle, overloadGroups: [String: [String]]) {
+        guard bundle.info.computedFeatureFlags.experimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         

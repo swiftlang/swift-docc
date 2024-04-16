@@ -32,7 +32,19 @@ extension DocumentationBundle {
         
         /// The default kind for the various modules in the bundle.
         public var defaultModuleKind: String?
-        
+
+        /// The parsed feature flags that were set for this bundle.
+        public var featureFlags: FeatureFlags?
+
+        /// A computed ``FeatureFlags`` that defers to a default-initialized instance in case this
+        /// bundle didn't specify any feature flags.
+        ///
+        /// This is useful to fall back to the global ``SwiftDocC/FeatureFlags`` set via the
+        /// command-line when determining whether a feature flag is set.
+        public var computedFeatureFlags: FeatureFlags {
+            self.featureFlags ?? FeatureFlags()
+        }
+
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
@@ -43,7 +55,8 @@ extension DocumentationBundle {
             case defaultCodeListingLanguage = "CDDefaultCodeListingLanguage"
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
-            
+            case featureFlags = "CDExperimentalFeatureFlags"
+
             var argumentName: String? {
                 switch self {
                 case .displayName:
@@ -56,7 +69,7 @@ extension DocumentationBundle {
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
                     return "--fallback-default-module-kind"
-                case .defaultAvailability:
+                case .defaultAvailability, .featureFlags:
                     return nil
                 }
             }
@@ -93,7 +106,8 @@ extension DocumentationBundle {
             version: String?,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
-            defaultModuleKind: String?
+            defaultModuleKind: String?,
+            featureFlags: FeatureFlags?
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -101,6 +115,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultAvailability = defaultAvailability
             self.defaultModuleKind = defaultModuleKind
+            self.featureFlags = featureFlags
         }
         
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
@@ -231,6 +246,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
+            self.featureFlags = try decodeOrFallbackIfPresent(FeatureFlags.self, with: .featureFlags)
         }
         
         init(
@@ -271,6 +287,7 @@ extension BundleDiscoveryOptions {
         fallbackDefaultCodeListingLanguage: String? = nil,
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
+        fallbackFeatureFlags: DocumentationBundle.Info.FeatureFlags? = nil,
         additionalSymbolGraphFiles: [URL] = []
     ) {
         // Iterate over all possible coding keys with a switch
@@ -294,6 +311,8 @@ extension BundleDiscoveryOptions {
                 value = fallbackDefaultAvailability
             case .defaultModuleKind:
                 value = fallbackDefaultModuleKind
+            case .featureFlags:
+                value = fallbackFeatureFlags
             }
             
             guard let unwrappedValue = value else {

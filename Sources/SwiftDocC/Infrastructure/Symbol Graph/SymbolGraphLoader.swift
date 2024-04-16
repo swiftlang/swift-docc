@@ -78,7 +78,7 @@ struct SymbolGraphLoader {
                 
                 configureSymbolGraph?(&symbolGraph)
 
-                if FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled {
+                if bundle.info.computedFeatureFlags.experimentalOverloadedSymbolPresentationEnabled {
                     symbolGraph.createOverloadGroupSymbols()
                 }
 
