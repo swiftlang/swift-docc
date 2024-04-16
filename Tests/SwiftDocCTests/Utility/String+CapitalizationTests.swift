@@ -15,7 +15,7 @@ class String_CapitalizationTests: XCTestCase {
     
     func testAllLowerCase() {
         let testString = "hello world"
-        XCTAssertEqual("Hello world", testString.capitalizeFirstWord())
+        XCTAssertEqual("Hello world", testString.capitalizingFirstWord())
     }
     
     func testAllLowerCaseWithPunctuation() {
@@ -24,30 +24,30 @@ class String_CapitalizationTests: XCTestCase {
         let testString3 = "hello! world"
         let testString4 = "hello: world"
         let testString5 = "l'ocean world"
-        XCTAssertEqual("Hello, world", testString1.capitalizeFirstWord())
-        XCTAssertEqual("Twenty-One", testString2.capitalizeFirstWord())
-        XCTAssertEqual("Hello! world", testString3.capitalizeFirstWord())
-        XCTAssertEqual("Hello: world", testString4.capitalizeFirstWord())
-        XCTAssertEqual("L'ocean world", testString5.capitalizeFirstWord())
+        XCTAssertEqual("Hello, world", testString1.capitalizingFirstWord())
+        XCTAssertEqual("Twenty-One", testString2.capitalizingFirstWord())
+        XCTAssertEqual("Hello! world", testString3.capitalizingFirstWord())
+        XCTAssertEqual("Hello: world", testString4.capitalizingFirstWord())
+        XCTAssertEqual("L'ocean world", testString5.capitalizingFirstWord())
     }
     
     func testInvalidPunctuation() {
         let testString = "h`ello world"
-        XCTAssertEqual(testString, testString.capitalizeFirstWord())
+        XCTAssertEqual(testString, testString.capitalizingFirstWord())
     }
     
     func testHasUppercase() {
         let testString = "iPad iOS visionOS"
-        XCTAssertEqual(testString, testString.capitalizeFirstWord())
+        XCTAssertEqual(testString, testString.capitalizingFirstWord())
     }
     
     func testWhiteSpaces() {
         let testString1 = "       has many spaces"
         let testString2 = "     has a tab"
         let testString3 = "         has many spaces     "
-        XCTAssertEqual("       Has many spaces", testString1.capitalizeFirstWord())
-        XCTAssertEqual("     Has a tab", testString2.capitalizeFirstWord())
-        XCTAssertEqual("         Has many spaces     ", testString3.capitalizeFirstWord())
+        XCTAssertEqual("       Has many spaces", testString1.capitalizingFirstWord())
+        XCTAssertEqual("     Has a tab", testString2.capitalizingFirstWord())
+        XCTAssertEqual("         Has many spaces     ", testString3.capitalizingFirstWord())
     }
     
     
@@ -59,13 +59,13 @@ class String_CapitalizationTests: XCTestCase {
         let testString5 = "牛奶"
         let testString6 = "i don't like 牛奶"
         let testString7 = "牛奶 is tasty"
-        XCTAssertEqual("L'amérique du nord", testString1.capitalizeFirstWord())
-        XCTAssertEqual("Ça va?", testString2.capitalizeFirstWord())
-        XCTAssertEqual("À", testString3.capitalizeFirstWord())
-        XCTAssertEqual("チーズ", testString4.capitalizeFirstWord())
-        XCTAssertEqual("牛奶", testString5.capitalizeFirstWord())
-        XCTAssertEqual("I don't like 牛奶", testString6.capitalizeFirstWord())
-        XCTAssertEqual("牛奶 is tasty", testString7.capitalizeFirstWord())
+        XCTAssertEqual("L'amérique du nord", testString1.capitalizingFirstWord())
+        XCTAssertEqual("Ça va?", testString2.capitalizingFirstWord())
+        XCTAssertEqual("À", testString3.capitalizingFirstWord())
+        XCTAssertEqual("チーズ", testString4.capitalizingFirstWord())
+        XCTAssertEqual("牛奶", testString5.capitalizingFirstWord())
+        XCTAssertEqual("I don't like 牛奶", testString6.capitalizingFirstWord())
+        XCTAssertEqual("牛奶 is tasty", testString7.capitalizingFirstWord())
     }
     
 }

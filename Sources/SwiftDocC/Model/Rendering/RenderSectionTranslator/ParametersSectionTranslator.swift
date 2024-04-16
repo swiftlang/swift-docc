@@ -33,9 +33,7 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
                             return ParameterRenderSection(name: parameter.name, content: parameterContent)
                         }
                         
-                        let capitalizedParameterContent = [parameterContent[0].withFirstWordCapitalized] + parameterContent[1...]
-                        
-                        return ParameterRenderSection(name: parameter.name, content: capitalizedParameterContent)
+                        return ParameterRenderSection(name: parameter.name, content: parameterContent.capitalizingFirstWord())
                     }
             )
         }
