@@ -294,8 +294,9 @@ struct PathHierarchy {
                     assert(element.node.parent === node, {
                         func describe(_ node: Node?) -> String {
                             guard let node else { return "<nil>" }
-                            guard let identifier = node.symbol?.identifier else { return node.name }
-                            return "\(identifier.precise) (\(identifier.interfaceLanguage))"
+                            guard let symbol = node.symbol else { return node.name }
+                            let id = symbol.identifier
+                            return "\(id.precise) (\(id.interfaceLanguage).\(symbol.kind.identifier.identifier)) [\(symbol.pathComponents.joined(separator: "/"))]"
                         }
                         return """
                             Every child node should point back to its parent so that the tree can be traversed both up and down without any dead-ends. \
