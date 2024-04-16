@@ -100,7 +100,7 @@ class AutoCapitalizationTests: XCTestCase {
         XCTAssertEqual(context.problems.count, 0)
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
-        var node = try context.entity(with: reference)
+        let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])

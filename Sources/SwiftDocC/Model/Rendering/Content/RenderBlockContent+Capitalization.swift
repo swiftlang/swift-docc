@@ -8,36 +8,41 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-/// For auto capitalizing the first letter of a sentence following a colon (e.g. asides, sections such as parameters, returns).
-protocol AutoCapitalizable {
-    
-    /// Any type that conforms to the AutoCapitalizable protocol will have the first letter of the first word capitalized (if applicable).
-    func capitalizeFirstWord() -> Self
-    
-}
 
-extension AutoCapitalizable {
-    func capitalizeFirstWord() -> Self { return self }
-}
-
-extension RenderInlineContent: AutoCapitalizable {
+extension RenderInlineContent {
     /// Capitalize the first word for normal text content, as well as content that has emphasis or strong applied.
     func capitalizeFirstWord() -> Self {
         switch self {
         case .text(let text):
             return .text(text.capitalizeFirstWord())
         case .emphasis(inlineContent: let embeddedContent):
-            return .emphasis(inlineContent: [embeddedContent[0].capitalizeFirstWord()] + embeddedContent[1...])
+            return .emphasis(inlineContent: embeddedContent.capitalizeFirstWord())
         case .strong(inlineContent: let embeddedContent):
-            return .strong(inlineContent: [embeddedContent[0].capitalizeFirstWord()] + embeddedContent[1...])
+            return .strong(inlineContent: embeddedContent.capitalizeFirstWord())
         default:
             return self
         }
     }
 }
 
+extension [RenderBlockContent] {
+    func capitalizeFirstWord() -> Self {
+        guard let first else { return [] }
+        
+        return [first.capitalizeFirstWord()] + dropFirst()
+    }
+}
 
-extension RenderBlockContent: AutoCapitalizable {
+extension [RenderInlineContent] {
+    func capitalizeFirstWord() -> Self {
+        guard let first else { return [] }
+        
+        return [first.capitalizeFirstWord()] + dropFirst()
+    }
+}
+
+
+extension RenderBlockContent {
     /// Capitalize the first word for paragraphs, asides, headings, and small content.
     func capitalizeFirstWord() -> Self {
         switch self {
@@ -55,36 +60,21 @@ extension RenderBlockContent: AutoCapitalizable {
     }
 }
 
-extension RenderBlockContent.Paragraph: AutoCapitalizable {
+extension RenderBlockContent.Paragraph {
     func capitalizeFirstWord() -> RenderBlockContent.Paragraph {
-        guard !self.inlineContent.isEmpty else {
-            return self
-        }
-        
-        let inlineContent = [self.inlineContent[0].capitalizeFirstWord()] + self.inlineContent[1...]
-        return .init(inlineContent: inlineContent)
+        return .init(inlineContent: inlineContent.capitalizeFirstWord())
     }
 }
 
-extension RenderBlockContent.Aside: AutoCapitalizable {
+extension RenderBlockContent.Aside {
     func capitalizeFirstWord() -> RenderBlockContent.Aside {
-        guard !self.content.isEmpty else {
-            return self
-        }
-        
-        let content = [self.content[0].capitalizeFirstWord()] + self.content[1...]
-        return .init(style: self.style, content: content)
+        return .init(style: self.style, content: self.content.capitalizeFirstWord())
     }
 }
 
-extension RenderBlockContent.Small: AutoCapitalizable {
+extension RenderBlockContent.Small {
     func capitalizeFirstWord() -> RenderBlockContent.Small {
-        guard !self.inlineContent.isEmpty else {
-            return self
-        }
-        
-        let inlineContent = [self.inlineContent[0].capitalizeFirstWord()] + self.inlineContent[1...]
-        return .init(inlineContent: inlineContent)
+        return .init(inlineContent: self.inlineContent.capitalizeFirstWord())
     }
 }
 

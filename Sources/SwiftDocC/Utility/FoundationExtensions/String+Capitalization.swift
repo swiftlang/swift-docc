@@ -26,12 +26,9 @@ extension String {
             return self
         }
         
-        var resultString = String() 
-        resultString.reserveCapacity(self.count)
-        resultString.append(contentsOf: self[..<firstWordStartIndex])
-        resultString.append(contentsOf: String(firstWord).localizedCapitalized)
-        let restStartIndex = self.index(firstWordStartIndex, offsetBy: firstWord.count)
-        resultString.append(contentsOf: self[restStartIndex...])
+        var resultString = self
+        
+        resultString.replaceSubrange(firstWordStartIndex..<firstWord.endIndex, with: firstWord.localizedCapitalized)
         
         return resultString
     }
