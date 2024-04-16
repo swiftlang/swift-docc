@@ -11,14 +11,14 @@
 
 extension RenderInlineContent {
     /// Capitalize the first word for normal text content, as well as content that has emphasis or strong applied.
-    func capitalizeFirstWord() -> Self {
+    func capitalizingFirstWord() -> Self {
         switch self {
         case .text(let text):
-            return .text(text.capitalizeFirstWord())
+            return .text(text.capitalizingFirstWord())
         case .emphasis(inlineContent: let embeddedContent):
-            return .emphasis(inlineContent: embeddedContent.capitalizeFirstWord())
+            return .emphasis(inlineContent: embeddedContent.capitalizingFirstWord())
         case .strong(inlineContent: let embeddedContent):
-            return .strong(inlineContent: embeddedContent.capitalizeFirstWord())
+            return .strong(inlineContent: embeddedContent.capitalizingFirstWord())
         default:
             return self
         }
@@ -26,34 +26,34 @@ extension RenderInlineContent {
 }
 
 extension [RenderBlockContent] {
-    func capitalizeFirstWord() -> Self {
+    func capitalizingFirstWord() -> Self {
         guard let first else { return [] }
         
-        return [first.capitalizeFirstWord()] + dropFirst()
+        return [first.capitalizingFirstWord()] + dropFirst()
     }
 }
 
 extension [RenderInlineContent] {
-    func capitalizeFirstWord() -> Self {
+    func capitalizingFirstWord() -> Self {
         guard let first else { return [] }
         
-        return [first.capitalizeFirstWord()] + dropFirst()
+        return [first.capitalizingFirstWord()] + dropFirst()
     }
 }
 
 
 extension RenderBlockContent {
     /// Capitalize the first word for paragraphs, asides, headings, and small content.
-    func capitalizeFirstWord() -> Self {
+    func capitalizingFirstWord() -> Self {
         switch self {
         case .paragraph(let paragraph):
-            return .paragraph(paragraph.capitalizeFirstWord())
+            return .paragraph(paragraph.capitalizingFirstWord())
         case .aside(let aside):
-            return .aside(aside.capitalizeFirstWord())
+            return .aside(aside.capitalizingFirstWord())
         case .small(let small):
-            return .small(small.capitalizeFirstWord())
+            return .small(small.capitalizingFirstWord())
         case .heading(let heading):
-            return .heading(.init(level: heading.level, text: heading.text.capitalizeFirstWord(), anchor: heading.anchor))
+            return .heading(.init(level: heading.level, text: heading.text.capitalizingFirstWord(), anchor: heading.anchor))
         default:
             return self
         }
@@ -61,20 +61,20 @@ extension RenderBlockContent {
 }
 
 extension RenderBlockContent.Paragraph {
-    func capitalizeFirstWord() -> RenderBlockContent.Paragraph {
-        return .init(inlineContent: inlineContent.capitalizeFirstWord())
+    func capitalizingFirstWord() -> RenderBlockContent.Paragraph {
+        return .init(inlineContent: inlineContent.capitalizingFirstWord())
     }
 }
 
 extension RenderBlockContent.Aside {
-    func capitalizeFirstWord() -> RenderBlockContent.Aside {
-        return .init(style: self.style, content: self.content.capitalizeFirstWord())
+    func capitalizingFirstWord() -> RenderBlockContent.Aside {
+        return .init(style: self.style, content: self.content.capitalizingFirstWord())
     }
 }
 
 extension RenderBlockContent.Small {
-    func capitalizeFirstWord() -> RenderBlockContent.Small {
-        return .init(inlineContent: self.inlineContent.capitalizeFirstWord())
+    func capitalizingFirstWord() -> RenderBlockContent.Small {
+        return .init(inlineContent: self.inlineContent.capitalizingFirstWord())
     }
 }
 

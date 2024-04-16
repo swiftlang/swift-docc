@@ -27,8 +27,6 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                 return nil
             }
             
-            let capitalizedDiscussionContent = [discussionContent[0].capitalizeFirstWord()] + discussionContent[1...]
-            
             let title: String?
             if let first = discussionContent.first, case RenderBlockContent.heading = first {
                 // There's already an authored heading. Don't add another heading.
@@ -44,7 +42,7 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                 }
             }
                 
-            return ContentRenderSection(kind: .content, content: capitalizedDiscussionContent, heading: title)
+            return ContentRenderSection(kind: .content, content: discussionContent.capitalizingFirstWord(), heading: title)
         }
     }
 }

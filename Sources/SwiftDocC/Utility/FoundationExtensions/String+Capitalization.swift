@@ -12,13 +12,13 @@ import Foundation
 
 extension String {
     
-    // Precomputes the CharacterSet to use in capitalizeFirstWord().
+    // Precomputes the CharacterSet to use in capitalizingFirstWord().
     private static let charactersPreventingWordCapitalization = CharacterSet.lowercaseLetters.union(.punctuationCharacters).inverted
     
     /// Returns the string with the first letter capitalized.
     /// This auto-capitalization only occurs if the first word is all lowercase and contains only lowercase letters.
     /// The first word can also contain punctuation (e.g. a period, comma, hyphen, semi-colon, colon).
-    func capitalizeFirstWord() -> String {
+    func capitalizingFirstWord() -> String {
         guard let firstWordStartIndex = self.firstIndex(where: { !$0.isWhitespace && !$0.isNewline }) else { return self }
         let firstWord = self[firstWordStartIndex...].prefix(while: { !$0.isWhitespace && !$0.isNewline})
         
