@@ -141,17 +141,36 @@ default organization and provide a more appropriate structure for your symbols.
 
 ![A screenshot showing the rendered documentation containing three topic groups: Creating a Sloth, Activities, and Schedule.](4_topics_2)
 
-To add an extension file to your documentation catalog for a specific symbol, use a text editor to create a new file named `Extension.md`.
+To add an extension file for a specific symbol, use a text editor to create an
+`.md` file within the documentation catalog. DocC ignores file names of
+documentation extensions; you can choose any file name you would like as long
+as it uses an `.md` extension. (DocC determines the URL path of source
+documentation from the symbol's name, type and parent type among other things.)
+Then open the file and add a level 1 header on the first line. Finally, set the
+level 1 header's title to be a link to the corresponding symbol.
 
-In the `Extension.md` file, replace the `Symbol` placeholder 
-with the symbol path of the symbol you're organizing and rename the file accordingly.
+Here's an example of a level 1 header set to be a symbol link:
 
 ```markdown
 # ``SlothCreator/Sloth``
 ```
 
-> Important: The symbol path for the page title of an extension file needs to start
-with the name of a top-level symbol or the name of the framework.
+> Note: If you're working in Xcode, you can select the documentation catalog in
+> the project navigator and run the "File -> New -> File From Template..." menu
+> command. Then click "Extension File" under the Documentation section. In the
+> new markdown file, replace the "Symbol" placeholder with a link to the
+> corresponding symbol, and rename the file accordingly.
+
+> Important:
+> If DocC can't resolve the symbol link in the level 1 header of the extension
+> file, it will raise a warning about the link and skip the rest of the content
+> of that extension file.
+>
+> DocC resolves symbol links in extension file headers relative to the module.
+> To create an extension file for a nested type or member symbol, start the
+> symbol link with the name of the top-level symbol that contains the nested
+> type or member symbol.  You can optionally prefix the symbol link with the
+> name of the module, but DocC does not require this prefix.
 
 The Extension File template includes a `Topics` section with a single named 
 group, ready for you to fill out. Alternatively, if your documentation catalog 

@@ -701,7 +701,7 @@
             "ThematicBreak": {
                 "type": "object",
                 "required": [
-                    "type",
+                    "type"
                 ],
                 "properties": {
                     "type": {
