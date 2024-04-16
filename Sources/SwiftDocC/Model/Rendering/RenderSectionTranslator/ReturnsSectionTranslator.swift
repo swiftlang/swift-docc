@@ -28,9 +28,7 @@ struct ReturnsSectionTranslator: RenderSectionTranslator {
                 return nil
             }
             
-            let capitalizedReturnsContent = [returnsContent[0].withFirstWordCapitalized] + returnsContent[1...]
-            
-            return ContentRenderSection(kind: .content, content: capitalizedReturnsContent, heading: "Return Value")
+            return ContentRenderSection(kind: .content, content: returnsContent.capitalizingFirstWord(), heading: "Return Value")
         }
     }
 }
