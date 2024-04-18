@@ -13,12 +13,12 @@ import Foundation
 import SwiftDocC
 
 extension Docc.ProcessArchive {
-    struct Diff: ParsableCommand {
+    struct DiffRenderJSON: ParsableCommand {
         
         // MARK: - Configuration
         
         static var configuration = CommandConfiguration(
-            commandName: "diff",
+            commandName: "diff-render-json",
             abstract: "Produce the symbol diff between two Render JSON files.",
             shouldDisplay: true)
         

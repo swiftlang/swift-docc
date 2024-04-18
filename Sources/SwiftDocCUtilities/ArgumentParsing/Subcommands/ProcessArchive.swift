@@ -18,7 +18,7 @@ extension Docc {
         static var configuration = CommandConfiguration(
             commandName: "process-archive",
             abstract: "Perform operations on documentation archives ('.doccarchive' directories).",
-            subcommands: [TransformForStaticHosting.self, Index.self, Diff.self])
+            subcommands: [TransformForStaticHosting.self, Index.self, DiffRenderJSON.self, DiffDocCArchive.self])
 
     }
 }
