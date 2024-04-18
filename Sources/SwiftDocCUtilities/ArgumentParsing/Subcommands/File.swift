@@ -13,6 +13,7 @@ import Foundation
 import SwiftDocC
 
 extension Docc.ProcessArchive {
+    
     struct DiffDocCArchive: ParsableCommand {
         
         // MARK: - Configuration
@@ -42,8 +43,13 @@ extension Docc.ProcessArchive {
         
         public mutating func run() throws {
             
-            let initialDocCArchiveAPIs: [String] = try findAllSymbols(initialPath: initialDocCArchivePath)
-            let newDocCArchiveAPIs: [String] = try findAllSymbols(initialPath: newerDocCArchivePath)
+            // Process arguments to start from the /data/ subdirectory.
+            // This is where all the relevant renderJSON are contained.
+            let initialProcessedArchivePath = initialDocCArchivePath.appendingPathComponent("data")
+            let newerProcessedArchivePath = newerDocCArchivePath.appendingPathComponent("data")
+            
+            let initialDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: initialProcessedArchivePath)
+            let newDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: newerProcessedArchivePath)
             
             print("\ninitialDocCArchiveAPIs: ")
             print(initialDocCArchiveAPIs)
@@ -51,10 +57,32 @@ extension Docc.ProcessArchive {
             print("\nnewDocCArchiveAPIs: ")
             print(newDocCArchiveAPIs)
             
-            let initialSet = Set(initialDocCArchiveAPIs.map { $0.plainText })
-            let newSet = Set(newDocCArchiveAPIs.map { $0.plainText })
+            let initialSet = Set(initialDocCArchiveAPIs.map { $0 })
+            let newSet = Set(newDocCArchiveAPIs.map { $0 })
             let difference = newSet.subtracting(initialSet)
             print("\nDifference:\n\(difference)")
+        }
+        
+        // Given a URL, return each of the symbols by their unique identifying links
+        func findAllSymbolLinks(initialPath: URL) throws -> [URL] {
+            guard let enumerator = FileManager.default.enumerator(
+                at: initialPath,
+                includingPropertiesForKeys: [],
+                options: .skipsHiddenFiles,
+                errorHandler: nil
+            ) else {
+                return []
+            }
+            
+            var returnSymbolLinks: [URL] = []
+            for case let filePath as URL in enumerator {
+                if filePath.lastPathComponent.hasSuffix(".json") {
+                    let symbolLink = try findSymbolLink(symbolPath: filePath)
+                    returnSymbolLinks.append(symbolLink)
+                }
+            }
+            
+            return returnSymbolLinks
         }
         
         func findAllSymbols(initialPath: URL) throws -> [String] {
@@ -75,6 +103,15 @@ extension Docc.ProcessArchive {
             }
             
             return returnSymbols
+        }
+        
+        // Given a file path to a renderJSON, return that symbol's url from its identifier.
+        func findSymbolLink(symbolPath: URL) throws -> URL {
+            let renderJSONData = try Data(contentsOf: symbolPath)
+            let decoder = RenderJSONDecoder.makeDecoder()
+            let renderNode = try decoder.decode(RenderNode.self, from: renderJSONData)
+            
+            return renderNode.identifier.url
         }
                     
     }
