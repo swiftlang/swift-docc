@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
@@ -458,6 +459,182 @@ Root
         
         XCTAssertEqual(results.count, 1)
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
+    }
+    
+    func testNavigatorIndexGenerationWithCyclicCuration() throws {
+        // This is a documentation hierarchy where every page exist in more than one place in the navigator,
+        // through a mix of automatic and manual curation, with a cycle between the two "leaf" nodes:
+        //
+        //     ModuleName ─────┐
+        //          │          ▼
+        //          │   API Collection
+        //          │          │
+        //    ┌─────┴────────┐ │
+        //    │┌─────────────┼┬┘
+        //    ▼▼             ▼▼
+        // Container ──▶ OtherSymbol
+        //     │             │
+        //     ├────────────┐│
+        //     ▼            ▼▼
+        //  first() ◀──▶ second()
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            InfoPlist(identifier: testBundleIdentifier),
+            
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                moduleName: "ModuleName", 
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "some-container-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                        names: .init(title: "Container", navigator: [.init(kind: .identifier, spelling: "Container", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                        pathComponents: ["Container"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    ),
+                    
+                    .init(
+                        identifier: .init(precise: "some-other-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                        names: .init(title: "OtherSymbol", navigator: [.init(kind: .identifier, spelling: "OtherSymbol", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                        pathComponents: ["OtherSymbol"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    ),
+                
+                    .init(
+                        identifier: .init(precise: "first-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                        names: .init(title: "first()", navigator: [.init(kind: .identifier, spelling: "first()", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                        pathComponents: ["Container", "first()"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .method, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    ),
+                
+                    .init(
+                        identifier: .init(precise: "second-member-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                        names: .init(title: "second()", navigator: [.init(kind: .identifier, spelling: "second()", preciseIdentifier: nil)], subHeading: nil, prose: nil),
+                        pathComponents: ["Container", "second()"],
+                        docComment: nil,
+                        accessLevel: .public,
+                        kind: .init(parsedIdentifier: .method, displayName: "Kind Display Name"),
+                        mixins: [:]
+                    ),
+                ], relationships: [
+                    .init(source: "some-container-symbol-id", target: "first-member-symbol-id", kind: .memberOf, targetFallback: nil),
+                    .init(source: "some-container-symbol-id", target: "second-member-symbol-id", kind: .memberOf, targetFallback: nil),
+                ])
+            ),
+            
+            TextFile(name: "Container.md", utf8Content: """
+            # ``Container``
+            
+            The container curates one of the members and the other symbol
+            
+            ## Topics
+            ### Manual curation
+            - ``first()``
+            - ``OtherSymbol``
+            """),
+            
+            TextFile(name: "OtherSymbol.md", utf8Content: """
+            # ``OtherSymbol``
+            
+            The other symbol curates the other member
+            
+            ## Topics
+            ### Manual curation
+            - ``Container/second()``
+            """),
+            
+            
+            TextFile(name: "first.md", utf8Content: """
+            # ``Container/first()``
+            
+            Both members curate each other
+            
+            ## Topics
+            ### Manual curation
+            - ``second()``
+            """),
+        
+            TextFile(name: "second.md", utf8Content: """
+            # ``Container/second()``
+            
+            Both members curate each other
+            
+            ## Topics
+            ### Manual curation
+            - ``first()``
+            """),
+            
+            TextFile(name: "API-Collection.md", utf8Content: """
+            # An API collection
+            
+            The API collection curates both top-level symbols
+            
+            ## Topics
+            ### Manual curation
+            - ``Container``
+            - ``OtherSymbol``
+            """),
+            
+            TextFile(name: "Module.md", utf8Content: """
+            # ``ModuleName``
+            
+            The module curates the API collection
+            
+            ## Topics
+            ### Manual curation
+            - <doc:API-Collection>
+            """),
+        ])
+        
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        builder.setup()
+        
+        for identifier in context.knownPages {
+            let source = context.documentURL(for: identifier)
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            try builder.index(renderNode: renderNode)
+        }
+        
+        builder.finalize()
+        
+        let navigatorIndex = try XCTUnwrap(builder.navigatorIndex)
+        
+        assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), """
+        [Root]
+        ┗╸ModuleName
+          ┣╸Manual curation
+          ┗╸An API collection
+            ┣╸Manual curation
+            ┣╸Container
+            ┃ ┣╸Manual curation
+            ┃ ┣╸first()
+            ┃ ┃ ┣╸Manual curation
+            ┃ ┃ ┗╸second()
+            ┃ ┗╸OtherSymbol
+            ┃   ┣╸Manual curation
+            ┃   ┗╸second()
+            ┃     ┣╸Manual curation
+            ┃     ┗╸first()
+            ┗╸OtherSymbol
+              ┣╸Manual curation
+              ┗╸second()
+                ┣╸Manual curation
+                ┗╸first()
+        """)
     }
     
     func testNavigatorIndexGenerationVariantsPayload() throws {
