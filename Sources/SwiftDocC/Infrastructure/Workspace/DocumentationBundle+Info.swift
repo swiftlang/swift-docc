@@ -255,7 +255,8 @@ extension DocumentationBundle {
             version: String? = nil,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
-            defaultAvailability: DefaultAvailability? = nil
+            defaultAvailability: DefaultAvailability? = nil,
+            featureFlags: FeatureFlags? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -263,6 +264,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
+            self.featureFlags = featureFlags
         }
     }
 }
