@@ -34,15 +34,15 @@ extension DocumentationBundle {
         public var defaultModuleKind: String?
 
         /// The parsed feature flags that were set for this bundle.
-        public var featureFlags: FeatureFlags?
+        public var featureFlags: BundleFeatureFlags?
 
         /// A computed ``FeatureFlags`` that defers to a default-initialized instance in case this
         /// bundle didn't specify any feature flags.
         ///
         /// This is useful to fall back to the global ``SwiftDocC/FeatureFlags`` set via the
         /// command-line when determining whether a feature flag is set.
-        public var computedFeatureFlags: FeatureFlags {
-            self.featureFlags ?? FeatureFlags()
+        public var computedFeatureFlags: BundleFeatureFlags {
+            self.featureFlags ?? BundleFeatureFlags()
         }
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
@@ -107,7 +107,7 @@ extension DocumentationBundle {
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
             defaultModuleKind: String?,
-            featureFlags: FeatureFlags?
+            featureFlags: BundleFeatureFlags?
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -246,7 +246,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
-            self.featureFlags = try decodeOrFallbackIfPresent(FeatureFlags.self, with: .featureFlags)
+            self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
         }
         
         init(
@@ -256,7 +256,7 @@ extension DocumentationBundle {
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
-            featureFlags: FeatureFlags? = nil
+            featureFlags: BundleFeatureFlags? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -289,7 +289,7 @@ extension BundleDiscoveryOptions {
         fallbackDefaultCodeListingLanguage: String? = nil,
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
-        fallbackFeatureFlags: DocumentationBundle.Info.FeatureFlags? = nil,
+        fallbackFeatureFlags: DocumentationBundle.Info.BundleFeatureFlags? = nil,
         additionalSymbolGraphFiles: [URL] = []
     ) {
         // Iterate over all possible coding keys with a switch

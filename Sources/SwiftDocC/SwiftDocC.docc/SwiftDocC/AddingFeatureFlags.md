@@ -31,7 +31,7 @@ instance, which can then be used during the compilation process.
 A subset of feature flags can affect how a documentation bundle is authored. For example, the
 experimental overloaded symbol presentation can affect how a bundle curates its symbols due to the 
 creation of overload group pages. These flags should also be added to the
-``DocumentationBundle/Info/FeatureFlags`` type, with a computed property that falls back to the
+``DocumentationBundle/Info/BundleFeatureFlags`` type, with a computed property that falls back to the
 global ``FeatureFlags`` when the flag is unset:
 
 ```swift

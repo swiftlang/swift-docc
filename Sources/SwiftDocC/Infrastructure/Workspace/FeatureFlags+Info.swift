@@ -13,7 +13,7 @@ import Foundation
 extension DocumentationBundle.Info {
     /// A collection of feature flags that can be enabled from a bundle's Info.plist.
     ///
-    /// This is a subset of flags from ``/SwiftDocC/FeatureFlags`` that can influence how a documentation
+    /// This is a subset of flags from ``FeatureFlags`` that can influence how a documentation
     /// bundle is written, and so can be considered a property of the documentation itself, rather
     /// than as an experimental behavior that can be enabled for one-off builds.
     ///
@@ -24,7 +24,7 @@ extension DocumentationBundle.Info {
     ///     <true/>
     /// </dict>
     /// ```
-    public struct FeatureFlags: Codable, Equatable {
+    public struct BundleFeatureFlags: Codable, Equatable {
         /// Whether or not experimental support for combining overloaded symbol pages is enabled.
         ///
         /// This feature flag corresponds to ``FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled``.
