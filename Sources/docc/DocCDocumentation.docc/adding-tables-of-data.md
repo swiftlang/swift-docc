@@ -19,7 +19,7 @@ Sloth speed  | Description
 `supersonic` | Moves faster than the speed of sound
 ```
 
-The example markup above defines the table that's shown below. Each column is automatically sized to fit its widest cell and the table is only as wide as the sum of its columns.
+The example markup above defines the table that's shown below. Each column is only as wide as its widest cell and the table is only as wide as the sum of its columns.
 
 Sloth speed  | Description                          
 ------------ | ------------------------------------- 
@@ -28,9 +28,9 @@ Sloth speed  | Description
 `fast`       | Moves faster than a hare            
 `supersonic` | Moves faster than the speed of sound
 
-It's not necessary to pad the cells to align the column separators (`|`). However, it may make your table _markup_ easier to read, especially for large or complex tables. 
+You don't need to pad the cells to align the column separators (`|`). However, it might make your table _markup_ easier to read, especially for large or complex tables. 
 
-The same table could have been defined like below. All other examples will uses padded cells for readability.
+You can also define the same table with the markup that's shown below. All other examples will use padded cells for readability.
 
 ```md
 Sloth speed|Description
@@ -41,7 +41,7 @@ Sloth speed|Description
 `supersonic`|Moves faster than the speed of sound
 ```
 
-You can add leading and/or trailing pipes (`|`) if you find that table markup easier to read. This doesn't affect the rendered table on the page. The leading and trailing pipes _can_ be applied inconsistently for each row but doing so may make it harder to discern the structure of the table. 
+You can add leading and/or trailing pipes (`|`) if you find that table markup easier to read. This doesn't affect the rendered table on the page. The leading and trailing pipes _can_ be applied inconsistently for each row, but doing so may make it harder to discern the structure of the table. 
 
 ```md
 | Sloth speed  | Description                          |                         
@@ -68,7 +68,7 @@ Leading  | Center   | Trailing
 
 ### Spanning cells across columns
 
-By default, each table cell is one column wide and one row tall. To span a table cell across multiple columns, place two or more column separators (`|`) next to each other after the cell's content. If the spanning cell is the last or only element of a row, you need to add the extra trailing pipe (`|`) for that row, otherwise DocC will interpret the row as having an additional empty cell at the end. For example:
+By default, each table cell is one column wide and one row tall. To span a table cell across multiple columns, place two or more column separators (`|`) next to each other after the cell's content. If the spanning cell is the last or only element of a row, you need to add the extra trailing pipe (`|`) for that row, otherwise DocC interprets the row as having an additional empty cell at the end. For example:
 
 @Row {
   @Column {
@@ -89,11 +89,11 @@ By default, each table cell is one column wide and one row tall. To span a table
   }
 }
 
-> Tip: You may find it easier to discern the structure of your table from its markup if you use trailing pipes consistently when spanning cells.  
+> Tip: You might find it easier to discern the structure of your table from its markup if you use trailing pipes consistently when spanning cells.  
 
-A spanning cells determines its horizontal alignment from the left-most column that it spans. Going from left to right in the example below:
+A spanning cell determines its horizontal alignment from the left-most column that it spans. Going from left to right in the example below:
 
- - Cells "One" and "Five" uses leading alignment because they both span the first column
+ - Cells "One" and "Five" use leading alignment because they both span the first column
  - Cell "Four" uses center alignment because it spans the second column
  - Cell "Two" uses trailing alignment because it spans the third column
 
@@ -101,7 +101,7 @@ A spanning cells determines its horizontal alignment from the left-most column t
   @Column {
     ```md
     Leading | Center | Trailing |
-    ------: | :----: | :------- |
+    :------ | :----: | -------: |
     One             || Two      |
     Three   | Four             ||
     Five                      |||
