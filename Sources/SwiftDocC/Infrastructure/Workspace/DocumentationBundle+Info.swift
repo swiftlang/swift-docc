@@ -36,15 +36,6 @@ extension DocumentationBundle {
         /// The parsed feature flags that were set for this bundle.
         public var featureFlags: BundleFeatureFlags?
 
-        /// A computed ``FeatureFlags`` that defers to a default-initialized instance in case this
-        /// bundle didn't specify any feature flags.
-        ///
-        /// This is useful to fall back to the global ``SwiftDocC/FeatureFlags`` set via the
-        /// command-line when determining whether a feature flag is set.
-        public var computedFeatureFlags: BundleFeatureFlags {
-            self.featureFlags ?? BundleFeatureFlags()
-        }
-
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         

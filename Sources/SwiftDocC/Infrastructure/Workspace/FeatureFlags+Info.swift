@@ -28,38 +28,29 @@ extension DocumentationBundle.Info {
         /// Whether or not experimental support for combining overloaded symbol pages is enabled.
         ///
         /// This feature flag corresponds to ``FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled``.
-        public var experimentalOverloadedSymbolPresentationEnabled: Bool {
-            get {
-                return _overloadsEnabled ?? SwiftDocC.FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
-            }
-            set {
-                _overloadsEnabled = newValue
-            }
-        }
+        public var experimentalOverloadedSymbolPresentation: Bool?
 
-        private var _overloadsEnabled: Bool?
-
-        public init(experimentalOverloadedSymbolPresentationEnabled: Bool? = nil) {
-            // IMPORTANT: If you add more fields to this struct, ensure that this initializer sets
-            // them to nil or another suitable default value, since it's called to set
-            // `computedFeatureFlags` on the parent Info struct.
-            self._overloadsEnabled = experimentalOverloadedSymbolPresentationEnabled
+        public init(experimentalOverloadedSymbolPresentation: Bool? = nil) {
+            self.experimentalOverloadedSymbolPresentation = experimentalOverloadedSymbolPresentation
         }
 
         enum CodingKeys: String, CodingKey {
-            case experimentalOverloadedSymbolPresentationEnabled = "ExperimentalOverloadedSymbolPresentation"
+            case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
         }
 
         public init(from decoder: any Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
 
-            self._overloadsEnabled = try values.decodeIfPresent(Bool.self, forKey: .experimentalOverloadedSymbolPresentationEnabled)
+            self.experimentalOverloadedSymbolPresentation = try values.decodeIfPresent(Bool.self, forKey: .experimentalOverloadedSymbolPresentation)
+            if let overloadsFlag = self.experimentalOverloadedSymbolPresentation {
+                FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = overloadsFlag
+            }
         }
 
         public func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
 
-            try container.encode(_overloadsEnabled, forKey: .experimentalOverloadedSymbolPresentationEnabled)
+            try container.encode(experimentalOverloadedSymbolPresentation, forKey: .experimentalOverloadedSymbolPresentation)
         }
     }
 }

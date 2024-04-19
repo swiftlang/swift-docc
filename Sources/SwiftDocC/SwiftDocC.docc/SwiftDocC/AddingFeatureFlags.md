@@ -31,33 +31,11 @@ instance, which can then be used during the compilation process.
 A subset of feature flags can affect how a documentation bundle is authored. For example, the
 experimental overloaded symbol presentation can affect how a bundle curates its symbols due to the 
 creation of overload group pages. These flags should also be added to the
-``DocumentationBundle/Info/BundleFeatureFlags`` type, with a computed property that falls back to the
-global ``FeatureFlags`` when the flag is unset:
+``DocumentationBundle/Info/BundleFeatureFlags`` type, so that they can be parsed out of a bundle's
+Info.plist.
 
-```swift
-public var experimentalExampleFeatureEnabled: Bool {
-    get {
-        _exampleFeatureEnabled ?? SwiftDocC.FeatureFlags.current.isExperimentalExampleFeatureEnabled
-    }
-    set {
-        _exampleFeatureEnabled = newValue
-    }
-}
-
-private var _exampleFeatureEnabled: Bool?
-
-enum CodingKeys: String, CodingKey {
-    case experimentalExampleFeatureEnabled = "ExperimentalExampleFeature"
-}
-```
-
-When a flag is defined in this way, it should be treated as a property of the bundle that is being
-converted, rather than a global property of the current execution of Swift-DocC. To facilitate this,
-the ``DocumentationBundle/Info`` type has a ``DocumentationBundle/Info/computedFeatureFlags``
-property that can be used to consistently refer to a feature flag, regardless of whether a bundle
-has specified it in its Info.plist or via the command line. Whereas the
-``DocumentationBundle/Info/featureFlags`` property contains the parsed feature flags, and will be
-`nil` if no feature flags were specified, `computedFeatureFlags` instead creates an empty set of
-bundle feature flags that can transparently defer to the global feature flags.
+Feature flags that are loaded from an Info.plist file are saved into the global feature flags while
+the bundle is being registered. To ensure that your new feature flag is properly loaded, update the
+``FeatureFlags/loadFlagsFromBundle(_:)`` method to load your new field into the global flags.
 
 <!-- Copyright (c) 2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -440,34 +440,6 @@ class DocumentationBundleInfoTests: XCTestCase {
             bundleDiscoveryOptions: nil)
 
         let featureFlags = try XCTUnwrap(info.featureFlags)
-        XCTAssertTrue(featureFlags.experimentalOverloadedSymbolPresentationEnabled)
-    }
-
-    func testComputedFeatureFlags() throws {
-        let infoPlistWithoutFeatureFlags = """
-        <plist version="1.0">
-        <dict>
-            <key>CFBundleDisplayName</key>
-            <string>Info Plist Display Name</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.info.Plist</string>
-            <key>CFBundleVersion</key>
-            <string>1.0.0</string>
-        </dict>
-        </plist>
-        """
-
-        let infoPlistData = Data(infoPlistWithoutFeatureFlags.utf8)
-        let info = try DocumentationBundle.Info(
-            from: infoPlistData,
-            bundleDiscoveryOptions: nil)
-
-        XCTAssertNil(info.featureFlags)
-        XCTAssertEqual(
-            info.computedFeatureFlags.experimentalOverloadedSymbolPresentationEnabled,
-            FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled)
-
-        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
-        XCTAssertTrue(info.computedFeatureFlags.experimentalOverloadedSymbolPresentationEnabled)
+        XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))
     }
 }

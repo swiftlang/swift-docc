@@ -1182,7 +1182,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             }
                         }
 
-                        addOverloadGroupReferences(from: bundle, overloadGroups: overloadGroups)
+                        addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
                     
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
@@ -2012,7 +2012,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      */
     private func register(_ bundle: DocumentationBundle) throws {
         try shouldContinueRegistration()
-        
+
+        let currentFeatureFlags: FeatureFlags?
+        if let bundleFlags = bundle.info.featureFlags {
+            currentFeatureFlags = FeatureFlags.current
+            FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
+        } else {
+            currentFeatureFlags = nil
+        }
+        defer {
+            if let currentFeatureFlags = currentFeatureFlags {
+                FeatureFlags.current = currentFeatureFlags
+            }
+        }
+
         // Note: Each bundle is registered and processed separately.
         // Documents and symbols may both reference each other so the bundle is registered in 4 steps
         
@@ -2348,8 +2361,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    private func addOverloadGroupReferences(from bundle: DocumentationBundle, overloadGroups: [String: [String]]) {
-        guard bundle.info.computedFeatureFlags.experimentalOverloadedSymbolPresentationEnabled else {
+    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
+        guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
         
