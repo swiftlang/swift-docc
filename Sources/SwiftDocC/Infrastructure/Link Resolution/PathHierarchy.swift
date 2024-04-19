@@ -158,14 +158,19 @@ struct PathHierarchy {
                     targetNode.add(symbolChild: sourceNode)
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else if var targetNodes = allNodes[relationship.target] {
-                    // Only match nodes that have the expected name
+                    // If the source was added in an extension symbol graph file, then its target won't be found in the same symbol graph file (in `nodes`).
+                    
+                    // We may have encountered multiple language representations of the target symbol. Try to find the best matching representation of the target to add the source to.
+                    // Remove any targets that don't match the source symbol's path components (see comment above for more details).
                     targetNodes.removeAll(where: { $0.name != expectedContainerName })
                     
-                    // If the source was added in an extension symbol graph file, then its target node won't be found in the same symbol graph file (in `nodes`).
+                    // Prefer the symbol that matches the relationship's language.
                     if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == language?.id }) {
-                        // Prefer the symbol that matches the relationship's language.
                         targetNode.add(symbolChild: sourceNode)
                     } else {
+                        // It's not clear which target to add the source to, so we add it to all of them.
+                        // This will likely hit a _debug_ assertion (later in this initializer) about inconsistent traversal through the hierarchy,
+                        // but in release builds DocC will "repair" the inconsistent hierarchy.
                         for targetNode in targetNodes {
                             targetNode.add(symbolChild: sourceNode)
                         }
@@ -625,15 +630,13 @@ extension PathHierarchy.DisambiguationContainer {
         var newStorage = storage
         for element in other.storage {
             if let existingIndex = storage.firstIndex(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
-                // If the same element exist in both containers, prefer to keep the Swift counterpart of it.
                 let existing = storage[existingIndex]
+                // If the same element exist in both containers, keep it unless the "other" element is the Swift counterpart of this symbol.
                 if existing.node.counterpart === element.node,
                    element.node.symbol?.identifier.interfaceLanguage == "swift"
                 {
                     // The "other" element is the Swift counterpart. Replace the existing element with it.
                     newStorage[existingIndex] = element
-                } else {
-                    // The existing element is the Swift counterpart. Keep it without adding the counterpart element.
                 }
             } else {
                 newStorage.append(element)
