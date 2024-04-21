@@ -32,16 +32,46 @@ extension DocumentationBundle.Info {
 
         public init(experimentalOverloadedSymbolPresentation: Bool? = nil) {
             self.experimentalOverloadedSymbolPresentation = experimentalOverloadedSymbolPresentation
+            self.unknownFeatureFlags = []
         }
+
+        /// A list of decoded feature flag keys that didn't match a known feature flag.
+        public let unknownFeatureFlags: [String]
 
         enum CodingKeys: String, CodingKey {
             case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
         }
 
-        public init(from decoder: any Decoder) throws {
-            let values = try decoder.container(keyedBy: CodingKeys.self)
+        struct AnyCodingKeys: CodingKey {
+            var stringValue: String
 
-            self.experimentalOverloadedSymbolPresentation = try values.decodeIfPresent(Bool.self, forKey: .experimentalOverloadedSymbolPresentation)
+            init?(stringValue: String) {
+                self.stringValue = stringValue
+            }
+
+            var intValue: Int? { nil }
+            init?(intValue: Int) {
+                return nil
+            }
+        }
+
+        public init(from decoder: any Decoder) throws {
+            let values = try decoder.container(keyedBy: AnyCodingKeys.self)
+            var unknownFeatureFlags: [String] = []
+
+            for flagName in values.allKeys {
+                if let codingKey = CodingKeys(stringValue: flagName.stringValue) {
+                    switch codingKey {
+                    case .experimentalOverloadedSymbolPresentation:
+                        self.experimentalOverloadedSymbolPresentation = try values.decode(Bool.self, forKey: flagName)
+                    }
+                } else {
+                    unknownFeatureFlags.append(flagName.stringValue)
+                }
+            }
+
+            self.unknownFeatureFlags = unknownFeatureFlags
+
             if let overloadsFlag = self.experimentalOverloadedSymbolPresentation {
                 FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = overloadsFlag
             }

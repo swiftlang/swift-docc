@@ -2017,6 +2017,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         if let bundleFlags = bundle.info.featureFlags {
             currentFeatureFlags = FeatureFlags.current
             FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
+
+            for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
+                diagnosticEngine.emit(.init(diagnostic:
+                        .init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.UnknownBundleFeatureFlag",
+                            summary: "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)")))
+            }
         } else {
             currentFeatureFlags = nil
         }

@@ -4682,6 +4682,32 @@ let expected = """
         }
     }
 
+    func testWarnsOnUnknownPlistFeatureFlag() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                DataFile(name: "Info.plist", data: Data("""
+                <plist version="1.0">
+                <dict>
+                    <key>CDExperimentalFeatureFlags</key>
+                    <dict>
+                        <key>ExperimentalNonExistentFeature</key>
+                        <true/>
+                    </dict>
+                </dict>
+                </plist>
+                """.utf8))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        let unknownFeatureFlagProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.UnknownBundleFeatureFlag" })
+        XCTAssertEqual(unknownFeatureFlagProblems.count, 1)
+        let problem = try XCTUnwrap(unknownFeatureFlagProblems.first)
+
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "Unknown feature flag in Info.plist: 'ExperimentalNonExistentFeature'")
+    }
+
     // A test helper that creates a symbol with a given identifier and kind.
     private func makeSymbol(
         name: String = "SymbolName",
