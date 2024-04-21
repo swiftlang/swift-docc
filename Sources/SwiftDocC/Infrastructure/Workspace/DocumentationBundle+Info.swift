@@ -272,6 +272,7 @@ extension BundleDiscoveryOptions {
     ///   - fallbackVersion: A fallback version for the bundle.
     ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
+    ///   - fallbackFeatureFlags: A fallback set of feature flags for the bundle.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
     public init(
         fallbackDisplayName: String? = nil,
