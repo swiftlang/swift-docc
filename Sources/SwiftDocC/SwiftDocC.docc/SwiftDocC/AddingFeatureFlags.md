@@ -4,10 +4,9 @@ Develop experimental features by adding feature flags.
 
 ## Overview
 
-When developing a new feature in Swift-DocC, it's recommended to make it optional while it's being
-actively developed by creating a command-line flag that enables the new behavior. This flag can then
-be used to set a flag in the ``FeatureFlags``' ``FeatureFlags/current`` instance, which is then
-available for the rest of the compilation process.
+Make new features in Swift-DocC optional during active development by creating a command-line flag that
+enables the new behavior. Then set the new flag in the ``FeatureFlags``' ``FeatureFlags/current`` instance,
+making it available for the rest of the compilation process.
 
 ### The FeatureFlags structure
 
