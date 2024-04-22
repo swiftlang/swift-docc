@@ -3100,7 +3100,7 @@ let expected = """
                 
                 ## Topics
                 
-                ### Some topic section
+                ### Some, topic - section!
                 
                 - <doc:Third>
                 """),
@@ -3175,6 +3175,22 @@ let expected = """
         let bundle = try XCTUnwrap(context.registeredBundles.first)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let renderNode = try converter.convert(entity, at: nil)
+        
+        XCTAssertEqual(renderNode.topicSections.map(\.anchor), [
+            "Another-topic-section"
+        ])
+        
+        let firstReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let firstRenderNode = try converter.convert(context.entity(with: firstReference), at: nil)
+        XCTAssertEqual(firstRenderNode.topicSections.map(\.anchor), [
+            "Topics"
+        ])
+        
+        let secondReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "Second" }))
+        let secondRenderNode = try converter.convert(context.entity(with: secondReference), at: nil)
+        XCTAssertEqual(secondRenderNode.topicSections.map(\.anchor), [
+            "Some-topic-section"
+        ])
         
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
         guard case .unorderedList(let unorderedList) = overviewSection.content.dropFirst().first else {
