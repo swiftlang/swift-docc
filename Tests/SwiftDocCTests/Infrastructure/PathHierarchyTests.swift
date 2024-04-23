@@ -1329,7 +1329,7 @@ class PathHierarchyTests: XCTestCase {
         'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Remove '-abc123' to select preferred symbol\n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("", 56, 63)]),
+                .init(summary: "Remove '-abc123' for\n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]),
                 .init(summary: "Replace 'abc123' with '8iuz7' for\n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]),
                 .init(summary: "Replace 'abc123' with '1h173' for\n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("-1h173", 56, 63)]),
                 .init(summary: "Replace 'abc123' with '91hxs' for\n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("-91hxs", 56, 63)]),

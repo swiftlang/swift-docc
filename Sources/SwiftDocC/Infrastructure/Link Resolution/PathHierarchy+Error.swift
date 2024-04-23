@@ -147,32 +147,22 @@ extension PathHierarchy.Error {
             let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
             let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             
-            // If exactly one of the candidates is preferred (if all the others are "disfavored")
-            // then first suggest a solution simply to remove the disambiguation from the path.
-            var solutions = [Solution]()
-            let preferred = preferredCandidate(candidates: candidates)
-            if let preferred {
-                solutions.append(
-                    Solution(
-                        summary: "\(Self.replacementOperationDescription(from: "-" + disambiguations.dropFirst(), to: "")) to select preferred symbol\n\(fullNameOfNode(preferred.node).singleQuoted)",
-                        replacements: [ Replacement(range: replacementRange, replacement: "") ]
-                    )
-                )
-            }
-
-            // Normally list all the ambiguous symbols as an option, with each symbol's disambiguation hash.
-            // If there was a preferred symbol then don't list it again.
-            solutions.append(
-                contentsOf: candidates.filter({ $0.disambiguation != preferred?.disambiguation })
-                                      .sorted(by: collisionIsBefore)
-                                      .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                                          return Solution(
-                                              summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)",
-                                              replacements: [ Replacement(range: replacementRange, replacement: "-" + disambiguation) ]
-                                          )
-                                      }
-            )
-
+            let solutions: [Solution] = candidates
+                .sorted(by: collisionIsBefore)
+                .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
+                    // Suggest removing the disambiguation hash entirely
+                    if disambiguation.isEmpty {
+                        return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations, to: disambiguation)) for\n\(node.name.singleQuoted)", replacements: [
+                            Replacement(range: replacementRange, replacement: "")
+                        ])
+                    // Suggest replacing the disambiguation hash with the correct value
+                    } else {
+                        return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                            Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                        ])
+                    }
+                }
+            
             return TopicReferenceResolutionErrorInfo("""
                 \(disambiguations.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
@@ -248,18 +238,6 @@ extension PathHierarchy.Error {
             return "Remove \(from.singleQuoted)"
         }
         return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
-    }
-
-    /// Check if exactly one of the given candidate symbols is preferred, because it is not
-    /// disfavored for link resolution and all the other symbols are.
-    /// - Parameters:
-    ///   - candidates: An array of candidate node and disambiguation tuples.
-    /// - Returns: An optional tuple containing the preferred node and its disambiguation string, or nil if there is no preferred node.
-    func preferredCandidate(candidates: [(node: PathHierarchy.Node, disambiguation: String)]) -> (node: PathHierarchy.Node, disambiguation: String)? {
-        guard let favoredCandidate = candidates.singleMatch({ !$0.node.specialBehaviors.contains(.disfavorInLinkCollision) }) else {
-            return nil
-        }
-        return favoredCandidate
     }
 }
 
