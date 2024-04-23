@@ -71,10 +71,6 @@ extension DocumentationBundle.Info {
             }
 
             self.unknownFeatureFlags = unknownFeatureFlags
-
-            if let overloadsFlag = self.experimentalOverloadedSymbolPresentation {
-                FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = overloadsFlag
-            }
         }
 
         public func encode(to encoder: any Encoder) throws {
