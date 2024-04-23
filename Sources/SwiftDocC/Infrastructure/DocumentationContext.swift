@@ -2707,15 +2707,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return topicGraph.nodes[reference]?.title
     }
     
-    /**
-     Traverse the Topic Graph breadth-first, starting at the given reference.
-     */
-    func traverseBreadthFirst(from reference: ResolvedTopicReference, _ observe: (TopicGraph.Node) -> TopicGraph.Traversal) {
-        guard let node = topicGraph.nodeWithReference(reference) else {
-            return
-        }
-        
-        topicGraph.traverseBreadthFirst(from: node, observe)
+    /// Returns a sequence that traverses the topic graph in breadth first order from a given reference, without visiting the same node more than once.
+    func breadthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<TopicGraph.Node> {
+        topicGraph.breadthFirstSearch(from: reference)
     }
     
     /**

@@ -225,11 +225,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Get all the tutorials and tutorial articles in the learning path, ordered.
 
         var surroundingTopics = [(reference: ResolvedTopicReference, kind: DocumentationNode.Kind)]()
-        context.traverseBreadthFirst(from: volume) { node in
-            if node.kind == .tutorial || node.kind == .tutorialArticle {
-                surroundingTopics.append((node.reference, node.kind))
-            }
-            return .continue
+        for node in context.breadthFirstSearch(from: volume) where node.kind == .tutorial || node.kind == .tutorialArticle {
+            surroundingTopics.append((node.reference, node.kind))
         }
         
         // Find the tutorial or article that comes after the current page, if one exists.
@@ -362,19 +359,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func totalEstimatedDuration(for technology: Technology) -> String? {
         var totalDurationMinutes: Int? = nil
 
-        context.traverseBreadthFirst(from: identifier) { node in
-            if let entity = try? context.entity(with: node.reference),
-                let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
-            {
-                if totalDurationMinutes == nil {
-                    totalDurationMinutes = 0
-                }
-                totalDurationMinutes! += durationMinutes
+        for node in context.breadthFirstSearch(from: identifier) {
+            guard let entity = try? context.entity(with: node.reference),
+                  let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
+            else {
+                continue
             }
-
-            return .continue
+            
+            if totalDurationMinutes == nil {
+                totalDurationMinutes = 0
+            }
+            totalDurationMinutes! += durationMinutes
         }
-
 
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
