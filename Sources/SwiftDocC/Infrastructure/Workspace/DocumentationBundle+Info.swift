@@ -91,6 +91,7 @@ extension DocumentationBundle {
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        ///   - featureFlags: The feature flags enabled in the bundle.
         public init(
             displayName: String,
             identifier: String,
