@@ -2279,15 +2279,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter automaticallyCurated: A list of topics that have been automatically curated.
     func removeUnneededAutomaticCuration(_ automaticallyCurated: [(child: ResolvedTopicReference, parent: ResolvedTopicReference)]) {
-        for pair in automaticallyCurated {
-            let paths = pathsTo(pair.child)
-            
-            // Collect all current unique parents of the child.
-            let parents = Set(paths.map({ $0.last?.path }))
-            
-            // Check if the topic has multiple curation paths
-            guard parents.count > 1 else { continue }
-            
+        for pair in automaticallyCurated where parents(of: pair.child).count > 1 {
             // The topic has been manually curated, remove the automatic curation now.
             topicGraph.removeEdge(fromReference: pair.parent, toReference: pair.child)
         }
