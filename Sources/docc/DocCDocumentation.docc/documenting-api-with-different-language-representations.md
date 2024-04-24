@@ -59,3 +59,5 @@ DocC automatically adds a generic description for the "error" parameter and exte
 If you want to customize this documentation you can manually document the "error" parameter and return value. 
 Doing so won't change the Swift version of that symbol's page.
 DocC will still hide the parameter and return value documentation that doesn't apply to each source language's version of that symbol's page.
+
+<!-- Copyright (c) 2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
