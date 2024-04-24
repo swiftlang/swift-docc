@@ -68,7 +68,7 @@ struct ParametersAndReturnValidator {
         parameterSection: DocumentationDataVariants<ParametersSection>,
         returnsSection: DocumentationDataVariants<ReturnsSection>
     ) {
-        guard FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled,
+        guard FeatureFlags.current.isParametersAndReturnsValidationEnabled,
               let symbol = unifiedSymbol,
               !hasInheritedDocumentationComment(symbol: symbol),
               let signatures = Self.traitSpecificSignatures(symbol)
