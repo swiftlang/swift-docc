@@ -53,7 +53,7 @@ func doSomething(with someValue: Int) throws
 Because the Swift representation of this method only has the "someValue" parameter and no return value, DocC hides the "error" parameter documentation and the return value documentation from the Swift version of this symbol's page.
 
 
-You don't need to document the Objective-C representation's "error" parameter or return value for symbols defined in Swift.
+You don't need to document the Objective-C representation's "error" parameter or Objective-C specific return value for symbols defined in Swift.
 DocC automatically adds a generic description for the "error" parameter and extends your return value documentation to describe the Objective-C specific return value behavior. 
 
 If you want to customize this documentation you can manually document the "error" parameter and return value. 
