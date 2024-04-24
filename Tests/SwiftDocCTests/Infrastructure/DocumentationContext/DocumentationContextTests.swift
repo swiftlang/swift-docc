@@ -4472,8 +4472,8 @@ let expected = """
         // "Log a hello world message. This line contains an ``invalid`` link."
         let (_, context) = try testBundleAndContext(named: "ObjCFrameworkWithInvalidLink")
         let problems = context.problems
-        if FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled {
-            XCTAssertEqual(5, problems.count)
+        if FeatureFlags.current.isParametersAndReturnsValidationEnabled {
+            XCTAssertEqual(4, problems.count)
         } else {
             XCTAssertEqual(1, problems.count)
         }
