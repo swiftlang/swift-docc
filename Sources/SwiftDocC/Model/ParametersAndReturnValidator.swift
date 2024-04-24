@@ -592,16 +592,16 @@ struct ParametersAndReturnValidator {
     
     private static let objcErrorDescription: [Markup] = [
         Paragraph([
-            Text("On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+            Text("On output, a pointer to an error object that describes why the method failed, or ") as InlineMarkup, InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter.")
         ])
     ]
     private static let objcBoolErrorDescription: [Markup] = [
         Paragraph([
-            InlineCode("YES") as InlineMarkup, Text(" if successful, or "), InlineCode("NO"), Text(" if an error occurred.")
+            InlineCode("YES") as InlineMarkup, Text(" if the method succeeded, otherwise "), InlineCode("NO"), Text(".")
         ])
     ]
     private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [InlineMarkup] {
-        [Text("\(endPreviousSentence ? "." : "") If an error occurs, this method returns "), InlineCode("nil"), Text(" and assigns an appropriate error object to the "), InlineCode("error"), Text(" parameter.")]
+        [Text("\(endPreviousSentence ? "." : "") On failure, this method returns "), InlineCode("nil"), Text(".")]
     }
     
     private static func newParameterDescription(name: String, standalone: Bool) -> String {
