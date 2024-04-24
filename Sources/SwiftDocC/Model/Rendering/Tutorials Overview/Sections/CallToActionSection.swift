@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,7 +23,7 @@ public struct CallToActionSection: RenderSection, Equatable {
     /// An intro-style image or video to display under the content.
     public var media: RenderReferenceIdentifier?
     
-    /// The primary action to perform.
+    /// The content that describe the primary action.
     public var action: RenderInlineContent
     
     /// A short description of the section.
@@ -35,6 +35,7 @@ public struct CallToActionSection: RenderSection, Equatable {
     ///   - title: The title of the section.
     ///   - abstract: The content for the section's abstract.
     ///   - media: A reference to a media item.
+    ///   - action: The content that describe the primary action.
     ///   - featuredEyebrow: A short description of the section.
     public init(title: String, abstract: [RenderInlineContent], media: RenderReferenceIdentifier?, action: RenderInlineContent, featuredEyebrow: String) {
         self.title = title

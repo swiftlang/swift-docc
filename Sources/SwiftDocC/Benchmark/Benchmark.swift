@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -94,38 +94,48 @@ private extension Benchmark {
 }
 
 /// Logs a one-off metric value.
-/// - Parameter event: The metric to add to the log.
-public func benchmark<E>(add event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) where E: BenchmarkMetric {
+/// - Parameters:
+///   - metric: The one-off metric
+///   - log: The log to add the metric to.
+public func benchmark<E>(add metric: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) where E: BenchmarkMetric {
     guard log.shouldLogMetricType(E.self) else { return }
 
-    log.metrics.append(event())
+    log.metrics.append(metric())
 }
 
-/// Starts the given metric.
-/// - Parameter event: The metric to start.
-public func benchmark<E>(begin event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) -> E? where E: BenchmarkBlockMetric {
+/// Begins the given metric.
+/// - Parameters:
+///   - metric: The metric to begin measuring.
+///   - log: The log that may filter out the metric.
+public func benchmark<E>(begin metric: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) -> E? where E: BenchmarkBlockMetric {
     guard log.shouldLogMetricType(E.self) else { return nil }
 
-    let event = event()
-    event.begin()
-    return event
+    let metric = metric()
+    metric.begin()
+    return metric
 }
 
 /// Ends the given metric and adds it to the log.
-/// - Parameter event: The metric to end and log.
-public func benchmark<E>(end event: @autoclosure () -> E?, benchmarkLog log: Benchmark = .main) where E: BenchmarkBlockMetric {
-    guard log.shouldLogMetricType(E.self), let event = event() else { return }
+/// - Parameters:
+///   - metric: The metric to end and log.
+///   - log: The log to add the metric to.
+public func benchmark<E>(end metric: @autoclosure () -> E?, benchmarkLog log: Benchmark = .main) where E: BenchmarkBlockMetric {
+    guard log.shouldLogMetricType(E.self), let metric = metric() else { return }
 
-    event.end()
-    log.metrics.append(event)
+    metric.end()
+    log.metrics.append(metric)
 }
 
-/// Ends the given metric and adds it to the log.
-/// - Parameter event: The metric to end and log.
 @discardableResult
-public func benchmark<E, Result>(wrap event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main, body: () throws -> Result) rethrows -> Result where E: BenchmarkBlockMetric {
+/// Measures a metric around the given closure.
+/// - Parameters:
+///   - metric: The metric to measure and log.
+///   - log: The log to add the metric to.
+///   - body: The closure around which to measure the metric.
+/// - Returns: The return value from the closure.
+public func benchmark<E, Result>(wrap metric: @autoclosure () -> E, benchmarkLog log: Benchmark = .main, body: () throws -> Result) rethrows -> Result where E: BenchmarkBlockMetric {
     if log.shouldLogMetricType(E.self) {
-        let event = event()
+        let event = metric()
         event.begin()
         let result = try body()
         event.end()
