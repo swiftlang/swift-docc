@@ -31,8 +31,14 @@ public struct FeatureFlags: Codable {
     /// that mention that symbol.
     public var isExperimentalMentionedInEnabled = false
     
-    /// Whether or not experimental support validating parameters and return value documentation is enabled.
-    public var isExperimentalParametersAndReturnsValidationEnabled = false
+    /// Whether or not support for validating parameters and return value documentation is enabled.
+    public var isParametersAndReturnsValidationEnabled = true
+    
+    @available(*, deprecated, renamed: "isParametersAndReturnsValidationEnabled", message: "Use 'isParametersAndReturnsValidationEnabled' instead. This deprecated API will be removed after 6.1 is released")
+    public var isExperimentalParametersAndReturnsValidationEnabled: Bool {
+        get { isParametersAndReturnsValidationEnabled }
+        set { isParametersAndReturnsValidationEnabled = newValue }
+    }
     
     /// Creates a set of feature flags with the given values.
     ///

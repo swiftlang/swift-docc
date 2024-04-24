@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,6 +27,9 @@ public struct Parameter {
     /// - Parameters:
     ///   - name: The name of this parameter.
     ///   - contents: The content that describe this parameter.
+    ///   - nameRange: The text range where the parameter name was parsed.
+    ///   - range: The text range where this parameter was parsed.
+    ///   - isStandalone: Whether the parameter is documented standalone or as a member of a parameters outline.
     public init(name: String, nameRange: SourceRange? = nil, contents: [Markup], range: SourceRange? = nil, isStandalone: Bool = false) {
         self.name = name
         self.nameRange = nameRange
