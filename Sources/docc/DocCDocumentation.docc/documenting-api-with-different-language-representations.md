@@ -38,8 +38,8 @@ When a symbol has different parameters or return values in different source lang
 ```objc
 /// - Parameters:
 ///   - someValue: Some description of this parameter.
-///   - error: On input, a pointer to an error object. If an error occurs, this pointer is set to an object containing the information about the error.
-/// - Returns: `YES` if "doing something" was successful, or `NO` if an error occurred.
+///   - error: On output, a pointer to an error object that describes why "doing somehting" failed, or `nil` if no error occurred.
+/// - Returns: `YES` if "doing something" was successful, `NO` if an error occurred.
 - (BOOL)doSomethingWith:(NSInteger)someValue
                   error:(NSError **)error;
 ```
