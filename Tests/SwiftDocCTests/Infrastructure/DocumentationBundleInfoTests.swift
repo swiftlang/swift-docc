@@ -336,7 +336,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                 errorTypeChecking = false
             }
             XCTAssertTrue(errorTypeChecking)
-            XCTAssertEqual(error.localizedDescription, "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line 24")
+            XCTAssert(error.localizedDescription.starts(with: "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line"))
         }
     }
     

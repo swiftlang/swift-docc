@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,6 +36,8 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
     public let identifiers: [String]
     /// If true, this is an automatically generated group. If false, this is an authored group.
     public let generated: Bool
+    /// An optional anchor that can be used to link to the task group.
+    public let anchor: String?
     
     /// Creates a new task group.
     /// - Parameters:
@@ -44,17 +46,19 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
     ///   - discussion: An optional discussion for the section.
     ///   - identifiers: A list of topic-graph references.
     ///   - generated: If `true`, this is an automatically generated group. If `false`, this is an authored group.
-    public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifiers: [String], generated: Bool = false) {
+    ///   - anchor: An optional anchor that can be used to link to the task group.
+    public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifiers: [String], generated: Bool = false, anchor: String? = nil) {
         self.title = title
         self.abstract = abstract
         self.identifiers = identifiers
         self.generated = generated
+        self.anchor = anchor ?? title.map(urlReadableFragment)
         self.discussion = discussion
     }
     
     /// The list of keys you use to encode or decode this section.
     private enum CodingKeys: CodingKey {
-        case title, abstract, discussion, identifiers, generated
+        case title, abstract, discussion, identifiers, generated, anchor
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -67,6 +71,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
         if generated {
             try container.encode(generated, forKey: .generated)
         }
+        try container.encodeIfPresent(anchor, forKey: .anchor)
     }
     
     public init(from decoder: Decoder) throws {
@@ -79,6 +84,7 @@ public struct TaskGroupRenderSection: RenderSection, Equatable {
         decoder.registerReferences(identifiers)
 
         generated = try container.decodeIfPresent(Bool.self, forKey: .generated) ?? false
+        anchor = try container.decodeIfPresent(String.self, forKey: .anchor)
         discussion = (try container.decodeIfPresent(CodableContentSection.self, forKey: .discussion)).map { $0.section }
     }
 }
@@ -91,6 +97,7 @@ extension TaskGroupRenderSection {
         self.abstract = nil
         self.identifiers = group.references.map({ $0.absoluteString })
         self.generated = true
+        self.anchor = group.title.map(urlReadableFragment)
         self.discussion = nil
     }
 }
