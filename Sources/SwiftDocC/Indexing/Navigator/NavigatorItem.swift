@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,10 +42,10 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     public let availabilityID: UInt64
     
     /// The path information of the item (might be a URL as well).
-    internal var path: String = ""
+    var path: String = ""
     
     /// If available, a hashed USR of this entry and its language information.
-    internal var usrIdentifier: String? = nil
+    var usrIdentifier: String? = nil
     
     var icon: RenderReferenceIdentifier? = nil
     
@@ -59,6 +59,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - platformMask: The mask indicating for which platform the page is available.
         - availabilityID:  The identifier of the availability information of the page.
         - path: The path to load the content.
+        - icon: A reference to a custom image for this navigator item.
      */
     init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, path: String, icon: RenderReferenceIdentifier? = nil) {
         self.pageType = pageType
@@ -79,6 +80,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         - title: The user facing page title.
         - platformMask: The mask indicating for which platform the page is available.
         - availabilityID:  The identifier of the availability information of the page.
+        - icon: A reference to a custom image for this navigator item.
      */
     public init(pageType: UInt8, languageID: UInt8, title: String, platformMask: UInt64, availabilityID: UInt64, icon: RenderReferenceIdentifier? = nil) {
         self.pageType = pageType

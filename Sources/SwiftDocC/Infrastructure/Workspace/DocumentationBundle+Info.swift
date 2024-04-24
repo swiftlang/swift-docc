@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -253,15 +253,16 @@ extension DocumentationBundle {
 
 extension BundleDiscoveryOptions {
     /// Creates new bundle discovery options with the given information.
-    ///
+    /// 
     /// The given fallback values will be used if any of the discovered bundles are missing that
     /// value in their Info.plist configuration file.
-    ///
+    /// 
     /// - Parameters:
     ///   - fallbackDisplayName: A fallback display name for the bundle.
     ///   - fallbackIdentifier: A fallback identifier for the bundle.
     ///   - fallbackVersion: A fallback version for the bundle.
     ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
+    ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
     public init(

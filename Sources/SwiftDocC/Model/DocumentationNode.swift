@@ -156,6 +156,7 @@ public struct DocumentationNode {
     ///   - markup: The markup that makes up the content for the node.
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
+    ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
     public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
@@ -184,8 +185,8 @@ public struct DocumentationNode {
     ///
     /// - Parameters:
     ///   - reference: The unique reference to the node.
-    ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformName: The name of the platforms for which the node is available.
+    ///   - unifiedSymbol: The symbol to create a documentation node for.
+    ///   - moduleData: The module that the symbol belongs to.
     ///   - moduleName: The name of the module that the symbol belongs to.
     init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, moduleData: SymbolGraph.Module, moduleReference: ResolvedTopicReference) {
         self.reference = reference
@@ -583,11 +584,10 @@ public struct DocumentationNode {
     /// - Parameters:
     ///   - reference: The unique reference to the node.
     ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformNames: The names of the platforms for which the node is available.
-    ///   - moduleName: The name of the module that the symbol belongs to.
+    ///   - platformName: The names of the platform that the symbol is available for.
+    ///   - moduleReference: A reference to the module that the symbol belongs to.
     ///   - article: The documentation extension content for this symbol.
     ///   - engine:The engine that collects any problems encountered during initialization.
-    ///   - bystanderModules: An optional list of cross-import module names.
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine) {
         self.reference = reference
         

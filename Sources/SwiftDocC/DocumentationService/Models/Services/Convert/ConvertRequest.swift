@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -98,6 +98,8 @@ public struct ConvertRequest: Codable {
     /// Creates a request to convert in-memory documentation.
     /// - Parameters:
     ///   - bundleInfo: Information about the bundle to convert.
+    ///   - featureFlags: Feature flags to enable when performing this convert request.
+    ///   - externalIDsToConvert: The external IDs of the symbols to convert.
     ///   - documentPathsToConvert: The paths of the documentation nodes to convert.
     ///   - includeRenderReferenceStore: Whether the conversion's render reference store should be included in the
     ///   response.
