@@ -104,11 +104,11 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     /// An optional list of text-based tags.
     public var tags: [RenderNode.Tag]?
     
-    /// Author provided images that should be used to represent this page.
+    /// Author provided images that represent this page.
     public var images: [TopicImage]
     
     /// Creates a new topic reference with all its initial values.
-    ///
+    /// 
     /// - Parameters:
     ///   - identifier: The identifier of this reference.
     ///   - title: The title of the destination page.
@@ -128,6 +128,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     ///   - name: Raw name of a symbol, e.g. "com.apple.enableDataAccess", or `nil` if the referenced page is not a symbol.
     ///   - ideTitle: The human friendly symbol name, or `nil` if the referenced page is not a symbol.
     ///   - tags: An optional list of string tags.
+    ///   - images: Author provided images that represent this page.
     public init(
         identifier: RenderReferenceIdentifier,
         title: String,
@@ -173,17 +174,17 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     }
     
     /// Creates a new topic reference with all its initial values.
-    ///
+    /// 
     /// - Parameters:
     ///   - identifier: The identifier of this reference.
     ///   - titleVariants: The variants for the title of the destination page.
-    ///   - abstract: The abstract of the destination page.
+    ///   - abstractVariants: The abstract of the destination page.
     ///   - url: The topic url of the destination page.
     ///   - kind: The kind of page that's referenced.
     ///   - required: Whether the reference is required in its parent context.
     ///   - role: The additional "role" assigned to the symbol, if any.
-    ///   - fragments: The abbreviated declaration of the symbol to display in links, or `nil` if the referenced page is not a symbol.
-    ///   - navigatorTitle: The abbreviated declaration of the symbol to display in navigation, or `nil` if the referenced page is not a symbol.
+    ///   - fragmentsVariants: The abbreviated declaration of the symbol to display in links, or `nil` if the referenced page is not a symbol.
+    ///   - navigatorTitleVariants: The abbreviated declaration of the symbol to display in navigation, or `nil` if the referenced page is not a symbol.
     ///   - estimatedTime: The estimated time to complete the topic.
     ///   - conformance: Information about conditional conformance for the symbol, or `nil` if the referenced page is not a symbol.
     ///   - isBeta: Whether this symbol is built for a beta platform, or `false` if the referenced page is not a symbol.
@@ -193,6 +194,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
     ///   - name: Raw name of a symbol, e.g. "com.apple.enableDataAccess", or `nil` if the referenced page is not a symbol.
     ///   - ideTitle: The human friendly symbol name, or `nil` if the referenced page is not a symbol.
     ///   - tags: An optional list of string tags.
+    ///   - images: Author provided images that represent this page.
     public init(
         identifier: RenderReferenceIdentifier,
         titleVariants: VariantCollection<String>,
