@@ -2218,7 +2218,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let automaticallyCurated = autoCurateSymbolsInTopicGraph()
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
-        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.child), bundle: bundle, initial: allCuratedReferences)
+        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), bundle: bundle, initial: allCuratedReferences)
 
         // Remove curation paths that have been created automatically above
         // but we've found manual curation for in the second crawl pass.
@@ -2277,11 +2277,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// call `removeUnneededAutomaticCuration(_:)` which walks the list of automatic curations and removes
     /// the parent <-> child topic graph relationships that have been obsoleted.
     ///
-    /// - Parameter automaticallyCurated: A list of topics that have been automatically curated.
-    func removeUnneededAutomaticCuration(_ automaticallyCurated: [(child: ResolvedTopicReference, parent: ResolvedTopicReference)]) {
-        for pair in automaticallyCurated where parents(of: pair.child).count > 1 {
-            // The topic has been manually curated, remove the automatic curation now.
-            topicGraph.removeEdge(fromReference: pair.parent, toReference: pair.child)
+    /// - Parameter automaticallyCurated: A list of automatic curation records.
+    func removeUnneededAutomaticCuration(_ automaticallyCurated: [AutoCuratedSymbolRecord]) {
+        // It might look like it would be correct to check `topicGraph.nodes[symbol]?.isManuallyCurated` here,
+        // but that would incorrectly remove the only parent if the manual curation and the automatic curation was the same.
+        //
+        // Similarly, it might look like it would be correct to only check `parents(of: symbol).count > 1` here,
+        // but that would incorrectly remove the automatic curation for symbols with different language representations with different parents.
+        for (symbol, parent, counterpartParent) in automaticallyCurated where parents(of: symbol).count > (counterpartParent != nil ? 2 : 1) {
+            topicGraph.removeEdge(fromReference: parent, toReference: symbol)
+            if let counterpartParent {
+                topicGraph.removeEdge(fromReference: counterpartParent, toReference: symbol)
+            }
         }
     }
 
@@ -2322,20 +2329,39 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
+    typealias AutoCuratedSymbolRecord = (symbol: ResolvedTopicReference, parent: ResolvedTopicReference, counterpartParent: ResolvedTopicReference?)
+    
     /// Curate all remaining uncurated symbols under their natural parent from the symbol graph.
     ///
     /// This will include all symbols that were not manually curated by the documentation author.
     /// - Returns: An ordered list of symbol references that have been added to the topic graph automatically.
-    private func autoCurateSymbolsInTopicGraph() -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
-        var automaticallyCuratedSymbols = [(ResolvedTopicReference, ResolvedTopicReference)]()
-        linkResolver.localResolver.traverseSymbolAndParentPairs { reference, parentReference in
+    private func autoCurateSymbolsInTopicGraph() -> [AutoCuratedSymbolRecord] {
+        var automaticallyCuratedSymbols = [AutoCuratedSymbolRecord]()
+        linkResolver.localResolver.traverseSymbolAndParents { reference, parentReference, counterpartParentReference in
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
-                  let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
-                  // Check that the node hasn't got any parents from manual curation
+                  // Check that the node isn't already manually curated
                   !topicGraphNode.isManuallyCurated
             else { return }
+            
+            // Check that the symbol doesn't already have parent's that aren't either language representation's hierarchical parent.
+            // This for example happens for default implementation and symbols that are requirements of protocol conformances.
+            guard parents(of: reference).allSatisfy({ $0 == parentReference || $0 == counterpartParentReference }) else {
+                return
+            }
+            
+            guard let topicGraphParentNode = topicGraph.nodeWithReference(parentReference) else { return }
             topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
-            automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
+            
+            if let counterpartParentReference {
+                guard let topicGraphCounterpartParentNode = topicGraph.nodeWithReference(counterpartParentReference) else { 
+                    // If the counterpart parent doesn't exist. Return the auto curation record without the it.
+                    automaticallyCuratedSymbols.append((reference, parentReference, nil))
+                    return
+                }
+                topicGraph.addEdge(from: topicGraphCounterpartParentNode, to: topicGraphNode)
+            }
+            // Collect a single automatic curation record for both language representation parents.
+            automaticallyCuratedSymbols.append((reference, parentReference, counterpartParentReference))
         }
         return automaticallyCuratedSymbols
     }
