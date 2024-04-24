@@ -150,17 +150,10 @@ extension PathHierarchy.Error {
             let solutions: [Solution] = candidates
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    // Suggest removing the disambiguation hash entirely
-                    if disambiguation.isEmpty {
-                        return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations, to: disambiguation)) for\n\(node.name.singleQuoted)", replacements: [
-                            Replacement(range: replacementRange, replacement: "")
-                        ])
-                    // Suggest replacing the disambiguation hash with the correct value
-                    } else {
-                        return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
-                            Replacement(range: replacementRange, replacement: "-" + disambiguation)
-                        ])
-                    }
+                    let from = disambiguation.isEmpty ? disambiguations : disambiguations.dropFirst()
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: from, to: disambiguation.dropFirst())) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                        Replacement(range: replacementRange, replacement: disambiguation)
+                    ])
                 }
             
             return TopicReferenceResolutionErrorInfo("""

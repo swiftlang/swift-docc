@@ -371,7 +371,7 @@ extension PathHierarchy {
         // suffix entirely.
         let candidates = disambiguationTree.disambiguatedValues()
         let favoredSuffix = favoredSuffix(from: candidates)
-        let suffixes = candidates.map { suffix(for: $0.disambiguation) }
+        let suffixes = candidates.map { $0.disambiguation.makeSuffix() }
         let candidatesAndSuffixes = zip(candidates, suffixes).map { (candidate, suffix) in
             if suffix == favoredSuffix {
                 return (node: candidate.value, disambiguation: "")
@@ -396,20 +396,10 @@ extension PathHierarchy {
     /// - Returns: An optional string set to the disambiguation suffix string, without the hyphen separator e.g. "abc123",
     ///            or nil if there is no preferred symbol.
     private func favoredSuffix(from candidates: [(value: PathHierarchy.Node, disambiguation: PathHierarchy.DisambiguationContainer.Disambiguation)]) -> String? {
-        guard let favored = candidates.singleMatch({
+        return candidates.singleMatch({
             !$0.value.specialBehaviors.contains(PathHierarchy.Node.SpecialBehaviors.disfavorInLinkCollision)
-        }) else { return nil }
-        return suffix(for: favored.disambiguation)
+        })?.disambiguation.makeSuffix()
     }
-
-    /// Return the suffix string "abc123" for the given disambiguation, without the hyphen separator
-    /// - Parameters:
-    ///   - from: A PathHierarchy disambiguation structure
-    /// - Returns: The corresponding disambiguation suffix string, without the hyphen separator e.g. "abc123"
-    private func suffix(for disambiguation: PathHierarchy.DisambiguationContainer.Disambiguation) -> String {
-        return String(disambiguation.makeSuffix().dropFirst())
-    }
-
 
     private func pathForError(
         of rawPath: String,
