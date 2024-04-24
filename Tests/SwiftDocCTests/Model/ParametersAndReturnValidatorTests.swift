@@ -17,11 +17,6 @@ import SwiftDocCTestUtilities
 
 class ParametersAndReturnValidatorTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        enableFeatureFlag(\.isExperimentalParametersAndReturnsValidationEnabled)
-    }
-    
     func testFiltersParameters() throws {
         let (bundle, context) = try testBundleAndContext(named: "ErrorParameters")
         
