@@ -4486,6 +4486,173 @@ let expected = """
         XCTAssertEqual(start..<end, range)
     }
     
+    func testPathsToHandlesCyclicCuration() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            // Any class declaration.
+                            makeSymbol(
+                                name: "SomeClass",
+                                identifier: "some-class-id",
+                                language: .objectiveC,
+                                kind: .class
+                            ),
+                            
+                            // extern NSErrorDomain const SomeErrorDomain;
+                            makeSymbol(
+                                name: "SomeErrorDomain",
+                                identifier: "some-error-domain-id",
+                                language: .objectiveC,
+                                kind: .var
+                            ),
+                            
+                            // typedef NS_ERROR_ENUM(SomeErrorDomain, SomeErrorCode) {
+                            //     SomeErrorCodeSomeCase = 1
+                            // };
+                            makeSymbol(
+                                name: "SomeErrorCode",
+                                identifier: "some-error-code-id",
+                                language: .objectiveC,
+                                kind: .enum
+                            ),
+                            makeSymbol(
+                                name: "SomeErrorCodeSomeCase",
+                                identifier: "some-error-code-case-id",
+                                language: .objectiveC,
+                                kind: .case,
+                                pathComponents: ["SomeErrorCode", "SomeErrorCodeSomeCase"]
+                            ),
+                        ],
+                        relationships: [
+                            .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil),
+                        ]
+                    ))
+                ]),
+                
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            // The Swift representation of the Objective-C class above.
+                            makeSymbol(
+                                name: "SomeClass",
+                                identifier: "some-class-id",
+                                kind: .class
+                            ),
+                            
+                            // The domain defined using NS_ERROR_ENUM translates to a struct with an 'errorDomain' and 'code'. Something like:
+                            //
+                            // let SomeErrorDomain: String
+                            // struct SomeError: CustomNSError, Error {
+                            //     static var errorDomain: String
+                            //     static var code: Code
+                            //     enum Code {
+                            //         someCase = 1
+                            //     }
+                            // }
+                            makeSymbol(
+                                name: "SomeErrorDomain",
+                                identifier: "some-error-domain-id",
+                                kind: .var
+                            ),
+                            
+                            makeSymbol(
+                                name: "SomeError",
+                                identifier: "some-error-id",
+                                kind: .struct
+                            ),
+                            makeSymbol(
+                                name: "errorDomain",
+                                identifier: "some-error-domain-property-id",
+                                kind: .typeProperty,
+                                pathComponents: ["SomeError", "errorDomain"]
+                            ),
+                            makeSymbol(
+                                name: "code",
+                                identifier: "some-error-code-property-id",
+                                kind: .typeProperty,
+                                pathComponents: ["SomeError", "code"]
+                            ),
+                            makeSymbol(
+                                name: "Code",
+                                identifier: "some-error-code-id",
+                                kind: .enum,
+                                pathComponents: ["SomeError", "Code"]
+                            ),
+                            makeSymbol(
+                                name: "someCase",
+                                identifier: "some-error-code-case-id",
+                                kind: .case,
+                                pathComponents: ["SomeError", "Code", "someCase"]
+                            ),
+                        ],
+                        relationships: [
+                            // static properties are members of struct
+                            .init(source: "some-error-domain-property-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "some-error-code-property-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
+                            // enum is member of struct
+                            .init(source: "some-error-code-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
+                            // case is member of enum
+                            .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil),
+                        ]
+                    ))
+                ]),
+                
+                // In addition to the automatic curation (thin lines) where all symbols are members of the module (SomeErrorCode is a top-level enum in Objective-C),
+                // Add manual curation (thick lines) from `SomeClass` to `SomeError` and from `SomeError/Code` to `SomeClass`, creating a cycle in the total curation.
+                //
+                //            ModuleName
+                //                 │
+                //     ┌───────┬───┴───┬─────────────┐
+                //     ▼       │       ▼             ▼
+                // SomeClass━━━━━━▶SomeError  SomeErrorDomain
+                //     ▲       │       │
+                //     ┃       ▼       │
+                //     ┗━━━━━Code◀─────┘
+                //             │
+                //             ▼
+                //          someCase
+                
+                TextFile(name: "SomeClass.md", utf8Content: """
+                # ``SomeClass``
+                
+                Curate the error
+                
+                ## Topics
+                
+                - ``SomeError``
+                """),
+                
+                TextFile(name: "SomeErrorCode.md", utf8Content: """
+                # ``SomeError/Code``
+                
+                Curate the class
+                
+                ## Topics
+                
+                - ``SomeClass``
+                """),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeError/Code-swift.enum/someCase", sourceLanguage: .swift)
+        
+        XCTAssertEqual(
+            DirectedGraph(neighbors: context.topicGraph.reverseEdges).cycles(from: reference).map { $0.map(\.lastPathComponent) },
+            [ ["Code-swift.enum", "SomeError", "SomeClass"] ],
+            "There is one cyclic path encountered while traversing the reverse edges from the 'someCase' enum case."
+        )
+        
+        XCTAssertEqual(
+            context.pathsTo(reference).map { $0.map(\.lastPathComponent) },
+            [ ["ModuleName", "Code-swift.enum"] ],
+            "There is only one _finite_ path from the 'someCase' enum case, through the reverse edges in the topic graph."
+        )
+    }
+    
     func testUnresolvedLinkWarnings() throws {
         var (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             let extensionFile = """
@@ -4655,11 +4822,12 @@ let expected = """
     private func makeSymbol(
         name: String = "SymbolName",
         identifier: String,
+        language: SourceLanguage = .swift,
         kind: SymbolGraph.Symbol.KindIdentifier,
         pathComponents: [String]? = nil
     ) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
-            identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+            identifier: .init(precise: identifier, interfaceLanguage: language.id),
             names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
             pathComponents: pathComponents ?? [name],
             docComment: nil,

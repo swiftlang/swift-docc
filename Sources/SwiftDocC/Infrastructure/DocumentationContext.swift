@@ -2822,55 +2822,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             .map { $0.reference }
     }
     
-    /// Options to consider when producing node breadcrumbs.
-    struct PathOptions: OptionSet {
-        let rawValue: Int
-        
-        /// The node is a technology page; sort the path to a technology as canonical.
-        static let preferTechnologyRoot = PathOptions(rawValue: 1 << 0)
-    }
-    
-    /// Finds all paths (breadcrumbs) to the given node reference.
-    ///
-    /// Each path is an array of references to the symbols from the module symbol to the current one.
-    /// The first path in the array is always the canonical path to the symbol.
-    ///
-    /// - Parameters:
-    ///   - reference: The reference to build that paths to.
-    ///   - currentPathToNode: Used for recursion - an accumulated path to "continue" working on.
-    /// - Returns: A list of paths to the current reference in the topic graph.
-    func pathsTo(_ reference: ResolvedTopicReference, currentPathToNode: [ResolvedTopicReference] = [], options: PathOptions = []) -> [[ResolvedTopicReference]] {
-        let nodeParents = parents(of: reference)
-        guard !nodeParents.isEmpty else {
-            // The path ends with this node
-            return [currentPathToNode]
-        }
-        var results = [[ResolvedTopicReference]]()
-        for parentReference in nodeParents {
-            let parentPaths = pathsTo(parentReference, currentPathToNode: [parentReference] + currentPathToNode)
-            results.append(contentsOf: parentPaths)
-        }
-        
-        // We are sorting the breadcrumbs by the path distance to the documentation root
-        // so that the first element is the shortest path that we are using as canonical.
-        results.sort { (lhs, rhs) -> Bool in
-            // Order a path rooted in a technology as the canonical one.
-            if options.contains(.preferTechnologyRoot), let first = lhs.first {
-                return try! entity(with: first).semantic is Technology
-            }
-            
-            // If the breadcrumbs have equal amount of components
-            // sort alphabetically to produce stable paths order.
-            guard lhs.count != rhs.count else {
-                return lhs.map({ $0.path }).joined(separator: ",") < rhs.map({ $0.path }).joined(separator: ",")
-            }
-            // Order by the length of the breadcrumb.
-            return lhs.count < rhs.count
-        }
-        
-        return results
-    }
-    
     func dumpGraph() -> String {
         return topicGraph.nodes.values
             .filter { parents(of: $0.reference).isEmpty }
