@@ -38,7 +38,7 @@ extension DocumentationBundle.Info {
         /// A list of decoded feature flag keys that didn't match a known feature flag.
         public let unknownFeatureFlags: [String]
 
-        enum CodingKeys: String, CodingKey {
+        enum CodingKeys: String, CodingKey, CaseIterable {
             case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
         }
 

@@ -2019,11 +2019,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
 
             for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
+                let suggestions = NearMiss.bestMatches(
+                    for: DocumentationBundle.Info.BundleFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
+                    against: unknownFeatureFlag)
+                var summary: String = "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)"
+                if !suggestions.isEmpty {
+                    summary += ". Possible suggestions: \(suggestions.map(\.singleQuoted).joined(separator: ", "))"
+                }
                 diagnosticEngine.emit(.init(diagnostic:
                         .init(
                             severity: .warning,
                             identifier: "org.swift.docc.UnknownBundleFeatureFlag",
-                            summary: "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)")))
+                            summary: summary
+                        )))
             }
         } else {
             currentFeatureFlags = nil

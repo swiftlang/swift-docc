@@ -4706,7 +4706,7 @@ let expected = """
                 <dict>
                     <key>CDExperimentalFeatureFlags</key>
                     <dict>
-                        <key>ExperimentalNonExistentFeature</key>
+                        <key>NonExistentFeature</key>
                         <true/>
                     </dict>
                 </dict>
@@ -4721,7 +4721,35 @@ let expected = """
         let problem = try XCTUnwrap(unknownFeatureFlagProblems.first)
 
         XCTAssertEqual(problem.diagnostic.severity, .warning)
-        XCTAssertEqual(problem.diagnostic.summary, "Unknown feature flag in Info.plist: 'ExperimentalNonExistentFeature'")
+        XCTAssertEqual(problem.diagnostic.summary, "Unknown feature flag in Info.plist: 'NonExistentFeature'")
+    }
+
+    func testUnknownFeatureFlagSuggestsOtherFlags() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                DataFile(name: "Info.plist", data: Data("""
+                <plist version="1.0">
+                <dict>
+                    <key>CDExperimentalFeatureFlags</key>
+                    <dict>
+                        <key>ExperimenalOverloadedSymbolPresentation</key>
+                        <true/>
+                    </dict>
+                </dict>
+                </plist>
+                """.utf8))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        let unknownFeatureFlagProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.UnknownBundleFeatureFlag" })
+        XCTAssertEqual(unknownFeatureFlagProblems.count, 1)
+        let problem = try XCTUnwrap(unknownFeatureFlagProblems.first)
+
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(
+            problem.diagnostic.summary,
+            "Unknown feature flag in Info.plist: 'ExperimenalOverloadedSymbolPresentation'. Possible suggestions: 'ExperimentalOverloadedSymbolPresentation'")
     }
 
     // A test helper that creates a symbol with a given identifier and kind.
