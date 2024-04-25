@@ -10,29 +10,22 @@
 
 import Foundation
 import XCTest
-import Markdown
-@testable import SymbolKit
-@_spi(ExternalLinks) @testable import SwiftDocC
+import SymbolKit
+@testable import SwiftDocC
 import SwiftDocCTestUtilities
 
 class AutoCapitalizationTests: XCTestCase {
-    
     
     // MARK: Test helpers
     
     private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
     private let symbolURL =  URL(fileURLWithPath: "/path/to/SomeFile.swift")
     
-    private func makeSymbolGraph(docComment: String) -> SymbolGraph {
+    private func makeSymbolGraph(docComment: String, parameters: [String]) -> SymbolGraph {
         makeSymbolGraph(
             docComment: docComment,
             sourceLanguage: .swift,
-            parameters: [
-                ("firstParameter", nil),
-                ("secondParameter", nil),
-                ("thirdParameter", nil),
-                ("fourthParameter", nil),
-            ],
+            parameters: parameters.map { ($0, nil) },
             returnValue: .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
         )
     }
@@ -79,7 +72,8 @@ class AutoCapitalizationTests: XCTestCase {
     // MARK: End-to-end integration tests
     
     func testParametersCapitalization() throws {
-        let symbolGraph = makeSymbolGraph(docComment: """
+        let symbolGraph = makeSymbolGraph(
+            docComment: """
             Some symbol description.
 
             - Parameters:
@@ -88,7 +82,9 @@ class AutoCapitalizationTests: XCTestCase {
                 - three: inValid third parameter will not be capitalized
                 - four: `code block` will not be capitalized
                 - five: a`nother invalid capitalization
-            """)
+            """,
+            parameters: ["one", "two", "three", "four", "five"]
+        )
         
         let url = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [
@@ -124,7 +120,8 @@ class AutoCapitalizationTests: XCTestCase {
     }
     
     func testIndividualParametersCapitalization() throws {
-        let symbolGraph = makeSymbolGraph(docComment: """
+        let symbolGraph = makeSymbolGraph(
+            docComment: """
             Some symbol description.
 
             - parameter one: upper-cased first parameter description.
@@ -132,7 +129,9 @@ class AutoCapitalizationTests: XCTestCase {
             - parameter three: inValid third parameter will not be capitalized
             - parameter four: `code block` will not be capitalized
             - parameter five: a`nother invalid capitalization
-            """)
+            """,
+            parameters: ["one", "two", "three", "four", "five"]
+        )
         
         let url = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [
@@ -168,11 +167,14 @@ class AutoCapitalizationTests: XCTestCase {
     }
     
     func testReturnsCapitalization() throws {
-        let symbolGraph = makeSymbolGraph(docComment: """
+        let symbolGraph = makeSymbolGraph(
+            docComment: """
             Some symbol description.
 
             - Returns: string, first word should have been capitalized here.
-            """)
+            """,
+            parameters: []
+        )
         
         let url = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [

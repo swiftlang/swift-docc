@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -105,8 +105,8 @@ public enum JSONPatchOperation: Codable {
     /// A replacement operation.
     ///
     /// - Parameters:
-    ///     - pointer: The pointer to the value to replace.
-    ///     - encodedValue: The value to use in the replacement.
+    ///   - pointer: The pointer to the value to replace.
+    ///   - encodableValue: The value to use in the replacement.
     public static func replace(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
         .replace(pointer: pointer, value: AnyCodable(encodableValue))
     }

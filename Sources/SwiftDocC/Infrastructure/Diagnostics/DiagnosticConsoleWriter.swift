@@ -24,8 +24,8 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     /// Creates a new instance of this class with the provided output stream.
     /// - Parameters:
     ///   - stream: The output stream to which this instance will write.
-    ///   - formattingOptions: The formatting options for the diagnostics.
-    ///   - baseUrl: A url to be used as a base url when formatting diagnostic source path.
+    ///   - options: The formatting options for the diagnostics.
+    ///   - baseURL: A url to be used as a base url when formatting diagnostic source path.
     ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
     public convenience init(
         _ stream: TextOutputStream = LogHandle.standardError,
