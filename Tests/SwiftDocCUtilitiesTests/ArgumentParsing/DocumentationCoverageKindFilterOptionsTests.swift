@@ -38,7 +38,7 @@ class KindFilterOptionsTests: XCTestCase {
         XCTAssertEqual(BitFlag(string: "initializer"), BitFlag.initializer) // 12
         XCTAssertEqual(BitFlag(string: "instance-method"), BitFlag.instanceMethod) // 13
         XCTAssertEqual(BitFlag(string: "instance-property"), BitFlag.instanceProperty) // 14
-        XCTAssertEqual(BitFlag(string: "instance-subcript"), BitFlag.instanceSubscript) // 15
+        XCTAssertEqual(BitFlag(string: "instance-subscript"), BitFlag.instanceSubscript) // 15
         XCTAssertEqual(BitFlag(string: "instance-variable"), BitFlag.instanceVariable) // 16
         XCTAssertEqual(BitFlag(string: "type-method"), BitFlag.typeMethod) // 17
         XCTAssertEqual(BitFlag(string: "type-property"), BitFlag.typeProperty) // 18

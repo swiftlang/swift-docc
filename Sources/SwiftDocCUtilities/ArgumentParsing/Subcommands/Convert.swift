@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -539,11 +539,17 @@ extension Docc {
             var enableExperimentalMentionedIn = false
 
             @Flag(
-                name: .customLong("enable-experimental-parameters-and-returns-validation"),
+                name: .customLong("parameters-and-returns-validation"),
+                inversion: .prefixedEnableDisable,
                 help: ArgumentHelp("Validate parameter and return value documentation", discussion: """
                 Validates and filters symbols' parameter and return value documentation based on the symbol's function signature in each language representation.
                 """)
             )
+            var enableParametersAndReturnsValidation = true
+            
+            // This flag only exist to allow developers to pass the previous '--enable-experimental-...' flag without errors.
+            @Flag(name: .customLong("enable-experimental-parameters-and-returns-validation"), help: .hidden)
+            @available(*, deprecated, message: "This deprecated API will be removed after 6.0 is released")
             var enableExperimentalParametersAndReturnsValidation = false
             
             @Flag(help: "Write additional metadata files to the output directory.")
@@ -566,6 +572,7 @@ extension Docc {
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-objective-c-support", message: "This flag has no effect. Objective-C support is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-json-index", message: "This flag has no effect. The JSON render is emitted by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("experimental-parse-doxygen-commands", message: "This flag has no effect. Doxygen support is enabled by default.")
+                Convert.warnAboutDeprecatedOptionIfNeeded("enable-experimental-parameters-and-returns-validation", message: "This flag has no effect. Parameter and return value validation is enabled by default.")
                 Convert.warnAboutDeprecatedOptionIfNeeded("index", message: "Use '--emit-lmdb-index' indead.")
                 emitLMDBIndex = emitLMDBIndex || index
             }
@@ -634,9 +641,15 @@ extension Docc {
         }
         
         /// A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.
+        public var enableParametersAndReturnsValidation: Bool {
+            get { featureFlags.enableParametersAndReturnsValidation }
+            set { featureFlags.enableParametersAndReturnsValidation = newValue }
+        }
+        
+        @available(*, deprecated, renamed: "enableParametersAndReturnsValidation", message: "Use 'enableParametersAndReturnsValidation' instead. This deprecated API will be removed after 6.0 is released")
         public var enableExperimentalParametersAndReturnsValidation: Bool {
-            get { featureFlags.enableExperimentalParametersAndReturnsValidation }
-            set { featureFlags.enableExperimentalParametersAndReturnsValidation = newValue }
+            get { enableParametersAndReturnsValidation }
+            set { enableParametersAndReturnsValidation = newValue }
         }
         
         /// A user-provided value that is true if additional metadata files should be produced.

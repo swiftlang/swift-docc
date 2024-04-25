@@ -82,21 +82,47 @@ public struct ConvertAction: Action, RecreatingContext {
     private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    /// - Parameter buildIndex: Whether or not the convert action should emit an LMDB representation
-    ///   of the navigator index.
-    ///
-    ///   A JSON representation is built and emitted regardless of this value.
-    /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
-    /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    /// - Parameter dataProvider: A data provider to use when registering bundles
-    /// - Parameter fileManager: A file persistence manager
-    /// - Parameter documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
-    /// - Parameter diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified, diagnostics with a severity up to and including `.information` will be printed.
-    /// - Parameter diagnosticEngine: The engine that will collect and emit diagnostics during this action.
+    /// 
+    /// - Parameters:
+    ///   - documentationBundleURL: The root of the documentation catalog to convert.
+    ///   - outOfProcessResolver: An out-of-process resolver that
+    ///   - analyze: `true` if the convert action should override the provided `diagnosticLevel` with `.information`, otherwise `false`.
+    ///   - targetDirectory: The location where the convert action will write the built documentation output.
+    ///   - htmlTemplateDirectory: The location of the HTML template to use as a base for the built documentation output.
+    ///   - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
+    ///   - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
+    ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
+    /// 
+    ///     A JSON representation is built and emitted regardless of this value.
+    ///   - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
+    ///   - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
+    ///   - dataProvider: A data provider to use when registering bundles
+    ///   - fileManager: The file manager that the convert action uses to create directories and write data to files.
+    ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
+    ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
+    ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
+    ///   - diagnosticEngine: The engine that will collect and emit diagnostics during this action.
+    ///   - diagnosticFilePath: The path to a file where the convert action should write diagnostic information.
+    ///   - formatConsoleOutputForTools: `true` if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise `false`.
+    ///   - inheritDocs: `true` if the convert action should retain the original documentation content for inherited symbols, otherwise `false`.
+    ///   - treatWarningsAsErrors: `true` if the convert action should treat warnings as errors, otherwise `false`.
+    ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
+    ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
+    ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
+    ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
+    ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
+    ///   - sourceRepository: The source repository where the documentation's sources are hosted.
+    ///   - temporaryDirectory: The location where the convert action should write temporary files while converting the documentation.
+    ///   - dependencies: A list of URLs to already built documentation archives that this documentation depends on.
     init(
-        documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?,
-        analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
-        currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
+        documentationBundleURL: URL?,
+        outOfProcessResolver: OutOfProcessReferenceResolver?,
+        analyze: Bool,
+        targetDirectory: URL,
+        htmlTemplateDirectory: URL?,
+        emitDigest: Bool,
+        currentPlatforms: [String : PlatformVersion]?,
+        buildIndex: Bool = false,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
         context: DocumentationContext? = nil,
         dataProvider: DocumentationWorkspaceDataProvider? = nil,
@@ -218,16 +244,44 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
-    /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    /// - Parameter dataProvider: A data provider to use when registering bundles
-    /// - Parameter documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
-    /// - Parameter diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
-    /// - Parameter diagnosticEngine: The engine that will collect and emit diagnostics during this action.
+    ///
+    /// - Parameters:
+    ///   - documentationBundleURL: The root of the documentation catalog to convert.
+    ///   - outOfProcessResolver: An out-of-process resolver that
+    ///   - analyze: `true` if the convert action should override the provided `diagnosticLevel` with `.information`, otherwise `false`.
+    ///   - targetDirectory: The location where the convert action will write the built documentation output.
+    ///   - htmlTemplateDirectory: The location of the HTML template to use as a base for the built documentation output.
+    ///   - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
+    ///   - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
+    ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
+    ///
+    ///     A JSON representation is built and emitted regardless of this value.
+    ///   - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
+    ///   - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
+    ///   - dataProvider: A data provider to use when registering bundles
+    ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
+    ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
+    ///   - diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
+    ///   - diagnosticEngine: The engine that will collect and emit diagnostics during this action.
+    ///   - formatConsoleOutputForTools: `true` if the convert action should write diagnostics to the console in a format suitable for parsing by an IDE or other tool, otherwise `false`.
+    ///   - inheritDocs: `true` if the convert action should retain the original documentation content for inherited symbols, otherwise `false`.
+    ///   - experimentalEnableCustomTemplates: `true` if the convert action should enable support for custom "header.html" and "footer.html" template files, otherwise `false`.
+    ///   - experimentalModifyCatalogWithGeneratedCuration: `true` if the convert action should write documentation extension files containing markdown representations of DocC's automatic curation into the `documentationBundleURL`, otherwise `false`.
+    ///   - transformForStaticHosting: `true` if the convert action should process the build documentation archive so that it supports a static hosting environment, otherwise `false`.
+    ///   - allowArbitraryCatalogDirectories: `true` if the convert action should consider the root location as a documentation bundle if it doesn't discover another bundle, otherwise `false`.
+    ///   - hostingBasePath: The base path where the built documentation archive will be hosted at.
+    ///   - sourceRepository: The source repository where the documentation's sources are hosted.
+    ///   - temporaryDirectory: The location where the convert action should write temporary files while converting the documentation.
+    ///   - dependencies: A list of URLs to already built documentation archives that this documentation depends on.
     public init(
-        documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?,
-        analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
-        currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
+        documentationBundleURL: URL,
+        outOfProcessResolver: OutOfProcessReferenceResolver?,
+        analyze: Bool,
+        targetDirectory: URL,
+        htmlTemplateDirectory: URL?,
+        emitDigest: Bool,
+        currentPlatforms: [String : PlatformVersion]?,
+        buildIndex: Bool = false,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
         context: DocumentationContext? = nil,
         dataProvider: DocumentationWorkspaceDataProvider? = nil,

@@ -2747,7 +2747,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Parameters:
        - reference: An unresolved (or resolved) reference.
        - parent: The *resolved* reference that serves as an enclosing search context, especially the parent reference's bundle identifier.
-       - fromSymbolLink: If `true` will try to resolve relative links *only* in documentation symbol locations in the hierarchy. If `false` it will try to resolve relative links as tutorials, articles, symbols, etc.
+       - isCurrentlyResolvingSymbolLink: If `true` will try to resolve relative links *only* in documentation symbol locations in the hierarchy. If `false` it will try to resolve relative links as tutorials, articles, symbols, etc.
      - Returns: Either the successfully resolved reference for the topic or error information about why the reference couldn't resolve.
      */
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
@@ -2777,6 +2777,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - name: The name of the asset.
     ///   - parent: The topic where the asset is referenced.
+    ///   - type: A restriction for what type of asset to resolve.
     /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
         let bundleIdentifier = parent.bundleIdentifier
