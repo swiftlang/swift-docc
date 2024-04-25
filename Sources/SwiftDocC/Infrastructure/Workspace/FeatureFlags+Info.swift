@@ -24,7 +24,9 @@ extension DocumentationBundle.Info {
     ///     <true/>
     /// </dict>
     /// ```
-    public struct BundleFeatureFlags: Codable, Equatable {
+    internal struct BundleFeatureFlags: Codable, Equatable {
+        // FIXME: Automatically expose all the feature flags from the global FeatureFlags struct
+
         /// Whether or not experimental support for combining overloaded symbol pages is enabled.
         ///
         /// This feature flag corresponds to ``FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled``.

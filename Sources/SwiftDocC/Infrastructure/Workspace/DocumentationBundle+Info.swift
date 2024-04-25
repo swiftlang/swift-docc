@@ -34,7 +34,7 @@ extension DocumentationBundle {
         public var defaultModuleKind: String?
 
         /// The parsed feature flags that were set for this bundle.
-        public var featureFlags: BundleFeatureFlags?
+        internal var featureFlags: BundleFeatureFlags?
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
@@ -91,15 +91,13 @@ extension DocumentationBundle {
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
-        ///   - featureFlags: The feature flags enabled in the bundle.
         public init(
             displayName: String,
             identifier: String,
             version: String?,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
-            defaultModuleKind: String?,
-            featureFlags: BundleFeatureFlags?
+            defaultModuleKind: String?
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -107,7 +105,6 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultAvailability = defaultAvailability
             self.defaultModuleKind = defaultModuleKind
-            self.featureFlags = featureFlags
         }
         
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
@@ -274,7 +271,6 @@ extension BundleDiscoveryOptions {
     ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
     ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
-    ///   - fallbackFeatureFlags: A fallback set of feature flags for the bundle.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
     public init(
         fallbackDisplayName: String? = nil,
@@ -283,7 +279,6 @@ extension BundleDiscoveryOptions {
         fallbackDefaultCodeListingLanguage: String? = nil,
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
-        fallbackFeatureFlags: DocumentationBundle.Info.BundleFeatureFlags? = nil,
         additionalSymbolGraphFiles: [URL] = []
     ) {
         // Iterate over all possible coding keys with a switch
@@ -308,7 +303,7 @@ extension BundleDiscoveryOptions {
             case .defaultModuleKind:
                 value = fallbackDefaultModuleKind
             case .featureFlags:
-                value = fallbackFeatureFlags
+                value = nil
             }
             
             guard let unwrappedValue = value else {
