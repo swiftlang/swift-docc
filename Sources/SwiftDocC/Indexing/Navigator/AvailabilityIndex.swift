@@ -99,8 +99,8 @@ public class AvailabilityIndex: Codable {
     }
     
     /// Returns a list of platforms for a given language.
-    public func platforms(for interfaceLangauge: InterfaceLanguage) -> [Platform.Name]? {
-        guard let values = languageToPlatforms[interfaceLangauge] else { return nil }
+    public func platforms(for interfaceLanguage: InterfaceLanguage) -> [Platform.Name]? {
+        guard let values = languageToPlatforms[interfaceLanguage] else { return nil }
         return Array(values)
     }
     

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,8 +23,6 @@ import Foundation
  - ``displayName``
  - ``identifier``
  - ``version``
- - ``defaultCodeListingLanguage``
- - ``defaultAvailability``
  */
 public struct DocumentationBundle {
     public enum PropertyListError: DescribedError {
@@ -81,13 +79,13 @@ public struct DocumentationBundle {
     /// Miscellaneous resources of the bundle.
     public let miscResourceURLs: [URL]
 
-    /// Custom HTML file to use as the header for rendered output.
+    /// A custom HTML file to use as the header for rendered output.
     public let customHeader: URL?
 
-    /// Custom HTML file to use as the footer for rendered output.
+    /// A custom HTML file to use as the footer for rendered output.
     public let customFooter: URL?
 
-    /// JSON settings file used to theme renderer output.
+    /// A custom JSON settings file used to theme renderer output.
     public let themeSettings: URL?
     
     /**
@@ -106,8 +104,9 @@ public struct DocumentationBundle {
     ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
     ///   - markupURLs: DocC Markup files of the bundle.
     ///   - miscResourceURLs: Miscellaneous resources of the bundle.
-    ///   - customHeader: Custom HTML file to use as the header for rendered output.
-    ///   - customFooter: Custom HTML file to use as the footer for rendered output.
+    ///   - customHeader: A custom HTML file to use as the header for rendered output.
+    ///   - customFooter: A custom HTML file to use as the footer for rendered output.
+    ///   - themeSettings: A custom JSON settings file used to theme renderer output.
     public init(
         info: Info,
         baseURL: URL = URL(string: "/")!,

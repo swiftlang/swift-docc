@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,10 +19,13 @@ public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, F
 
     public var fileSystem: FSNode
 
+    /// Whether to consider the root location as a documentation bundle if the data provider doesn't discover another bundle in the hierarchy from the root location.
     public let allowArbitraryCatalogDirectories: Bool
 
     /// Creates a new provider that recursively traverses the content of the given root URL to discover documentation bundles.
-    /// - Parameter rootURL: The location that this provider searches for documentation bundles in.
+    /// - Parameters:
+    ///   - rootURL: The location that this provider searches for documentation bundles in.
+    ///   - allowArbitraryCatalogDirectories: Configures the data provider to consider the root location as a documentation bundle if it doesn't discover another bundle.
     public init(rootURL: URL, allowArbitraryCatalogDirectories: Bool = false) throws {
         self.rootURL = rootURL
         self.allowArbitraryCatalogDirectories = allowArbitraryCatalogDirectories

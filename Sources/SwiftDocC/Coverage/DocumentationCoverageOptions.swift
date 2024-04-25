@@ -428,7 +428,7 @@ extension DocumentationCoverageOptions.KindFilterOptions {
                 // 14
                 "instance-property": .instanceProperty,
                 // 15
-                "instance-subcript": .instanceSubscript,
+                "instance-subscript": .instanceSubscript,
                 // 16
                 "instance-variable": .instanceVariable,
                 // 17

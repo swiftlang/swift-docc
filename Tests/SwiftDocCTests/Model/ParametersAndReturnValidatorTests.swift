@@ -17,11 +17,6 @@ import SwiftDocCTestUtilities
 
 class ParametersAndReturnValidatorTests: XCTestCase {
     
-    override func setUp() {
-        super.setUp()
-        enableFeatureFlag(\.isExperimentalParametersAndReturnsValidationEnabled)
-    }
-    
     func testFiltersParameters() throws {
         let (bundle, context) = try testBundleAndContext(named: "ErrorParameters")
         
@@ -86,11 +81,11 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             XCTAssertEqual(parameterSections[.swift]?.parameters.first?.contents.map({ $0.format() }).joined(), "Some value.")
             XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["someValue", "error"])
             XCTAssertEqual(parameterSections[.objectiveC]?.parameters.first?.contents.map({ $0.format() }).joined(), "Some value.")
-            XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+            XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On output, a pointer to an error object that describes why the method failed, or `nil` if no error occurred. If you are not interested in the error information, pass `nil` for this parameter.")
             
             let returnsSections = symbol.returnsSectionVariants
             XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), "", "The method has no return value documentation but needs an empty returns section to so that the rendered page doesn't use the Objective-C variant as a fallback.")
-            XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "`YES` if successful, or `NO` if an error occurred.", "The Objective-C variant returns BOOL")
+            XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "`YES` if the method succeeded, otherwise `NO`.", "The Objective-C variant returns BOOL")
         }
         
         // /// Returns something from Swift.
@@ -112,7 +107,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             
             let returnsSections = symbol.returnsSectionVariants
             XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), "Some string.")
-            XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some string. If an error occurs, this method returns `nil` and assigns an appropriate error object to the `error` parameter.")
+            XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some string. On failure, this method returns `nil`.")
         }
     }
     
@@ -358,7 +353,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let parameterSections = symbol.parametersSectionVariants
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), [], "The Swift variant has no error parameter")
         XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["error"])
-        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "On output, a pointer to an error object that describes why the method failed, or `nil` if no error occurred. If you are not interested in the error information, pass `nil` for this parameter.")
         
         let returnsSections = symbol.returnsSectionVariants
         XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), "", "The Swift variant has no return value")

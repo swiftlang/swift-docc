@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -37,6 +37,7 @@ public class DocumentationContextConverter {
     /// Whether the documentation converter should include access level information for symbols.
     let shouldEmitSymbolAccessLevels: Bool
     
+    /// A list of symbol IDs that have version of their documentation page with more content that a renderer can link to.
     let symbolIdentifiersWithExpandedDocumentation: [String]?
     
     /// The remote source control repository where the documented module's source is hosted.
@@ -56,7 +57,9 @@ public class DocumentationContextConverter {
     ///     Before passing `true` please confirm that your use case doesn't include public
     ///     distribution of any created render nodes as there are filesystem privacy and security
     ///     concerns with distributing this data.
+    ///   - emitSymbolAccessLevels: Whether the documentation converter should include access level information for symbols.
     ///   - sourceRepository: The source repository where the documentation's sources are hosted.
+    ///   - symbolIdentifiersWithExpandedDocumentation: A list of symbol IDs that have version of their documentation page with more content that a renderer can link to.
     public init(
         bundle: DocumentationBundle,
         context: DocumentationContext,

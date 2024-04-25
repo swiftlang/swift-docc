@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,7 +23,6 @@ public struct MissingAbstract: Checker {
     
     /// Creates a new checker that detects documents without abstracts.
     ///
-    /// - Parameter document: The documentation node that the checker checks.
     /// - Parameter sourceFile: The URL to the documentation file that the checker checks.
     public init(sourceFile: URL?) {
         self.sourceFile = sourceFile

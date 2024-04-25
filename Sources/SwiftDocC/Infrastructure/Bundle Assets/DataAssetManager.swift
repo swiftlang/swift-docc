@@ -187,6 +187,7 @@ public struct DataAsset: Codable, Equatable {
     /// - Parameters:
     ///   - url: The location of the variant.
     ///   - traitCollection: The trait collection associated with the variant.
+    ///   - metadata: Metadata specific to this variant of the asset.
     public mutating func register(_ url: URL, with traitCollection: DataTraitCollection, metadata: Metadata = Metadata()) {
         variants[traitCollection] = url
         self.metadata[url] = metadata
