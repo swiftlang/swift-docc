@@ -27,7 +27,7 @@ extension DocumentationContext {
     ///   - reference: The reference to find paths to.
     ///   - options: Options for how the context produces node breadcrumbs.
     /// - Returns: A list of finite paths to the given reference in the topic graph.
-    func pathsTo(_ reference: ResolvedTopicReference, options: PathOptions = []) -> [[ResolvedTopicReference]] {
+    func finitePaths(to reference: ResolvedTopicReference, options: PathOptions = []) -> [[ResolvedTopicReference]] {
         reverseEdgesGraph
             .allFinitePaths(from: reference)
             .map { $0.dropFirst().reversed() }
@@ -45,7 +45,7 @@ extension DocumentationContext {
     ///
     /// - Parameter reference: The reference to find the shortest path to.
     /// - Returns: The shortest path to the given reference, or `nil` if all paths to the reference are infinite (contain cycles).
-    func shortestFinitePathTo(_ reference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
+    func shortestFinitePath(to reference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
         reverseEdgesGraph
             .shortestFinitePaths(from: reference)
             .map { $0.dropFirst().reversed() }

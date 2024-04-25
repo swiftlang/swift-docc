@@ -152,7 +152,7 @@ public struct AutomaticCuration {
         }
         
         // First try getting the canonical path from a render context, default to the documentation context
-        guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.shortestFinitePathTo(node.reference),
+        guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.shortestFinitePath(to: node.reference),
               let parentReference = canonicalPath.last
         else {
             // If the symbol is not curated or is a root symbol, no See Also please.

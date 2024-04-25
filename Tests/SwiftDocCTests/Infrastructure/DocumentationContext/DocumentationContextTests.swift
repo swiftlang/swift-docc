@@ -1390,10 +1390,10 @@ let expected = """
         assertEqualDumps(context.dumpGraph(), expected)
         
         // Test correct symbol hierarchy in context
-        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol"]])
         
-        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyClass"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol", "doc://org.swift.docc.example/documentation/MyKit/MyClass"]])
     }
     
@@ -1426,7 +1426,7 @@ let expected = """
         let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
-        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePathTo(cccNode.reference))
+        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePath(to: cccNode.reference))
         XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/AAA"], canonicalPathCCC.map({ $0.path }))
         
         ///
@@ -1440,7 +1440,7 @@ let expected = """
         let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         
-        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePathTo(fffNode.reference))
+        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePath(to: fffNode.reference))
         XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/DDD"], canonicalPathFFF.map({ $0.path }))
     }
     
@@ -1463,7 +1463,7 @@ let expected = """
         context.topicGraph.addEdge(from: aaaTgNode, to: cccTgNode)
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
-        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePathTo(cccNode.reference))
+        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePath(to: cccNode.reference))
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathCCC.map({ $0.path }))
         
         ///
@@ -1479,7 +1479,7 @@ let expected = """
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         context.topicGraph.addEdge(from: tgMykitNode, to: fffTgNode)
         
-        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePathTo(fffNode.reference))
+        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePath(to: fffNode.reference))
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathFFF.map({ $0.path }))
     }
 
@@ -1519,7 +1519,7 @@ let expected = """
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         // Get the breadcrumbs as paths
-        let paths = context.pathsTo(node.reference).sorted { (path1, path2) -> Bool in
+        let paths = context.finitePaths(to: node.reference).sorted { (path1, path2) -> Bool in
             return path1.count < path2.count
         }
         .map { return $0.map { $0.url.path } }
@@ -4647,7 +4647,7 @@ let expected = """
         )
         
         XCTAssertEqual(
-            context.pathsTo(reference).map { $0.map(\.lastPathComponent) },
+            context.finitePaths(to: reference).map { $0.map(\.lastPathComponent) },
             [ ["ModuleName", "Code-swift.enum"] ],
             "There is only one _finite_ path from the 'someCase' enum case, through the reverse edges in the topic graph."
         )

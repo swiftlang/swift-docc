@@ -167,7 +167,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
-              let pathToRoot = context.pathsTo(moduleNode.reference).first,
+              let pathToRoot = context.finitePaths(to: moduleNode.reference).first,
               let root = pathToRoot.first else {
             
             XCTFail("Module doesn't have technology root as a predecessor in its path")
@@ -211,7 +211,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
-              let pathToRoot = context.shortestFinitePathTo(moduleNode.reference),
+              let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
               let root = pathToRoot.first else {
             
             XCTFail("Module doesn't have technology root as a predecessor in its path")
@@ -453,14 +453,14 @@ class DocumentationCuratorTests: XCTestCase {
         // Verify that the ONLY curation for `TopClass/name` is the manual curation under `MyArticle`
         // and the automatic curation under `TopClass` is not present.
         let nameReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
-        XCTAssertEqual(context.pathsTo(nameReference).map({ $0.map(\.path) }), [
+        XCTAssertEqual(context.finitePaths(to: nameReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
 
         // Verify that the BOTH manual curations for `TopClass/age` are preserved
         // even if one of the manual curations overlaps with the inheritance edge from the symbol graph.
         let ageReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
-        XCTAssertEqual(context.pathsTo(ageReference).map({ $0.map(\.path) }), [
+        XCTAssertEqual(context.finitePaths(to: ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
@@ -473,7 +473,7 @@ class DocumentationCuratorTests: XCTestCase {
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         
-        XCTAssertEqual(context.pathsTo(reference).map({ $0.map({ $0.path }) }), [
+        XCTAssertEqual(context.finitePaths(to: reference).map({ $0.map({ $0.path }) }), [
             [
                 "/documentation/TestBed",
                 "/documentation/TestBed/TopClass",
