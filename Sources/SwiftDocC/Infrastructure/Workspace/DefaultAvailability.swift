@@ -47,7 +47,7 @@ public struct DefaultAvailability: Codable, Equatable {
             case unavailable
         }
         
-        /// The diferent availability states that can be declared.
+        /// The different availability states that can be declared.
         /// Unavailable or Available with an introduced version.
         enum VersionInformation: Hashable {
             case unavailable
