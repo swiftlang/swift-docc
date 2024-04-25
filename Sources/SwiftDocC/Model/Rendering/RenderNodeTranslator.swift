@@ -996,7 +996,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 abstract: nil,
                 discussion: nil,
                 identifiers: group.references.map(\.url.absoluteString),
-                generated: true
+                generated: true,
+                anchor: urlReadableFragment(group.title)
             )
         }
     }
@@ -1148,7 +1149,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     default: break
                     }
                     return nil
-                }
+                },
+                anchor: group.heading.map { urlReadableFragment($0.plainText) } ?? "Topics"
             )
             
             // rdar://74617294 If a task group doesn't have any symbol or external links it shouldn't be rendered
@@ -1608,7 +1610,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     title: group.heading,
                     abstract: nil,
                     discussion: nil,
-                    identifiers: group.references.map({ $0.url!.absoluteString })
+                    identifiers: group.references.map({ $0.url!.absoluteString }),
+                    anchor: urlReadableFragment(group.heading)
                 )
             }
         } ?? .init(defaultValue: [])

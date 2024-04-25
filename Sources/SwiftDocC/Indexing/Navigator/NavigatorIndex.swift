@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -567,16 +567,16 @@ extension NavigatorIndex {
         /// for any custom icons used in this navigator index.
         var iconReferences = [String : ImageReference]()
         
-        /**
-         Initialize a `Builder` with the given data provider and output URL.
-         - Parameters:
-            - renderNodeProvider: The `RenderNode` provider to use.
-            - outputURL: The URL to which the data should be written.
-            - bundleIdentifier: The identifier of the bundle the index is built for.
-            - sortRootChildren: Indicates if the root's children must be sorted by name.
-            - groupByLanguage: Indicates if the tree needs to group the entries by language.
-            - usePageTitle: Use the page title instead of the navigator title as the entry title.
-         */
+        
+        /// Create a new a builder with the given data provider and output URL.
+        /// - Parameters:
+        ///    - renderNodeProvider: The `RenderNode` provider to use.
+        ///    - outputURL: The location where the builder will write the the built navigator index.
+        ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
+        ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
+        ///    - groupByLanguage: Configure the builder to group the entries by language.
+        ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
+        ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
         public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.renderNodeProvider = renderNodeProvider
             self.outputURL = outputURL

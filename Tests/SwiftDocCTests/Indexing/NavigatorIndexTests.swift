@@ -776,7 +776,8 @@ Root
                                                           abstract: section.abstract,
                                                           discussion: section.discussion,
                                                           identifiers: identifiers,
-                                                          generated: section.generated)
+                                                          generated: section.generated,
+                                                          anchor: section.title.map(urlReadableFragment))
                         }
                         return section
                     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,14 +30,13 @@ public protocol DirectiveConvertible {
      */
     var originalMarkup: BlockDirective { get }
     
-    /**
-     Initialize from a `BlockDirective`, performing semantic analyses to determine whether a valid object can form.
-     
-     - parameter directive: The `BlockDirective` from which you want to form the object.
-     - parameter bundle: The documentation bundle that owns the directive.
-     - parameter context: The documentation context in which the bundle resides.
-     - parameter problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
-     */
+    /// Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.
+    /// - Parameters:
+    ///   -  directive: The parsed block directive to create a semantic object from.
+    ///   -  source: The location of the source file that contains the markup for the parsed block directive.
+    ///   -  bundle: The documentation bundle that owns the directive.
+    ///   -  context: The documentation context in which the bundle resides.
+    ///   -  problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
     init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
     
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
