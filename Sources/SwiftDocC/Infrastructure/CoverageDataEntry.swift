@@ -104,7 +104,6 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
     }
 
     /// Outputs a short table summarizing the coverage statistics for a list of data entries.
-    /// - Parameter coverageInfo: An array of entries to summarize.
     public static func generateSummary(
         of coverageInfo: [CoverageDataEntry],
         shouldGenerateBrief: Bool,

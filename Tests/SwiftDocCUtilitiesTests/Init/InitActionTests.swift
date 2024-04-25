@@ -10,7 +10,7 @@
 
 import XCTest
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+import SwiftDocCTestUtilities
 @testable import SwiftDocCUtilities
 
 final class InitActionTests: XCTestCase {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -111,7 +111,9 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
     ///
     /// Adding a data provider also adds the documentation bundles that it provides, and notifies the ``delegate`` of the added bundles.
     ///
-    /// - Parameter provider: The workspace data provider to add to the workspace.
+    /// - Parameters:
+    ///   - provider: The workspace data provider to add to the workspace.
+    ///   - options: The options that the data provider uses to discover documentation bundles that it provides to the delegate.
     public func registerProvider(_ provider: DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
         // We must add the provider before adding the bundle so that the delegate
         // may start making requests immediately.
@@ -128,7 +130,9 @@ public class DocumentationWorkspace: DocumentationContextDataProvider {
     ///
     /// Removing a data provider also removes all its provided documentation bundles and notifies the ``delegate`` of the removed bundles.
     ///
-    /// - Parameter provider: The workspace data provider to remove from the workspace.
+    /// - Parameters:
+    ///   - provider: The workspace data provider to remove from the workspace.
+    ///   - options: The options that the data provider uses to discover documentation bundles that it removes from the delegate.
     public func unregisterProvider(_ provider: DocumentationWorkspaceDataProvider, options: BundleDiscoveryOptions = .init()) throws {
         for bundle in try provider.bundles(options: options) {
             bundles[bundle.identifier] = nil

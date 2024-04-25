@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -76,7 +76,10 @@ public enum RenderBlockContent: Equatable {
     
     /// A video with an optional caption.
     case video(Video)
-
+    
+    /// An authored thematic break between block elements.
+    case thematicBreak
+    
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
     // RenderBlockContent+TextIndexing.swift!
@@ -776,11 +779,13 @@ extension RenderBlockContent: Codable {
                     metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
                 )
             )
+        case .thematicBreak:
+            self = .thematicBreak
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video, thematicBreak
     }
     
     private var type: BlockType {
@@ -801,6 +806,7 @@ extension RenderBlockContent: Codable {
         case .tabNavigator: return .tabNavigator
         case .links: return .links
         case .video: return .video
+        case .thematicBreak: return .thematicBreak
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -862,6 +868,8 @@ extension RenderBlockContent: Codable {
         case .video(let video):
             try container.encode(video.identifier, forKey: .identifier)
             try container.encodeIfPresent(video.metadata, forKey: .metadata)
+        case .thematicBreak:
+            break
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }

@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 /// An action that emits documentation extension files that reflect the auto-generated curation.
 struct EmitGeneratedCurationAction: Action {

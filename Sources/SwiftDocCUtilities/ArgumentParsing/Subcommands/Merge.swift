@@ -9,7 +9,7 @@
 */
 
 import ArgumentParser
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 import Foundation
 
 extension Docc {

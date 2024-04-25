@@ -9,7 +9,7 @@
 */
 
 import Foundation
-@_spi(FileManagerProtocol) import SwiftDocC
+import SwiftDocC
 
 extension CoverageDataEntry {
     /// Outputs a short table summarizing the coverage statistics for a list of data entries in a file at the given URL.

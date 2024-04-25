@@ -12,7 +12,7 @@ import XCTest
 import SymbolKit
 @testable import SwiftDocC
 import Markdown
-@_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+import SwiftDocCTestUtilities
 
 func diffDescription(lhs: String, rhs: String) -> String {
     let leftLines = lhs.components(separatedBy: .newlines)
@@ -3100,7 +3100,7 @@ let expected = """
                 
                 ## Topics
                 
-                ### Some topic section
+                ### Some, topic - section!
                 
                 - <doc:Third>
                 """),
@@ -3175,6 +3175,22 @@ let expected = """
         let bundle = try XCTUnwrap(context.registeredBundles.first)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let renderNode = try converter.convert(entity, at: nil)
+        
+        XCTAssertEqual(renderNode.topicSections.map(\.anchor), [
+            "Another-topic-section"
+        ])
+        
+        let firstReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
+        let firstRenderNode = try converter.convert(context.entity(with: firstReference), at: nil)
+        XCTAssertEqual(firstRenderNode.topicSections.map(\.anchor), [
+            "Topics"
+        ])
+        
+        let secondReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "Second" }))
+        let secondRenderNode = try converter.convert(context.entity(with: secondReference), at: nil)
+        XCTAssertEqual(secondRenderNode.topicSections.map(\.anchor), [
+            "Some-topic-section"
+        ])
         
         let overviewSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
         guard case .unorderedList(let unorderedList) = overviewSection.content.dropFirst().first else {
@@ -4456,8 +4472,8 @@ let expected = """
         // "Log a hello world message. This line contains an ``invalid`` link."
         let (_, context) = try testBundleAndContext(named: "ObjCFrameworkWithInvalidLink")
         let problems = context.problems
-        if FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled {
-            XCTAssertEqual(5, problems.count)
+        if FeatureFlags.current.isParametersAndReturnsValidationEnabled {
+            XCTAssertEqual(4, problems.count)
         } else {
             XCTAssertEqual(1, problems.count)
         }
