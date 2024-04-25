@@ -9,7 +9,7 @@
 */
 
 extension DocumentationContext {
-    /// Options to consider when producing node breadcrumbs.
+    /// Options that configure how the context produces node breadcrumbs.
     struct PathOptions: OptionSet {
         let rawValue: Int
         
@@ -17,15 +17,15 @@ extension DocumentationContext {
         static let preferTechnologyRoot = PathOptions(rawValue: 1 << 0)
     }
     
-    /// Finds all finite paths (breadcrumbs) to the given node reference.
+    /// Finds all finite paths (breadcrumbs) to the given reference.
     ///
     /// Each path is a list of references for the nodes traversed while walking the topic graph from a root node to, but not including, the given `reference`.
     ///
     /// The first path is the canonical path to the node. The other paths are sorted by increasing length (number of components).
     ///
     /// - Parameters:
-    ///   - reference: The reference to build that paths to.
-    ///   - options: Options to consider when producing node breadcrumbs.
+    ///   - reference: The reference to find paths to.
+    ///   - options: Options for how the context produces node breadcrumbs.
     /// - Returns: A list of finite paths to the given reference in the topic graph.
     func pathsTo(_ reference: ResolvedTopicReference, options: PathOptions = []) -> [[ResolvedTopicReference]] {
         return DirectedGraph(neighbors: topicGraph.reverseEdges)
@@ -37,13 +37,29 @@ extension DocumentationContext {
                     return try! entity(with: first).semantic is Technology
                 }
                 
-                // If the breadcrumbs have equal amount of components
-                // sort alphabetically to produce stable paths order.
-                guard lhs.count != rhs.count else {
-                    return lhs.map({ $0.path }).joined(separator: ",") < rhs.map({ $0.path }).joined(separator: ",")
-                }
-                // Order by the length of the breadcrumb.
-                return lhs.count < rhs.count
+                return breadcrumbsAreInIncreasingOrder(lhs, rhs)
             }
     }
+    
+    /// Finds the shortest finite path (breadcrumb) to the given reference.
+    ///
+    /// - Parameter reference: The reference to find the shortest path to.
+    /// - Returns: The shortest path to the given reference, or `nil` if all paths to the reference are infinite (contain cycles).
+    func shortestFinitePathTo(_ reference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
+        return DirectedGraph(neighbors: topicGraph.reverseEdges)
+            .shortestFinitePaths(from: reference)
+            .map { $0.dropFirst().reversed() }
+            .min(by: breadcrumbsAreInIncreasingOrder)
+    }
 }
+
+/// Compares two breadcrumbs for sorting so that the breadcrumb with fewer components come first and breadcrumbs with the same number of components are sorter alphabetically.
+private func breadcrumbsAreInIncreasingOrder(_ lhs: [ResolvedTopicReference], _ rhs: [ResolvedTopicReference]) -> Bool {
+    // If the breadcrumbs have the same number of components, sort alphabetically to produce stable results.
+    guard lhs.count != rhs.count else {
+        return lhs.map({ $0.path }).joined(separator: ",") < rhs.map({ $0.path }).joined(separator: ",")
+    }
+    // Otherwise, sort by the number of breadcrumb components.
+    return lhs.count < rhs.count
+}
+

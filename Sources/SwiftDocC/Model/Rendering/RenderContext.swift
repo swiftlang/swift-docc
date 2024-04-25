@@ -46,7 +46,7 @@ public struct RenderContext {
         let renderContentFor: (ResolvedTopicReference) -> RenderReferenceStore.TopicContent = { reference in
             var dependencies = RenderReferenceDependencies()
             let renderReference = renderer.renderReference(for: reference, dependencies: &dependencies)
-            let canonicalPath = documentationContext.pathsTo(reference).first.flatMap { $0.isEmpty ? nil : $0 }
+            let canonicalPath = documentationContext.shortestFinitePathTo(reference).flatMap { $0.isEmpty ? nil : $0 }
             let reverseLookup = renderer.taskGroups(for: reference)
             
             return RenderReferenceStore.TopicContent(

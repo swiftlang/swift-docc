@@ -211,7 +211,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
         
         guard let moduleNode = context.documentationCache["SourceLocations"],
-              let pathToRoot = context.pathsTo(moduleNode.reference).first,
+              let pathToRoot = context.shortestFinitePathTo(moduleNode.reference),
               let root = pathToRoot.first else {
             
             XCTFail("Module doesn't have technology root as a predecessor in its path")

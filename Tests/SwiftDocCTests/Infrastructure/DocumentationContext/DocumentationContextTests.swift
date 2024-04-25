@@ -1426,7 +1426,7 @@ let expected = """
         let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
-        let canonicalPathCCC = try XCTUnwrap(context.pathsTo(cccNode.reference).first)
+        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePathTo(cccNode.reference))
         XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/AAA"], canonicalPathCCC.map({ $0.path }))
         
         ///
@@ -1440,7 +1440,7 @@ let expected = """
         let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         
-        let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
+        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePathTo(fffNode.reference))
         XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/DDD"], canonicalPathFFF.map({ $0.path }))
     }
     
@@ -1463,7 +1463,7 @@ let expected = """
         context.topicGraph.addEdge(from: aaaTgNode, to: cccTgNode)
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
-        let canonicalPathCCC = try XCTUnwrap(context.pathsTo(cccNode.reference).first)
+        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePathTo(cccNode.reference))
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathCCC.map({ $0.path }))
         
         ///
@@ -1479,7 +1479,7 @@ let expected = """
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         context.topicGraph.addEdge(from: tgMykitNode, to: fffTgNode)
         
-        let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
+        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePathTo(fffNode.reference))
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathFFF.map({ $0.path }))
     }
 
