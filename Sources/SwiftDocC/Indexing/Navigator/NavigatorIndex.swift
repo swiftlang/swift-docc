@@ -361,14 +361,15 @@ public class NavigatorIndex {
 
         /// Whether this page kind references a symbol.
         var isSymbolKind: Bool {
-            // This switch is written with the non-symbol kinds written explicitly on the assumption
-            // that new symbol kinds will be added over time, but that non-symbol kinds are much
-            // more rare to add.
             switch self {
             case .root, .article, .tutorial, .section, .learn, .overview, .resources, .framework,
                     .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
                 return false
-            default:
+            case .symbol, .class, .structure, .protocol, .enumeration, .function, .extension,
+                    .localVariable, .globalVariable, .typeAlias, .associatedType, .operator, .macro,
+                    .union, .enumerationCase, .initializer, .instanceMethod, .instanceProperty,
+                    .instanceVariable, .subscript, .typeMethod, .typeProperty, .propertyListKey,
+                    .httpRequest, .dictionarySymbol, .propertyListKeyReference, .namespace:
                 return true
             }
         }
