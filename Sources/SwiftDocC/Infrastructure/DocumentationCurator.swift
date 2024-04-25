@@ -127,7 +127,9 @@ struct DocumentationCurator {
     }
     
     private func isReference(_ childReference: ResolvedTopicReference, anAncestorOf nodeReference: ResolvedTopicReference) -> Bool {
-        return context.pathsTo(nodeReference).contains { $0.contains(childReference) }
+        DirectedGraph(neighbors: context.topicGraph.reverseEdges)
+            .breadthFirstSearch(from: nodeReference)
+            .contains(childReference)
     }
     
     /// Crawls the topic graph starting at a given root node, curates articles during.
