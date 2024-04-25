@@ -604,13 +604,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = article.title!.plainText
         
         // Detect the article modules from its breadcrumbs.
-        let modules = context.pathsTo(identifier).compactMap({ path -> ResolvedTopicReference? in
-            return path.mapFirst(where: { ancestor in
-                guard let ancestorNode = try? context.entity(with: ancestor) else { return nil }
-                return (ancestorNode.semantic as? Symbol)?.moduleReference
-            })
-        })
-        let moduleNames = Set(modules).compactMap { reference -> String? in
+        var modules = Set<ResolvedTopicReference>()
+        for reference in DirectedGraph(neighbors: context.topicGraph.reverseEdges).breadthFirstSearch(from: identifier) {
+            if let moduleReference = (try? context.entity(with: reference).semantic as? Symbol)?.moduleReference {
+                modules.insert(moduleReference)
+            }
+        }
+        
+        let moduleNames = modules.compactMap { reference -> String? in
             guard let node = try? context.entity(with: reference) else { return nil }
             switch node.name {
             case .conceptual(let title):
