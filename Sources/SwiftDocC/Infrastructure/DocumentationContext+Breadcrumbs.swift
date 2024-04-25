@@ -28,7 +28,7 @@ extension DocumentationContext {
     ///   - options: Options for how the context produces node breadcrumbs.
     /// - Returns: A list of finite paths to the given reference in the topic graph.
     func pathsTo(_ reference: ResolvedTopicReference, options: PathOptions = []) -> [[ResolvedTopicReference]] {
-        return DirectedGraph(neighbors: topicGraph.reverseEdges)
+        reverseEdgesGraph
             .allFinitePaths(from: reference)
             .map { $0.dropFirst().reversed() }
             .sorted { (lhs, rhs) -> Bool in
@@ -46,10 +46,26 @@ extension DocumentationContext {
     /// - Parameter reference: The reference to find the shortest path to.
     /// - Returns: The shortest path to the given reference, or `nil` if all paths to the reference are infinite (contain cycles).
     func shortestFinitePathTo(_ reference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
-        return DirectedGraph(neighbors: topicGraph.reverseEdges)
+        reverseEdgesGraph
             .shortestFinitePaths(from: reference)
             .map { $0.dropFirst().reversed() }
             .min(by: breadcrumbsAreInIncreasingOrder)
+    }
+    
+    /// Finds all the reachable root node references from the given reference.
+    ///
+    /// > Note:
+    /// If all paths from the given reference are infinite (contain cycles) then it can't reach any roots and will return an empty set.
+    ///
+    /// - Parameter reference: The reference to find reachable root node references from.
+    /// - Returns: The references of the root nodes that are reachable fro the given reference, or `[]` if all paths from the reference are infinite (contain cycles).
+    func reachableRoots(from reference: ResolvedTopicReference) -> Set<ResolvedTopicReference> {
+        reverseEdgesGraph.reachableLeafNodes(from: reference)
+    }
+    
+    /// The directed graph of reverse edges in the topic graph.
+    private var reverseEdgesGraph: DirectedGraph<ResolvedTopicReference> {
+        DirectedGraph(neighbors: topicGraph.reverseEdges)
     }
 }
 
