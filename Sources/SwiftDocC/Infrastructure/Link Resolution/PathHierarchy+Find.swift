@@ -18,14 +18,7 @@ extension PathHierarchy {
     /// - Returns: Returns the unique identifier for the found match or raises an error if no match can be found.
     /// - Throws: Raises a ``PathHierarchy/Error`` if no match can be found.
     func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws -> ResolvedIdentifier {
-        let node = try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols)
-        if node.identifier == nil {
-            throw Error.unfindableMatch(node)
-        }
-        if onlyFindSymbols, node.symbol == nil {
-            throw Error.nonSymbolMatchForSymbolLink(path: rawPath[...])
-        }
-        return node.identifier
+        return try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols).identifier
     }
     
     private func findNode(path rawPath: String, parentID: ResolvedIdentifier?, onlyFindSymbols: Bool) throws -> Node {
@@ -219,10 +212,21 @@ extension PathHierarchy {
         var node = startingPoint
         var remaining = pathComponents[...]
         
+        /// Ensure that the return value is valid for this search. 
+        func validateReturnValue(_ node: Node) throws -> Node {
+            if node.identifier == nil {
+                throw Error.unfindableMatch(node)
+            }
+            if onlyFindSymbols, node.symbol == nil {
+                throw Error.nonSymbolMatchForSymbolLink(path: rawPathForError)
+            }
+            return node
+        }
+        
         // Third, search for the match relative to the start node.
         if remaining.isEmpty {
             // If all path components were consumed, then the start of the search is the match.
-            return node
+            return try validateReturnValue(node)
         }
         
         // Search for the remaining components from the node
@@ -238,11 +242,12 @@ extension PathHierarchy {
                 remaining = remaining.dropFirst()
                 if remaining.isEmpty {
                     // If all path components are consumed, then the match is found.
-                    return child
+                    return try validateReturnValue(child)
                 }
             } catch DisambiguationContainer.Error.lookupCollision(let collisions) {
                 func handleWrappedCollision() throws -> Node {
-                    try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+                    let match = try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+                    return try validateReturnValue(match)
                 }
                 
                 // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
@@ -270,13 +275,13 @@ extension PathHierarchy {
                         }
                     }
                     // A wrapped error would have been raised while iterating over the collection.
-                    return uniqueCollisions.first!.value
+                    return try validateReturnValue(uniqueCollisions.first!.value)
                 }
                 
                 // Look ahead one path component to narrow down the list of collisions. 
                 // For each collision where the next path component can be found unambiguously, return that matching node one level down.
                 let possibleMatchesOneLevelDown = collisions.compactMap {
-                    return try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
+                    try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
                 }
                 let onlyPossibleMatch: Node?
                 
@@ -296,7 +301,7 @@ extension PathHierarchy {
                     remaining = remaining.dropFirst(2)
                     if remaining.isEmpty {
                         // If that was the end of the path we can simply return the result.
-                        return onlyPossibleMatch
+                        return try validateReturnValue(onlyPossibleMatch)
                     } else {
                         // Otherwise we continue looping over the remaining path components.
                         node = onlyPossibleMatch
@@ -305,7 +310,8 @@ extension PathHierarchy {
                 }
                 
                 // Couldn't resolve the collision by look ahead.
-                return try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+//                return try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+                return try handleWrappedCollision()
             }
         }
     }
