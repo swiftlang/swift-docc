@@ -119,6 +119,17 @@ struct PathHierarchy {
                     existingNode.languages.insert(language!) // If we have symbols in this graph we have a language as well
                 } else {
                     assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
+
+                    if symbol.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix),
+                       loader.unifiedGraphs[moduleName]?.symbols.keys.contains(symbol.identifier.precise) != true {
+                        // Overload groups can be discarded in the unified symbol graph collector if
+                        // they don't reflect the default overload across all platforms. In this
+                        // case, we don't want to add these nodes to the path hierarchy since
+                        // they've been discarded from the unified graph that's used to generate
+                        // documentation nodes.
+                        continue
+                    }
+
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58

@@ -4919,6 +4919,157 @@ let expected = """
             "Unknown feature flag in Info.plist: 'ExperimenalOverloadedSymbolPresentation'. Possible suggestions: 'ExperimentalOverloadedSymbolPresentation'")
     }
 
+    func testContextGeneratesUnifiedOverloadGroupsAcrossPlatforms() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-3", kind: symbolKind),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        // There should only be one overload group for `SymbolName` - the one from the iOS symbol
+        // graph should have been removed during graph collection.
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2", "symbol-3"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    func testContextGeneratesOverloadGroupsWhenOnePlatformHasNoOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        // This situation used to crash. The macOS symbol graph only has one symbol in the overload
+        // group, whereas the iOS graph has two. Due to the way that Symbol loaded the overload
+        // mixins, `symbol-1` wouldn't save its overload data, which would trip an assertion in
+        // DocumentationContext. We need to ensure that an overload group is properly created, and
+        // that both symbols are correctly grouped underneath it.
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        // Even though the macOS symbol graph doesn't contain an overload group, one should still
+        // have been created from the iOS symbol graph, and that overload group should reference
+        // both symbols.
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
     // A test helper that creates a symbol with a given identifier and kind.
     private func makeSymbol(
         name: String = "SymbolName",

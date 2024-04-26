@@ -57,10 +57,10 @@
     {
       "identity" : "swift-docc-symbolkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-docc-symbolkit",
+      "location" : "https://github.com/QuietMisdreavus/swift-docc-symbolkit",
       "state" : {
-        "branch" : "main",
-        "revision" : "8a740b5197ece51e4b597f8a467546da66324581"
+        "branch" : "combine-overload-groups",
+        "revision" : "3a08be4efc1a3675177084a4c5b6055897d6e10d"
       }
     },
     {
