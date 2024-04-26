@@ -414,4 +414,32 @@ class DocumentationBundleInfoTests: XCTestCase {
             )
         )
     }
+
+    func testFeatureFlags() throws {
+        let infoPlistWithFeatureFlags = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>Info Plist Display Name</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.info.Plist</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CDExperimentalFeatureFlags</key>
+            <dict>
+                <key>ExperimentalOverloadedSymbolPresentation</key>
+                <true/>
+            </dict>
+        </dict>
+        </plist>
+        """
+
+        let infoPlistWithFeatureFlagsData = Data(infoPlistWithFeatureFlags.utf8)
+        let info = try DocumentationBundle.Info(
+            from: infoPlistWithFeatureFlagsData,
+            bundleDiscoveryOptions: nil)
+
+        let featureFlags = try XCTUnwrap(info.featureFlags)
+        XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))
+    }
 }
