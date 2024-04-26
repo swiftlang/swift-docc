@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Render Node API",
-        "version": "0.4.1",
+        "version": "0.4.2",
         "title": "Render Node API"
     },
     "paths": { },
@@ -701,7 +701,7 @@
             "ThematicBreak": {
                 "type": "object",
                 "required": [
-                    "type",
+                    "type"
                 ],
                 "properties": {
                     "type": {
@@ -2704,6 +2704,9 @@
                     },
                     "generated": {
                         "type": "boolean"
+                    },
+                    "anchor": {
+                        "type": "string"
                     }
                 }
             },

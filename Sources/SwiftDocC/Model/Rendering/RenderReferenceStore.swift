@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -70,6 +70,7 @@ public extension RenderReferenceStore {
         ///   - taskGroups: A lookup of a topic's task groups.
         ///   - source: The original source file location of the topic.
         ///   - isDocumentationExtensionContent: Whether the topic is a documentation extension.
+        ///   - renderReferenceDependencies: Render reference dependencies.
         public init(
             renderReference: RenderReference,
             canonicalPath: [ResolvedTopicReference]?,

@@ -156,9 +156,23 @@ struct PathHierarchy {
                 if let targetNode = nodes[relationship.target], targetNode.name == expectedContainerName {
                     targetNode.add(symbolChild: sourceNode)
                     topLevelCandidates.removeValue(forKey: relationship.source)
-                } else if let targetNodes = allNodes[relationship.target] {
-                    for targetNode in targetNodes where targetNode.name == expectedContainerName {
+                } else if var targetNodes = allNodes[relationship.target] {
+                    // If the source was added in an extension symbol graph file, then its target won't be found in the same symbol graph file (in `nodes`).
+                    
+                    // We may have encountered multiple language representations of the target symbol. Try to find the best matching representation of the target to add the source to.
+                    // Remove any targets that don't match the source symbol's path components (see comment above for more details).
+                    targetNodes.removeAll(where: { $0.name != expectedContainerName })
+                    
+                    // Prefer the symbol that matches the relationship's language.
+                    if let targetNode = targetNodes.first(where: { $0.symbol!.identifier.interfaceLanguage == language?.id }) {
                         targetNode.add(symbolChild: sourceNode)
+                    } else {
+                        // It's not clear which target to add the source to, so we add it to all of them.
+                        // This will likely hit a _debug_ assertion (later in this initializer) about inconsistent traversal through the hierarchy,
+                        // but in release builds DocC will "repair" the inconsistent hierarchy.
+                        for targetNode in targetNodes {
+                            targetNode.add(symbolChild: sourceNode)
+                        }
                     }
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else {
@@ -295,8 +309,9 @@ struct PathHierarchy {
                     assert(element.node.parent === node, {
                         func describe(_ node: Node?) -> String {
                             guard let node else { return "<nil>" }
-                            guard let identifier = node.symbol?.identifier else { return node.name }
-                            return "\(identifier.precise) (\(identifier.interfaceLanguage))"
+                            guard let symbol = node.symbol else { return node.name }
+                            let id = symbol.identifier
+                            return "\(id.precise) (\(id.interfaceLanguage).\(symbol.kind.identifier.identifier)) [\(symbol.pathComponents.joined(separator: "/"))]"
                         }
                         return """
                             Every child node should point back to its parent so that the tree can be traversed both up and down without any dead-ends. \
@@ -623,8 +638,19 @@ extension PathHierarchy.DisambiguationContainer {
     /// Combines the data from this tree with another tree to form a new, merged disambiguation tree.
     func merge(with other: Self) -> Self {
         var newStorage = storage
-        for element in other.storage where !storage.contains(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
-            newStorage.append(element)
+        for element in other.storage {
+            if let existingIndex = storage.firstIndex(where: { $0.matches(kind: element.kind, hash: element.hash )}) {
+                let existing = storage[existingIndex]
+                // If the same element exist in both containers, keep it unless the "other" element is the Swift counterpart of this symbol.
+                if existing.node.counterpart === element.node,
+                   element.node.symbol?.identifier.interfaceLanguage == "swift"
+                {
+                    // The "other" element is the Swift counterpart. Replace the existing element with it.
+                    newStorage[existingIndex] = element
+                }
+            } else {
+                newStorage.append(element)
+            }
         }
         return .init(storage: newStorage)
     }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,7 +18,9 @@ public struct Return {
     var range: SourceRange?
     
     /// Initialize a value to describe documentation about a symbol's return value.
-    /// - Parameter contents: The content that describe the return value for this symbol.
+    /// - Parameters:
+    ///   - contents: The content that describe the return value for this symbol.
+    ///   - range: The text range where this return value was parsed.
     public init(contents: [Markup], range: SourceRange? = nil) {
         self.contents = contents
         self.range = range
