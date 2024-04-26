@@ -2012,7 +2012,36 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      */
     private func register(_ bundle: DocumentationBundle) throws {
         try shouldContinueRegistration()
-        
+
+        let currentFeatureFlags: FeatureFlags?
+        if let bundleFlags = bundle.info.featureFlags {
+            currentFeatureFlags = FeatureFlags.current
+            FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
+
+            for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
+                let suggestions = NearMiss.bestMatches(
+                    for: DocumentationBundle.Info.BundleFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
+                    against: unknownFeatureFlag)
+                var summary: String = "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)"
+                if !suggestions.isEmpty {
+                    summary += ". Possible suggestions: \(suggestions.map(\.singleQuoted).joined(separator: ", "))"
+                }
+                diagnosticEngine.emit(.init(diagnostic:
+                        .init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.UnknownBundleFeatureFlag",
+                            summary: summary
+                        )))
+            }
+        } else {
+            currentFeatureFlags = nil
+        }
+        defer {
+            if let currentFeatureFlags = currentFeatureFlags {
+                FeatureFlags.current = currentFeatureFlags
+            }
+        }
+
         // Note: Each bundle is registered and processed separately.
         // Documents and symbols may both reference each other so the bundle is registered in 4 steps
         
