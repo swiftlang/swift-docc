@@ -334,7 +334,14 @@ struct TopicGraph {
     /// │   ╰ doc://com.testbundle/documentation/MyFramework/MyClass/init()
     /// ...
     /// ```
+    ///
+    /// - Precondition: All paths through the topic graph from the starting node are finite (acyclic).
     func dump(startingAt node: Node, keyPath: KeyPath<TopicGraph.Node, String> = \.title, decorator: String = "") -> String {
+        if let cycle = edgesGraph.firstCycle(from: node.reference) {
+            let cycleDescription = cycle.map(\.absoluteString).joined(separator: " -> ")
+            preconditionFailure("Traversing the topic graph from \(node.reference.absoluteString) encounters an infinite cyclic path: \(cycleDescription) -cycle-> \(cycleDescription) ...")
+        }
+        
         var result = ""
         result.append("\(decorator) \(node[keyPath: keyPath])\r\n")
         if let childEdges = edges[node.reference]?.sorted(by: { $0.path < $1.path }) {
