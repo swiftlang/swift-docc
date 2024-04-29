@@ -184,71 +184,43 @@ class TopicGraphTests: XCTestCase {
     func testBreadthFirstSearch() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseBreadthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "B", "D", "C", "E"],
-                       visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "B", "D", "C", "E"], visited)
     }
     
     func testBreadthFirstSearchWithCycle() {
         let graph = TestGraphs.withCycle
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseBreadthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "B", "C"],
-                       visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "B", "C"], visited)
     }
     
     func testBreadthFirstSearchEarlyStop() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseBreadthFirst(from: A) {
-            visited.append($0)
-            return .stop
-        }
-        XCTAssertEqual(["A"], visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).prefix(1).map(\.title)
+        XCTAssertEqual(["A"], visited)
     }
     
     func testDepthFirstSearch() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseDepthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "D", "E", "B", "C"],
-                       visited.map { $0.title })
+        let visited = graph.depthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "D", "E", "B", "C"], visited)
     }
     
     func testDepthFirstSearchWithCycle() {
         let graph = TestGraphs.withCycle
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseDepthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "B", "C"],
-                       visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "B", "C"], visited)
     }
     
     func testDepthFirstSearchEarlyStop() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseDepthFirst(from: A) {
-            visited.append($0)
-            return .stop
-        }
-        XCTAssertEqual(["A"], visited.map { $0.title })
+        let visited = graph.depthFirstSearch(from: A.reference).prefix(1).map(\.title)
+        XCTAssertEqual(["A"], visited)
     }
     
     func testEveryEdgeSourceHasNode() {

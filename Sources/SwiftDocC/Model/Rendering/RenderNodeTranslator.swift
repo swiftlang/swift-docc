@@ -198,7 +198,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
         // The way to curate tutorials is to link them from a Technology page and that generates the following hierarchy:
         // technology -> volume -> chapter -> tutorial.
-        let technologyPath = context.pathsTo(identifier, options: [.preferTechnologyRoot])[0]
+        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
         
         if technologyPath.count >= 2 {
             let volume = technologyPath[technologyPath.count - 2]
@@ -225,11 +225,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Get all the tutorials and tutorial articles in the learning path, ordered.
 
         var surroundingTopics = [(reference: ResolvedTopicReference, kind: DocumentationNode.Kind)]()
-        context.traverseBreadthFirst(from: volume) { node in
-            if node.kind == .tutorial || node.kind == .tutorialArticle {
-                surroundingTopics.append((node.reference, node.kind))
-            }
-            return .continue
+        for node in context.breadthFirstSearch(from: volume) where node.kind == .tutorial || node.kind == .tutorialArticle {
+            surroundingTopics.append((node.reference, node.kind))
         }
         
         // Find the tutorial or article that comes after the current page, if one exists.
@@ -362,19 +359,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func totalEstimatedDuration(for technology: Technology) -> String? {
         var totalDurationMinutes: Int? = nil
 
-        context.traverseBreadthFirst(from: identifier) { node in
-            if let entity = try? context.entity(with: node.reference),
-                let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
-            {
-                if totalDurationMinutes == nil {
-                    totalDurationMinutes = 0
-                }
-                totalDurationMinutes! += durationMinutes
+        for node in context.breadthFirstSearch(from: identifier) {
+            guard let entity = try? context.entity(with: node.reference),
+                  let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
+            else {
+                continue
             }
-
-            return .continue
+            
+            if totalDurationMinutes == nil {
+                totalDurationMinutes = 0
+            }
+            totalDurationMinutes! += durationMinutes
         }
-
 
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
@@ -608,13 +604,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = article.title!.plainText
         
         // Detect the article modules from its breadcrumbs.
-        let modules = context.pathsTo(identifier).compactMap({ path -> ResolvedTopicReference? in
-            return path.mapFirst(where: { ancestor in
-                guard let ancestorNode = try? context.entity(with: ancestor) else { return nil }
-                return (ancestorNode.semantic as? Symbol)?.moduleReference
-            })
-        })
-        let moduleNames = Set(modules).compactMap { reference -> String? in
+        var modules = Set<ResolvedTopicReference>()
+        for reference in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: identifier) {
+            if let moduleReference = (try? context.entity(with: reference).semantic as? Symbol)?.moduleReference {
+                modules.insert(moduleReference)
+            }
+        }
+        
+        let moduleNames = modules.compactMap { reference -> String? in
             guard let node = try? context.entity(with: reference) else { return nil }
             switch node.name {
             case .conceptual(let title):
@@ -923,7 +920,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Guaranteed to have at least one path
-        let technologyPath = context.pathsTo(identifier, options: [.preferTechnologyRoot])[0]
+        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
                 
         node.sections.append(intro)
         
