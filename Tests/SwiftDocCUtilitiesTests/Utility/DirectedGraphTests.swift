@@ -21,7 +21,7 @@ final class DirectedGraphTests: XCTestCase {
         //      │    │
         //      ▼    ▼
         // 7───▶8◀───9
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [2],
             2: [5],
             3: [2],
@@ -77,7 +77,7 @@ final class DirectedGraphTests: XCTestCase {
         // 1─┼─▶3
         //   │
         //   └─▶4──▶7──▶8
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [2,3,4],
             2: [5,6],
             4: [7],
@@ -110,7 +110,7 @@ final class DirectedGraphTests: XCTestCase {
         // 1─┼─▶3─┼▶5──▶6
         //   │    │
         //   └─▶4─┘
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [2,3,4],
             2: [5],
             3: [5],
@@ -146,7 +146,7 @@ final class DirectedGraphTests: XCTestCase {
         // │   ▲  │       ▲
         // ▼   │  │       │
         // 3───┘  └──▶7───┘
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [2],
             2: [3,4],
             3: [4],
@@ -178,6 +178,60 @@ final class DirectedGraphTests: XCTestCase {
         }
     }
     
+    func testSimpleCycle() throws {
+        do {
+            // ┌──────▶2
+            // │       │
+            // 1───┐   │
+            // ▲   ▼   │
+            // └───3◀──┘
+            let graph = DirectedGraph(edges: [
+                0: [2,3],
+                1: [2,3],
+                2: [3],
+                3: [1],
+            ])
+            
+            XCTAssertEqual(graph.cycles(from: 1), [
+                [1,3],
+            ])
+            XCTAssertEqual(graph.cycles(from: 2), [
+                [2,3,1],
+                [3,1],
+            ])
+            XCTAssertEqual(graph.cycles(from: 3), [
+                [3,1],
+                [3,1,2],
+            ])
+            
+            for id in [1,2,3] {
+                XCTAssertEqual(graph.allFinitePaths(from: id), [], "The only path from '\(id)' is infinite (cyclic)")
+                XCTAssertEqual(graph.shortestFinitePaths(from: id), [], "The only path from '\(id)' is infinite (cyclic)")
+                XCTAssertEqual(graph.reachableLeafNodes(from: id), [], "The only path from '\(id)' is infinite (cyclic)")
+            }
+        }
+    }
+    
+    func testSimpleCycleRotation() throws {
+        do {
+            // ┌───▶1───▶2
+            // │    ▲    │
+            // │    │    │
+            // 0───▶3◀───┘
+            let graph = DirectedGraph(edges: [
+                0: [1,3],
+                1: [2,],
+                2: [3],
+                3: [1],
+            ])
+            
+            XCTAssertEqual(graph.cycles(from: 0), [
+                [1,2,3],
+                // '3,1,2' and '2,3,1' are both rotations of '1,2,3'.
+            ])
+        }
+    }
+    
     func testGraphWithCycleAndSingleAdjacency() throws {
         // 1───▶2◀───3
         //      │
@@ -186,7 +240,7 @@ final class DirectedGraphTests: XCTestCase {
         //      │    ▲
         //      ▼    │
         // 7───▶8───▶9
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [2],
             2: [5],
             3: [2],
@@ -235,10 +289,10 @@ final class DirectedGraphTests: XCTestCase {
             //             │    │
             //             ▼    ▼
             //             8   11
-            let graph = DirectedGraph(neighbors: [
+            let graph = DirectedGraph(edges: [
                 0: [1,2],
                 2: [3,4,5],
-                4: [6,7],
+                4: [5,6,7],
                 5: [8,9],
                 7: [10,9],
                 9: [11,7],
@@ -257,10 +311,13 @@ final class DirectedGraphTests: XCTestCase {
                 [0,2,3],
                 [0,2,4,6],
                 [0,2,5,8],
+                [0,2,4,5,8],
                 [0,2,4,7,10],
                 [0,2,5,9,11],
+                [0,2,4,5,9,11],
                 [0,2,4,7,9,11],
                 [0,2,5,9,7,10],
+                [0,2,4,5,9,7,10]
             ])
             
             XCTAssertEqual(graph.shortestFinitePaths(from: 0), [
@@ -280,7 +337,7 @@ final class DirectedGraphTests: XCTestCase {
         //    ║    ║    │    ║
         //    ║    ▼    ▼    ▼
         //    ╚═══▶3    8───▶9───▶11
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [1,2,3],
             2: [3,4,5],
             3: [1,2],
@@ -343,7 +400,7 @@ final class DirectedGraphTests: XCTestCase {
         //    │  │  ▲
         //    │  ▼  │
         //    └─▶4──┘
-        let graph = DirectedGraph(neighbors: [
+        let graph = DirectedGraph(edges: [
             1: [2,3,4],
             2: [3],
             3: [4],

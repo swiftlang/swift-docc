@@ -4641,7 +4641,7 @@ let expected = """
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeError/Code-swift.enum/someCase", sourceLanguage: .swift)
         
         XCTAssertEqual(
-            DirectedGraph(neighbors: context.topicGraph.reverseEdges).cycles(from: reference).map { $0.map(\.lastPathComponent) },
+            context.topicGraph.reverseEdgesGraph.cycles(from: reference).map { $0.map(\.lastPathComponent) },
             [ ["Code-swift.enum", "SomeError", "SomeClass"] ],
             "There is one cyclic path encountered while traversing the reverse edges from the 'someCase' enum case."
         )

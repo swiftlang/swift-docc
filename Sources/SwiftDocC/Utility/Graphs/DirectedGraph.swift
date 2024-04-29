@@ -38,13 +38,13 @@ struct DirectedGraph<Node: Hashable> {
     // but all our current usages of graph structures use dictionaries to track the neighboring nodes.
     //
     // This type is internal so we can change it's implementation later when there's new data that's structured differently.
-    private let _neighbors: [Node: [Node]]
-    init(neighbors: [Node: [Node]]) {
-        _neighbors = neighbors
+    private let edges: [Node: [Node]]
+    init(edges: [Node: [Node]]) {
+        self.edges = edges
     }
     
     /// Returns the nodes that are reachable from the given node
     func neighbors(of node: Node) -> [Node] {
-        _neighbors[node] ?? []
+        edges[node] ?? []
     }
 }

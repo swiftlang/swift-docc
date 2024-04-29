@@ -127,7 +127,7 @@ struct DocumentationCurator {
     }
     
     private func isReference(_ childReference: ResolvedTopicReference, anAncestorOf nodeReference: ResolvedTopicReference) -> Bool {
-        DirectedGraph(neighbors: context.topicGraph.reverseEdges)
+        context.topicGraph.reverseEdgesGraph
             .breadthFirstSearch(from: nodeReference)
             .contains(childReference)
     }

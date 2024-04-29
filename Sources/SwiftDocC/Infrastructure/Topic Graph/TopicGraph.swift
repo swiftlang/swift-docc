@@ -277,7 +277,7 @@ struct TopicGraph {
     
     /// Returns a sequence that traverses the topic graph in depth first order from a given reference, without visiting the same node more than once.
     func depthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<Node> {
-        DirectedGraph(neighbors: edges)
+        edgesGraph
             .depthFirstSearch(from: reference)
             .lazy
             .map { nodeWithReference($0)! }
@@ -285,10 +285,20 @@ struct TopicGraph {
     
     /// Returns a sequence that traverses the topic graph in breadth first order from a given reference, without visiting the same node more than once.
     func breadthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<Node> {
-        DirectedGraph(neighbors: edges)
+        edgesGraph
             .breadthFirstSearch(from: reference)
             .lazy
             .map { nodeWithReference($0)! }
+    }
+    
+    /// A directed graph of the edges in the topic graph.
+    var edgesGraph: DirectedGraph<ResolvedTopicReference> {
+        DirectedGraph(edges: edges)
+    }
+    
+    /// A directed graph of the reverse edges in the topic graph.
+    var reverseEdgesGraph: DirectedGraph<ResolvedTopicReference> {
+        DirectedGraph(edges: reverseEdges)
     }
 
     /// Returns the children of this node that reference it as their overload group.

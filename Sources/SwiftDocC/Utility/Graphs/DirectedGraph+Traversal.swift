@@ -20,19 +20,7 @@ extension DirectedGraph {
     }
 }
 
-extension DirectedGraph {
-    /// A path through the graph, including the start and end nodes.
-    typealias Path = [Node]
-    /// Information about the current accumulated path during iteration.
-    typealias PathIterationElement = (path: Path, isLeaf: Bool, cycleStartIndex: Int?)
-    
-    /// Returns a sequence of accumulated path information from traversing the graph in breadth first order.
-    func accumulatingPaths(from startingPoint: Node) -> some Sequence<PathIterationElement> {
-        IteratorSequence(GraphBreadthFirstPathIterator(from: startingPoint, in: self))
-    }
-}
-
-// MARK: Node iterator
+// MARK: Iterator
 
 /// An iterator that traverses a graph in either breadth first or depth first order depending on the buffer it uses to track nodes to traverse next.
 private struct GraphNodeIterator<Node: Hashable>: IteratorProtocol {
@@ -73,33 +61,5 @@ private struct GraphNodeIterator<Node: Hashable>: IteratorProtocol {
             return node
         }
         return nil
-    }
-}
-
-// MARK: Path iterator
-
-/// An iterator that traverses a graph in breadth first order and returns information about the accumulated path through the graph, up to the current node.
-private struct GraphBreadthFirstPathIterator<Node: Hashable>: IteratorProtocol {
-    var pathsToTraverse: [(Node, [Node])]
-    var graph: DirectedGraph<Node>
-    
-    init(from startingPoint: Node, in graph: DirectedGraph<Node>) {
-        self.pathsToTraverse = [(startingPoint, [])]
-        self.graph = graph
-    }
-    
-    mutating func next() -> DirectedGraph<Node>.PathIterationElement? {
-        guard !pathsToTraverse.isEmpty else { return nil }
-        let (node, path) = pathsToTraverse.removeFirst()
-        
-        if let cycleStartIndex = path.lastIndex(of: node) {
-            return (path, false, cycleStartIndex)
-        }
-        
-        let newPath = path + [node]
-        let neighbors = graph.neighbors(of: node)
-        pathsToTraverse.append(contentsOf: neighbors.map { ($0, newPath) })
-        
-        return (newPath, neighbors.isEmpty, nil)
     }
 }

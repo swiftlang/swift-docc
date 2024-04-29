@@ -605,7 +605,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Detect the article modules from its breadcrumbs.
         var modules = Set<ResolvedTopicReference>()
-        for reference in DirectedGraph(neighbors: context.topicGraph.reverseEdges).breadthFirstSearch(from: identifier) {
+        for reference in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: identifier) {
             if let moduleReference = (try? context.entity(with: reference).semantic as? Symbol)?.moduleReference {
                 modules.insert(moduleReference)
             }

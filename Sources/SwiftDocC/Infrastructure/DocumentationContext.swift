@@ -2378,14 +2378,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 return
             }
             
-            guard let topicGraphParentNode = topicGraph.nodeWithReference(parentReference) else { return }
+            guard let topicGraphParentNode = topicGraph.nodeWithReference(parentReference) else {
+                preconditionFailure("Node with reference \(parentReference.absoluteString) exist in link resolver but not in topic graph.")
+            }
             topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
             
             if let counterpartParentReference {
-                guard let topicGraphCounterpartParentNode = topicGraph.nodeWithReference(counterpartParentReference) else { 
-                    // If the counterpart parent doesn't exist. Return the auto curation record without the it.
-                    automaticallyCuratedSymbols.append((reference, parentReference, nil))
-                    return
+                guard let topicGraphCounterpartParentNode = topicGraph.nodeWithReference(counterpartParentReference) else {
+                    preconditionFailure("Node with reference \(counterpartParentReference.absoluteString) exist in link resolver but not in topic graph.")
                 }
                 topicGraph.addEdge(from: topicGraphCounterpartParentNode, to: topicGraphNode)
             }
