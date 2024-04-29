@@ -257,7 +257,8 @@ final class PathHierarchyBasedLinkResolver {
     func fullName(of node: PathHierarchy.Node, in context: DocumentationContext) -> String {
         guard let identifier = node.identifier else { return node.name }
         if let symbol = node.symbol {
-            if let fragments = symbol.declarationFragments {
+            // Use the simple title for overload group symbols to avoid showing detailed type info
+            if !symbol.isOverloadGroup, let fragments = symbol.declarationFragments {
                 return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
             }
             return symbol.names.title
