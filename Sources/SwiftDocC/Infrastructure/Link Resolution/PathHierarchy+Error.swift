@@ -150,8 +150,8 @@ extension PathHierarchy.Error {
             let solutions: [Solution] = candidates
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
-                        Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations, to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                        Replacement(range: replacementRange, replacement: disambiguation)
                     ])
                 }
             

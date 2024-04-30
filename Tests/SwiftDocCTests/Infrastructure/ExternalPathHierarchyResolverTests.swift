@@ -379,8 +379,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentKinds/something-class",
             errorMessage: "'class' isn't a disambiguation for 'something' at '/MixedFramework/CollisionsWithDifferentKinds'",
             solutions: [
-                .init(summary: "Replace 'class' with 'enum.case' for\n'case something'", replacement: ("-enum.case", 54, 60)),
-                .init(summary: "Replace 'class' with 'property' for\n'var something: String { get }'", replacement: ("-property", 54, 60)),
+                .init(summary: "Replace '-class' with '-enum.case' for\n'case something'", replacement: ("-enum.case", 54, 60)),
+                .init(summary: "Replace '-class' with '-property' for\n'var something: String { get }'", replacement: ("-property", 54, 60)),
             ]
         )
  
@@ -407,9 +407,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithEscapedKeywords/init()-abc123",
             errorMessage: "'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'",
             solutions: [
-                .init(summary: "Replace 'abc123' with 'method' for\n'func `init`()'", replacement: ("-method", 52, 59)),
-                .init(summary: "Replace 'abc123' with 'init' for\n'init()'", replacement: ("-init", 52, 59)),
-                .init(summary: "Replace 'abc123' with 'type.method' for\n'static func `init`()'", replacement: ("-type.method", 52, 59)),
+                .init(summary: "Replace '-abc123' with '-method' for\n'func `init`()'", replacement: ("-method", 52, 59)),
+                .init(summary: "Replace '-abc123' with '-init' for\n'init()'", replacement: ("-init", 52, 59)),
+                .init(summary: "Replace '-abc123' with '-type.method' for\n'static func `init`()'", replacement: ("-type.method", 52, 59)),
             ]
         )
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
@@ -469,8 +469,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             authoredLink: "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123",
             errorMessage: "'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'",
             solutions: [
-                .init(summary: "Replace 'abc123' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 77, 84)),
-                .init(summary: "Replace 'abc123' with '2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 77, 84)),
+                .init(summary: "Replace '-abc123' with '-1cyvp' for\n'func something(argument: Int) -> Int'", replacement: ("-1cyvp", 77, 84)),
+                .init(summary: "Replace '-abc123' with '-2vke2' for\n'func something(argument: String) -> Int'", replacement: ("-2vke2", 77, 84)),
             ]
         )
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component

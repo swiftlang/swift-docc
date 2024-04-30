@@ -310,7 +310,6 @@ extension PathHierarchy {
                 }
                 
                 // Couldn't resolve the collision by look ahead.
-//                return try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
                 return try handleWrappedCollision()
             }
         }
@@ -361,29 +360,52 @@ extension PathHierarchy {
         remaining: ArraySlice<PathComponent>,
         rawPathForError: String
     ) -> Error {
-        if let disambiguationTree = node.children[String(remaining.first!.name)] {
-            return Error.unknownDisambiguation(
+        guard let disambiguationTree = node.children[String(remaining.first!.name)] else {
+            return Error.unknownName(
                 partialResult: (
                     node,
                     pathForError(of: rawPathForError, droppingLast: remaining.count)
                 ),
                 remaining: Array(remaining),
-                candidates: disambiguationTree.disambiguatedValues().map {
-                    (node: $0.value, disambiguation: String($0.disambiguation.makeSuffix().dropFirst()))
-                }
+                availableChildren: Set(node.children.keys)
             )
         }
-        
-        return Error.unknownName(
+
+        // Use a empty disambiguation suffix for the preferred symbol, if there
+        // is one, which will trigger the warning to suggest removing the
+        // suffix entirely.
+        let candidates = disambiguationTree.disambiguatedValues()
+        let favoredSuffix = favoredSuffix(from: candidates)
+        let suffixes = candidates.map { $0.disambiguation.makeSuffix() }
+        let candidatesAndSuffixes = zip(candidates, suffixes).map { (candidate, suffix) in
+            if suffix == favoredSuffix {
+                return (node: candidate.value, disambiguation: "")
+            } else {
+                return (node: candidate.value, disambiguation: suffix)
+            }
+        }
+        return Error.unknownDisambiguation(
             partialResult: (
                 node,
                 pathForError(of: rawPathForError, droppingLast: remaining.count)
             ),
             remaining: Array(remaining),
-            availableChildren: Set(node.children.keys)
+            candidates: candidatesAndSuffixes
         )
     }
-    
+
+    /// Check if exactly one of the given candidate symbols is preferred, because it is not disfavored
+    /// for link resolution and all the other symbols are.
+    /// - Parameters:
+    ///   - from: An array of candidate node and disambiguation tuples.
+    /// - Returns: An optional string set to the disambiguation suffix string, without the hyphen separator e.g. "abc123",
+    ///            or nil if there is no preferred symbol.
+    private func favoredSuffix(from candidates: [(value: PathHierarchy.Node, disambiguation: PathHierarchy.DisambiguationContainer.Disambiguation)]) -> String? {
+        return candidates.singleMatch({
+            !$0.value.specialBehaviors.contains(PathHierarchy.Node.SpecialBehaviors.disfavorInLinkCollision)
+        })?.disambiguation.makeSuffix()
+    }
+
     private func pathForError(
         of rawPath: String,
         droppingLast trailingComponentsToDrop: Int

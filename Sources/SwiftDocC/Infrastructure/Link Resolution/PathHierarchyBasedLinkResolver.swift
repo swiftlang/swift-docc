@@ -45,15 +45,21 @@ final class PathHierarchyBasedLinkResolver {
         return "\(unresolved.path)#\(urlReadableFragment(fragment))"
     }
     
-    /// Traverse all the pairs of symbols and their parents.
-    func traverseSymbolAndParentPairs(_ observe: (_ symbol: ResolvedTopicReference, _ parent: ResolvedTopicReference) -> Void) {
+    /// Traverse all the pairs of symbols and their parents and counterpart parents.
+    func traverseSymbolAndParents(_ observe: (_ symbol: ResolvedTopicReference, _ parent: ResolvedTopicReference, _ counterpartParent: ResolvedTopicReference?) -> Void) {
+        let swiftLanguageID = SourceLanguage.swift.id
         for (id, node) in pathHierarchy.lookup {
-            guard node.symbol != nil else { continue }
-            guard let parentID = node.parent?.identifier else { continue }
-            
+            guard let symbol = node.symbol,
+                  let parentID = node.parent?.identifier,
+                  // Symbols that exist in more than one source language may have more than one parent.
+                  // If this symbol has language counterparts, only call `observe` for one of the counterparts.
+                  node.counterpart == nil || symbol.identifier.interfaceLanguage == swiftLanguageID
+            else { continue }
+                
             // Only symbols in the symbol index are added to the reference map.
             guard let reference = resolvedReferenceMap[id], let parentReference = resolvedReferenceMap[parentID] else { continue }
-            observe(reference, parentReference)
+           
+            observe(reference, parentReference, node.counterpart?.parent?.identifier.flatMap { resolvedReferenceMap[$0] })
         }
     }
 
@@ -251,7 +257,8 @@ final class PathHierarchyBasedLinkResolver {
     func fullName(of node: PathHierarchy.Node, in context: DocumentationContext) -> String {
         guard let identifier = node.identifier else { return node.name }
         if let symbol = node.symbol {
-            if let fragments = symbol.declarationFragments {
+            // Use the simple title for overload group symbols to avoid showing detailed type info
+            if !symbol.isOverloadGroup, let fragments = symbol.declarationFragments {
                 return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
             }
             return symbol.names.title
