@@ -21,14 +21,14 @@ extension Docc.ProcessArchive {
         /// Command line configuration.
         static var configuration = CommandConfiguration(
             commandName: "diff-docc-archive",
-            abstract: "Produce a list of symbols added in the newer DocC Archive that did not exist in the initial DocC Archive.",
+            abstract: "Produce a markdown file saved as {FrameworkName}_ChangeLog.md containing the diff of added/removed symbols between the two provided DocC archives.",
             shouldDisplay: true)
         
         /// Content of the 'changeLog' template.
         static func changeLogTemplateFileContent(
             frameworkName: String,
-            initialDocCArchiveName: String,
-            newerDocCArchiveName: String,
+            initialDocCArchiveVersion: String,
+            newerDocCArchiveVersion: String,
             additionLinks: String,
             removalLinks: String
         ) -> [String : String] {
@@ -44,19 +44,19 @@ extension Docc.ProcessArchive {
 
                     Browse notable changes in \(frameworkName.localizedCapitalized).
                     
-                    ## Version: Diff between \(initialDocCArchiveName) and \(newerDocCArchiveName)
+                    ## Version: Diff between \(initialDocCArchiveVersion) and \(newerDocCArchiveVersion)
 
                     
                     ### Change Log
                     
                     #### Additions
-                    _New symbols added in \(newerDocCArchiveName) that did not previously exist in \(initialDocCArchiveName)._
+                    _New symbols added in \(newerDocCArchiveVersion) that did not previously exist in \(initialDocCArchiveVersion)._
                                         
                     \(additionLinks)
                     
                     
                     #### Removals
-                    _Old symbols that existed in \(initialDocCArchiveName) that no longer exist in \(newerDocCArchiveName)._
+                    _Old symbols that existed in \(initialDocCArchiveVersion) that no longer exist in \(newerDocCArchiveVersion)._
                                         
                     \(removalLinks)
                     
@@ -68,9 +68,9 @@ extension Docc.ProcessArchive {
         
         @Argument(
             help: ArgumentHelp(
-                "The name of the initial DocC Archive to be compared.",
-                valueName: "initialDocCArchiveName"))
-        var initialDocCArchiveName: String
+                "The version of the initial DocC Archive to be compared.",
+                valueName: "initialDocCArchiveVersion"))
+        var initialDocCArchiveVersion: String
         
         @Argument(
             help: ArgumentHelp(
@@ -81,9 +81,9 @@ extension Docc.ProcessArchive {
         
         @Argument(
             help: ArgumentHelp(
-                "The name of the newer DocC Archive to be compared.",
-                valueName: "newerDocCArchiveName"))
-        var newerDocCArchiveName: String
+                "The version of the newer DocC Archive to be compared.",
+                valueName: "newerDocCArchiveVersion"))
+        var newerDocCArchiveVersion: String
         
         @Argument(
             help: ArgumentHelp(
@@ -142,7 +142,7 @@ extension Docc.ProcessArchive {
             }
             
             // Create markdown file with changes in the newer DocC Archive that do not exist in the initial DocC Archive.
-            for fileNameAndContent in Docc.ProcessArchive.DiffDocCArchive.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveName: initialDocCArchiveName, newerDocCArchiveName: newerDocCArchiveName, additionLinks: additionLinks, removalLinks: removalLinks) {
+            for fileNameAndContent in Docc.ProcessArchive.DiffDocCArchive.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialDocCArchiveVersion, newerDocCArchiveVersion: newerDocCArchiveVersion, additionLinks: additionLinks, removalLinks: removalLinks) {
                 let fileName = fileNameAndContent.key
                 let content = fileNameAndContent.value
                 try FileManager.default.createFile(at: initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName), contents: Data(content.utf8))
