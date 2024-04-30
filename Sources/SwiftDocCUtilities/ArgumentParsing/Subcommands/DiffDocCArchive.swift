@@ -98,23 +98,12 @@ extension Docc.ProcessArchive {
             let initialDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: initialDocCArchivePath)
             let newDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: newerDocCArchivePath)
             
-            print("\nInitial DocC Archive: ")
-            printAllSymbols(symbols: initialDocCArchiveAPIs)
-            
-            print("\nNew DocC Archive: ")
-            printAllSymbols(symbols: newDocCArchiveAPIs)
-            
             let initialSet = Set(initialDocCArchiveAPIs.map { $0 })
             let newSet = Set(newDocCArchiveAPIs.map { $0 })
             
             // Compute additions and removals to both sets
             let additionsToNewSet = newSet.subtracting(initialSet)
             let removedFromOldSet = initialSet.subtracting(newSet)
-            
-            print("\nAdditions to New DocC Archive:")
-            printAllSymbols(symbols: Array(additionsToNewSet))
-            print("\nRemovals from Initial DocC Archive:")
-            printAllSymbols(symbols: Array(removedFromOldSet))
             
             // Map identifier urls in differences to external urls
             let additionsExternalURLs = Set(additionsToNewSet.map { findExternalLink(identifierURL: $0) })
@@ -145,7 +134,9 @@ extension Docc.ProcessArchive {
             for fileNameAndContent in Docc.ProcessArchive.DiffDocCArchive.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialDocCArchiveVersion, newerDocCArchiveVersion: newerDocCArchiveVersion, additionLinks: additionLinks, removalLinks: removalLinks) {
                 let fileName = fileNameAndContent.key
                 let content = fileNameAndContent.value
-                try FileManager.default.createFile(at: initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName), contents: Data(content.utf8))
+                let filePath = initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName)
+                try FileManager.default.createFile(at: filePath, contents: Data(content.utf8))
+                print("\nOutput file path: \(filePath)")
             }
         }
         
