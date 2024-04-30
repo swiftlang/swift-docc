@@ -304,8 +304,6 @@ class RenderContentMetadataTests: XCTestCase {
         
         let source = """
         ## テスト
-        
-        Note that テスト consists of Non-ASCII characters of E3 83 86 E3 82 B9 E3 83 88 in UTF-8.
         """
         let document = Document(parsing: source)
         
@@ -315,7 +313,7 @@ class RenderContentMetadataTests: XCTestCase {
         case .heading(let heading):
             XCTAssertEqual(heading.level, 2)
             XCTAssertEqual(heading.text, "テスト")
-            XCTAssertEqual(heading.anchor, "%E3%83%86%E3%82%B9%E3%83%88")
+            XCTAssertEqual(heading.anchor, "%E3%83%86%E3%82%B9%E3%83%88", "The UTF-8 representation of テスト is E3 83 86 E3 82 B9 E3 83 88")
         default: XCTFail("Unexpected element")
         }
     }
