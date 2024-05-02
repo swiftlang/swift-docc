@@ -121,7 +121,7 @@ struct PathHierarchy {
                     assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
 
                     if symbol.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix),
-                       loader.unifiedGraphs[moduleName]?.symbols.keys.contains(symbol.identifier.precise) != true {
+                       loader.unifiedGraphs[moduleNode.name]?.symbols.keys.contains(symbol.identifier.precise) != true {
                         // Overload groups can be discarded in the unified symbol graph collector if
                         // they don't reflect the default overload across all platforms. In this
                         // case, we don't want to add these nodes to the path hierarchy since
