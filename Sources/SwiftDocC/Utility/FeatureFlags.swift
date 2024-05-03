@@ -50,4 +50,11 @@ public struct FeatureFlags: Codable {
         additionalFlags: [String : Bool] = [:]
     ) {
     }
+
+    /// Set feature flags that were loaded from a bundle's Info.plist.
+    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationBundle.Info.BundleFeatureFlags) {
+        if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
+            self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
+        }
+    }
 }

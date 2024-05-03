@@ -32,7 +32,10 @@ extension DocumentationBundle {
         
         /// The default kind for the various modules in the bundle.
         public var defaultModuleKind: String?
-        
+
+        /// The parsed feature flags that were set for this bundle.
+        internal var featureFlags: BundleFeatureFlags?
+
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
@@ -43,7 +46,8 @@ extension DocumentationBundle {
             case defaultCodeListingLanguage = "CDDefaultCodeListingLanguage"
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
-            
+            case featureFlags = "CDExperimentalFeatureFlags"
+
             var argumentName: String? {
                 switch self {
                 case .displayName:
@@ -56,7 +60,7 @@ extension DocumentationBundle {
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
                     return "--fallback-default-module-kind"
-                case .defaultAvailability:
+                case .defaultAvailability, .featureFlags:
                     return nil
                 }
             }
@@ -231,6 +235,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
+            self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
         }
         
         init(
@@ -239,7 +244,8 @@ extension DocumentationBundle {
             version: String? = nil,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
-            defaultAvailability: DefaultAvailability? = nil
+            defaultAvailability: DefaultAvailability? = nil,
+            featureFlags: BundleFeatureFlags? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -247,6 +253,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
+            self.featureFlags = featureFlags
         }
     }
 }
@@ -295,6 +302,8 @@ extension BundleDiscoveryOptions {
                 value = fallbackDefaultAvailability
             case .defaultModuleKind:
                 value = fallbackDefaultModuleKind
+            case .featureFlags:
+                value = nil
             }
             
             guard let unwrappedValue = value else {
