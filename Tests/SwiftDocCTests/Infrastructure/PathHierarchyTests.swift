@@ -327,8 +327,8 @@ class PathHierarchyTests: XCTestCase {
         'class' isn't a disambiguation for 'something' at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'class' with 'enum.case' for\n'case something'", replacements: [("-enum.case", 54, 60)]),
-                .init(summary: "Replace 'class' with 'property' for\n'var something: String { get }'", replacements: [("-property", 54, 60)]),
+                .init(summary: "Replace '-class' with '-enum.case' for\n'case something'", replacements: [("-enum.case", 54, 60)]),
+                .init(summary: "Replace '-class' with '-property' for\n'var something: String { get }'", replacements: [("-property", 54, 60)]),
             ])
         }
         
@@ -350,9 +350,9 @@ class PathHierarchyTests: XCTestCase {
         'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with 'method' for\n'func `init`()'", replacements: [("-method", 52, 59)]),
-                .init(summary: "Replace 'abc123' with 'init' for\n'init()'", replacements: [("-init", 52, 59)]),
-                .init(summary: "Replace 'abc123' with 'type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
+                .init(summary: "Replace '-abc123' with '-method' for\n'func `init`()'", replacements: [("-method", 52, 59)]),
+                .init(summary: "Replace '-abc123' with '-init' for\n'init()'", replacements: [("-init", 52, 59)]),
+                .init(summary: "Replace '-abc123' with '-type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
@@ -431,8 +431,8 @@ class PathHierarchyTests: XCTestCase {
         'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace 'abc123' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace '-abc123' with '-1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
+                .init(summary: "Replace '-abc123' with '-2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
@@ -1318,8 +1318,52 @@ class PathHierarchyTests: XCTestCase {
         // This overloaded protocol method should be able to resolve without a suffix at all, since it doesn't conflict with anything
         let overloadedProtocolMethod = try tree.findNode(path: "/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)", onlyFindSymbols: true)
         XCTAssert(overloadedProtocolMethod.symbol?.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) == true)
+
     }
 
+    func testAmbiguousPathsForOverloadedGroupSymbols() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
+        'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Remove '-abc123' for\n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-8iuz7' for\n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-1h173' for\n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("-1h173", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-91hxs' for\n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("-91hxs", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-961zx' for\n'func fourthTestMemberName(test: String) -> String\'", replacements: [("-961zx", 56, 63)]),
+            ])
+        }
+    }
+
+    func testDoesNotSuggestBundleNameForSymbolLink() throws {
+        let exampleDocumentation = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
+            
+            InfoPlist(displayName: "ModuleNaem"), // The bundle name is intentionally misspelled.
+            
+            // The symbol link in the header is intentionally misspelled.
+            TextFile(name: "root.md", utf8Content: """
+            # ``ModuleNaem``
+            
+            A documentation extension file with a misspelled link that happens to match the, also misspelled, bundle name.
+            """),
+        ])
+        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        // This link is intentionally misspelled
+        try assertPathRaisesErrorMessage("ModuleNaem", in: tree, context: context, expectedErrorMessage: "Can't resolve 'ModuleNaem'") { errorInfo in
+            XCTAssertEqual(errorInfo.solutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+        }
+        
+        let linkProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "No symbol matched 'ModuleNaem'. Can't resolve 'ModuleNaem'."}))
+        XCTAssertEqual(linkProblem.possibleSolutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+    }
+        
     func testSymbolsWithSameNameAsModule() throws {
         let (_, context) = try testBundleAndContext(named: "SymbolsWithSameNameAsModule")
         let tree = context.linkResolver.localResolver.pathHierarchy
