@@ -1179,14 +1179,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     }
 
                     let overloadGroups: [String: Set<String>] =
-                    unifiedSymbolGraph.relationshipsByLanguage.values.joined().filter({
-                        $0.kind == .overloadOf
-                    }).map({
-                        (key: $0.target, value: $0.source)
-                    }).reduce([:], { acc, kv in
-                        var acc = acc
-                        acc[kv.key, default: []].insert(kv.value)
-                        return acc
+                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
+                        $0.filter { $0.kind == .overloadOf }
+                    }).reduce(into: [:], { acc, relationship in
+                        acc[relationship.target, default: []].insert(relationship.source)
                     })
                     addOverloadGroupReferences(overloadGroups: overloadGroups)
 
