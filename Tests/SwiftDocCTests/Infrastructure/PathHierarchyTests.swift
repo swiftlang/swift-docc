@@ -1338,6 +1338,32 @@ class PathHierarchyTests: XCTestCase {
         }
     }
 
+    func testDoesNotSuggestBundleNameForSymbolLink() throws {
+        let exampleDocumentation = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
+            
+            InfoPlist(displayName: "ModuleNaem"), // The bundle name is intentionally misspelled.
+            
+            // The symbol link in the header is intentionally misspelled.
+            TextFile(name: "root.md", utf8Content: """
+            # ``ModuleNaem``
+            
+            A documentation extension file with a misspelled link that happens to match the, also misspelled, bundle name.
+            """),
+        ])
+        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        // This link is intentionally misspelled
+        try assertPathRaisesErrorMessage("ModuleNaem", in: tree, context: context, expectedErrorMessage: "Can't resolve 'ModuleNaem'") { errorInfo in
+            XCTAssertEqual(errorInfo.solutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+        }
+        
+        let linkProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "No symbol matched 'ModuleNaem'. Can't resolve 'ModuleNaem'."}))
+        XCTAssertEqual(linkProblem.possibleSolutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+    }
+        
     func testSymbolsWithSameNameAsModule() throws {
         let (_, context) = try testBundleAndContext(named: "SymbolsWithSameNameAsModule")
         let tree = context.linkResolver.localResolver.pathHierarchy
