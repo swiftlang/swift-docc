@@ -209,110 +209,121 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        var node = startingPoint
-        var remaining = pathComponents[...]
+        // All code paths through this function wants to perform extra verification on the return value before returning it to the caller.
+        // To accomplish that, the core implementation happens in `_innerImplementation`, which is called once, right below its definition.
         
-        /// Ensure that the return value is valid for this search. 
-        func validateReturnValue(_ node: Node) throws -> Node {
-            if node.identifier == nil {
-                throw Error.unfindableMatch(node)
-            }
-            if onlyFindSymbols, node.symbol == nil {
-                throw Error.nonSymbolMatchForSymbolLink(path: rawPathForError)
-            }
-            return node
-        }
-        
-        // Third, search for the match relative to the start node.
-        if remaining.isEmpty {
-            // If all path components were consumed, then the start of the search is the match.
-            return try validateReturnValue(node)
-        }
-        
-        // Search for the remaining components from the node
-        while true {
-            let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
+        func _innerImplementation(
+            descendingFrom startingPoint: Node,
+            pathComponents: ArraySlice<PathComponent>,
+            onlyFindSymbols: Bool,
+            rawPathForError: String
+        ) throws -> Node {
+            var node = startingPoint
+            var remaining = pathComponents[...]
             
-            do {
-                guard let child = try children.find(pathComponent.disambiguation) else {
-                    // The search has ended with a node that doesn't have a child matching the next path component.
-                    throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
-                }
-                node = child
-                remaining = remaining.dropFirst()
-                if remaining.isEmpty {
-                    // If all path components are consumed, then the match is found.
-                    return try validateReturnValue(child)
-                }
-            } catch DisambiguationContainer.Error.lookupCollision(let collisions) {
-                func handleWrappedCollision() throws -> Node {
-                    let match = try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
-                    return try validateReturnValue(match)
-                }
+            // Search for the match relative to the start node.
+            if remaining.isEmpty {
+                // If all path components were consumed, then the start of the search is the match.
+                return node
+            }
+            
+            // Search for the remaining components from the node
+            while true {
+                let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
                 
-                // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
-                
-                guard let nextPathComponent = remaining.dropFirst().first else {
-                    // This was the last path component so there's nothing to look ahead.
-                    //
-                    // It's possible for a symbol that exist on multiple languages to collide with itself.
-                    // Check if the collision can be resolved by finding a unique symbol or an otherwise preferred match.
-                    var uniqueCollisions: [String: Node] = [:]
-                    for (node, _) in collisions {
-                        guard let symbol = node.symbol else {
-                            // Non-symbol collisions should have already been resolved
-                            return try handleWrappedCollision()
-                        }
-                        
-                        let id = symbol.identifier.precise
-                        if symbol.identifier.interfaceLanguage == "swift" || !uniqueCollisions.keys.contains(id) {
-                            uniqueCollisions[id] = node
-                        }
-                        
-                        guard uniqueCollisions.count < 2 else {
-                            // Encountered more than one unique symbol
-                            return try handleWrappedCollision()
-                        }
+                do {
+                    guard let child = try children.find(pathComponent.disambiguation) else {
+                        // The search has ended with a node that doesn't have a child matching the next path component.
+                        throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
                     }
-                    // A wrapped error would have been raised while iterating over the collection.
-                    return try validateReturnValue(uniqueCollisions.first!.value)
-                }
-                
-                // Look ahead one path component to narrow down the list of collisions. 
-                // For each collision where the next path component can be found unambiguously, return that matching node one level down.
-                let possibleMatchesOneLevelDown = collisions.compactMap {
-                    try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
-                }
-                let onlyPossibleMatch: Node?
-                
-                if possibleMatchesOneLevelDown.count == 1 {
-                    // Only one of the collisions found a match for the next path component
-                    onlyPossibleMatch = possibleMatchesOneLevelDown.first!
-                } else if !possibleMatchesOneLevelDown.isEmpty, possibleMatchesOneLevelDown.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatchesOneLevelDown.first!.symbol?.identifier.precise }) {
-                    // It's also possible that different language representations of the same symbols appear as different collisions.
-                    // If _all_ collisions that can find the next path component are the same symbol, then we prefer the Swift version of that symbol.
-                    onlyPossibleMatch = possibleMatchesOneLevelDown.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatchesOneLevelDown.first!
-                } else {
-                    onlyPossibleMatch = nil
-                }
-                
-                if let onlyPossibleMatch {
-                    // If we found only a single match one level down then we've processed both this path component and the next.
-                    remaining = remaining.dropFirst(2)
+                    node = child
+                    remaining = remaining.dropFirst()
                     if remaining.isEmpty {
-                        // If that was the end of the path we can simply return the result.
-                        return try validateReturnValue(onlyPossibleMatch)
-                    } else {
-                        // Otherwise we continue looping over the remaining path components.
-                        node = onlyPossibleMatch
-                        continue
+                        // If all path components are consumed, then the match is found.
+                        return child
                     }
+                } catch DisambiguationContainer.Error.lookupCollision(let collisions) {
+                    func handleWrappedCollision() throws -> Node {
+                        let match = try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+                        return match
+                    }
+                    
+                    // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
+                    
+                    guard let nextPathComponent = remaining.dropFirst().first else {
+                        // This was the last path component so there's nothing to look ahead.
+                        //
+                        // It's possible for a symbol that exist on multiple languages to collide with itself.
+                        // Check if the collision can be resolved by finding a unique symbol or an otherwise preferred match.
+                        var uniqueCollisions: [String: Node] = [:]
+                        for (node, _) in collisions {
+                            guard let symbol = node.symbol else {
+                                // Non-symbol collisions should have already been resolved
+                                return try handleWrappedCollision()
+                            }
+                            
+                            let id = symbol.identifier.precise
+                            if symbol.identifier.interfaceLanguage == "swift" || !uniqueCollisions.keys.contains(id) {
+                                uniqueCollisions[id] = node
+                            }
+                            
+                            guard uniqueCollisions.count < 2 else {
+                                // Encountered more than one unique symbol
+                                return try handleWrappedCollision()
+                            }
+                        }
+                        // A wrapped error would have been raised while iterating over the collection.
+                        return uniqueCollisions.first!.value
+                    }
+                    
+                    // Look ahead one path component to narrow down the list of collisions.
+                    // For each collision where the next path component can be found unambiguously, return that matching node one level down.
+                    let possibleMatchesOneLevelDown = collisions.compactMap {
+                        try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
+                    }
+                    let onlyPossibleMatch: Node?
+                    
+                    if possibleMatchesOneLevelDown.count == 1 {
+                        // Only one of the collisions found a match for the next path component
+                        onlyPossibleMatch = possibleMatchesOneLevelDown.first!
+                    } else if !possibleMatchesOneLevelDown.isEmpty, possibleMatchesOneLevelDown.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatchesOneLevelDown.first!.symbol?.identifier.precise }) {
+                        // It's also possible that different language representations of the same symbols appear as different collisions.
+                        // If _all_ collisions that can find the next path component are the same symbol, then we prefer the Swift version of that symbol.
+                        onlyPossibleMatch = possibleMatchesOneLevelDown.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatchesOneLevelDown.first!
+                    } else {
+                        onlyPossibleMatch = nil
+                    }
+                    
+                    if let onlyPossibleMatch {
+                        // If we found only a single match one level down then we've processed both this path component and the next.
+                        remaining = remaining.dropFirst(2)
+                        if remaining.isEmpty {
+                            // If that was the end of the path we can simply return the result.
+                            return onlyPossibleMatch
+                        } else {
+                            // Otherwise we continue looping over the remaining path components.
+                            node = onlyPossibleMatch
+                            continue
+                        }
+                    }
+                    
+                    // Couldn't resolve the collision by look ahead.
+                    return try handleWrappedCollision()
                 }
-                
-                // Couldn't resolve the collision by look ahead.
-                return try handleWrappedCollision()
             }
         }
+        
+        // Run the core implementation, defined above.
+        let node = try _innerImplementation(descendingFrom: startingPoint, pathComponents: pathComponents, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+        
+        // Perform extra validation on the return value before returning it to the caller.
+        if node.identifier == nil {
+            throw Error.unfindableMatch(node)
+        }
+        if onlyFindSymbols, node.symbol == nil {
+            throw Error.nonSymbolMatchForSymbolLink(path: rawPathForError)
+        }
+        return node
     }
                         
     private func handleCollision(
