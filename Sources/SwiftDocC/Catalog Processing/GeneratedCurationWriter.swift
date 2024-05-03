@@ -140,7 +140,7 @@ public struct GeneratedCurationWriter {
         for (usr, reference) in context.documentationCache.referencesBySymbolID {
             // Filter out symbols that aren't in the specified sub hierarchy.
             if symbolLink != nil || depthLimit != nil {
-                guard reference == curationCrawlRoot || context.pathsTo(reference).contains(where: { path in path.suffix(depthLimit ?? .max).contains(curationCrawlRoot)}) else {
+                guard reference == curationCrawlRoot || context.finitePaths(to: reference).contains(where: { path in path.suffix(depthLimit ?? .max).contains(curationCrawlRoot)}) else {
                     continue
                 }
             }
