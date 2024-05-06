@@ -1726,8 +1726,52 @@ class PathHierarchyTests: XCTestCase {
         // This overloaded protocol method should be able to resolve without a suffix at all, since it doesn't conflict with anything
         let overloadedProtocolMethod = try tree.findNode(path: "/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)", onlyFindSymbols: true)
         XCTAssert(overloadedProtocolMethod.symbol?.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) == true)
+
     }
 
+    func testAmbiguousPathsForOverloadedGroupSymbols() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+        let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
+        'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Remove '-abc123' for\n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-8iuz7' for\n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-1h173' for\n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("-1h173", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-91hxs' for\n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("-91hxs", 56, 63)]),
+                .init(summary: "Replace '-abc123' with '-961zx' for\n'func fourthTestMemberName(test: String) -> String\'", replacements: [("-961zx", 56, 63)]),
+            ])
+        }
+    }
+
+    func testDoesNotSuggestBundleNameForSymbolLink() throws {
+        let exampleDocumentation = Folder(name: "Something.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
+            
+            InfoPlist(displayName: "ModuleNaem"), // The bundle name is intentionally misspelled.
+            
+            // The symbol link in the header is intentionally misspelled.
+            TextFile(name: "root.md", utf8Content: """
+            # ``ModuleNaem``
+            
+            A documentation extension file with a misspelled link that happens to match the, also misspelled, bundle name.
+            """),
+        ])
+        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        // This link is intentionally misspelled
+        try assertPathRaisesErrorMessage("ModuleNaem", in: tree, context: context, expectedErrorMessage: "Can't resolve 'ModuleNaem'") { errorInfo in
+            XCTAssertEqual(errorInfo.solutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+        }
+        
+        let linkProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "No symbol matched 'ModuleNaem'. Can't resolve 'ModuleNaem'."}))
+        XCTAssertEqual(linkProblem.possibleSolutions.map(\.summary), ["Replace 'ModuleNaem' with 'ModuleName'"])
+    }
+        
     func testSymbolsWithSameNameAsModule() throws {
         let (_, context) = try testBundleAndContext(named: "SymbolsWithSameNameAsModule")
         let tree = context.linkResolver.localResolver.pathHierarchy
@@ -1816,6 +1860,49 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("Inner/InnerClass", in: tree, asSymbolID: "s:e:s:5Inner0A5ClassC5OuterE9somethingyyF")
         try assertFindsPath("Inner/InnerStruct/something()", in: tree, asSymbolID: "s:5Inner0A6StructV5OuterE9somethingyyF")
         try assertFindsPath("Inner/InnerClass/something()", in: tree, asSymbolID: "s:5Inner0A5ClassC5OuterE9somethingyyF")
+    }
+    
+    func testContinuesSearchingIfNonSymbolMatchesSymbolLink() throws {
+        let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                ("some-class-id", .swift, ["SomeClass"], .class),
+            ])),
+            
+            TextFile(name: "Some-Article.md", utf8Content: """
+             # Some article
+             
+             An article with a heading with the same name as a symbol and another heading.
+             
+             ### SomeClass
+             
+             - ``SomeClass``
+             
+             ### OtherHeading
+             """),
+        ])
+        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        let articleID = try tree.find(path: "/CatalogName/Some-Article", onlyFindSymbols: false)
+        
+        XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,
+                       "A general documentation link will find the heading because its closer than the symbol.")
+        XCTAssertEqual(try tree.findNode(path: "SomeClass", onlyFindSymbols: true, parent: articleID).symbol?.identifier.precise, "some-class-id",
+                       "A symbol link will skip the heading and continue searching until it finds the symbol.")
+        
+        XCTAssertEqual(try tree.findNode(path: "OtherHeading", onlyFindSymbols: false, parent: articleID).symbol?.identifier.precise, nil,
+                       "A general documentation link will find the other heading.")
+        XCTAssertThrowsError(
+            try tree.findNode(path: "OtherHeading", onlyFindSymbols: true, parent: articleID),
+            "A symbol link that find the header but doesn't find a symbol will raise the error about the heading not being a symbol"
+        ) { untypedError in
+            let error = untypedError as! PathHierarchy.Error
+            let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
+            XCTAssertEqual(referenceError.message, "Symbol links can only resolve symbols")
+        }
     }
     
     func testSnippets() throws {

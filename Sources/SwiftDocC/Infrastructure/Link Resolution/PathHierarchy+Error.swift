@@ -47,7 +47,7 @@ extension PathHierarchy {
         ///
         /// Includes information about:
         /// - The path to the non-symbol match.
-        case nonSymbolMatchForSymbolLink(path: Substring)
+        case nonSymbolMatchForSymbolLink(path: String)
         
         /// Encountered an unknown disambiguation for a found node.
         ///
