@@ -5101,9 +5101,6 @@ let expected = """
         let overloadGroupSymbol: Symbol
         let overloadGroupReferences: Symbol.Overloads
 
-        // Even though the macOS symbol graph doesn't contain an overload group, one should still
-        // have been created from the iOS symbol graph, and that overload group should reference
-        // both symbols.
         switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
         case let .failure(_, errorMessage):
             XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
