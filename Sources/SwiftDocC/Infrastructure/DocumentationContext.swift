@@ -1161,8 +1161,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
-                        var overloadGroups = [String: [String]]()
-
                         for relationship in relationships {
                             // Check for an origin key.
                             if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
@@ -1176,15 +1174,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                     localCache: documentationCache,
                                     moduleName: moduleName
                                 )
-                            } else if relationship.kind == .overloadOf {
-                                // An 'overloadOf' relationship points from symbol -> group
-                                overloadGroups[relationship.target, default: []].append(relationship.source)
                             }
                         }
-
-                        addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
-                    
+
+                    let overloadGroups: [String: Set<String>] =
+                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
+                        $0.filter { $0.kind == .overloadOf }
+                    }).reduce(into: [:], { acc, relationship in
+                        acc[relationship.target, default: []].insert(relationship.source)
+                    })
+                    addOverloadGroupReferences(overloadGroups: overloadGroups)
+
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
                         addPreparedSymbolToContext(
                             preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, module: rootModule, moduleReference: moduleReference, fileURL: fileURL)
@@ -2395,7 +2396,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return automaticallyCuratedSymbols
     }
 
-    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
+    private func addOverloadGroupReferences(overloadGroups: [String: Set<String>]) {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
