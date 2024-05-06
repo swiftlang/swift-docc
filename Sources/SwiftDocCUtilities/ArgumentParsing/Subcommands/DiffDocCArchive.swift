@@ -120,15 +120,24 @@ extension Docc.ProcessArchive {
                 frameworkName = potentialFrameworkName ?? "No_Framework_Name"
             }
             
-            var additionLinks: String = ""
-            for addition in additionsExternalURLs {
-                additionLinks.append("\n- <\(addition)>")
-            }
             
-            var removalLinks: String = ""
-            for removal in removalsExternalURLs {
-                removalLinks.append("\n- <\(removal)>")
-            }
+            let additionLinks = groupSeparateSymbols(symbolLinks: additionsExternalURLs)
+            let removalLinks = groupSeparateSymbols(symbolLinks: removalsExternalURLs)
+            
+            
+            
+//            let sortedAdditionSymbols = groupSeparateSymbols(symbolLinks: additionsExternalURLs)
+//            let sortedRemovalSymbols = groupSeparateSymbols(symbolLinks: removalsExternalURLs)
+//            
+//            var additionLinks: String = ""
+//            for addition in sortedAdditionSymbols {
+//                additionLinks.append("\n- <\(addition)>")
+//            }
+//            
+//            var removalLinks: String = ""
+//            for removal in sortedRemovalSymbols {
+//                removalLinks.append("\n- <\(removal)>")
+//            }
             
             // Create markdown file with changes in the newer DocC Archive that do not exist in the initial DocC Archive.
             for fileNameAndContent in Docc.ProcessArchive.DiffDocCArchive.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialDocCArchiveVersion, newerDocCArchiveVersion: newerDocCArchiveVersion, additionLinks: additionLinks, removalLinks: removalLinks) {
@@ -231,6 +240,33 @@ extension Docc.ProcessArchive {
             } catch {
                 return nil
             }
+        }
+        
+        /// Process lists of symbols to group them according to the highest level path component.
+        ///
+        /// If a class didn't exist in the old version but now exists in the new version:
+        ///     - print that a new class was added,
+        ///     - display the number of symbols added within that class beside it.
+        ///
+        /// Otherwise, group symbols by their highest path component below a header, and then print a nested list.
+        func groupSeparateSymbols(symbolLinks: Set<String>) -> String {
+            
+            // Sort list alphabetically
+            let sortedSymbols: [String] = symbolLinks.sorted { $0.localizedCompare($1) == .orderedAscending }
+            
+            // Check matching path components
+            // for each path component after the initial path component....
+//            for symbol in sortedSymbols {
+//                // example path components: ["/", "documentation", "accelerate", "vdsp", "vector-scalar_real_arithmetic_functions"]
+//                print(symbol.pathComponents)
+//            }
+            
+            var links: String = ""
+            for symbol in sortedSymbols {
+                links.append("\n- <\(symbol)>")
+            }
+            
+            return links // TODO: STUB
         }
                     
     }
