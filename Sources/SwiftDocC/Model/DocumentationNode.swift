@@ -226,14 +226,9 @@ public struct DocumentationNode {
         }
 
         let overloadVariants = DocumentationDataVariants(
-            symbolData: unifiedSymbol.mixins,
-            platformName: platformName
-        ) { mixins -> Symbol.Overloads? in
-            guard let overloadData = mixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData else {
-                return nil
-            }
-            return .init(references: [], displayIndex: overloadData.overloadGroupIndex)
-        }
+            swiftVariant: unifiedSymbol.unifiedOverloadData.map { overloadData in
+                Symbol.Overloads(references: [], displayIndex: overloadData.overloadGroupIndex)
+            })
 
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
