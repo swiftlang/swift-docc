@@ -105,10 +105,6 @@ extension Docc.ProcessArchive {
             let additionsToNewSet = newSet.subtracting(initialSet)
             let removedFromOldSet = initialSet.subtracting(newSet)
             
-            // Map identifier urls in differences to external urls
-            let additionsExternalURLs = Set(additionsToNewSet.map { findExternalLink(identifierURL: $0) })
-            let removalsExternalURLs = Set(removedFromOldSet.map { findExternalLink(identifierURL: $0) })
-            
             // The framework name is the path component after "/documentation/".
             var frameworkName: String = "No_Framework_Name"
             var potentialFrameworkName = try findFrameworkName(initialPath: initialDocCArchivePath)
@@ -120,24 +116,8 @@ extension Docc.ProcessArchive {
                 frameworkName = potentialFrameworkName ?? "No_Framework_Name"
             }
             
-            
-            let additionLinks = groupSeparateSymbols(symbolLinks: additionsExternalURLs)
-            let removalLinks = groupSeparateSymbols(symbolLinks: removalsExternalURLs)
-            
-            
-            
-//            let sortedAdditionSymbols = groupSeparateSymbols(symbolLinks: additionsExternalURLs)
-//            let sortedRemovalSymbols = groupSeparateSymbols(symbolLinks: removalsExternalURLs)
-//            
-//            var additionLinks: String = ""
-//            for addition in sortedAdditionSymbols {
-//                additionLinks.append("\n- <\(addition)>")
-//            }
-//            
-//            var removalLinks: String = ""
-//            for removal in sortedRemovalSymbols {
-//                removalLinks.append("\n- <\(removal)>")
-//            }
+            let additionLinks = groupSymbols(symbolLinks: additionsToNewSet, frameworkName: frameworkName)
+            let removalLinks = groupSymbols(symbolLinks: removedFromOldSet, frameworkName: frameworkName)
             
             // Create markdown file with changes in the newer DocC Archive that do not exist in the initial DocC Archive.
             for fileNameAndContent in Docc.ProcessArchive.DiffDocCArchive.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialDocCArchiveVersion, newerDocCArchiveVersion: newerDocCArchiveVersion, additionLinks: additionLinks, removalLinks: removalLinks) {
@@ -242,31 +222,31 @@ extension Docc.ProcessArchive {
             }
         }
         
-        /// Process lists of symbols to group them according to the highest level path component.
-        ///
-        /// If a class didn't exist in the old version but now exists in the new version:
-        ///     - print that a new class was added,
-        ///     - display the number of symbols added within that class beside it.
-        ///
-        /// Otherwise, group symbols by their highest path component below a header, and then print a nested list.
-        func groupSeparateSymbols(symbolLinks: Set<String>) -> String {
-            
+        /// Process lists of symbols to group them according to the highest level path component, split by spaces.
+        func groupSymbols(symbolLinks: Set<URL>, frameworkName: String) -> String {
             // Sort list alphabetically
-            let sortedSymbols: [String] = symbolLinks.sorted { $0.localizedCompare($1) == .orderedAscending }
-            
-            // Check matching path components
-            // for each path component after the initial path component....
-//            for symbol in sortedSymbols {
-//                // example path components: ["/", "documentation", "accelerate", "vdsp", "vector-scalar_real_arithmetic_functions"]
-//                print(symbol.pathComponents)
-//            }
+            let sortedSymbols: [URL] = symbolLinks.sorted { $0.absoluteString.localizedCompare($1.absoluteString) == .orderedAscending }
             
             var links: String = ""
-            for symbol in sortedSymbols {
-                links.append("\n- <\(symbol)>")
+            
+            // find most similar path up until framework name by iterating over path components one at a time
+            guard var first = sortedSymbols.first else {
+                return links
             }
             
-            return links // TODO: STUB
+            for symbol in sortedSymbols.dropFirst() {
+                let parent: String = first.absoluteString.commonPrefix(with: symbol.absoluteString)
+                
+                // If there are no common path components, add a space. Then reset the first to find the next parent.
+                if parent.localizedLowercase.hasSuffix(frameworkName + "/") {
+                    links.append("\n\n")
+                    first = symbol
+                }
+                    
+                links.append("\n- <\(findExternalLink(identifierURL: symbol))>")
+            }
+            
+            return links
         }
                     
     }
