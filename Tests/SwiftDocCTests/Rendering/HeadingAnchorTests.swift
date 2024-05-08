@@ -22,6 +22,10 @@ class HeadingAnchorTests: XCTestCase {
                 
                 This single article defines two headings and links to them
                 
+                @Metadata {
+                  @TechnologyRoot
+                }
+
                 ### テスト
                 - <doc:#テスト>
                 
