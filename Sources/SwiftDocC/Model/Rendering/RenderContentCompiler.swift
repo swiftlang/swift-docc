@@ -131,7 +131,7 @@ struct RenderContentCompiler: MarkupVisitor {
     mutating func visitLink(_ link: Link) -> [RenderContent] {
         let destination = link.destination ?? ""
         // Before attempting to resolve the link, we confirm that is has a ResolvedTopicReference urlScheme
-        guard ResolvedTopicReference.urlHasResolvedTopicScheme(ValidatedURL(parsingAuthoredLink: destination)?.url) else {
+        guard ResolvedTopicReference.urlHasResolvedTopicScheme(URL(string: destination)) else {
             // This is an external URL which needs a ``LinkRenderReference``.
             let linkTitleInlineContent = link.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent]
             let plainTextLinkTitle = linkTitleInlineContent.plainText
