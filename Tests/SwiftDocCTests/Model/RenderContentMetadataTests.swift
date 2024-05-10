@@ -297,4 +297,24 @@ class RenderContentMetadataTests: XCTestCase {
             default: XCTFail("Unexpected element")
         }
     }
+    
+    func testHeadingAnchorShouldBeEncoded() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        
+        let source = """
+        ## テスト
+        """
+        let document = Document(parsing: source)
+        
+        let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+        let element = try XCTUnwrap(result.first as? RenderBlockContent)
+        switch element {
+        case .heading(let heading):
+            XCTAssertEqual(heading.level, 2)
+            XCTAssertEqual(heading.text, "テスト")
+            XCTAssertEqual(heading.anchor, "%E3%83%86%E3%82%B9%E3%83%88", "The UTF-8 representation of テスト is E3 83 86 E3 82 B9 E3 83 88")
+        default: XCTFail("Unexpected element")
+        }
+    }
 }
