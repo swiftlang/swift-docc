@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -207,41 +207,42 @@ public struct JSONPatchApplier {
         return .array(array)
     }
     
-    /// An error that occured during the application of a JSON patch.
+    /// An error that occurred during the application of a JSON patch.
     public enum Error: DescribedError {
         /// An error indicating that the pointer of a patch operation is invalid for a JSON object.
         ///
         /// - Parameters:
-        ///     - component: The component that's causing the pointer to be invalid in the JSON object.
-        ///     - availableKeys: The keys available in the JSON object.
+        ///   - component: The component that's causing the pointer to be invalid in the JSON object.
+        ///   - availableKeys: The keys available in the JSON object.
         case invalidObjectPointer(JSONPointer, component: String, availableKeys: [String])
         
         
         /// An error indicating that the pointer of a patch operation is invalid for a JSON object.
         ///
         /// - Parameters:
-        ///     - component: The component that's causing the pointer to be invalid in the JSON object.
-        ///     - availableObjectKeys: The keys available in the JSON object.
-        public static func invalidObjectPointer<Keys: Collection>(
+        ///   - pointer: A pointer to the invalid object the JSON document.
+        ///   - component: The component that's causing the pointer to be invalid in the JSON object.
+        ///   - availableObjectKeys: The keys available in the JSON object.
+        public static func invalidObjectPointer(
             _ pointer: JSONPointer,
             component: String,
-            availableObjectKeys: Keys
-        ) -> Self where Keys.Element == String {
+            availableObjectKeys: some Collection<String>
+        ) -> Self {
             return .invalidObjectPointer(pointer, component: component, availableKeys: Array(availableObjectKeys))
         }
         
         /// An error indicating that the pointer of a patch operation is invalid for a JSON array.
         ///
         /// - Parameters:
-        ///     - index: The index component that's causing the pointer to be invalid in the JSON array.
-        ///     - arrayCount: The size of the JSON array.
+        ///   - index: The index component that's causing the pointer to be invalid in the JSON array.
+        ///   - arrayCount: The size of the JSON array.
         case invalidArrayPointer(JSONPointer, index: String, arrayCount: Int)
         
         /// An error indicating that the pointer of a patch operation is invalid for a JSON value.
         ///
         /// - Parameters:
-        ///     - component: The component that's causing the pointer to be invalid, since the JSON element is a non-traversable value.
-        ///     - jsonValue: The string-encoded description of the JSON value.
+        ///   - component: The component that's causing the pointer to be invalid, since the JSON element is a non-traversable value.
+        ///   - jsonValue: The string-encoded description of the JSON value.
         case invalidValuePointer(JSONPointer, component: String, jsonValue: String)
         
         /// An error indicating that a patch operation is invalid.

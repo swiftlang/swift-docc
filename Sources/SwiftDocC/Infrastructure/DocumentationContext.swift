@@ -332,7 +332,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The documentation bundles that are currently registered with the context.
-    public var registeredBundles: Dictionary<String, DocumentationBundle>.Values {
+    public var registeredBundles: some Collection<DocumentationBundle> {
         return dataProvider.bundles.values
     }
     
@@ -445,7 +445,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private typealias ReferencedSemanticObject = (reference: ResolvedTopicReference, semantic: Semantic)
     
     /// Converts a semantic result to a referenced semantic object by removing the generic constraint.
-    private func referencedSemanticObject<S: Semantic>(from: SemanticResult<S>) -> ReferencedSemanticObject {
+    private func referencedSemanticObject(from: SemanticResult<some Semantic>) -> ReferencedSemanticObject {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
     
@@ -952,7 +952,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
-    private func insertLandmarks<Landmarks: Sequence>(_ landmarks: Landmarks, from topicGraphNode: TopicGraph.Node, source url: URL) where Landmarks.Element == Landmark {
+    private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
         for landmark in landmarks {
             guard let range = landmark.range else {
                 continue
@@ -986,7 +986,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         )
 
         // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
-        if let foundDocumentationExtension = foundDocumentationExtension,
+        if let foundDocumentationExtension,
             foundDocumentationExtension.value.deprecationSummary != nil,
             (updatedNode.semantic as? Symbol)?.isDeprecated == false,
             let articleMarkup = foundDocumentationExtension.value.markup,
@@ -1006,7 +1006,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, moduleData: module, moduleReference: moduleReference)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
-        if let symbolGraphURL = symbolGraphURL {
+        if let symbolGraphURL {
             source = .file(url: symbolGraphURL)
         } else {
             source = .external
@@ -1161,8 +1161,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
-                        var overloadGroups = [String: [String]]()
-
                         for relationship in relationships {
                             // Check for an origin key.
                             if let sourceOrigin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
@@ -1176,15 +1174,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                     localCache: documentationCache,
                                     moduleName: moduleName
                                 )
-                            } else if relationship.kind == .overloadOf {
-                                // An 'overloadOf' relationship points from symbol -> group
-                                overloadGroups[relationship.target, default: []].append(relationship.source)
                             }
                         }
-
-                        addOverloadGroupReferences(overloadGroups: overloadGroups)
                     }
-                    
+
+                    let overloadGroups: [String: Set<String>] =
+                    unifiedSymbolGraph.relationshipsByLanguage.values.flatMap({
+                        $0.filter { $0.kind == .overloadOf }
+                    }).reduce(into: [:], { acc, relationship in
+                        acc[relationship.target, default: []].insert(relationship.source)
+                    })
+                    addOverloadGroupReferences(overloadGroups: overloadGroups)
+
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
                         addPreparedSymbolToContext(
                             preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, module: rootModule, moduleReference: moduleReference, fileURL: fileURL)
@@ -1306,7 +1307,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             )
 
             // Parse and prepare the nodes' content concurrently.
-            let updatedNodes = documentationCache.symbolReferences.concurrentMap { finalReference in
+            let updatedNodes = Array(documentationCache.symbolReferences).concurrentMap { finalReference in
                 // Match the symbol's documentation extension and initialize the node content.
                 let match = uncuratedDocumentationExtensions[finalReference]
                 let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
@@ -1427,6 +1428,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Build optional required member -> protocol relationships.
                 SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(
                     edge: edge,
+                    localCache: documentationCache,
+                    engine: diagnosticEngine
+                )
+            case .overloadOf:
+                // Build overload <-> overloadGroup relationships.
+                SymbolGraphRelationshipsBuilder.addOverloadRelationship(
+                    edge: edge,
+                    context: self,
                     localCache: documentationCache,
                     engine: diagnosticEngine
                 )
@@ -1709,7 +1718,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         return resources.filter { dataAsset in
             // Filter by file extension.
-            if let extensions = extensions {
+            if let extensions {
                 let fileExtensions = dataAsset.variants.values.map { $0.pathExtension.lowercased() }
                 guard !extensions.intersection(fileExtensions).isEmpty else {
                     return false
@@ -2004,7 +2013,36 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      */
     private func register(_ bundle: DocumentationBundle) throws {
         try shouldContinueRegistration()
-        
+
+        let currentFeatureFlags: FeatureFlags?
+        if let bundleFlags = bundle.info.featureFlags {
+            currentFeatureFlags = FeatureFlags.current
+            FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
+
+            for unknownFeatureFlag in bundleFlags.unknownFeatureFlags {
+                let suggestions = NearMiss.bestMatches(
+                    for: DocumentationBundle.Info.BundleFeatureFlags.CodingKeys.allCases.map({ $0.stringValue }),
+                    against: unknownFeatureFlag)
+                var summary: String = "Unknown feature flag in Info.plist: \(unknownFeatureFlag.singleQuoted)"
+                if !suggestions.isEmpty {
+                    summary += ". Possible suggestions: \(suggestions.map(\.singleQuoted).joined(separator: ", "))"
+                }
+                diagnosticEngine.emit(.init(diagnostic:
+                        .init(
+                            severity: .warning,
+                            identifier: "org.swift.docc.UnknownBundleFeatureFlag",
+                            summary: summary
+                        )))
+            }
+        } else {
+            currentFeatureFlags = nil
+        }
+        defer {
+            if let currentFeatureFlags = currentFeatureFlags {
+                FeatureFlags.current = currentFeatureFlags
+            }
+        }
+
         // Note: Each bundle is registered and processed separately.
         // Documents and symbols may both reference each other so the bundle is registered in 4 steps
         
@@ -2210,7 +2248,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let automaticallyCurated = autoCurateSymbolsInTopicGraph()
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
-        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.child), bundle: bundle, initial: allCuratedReferences)
+        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.symbol), bundle: bundle, initial: allCuratedReferences)
 
         // Remove curation paths that have been created automatically above
         // but we've found manual curation for in the second crawl pass.
@@ -2269,19 +2307,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// call `removeUnneededAutomaticCuration(_:)` which walks the list of automatic curations and removes
     /// the parent <-> child topic graph relationships that have been obsoleted.
     ///
-    /// - Parameter automaticallyCurated: A list of topics that have been automatically curated.
-    func removeUnneededAutomaticCuration(_ automaticallyCurated: [(child: ResolvedTopicReference, parent: ResolvedTopicReference)]) {
-        for pair in automaticallyCurated {
-            let paths = pathsTo(pair.child)
-            
-            // Collect all current unique parents of the child.
-            let parents = Set(paths.map({ $0.last?.path }))
-            
-            // Check if the topic has multiple curation paths
-            guard parents.count > 1 else { continue }
-            
-            // The topic has been manually curated, remove the automatic curation now.
-            topicGraph.removeEdge(fromReference: pair.parent, toReference: pair.child)
+    /// - Parameter automaticallyCurated: A list of automatic curation records.
+    func removeUnneededAutomaticCuration(_ automaticallyCurated: [AutoCuratedSymbolRecord]) {
+        // It might look like it would be correct to check `topicGraph.nodes[symbol]?.isManuallyCurated` here,
+        // but that would incorrectly remove the only parent if the manual curation and the automatic curation was the same.
+        //
+        // Similarly, it might look like it would be correct to only check `parents(of: symbol).count > 1` here,
+        // but that would incorrectly remove the automatic curation for symbols with different language representations with different parents.
+        for (symbol, parent, counterpartParent) in automaticallyCurated where parents(of: symbol).count > (counterpartParent != nil ? 2 : 1) {
+            topicGraph.removeEdge(fromReference: parent, toReference: symbol)
+            if let counterpartParent {
+                topicGraph.removeEdge(fromReference: counterpartParent, toReference: symbol)
+            }
         }
     }
 
@@ -2322,25 +2359,44 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
+    typealias AutoCuratedSymbolRecord = (symbol: ResolvedTopicReference, parent: ResolvedTopicReference, counterpartParent: ResolvedTopicReference?)
+    
     /// Curate all remaining uncurated symbols under their natural parent from the symbol graph.
     ///
     /// This will include all symbols that were not manually curated by the documentation author.
     /// - Returns: An ordered list of symbol references that have been added to the topic graph automatically.
-    private func autoCurateSymbolsInTopicGraph() -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
-        var automaticallyCuratedSymbols = [(ResolvedTopicReference, ResolvedTopicReference)]()
-        linkResolver.localResolver.traverseSymbolAndParentPairs { reference, parentReference in
+    private func autoCurateSymbolsInTopicGraph() -> [AutoCuratedSymbolRecord] {
+        var automaticallyCuratedSymbols = [AutoCuratedSymbolRecord]()
+        linkResolver.localResolver.traverseSymbolAndParents { reference, parentReference, counterpartParentReference in
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
-                  let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
-                  // Check that the node hasn't got any parents from manual curation
+                  // Check that the node isn't already manually curated
                   !topicGraphNode.isManuallyCurated
             else { return }
+            
+            // Check that the symbol doesn't already have parent's that aren't either language representation's hierarchical parent.
+            // This for example happens for default implementation and symbols that are requirements of protocol conformances.
+            guard parents(of: reference).allSatisfy({ $0 == parentReference || $0 == counterpartParentReference }) else {
+                return
+            }
+            
+            guard let topicGraphParentNode = topicGraph.nodeWithReference(parentReference) else {
+                preconditionFailure("Node with reference \(parentReference.absoluteString) exist in link resolver but not in topic graph.")
+            }
             topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
-            automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
+            
+            if let counterpartParentReference {
+                guard let topicGraphCounterpartParentNode = topicGraph.nodeWithReference(counterpartParentReference) else {
+                    preconditionFailure("Node with reference \(counterpartParentReference.absoluteString) exist in link resolver but not in topic graph.")
+                }
+                topicGraph.addEdge(from: topicGraphCounterpartParentNode, to: topicGraphNode)
+            }
+            // Collect a single automatic curation record for both language representation parents.
+            automaticallyCuratedSymbols.append((reference, parentReference, counterpartParentReference))
         }
         return automaticallyCuratedSymbols
     }
 
-    private func addOverloadGroupReferences(overloadGroups: [String: [String]]) {
+    private func addOverloadGroupReferences(overloadGroups: [String: Set<String>]) {
         guard FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled else {
             return
         }
@@ -2559,7 +2615,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return false
         }
         
-        guard let expectedAssetType = expectedAssetType, let asset = assetManager.storage[key] else {
+        guard let expectedAssetType, let asset = assetManager.storage[key] else {
             return true
         }
         
@@ -2699,15 +2755,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return topicGraph.nodes[reference]?.title
     }
     
-    /**
-     Traverse the Topic Graph breadth-first, starting at the given reference.
-     */
-    func traverseBreadthFirst(from reference: ResolvedTopicReference, _ observe: (TopicGraph.Node) -> TopicGraph.Traversal) {
-        guard let node = topicGraph.nodeWithReference(reference) else {
-            return
-        }
-        
-        topicGraph.traverseBreadthFirst(from: node, observe)
+    /// Returns a sequence that traverses the topic graph in breadth first order from a given reference, without visiting the same node more than once.
+    func breadthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<TopicGraph.Node> {
+        topicGraph.breadthFirstSearch(from: reference)
     }
     
     /**
@@ -2718,7 +2768,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Parameters:
        - reference: An unresolved (or resolved) reference.
        - parent: The *resolved* reference that serves as an enclosing search context, especially the parent reference's bundle identifier.
-       - fromSymbolLink: If `true` will try to resolve relative links *only* in documentation symbol locations in the hierarchy. If `false` it will try to resolve relative links as tutorials, articles, symbols, etc.
+       - isCurrentlyResolvingSymbolLink: If `true` will try to resolve relative links *only* in documentation symbol locations in the hierarchy. If `false` it will try to resolve relative links as tutorials, articles, symbols, etc.
      - Returns: Either the successfully resolved reference for the topic or error information about why the reference couldn't resolve.
      */
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
@@ -2748,6 +2798,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - name: The name of the asset.
     ///   - parent: The topic where the asset is referenced.
+    ///   - type: A restriction for what type of asset to resolve.
     /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
         let bundleIdentifier = parent.bundleIdentifier
@@ -2756,7 +2807,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     func resolveAsset(named name: String, bundleIdentifier: String, withType expectedType: AssetType?) -> DataAsset? {
         if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
-            if let expectedType = expectedType {
+            if let expectedType {
                 guard localAsset.hasVariant(withAssetType: expectedType) else {
                     return nil
                 }
@@ -2826,55 +2877,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return topicGraph.nodes.values
             .filter { !$0.isVirtual && $0.kind.isPage }
             .map { $0.reference }
-    }
-    
-    /// Options to consider when producing node breadcrumbs.
-    struct PathOptions: OptionSet {
-        let rawValue: Int
-        
-        /// The node is a technology page; sort the path to a technology as canonical.
-        static let preferTechnologyRoot = PathOptions(rawValue: 1 << 0)
-    }
-    
-    /// Finds all paths (breadcrumbs) to the given node reference.
-    ///
-    /// Each path is an array of references to the symbols from the module symbol to the current one.
-    /// The first path in the array is always the canonical path to the symbol.
-    ///
-    /// - Parameters:
-    ///   - reference: The reference to build that paths to.
-    ///   - currentPathToNode: Used for recursion - an accumulated path to "continue" working on.
-    /// - Returns: A list of paths to the current reference in the topic graph.
-    func pathsTo(_ reference: ResolvedTopicReference, currentPathToNode: [ResolvedTopicReference] = [], options: PathOptions = []) -> [[ResolvedTopicReference]] {
-        let nodeParents = parents(of: reference)
-        guard !nodeParents.isEmpty else {
-            // The path ends with this node
-            return [currentPathToNode]
-        }
-        var results = [[ResolvedTopicReference]]()
-        for parentReference in nodeParents {
-            let parentPaths = pathsTo(parentReference, currentPathToNode: [parentReference] + currentPathToNode)
-            results.append(contentsOf: parentPaths)
-        }
-        
-        // We are sorting the breadcrumbs by the path distance to the documentation root
-        // so that the first element is the shortest path that we are using as canonical.
-        results.sort { (lhs, rhs) -> Bool in
-            // Order a path rooted in a technology as the canonical one.
-            if options.contains(.preferTechnologyRoot), let first = lhs.first {
-                return try! entity(with: first).semantic is Technology
-            }
-            
-            // If the breadcrumbs have equal amount of components
-            // sort alphabetically to produce stable paths order.
-            guard lhs.count != rhs.count else {
-                return lhs.map({ $0.path }).joined(separator: ",") < rhs.map({ $0.path }).joined(separator: ",")
-            }
-            // Order by the length of the breadcrumb.
-            return lhs.count < rhs.count
-        }
-        
-        return results
     }
     
     func dumpGraph() -> String {

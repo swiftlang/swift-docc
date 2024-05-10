@@ -88,6 +88,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     /// - Parameters:
     ///   - bundleIdentifier: The bundle identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
+    ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
     public init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
         self.bundleIdentifier = bundleIdentifier
         self.externalLinkResolvingClient = LongRunningService(
@@ -316,7 +317,7 @@ private class LongRunningProcess: ExternalLinkResolving {
     private let errorReadSource: DispatchSourceRead
         
     func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
-        if let request = request {
+        if let request {
             guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
                   let requestData = requestString.data(using: .utf8)
             else {
@@ -599,6 +600,8 @@ extension OutOfProcessReferenceResolver {
         ///   - availableLanguages: The languages where the resolved node is available.
         ///   - platforms: The platforms and their versions where the resolved node is available, if any.
         ///   - declarationFragments: The resolved declaration fragments, if any.
+        ///   - topicImages: Images that are used to represent the summarized element.
+        ///   - references: References used in the content of the summarized element.
         ///   - variants: The variants of content for this resolver information.
         public init(
             kind: DocumentationNode.Kind,

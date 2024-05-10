@@ -10,11 +10,11 @@
 
 import XCTest
 import Foundation
-@testable @_spi(FileManagerProtocol) @_spi(ExternalLinks) import SwiftDocC
+@testable @_spi(ExternalLinks) import SwiftDocC
 @testable import SwiftDocCUtilities
 import SymbolKit
 import Markdown
-@testable @_spi(FileManagerProtocol) import SwiftDocCTestUtilities
+@testable import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
@@ -1216,6 +1216,64 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(resultAssets.images.map({ $0.identifier.identifier }).sorted(), images.map({ $0.identifier.identifier }).sorted())
     }
 
+    func testLinkableEntitiesMetadataIncludesOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let bundle = try Folder.createFromDisk(
+            url: Bundle.module.url(
+                forResource: "OverloadedSymbols",
+                withExtension: "docc",
+                subdirectory: "Test Bundles")!
+        )
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
+            guard let data = testDataProvider.contents(atPath: url.path) else {
+                return nil
+            }
+            return try? JSONDecoder().decode(Result.self, from: data)
+        }
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: true,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
+        let result = try action.perform(logHandle: .none)
+
+        guard let resultLikableEntities: [LinkDestinationSummary] = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("linkable-entities.json")) else {
+            XCTFail("Can't find linkable-entities.json in output")
+            return
+        }
+
+        // Rather than comparing all the linkable entities in the file, pull out one overload group
+        // and check its task groups
+        let overloadGroupEntity = try XCTUnwrap(resultLikableEntities.first(where: { $0.usr == "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSdSS_tF::OverloadGroup" }))
+
+        let taskGroups = try XCTUnwrap(overloadGroupEntity.taskGroups)
+        guard taskGroups.count == 1, let overloadTaskGroup = taskGroups.first else {
+            XCTFail("Expected one task group, found \(taskGroups.count): \(taskGroups.map(\.title?.singleQuoted))")
+            return
+        }
+
+        XCTAssertEqual(overloadTaskGroup.title, "Overloads")
+        XCTAssertEqual(Set(overloadTaskGroup.identifiers), [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-1h173",
+        ])
+    }
+
     func testDownloadMetadataIsWritenToOutputFolder() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: projectZipFile),
@@ -1757,6 +1815,71 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
             "platform1" : PlatformVersion(.init(10, 11, 12), beta: false),
             "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
+        ])
+    }
+    
+    func testBetaInAvailabilityFallbackPlatforms() throws {
+        
+        func generateConvertAction(currentPlatforms: [String : PlatformVersion]) throws -> ConvertAction {
+            try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: currentPlatforms,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            )
+        }
+        let bundle = Folder(name: "nested", content: [
+            Folder(name: "folders", content: [
+                Folder(name: "unit-test.docc", content: [
+                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                ]),
+            ])
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        
+        // Test whether the missing platforms copy the availability information from the fallback platform.
+        var action = try generateConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+        ])
+        // Test whether the non-missing platforms don't copy the availability information from the fallback platform.
+        action = try generateConvertAction(currentPlatforms: [
+            "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst": PlatformVersion(.init(11, 0, 0), beta: false)
+        ])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: false),
+            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true)
+        ])
+        action = try generateConvertAction(currentPlatforms: [
+            "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
+            "iPadOS": PlatformVersion(.init(12, 0, 0), beta: false),
+            
+        ])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
+            "iPadOS" : PlatformVersion(.init(12, 0, 0), beta: false),
+        ])
+        // Test whether the non-missing platforms don't copy the availability information from the non-fallback platform.
+        action = try generateConvertAction(currentPlatforms: [
+            "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
+            
+        ])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
         ])
     }
     

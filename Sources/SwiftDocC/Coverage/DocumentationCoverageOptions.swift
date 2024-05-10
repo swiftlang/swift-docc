@@ -139,9 +139,7 @@ extension DocumentationCoverageOptions {
 }
 
 extension DocumentationCoverageOptions.KindFilterOptions {
-    public init<List>(bitFlags: List) where
-        List: Collection,
-        List.Element == BitFlagRepresentation {
+    public init(bitFlags: some Collection<BitFlagRepresentation>) {
         let mask = bitFlags.reduce(0) {
             $0 | $1.bitMask
         }
@@ -430,7 +428,7 @@ extension DocumentationCoverageOptions.KindFilterOptions {
                 // 14
                 "instance-property": .instanceProperty,
                 // 15
-                "instance-subcript": .instanceSubscript,
+                "instance-subscript": .instanceSubscript,
                 // 16
                 "instance-variable": .instanceVariable,
                 // 17

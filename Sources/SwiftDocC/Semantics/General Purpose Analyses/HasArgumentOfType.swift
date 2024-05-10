@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-protocol DirectiveArgument {
+protocol DirectiveArgument<ArgumentValue> {
     associatedtype ArgumentValue: DirectiveArgumentValueConvertible = String
     /// The expected `BlockDirective` argument's name.
     static var argumentName: String { get }
@@ -30,7 +30,7 @@ extension DirectiveArgument {
     }
 }
 
-extension DirectiveArgument where ArgumentValue == Bool {
+extension DirectiveArgument<Bool> {
     static func allowedValues() -> [String]? {
         return ["true", "false"]
     }

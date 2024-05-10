@@ -6,7 +6,7 @@ Teach developers your Swift APIs through step-by-step, interactive content.
 
 Use tutorials to deliver interactive documentation for your Swift frameworks and packages. Each tutorial augments your reference documentation by guiding readers through coding exercises that show how to build apps and projects that use your APIs in realistic ways.
 
-![A screenshot of the landing page of an example tutorial called SlothCreator. The tutorial text reads ‘Meet SlothCreator. Create, catalog, and care for sloths using SlothCreator. Get started with SlothCreator by building the demo app Slothy.’ There’s an estimated time to comlete the tutorial of 30 minutes, a ‘Get started’ button, and an illustration showing three iPhones with sloth artwork on them.](6_tutorial_toc)
+![A screenshot of the landing page of an example tutorial called SlothCreator. The tutorial text reads ‘Meet SlothCreator. Create, catalog, and care for sloths using SlothCreator. Get started with SlothCreator by building the demo app Slothy.’ There’s an estimated time to complete the tutorial of 30 minutes, a ‘Get started’ button, and an illustration showing three iPhones with sloth artwork on them.](6_tutorial_toc)
 
 You write tutorial content in Markdown, and use directives to define specific types of pages and elements, like introductions, sections, steps, and assessments. Then, you run the DocC compiler to render your tutorial in a rich, interactive learning format.
 

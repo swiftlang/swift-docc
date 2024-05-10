@@ -213,7 +213,7 @@ public extension RenderNode {
         do {
             // If there is no topic reference cache, just encode the reference.
             // To skim a little off the duration we first do a quick check if the key is present at all.
-            guard let renderReferenceCache = renderReferenceCache else {
+            guard let renderReferenceCache else {
                 return try encoder.encode(self)
             }
             

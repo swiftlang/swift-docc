@@ -18,7 +18,7 @@ extension Semantic.Analyses {
     public struct HasContent<Parent: Semantic & DirectiveConvertible>: SemanticAnalysis {
         let additionalContext: String
         public init(additionalContext: String? = nil) {
-            if let additionalContext = additionalContext,
+            if let additionalContext,
                 !additionalContext.isEmpty {
                 self.additionalContext = "; \(additionalContext)"
             } else {
@@ -26,7 +26,7 @@ extension Semantic.Analyses {
             }
         }
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> MarkupContainer where Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> MarkupContainer {
             let children = Array(children)
             guard children.isEmpty else {
                 return MarkupContainer(children)

@@ -68,7 +68,7 @@ struct ParametersAndReturnValidator {
         parameterSection: DocumentationDataVariants<ParametersSection>,
         returnsSection: DocumentationDataVariants<ReturnsSection>
     ) {
-        guard FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled,
+        guard FeatureFlags.current.isParametersAndReturnsValidationEnabled,
               let symbol = unifiedSymbol,
               !hasInheritedDocumentationComment(symbol: symbol),
               let signatures = Self.traitSpecificSignatures(symbol)
@@ -106,7 +106,7 @@ struct ParametersAndReturnValidator {
         _ symbolKind: SymbolGraph.Symbol.Kind?,
         hasDocumentedReturnValues: Bool
     ) -> DocumentationDataVariants<ParametersSection> {
-        guard let parameters = parameters, !parameters.isEmpty else {
+        guard let parameters, !parameters.isEmpty else {
             guard hasDocumentedReturnValues, Self.shouldAddObjectiveCErrorParameter(signatures, parameters) else {
                 // The symbol has no parameter documentation or return value documentation and none should be synthesized.
                 return DocumentationDataVariants(defaultVariantValue: nil)
@@ -243,7 +243,7 @@ struct ParametersAndReturnValidator {
         }
         
         // Diagnose if the symbol had documented its return values but all language representations only return void.
-        if let returns = returns, traitsWithNonVoidReturnValues.isEmpty {
+        if let returns, traitsWithNonVoidReturnValues.isEmpty {
             diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: symbolKind))
         }
         return variants
@@ -302,7 +302,7 @@ struct ParametersAndReturnValidator {
     private static func newObjectiveCReturnsContent(_ signatures: Signatures, returns: Return?) -> [Markup]? {
         guard hasSwiftThrowsObjectiveCErrorBridging(signatures) else { return nil }
         
-        guard let returns = returns, !returns.contents.isEmpty else {
+        guard let returns, !returns.contents.isEmpty else {
             if signatures[.objectiveC]?.returns == [.init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")] {
                 // There is no documented return value and the Objective-C signature returns BOOL
                 return objcBoolErrorDescription
@@ -592,16 +592,16 @@ struct ParametersAndReturnValidator {
     
     private static let objcErrorDescription: [Markup] = [
         Paragraph([
-            Text("On input, a pointer to an error object. If an error occurs, this pointer is set to an actual error object containing the error information.")
+            Text("On output, a pointer to an error object that describes why the method failed, or ") as InlineMarkup, InlineCode("nil"), Text(" if no error occurred. If you are not interested in the error information, pass "), InlineCode("nil"), Text(" for this parameter.")
         ])
     ]
     private static let objcBoolErrorDescription: [Markup] = [
         Paragraph([
-            InlineCode("YES") as InlineMarkup, Text(" if successful, or "), InlineCode("NO"), Text(" if an error occurred.")
+            InlineCode("YES") as InlineMarkup, Text(" if the method succeeded, otherwise "), InlineCode("NO"), Text(".")
         ])
     ]
     private static func objcObjectErrorAddition(endPreviousSentence: Bool) -> [InlineMarkup] {
-        [Text("\(endPreviousSentence ? "." : "") If an error occurs, this method returns "), InlineCode("nil"), Text(" and assigns an appropriate error object to the "), InlineCode("error"), Text(" parameter.")]
+        [Text("\(endPreviousSentence ? "." : "") On failure, this method returns "), InlineCode("nil"), Text(".")]
     }
     
     private static func newParameterDescription(name: String, standalone: Bool) -> String {

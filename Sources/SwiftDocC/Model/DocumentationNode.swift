@@ -156,6 +156,7 @@ public struct DocumentationNode {
     ///   - markup: The markup that makes up the content for the node.
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
+    ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
     public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
@@ -184,8 +185,8 @@ public struct DocumentationNode {
     ///
     /// - Parameters:
     ///   - reference: The unique reference to the node.
-    ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformName: The name of the platforms for which the node is available.
+    ///   - unifiedSymbol: The symbol to create a documentation node for.
+    ///   - moduleData: The module that the symbol belongs to.
     ///   - moduleName: The name of the module that the symbol belongs to.
     init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, moduleData: SymbolGraph.Module, moduleReference: ResolvedTopicReference) {
         self.reference = reference
@@ -225,14 +226,9 @@ public struct DocumentationNode {
         }
 
         let overloadVariants = DocumentationDataVariants(
-            symbolData: unifiedSymbol.mixins,
-            platformName: platformName
-        ) { mixins -> Symbol.Overloads? in
-            guard let overloadData = mixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData else {
-                return nil
-            }
-            return .init(references: [], displayIndex: overloadData.overloadGroupIndex)
-        }
+            swiftVariant: unifiedSymbol.unifiedOverloadData.map { overloadData in
+                Symbol.Overloads(references: [], displayIndex: overloadData.overloadGroupIndex)
+            })
 
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
@@ -345,7 +341,7 @@ public struct DocumentationNode {
         var deprecated: DeprecatedSection? = markupModel.deprecation.map { DeprecatedSection.init(content: $0.elements) }
 
         // When deprecation is not authored explicitly, try using a deprecation message from annotation.
-        if deprecated == nil, let symbolAvailability = symbolAvailability {
+        if deprecated == nil, let symbolAvailability {
             let availabilityData = AvailabilityParser(symbolAvailability)
             deprecated = availabilityData.deprecationMessage().map(DeprecatedSection.init(text:))
         }
@@ -493,7 +489,7 @@ public struct DocumentationNode {
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
                     
-                    if let offset = offset {
+                    if let offset {
                         problem.offsetWithRange(offset)
                     }
                     
@@ -583,11 +579,10 @@ public struct DocumentationNode {
     /// - Parameters:
     ///   - reference: The unique reference to the node.
     ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformNames: The names of the platforms for which the node is available.
-    ///   - moduleName: The name of the module that the symbol belongs to.
+    ///   - platformName: The names of the platform that the symbol is available for.
+    ///   - moduleReference: A reference to the module that the symbol belongs to.
     ///   - article: The documentation extension content for this symbol.
     ///   - engine:The engine that collects any problems encountered during initialization.
-    ///   - bystanderModules: An optional list of cross-import module names.
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine) {
         self.reference = reference
         
@@ -632,11 +627,11 @@ public struct DocumentationNode {
         platformNames = Set(operatingSystemName.map { PlatformName(operatingSystemName: $0).rawValue })
         availableSourceLanguages = languages
         
-        if let article = article {
+        if let article {
             // Prefer authored deprecation summary over docs.
             deprecated = article.deprecationSummary.map { DeprecatedSection.init(content: $0.elements) }
         }
-        if deprecated == nil, let symbolAvailability = symbolAvailability {
+        if deprecated == nil, let symbolAvailability {
             let availabilityData = AvailabilityParser(symbolAvailability)
             deprecated = availabilityData.deprecationMessage().map(DeprecatedSection.init(text:))
         }

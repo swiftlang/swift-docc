@@ -127,7 +127,9 @@ struct DocumentationCurator {
     }
     
     private func isReference(_ childReference: ResolvedTopicReference, anAncestorOf nodeReference: ResolvedTopicReference) -> Bool {
-        return context.pathsTo(nodeReference).contains { $0.contains(childReference) }
+        context.topicGraph.reverseEdgesGraph
+            .breadthFirstSearch(from: nodeReference)
+            .contains(childReference)
     }
     
     /// Crawls the topic graph starting at a given root node, curates articles during.
@@ -212,7 +214,7 @@ struct DocumentationCurator {
                     if let range = link.range {
                         return range
                     }
-                    if let topics = topics,
+                    if let topics,
                         topics.originalLinkRangesByGroup.count > groupIndex,
                         topics.originalLinkRangesByGroup[groupIndex].count > linkIndex {
                         return topics.originalLinkRangesByGroup[groupIndex][linkIndex]
@@ -237,10 +239,7 @@ struct DocumentationCurator {
                         return node.kind == .module && documentationNode.kind.isSymbol == false
                     }
         
-                    let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.pathsTo(nodeReference).contains { path in
-                        guard let root = path.first else { return false }
-                        return isTechnologyRoot(root)
-                    }
+                    let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.reachableRoots(from: nodeReference).contains(where: isTechnologyRoot)
 
                     if !hasTechnologyRoot {
                         problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))

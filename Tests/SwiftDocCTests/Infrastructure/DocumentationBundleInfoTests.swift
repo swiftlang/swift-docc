@@ -336,7 +336,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                 errorTypeChecking = false
             }
             XCTAssertTrue(errorTypeChecking)
-            XCTAssertEqual(error.localizedDescription, "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line 24")
+            XCTAssert(error.localizedDescription.starts(with: "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line"))
         }
     }
     
@@ -413,5 +413,33 @@ class DocumentationBundleInfoTests: XCTestCase {
                 version: nil
             )
         )
+    }
+
+    func testFeatureFlags() throws {
+        let infoPlistWithFeatureFlags = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>Info Plist Display Name</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.info.Plist</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CDExperimentalFeatureFlags</key>
+            <dict>
+                <key>ExperimentalOverloadedSymbolPresentation</key>
+                <true/>
+            </dict>
+        </dict>
+        </plist>
+        """
+
+        let infoPlistWithFeatureFlagsData = Data(infoPlistWithFeatureFlags.utf8)
+        let info = try DocumentationBundle.Info(
+            from: infoPlistWithFeatureFlagsData,
+            bundleDiscoveryOptions: nil)
+
+        let featureFlags = try XCTUnwrap(info.featureFlags)
+        XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))
     }
 }

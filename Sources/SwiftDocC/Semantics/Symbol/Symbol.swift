@@ -30,7 +30,6 @@ import SymbolKit
 /// - ``platformNameVariants``
 /// - ``moduleReference``
 /// - ``extendedModuleVariants``
-/// - ``bystanderModuleNames``
 /// - ``isRequiredVariants``
 /// - ``externalIDVariants``
 /// - ``accessLevelVariants``
@@ -382,7 +381,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// - Parameters:
     ///    - extendedModule: The name of the extended module.
     ///    - extendedSymbolKind: The kind of the extended symbol.
-    ///    - constraint: The new generic constraints to add.
+    ///    - newConstraint: The new generic constraints to add.
     public func addSwiftExtensionConstraint(
         extendedModule: String,
         extendedSymbolKind: SymbolGraph.Symbol.KindIdentifier? = nil,
@@ -448,7 +447,7 @@ extension Symbol {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
-        if let platformName = platformName,
+        if let platformName,
             let existingKey = declarationVariants[trait]?.first(
                 where: { pair in
                     return pair.value.declarationFragments == mergingDeclaration.declarationFragments
@@ -475,7 +474,7 @@ extension Symbol {
         }
 
         // Merge the new symbol with the existing availability. If a value already exist, only override if it's for this platform.
-        if let symbolAvailability = symbolAvailability,
+        if let symbolAvailability,
             symbolAvailability.availability.isEmpty == false || availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
         {
             var items = availabilityVariants[trait]?.availability ?? []
@@ -528,13 +527,17 @@ extension Symbol {
     }
 }
 
-extension Dictionary where Key == String, Value == Mixin {
+extension [String: Mixin] {
     func getValueIfPresent<T>(for mixinType: T.Type) -> T? where T: Mixin {
         return self[mixinType.mixinKey] as? T
     }
 }
 
 // MARK: Accessors for the first variant of symbol properties.
+
+// Extend the Symbol class to account for legacy code that didn't account for symbols having multiple
+// language representations. New code should be written to work with the variants so that it supports
+// language specific content.
 
 extension Symbol {
     /// The kind of the first variant of this symbol, such as protocol or variable.
@@ -686,10 +689,12 @@ extension Symbol {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }
-    
+
     /// Any automatically created task groups of the first variant of the symbol.
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
     }
+
+    // Don't add additional functions here. See the comment above about legacy code.
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -599,5 +599,23 @@ class ConvertSubcommandTests: XCTestCase {
         } catch {
             XCTFail("Failed to run docc convert without arguments.")
         }
+    }
+    
+    func testParameterValidationFeatureFlag() throws {
+        // The feature is enabled when no flag is passed.
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.enableParametersAndReturnsValidation, true)
+        
+        // It's allowed to pass the previous "--enable-experimental-..." flag.
+        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-parameters-and-returns-validation"])
+        XCTAssertEqual(oldFlagConvert.enableParametersAndReturnsValidation, true)
+        
+        // It's allowed to pass the redundant "--enable-..." flag.
+        let enabledFlagConvert = try Docc.Convert.parse(["--enable-parameters-and-returns-validation"])
+        XCTAssertEqual(enabledFlagConvert.enableParametersAndReturnsValidation, true)
+        
+        // Passing the "--disable-..." flag turns of the feature.
+        let disabledFlagConvert = try Docc.Convert.parse(["--disable-parameters-and-returns-validation"])
+        XCTAssertEqual(disabledFlagConvert.enableParametersAndReturnsValidation, false)
     }
 }

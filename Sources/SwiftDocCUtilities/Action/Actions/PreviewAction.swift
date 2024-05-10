@@ -66,7 +66,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///
     /// - Parameters:
     ///   - port: The port number used by the preview server.
-    ///   - convertAction: The action used to convert the documentation bundle before preview.
+    ///   - createConvertAction: A closure that returns the action used to convert the documentation before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
     ///   - workspace: The documentation workspace used by the action's documentation context.
     ///   - context: The documentation context for the action.

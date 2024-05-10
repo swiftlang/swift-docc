@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,8 +36,13 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
         let aside = Aside(blockQuote)
-        return [RenderBlockContent.aside(.init(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
-                                               content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]))]
+        
+        let newAside = RenderBlockContent.Aside(
+            style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
+            content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]
+        )
+            
+        return [RenderBlockContent.aside(newAside.capitalizingFirstWord())]
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
@@ -173,7 +178,7 @@ struct RenderContentCompiler: MarkupVisitor {
         let useOverriding: Bool
         if link.isAutolink { // If the link is an auto link, we don't use overriding info
             useOverriding = false
-        } else if let overridingTitle = overridingTitle,
+        } else if let overridingTitle,
                   overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
                   destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
         {
@@ -375,6 +380,10 @@ struct RenderContentCompiler: MarkupVisitor {
             style: .init(asideKind: .note),
             content: content
         ))]
+    }
+    
+    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) -> [RenderContent] {
+        return [RenderBlockContent.thematicBreak]
     }
 
     func defaultVisit(_ markup: Markup) -> [RenderContent] {

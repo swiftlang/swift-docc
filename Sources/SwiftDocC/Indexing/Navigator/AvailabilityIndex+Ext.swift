@@ -35,7 +35,7 @@ extension AvailabilityIndex {
         
         public func isIntroduced(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
-            if let introduced = introduced {
+            if let introduced {
                 return introduced == platform.version
             }
             return false
@@ -43,7 +43,7 @@ extension AvailabilityIndex {
         
         public func isAvailable(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
-            if let introduced = introduced {
+            if let introduced {
                 return platform.version >= introduced
             }
             return true
@@ -51,7 +51,7 @@ extension AvailabilityIndex {
         
         public func isDeprecated(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
-            if let deprecated = deprecated {
+            if let deprecated {
                 return platform.version > deprecated
             }
             return false
@@ -112,7 +112,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         self.name = name
         
         let id = try values.decodeIfPresent(String.self, forKey: .id)
-        if let id = id {
+        if let id {
             self.id = id
         } else {
             // Default to a lowercased version of the name if an ID isn't provided

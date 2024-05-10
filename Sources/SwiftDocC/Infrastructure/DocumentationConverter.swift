@@ -24,8 +24,8 @@ public protocol DocumentationConverterProtocol {
     /// - Throws: Throws an error if the conversion process was not able to start at all, for example if the bundle could not be read.
     /// Partial failures, such as failing to consume a single render node, are returned in the `conversionProblems` component
     /// of the returned tuple.
-    mutating func convert<OutputConsumer: ConvertOutputConsumer>(
-        outputConsumer: OutputConsumer
+    mutating func convert(
+        outputConsumer: some ConvertOutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
 }
 
@@ -92,6 +92,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
+    /// Whether the documentation converter should write documentation extension files containing markdown representations of DocC's automatic curation into the source documentation catalog.
     var experimentalModifyCatalogWithGeneratedCuration: Bool
     
     /// The identifiers and access level requirements for symbols that have an expanded version of their documentation page if the requirements are met
@@ -103,28 +104,31 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     private var processingDurationMetric: Benchmark.Duration?
 
     /// Creates a documentation converter given a documentation bundle's URL.
-    ///
+    /// 
     /// - Parameters:
     ///  - documentationBundleURL: The root URL of the documentation bundle to convert.
     ///  - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
     ///  - documentationCoverageOptions: What level of documentation coverage output should be emitted.
     ///  - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
-    ///   that may be encountered while processing symbol graph files.
     ///  - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`.
     ///  - context: A provided documentation context.
     ///  - dataProvider: A data provider to use when registering bundles.
-    /// - Parameter fileManager: A file persistence manager
-    /// - Parameter externalIDsToConvert: The external IDs of the documentation nodes to convert.
-    /// - Parameter documentPathsToConvert: The paths of the documentation nodes to convert.
-    /// - Parameter bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
-    /// - Parameter emitSymbolSourceFileURIs: Whether the documentation converter should include
-    ///   source file location metadata in any render nodes representing symbols it creates.
-    ///
-    ///   Before passing `true` please confirm that your use case doesn't include public
-    ///   distribution of any created render nodes as there are filesystem privacy and security
-    ///   concerns with distributing this data.
-    /// - Parameter symbolIdentifiersWithExpandedDocumentation: Identifiers and access level requirements for symbols
+    ///  - externalIDsToConvert: The external IDs of the documentation nodes to convert.
+    ///  - documentPathsToConvert: The paths of the documentation nodes to convert.
+    ///  - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
+    ///  - emitSymbolSourceFileURIs: Whether the documentation converter should include
+    ///    source file location metadata in any render nodes representing symbols it creates.
+    /// 
+    ///    Before passing `true` please confirm that your use case doesn't include public
+    ///    distribution of any created render nodes as there are filesystem privacy and security
+    ///    concerns with distributing this data.
+    ///  - emitSymbolAccessLevels: Whether the documentation converter should include access level information for symbols.
+    ///  - sourceRepository: The source repository where the documentation's sources are hosted.
+    ///  - isCancelled: A wrapped boolean value used for the caller to cancel converting the documentation.
     ///   that have an expanded version of their documentation page if the access level requirement is met.
+    ///  - diagnosticEngine: The diagnostic engine that collects any problems encountered from converting the documentation.
+    ///  - symbolIdentifiersWithExpandedDocumentation: Identifiers and access level requirements for symbols
+    ///  - experimentalModifyCatalogWithGeneratedCuration: Whether the documentation converter should write documentation extension files containing markdown representations of DocC's automatic curation into the source documentation catalog.
     public init(
         documentationBundleURL: URL?,
         emitDigest: Bool,
@@ -162,7 +166,11 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         // Inject current platform versions if provided
-        if let currentPlatforms = currentPlatforms {
+        if var currentPlatforms {
+            // Add missing platforms if their fallback platform is present.
+            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
+                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            }
             self.context.externalMetadata.currentPlatforms = currentPlatforms
         }
     }
@@ -178,8 +186,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         return bundles.sorted(by: \.identifier)
     }
     
-    mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
-        outputConsumer: OutputConsumer
+    mutating public func convert(
+        outputConsumer: some ConvertOutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
         defer {
             diagnosticEngine.flush()
@@ -239,7 +247,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         let bundles = try sorted(bundles: dataProvider.bundles(options: bundleDiscoveryOptions))
         guard !bundles.isEmpty else {
-            if let rootURL = rootURL {
+            if let rootURL {
                 throw Error.doesNotContainBundle(url: rootURL)
             } else {
                 try outputConsumer.consume(problems: context.problems)
@@ -443,14 +451,14 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         identifier: ResolvedTopicReference
     ) -> Bool {
         let isDocumentPathToConvert: Bool
-        if let documentPathsToConvert = documentPathsToConvert {
+        if let documentPathsToConvert {
             isDocumentPathToConvert = documentPathsToConvert.contains(identifier.path)
         } else {
             isDocumentPathToConvert = true
         }
         
         let isExternalIDToConvert: Bool
-        if let externalIDsToConvert = externalIDsToConvert {
+        if let externalIDsToConvert {
             isExternalIDToConvert = entity.symbol.map {
                 externalIDsToConvert.contains($0.identifier.precise)
             } == true
@@ -511,7 +519,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
 
 extension DocumentationNode {
     func meetsExpandedDocumentationRequirements(_ requirements: ConvertRequest.ExpandedDocumentationRequirements) -> Bool {
-        guard let symbol = symbol else { return false }
+        guard let symbol else { return false }
         
         return requirements.accessControlLevels.contains(symbol.accessLevel.rawValue) && (!symbol.names.title.starts(with: "_") || requirements.canBeUnderscored)
     }

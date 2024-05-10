@@ -86,9 +86,9 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     /// This can be provided directly via the ``label`` parameter or indirectly via the given ``purpose`` and
     /// associated page kind.
     public func buttonLabel(for pageKind: Metadata.PageKind.Kind?) -> String {
-        if let label = label {
+        if let label {
             return label
-        } else if let purpose = purpose {
+        } else if let purpose {
             return purpose.defaultLabel(for: pageKind)
         } else {
             // The `validate()` method ensures that this type should never be constructed without

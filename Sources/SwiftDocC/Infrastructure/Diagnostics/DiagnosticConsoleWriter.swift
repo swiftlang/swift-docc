@@ -24,8 +24,8 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     /// Creates a new instance of this class with the provided output stream.
     /// - Parameters:
     ///   - stream: The output stream to which this instance will write.
-    ///   - formattingOptions: The formatting options for the diagnostics.
-    ///   - baseUrl: A url to be used as a base url when formatting diagnostic source path.
+    ///   - options: The formatting options for the diagnostics.
+    ///   - baseURL: A url to be used as a base url when formatting diagnostic source path.
     ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
     public convenience init(
         _ stream: TextOutputStream = LogHandle.standardError,
@@ -36,8 +36,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         self.init(stream, formattingOptions: options, baseURL: baseURL, highlight: highlight, fileManager: FileManager.default)
     }
     
-    @_spi(FileManagerProtocol)
-    public init(
+    package init(
         _ stream: TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
@@ -98,19 +97,17 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 // MARK: Formatted descriptions
 
 extension DiagnosticConsoleWriter {
-    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
+    public static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: problems, options: options, fileManager: FileManager.default)
     }
-    @_spi(FileManagerProtocol)
-    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String where Problems: Sequence, Problems.Element == Problem {
+    package static func formattedDescription(for problems: some Sequence<Problem>, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
         return problems.map { formattedDescription(for: $0, options: options, fileManager: fileManager) }.joined(separator: "\n")
     }
     
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: problem, options: options, fileManager: FileManager.default)
     }
-    @_spi(FileManagerProtocol)
-    public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
+    package static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol = FileManager.default) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
@@ -118,8 +115,7 @@ extension DiagnosticConsoleWriter {
     public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
         formattedDescription(for: diagnostic, options: options, fileManager: FileManager.default)
     }
-    @_spi(FileManagerProtocol)
-    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
+    package static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = [], fileManager: FileManagerProtocol) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal, fileManager: fileManager)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
@@ -128,14 +124,14 @@ extension DiagnosticConsoleWriter {
 protocol DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions { get set }
     
-    func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem
+    func formattedDescription(for problems: some Sequence<Problem>) -> String
     func formattedDescription(for problem: Problem) -> String
     func formattedDescription(for diagnostic: Diagnostic) -> String
     func finalize()
 }
 
 extension DiagnosticConsoleFormatter {
-    func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
+    func formattedDescription(for problems: some Sequence<Problem>) -> String {
         return problems.map { formattedDescription(for: $0) }.joined(separator: "\n")
     }
 }
@@ -246,7 +242,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         self.fileManager = fileManager
     }
     
-    func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
+    func formattedDescription(for problems: some Sequence<Problem>) -> String {
         let sortedProblems = problems.sorted { lhs, rhs in
             guard let lhsSource = lhs.diagnostic.source,
                   let rhsSource = rhs.diagnostic.source

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -255,8 +255,7 @@ public class NavigatorIndex {
     }
     
     /// Indicates the page type of a given item inside the tree.
-    /// - Note: This information is stored as UInt8 to decrease the required size to store it and make
-    ///         the comparision faster between types.
+    /// - Note: This information is stored as `UInt8` to decrease the required size to store it and make the comparison faster between types.
     public enum PageType: UInt8 {
         case root = 0
         case article = 1
@@ -358,7 +357,21 @@ public class NavigatorIndex {
             default: self = .article
             }
         }
-        
+
+        /// Whether this page kind references a symbol.
+        var isSymbolKind: Bool {
+            switch self {
+            case .root, .article, .tutorial, .section, .learn, .overview, .resources, .framework,
+                    .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
+                return false
+            case .symbol, .class, .structure, .protocol, .enumeration, .function, .extension,
+                    .localVariable, .globalVariable, .typeAlias, .associatedType, .operator, .macro,
+                    .union, .enumerationCase, .initializer, .instanceMethod, .instanceProperty,
+                    .instanceVariable, .subscript, .typeMethod, .typeProperty, .propertyListKey,
+                    .httpRequest, .dictionarySymbol, .propertyListKeyReference, .namespace:
+                return true
+            }
+        }
     }
     
     // MARK: - Read Navigator Tree
@@ -553,16 +566,16 @@ extension NavigatorIndex {
         /// for any custom icons used in this navigator index.
         var iconReferences = [String : ImageReference]()
         
-        /**
-         Initialize a `Builder` with the given data provider and output URL.
-         - Parameters:
-            - renderNodeProvider: The `RenderNode` provider to use.
-            - outputURL: The URL to which the data should be written.
-            - bundleIdentifier: The identifier of the bundle the index is built for.
-            - sortRootChildren: Indicates if the root's children must be sorted by name.
-            - groupByLanguage: Indicates if the tree needs to group the entries by language.
-            - usePageTitle: Use the page title instead of the navigator title as the entry title.
-         */
+        
+        /// Create a new a builder with the given data provider and output URL.
+        /// - Parameters:
+        ///    - renderNodeProvider: The `RenderNode` provider to use.
+        ///    - outputURL: The location where the builder will write the the built navigator index.
+        ///    - bundleIdentifier: The bundle identifier of the documentation that the builder builds a navigator index for.
+        ///    - sortRootChildrenByName: Configure the builder to sort root's children by name.
+        ///    - groupByLanguage: Configure the builder to group the entries by language.
+        ///    - writePathsOnDisk: Configure the builder to write each navigator item's path components to the location.
+        ///    - usePageTitle: Configure the builder to use the "page title" instead of the "navigator title" as the title for each entry.
         public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.renderNodeProvider = renderNodeProvider
             self.outputURL = outputURL
@@ -606,7 +619,7 @@ extension NavigatorIndex {
         /// - Parameter renderNode: The render node to be indexed.
         public func index(renderNode: RenderNode) throws {
             
-            guard let navigatorIndex = navigatorIndex else {
+            guard let navigatorIndex else {
                 throw Error.navigatorIndexIsNil
             }
             
@@ -776,7 +789,7 @@ extension NavigatorIndex {
                     }
                 }
                 
-                if let groupIdentifier = groupIdentifier, !nestedChildren.isEmpty {
+                if let groupIdentifier, !nestedChildren.isEmpty {
                     identifierToChildren[groupIdentifier] = nestedChildren
                 }
             }
@@ -851,7 +864,7 @@ extension NavigatorIndex {
         ) {
             precondition(!isCompleted, "Finalizing an already completed index build multiple times is not possible.")
             
-            guard let navigatorIndex = navigatorIndex else {
+            guard let navigatorIndex else {
                 preconditionFailure("The navigatorIndex instance has not been initialized.")
             }
             
@@ -918,7 +931,11 @@ extension NavigatorIndex {
             
             // The rest have no parent, so they need to be under the root.
             for nodeID in pendingUncuratedReferences {
-                if let node = identifierToNode[nodeID] {
+                // Don't add symbol nodes to the root; if they have been dropped by automatic
+                // curation, then they should not be in the navigator. In addition, treat unknown
+                // page types as symbol nodes on the assumption that an unknown page type is a
+                // symbol kind added in a future version of Swift-DocC.
+                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in
@@ -1104,7 +1121,7 @@ extension NavigatorIndex {
             
             do {
                 var records = [Record]()
-                if let estimatedCount = estimatedCount {
+                if let estimatedCount {
                     records.reserveCapacity(estimatedCount)
                 }
                 

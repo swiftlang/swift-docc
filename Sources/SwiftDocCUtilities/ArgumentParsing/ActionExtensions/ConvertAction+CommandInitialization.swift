@@ -24,7 +24,7 @@ extension ConvertAction {
         FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
         FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
         FeatureFlags.current.isExperimentalMentionedInEnabled = convert.enableExperimentalMentionedIn
-        FeatureFlags.current.isExperimentalParametersAndReturnsValidationEnabled = convert.enableExperimentalParametersAndReturnsValidation
+        FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -98,7 +98,7 @@ extension ConvertAction {
 }
 
 private func symbolGraphFiles(in directory: URL?) -> [URL] {
-    guard let directory = directory else { return [] }
+    guard let directory else { return [] }
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }

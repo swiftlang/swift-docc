@@ -14,7 +14,12 @@ import XCTest
 import SymbolKit
 
 extension XCTestCase {
-    public func makeSymbolGraph(moduleName: String, symbols: [SymbolGraph.Symbol] = [], relationships: [SymbolGraph.Relationship] = []) -> SymbolGraph {
+    public func makeSymbolGraph(
+        moduleName: String,
+        platform: SymbolGraph.Platform = .init(),
+        symbols: [SymbolGraph.Symbol] = [],
+        relationships: [SymbolGraph.Relationship] = []
+    ) -> SymbolGraph {
         return SymbolGraph(
             metadata: SymbolGraph.Metadata(
                 formatVersion: SymbolGraph.SemanticVersion(major: 0, minor: 6, patch: 0),
@@ -22,7 +27,7 @@ extension XCTestCase {
             ),
             module: SymbolGraph.Module(
                 name: moduleName,
-                platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
+                platform: platform
             ),
             symbols: symbols,
             relationships: relationships

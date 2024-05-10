@@ -128,7 +128,7 @@ extension RenderIndex {
         /// Allows renderers to use a specific design treatment for render index nodes that mark the node as in beta.
         public let isBeta: Bool
         
-        /// Reference to the image that should be used to represent this node.
+        /// A reference to a custom image for this node.
         public let icon: RenderReferenceIdentifier?
 
         enum CodingKeys: String, CodingKey {
@@ -197,10 +197,11 @@ extension RenderIndex {
         ///   - path: The relative path to the page represented by this node.
         ///   - type: The type of this node.
         ///   - children: The children of this node.
-        ///   - isDeprecated : If the current node has been marked as deprecated.
+        ///   - isDeprecated: If the current node has been marked as deprecated.
         ///   - isExternal: If the current node belongs to an external
         ///     documentation archive.
         ///   - isBeta: If the current node is in beta.
+        ///   - icon: A reference to a custom image for this node.
         public init(
             title: String,
             path: String?,
@@ -241,7 +242,7 @@ extension RenderIndex {
             self.isBeta = false
             self.icon = icon
             
-            guard let pageType = pageType else {
+            guard let pageType else {
                 self.type = nil
                 self.path = path
                 return

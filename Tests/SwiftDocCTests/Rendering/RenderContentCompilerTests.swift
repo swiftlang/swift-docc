@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -62,7 +62,7 @@ class RenderContentCompilerTests: XCTestCase {
         
         do {
             guard case let .paragraph(paragraph) = result[0] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let link = RenderInlineContent.reference(
@@ -75,7 +75,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
         do {
             guard case let .paragraph(paragraph) = result[1] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let text = RenderInlineContent.text("Custom Title")
@@ -83,7 +83,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
         do {
             guard case let .paragraph(paragraph) = result[2] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let link = RenderInlineContent.reference(
@@ -95,7 +95,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
         do {
             guard case let .paragraph(paragraph) = result[3] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let link = RenderInlineContent.reference(
@@ -111,7 +111,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
         do {
             guard case let .paragraph(paragraph) = result[4] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let text = RenderInlineContent.text("doc:UNRESOVLED")
@@ -119,7 +119,7 @@ class RenderContentCompilerTests: XCTestCase {
         }
         do {
             guard case let .paragraph(paragraph) = result[5] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let link = RenderInlineContent.reference(
@@ -181,7 +181,7 @@ class RenderContentCompilerTests: XCTestCase {
         XCTAssertEqual(result.count, 6)
         do {
             guard case let .paragraph(paragraph) = result[0] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let text = RenderInlineContent.text("\n")
@@ -189,11 +189,38 @@ class RenderContentCompilerTests: XCTestCase {
         }
         do {
             guard case let .paragraph(paragraph) = result[1] as? RenderBlockContent else {
-                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                XCTFail("RenderContent result is not the expected RenderBlockContent.paragraph(Paragraph)")
                 return
             }
             let text = RenderInlineContent.text("\n")
             XCTAssertEqual(paragraph.inlineContent[1], text)
+        }
+    }
+    
+    func testThematicBreak() throws {
+        let (bundle, context) = try testBundleAndContext()
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        
+
+        let source = #"""
+        
+        ---
+        
+        """#
+        let document = Document(parsing: source)
+        let expectedDump = #"""
+        Document
+        └─ ThematicBreak
+        """#
+        XCTAssertEqual(document.debugDescription(), expectedDump)
+        let result = document.children.flatMap { compiler.visit($0) }
+        XCTAssertEqual(result.count, 1)
+        do {
+            let thematicBreak = RenderBlockContent.thematicBreak
+            
+            let documentThematicBreak = try XCTUnwrap(result[0] as? RenderBlockContent)
+            
+            XCTAssertEqual(documentThematicBreak, thematicBreak)
         }
     }
 }

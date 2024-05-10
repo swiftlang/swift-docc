@@ -23,15 +23,6 @@ import Markdown
  > If you need information about source language specific edged between nodes, you need to query another source of information.
  */
 struct TopicGraph {
-    /// A decision about whether to continue a depth-first or breadth-first traversal after visiting a node.
-    enum Traversal {
-        /// Stop here, do not visit any more nodes.
-        case stop
-        
-        /// Continue to visit nodes.
-        case `continue`
-    }
-    
     /// A node in the graph.
     class Node: Hashable, CustomDebugStringConvertible {
         /// The location of the node's contents.
@@ -98,7 +89,10 @@ struct TopicGraph {
         
         /// If true, the topic has been manually organized into a topic section on some other page.
         var isManuallyCurated: Bool = false
-        
+
+        /// If true, this topic is a generated "overload group" symbol page.
+        var isOverloadGroup: Bool = false
+
         init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false, isManuallyCurated: Bool = false) {
             self.reference = reference
             self.kind = kind
@@ -166,7 +160,7 @@ struct TopicGraph {
         edges.removeValue(forKey: node.reference)
         
         // 2. Remove reverse edges
-        if let parentReference = parentReference {
+        if let parentReference {
             edges[parentReference]!.removeAll(where: { ref -> Bool in
                 return ref == node.reference
             })
@@ -188,7 +182,7 @@ struct TopicGraph {
         }
 
         // 1. Add the new edges
-        if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
+        if let parentReference, let parentNode = nodeWithReference(parentReference) {
             addEdge(from: parentNode, to: newNode)
         }
     }
@@ -281,44 +275,40 @@ struct TopicGraph {
         return edges[node.reference] ?? []
     }
     
-    /// Traverses the graph depth-first and passes each node to `observe`.
-    func traverseDepthFirst(from startingNode: Node, _ observe: (Node) -> Traversal) {
-        var seen = Set<Node>()
-        var nodesToVisit = [startingNode]
-        while !nodesToVisit.isEmpty {
-            let node = nodesToVisit.removeLast()
-            guard !seen.contains(node) else {
-                continue
-            }
-            let children = self[node].map {
-                nodeWithReference($0)!
-            }
-            nodesToVisit.append(contentsOf: children)
-            guard case .continue = observe(node) else {
-                break
-            }
-            seen.insert(node)
-        }
+    /// Returns a sequence that traverses the topic graph in depth first order from a given reference, without visiting the same node more than once.
+    func depthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<Node> {
+        edgesGraph
+            .depthFirstSearch(from: reference)
+            .lazy
+            .map { nodeWithReference($0)! }
     }
     
-    /// Traverses the graph breadth-first and passes each node to `observe`.
-    func traverseBreadthFirst(from startingNode: Node, _ observe: (Node) -> Traversal) {
-        var seen = Set<Node>()
-        var nodesToVisit = [startingNode]
-        while !nodesToVisit.isEmpty {
-            let node = nodesToVisit.removeFirst()
-            guard !seen.contains(node) else {
-                continue
-            }
-            let children = self[node].map {
-                nodeWithReference($0)!
-            }
-            nodesToVisit.append(contentsOf: children)
-            guard case .continue = observe(node) else {
-                break
-            }
-            seen.insert(node)
+    /// Returns a sequence that traverses the topic graph in breadth first order from a given reference, without visiting the same node more than once.
+    func breadthFirstSearch(from reference: ResolvedTopicReference) -> some Sequence<Node> {
+        edgesGraph
+            .breadthFirstSearch(from: reference)
+            .lazy
+            .map { nodeWithReference($0)! }
+    }
+    
+    /// A directed graph of the edges in the topic graph.
+    var edgesGraph: DirectedGraph<ResolvedTopicReference> {
+        DirectedGraph(edges: edges)
+    }
+    
+    /// A directed graph of the reverse edges in the topic graph.
+    var reverseEdgesGraph: DirectedGraph<ResolvedTopicReference> {
+        DirectedGraph(edges: reverseEdges)
+    }
+
+    /// Returns the children of this node that reference it as their overload group.
+    func overloads(of groupReference: ResolvedTopicReference) -> [ResolvedTopicReference]? {
+        guard nodes[groupReference]?.isOverloadGroup == true else {
+            return nil
         }
+        return edges[groupReference, default: []].filter({ childReference in
+            nodes[childReference]?.isManuallyCurated == false
+        })
     }
 
     /// Returns true if a node exists with the given reference and it's set as linkable.
@@ -344,7 +334,14 @@ struct TopicGraph {
     /// │   ╰ doc://com.testbundle/documentation/MyFramework/MyClass/init()
     /// ...
     /// ```
+    ///
+    /// - Precondition: All paths through the topic graph from the starting node are finite (acyclic).
     func dump(startingAt node: Node, keyPath: KeyPath<TopicGraph.Node, String> = \.title, decorator: String = "") -> String {
+        if let cycle = edgesGraph.firstCycle(from: node.reference) {
+            let cycleDescription = cycle.map(\.absoluteString).joined(separator: " -> ")
+            preconditionFailure("Traversing the topic graph from \(node.reference.absoluteString) encounters an infinite cyclic path: \(cycleDescription) -cycle-> \(cycleDescription) ...")
+        }
+        
         var result = ""
         result.append("\(decorator) \(node[keyPath: keyPath])\r\n")
         if let childEdges = edges[node.reference]?.sorted(by: { $0.path < $1.path }) {
