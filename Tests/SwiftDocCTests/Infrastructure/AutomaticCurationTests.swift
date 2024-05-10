@@ -737,6 +737,53 @@ class AutomaticCurationTests: XCTestCase {
         try assertAutomaticCuration(variants: [])
         try assertAutomaticCuration(variants: [.swift])
     }
+
+    func testAutomaticCurationDropsOverloadGroupWhenOverloadsAreCurated() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, bundle, context) = try testBundleAndContext(copying: "OverloadedSymbols") { url in
+            try """
+            # ``OverloadedProtocol``
+
+            This is a protocol's docs.
+
+            ## Topics
+
+            - ``fourthTestMemberName(test:)-1h173``
+            - ``fourthTestMemberName(test:)-8iuz7``
+            - ``fourthTestMemberName(test:)-91hxs``
+            - ``fourthTestMemberName(test:)-961zx``
+            """.write(to: url.appendingPathComponent("OverloadedProtocol.md"), atomically: true, encoding: .utf8)
+        }
+
+        let protocolDocumentationNode = try context.entity(
+            with: .init(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/ShapeKit/OverloadedProtocol",
+                sourceLanguage: .swift))
+
+        // Compile the render node to flex the automatic curator
+        let symbol = protocolDocumentationNode.semantic as! Symbol
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: protocolDocumentationNode.reference,
+            source: nil)
+        let renderNode = translator.visit(symbol) as! RenderNode
+
+        XCTAssertEqual(renderNode.topicSections.count, 1)
+
+        // The page should not contain a reference to the overload group node, which would otherwise
+        // be automatically curated into an "Instance Methods" topic group with a hash suffix of 9b6be
+        let curatedTopic = try XCTUnwrap(renderNode.topicSections.first)
+        XCTAssertEqual(curatedTopic.title, nil)
+        XCTAssertEqual(curatedTopic.identifiers, [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-1h173",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
+        ])
+    }
 }
 
 private func makeSymbol(
