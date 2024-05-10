@@ -171,7 +171,7 @@ public struct NodeURLGenerator {
             )
         } else {
             let url = baseURL.appendingPathComponent(safePath, isDirectory: false)
-            return url.withFragment(reference.url.fragment)
+            return url.withFragment(reference.fragment)
         }
     }
     
