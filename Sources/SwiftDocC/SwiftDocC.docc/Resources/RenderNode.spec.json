@@ -2616,6 +2616,9 @@
                     },
                     "preciseIdentifier": {
                         "type": "string"
+                    },
+                    "highlightDiff": {
+                        "type": "boolean"
                     }
                 }
             },

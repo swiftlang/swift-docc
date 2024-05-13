@@ -16,10 +16,15 @@ extension DeclarationRenderSection.Token {
     /// - Parameters:
     ///   - fragment: The symbol-graph declaration fragment to render.
     ///   - identifier: An optional reference to a symbol.
-    init(fragment: SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment, identifier: String?) {
+    init(
+        fragment: SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment,
+        identifier: String?,
+        highlightDiff: Bool? = nil
+    ) {
         self.text = fragment.spelling
         self.kind = Kind(rawValue: fragment.kind.rawValue) ?? .text
         self.identifier = identifier
         self.preciseIdentifier = fragment.preciseIdentifier
+        self.highlightDiff = highlightDiff
     }
 }
