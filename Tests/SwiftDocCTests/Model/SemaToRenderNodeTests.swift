@@ -3314,8 +3314,7 @@ Document
             "doc://org.swift.MixedFramework/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()"
         ])
         
-        let objcTopicSectionVariant = try XCTUnwrap(topicSectionsVariants.variants.first { $0.traits[0] == .interfaceLanguage("occ") })
-        let objcTopicSection = objcTopicSectionVariant.applyingPatchTo(swiftTopicSection)
+        let objcTopicSection = topicSectionsVariants.value(for: [.interfaceLanguage("occ")])
         
         XCTAssertEqual(objcTopicSection.first?.title, "Something Objective-C only")
         XCTAssertEqual(objcTopicSection.first?.abstract?.plainText, "This link is only for Objective-C")
@@ -3392,8 +3391,7 @@ Document
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
             ])
             
-            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
-            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
             XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
                 "Structures",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
@@ -3443,8 +3441,7 @@ Document
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
             ])
             
-            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
-            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
             XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
                 "Instance Properties",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",

@@ -56,27 +56,6 @@ public enum VariantPatchOperation<Value: Codable> {
     }
 }
 
-extension VariantCollection.Variant where Value: RangeReplaceableCollection {
-    /// Applies the variant's patch operations to a given value and returns the patched value.
-    ///
-    /// - Parameter originalValue: The value that the variant will apply the patch operations to.
-    /// - Returns: The value after applying all patch operations.
-    func applyingPatchTo(_ originalValue: Value) -> Value {
-        var result = originalValue
-        for operation in patch {
-            switch operation {
-            case .replace(let newValue):
-                result = newValue
-            case .add(let newValue):
-                result.append(contentsOf: newValue)
-            case .remove:
-                result.removeAll()
-            }
-        }
-        return result
-    }
-}
-
 // The synthesized implementation is sufficient for this conformance.
 extension VariantPatchOperation: Equatable where Value: Equatable {}
 
