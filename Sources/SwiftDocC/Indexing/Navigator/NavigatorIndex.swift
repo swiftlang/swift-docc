@@ -618,7 +618,57 @@ extension NavigatorIndex {
         /// Index a single render `RenderNode`.
         /// - Parameter renderNode: The render node to be indexed.
         public func index(renderNode: RenderNode) throws {
+            // Always index the main render node representation
+            let language = try index(renderNode, traits: nil)
             
+            // Additionally, for Swift want to also index the Objective-C variant, if there is any.
+            guard language == .swift else {
+                return
+            }
+            
+            // Check if the render node has an Objective-C representation
+            guard let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first(where: { trait in
+                switch trait {
+                case .interfaceLanguage(let language):
+                    return InterfaceLanguage.from(string: language) == .objc
+                }
+            }) else {
+                return
+            }
+            
+            // A render node holds is structured differently depending on if it was created by "rendering" a documentation node 
+            // or if it was deserialized from a documentation archive.
+            //
+            // If it was created by rendering a documentation node, all variant information is stored in each individual variant collection and the variant overrides are nil.
+            // If it was deserialized from a documentation archive, all variant information is stored in the variant overrides and the variant collections are empty.
+            
+            // Operating on the variant override is _significantly_ slower, so we only take that code path if we have to.
+            // The only reason why this code path still exists is to support the `docc process-archive index` command, which creates an navigation index from an already build documentation archive.
+            if let overrides = renderNode.variantOverrides, !overrides.isEmpty {
+                // This code looks peculiar and very inefficient because it is.
+                // I didn't write it and I really wanted to remove it, but it's the only way to support the `docc process-archive index` command for now.
+                // rdar://128050800 Tracks fixing the inefficiencies with this code, to make `docc process-archive index` command as fast as indexing during a `docc convert` command.
+                //
+                // First, it encodes the render node, which was read from a file, back to data; because that's what the overrides applier operates on
+                let encodedRenderNode = try renderNode.encodeToJSON()
+                // Second, the overrides applier will decode that data into an abstract JSON representation of arrays, dictionaries, string, numbers, etc.
+                // After that the overrides applier loops over all the JSON patches and applies them to the abstract JSON representation.
+                // With all the patches applies, the overrides applier encodes the abstract JSON representation into data again and returns it.
+                let transformedData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(in: encodedRenderNode, for: [objCVariantTrait])
+                // Third, this code decodes the render node from the transformed data. If you count reading the render node from the documentation archive, 
+                // this is the fifth time that the same node is either encoded or decoded.
+                let variantRenderNode = try RenderNode.decode(fromJSON: transformedData)
+                // Finally, the decoded node is in a way flattened, so that it only contains its Objective-C content. That's why we pass `nil` instead of `[objCVariantTrait]` to this call.
+                _ = try index(variantRenderNode, traits: nil)
+            }
+            
+            // If this render node was created by rendering a documentation node, we create a "view" into its Objective-C specific data and index that.
+            let objVariantView = RenderNodeVariantView(wrapped: renderNode, traits: [objCVariantTrait])
+            _ = try index(objVariantView, traits: [objCVariantTrait])
+        }
+        
+        // The private index implementation which indexes a given render node representation
+        private func index(_ renderNode: any IndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?) throws -> InterfaceLanguage? {
             guard let navigatorIndex else {
                 throw Error.navigatorIndexIsNil
             }
@@ -643,10 +693,10 @@ extension NavigatorIndex {
                 .normalizedNavigatorIndexIdentifier(forLanguage: language.mask)
             
             guard identifierToNode[normalizedIdentifier] == nil else {
-                return // skip as item exists already.
+                return nil // skip as item exists already.
             }
             
-            guard let title = (usePageTitle) ? renderNode.metadata.title : renderNode.navigatorTitle() else {
+            guard let title = usePageTitle ? renderNode.metadata.title : renderNode.navigatorTitle() else {
                 throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
             }
             
@@ -724,13 +774,11 @@ extension NavigatorIndex {
                 navigationItem.usrIdentifier =  language.name + "-" + ExternalIdentifier.usr(usr).hash // We pair the hash and the language name
             }
             
-            let childrenRelationship = renderNode.childrenRelationship()
-            
             let navigatorNode = NavigatorTree.Node(item: navigationItem, bundleIdentifier: bundleIdentifier)
             
             // Process the children
             var children = [Identifier]()
-            for (index, child) in childrenRelationship.enumerated() {
+            for (index, child) in renderNode.navigatorChildren(for: traits).enumerated() {
                 let groupIdentifier: Identifier?
                 
                 if let title = child.name {
@@ -807,30 +855,7 @@ extension NavigatorIndex {
             // Bump the nodes counter.
             counter += 1
             
-            // We only want to check for an objective-c variant
-            // if we're currently indexing a swift variant.
-            guard language == .swift else {
-                return
-            }
-            
-            // Check if the render node has a variant for Objective-C
-            //
-            // Note that we need to check the `variants` property here, not the `variantsOverride`
-            // property because `variantsOverride` is only populated when the RenderNode is encoded.
-            let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first { trait in
-                switch trait {
-                case .interfaceLanguage(let language):
-                    return InterfaceLanguage.from(string: language) == .objc
-                }
-            }
-            
-            // In case we have a variant for Objective-C, apply the variant and re-index the render node.
-            if let variantToApply = objCVariantTrait {
-                let encodedRenderNode = try renderNode.encodeToJSON()
-                let transformedData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(in: encodedRenderNode, for: [variantToApply])
-                let variantRenderNode = try RenderNode.decode(fromJSON: transformedData)
-                try index(renderNode: variantRenderNode)
-            }
+            return language
         }
         
         /// An internal struct to store data about a single navigator entry.
