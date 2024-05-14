@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,47 +17,9 @@ extension RenderNode {
      
      - Returns: A list of `RenderRelationshipsGroup`.
      */
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func childrenRelationship(for language: String? = nil) -> [RenderRelationshipsGroup] {
-        var groups = [RenderRelationshipsGroup]()
-        
-        switch kind {
-        case .overview:
-            for case let section as VolumeRenderSection in sections {
-                let chapters = section.chapters
-                for chapter in chapters {
-                    let name = chapter.name
-                    
-                    // Extract the identifiers of linked chapters.
-                    let tutorials = chapter.tutorials.map { $0.identifier }
-                    // Get the references preserving the order.
-                    let references = tutorials.compactMap { self.references[$0] } as! [TopicRenderReference]
-
-                    groups.append(RenderRelationshipsGroup(name: name, abstract: nil, references: references))
-                }
-            }
-        default:
-            let topicReferences: [TopicRenderReference] = self.references.values.filter { $0 is TopicRenderReference } as! [TopicRenderReference]
-            let references: [String : TopicRenderReference] = Dictionary(uniqueKeysWithValues: topicReferences.map{ ($0.identifier.identifier, $0) })
-            
-            func processBlock(nestingReferences: Bool) -> ((TaskGroupRenderSection) -> ()) {
-                return { topicSection in
-                    // Get all the related identifiers
-                    let identifiers = topicSection.identifiers
-                    // Map the references preserving the order
-                    let relationships = identifiers.map { references[$0]! }
-                    // Get the abstract
-                    let abstract = topicSection.abstract?.map { $0.rawIndexableTextContent(references: self.references) }.joined(separator: " ")
-                    
-                    // Append the group to the result
-                    groups.append(RenderRelationshipsGroup(name: topicSection.title, abstract: abstract, references: relationships, referencesAreNested: nestingReferences))
-                }
-            }
-            
-            topicSections.forEach(processBlock(nestingReferences: false))
-            defaultImplementationsSections.forEach(processBlock(nestingReferences: true))
-        }
-        
-        return groups
+        return (self as any NavigatorIndex.Builder.IndexableRenderNodeRepresentation).navigatorChildren(for: nil)
     }
     
     /**

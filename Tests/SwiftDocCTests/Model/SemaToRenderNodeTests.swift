@@ -467,7 +467,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.sections[2].kind, .callToAction)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 0)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 0)
         
         XCTAssertNil(renderNode.metadata.roleHeading)
         XCTAssertEqual(renderNode.metadata.title, "Making an Augmented Reality App")
@@ -622,7 +622,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.references.count, 13)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 1)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 1)
         
         guard let introImageReference = renderNode.references["intro.png"] as? ImageReference else {
             XCTFail("Missing intro.png image reference")
@@ -878,7 +878,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.references.count, 13)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 3, "Expected three chapters as children.")
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 3, "Expected three chapters as children.")
         
         guard let introImageReference = renderNode.references["intro.png"] as? ImageReference else {
             XCTFail("Missing intro.png image reference")
@@ -1060,7 +1060,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(discussion.kind, RenderSectionKind.content)
         
         // Test childrenRelationships are handled correctly
-        let children = renderNode.childrenRelationship()
+        let children = renderNode.navigatorChildren(for: nil)
         XCTAssertEqual(children.count, renderNode.topicSections.count)
         XCTAssertEqual(children.first?.name, "Task Group Exercising Symbol Links")
         XCTAssertEqual(children.first?.references.count, 3)
