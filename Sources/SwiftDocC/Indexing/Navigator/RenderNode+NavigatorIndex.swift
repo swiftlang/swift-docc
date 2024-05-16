@@ -10,50 +10,48 @@
 
 import Foundation
 
-extension NavigatorIndex.Builder {
-    /// A language specific representation of a render node value for indexing.
-    protocol IndexableRenderNodeRepresentation<Metadata> {
-        associatedtype Metadata: IndexableRenderMetadataRepresentation
-        
-        // Information that's the same for all language variants
-        var identifier: ResolvedTopicReference { get }
-        var references: [String: RenderReference] { get }
-        var kind: RenderNode.Kind { get }
-        var sections: [RenderSection] { get }
-        
-        // Information that's different for each language variant
-        var metadata: Metadata { get }
-        var topicSections: [TaskGroupRenderSection] { get }
-        var defaultImplementationsSections: [TaskGroupRenderSection] { get }
-    }
+/// A language specific representation of a render node value for building a navigator index.
+protocol NavigatorIndexableRenderNodeRepresentation<Metadata> {
+    associatedtype Metadata: NavigatorIndexableRenderMetadataRepresentation
     
-    /// A language specific representation of a render metadata value for indexing.
-    protocol IndexableRenderMetadataRepresentation {
-        // Information that's the same for all language variants
-        var role: String? { get }
-        var images: [TopicImage] { get }
-        
-        // Information that's different for each language variant
-        var title: String? { get }
-        var navigatorTitle: [DeclarationRenderSection.Token]? { get }
-        var fragments: [DeclarationRenderSection.Token]? { get }
-        var externalID: String? { get }
-        var roleHeading: String? { get }
-        var symbolKind: String? { get }
-        var platforms: [AvailabilityRenderItem]? { get }
-    }
+    // Information that's the same for all language variants
+    var identifier: ResolvedTopicReference { get }
+    var references: [String: RenderReference] { get }
+    var kind: RenderNode.Kind { get }
+    var sections: [RenderSection] { get }
+    
+    // Information that's different for each language variant
+    var metadata: Metadata { get }
+    var topicSections: [TaskGroupRenderSection] { get }
+    var defaultImplementationsSections: [TaskGroupRenderSection] { get }
 }
 
-extension NavigatorIndex.Builder.IndexableRenderNodeRepresentation {
+/// A language specific representation of a render metadata value for building a navigator index.
+protocol NavigatorIndexableRenderMetadataRepresentation {
+    // Information that's the same for all language variants
+    var role: String? { get }
+    var images: [TopicImage] { get }
+    
+    // Information that's different for each language variant
+    var title: String? { get }
+    var navigatorTitle: [DeclarationRenderSection.Token]? { get }
+    var fragments: [DeclarationRenderSection.Token]? { get }
+    var externalID: String? { get }
+    var roleHeading: String? { get }
+    var symbolKind: String? { get }
+    var platforms: [AvailabilityRenderItem]? { get }
+}
+
+extension NavigatorIndexableRenderNodeRepresentation {
     var icon: RenderReferenceIdentifier? {
         metadata.images.first { $0.type == .icon }?.identifier
     }
 }
 
-extension RenderNode: NavigatorIndex.Builder.IndexableRenderNodeRepresentation {}
-extension RenderMetadata: NavigatorIndex.Builder.IndexableRenderMetadataRepresentation {}
+extension RenderNode: NavigatorIndexableRenderNodeRepresentation {}
+extension RenderMetadata: NavigatorIndexableRenderMetadataRepresentation {}
 
-struct RenderMetadataVariantView: NavigatorIndex.Builder.IndexableRenderMetadataRepresentation {
+struct RenderMetadataVariantView: NavigatorIndexableRenderMetadataRepresentation {
     var wrapped: RenderMetadata
     var traits: [RenderNode.Variant.Trait]
     
@@ -89,7 +87,7 @@ struct RenderMetadataVariantView: NavigatorIndex.Builder.IndexableRenderMetadata
     }
 }
 
-struct RenderNodeVariantView: NavigatorIndex.Builder.IndexableRenderNodeRepresentation {
+struct RenderNodeVariantView: NavigatorIndexableRenderNodeRepresentation {
     var wrapped: RenderNode
     var traits: [RenderNode.Variant.Trait]
     
@@ -128,7 +126,7 @@ private let typesThatShouldNotUseNavigatorTitle: Set<NavigatorIndex.PageType> = 
     .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType, .extension
 ]
 
-extension NavigatorIndex.Builder.IndexableRenderNodeRepresentation {
+extension NavigatorIndexableRenderNodeRepresentation {
     /// Returns a navigator title preferring the fragments inside the metadata, if applicable.
     func navigatorTitle() -> String? {
         let tokens: [DeclarationRenderSection.Token]?
@@ -169,7 +167,7 @@ extension NavigatorIndex.Builder.IndexableRenderNodeRepresentation {
     }
 }
 
-extension NavigatorIndex.Builder.IndexableRenderNodeRepresentation {
+extension NavigatorIndexableRenderNodeRepresentation {
     func navigatorChildren(for traits: [RenderNode.Variant.Trait]?) -> [RenderRelationshipsGroup] {
         switch kind {
         case .overview:

@@ -19,7 +19,7 @@ extension RenderNode {
      */
     @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func childrenRelationship(for language: String? = nil) -> [RenderRelationshipsGroup] {
-        return (self as any NavigatorIndex.Builder.IndexableRenderNodeRepresentation).navigatorChildren(for: nil)
+        return (self as any NavigatorIndexableRenderNodeRepresentation).navigatorChildren(for: nil)
     }
     
     /**

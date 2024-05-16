@@ -79,6 +79,6 @@ extension RenderNode {
     @_disfavoredOverload
     @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func navigatorPageType() -> NavigatorIndex.PageType {
-        return (self as any NavigatorIndex.Builder.IndexableRenderNodeRepresentation).navigatorPageType()
+        return (self as any NavigatorIndexableRenderNodeRepresentation).navigatorPageType()
     }
 }

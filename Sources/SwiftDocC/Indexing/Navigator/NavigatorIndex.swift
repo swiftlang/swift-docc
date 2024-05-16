@@ -668,7 +668,7 @@ extension NavigatorIndex {
         }
         
         // The private index implementation which indexes a given render node representation
-        private func index(_ renderNode: any IndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?) throws -> InterfaceLanguage? {
+        private func index(_ renderNode: any NavigatorIndexableRenderNodeRepresentation, traits: [RenderNode.Variant.Trait]?) throws -> InterfaceLanguage? {
             guard let navigatorIndex else {
                 throw Error.navigatorIndexIsNil
             }
