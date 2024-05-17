@@ -1390,10 +1390,10 @@ let expected = """
         assertEqualDumps(context.dumpGraph(), expected)
         
         // Test correct symbol hierarchy in context
-        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol"]])
         
-        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyClass"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol", "doc://org.swift.docc.example/documentation/MyKit/MyClass"]])
     }
     
@@ -1426,7 +1426,7 @@ let expected = """
         let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
-        let canonicalPathCCC = try XCTUnwrap(context.pathsTo(cccNode.reference).first)
+        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePath(to: cccNode.reference))
         XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/AAA"], canonicalPathCCC.map({ $0.path }))
         
         ///
@@ -1440,7 +1440,7 @@ let expected = """
         let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         
-        let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
+        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePath(to: fffNode.reference))
         XCTAssertEqual(["/documentation/MyKit", "/documentation/MyKit/DDD"], canonicalPathFFF.map({ $0.path }))
     }
     
@@ -1463,7 +1463,7 @@ let expected = """
         context.topicGraph.addEdge(from: aaaTgNode, to: cccTgNode)
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
-        let canonicalPathCCC = try XCTUnwrap(context.pathsTo(cccNode.reference).first)
+        let canonicalPathCCC = try XCTUnwrap(context.shortestFinitePath(to: cccNode.reference))
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathCCC.map({ $0.path }))
         
         ///
@@ -1479,7 +1479,7 @@ let expected = """
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         context.topicGraph.addEdge(from: tgMykitNode, to: fffTgNode)
         
-        let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
+        let canonicalPathFFF = try XCTUnwrap(context.shortestFinitePath(to: fffNode.reference))
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathFFF.map({ $0.path }))
     }
 
@@ -1519,7 +1519,7 @@ let expected = """
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         // Get the breadcrumbs as paths
-        let paths = context.pathsTo(node.reference).sorted { (path1, path2) -> Bool in
+        let paths = context.finitePaths(to: node.reference).sorted { (path1, path2) -> Bool in
             return path1.count < path2.count
         }
         .map { return $0.map { $0.url.path } }
@@ -4486,6 +4486,173 @@ let expected = """
         XCTAssertEqual(start..<end, range)
     }
     
+    func testPathsToHandlesCyclicCuration() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                Folder(name: "clang", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            // Any class declaration.
+                            makeSymbol(
+                                name: "SomeClass",
+                                identifier: "some-class-id",
+                                language: .objectiveC,
+                                kind: .class
+                            ),
+                            
+                            // extern NSErrorDomain const SomeErrorDomain;
+                            makeSymbol(
+                                name: "SomeErrorDomain",
+                                identifier: "some-error-domain-id",
+                                language: .objectiveC,
+                                kind: .var
+                            ),
+                            
+                            // typedef NS_ERROR_ENUM(SomeErrorDomain, SomeErrorCode) {
+                            //     SomeErrorCodeSomeCase = 1
+                            // };
+                            makeSymbol(
+                                name: "SomeErrorCode",
+                                identifier: "some-error-code-id",
+                                language: .objectiveC,
+                                kind: .enum
+                            ),
+                            makeSymbol(
+                                name: "SomeErrorCodeSomeCase",
+                                identifier: "some-error-code-case-id",
+                                language: .objectiveC,
+                                kind: .case,
+                                pathComponents: ["SomeErrorCode", "SomeErrorCodeSomeCase"]
+                            ),
+                        ],
+                        relationships: [
+                            .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil),
+                        ]
+                    ))
+                ]),
+                
+                Folder(name: "swift", content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: [
+                            // The Swift representation of the Objective-C class above.
+                            makeSymbol(
+                                name: "SomeClass",
+                                identifier: "some-class-id",
+                                kind: .class
+                            ),
+                            
+                            // The domain defined using NS_ERROR_ENUM translates to a struct with an 'errorDomain' and 'code'. Something like:
+                            //
+                            // let SomeErrorDomain: String
+                            // struct SomeError: CustomNSError, Error {
+                            //     static var errorDomain: String
+                            //     static var code: Code
+                            //     enum Code {
+                            //         someCase = 1
+                            //     }
+                            // }
+                            makeSymbol(
+                                name: "SomeErrorDomain",
+                                identifier: "some-error-domain-id",
+                                kind: .var
+                            ),
+                            
+                            makeSymbol(
+                                name: "SomeError",
+                                identifier: "some-error-id",
+                                kind: .struct
+                            ),
+                            makeSymbol(
+                                name: "errorDomain",
+                                identifier: "some-error-domain-property-id",
+                                kind: .typeProperty,
+                                pathComponents: ["SomeError", "errorDomain"]
+                            ),
+                            makeSymbol(
+                                name: "code",
+                                identifier: "some-error-code-property-id",
+                                kind: .typeProperty,
+                                pathComponents: ["SomeError", "code"]
+                            ),
+                            makeSymbol(
+                                name: "Code",
+                                identifier: "some-error-code-id",
+                                kind: .enum,
+                                pathComponents: ["SomeError", "Code"]
+                            ),
+                            makeSymbol(
+                                name: "someCase",
+                                identifier: "some-error-code-case-id",
+                                kind: .case,
+                                pathComponents: ["SomeError", "Code", "someCase"]
+                            ),
+                        ],
+                        relationships: [
+                            // static properties are members of struct
+                            .init(source: "some-error-domain-property-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
+                            .init(source: "some-error-code-property-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
+                            // enum is member of struct
+                            .init(source: "some-error-code-id", target: "some-error-id", kind: .memberOf, targetFallback: nil),
+                            // case is member of enum
+                            .init(source: "some-error-code-case-id", target: "some-error-code-id", kind: .memberOf, targetFallback: nil),
+                        ]
+                    ))
+                ]),
+                
+                // In addition to the automatic curation (thin lines) where all symbols are members of the module (SomeErrorCode is a top-level enum in Objective-C),
+                // Add manual curation (thick lines) from `SomeClass` to `SomeError` and from `SomeError/Code` to `SomeClass`, creating a cycle in the total curation.
+                //
+                //            ModuleName
+                //                 │
+                //     ┌───────┬───┴───┬─────────────┐
+                //     ▼       │       ▼             ▼
+                // SomeClass━━━━━━▶SomeError  SomeErrorDomain
+                //     ▲       │       │
+                //     ┃       ▼       │
+                //     ┗━━━━━Code◀─────┘
+                //             │
+                //             ▼
+                //          someCase
+                
+                TextFile(name: "SomeClass.md", utf8Content: """
+                # ``SomeClass``
+                
+                Curate the error
+                
+                ## Topics
+                
+                - ``SomeError``
+                """),
+                
+                TextFile(name: "SomeErrorCode.md", utf8Content: """
+                # ``SomeError/Code``
+                
+                Curate the class
+                
+                ## Topics
+                
+                - ``SomeClass``
+                """),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeError/Code-swift.enum/someCase", sourceLanguage: .swift)
+        
+        XCTAssertEqual(
+            context.topicGraph.reverseEdgesGraph.cycles(from: reference).map { $0.map(\.lastPathComponent) },
+            [ ["Code-swift.enum", "SomeError", "SomeClass"] ],
+            "There is one cyclic path encountered while traversing the reverse edges from the 'someCase' enum case."
+        )
+        
+        XCTAssertEqual(
+            context.finitePaths(to: reference).map { $0.map(\.lastPathComponent) },
+            [ ["ModuleName", "Code-swift.enum"] ],
+            "There is only one _finite_ path from the 'someCase' enum case, through the reverse edges in the topic graph."
+        )
+    }
+    
     func testUnresolvedLinkWarnings() throws {
         var (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             let extensionFile = """
@@ -4613,7 +4780,54 @@ let expected = """
             }
         }
     }
-    
+
+    func testContextRecognizesOverloadsFromPlistFlag() throws {
+        let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
+        // Generate a 4 symbols with the same name for every overloadable symbol kind
+        let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
+            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
+            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+        ] }
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: symbols
+                )),
+                DataFile(name: "Info.plist", data: Data("""
+                <plist version="1.0">
+                <dict>
+                    <key>CDExperimentalFeatureFlags</key>
+                    <dict>
+                        <key>ExperimentalOverloadedSymbolPresentation</key>
+                        <true/>
+                    </dict>
+                </dict>
+                </plist>
+                """.utf8))
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        for kindID in overloadableKindIDs {
+            switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName-\(kindID.identifier)"))), in: moduleReference, fromSymbolLink: true) {
+            case let .failure(_, errorMessage):
+                XCTFail("Could not resolve overload group page for \(kindID.identifier). Error message: \(errorMessage)")
+                continue
+            case let .success(overloadGroupReference):
+                let overloadGroupNode = try context.entity(with: overloadGroupReference)
+                let overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+                let overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+                XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+            }
+        }
+    }
+
     // The overload behavior doesn't apply to symbol kinds that don't support overloading
     func testContextDoesNotRecognizeNonOverloadableSymbolKinds() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
@@ -4651,15 +4865,293 @@ let expected = """
         }
     }
 
+    func testWarnsOnUnknownPlistFeatureFlag() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                DataFile(name: "Info.plist", data: Data("""
+                <plist version="1.0">
+                <dict>
+                    <key>CDExperimentalFeatureFlags</key>
+                    <dict>
+                        <key>NonExistentFeature</key>
+                        <true/>
+                    </dict>
+                </dict>
+                </plist>
+                """.utf8))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        let unknownFeatureFlagProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.UnknownBundleFeatureFlag" })
+        XCTAssertEqual(unknownFeatureFlagProblems.count, 1)
+        let problem = try XCTUnwrap(unknownFeatureFlagProblems.first)
+
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(problem.diagnostic.summary, "Unknown feature flag in Info.plist: 'NonExistentFeature'")
+    }
+
+    func testUnknownFeatureFlagSuggestsOtherFlags() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                DataFile(name: "Info.plist", data: Data("""
+                <plist version="1.0">
+                <dict>
+                    <key>CDExperimentalFeatureFlags</key>
+                    <dict>
+                        <key>ExperimenalOverloadedSymbolPresentation</key>
+                        <true/>
+                    </dict>
+                </dict>
+                </plist>
+                """.utf8))
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: tempURL)
+
+        let unknownFeatureFlagProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.UnknownBundleFeatureFlag" })
+        XCTAssertEqual(unknownFeatureFlagProblems.count, 1)
+        let problem = try XCTUnwrap(unknownFeatureFlagProblems.first)
+
+        XCTAssertEqual(problem.diagnostic.severity, .warning)
+        XCTAssertEqual(
+            problem.diagnostic.summary,
+            "Unknown feature flag in Info.plist: 'ExperimenalOverloadedSymbolPresentation'. Possible suggestions: 'ExperimentalOverloadedSymbolPresentation'")
+    }
+
+    func testContextGeneratesUnifiedOverloadGroupsAcrossPlatforms() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-3", kind: symbolKind),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        // There should only be one overload group for `SymbolName` - the one from the iOS symbol
+        // graph should have been removed during graph collection.
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2", "symbol-3"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    func testContextGeneratesOverloadGroupsWhenOnePlatformHasNoOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        // This situation used to crash. The macOS symbol graph only has one symbol in the overload
+        // group, whereas the iOS graph has two. Due to the way that Symbol loaded the overload
+        // mixins, `symbol-1` wouldn't save its overload data, which would trip an assertion in
+        // DocumentationContext. We need to ensure that an overload group is properly created, and
+        // that both symbols are correctly grouped underneath it.
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        // Even though the macOS symbol graph doesn't contain an overload group, one should still
+        // have been created from the iOS symbol graph, and that overload group should reference
+        // both symbols.
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    /// Ensure that overload groups are correctly loaded into the path hierarchy and create nodes,
+    /// even when they came from an extension symbol graph.
+    func testContextGeneratesOverloadGroupsForExtensionGraphOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(name: "RegularSymbol", identifier: "RegularSymbol", kind: .class),
+                    ])),
+                JSONFile(name: "OtherModule@ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "OtherModule",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(identifier: "symbol-1", kind: symbolKind),
+                        makeSymbol(identifier: "symbol-2", kind: symbolKind),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
     // A test helper that creates a symbol with a given identifier and kind.
     private func makeSymbol(
         name: String = "SymbolName",
         identifier: String,
+        language: SourceLanguage = .swift,
         kind: SymbolGraph.Symbol.KindIdentifier,
         pathComponents: [String]? = nil
     ) -> SymbolGraph.Symbol {
         return SymbolGraph.Symbol(
-            identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
+            identifier: .init(precise: identifier, interfaceLanguage: language.id),
             names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
             pathComponents: pathComponents ?? [name],
             docComment: nil,

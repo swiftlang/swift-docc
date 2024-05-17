@@ -255,8 +255,7 @@ public class NavigatorIndex {
     }
     
     /// Indicates the page type of a given item inside the tree.
-    /// - Note: This information is stored as UInt8 to decrease the required size to store it and make
-    ///         the comparision faster between types.
+    /// - Note: This information is stored as `UInt8` to decrease the required size to store it and make the comparison faster between types.
     public enum PageType: UInt8 {
         case root = 0
         case article = 1
@@ -358,7 +357,21 @@ public class NavigatorIndex {
             default: self = .article
             }
         }
-        
+
+        /// Whether this page kind references a symbol.
+        var isSymbolKind: Bool {
+            switch self {
+            case .root, .article, .tutorial, .section, .learn, .overview, .resources, .framework,
+                    .buildSetting, .sampleCode, .languageGroup, .container, .groupMarker:
+                return false
+            case .symbol, .class, .structure, .protocol, .enumeration, .function, .extension,
+                    .localVariable, .globalVariable, .typeAlias, .associatedType, .operator, .macro,
+                    .union, .enumerationCase, .initializer, .instanceMethod, .instanceProperty,
+                    .instanceVariable, .subscript, .typeMethod, .typeProperty, .propertyListKey,
+                    .httpRequest, .dictionarySymbol, .propertyListKeyReference, .namespace:
+                return true
+            }
+        }
     }
     
     // MARK: - Read Navigator Tree
@@ -918,7 +931,11 @@ extension NavigatorIndex {
             
             // The rest have no parent, so they need to be under the root.
             for nodeID in pendingUncuratedReferences {
-                if let node = identifierToNode[nodeID] {
+                // Don't add symbol nodes to the root; if they have been dropped by automatic
+                // curation, then they should not be in the navigator. In addition, treat unknown
+                // page types as symbol nodes on the assumption that an unknown page type is a
+                // symbol kind added in a future version of Swift-DocC.
+                if let node = identifierToNode[nodeID], PageType(rawValue: node.item.pageType)?.isSymbolKind == false {
 
                     // If an uncurated page has been curated in another language, don't add it to the top-level.
                     if curatedReferences.contains(where: { curatedNodeID in

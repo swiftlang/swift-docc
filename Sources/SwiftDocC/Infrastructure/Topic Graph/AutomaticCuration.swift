@@ -96,7 +96,14 @@ public struct AutomaticCuration {
                 else {
                     return
                 }
-                
+
+                // If this symbol is an overload group and all its overloaded children were manually
+                // curated elsewhere, skip it so it doesn't clutter the curation hierarchy with a
+                // duplicate symbol.
+                if let overloads = context.topicGraph.overloads(of: reference), overloads.isEmpty {
+                    return
+                }
+
                 let childNode = try context.entity(with: reference)
                 guard let childSymbol = childNode.semantic as? Symbol else {
                     return
@@ -152,7 +159,7 @@ public struct AutomaticCuration {
         }
         
         // First try getting the canonical path from a render context, default to the documentation context
-        guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.pathsTo(node.reference).first,
+        guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.shortestFinitePath(to: node.reference),
               let parentReference = canonicalPath.last
         else {
             // If the symbol is not curated or is a root symbol, no See Also please.
