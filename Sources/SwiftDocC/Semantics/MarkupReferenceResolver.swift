@@ -101,7 +101,14 @@ struct MarkupReferenceResolver: MarkupRewriter {
 
     mutating func visitImage(_ image: Image) -> Markup? {
         if let reference = image.reference(in: bundle), !context.resourceExists(with: reference) {
-            problems.append(unresolvedResourceProblem(resource: reference, source: source, range: image.range, severity: .warning))
+            if let rangeLowerBoundSource = image.range?.lowerBound.source,
+               let rangeUpperBoundSource = image.range?.upperBound.source,
+               let source = source,
+               source != rangeLowerBoundSource || source != rangeUpperBoundSource {
+                // Do not emit duplicated problem for extension file
+            } else {
+                problems.append(unresolvedResourceProblem(resource: reference, source: source, range: image.range, severity: .warning))
+            }
         }
 
         var image = image
