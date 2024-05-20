@@ -84,8 +84,20 @@ extension Docc {
         var newerDocCArchivePath: URL
         
         @Option(
+            name: [.customLong("initial-archive-name", withSingleDash: false)],
+            help: "The name of the initial DocC Archive version to be compared."
+        )
+        var initialArchiveName: String = "Version 1"
+        
+        @Option(
+            name: [.customLong("newer-archive-name", withSingleDash: false)],
+            help: "The name of the newer DocC Archive version to be compared."
+        )
+        var newerArchiveName: String = "Version 2"
+        
+        @Option(
             name: [.customLong("show-all", withSingleDash: false)],
-            help: "Produces full symbol diff: including all properties, methods, and overrides"
+            help: "Boolean value to indicate whether to produce a full symbol diff, including all properties, methods, and overrides"
         )
         var showAllSymbols: Bool = false
         
@@ -96,11 +108,11 @@ extension Docc {
             var newDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: newerDocCArchivePath)
             
             if showAllSymbols {
-                print("Showing ALL symbols")
+                print("Showing ALL symbols.")
                 initialDocCArchiveAPIs = try findAllSymbolLinks_Full(initialPath: initialDocCArchivePath)
                 newDocCArchiveAPIs = try findAllSymbolLinks_Full(initialPath: newerDocCArchivePath)
             } else {
-                print("Showing ONLY modules, classes, protocols, and structs.")
+                print("Showing ONLY high-level symbol diffs: modules, classes, protocols, and structs.")
             }
             
             let initialSet = Set(initialDocCArchiveAPIs.map { $0 })
@@ -125,7 +137,7 @@ extension Docc {
             let removalLinks = groupSymbols(symbolLinks: removedFromOldSet, frameworkName: frameworkName)
             
             // Create markdown file with changes in the newer DocC Archive that do not exist in the initial DocC Archive.
-            for fileNameAndContent in Docc.GenerateChangelog.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: "RainbowF RC", newerDocCArchiveVersion: "Geode Beta 1", additionLinks: additionLinks, removalLinks: removalLinks) {
+            for fileNameAndContent in Docc.GenerateChangelog.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialArchiveName, newerDocCArchiveVersion: newerArchiveName, additionLinks: additionLinks, removalLinks: removalLinks) {
                 let fileName = fileNameAndContent.key
                 let content = fileNameAndContent.value
                 let filePath = initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName)
@@ -292,10 +304,6 @@ extension Docc {
             }
         }
         
-        func findClassName(symbolPath: URL) -> String {
-            return symbolPath.lastPathComponent
-        }
-        
         /// Process lists of symbols to group them according to the highest level path component, split by spaces.
         func groupSymbols(symbolLinks: Set<URL>, frameworkName: String) -> String {
             // Sort list alphabetically
@@ -321,34 +329,6 @@ extension Docc {
             }
             
             return links
-        }
-        
-        func addClassNames(allSymbolsString: String) -> String {
-            // Split string into string array on a double newline
-            return longestCommonPrefix(of: allSymbolsString)
-        }
-        
-        func longestCommonPrefix(of string: String) -> String {
-            
-            let words = string.split(separator: " ")
-            guard let first = words.first else {
-                return ""
-            }
-
-            var (minWord, maxWord) = (first, first)
-            for word in words.dropFirst() {
-                if word < minWord {
-                    print(word)
-                    print(maxWord)
-                    minWord = word
-                } else if word > maxWord {
-                    print(word)
-                    print(maxWord)
-                    maxWord = word
-                }
-            }
-
-            return minWord.commonPrefix(with: maxWord)
         }
         
     }
