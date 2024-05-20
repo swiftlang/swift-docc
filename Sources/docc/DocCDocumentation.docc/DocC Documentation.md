@@ -48,4 +48,8 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 
 - ``Comment``
 
+### Command line
+
+- <doc:commands>
+
 <!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
