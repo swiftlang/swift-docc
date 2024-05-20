@@ -18,6 +18,7 @@ private var subcommands: [ParsableCommand.Type] {
         Docc._Index.self,
         Docc.Init.self,
         Docc.Merge.self,
+        Docc.GenerateChangelog.self,
     ]
 #if canImport(NIOHTTP1)
     subcommands.insert(Docc.Preview.self, at: 1)

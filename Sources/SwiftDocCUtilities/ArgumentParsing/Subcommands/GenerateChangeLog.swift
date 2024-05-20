@@ -1,5 +1,5 @@
 /*
- This source file is part doccof the Swift.org open source project
+ This source file is part of the Swift.org open source project
 
  Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
@@ -12,16 +12,16 @@ import ArgumentParser
 import Foundation
 import SwiftDocC
 
-extension Docc.ProcessArchive {
+extension Docc {
     
-    struct DiffDocCArchive: ParsableCommand {
+    struct GenerateChangelog: ParsableCommand {
         
         // MARK: - Content and Configuration
-        
+
         /// Command line configuration.
         static var configuration = CommandConfiguration(
-            commandName: "diff-docc-archive",
-            abstract: "Produce a markdown file saved as {FrameworkName}_ChangeLog.md containing the diff of added/removed symbols between the two provided DocC archives.",
+            commandName: "generate-changelog",
+            abstract: "Generate a changelog with symbol diffs between documentation archives ('.doccarchive' directories).",
             shouldDisplay: true)
         
         /// Content of the 'changeLog' template.
@@ -33,7 +33,7 @@ extension Docc.ProcessArchive {
             removalLinks: String
         ) -> [String : String] {
             [
-                "\(frameworkName.localizedCapitalized)_ChangeLog.md": """
+                "\(frameworkName.localizedCapitalized)_Changelog.md": """
                     # \(frameworkName.localizedCapitalized) Updates
                     
                     @Metadata { 
@@ -46,7 +46,7 @@ extension Docc.ProcessArchive {
 
                     Browse notable changes in \(frameworkName.localizedCapitalized).
                     
-                    ## Version: Diff between \(initialDocCArchiveVersion) and \(newerDocCArchiveVersion)
+                    ## Diff between \(initialDocCArchiveVersion) and \(newerDocCArchiveVersion)
 
                     
                     ### Change Log
@@ -66,13 +66,8 @@ extension Docc.ProcessArchive {
             ]
         }
         
-        // MARK: - Command Line Options & Arguments
         
-        @Argument(
-            help: ArgumentHelp(
-                "The version of the initial DocC Archive to be compared.",
-                valueName: "initialDocCArchiveVersion"))
-        var initialDocCArchiveVersion: String
+        // MARK: - Command Line Options & Arguments
         
         @Argument(
             help: ArgumentHelp(
@@ -83,22 +78,30 @@ extension Docc.ProcessArchive {
         
         @Argument(
             help: ArgumentHelp(
-                "The version of the newer DocC Archive to be compared.",
-                valueName: "newerDocCArchiveVersion"))
-        var newerDocCArchiveVersion: String
-        
-        @Argument(
-            help: ArgumentHelp(
                 "The path to the newer DocC Archive to be compared.",
                 valueName: "newerDocCArchive"),
             transform: URL.init(fileURLWithPath:))
         var newerDocCArchivePath: URL
         
+        @Option(
+            name: [.customLong("show-all", withSingleDash: false)],
+            help: "Produces full symbol diff: including all properties, methods, and overrides"
+        )
+        var showAllSymbols: Bool = false
+        
         // MARK: - Execution
         
         public mutating func run() throws {
-            let initialDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: initialDocCArchivePath)
-            let newDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: newerDocCArchivePath)
+            var initialDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: initialDocCArchivePath)
+            var newDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: newerDocCArchivePath)
+            
+            if showAllSymbols {
+                print("Showing ALL symbols")
+                initialDocCArchiveAPIs = try findAllSymbolLinks_Full(initialPath: initialDocCArchivePath)
+                newDocCArchiveAPIs = try findAllSymbolLinks_Full(initialPath: newerDocCArchivePath)
+            } else {
+                print("Showing ONLY modules, classes, protocols, and structs.")
+            }
             
             let initialSet = Set(initialDocCArchiveAPIs.map { $0 })
             let newSet = Set(newDocCArchiveAPIs.map { $0 })
@@ -122,7 +125,7 @@ extension Docc.ProcessArchive {
             let removalLinks = groupSymbols(symbolLinks: removedFromOldSet, frameworkName: frameworkName)
             
             // Create markdown file with changes in the newer DocC Archive that do not exist in the initial DocC Archive.
-            for fileNameAndContent in Docc.ProcessArchive.DiffDocCArchive.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialDocCArchiveVersion, newerDocCArchiveVersion: newerDocCArchiveVersion, additionLinks: additionLinks, removalLinks: removalLinks) {
+            for fileNameAndContent in Docc.GenerateChangelog.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: "RainbowF RC", newerDocCArchiveVersion: "Geode Beta 1", additionLinks: additionLinks, removalLinks: removalLinks) {
                 let fileName = fileNameAndContent.key
                 let content = fileNameAndContent.value
                 let filePath = initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName)
@@ -130,6 +133,7 @@ extension Docc.ProcessArchive {
                 print("\nOutput file path: \(filePath)")
             }
         }
+
         
         /// Pretty print all symbols' url identifiers into a pretty format, with a new line between each symbol.
         func printAllSymbols(symbols: [URL]) {
@@ -137,7 +141,8 @@ extension Docc.ProcessArchive {
                 print(symbol)
             }
         }
-
+        
+        
         /// The framework name is the path component after "/documentation/".
         func findFrameworkName(initialPath: URL) throws -> String? {
             guard let enumerator = FileManager.default.enumerator(
@@ -199,14 +204,61 @@ extension Docc.ProcessArchive {
             for case let filePath as URL in enumerator {
                 if filePath.lastPathComponent.hasSuffix(".json") {
                     let symbolLink = try findSymbolLink(symbolPath: filePath)
-                    if symbolLink != nil {
-                        returnSymbolLinks.append(symbolLink!)
+                    let symbolKind = try findKind(symbolPath: filePath)
+                    
+                    if (symbolLink != nil && symbolKind != nil) {
+                        if let validSymbol = symbolKind?.contains("module") {
+                            if validSymbol == true {
+                                returnSymbolLinks.append(symbolLink!)
+                            }
+                        }
+                        
+                        if let validSymbol = symbolKind?.contains("class") {
+                            if validSymbol == true {
+                                returnSymbolLinks.append(symbolLink!)
+                            }
+                        }
+                        
+                        if let validSymbol = symbolKind?.contains("protocol") {
+                            if validSymbol == true {
+                                returnSymbolLinks.append(symbolLink!)
+                            }
+                        }
+                        
+                        if let validSymbol = symbolKind?.contains("struct") {
+                            if validSymbol == true {
+                                returnSymbolLinks.append(symbolLink!)
+                            }
+                        }
                     }
                 }
             }
-            
             return returnSymbolLinks
         }
+        
+        /// Given a URL, return each of the symbols by their unique identifying links
+       func findAllSymbolLinks_Full(initialPath: URL) throws -> [URL] {
+           guard let enumerator = FileManager.default.enumerator(
+               at: initialPath,
+               includingPropertiesForKeys: [],
+               options: .skipsHiddenFiles,
+               errorHandler: nil
+           ) else {
+               return []
+           }
+           
+           var returnSymbolLinks: [URL] = []
+           for case let filePath as URL in enumerator {
+               if filePath.lastPathComponent.hasSuffix(".json") {
+                   let symbolLink = try findSymbolLink(symbolPath: filePath)
+                   if symbolLink != nil {
+                       returnSymbolLinks.append(symbolLink!)
+                   }
+               }
+           }
+           
+           return returnSymbolLinks
+       }
         
         func findSymbolLink(symbolPath: URL) throws -> URL? {
             struct ContainerWithTopicReferenceIdentifier: Codable {
@@ -224,47 +276,25 @@ extension Docc.ProcessArchive {
             }
         }
         
-        // TODO: CONTINUE
-//        func findPageType(symbolPath: URL) throws -> URL? {
-//            struct ContainerWithPageType: Codable {
-//                var pageType: NavigatorIndex.PageType
-//            }
-//            
-//            let renderJSONData = try Data(contentsOf: symbolPath)
-//            let decoder = RenderJSONDecoder.makeDecoder()
-//            
-//            do {
-//                let identifier = try decoder.decode(NavigatorIndex.self, from: renderJSONData).
-//                return identifier.url
-//            } catch {
-//                return nil
-//            }
-//        }
+        func findKind(symbolPath: URL) throws -> String? {
+            struct ContainerWithKind: Codable {
+                var metadata: RenderMetadata
+            }
+            
+            let renderJSONData = try Data(contentsOf: symbolPath)
+            let decoder = RenderJSONDecoder.makeDecoder()
+            
+            do {
+                let metadata = try decoder.decode(ContainerWithKind.self, from: renderJSONData).metadata
+                return metadata.symbolKind
+            } catch {
+                return nil
+            }
+        }
         
         func findClassName(symbolPath: URL) -> String {
             return symbolPath.lastPathComponent
         }
-        
-//        func findClassName(symbolPath: URL) throws -> [[String]]? {
-//            struct ContainerWithRenderHierarchy: Codable {
-//                var hierarchy: RenderHierarchy
-//            }
-//            
-//            let renderJSONData = try Data(contentsOf: symbolPath)
-//            let decoder = RenderJSONDecoder.makeDecoder()
-//            
-//            do {
-//                let hierarchy = try decoder.decode(ContainerWithRenderHierarchy.self, from: renderJSONData).hierarchy
-//                
-//                if hierarchy != nil {
-//                    return hierarchy.paths
-//                }
-//                
-//                return identifier.url
-//            } catch {
-//                return nil
-//            }
-//        }
         
         /// Process lists of symbols to group them according to the highest level path component, split by spaces.
         func groupSymbols(symbolLinks: Set<URL>, frameworkName: String) -> String {
@@ -283,7 +313,7 @@ extension Docc.ProcessArchive {
                 
                 // If there are no common path components, add a space. Then reset the first to find the next parent.
                 if parent.localizedLowercase.hasSuffix(frameworkName + "/") {
-                    links.append("\n  \n")
+                    links.append("\n")
                     first = symbol
                 }
                     
@@ -294,8 +324,6 @@ extension Docc.ProcessArchive {
         }
         
         func addClassNames(allSymbolsString: String) -> String {
-//            let processedString = ""
-                
             // Split string into string array on a double newline
             return longestCommonPrefix(of: allSymbolsString)
         }
@@ -303,7 +331,6 @@ extension Docc.ProcessArchive {
         func longestCommonPrefix(of string: String) -> String {
             
             let words = string.split(separator: " ")
-//            let words = string.split(separator: "\n\n")
             guard let first = words.first else {
                 return ""
             }
@@ -323,6 +350,6 @@ extension Docc.ProcessArchive {
 
             return minWord.commonPrefix(with: maxWord)
         }
-                    
+        
     }
 }

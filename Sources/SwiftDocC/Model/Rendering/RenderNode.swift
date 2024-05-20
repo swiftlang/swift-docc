@@ -275,5 +275,26 @@ public struct RenderNode: VariantContainer {
                 throw DecodingError.dataCorruptedError(in: container, debugDescription: "Unknown RenderNode.Kind: '\(unknown)'.")
             }
         }
+        
+//        // Return the string representing this kind.
+//        //      If the kind is a symbol, return the symbol kind.
+//        public func kindString() -> String {
+//            var kind = ""
+//            
+//            switch(self) {
+//            case .article:
+//                kind = "article"
+//            case .tutorial:
+//                kind = "tutorial"
+//            case .section:
+//                kind = "section"
+//            case .overview:
+//                kind = "overview"
+//            case .symbol:
+//                kind = "symbol"
+//            }
+//            
+//            return kind
+//        }
     }
 }
