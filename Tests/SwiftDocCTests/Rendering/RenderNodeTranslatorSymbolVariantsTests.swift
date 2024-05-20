@@ -1232,6 +1232,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    @available(*, deprecated)
     private func assertMultiLanguageSemantic(
         _ semantic: Semantic,
         context: DocumentationContext,

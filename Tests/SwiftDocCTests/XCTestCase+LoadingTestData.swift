@@ -331,6 +331,7 @@ extension XCTestCase {
         return (renderedContent, try problemIDs(), directive, collectedReferences)
     }
     
+    @available(*, deprecated)
     func renderNodeApplying(variant: String, to renderNode: RenderNode) throws -> RenderNode {
         let variantData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(
             in: RenderJSONEncoder.makeEncoder().encode(renderNode),
