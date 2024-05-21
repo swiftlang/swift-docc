@@ -16,55 +16,13 @@ extension Docc {
     
     struct GenerateChangelog: ParsableCommand {
         
-        // MARK: - Content and Configuration
+        // MARK: - Configuration
 
         /// Command line configuration.
         static var configuration = CommandConfiguration(
             commandName: "generate-changelog",
             abstract: "Generate a changelog with symbol diffs between documentation archives ('.doccarchive' directories).",
             shouldDisplay: true)
-        
-        /// Content of the 'changeLog' template.
-        static func changeLogTemplateFileContent(
-            frameworkName: String,
-            initialDocCArchiveVersion: String,
-            newerDocCArchiveVersion: String,
-            additionLinks: String,
-            removalLinks: String
-        ) -> [String : String] {
-            [
-                "\(frameworkName.localizedCapitalized)_Changelog.md": """
-                    # \(frameworkName.localizedCapitalized) Updates
-                    
-                    @Metadata { 
-                        @PageColor(yellow)
-                    }
-                    
-                    Learn about important changes to \(frameworkName.localizedCapitalized).
-                    
-                    ## Overview
-
-                    Browse notable changes in \(frameworkName.localizedCapitalized).
-                    
-                    ## Diff between \(initialDocCArchiveVersion) and \(newerDocCArchiveVersion)
-
-                    
-                    ### Change Log
-                    
-                    #### Additions
-                    _New symbols added in \(newerDocCArchiveVersion) that did not previously exist in \(initialDocCArchiveVersion)._
-                                        
-                    \(additionLinks)
-                    
-                    
-                    #### Removals
-                    _Old symbols that existed in \(initialDocCArchiveVersion) that no longer exist in \(newerDocCArchiveVersion)._
-                                        
-                    \(removalLinks)
-                    
-                    """
-            ]
-        }
         
         
         // MARK: - Command Line Options & Arguments
@@ -115,29 +73,25 @@ extension Docc {
                 print("Showing ONLY high-level symbol diffs: modules, classes, protocols, and structs.")
             }
             
-            let initialSet = Set(initialDocCArchiveAPIs.map { $0 })
-            let newSet = Set(newDocCArchiveAPIs.map { $0 })
+            let initialSet = Set(initialDocCArchiveAPIs)
+            let newSet = Set(newDocCArchiveAPIs)
             
             // Compute additions and removals to both sets
             let additionsToNewSet = newSet.subtracting(initialSet)
             let removedFromOldSet = initialSet.subtracting(newSet)
             
             // The framework name is the path component after "/documentation/".
-            var frameworkName: String = "No_Framework_Name"
             var potentialFrameworkName = try findFrameworkName(initialPath: initialDocCArchivePath)
             if potentialFrameworkName == nil {
                 potentialFrameworkName = try findFrameworkName(initialPath: newerDocCArchivePath)
             }
-            
-            if potentialFrameworkName != nil {
-                frameworkName = potentialFrameworkName ?? "No_Framework_Name"
-            }
+            let frameworkName: String = potentialFrameworkName ?? "No_Framework_Name"
             
             let additionLinks = groupSymbols(symbolLinks: additionsToNewSet, frameworkName: frameworkName)
             let removalLinks = groupSymbols(symbolLinks: removedFromOldSet, frameworkName: frameworkName)
             
             // Create markdown file with changes in the newer DocC Archive that do not exist in the initial DocC Archive.
-            for fileNameAndContent in Docc.GenerateChangelog.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialArchiveName, newerDocCArchiveVersion: newerArchiveName, additionLinks: additionLinks, removalLinks: removalLinks) {
+            for fileNameAndContent in CatalogTemplateKind.changeLogTemplateFileContent(frameworkName: frameworkName, initialDocCArchiveVersion: initialArchiveName, newerDocCArchiveVersion: newerArchiveName, additionLinks: additionLinks, removalLinks: removalLinks) {
                 let fileName = fileNameAndContent.key
                 let content = fileNameAndContent.value
                 let filePath = initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName)
@@ -145,7 +99,6 @@ extension Docc {
                 print("\nOutput file path: \(filePath)")
             }
         }
-
         
         /// Pretty print all symbols' url identifiers into a pretty format, with a new line between each symbol.
         func printAllSymbols(symbols: [URL]) {
@@ -153,7 +106,6 @@ extension Docc {
                 print(symbol)
             }
         }
-        
         
         /// The framework name is the path component after "/documentation/".
         func findFrameworkName(initialPath: URL) throws -> String? {
