@@ -59,7 +59,31 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     }
                 }
 
-                return translatedDeclaration
+                // post-process the declaration to combine adjacent text fragments
+                var processedDeclaration: [DeclarationRenderSection.Token] = []
+                var currentToken: DeclarationRenderSection.Token? = nil
+                for token in translatedDeclaration {
+                    if let previousToken = currentToken {
+                        if previousToken.kind == .text,
+                            token.kind == .text,
+                            previousToken.highlightDiff == token.highlightDiff
+                        {
+                            currentToken = .init(
+                                text: previousToken.text + token.text,
+                                kind: .text,
+                                highlightDiff: previousToken.highlightDiff)
+                            continue
+                        } else {
+                            processedDeclaration.append(previousToken)
+                        }
+                    }
+                    currentToken = token
+                }
+                if let currentToken = currentToken {
+                    processedDeclaration.append(currentToken)
+                }
+
+                return processedDeclaration
             }
 
             typealias OverloadDeclaration = (declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment], reference: ResolvedTopicReference)
@@ -72,18 +96,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 var otherDeclarations = [DeclarationRenderSection.OtherDeclarations.Declaration]()
 
                 for overloadDeclaration in overloadDeclarations {
-                    var commonIndex = 0
-                    var translatedDeclaration: [DeclarationRenderSection.Token] = []
-                    for fragment in overloadDeclaration.declaration {
-                        if commonIndex < commonFragments.count && fragment == commonFragments[commonIndex] {
-                            // fragment is common to all declarations, render plain
-                            translatedDeclaration.append(translateFragment(fragment))
-                            commonIndex += 1
-                        } else {
-                            // fragment is unique to this declaration, render highlighted
-                            translatedDeclaration.append(translateFragment(fragment, highlightDiff: true))
-                        }
-                    }
+                    let translatedDeclaration = translateDeclaration(
+                        overloadDeclaration.declaration,
+                        commonFragments: commonFragments)
                     otherDeclarations.append(.init(
                         tokens: translatedDeclaration,
                         identifier: overloadDeclaration.reference.absoluteString))
@@ -113,14 +128,60 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     assert(declarationFragments != nil, "Overloaded symbols must have declaration fragments.")
                     return declarationFragments.map({ (declaration: $0, reference: overloadReference )})
                 }), !overloadDeclarations.isEmpty {
+                    func preProcessFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+                        guard fragment.kind == .text, !fragment.spelling.isEmpty else {
+                            return [fragment]
+                        }
+                        // what follows is a recreation of `Collection.chunked(by:)` from Swift-Algorithms.
+                        // FIXME: replace this with `chunked(by:)` if we add swift-algorithms as a dependency
+                        var textPartitions: [String] = []
+                        var substringIndex = fragment.spelling.startIndex
+                        var currentElement = fragment.spelling[substringIndex]
+
+                        func shouldSplit(_ currentElement: Character, _ nextElement: Character) -> Bool {
+                            if "(),".contains(nextElement) {
+                                // an open paren means we have a token like `>(` which should be split
+                                // a close paren means we have a token like ` = nil)` which should be split
+                                // a comma is similar to the close paren situation
+                                return true
+                            } else if currentElement.isWhitespace != nextElement.isWhitespace {
+                                // break whitespace into their own blocks
+                                return true
+                            } else if currentElement == "?" {
+                                // if we have a token like `?>` or similar we should break the fragment
+                                return true
+                            } else {
+                                return false
+                            }
+                        }
+
+                        for (nextIndex, nextElement) in fragment.spelling.indexed().dropFirst() {
+                            if shouldSplit(currentElement, nextElement) {
+                                textPartitions.append(String(fragment.spelling[substringIndex..<nextIndex]))
+                                substringIndex = nextIndex
+                            }
+                            currentElement = nextElement
+                        }
+
+                        if substringIndex != fragment.spelling.endIndex {
+                            textPartitions.append(String(fragment.spelling[substringIndex...]))
+                        }
+
+                        return textPartitions.map({ .init(kind: .text, spelling: $0, preciseIdentifier: nil) })
+                    }
                     // Collect the "common fragments" so we can highlight the ones that are different
                     // in each declaration
-                    // FIXME: Pre-process declarations to break up text fragments for better visual output
-                    let commonFragments = longestCommonSubsequence([declaration.declarationFragments] + overloadDeclarations.map(\.declaration))
 
-                    renderedTokens = translateDeclaration(declaration.declarationFragments, commonFragments: commonFragments)
+                    // Pre-process the declarations by splitting text fragments apart to increase legibility
+                    let mainDeclaration = declaration.declarationFragments.flatMap(preProcessFragment(_:))
+                    let processedOverloadDeclarations = overloadDeclarations.map({ ($0.declaration.flatMap(preProcessFragment(_:)), $0.reference) })
+                    let preProcessedDeclarations = [mainDeclaration] + processedOverloadDeclarations.map(\.0)
+
+                    let commonFragments = longestCommonSubsequence(preProcessedDeclarations)
+
+                    renderedTokens = translateDeclaration(mainDeclaration, commonFragments: commonFragments)
                     otherDeclarations = renderOtherDeclarationsTokens(
-                        from: overloadDeclarations,
+                        from: processedOverloadDeclarations,
                         displayIndex: overloads.displayIndex,
                         commonFragments: commonFragments)
                 } else {
