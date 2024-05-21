@@ -74,9 +74,11 @@ public struct PlatformName: Codable, Hashable, Equatable {
     /// All supported platforms sorted for presentation.
     public static let sortedPlatforms: [PlatformName] = [
         .iOS, .iOSAppExtension,
-        .macOS, .macOSAppExtension,
+        .iPadOS,
         .catalyst, .catalystOSAppExtension,
+        .macOS, .macOSAppExtension,
         .tvOS, .tvOSAppExtension,
+        .visionOS,
         .watchOS, .watchOSAppExtension,
         .swift
     ]

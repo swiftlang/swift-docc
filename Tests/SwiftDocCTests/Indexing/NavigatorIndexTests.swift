@@ -1034,6 +1034,7 @@ Root
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "tvOS"), .tvOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "ios"), .undefined, "Incorrect capitalization")
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "iOS"), .iOS)
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "iPadOS"), .iPadOS)
         
         // Check ID mapping
         XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass", with: .swift))
@@ -1076,6 +1077,9 @@ Root
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
         availabilityInfo = availabilities[1]
         XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
+        XCTAssertTrue(availabilityInfo.belongs(to: .iPadOS))
+        XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .iPadOS, version: Platform.Version(string: "10.15.0")!)))
+        availabilityInfo = availabilities[2]
         XCTAssertTrue(availabilityInfo.belongs(to: .macCatalyst))
         XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .macCatalyst, version: Platform.Version(string: "13.0")!)))
         
