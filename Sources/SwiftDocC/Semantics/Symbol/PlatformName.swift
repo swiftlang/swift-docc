@@ -66,6 +66,8 @@ public struct PlatformName: Codable, Hashable, Equatable {
     public static let catalystOSAppExtension = PlatformName(rawValue: "macCatalystAppExtension", displayName: "Mac Catalyst App Extension")
     /// The Swift toolchain platform.
     public static let swift = PlatformName(rawValue: "swift", displayName: "Swift")
+    /// The iPad platform.
+    public static let iPadOS = PlatformName(rawValue: "iPadOS")
     
     /// All supported platforms sorted for presentation.
     public static let sortedPlatforms: [PlatformName] = [

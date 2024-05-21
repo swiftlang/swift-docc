@@ -131,7 +131,7 @@ public struct DefaultAvailability: Codable, Equatable {
     /// or have the same availability information as another platform.
     static let fallbackPlatforms: [PlatformName : PlatformName] = [
         .catalyst:.iOS,
-        PlatformName(operatingSystemName: "iPadOS"):.iOS
+        .iPadOS:.iOS
     ]
 
     /// Creates a default availability module.
