@@ -68,6 +68,8 @@ public struct PlatformName: Codable, Hashable, Equatable {
     public static let swift = PlatformName(rawValue: "swift", displayName: "Swift")
     /// The iPad platform.
     public static let iPadOS = PlatformName(rawValue: "iPadOS")
+    /// Apple's visionOS operating system.
+    public static let visionOS = PlatformName(rawValue: "visionOS")
     
     /// All supported platforms sorted for presentation.
     public static let sortedPlatforms: [PlatformName] = [

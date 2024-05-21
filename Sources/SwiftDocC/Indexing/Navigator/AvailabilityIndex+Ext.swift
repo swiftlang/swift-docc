@@ -260,6 +260,7 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         public static let tvOS = Platform.Name(name: "tvOS", mask: 1 << 4)
         public static let macCatalyst = Platform.Name(name: "Mac Catalyst", mask: 1 << 5)
         public static let iPadOS = Platform.Name(name: "iPadOS", mask: 1 << 6)
+        public static let visionOS = Platform.Name(name: "visionOS", mask: 1 << 7)
         
         // A mask including all the platforms
         public static let any = Platform.Name(name: "all", mask: ID.max)
@@ -287,6 +288,8 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
                 return .macCatalyst
             case "ipados":
                 return .iPadOS
+            case "visionos":
+                return .visionOS
             default:
                 return .undefined
             }
