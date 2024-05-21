@@ -62,18 +62,91 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 // post-process the declaration to combine adjacent text fragments
                 var processedDeclaration: [DeclarationRenderSection.Token] = []
                 var currentToken: DeclarationRenderSection.Token? = nil
-                for token in translatedDeclaration {
-                    if let previousToken = currentToken {
+                for var token in translatedDeclaration {
+                    if var previousToken = currentToken {
+                        if previousToken.kind == .text,
+                           previousToken.highlightDiff == true,
+                           token.highlightDiff != true,
+                           previousToken.text.last?.isWhitespace == true
+                        {
+                            // if we've ended a span of highlighted tokens with trailing whitespace,
+                            // trim the space out of the highlighted section before continuing
+                            if previousToken.text.allSatisfy(\.isWhitespace) {
+                                // if the last token was all whitespace, just convert it to be unhighlighted
+                                previousToken = .init(
+                                    text: previousToken.text,
+                                    kind: .text,
+                                    highlightDiff: nil)
+                            } else {
+                                // otherwise, split off the trailing whitespace into a new token and
+                                // save off the rest of the highlighted text
+                                let trimmedText = previousToken.text.removingTrailingWhitespace()
+                                let trailingWhitespace = previousToken.text.suffix(previousToken.text.count - trimmedText.count)
+                                processedDeclaration.append(.init(
+                                    text: trimmedText,
+                                    kind: .text,
+                                    highlightDiff: previousToken.highlightDiff))
+
+                                // save the trailing whitespace into `previousToken` so we can
+                                // potentially combine it with the next token below
+                                previousToken = .init(
+                                    text: String(trailingWhitespace),
+                                    kind: .text,
+                                    highlightDiff: nil)
+                            }
+                        } else if previousToken.highlightDiff != true,
+                                  token.highlightDiff == true,
+                                  token.kind == .text,
+                                  token.text.first?.isWhitespace == true
+                        {
+                            // if we're about to start a span of highlighted tokens with leading
+                            // whitespace, trim the space out of the highlighted section before
+                            // continuing
+                            if token.text.allSatisfy(\.isWhitespace) {
+                                // if this token is all whitespace, just convert it to be unhighlighted
+                                token = .init(
+                                    text: token.text,
+                                    kind: .text,
+                                    highlightDiff: nil)
+                            } else {
+                                // otherwise, split the whitespace into a new token and save the
+                                // remainder back into the token being processed
+                                let trimmedText = token.text.removingLeadingWhitespace()
+                                let leadingWhitespace = token.text.prefix(token.text.count - trimmedText.count)
+                                token = .init(
+                                    text: trimmedText,
+                                    kind: .text,
+                                    highlightDiff: token.highlightDiff)
+                                // if we can combine the whitespace with the previous token, do that
+                                if previousToken.kind == .text {
+                                    previousToken = .init(
+                                        text: previousToken.text + leadingWhitespace,
+                                        kind: .text,
+                                        highlightDiff: previousToken.highlightDiff)
+                                } else {
+                                    // otherwise, save off the previous token and create a new token
+                                    // with just the whitespace in it
+                                    processedDeclaration.append(previousToken)
+                                    previousToken = .init(
+                                        text: String(leadingWhitespace),
+                                        kind: .text,
+                                        highlightDiff: nil)
+                                }
+                            }
+                        }
+
                         if previousToken.kind == .text,
                             token.kind == .text,
                             previousToken.highlightDiff == token.highlightDiff
                         {
-                            currentToken = .init(
+                            // combine adjacent text tokens if they're both highlighted or plain
+                            token = .init(
                                 text: previousToken.text + token.text,
                                 kind: .text,
                                 highlightDiff: previousToken.highlightDiff)
-                            continue
                         } else {
+                            // otherwise, just save off the previous token so we can store the next
+                            // one for the next iteration
                             processedDeclaration.append(previousToken)
                         }
                     }
