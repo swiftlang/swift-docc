@@ -17,6 +17,8 @@ extension Docc {
     struct GenerateChangelog: ParsableCommand {
         
         // MARK: - Configuration
+        
+        static var logHandle: LogHandle = .standardOutput
 
         /// Command line configuration.
         static var configuration = CommandConfiguration(
@@ -62,15 +64,17 @@ extension Docc {
         // MARK: - Execution
         
         public mutating func run() throws {
-            var initialDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: initialDocCArchivePath)
-            var newDocCArchiveAPIs: [URL] = try findAllSymbolLinks(initialPath: newerDocCArchivePath)
+            var initialDocCArchiveAPIs: [URL] = []
+            var newDocCArchiveAPIs: [URL] = []
             
             if showAllSymbols {
-                print("Showing ALL symbols.")
+                print("Showing ALL symbols.", to: &Docc.GenerateChangelog.logHandle)
                 initialDocCArchiveAPIs = try findAllSymbolLinks_Full(initialPath: initialDocCArchivePath)
                 newDocCArchiveAPIs = try findAllSymbolLinks_Full(initialPath: newerDocCArchivePath)
             } else {
-                print("Showing ONLY high-level symbol diffs: modules, classes, protocols, and structs.")
+                print("Showing ONLY high-level symbol diffs: modules, classes, protocols, and structs.", to: &Docc.GenerateChangelog.logHandle)
+                initialDocCArchiveAPIs = try findAllSymbolLinks(initialPath: initialDocCArchivePath)
+                newDocCArchiveAPIs = try findAllSymbolLinks(initialPath: newerDocCArchivePath)
             }
             
             let initialSet = Set(initialDocCArchiveAPIs)
@@ -96,14 +100,7 @@ extension Docc {
                 let content = fileNameAndContent.value
                 let filePath = initialDocCArchivePath.deletingLastPathComponent().appendingPathComponent(fileName)
                 try FileManager.default.createFile(at: filePath, contents: Data(content.utf8))
-                print("\nOutput file path: \(filePath)")
-            }
-        }
-        
-        /// Pretty print all symbols' url identifiers into a pretty format, with a new line between each symbol.
-        func printAllSymbols(symbols: [URL]) {
-            for symbol in symbols {
-                print(symbol)
+                print("\nOutput file path: \(filePath)", to: &Docc.GenerateChangelog.logHandle)
             }
         }
         
