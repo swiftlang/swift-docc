@@ -12,12 +12,12 @@ import Foundation
 
 /// A style for how to render links to a property list key or an entitlement key.
 public enum PropertyListTitleStyle: String, Codable, Equatable {
-    /// Render links to the symbol using the raw key, for example, "com.apple.enableDataAccess".
+    /// Render links to the property list key using the raw key, for example "com.apple.enableDataAccess".
     ///
     /// ## See Also
     /// - ``TopicRenderReference/PropertyListKeyNames/rawKey``
     case useRawKey = "symbol"
-    /// Render links to the symbol using a special "IDE title" name, for example, "Enables Data Access".
+    /// Render links to the property list key using the display name, for example "Enables Data Access".
     ///
     /// ## See Also
     /// - ``TopicRenderReference/PropertyListKeyNames/displayName``
