@@ -218,9 +218,7 @@ private extension LinkDestinationSummary {
             isBeta: platforms?.contains(where: { $0.isBeta == true }) ?? false,
             isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true }) ?? false,
             defaultImplementationCount: nil,
-            titleStyle: self.kind.isSymbol ? .symbol : .title,
-            name: title,
-            ideTitle: nil,
+            propertyListKeyNames: nil,
             tags: nil,
             images: topicImages ?? []
         )
