@@ -3045,6 +3045,7 @@ Document
          
         let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         let protocolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let functionReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
         
         // Verify the MyKit module
         
@@ -3098,6 +3099,17 @@ Document
         for moduleVariant in protocolRenderNode.metadata.modulesVariants.variants {
             XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
         }
+        
+        // Verify the MyFunction node
+        
+        let functionNode = try context.entity(with: functionReference)
+        let functionSymbol = try XCTUnwrap(functionNode.semantic as? Symbol)
+        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: functionNode.reference, source: nil)
+        let functionRenderNode = try XCTUnwrap(translator.visit(functionSymbol) as? RenderNode)
+        XCTAssertTrue(functionRenderNode.metadata.modulesVariants.variants.isEmpty)
+        // Test that the symbol name `MyKit` is not added as a related module.
+        XCTAssertNil((functionRenderNode.metadata.modulesVariants.defaultValue!.first!.relatedModules))
+        XCTAssertTrue(functionRenderNode.metadata.extendedModuleVariants.variants.isEmpty)
     }
     
     /// Tests that we correctly resolve links in automatic inherited API Collections.
