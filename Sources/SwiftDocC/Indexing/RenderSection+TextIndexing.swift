@@ -328,15 +328,15 @@ extension AttributesRenderSection {
 
 extension PlistDetailsRenderSection {
     public var headings: [String] {
-        if let ideTitle = details.ideTitle {
-            return [details.name, ideTitle]
+        if let displayName = details.displayName {
+            return [details.rawKey, displayName]
         } else {
-            return [details.name]
+            return [details.rawKey]
         }
     }
     
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
-        return [details.name, details.ideTitle ?? ""].joined(separator: " ")
+        return [details.rawKey, details.displayName ?? ""].joined(separator: " ")
     }
 }
 
