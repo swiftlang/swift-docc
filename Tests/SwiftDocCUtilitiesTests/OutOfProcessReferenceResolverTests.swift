@@ -314,6 +314,14 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
            XCTFail("Unexpected fragments variant patch")
         }
 
+        XCTAssertNil(entity.topicRenderReference.conformance)
+        XCTAssertNil(entity.topicRenderReference.estimatedTime)
+        XCTAssertNil(entity.topicRenderReference.defaultImplementationCount)
+        XCTAssertFalse(entity.topicRenderReference.isBeta)
+        XCTAssertFalse(entity.topicRenderReference.isDeprecated)
+        XCTAssertNil(entity.topicRenderReference.propertyListKeyNames)
+        XCTAssertNil(entity.topicRenderReference.tags)
+        
         XCTAssertEqual(entity.topicRenderReference.images.count, 1)
         let topicImage = try XCTUnwrap(entity.topicRenderReference.images.first)
         XCTAssertEqual(topicImage.type, .card)
