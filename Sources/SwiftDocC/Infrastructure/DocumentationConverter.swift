@@ -166,7 +166,11 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         // Inject current platform versions if provided
-        if let currentPlatforms {
+        if var currentPlatforms {
+            // Add missing platforms if their fallback platform is present.
+            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
+                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            }
             self.context.externalMetadata.currentPlatforms = currentPlatforms
         }
     }

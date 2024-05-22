@@ -96,7 +96,14 @@ public struct AutomaticCuration {
                 else {
                     return
                 }
-                
+
+                // If this symbol is an overload group and all its overloaded children were manually
+                // curated elsewhere, skip it so it doesn't clutter the curation hierarchy with a
+                // duplicate symbol.
+                if let overloads = context.topicGraph.overloads(of: reference), overloads.isEmpty {
+                    return
+                }
+
                 let childNode = try context.entity(with: reference)
                 guard let childSymbol = childNode.semantic as? Symbol else {
                     return
