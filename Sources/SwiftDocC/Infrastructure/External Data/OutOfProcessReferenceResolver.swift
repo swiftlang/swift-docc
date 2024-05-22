@@ -157,7 +157,6 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
             isBeta: (resolvedInformation.platforms ?? []).contains(where: { $0.isBeta == true }),
             isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
-            titleStyle: resolvedInformation.kind.isSymbol ? .symbol : .title,
             images: resolvedInformation.topicImages ?? []
         )
         for variant in resolvedInformation.variants ?? [] {
