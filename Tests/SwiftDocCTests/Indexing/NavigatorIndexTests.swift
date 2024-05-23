@@ -19,8 +19,6 @@ let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
-    let iPadOSPlatformName = Platform.Name("iPadOS", id: 6)
-    
     struct Language: OptionSet {
         let rawValue: UInt8
         
@@ -433,7 +431,7 @@ Root
             let navigatorIndex = builder.navigatorIndex!
             XCTAssertEqual(
                 navigatorIndex.availabilityIndex.platforms,
-                [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName]
+                [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS]
             )
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
@@ -817,7 +815,7 @@ Root
             
             let navigatorIndex = builder.navigatorIndex!
             
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
+            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -867,7 +865,7 @@ Root
             // Read the index back from disk
             let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
             
-            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
+            XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
                 Platform.Version(string: "13.0")!,
                 Platform.Version(string: "10.15")!,
@@ -905,7 +903,7 @@ Root
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
         let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
         
-        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, iPadOSPlatformName])
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS, .iPadOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
             Platform.Version(string: "13.0")!,
             Platform.Version(string: "10.15")!,
@@ -1008,7 +1006,7 @@ Root
         
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
         XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
-        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, iPadOSPlatformName])
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, .iPadOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .macOS), Set([
             Platform.Version(string: "10.9")!,
             Platform.Version(string: "10.10")!,
@@ -1030,12 +1028,13 @@ Root
             Platform.Version(string: "13.0")!,
         ]))
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
-        XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, iPadOSPlatformName]))
+        XCTAssertEqual(Set(navigatorIndex.availabilityIndex.platforms(for: InterfaceLanguage.swift) ?? []), Set([.watchOS, .iOS, .macCatalyst, .tvOS, .macOS, .iPadOS]))
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "macOS"), .macOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "watchOS"), .watchOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "tvOS"), .tvOS)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "ios"), .undefined, "Incorrect capitalization")
         XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "iOS"), .iOS)
+        XCTAssertEqual(navigatorIndex.availabilityIndex.platform(named: "iPadOS"), .iPadOS)
         
         // Check ID mapping
         XCTAssertNotNil(navigatorIndex.id(for:"/documentation/sidekit/sideclass", with: .swift))
@@ -1078,6 +1077,9 @@ Root
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
         availabilityInfo = availabilities[1]
         XCTAssertFalse(availabilityInfo.belongs(to: .macOS))
+        XCTAssertTrue(availabilityInfo.belongs(to: .iPadOS))
+        XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .iPadOS, version: Platform.Version(string: "10.15.0")!)))
+        availabilityInfo = availabilities[2]
         XCTAssertTrue(availabilityInfo.belongs(to: .macCatalyst))
         XCTAssertTrue(availabilityInfo.isAvailable(on: Platform(name: .macCatalyst, version: Platform.Version(string: "13.0")!)))
         
