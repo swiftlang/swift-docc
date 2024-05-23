@@ -1235,7 +1235,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: symbol.extendedModuleVariants,
             transform: { (_, value) in
                 let relatedModules: [String]?
-                if value != moduleName.displayName {
+                // Don't add the module name of extensions made in the compiled module.
+                if (value != moduleName.displayName) && (value != moduleName.symbolName) {
                     relatedModules = [value]
                 } else {
                     relatedModules = nil
