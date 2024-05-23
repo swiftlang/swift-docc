@@ -636,7 +636,7 @@ extension NavigatorIndex {
                 return
             }
             
-            // A render node holds is structured differently depending on if it was created by "rendering" a documentation node 
+            // A render node is structured differently depending on if it was created by "rendering" a documentation node 
             // or if it was deserialized from a documentation archive.
             //
             // If it was created by rendering a documentation node, all variant information is stored in each individual variant collection and the variant overrides are nil.
