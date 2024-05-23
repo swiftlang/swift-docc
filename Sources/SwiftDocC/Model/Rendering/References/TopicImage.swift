@@ -78,11 +78,3 @@ extension TopicImage {
     }
     
 }
-
-extension RenderNode {
-    var icon: RenderReferenceIdentifier? {
-        return metadata.images.first { image in
-            image.type == .icon
-        }?.identifier
-    }
-}
