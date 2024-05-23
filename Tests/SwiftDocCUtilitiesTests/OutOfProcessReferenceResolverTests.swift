@@ -124,12 +124,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
 
         let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
-        
-        let titleVariant = try XCTUnwrap(entity.topicRenderReference.titleVariants.variants.first(where: { $0.traits == variantTraits }))
-        XCTAssertEqual(titleVariant.applyingPatchTo(entity.topicRenderReference.title), "Resolved Variant Title")
-        
-        let abstractVariant = try XCTUnwrap(entity.topicRenderReference.abstractVariants.variants.first(where: { $0.traits == variantTraits }))
-        XCTAssertEqual(abstractVariant.applyingPatchTo(entity.topicRenderReference.abstract), [.text("Resolved variant abstract for this topic.")])
+        XCTAssertEqual(entity.topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
+        XCTAssertEqual(entity.topicRenderReference.abstractVariants.value(for: variantTraits), [.text("Resolved variant abstract for this topic.")])
         
         let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
         XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
@@ -299,12 +295,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(entity.topicRenderReference.fragments, [.init(text: "declaration fragment", kind: .text, preciseIdentifier: nil)])
         
         let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage("com.test.another-language.id")]
-        
-        let titleVariant = try XCTUnwrap(entity.topicRenderReference.titleVariants.variants.first(where: { $0.traits == variantTraits }))
-        XCTAssertEqual(titleVariant.applyingPatchTo(entity.topicRenderReference.title), "Resolved Variant Title")
-        
-        let abstractVariant = try XCTUnwrap(entity.topicRenderReference.abstractVariants.variants.first(where: { $0.traits == variantTraits }))
-        XCTAssertEqual(abstractVariant.applyingPatchTo(entity.topicRenderReference.abstract), [.text("Resolved variant abstract for this topic.")])
+        XCTAssertEqual(entity.topicRenderReference.titleVariants.value(for: variantTraits), "Resolved Variant Title")
+        XCTAssertEqual(entity.topicRenderReference.abstractVariants.value(for: variantTraits), [.text("Resolved variant abstract for this topic.")])
         
         let fragmentVariant = try XCTUnwrap(entity.topicRenderReference.fragmentsVariants.variants.first(where: { $0.traits == variantTraits }))
         XCTAssertEqual(fragmentVariant.patch.map(\.operation), [.replace])
@@ -314,6 +306,14 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
            XCTFail("Unexpected fragments variant patch")
         }
 
+        XCTAssertNil(entity.topicRenderReference.conformance)
+        XCTAssertNil(entity.topicRenderReference.estimatedTime)
+        XCTAssertNil(entity.topicRenderReference.defaultImplementationCount)
+        XCTAssertFalse(entity.topicRenderReference.isBeta)
+        XCTAssertFalse(entity.topicRenderReference.isDeprecated)
+        XCTAssertNil(entity.topicRenderReference.propertyListKeyNames)
+        XCTAssertNil(entity.topicRenderReference.tags)
+        
         XCTAssertEqual(entity.topicRenderReference.images.count, 1)
         let topicImage = try XCTUnwrap(entity.topicRenderReference.images.first)
         XCTAssertEqual(topicImage.type, .card)

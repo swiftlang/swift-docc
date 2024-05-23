@@ -1303,24 +1303,6 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
     
     func testExpectedRoleHeadingIsAssigned() throws {
-        func renderNodeArticleFromReferencePath(
-            referencePath: String
-        ) throws -> RenderNode {
-            let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
-                path: referencePath,
-                sourceLanguage: .swift
-            )
-            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-            var translator = RenderNodeTranslator(
-                context: context,
-                bundle: bundle,
-                identifier: reference,
-                source: nil
-            )
-            return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
-        }
-
         let exampleDocumentation = Folder(
             name: "unit-test.docc",
             content: [
@@ -1385,6 +1367,15 @@ class RenderNodeTranslatorTests: XCTestCase {
         let tempURL = try createTempFolder(content: [exampleDocumentation])
         let (_, bundle, context) = try loadBundle(from: tempURL)
 
+        func renderNodeArticleFromReferencePath(
+            referencePath: String
+        ) throws -> RenderNode {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: referencePath, sourceLanguage: .swift)
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+            return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
+        }
+        
         // Assert that articles that curates any symbol gets 'API Collection' assigned as the eyebrow title.
         var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/APICollection")
         XCTAssertEqual(renderNode.metadata.roleHeading, "API Collection")

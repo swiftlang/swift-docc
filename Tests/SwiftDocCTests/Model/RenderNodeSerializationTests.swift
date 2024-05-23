@@ -165,7 +165,7 @@ class RenderNodeSerializationTests: XCTestCase {
         XCTAssertNotNil(renderNode.projectFiles())
         XCTAssertEqual(renderNode.projectFiles()?.url.lastPathComponent, "project.zip")
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 0)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 0)
         XCTAssertEqual(renderNode.downloadReferences().count, 1)
         
         // Check the output of the dictionary
