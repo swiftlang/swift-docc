@@ -23,6 +23,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return nil
             }
 
+            /// Convert a ``SymbolGraph`` declaration fragment into a ``DeclarationRenderSection/Token``
+            /// by resolving any symbol USRs to the appropriate reference link.
             func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment, highlightDiff: Bool? = nil) -> DeclarationRenderSection.Token {
                 let reference: ResolvedTopicReference?
                 if let preciseIdentifier = fragment.preciseIdentifier,
@@ -38,10 +40,14 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString, highlightDiff: highlightDiff)
             }
 
+            /// Convenience overload for `translateFragment(_:highlightDiff:)` that can be used in
+            /// an iterator mapping.
             func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
                 return translateFragment(fragment, highlightDiff: nil)
             }
 
+            /// Translate a whole ``SymbolGraph`` declaration to a ``DeclarationRenderSection``
+            /// declaration and highlight any tokens that aren't shared with a sequence of common tokens.
             func translateDeclaration(
                 _ declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],
                 commonFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]
@@ -183,6 +189,68 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return .init(declarations: otherDeclarations, displayIndex: displayIndex)
             }
 
+            /// "Pre-process" a declaration fragment by eagerly splitting apart text fragments
+            /// into chunks that are more likely to be held in common with other declarations.
+            ///
+            /// This method exists to clean up the diff visualization in circumstances where parts
+            /// of a text fragment are shared in common, but have been combined with other text
+            /// that is not shared. For example, a declaration such as `myFunc<T>(param: T)` will
+            /// have a text fragment `>(` before the parameter list, which is technically not
+            /// shared with a similar declaration `myFunc(param: Int)` which only has a `(`
+            /// fragment.
+            ///
+            /// Text should be broken up in three scenarios:
+            /// 1. Before a parenthesis or comma, as in the previous example,
+            /// 2. Before and after whitespace, to increase the chances of matching non-whitespace
+            ///    tokens with each other, and
+            /// 3. After a `?` character, to eagerly separate optional parameter types from their
+            ///    surrounding syntax.
+            ///
+            /// > Note: Any adjacent text fragments that are both shared or highlighted should
+            /// > be recombined after translation, to allow Swift-DocC-Render to correctly format
+            /// > Swift declarations into multiple lines. This is performed as part of
+            /// > `translateDeclaration(_:commonFragments:)` above.
+            func preProcessFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+                guard fragment.kind == .text, !fragment.spelling.isEmpty else {
+                    return [fragment]
+                }
+                var textPartitions: [String] = []
+                var substringIndex = fragment.spelling.startIndex
+                var currentElement = fragment.spelling[substringIndex]
+
+                func areInSameChunk(_ currentElement: Character, _ nextElement: Character) -> Bool {
+                    if "(),".contains(nextElement) {
+                        // an open paren means we have a token like `>(` which should be split
+                        // a close paren means we have a token like ` = nil)` which should be split
+                        // a comma is similar to the close paren situation
+                        return false
+                    } else if currentElement.isWhitespace != nextElement.isWhitespace {
+                        // break whitespace into their own blocks
+                        return false
+                    } else if currentElement == "?" {
+                        // if we have a token like `?>` or similar we should break the fragment
+                        return false
+                    } else {
+                        return true
+                    }
+                }
+
+                // FIXME: replace this with `chunked(by:)` if we add swift-algorithms as a dependency
+                for (nextIndex, nextElement) in fragment.spelling.indexed().dropFirst() {
+                    if !areInSameChunk(currentElement, nextElement) {
+                        textPartitions.append(String(fragment.spelling[substringIndex..<nextIndex]))
+                        substringIndex = nextIndex
+                    }
+                    currentElement = nextElement
+                }
+
+                if substringIndex != fragment.spelling.endIndex {
+                    textPartitions.append(String(fragment.spelling[substringIndex...]))
+                }
+
+                return textPartitions.map({ .init(kind: .text, spelling: $0, preciseIdentifier: nil) })
+            }
+
             var declarations = [DeclarationRenderSection]()
             for pair in declaration {
                 let (platforms, declaration) = pair
@@ -201,55 +269,13 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     assert(declarationFragments != nil, "Overloaded symbols must have declaration fragments.")
                     return declarationFragments.map({ (declaration: $0, reference: overloadReference )})
                 }), !overloadDeclarations.isEmpty {
-                    func preProcessFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-                        guard fragment.kind == .text, !fragment.spelling.isEmpty else {
-                            return [fragment]
-                        }
-                        // what follows is a recreation of `Collection.chunked(by:)` from Swift-Algorithms.
-                        // FIXME: replace this with `chunked(by:)` if we add swift-algorithms as a dependency
-                        var textPartitions: [String] = []
-                        var substringIndex = fragment.spelling.startIndex
-                        var currentElement = fragment.spelling[substringIndex]
-
-                        func shouldSplit(_ currentElement: Character, _ nextElement: Character) -> Bool {
-                            if "(),".contains(nextElement) {
-                                // an open paren means we have a token like `>(` which should be split
-                                // a close paren means we have a token like ` = nil)` which should be split
-                                // a comma is similar to the close paren situation
-                                return true
-                            } else if currentElement.isWhitespace != nextElement.isWhitespace {
-                                // break whitespace into their own blocks
-                                return true
-                            } else if currentElement == "?" {
-                                // if we have a token like `?>` or similar we should break the fragment
-                                return true
-                            } else {
-                                return false
-                            }
-                        }
-
-                        for (nextIndex, nextElement) in fragment.spelling.indexed().dropFirst() {
-                            if shouldSplit(currentElement, nextElement) {
-                                textPartitions.append(String(fragment.spelling[substringIndex..<nextIndex]))
-                                substringIndex = nextIndex
-                            }
-                            currentElement = nextElement
-                        }
-
-                        if substringIndex != fragment.spelling.endIndex {
-                            textPartitions.append(String(fragment.spelling[substringIndex...]))
-                        }
-
-                        return textPartitions.map({ .init(kind: .text, spelling: $0, preciseIdentifier: nil) })
-                    }
-                    // Collect the "common fragments" so we can highlight the ones that are different
-                    // in each declaration
-
                     // Pre-process the declarations by splitting text fragments apart to increase legibility
                     let mainDeclaration = declaration.declarationFragments.flatMap(preProcessFragment(_:))
                     let processedOverloadDeclarations = overloadDeclarations.map({ ($0.declaration.flatMap(preProcessFragment(_:)), $0.reference) })
                     let preProcessedDeclarations = [mainDeclaration] + processedOverloadDeclarations.map(\.0)
 
+                    // Collect the "common fragments" so we can highlight the ones that are different
+                    // in each declaration
                     let commonFragments = longestCommonSubsequence(preProcessedDeclarations)
 
                     renderedTokens = translateDeclaration(mainDeclaration, commonFragments: commonFragments)
