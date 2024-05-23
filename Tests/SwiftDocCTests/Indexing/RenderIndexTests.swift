@@ -704,7 +704,7 @@ final class RenderIndexTests: XCTestCase {
                       "identifier" : "plus.svg",
                       "variants" : [
                         {
-                          "url" : "\/images\/plus.svg",
+                          "url" : "\/images\/org.swift.docc.Book\/plus.svg",
                           "traits" : [
                             "1x",
                             "light"
