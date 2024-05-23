@@ -34,9 +34,11 @@ class AvailabilityRenderOrderTests: XCTestCase {
         // Additionally verify all the platforms have their correctly spelled name including spaces.
         XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), [
             "iOS 12.0", "iOS App Extension 12.0",
-            "macOS 10.12", "macOS App Extension 10.12",
+            "iPadOS 12.0",
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
+            "macOS 10.12", "macOS App Extension 10.12",
             "tvOS 12.0", "tvOS App Extension 12.0",
+            "visionOS 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
             "Swift 4.2"
         ])
@@ -50,9 +52,11 @@ class AvailabilityRenderOrderTests: XCTestCase {
         let roundtripNode = try RenderNode.decode(fromJSON: roundtripData)
         XCTAssertEqual(roundtripNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), [
             "iOS 12.0", "iOS App Extension 12.0",
-            "macOS 10.12", "macOS App Extension 10.12",
+            "iPadOS 12.0",
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
+            "macOS 10.12", "macOS App Extension 10.12",
             "tvOS 12.0", "tvOS App Extension 12.0",
+            "visionOS 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
             "Swift 4.2"
         ])

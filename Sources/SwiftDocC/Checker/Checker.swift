@@ -270,7 +270,7 @@ public struct CompositeChecker: Checker {
     public var checkers: [AnyChecker]
 
     /// Creates a checker that performs the combined work of the given checkers.
-    public init(_ checkers: some Sequence<Checker>) {
+    public init(_ checkers: some Sequence<any Checker>) {
         self.checkers = checkers.map { $0.any() }
     }
     

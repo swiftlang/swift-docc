@@ -49,9 +49,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                     role: role,
                     fragments: resolvedEntityDeclarationFragments?.declarationFragments.map { fragment in
                         return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-                    },
-                    estimatedTime: nil,
-                    titleStyle: resolvedEntityKind.isSymbol ? .symbol : .title
+                    }
                 ),
                 renderReferenceDependencies: RenderReferenceDependencies(),
                 sourceLanguages: [resolvedEntityLanguage]

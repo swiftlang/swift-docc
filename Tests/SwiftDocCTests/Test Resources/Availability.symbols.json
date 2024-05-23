@@ -10,10 +10,10 @@
   "module": {
     "name": "Availability",
     "platform": {
-      "architecture": "x86_64",
+      "architecture": "arm64",
       "vendor": "apple",
       "operatingSystem": {
-        "name": "macosx",
+        "name": "ios",
         "minimumVersion": {
           "major": 10,
           "minor": 10,
@@ -126,6 +126,13 @@
         },
         {
           "domain": "iOS",
+          "introduced": {
+            "major": 12,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "visionOS",
           "introduced": {
             "major": 12,
             "minor": 0
