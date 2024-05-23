@@ -635,6 +635,79 @@ Root
         """)
     }
     
+    func testNavigatorWithDifferentSwiftAndObjectiveCHierarchies() throws {
+        let (_, bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        
+        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.identifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.identifier, sortRootChildrenByName: true, groupByLanguage: true)
+        fromMemoryBuilder.setup()
+        fromDecodedBuilder.setup()
+        
+        for identifier in context.knownPages {
+            let source = context.documentURL(for: identifier)
+            let entity = try context.entity(with: identifier)
+            
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            XCTAssertNil(renderNode.variantOverrides)
+            try fromMemoryBuilder.index(renderNode: renderNode)
+            
+            let encoded = try RenderJSONEncoder.makeEncoder(emitVariantOverrides: true).encode(renderNode)
+            let decoded = try RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: encoded)
+            XCTAssertNotNil(decoded.variantOverrides)
+            try fromDecodedBuilder.index(renderNode: decoded)
+        }
+        
+        fromMemoryBuilder.finalize()
+        fromDecodedBuilder.finalize()
+        let fromMemoryNavigatorTree  = try XCTUnwrap(fromMemoryBuilder.navigatorIndex).navigatorTree.root
+        let fromDecodedNavigatorTree = try XCTUnwrap(fromDecodedBuilder.navigatorIndex).navigatorTree.root
+        
+        XCTAssertEqual(fromMemoryNavigatorTree.dumpTree(), fromDecodedNavigatorTree.dumpTree())
+        XCTAssertEqual(fromMemoryNavigatorTree.dumpTree(), """
+        [Root]
+        ┣╸Objective-C
+        ┃ ┗╸GeometricalShapes
+        ┃   ┣╸Structures
+        ┃   ┣╸TLACircle
+        ┃   ┃ ┣╸Instance Properties
+        ┃   ┃ ┣╸center
+        ┃   ┃ ┗╸radius
+        ┃   ┣╸Variables
+        ┃   ┣╸TLACircleDefaultRadius
+        ┃   ┣╸TLACircleNull
+        ┃   ┣╸TLACircleZero
+        ┃   ┣╸Functions
+        ┃   ┣╸TLACircleToString
+        ┃   ┣╸TLACircleFromString
+        ┃   ┣╸TLACircleIntersects
+        ┃   ┣╸TLACircleIsEmpty
+        ┃   ┣╸TLACircleIsNull
+        ┃   ┗╸TLACircleMake
+        ┗╸Swift
+          ┗╸GeometricalShapes
+            ┣╸Structures
+            ┗╸Circle
+              ┣╸Initializers
+              ┣╸init()
+              ┣╸init(center: CGPoint, radius: CGFloat)
+              ┣╸init(string: String)
+              ┣╸Instance Properties
+              ┣╸var center: CGPoint
+              ┣╸var debugDescription: String
+              ┣╸var isEmpty: Bool
+              ┣╸var isNull: Bool
+              ┣╸var radius: CGFloat
+              ┣╸Instance Methods
+              ┣╸func intersects(Circle) -> Bool
+              ┣╸Type Properties
+              ┣╸static let defaultRadius: CGFloat
+              ┣╸static let null: Circle
+              ┗╸static let zero: Circle
+        """)
+    }
+    
     func testNavigatorIndexGenerationVariantsPayload() throws {
         let jsonFile = Bundle.module.url(forResource: "Variant-render-node", withExtension: "json", subdirectory: "Test Resources")!
         let jsonData = try Data(contentsOf: jsonFile)
