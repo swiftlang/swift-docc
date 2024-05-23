@@ -1017,12 +1017,11 @@ extension NavigatorIndex {
             if emitJSONRepresentation {
                 let renderIndex = RenderIndex.fromNavigatorIndex(navigatorIndex, with: self)
                 
-                let jsonEncoder = JSONEncoder()
-                if shouldPrettyPrintOutputJSON {
-                    jsonEncoder.outputFormatting = [.sortedKeys, .prettyPrinted]
-                } else {
-                    jsonEncoder.outputFormatting = [.sortedKeys]
-                }
+                let jsonEncoder = RenderJSONEncoder.makeEncoder(
+                    prettyPrint: shouldPrettyPrintOutputJSON,
+                    assetPrefixComponent: bundleIdentifier.split(separator: "/").joined(separator: "-")
+                )
+                jsonEncoder.outputFormatting.insert(.sortedKeys)
                 
                 let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
                 do {
