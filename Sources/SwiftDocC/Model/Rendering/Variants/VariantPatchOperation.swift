@@ -56,26 +56,87 @@ public enum VariantPatchOperation<Value: Codable> {
     }
 }
 
-extension VariantCollection.Variant where Value: RangeReplaceableCollection {
-    /// Applies the variant's patch operations to a given value and returns the patched value.
-    ///
-    /// - Parameter originalValue: The value that the variant will apply the patch operations to.
-    /// - Returns: The value after applying all patch operations.
-    func applyingPatchTo(_ originalValue: Value) -> Value {
-        var result = originalValue
-        for operation in patch {
-            switch operation {
-            case .replace(let newValue):
-                result = newValue
-            case .add(let newValue):
-                result.append(contentsOf: newValue)
-            case .remove:
-                result.removeAll()
-            }
-        }
-        return result
+// The synthesized implementation is sufficient for this conformance.
+extension VariantPatchOperation: Equatable where Value: Equatable {}
+
+// MARK: Applying patches
+
+/// A type that can be transformed by incrementally applying variant patch operations.
+protocol VariantCollectionPatchable {
+    /// Apply an "add" patch operation to the value
+    mutating func add(_ other: Self)
+    /// Apply a "remove" patch operation to the value
+    mutating func remove()
+}
+
+extension Optional: VariantCollectionPatchable where Wrapped: VariantCollectionPatchable {
+    mutating func add(_ other: Wrapped?) {
+        guard var wrapped, let other else { return }
+        wrapped.add(other)
+        self = wrapped
+    }
+    
+    mutating func remove() {
+        self = nil
     }
 }
 
-// The synthesized implementation is sufficient for this conformance.
-extension VariantPatchOperation: Equatable where Value: Equatable {}
+extension Array: VariantCollectionPatchable {
+    mutating func add(_ other: [Element]) {
+        append(contentsOf: other)
+    }
+    
+    mutating func remove() {
+        self.removeAll()
+    }
+}
+
+extension String: VariantCollectionPatchable {
+    mutating func add(_ other: String) {
+        append(contentsOf: other)
+    }
+    
+    mutating func remove() {
+        self.removeAll()
+    }
+}
+
+extension VariantCollection where Value: VariantCollectionPatchable {
+    /// Returns the transformed value after applying the patch operations for all variants that match the given source language to the default value.
+    /// - Parameters:
+    ///   - language: The source language that determine what variant's patches to apply to the default value.
+    /// - Returns: The transformed value, or the default value if no variants match the given source language.
+    func value(for language: SourceLanguage) -> Value {
+        applied(to: defaultValue, for: [.interfaceLanguage(language.id)])
+    } 
+    
+    /// Returns the transformed value after applying the patch operations for all variants that match the given traits to the default value.
+    /// - Parameters:
+    ///   - traits: The traits that determine what variant's patches to apply to the default value.
+    /// - Returns: The transformed value, or the default value if no variants match the given traits.
+    func value(for traits: [RenderNode.Variant.Trait]) -> Value {
+        applied(to: defaultValue, for: traits)
+    }
+    
+    /// Returns the transformed value after applying the patch operations for all variants that match the given traits to the original value.
+    /// - Parameters:
+    ///   - originalValue: The original value to transform.
+    ///   - traits: The traits that determine what variant's patches to apply to the original value.
+    /// - Returns: The transformed value, or the original value if no variants match the given traits.
+    func applied(to originalValue: Value, for traits: [RenderNode.Variant.Trait]) -> Value {
+        var patchedValue = originalValue
+        for variant in variants where variant.traits == traits {
+            for patch in variant.patch {
+                switch patch {
+                case .replace(let value):
+                    patchedValue = value
+                case .add(let value):
+                    patchedValue.add(value)
+                case .remove:
+                    patchedValue.remove()
+                }
+            }
+        }
+        return patchedValue
+    }
+}

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -75,61 +75,10 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
 }
 
 extension RenderNode {
-    private static let typesThatShouldNotUseNavigatorTitle: Set<NavigatorIndex.PageType> = [
-        .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType, .extension
-    ]
-    
-    /// Returns a navigator title preferring the fragments inside the metadata, if applicable.
-    func navigatorTitle() -> String? {
-        let fragments: [DeclarationRenderSection.Token]?
-        
-        // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (github.com/apple/swift-docc/issues/176).
-        if identifier.sourceLanguage == .swift || (metadata.navigatorTitle ?? []).isEmpty {
-            let pageType = navigatorPageType()
-            guard !Self.typesThatShouldNotUseNavigatorTitle.contains(pageType) else {
-                return metadata.title
-            }
-            fragments = metadata.fragments
-        } else {
-            fragments = metadata.navigatorTitle
-        }
-        
-        return fragments?.map(\.text).joined() ?? metadata.title
-    }
-    
     /// Returns the NavigatorIndex.PageType indicating the type of the page.
+    @_disfavoredOverload
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func navigatorPageType() -> NavigatorIndex.PageType {
-        
-        // This is a workaround to support plist keys.
-        if let roleHeading = metadata.roleHeading?.lowercased() {
-            if roleHeading == "property list key" {
-                return .propertyListKey
-            } else if roleHeading == "property list key reference" {
-                return .propertyListKeyReference
-            }
-        }
-        
-        switch self.kind {
-        case .article:
-            if let role = metadata.role {
-                return NavigatorIndex.PageType(role: role)
-            }
-            return NavigatorIndex.PageType.article
-        case .tutorial:
-            return NavigatorIndex.PageType.tutorial
-        case .section:
-            return NavigatorIndex.PageType.section
-        case .overview:
-            return NavigatorIndex.PageType.overview
-        case .symbol:
-            if let symbolKind = metadata.symbolKind {
-                return NavigatorIndex.PageType(symbolKind: symbolKind)
-            }
-            if let role = metadata.role {
-                return NavigatorIndex.PageType(role: role)
-            }
-            return NavigatorIndex.PageType.symbol
-        }
+        return (self as any NavigatorIndexableRenderNodeRepresentation).navigatorPageType()
     }
-    
 }
