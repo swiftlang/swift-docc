@@ -1162,7 +1162,34 @@ Root
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
     }
     
-    func testNavigatorIndexDifferenHasherGeneration() throws {
+    func testCustomIconsInNavigator() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent") // This content has a @PageImage with the "icon" purpose
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.identifier, sortRootChildrenByName: true)
+        builder.setup()
+        
+        for identifier in context.knownPages {
+            let source = context.documentURL(for: identifier)
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            try builder.index(renderNode: renderNode)
+        }
+        
+        builder.finalize()
+        
+        let renderIndexData = try Data(contentsOf: targetURL.appendingPathComponent("index.json"))
+        let renderIndex = try JSONDecoder().decode(RenderIndex.self, from: renderIndexData)
+        
+        let imageReference = try XCTUnwrap(renderIndex.references["plus.svg"])
+        XCTAssertEqual(imageReference.asset.variants.values.map(\.path).sorted(), [
+            "/images/\(bundle.identifier)/plus.svg",
+        ])
+    }
+    
+    func testNavigatorIndexDifferentHasherGeneration() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
