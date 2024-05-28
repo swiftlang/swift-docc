@@ -2607,7 +2607,7 @@
                     "kind": {
                         "type": "string",
                         "enum": [
-                            "keyword", "attribute", "number", "string", "identifier", "typeIdentifier", "genericParameter", "text", "internalParam", "externalParam", "label"
+                            "keyword", "attribute", "number", "string", "identifier", "typeIdentifier", "genericParameter", "text", "internalParam", "externalParam", "label", "highlightDiff"
                         ]
                     },
                     "identifier": {
@@ -2617,8 +2617,11 @@
                     "preciseIdentifier": {
                         "type": "string"
                     },
-                    "highlightDiff": {
-                        "type": "boolean"
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
                     }
                 }
             },

@@ -25,7 +25,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
             /// Convert a ``SymbolGraph`` declaration fragment into a ``DeclarationRenderSection/Token``
             /// by resolving any symbol USRs to the appropriate reference link.
-            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment, highlightDiff: Bool? = nil) -> DeclarationRenderSection.Token {
+            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment, highlightDiff: Bool = false) -> DeclarationRenderSection.Token {
                 let reference: ResolvedTopicReference?
                 if let preciseIdentifier = fragment.preciseIdentifier,
                    let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
@@ -37,13 +37,16 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 }
 
                 // Add the declaration token
-                return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString, highlightDiff: highlightDiff)
+                return DeclarationRenderSection.Token(
+                    fragment: fragment,
+                    identifier: reference?.absoluteString,
+                    highlightDiff: highlightDiff)
             }
 
             /// Convenience overload for `translateFragment(_:highlightDiff:)` that can be used in
             /// an iterator mapping.
             func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
-                return translateFragment(fragment, highlightDiff: nil)
+                return translateFragment(fragment, highlightDiff: false)
             }
 
             /// Translate a whole ``SymbolGraph`` declaration to a ``DeclarationRenderSection``
@@ -70,86 +73,111 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 var currentToken: DeclarationRenderSection.Token? = nil
                 for var token in translatedDeclaration {
                     if var previousToken = currentToken {
-                        if previousToken.kind == .text,
-                           previousToken.highlightDiff == true,
-                           token.highlightDiff != true,
-                           previousToken.text.last?.isWhitespace == true
+                        if previousToken.kind == .highlightDiff,
+                           token.kind != .highlightDiff,
+                           let previousInnerToken = previousToken.tokens?.last,
+                           previousInnerToken.kind == .text,
+                           previousInnerToken.text.last?.isWhitespace == true
                         {
+                            var newTokens: [DeclarationRenderSection.Token] = previousToken.tokens!.dropLast()
                             // if we've ended a span of highlighted tokens with trailing whitespace,
                             // trim the space out of the highlighted section before continuing
-                            if previousToken.text.allSatisfy(\.isWhitespace) {
+                            if previousInnerToken.text.allSatisfy(\.isWhitespace) {
                                 // if the last token was all whitespace, just convert it to be unhighlighted
-                                previousToken = .init(
+                                // and save off the remaining highlighted tokens
+                                processedDeclaration.append(.init(
                                     text: previousToken.text,
-                                    kind: .text,
-                                    highlightDiff: nil)
+                                    kind: previousToken.kind,
+                                    tokens: newTokens))
+                                previousToken = .init(
+                                    text: previousInnerToken.text,
+                                    kind: .text)
                             } else {
                                 // otherwise, split off the trailing whitespace into a new token and
                                 // save off the rest of the highlighted text
-                                let trimmedText = previousToken.text.removingTrailingWhitespace()
-                                let trailingWhitespace = previousToken.text.suffix(previousToken.text.count - trimmedText.count)
+                                let trimmedText = previousInnerToken.text.removingTrailingWhitespace()
+                                newTokens.append(.init(text: trimmedText, kind: .text))
                                 processedDeclaration.append(.init(
-                                    text: trimmedText,
-                                    kind: .text,
-                                    highlightDiff: previousToken.highlightDiff))
+                                    text: previousToken.text,
+                                    kind: previousToken.kind,
+                                    tokens: newTokens))
+                                let trailingWhitespace = previousInnerToken.text.suffix(previousInnerToken.text.count - trimmedText.count)
 
-                                // save the trailing whitespace into `previousToken` so we can
-                                // potentially combine it with the next token below
+                                // save the trailing whitespace into `previousToken` as a plain-text
+                                // token so we can potentially combine it with the next token below
                                 previousToken = .init(
                                     text: String(trailingWhitespace),
-                                    kind: .text,
-                                    highlightDiff: nil)
+                                    kind: .text)
                             }
-                        } else if previousToken.highlightDiff != true,
-                                  token.highlightDiff == true,
-                                  token.kind == .text,
-                                  token.text.first?.isWhitespace == true
+                        } else if previousToken.kind != .highlightDiff,
+                                  token.kind == .highlightDiff,
+                                  token.tokens?.count == 1,
+                                  let innerToken = token.tokens?.first,
+                                  innerToken.kind == .text,
+                                  innerToken.text.first?.isWhitespace == true
                         {
                             // if we're about to start a span of highlighted tokens with leading
                             // whitespace, trim the space out of the highlighted section before
                             // continuing
-                            if token.text.allSatisfy(\.isWhitespace) {
-                                // if this token is all whitespace, just convert it to be unhighlighted
-                                token = .init(
-                                    text: token.text,
-                                    kind: .text,
-                                    highlightDiff: nil)
+                            if innerToken.text.allSatisfy(\.isWhitespace) {
+                                // if this token is all whitespace, just extract it so it renders
+                                // without highlighting
+                                token = innerToken
                             } else {
                                 // otherwise, split the whitespace into a new token and save the
                                 // remainder back into the token being processed
-                                let trimmedText = token.text.removingLeadingWhitespace()
-                                let leadingWhitespace = token.text.prefix(token.text.count - trimmedText.count)
+                                let trimmedText = innerToken.text.removingLeadingWhitespace()
+                                let leadingWhitespace = innerToken.text.prefix(innerToken.text.count - trimmedText.count)
                                 token = .init(
-                                    text: trimmedText,
-                                    kind: .text,
-                                    highlightDiff: token.highlightDiff)
+                                    text: token.text,
+                                    kind: token.kind,
+                                    tokens: [.init(text: trimmedText, kind: .text)])
                                 // if we can combine the whitespace with the previous token, do that
                                 if previousToken.kind == .text {
                                     previousToken = .init(
                                         text: previousToken.text + leadingWhitespace,
-                                        kind: .text,
-                                        highlightDiff: previousToken.highlightDiff)
+                                        kind: .text)
                                 } else {
                                     // otherwise, save off the previous token and create a new token
                                     // with just the whitespace in it
                                     processedDeclaration.append(previousToken)
                                     previousToken = .init(
                                         text: String(leadingWhitespace),
-                                        kind: .text,
-                                        highlightDiff: nil)
+                                        kind: .text)
                                 }
                             }
                         }
 
                         if previousToken.kind == .text,
-                            token.kind == .text,
-                            previousToken.highlightDiff == token.highlightDiff
+                            token.kind == .text
                         {
-                            // combine adjacent text tokens if they're both highlighted or plain
+                            // combine adjacent text tokens if they're both plain
                             token = .init(
                                 text: previousToken.text + token.text,
-                                kind: .text,
-                                highlightDiff: previousToken.highlightDiff)
+                                kind: .text)
+                        } else if previousToken.kind == .highlightDiff, token.kind == .highlightDiff {
+                            if let previousInnerTokens = previousToken.tokens,
+                               let previousInnerToken = previousInnerTokens.last,
+                               let nextInnerTokens = token.tokens, nextInnerTokens.count == 1,
+                               let nextInnerToken = nextInnerTokens.first,
+                               previousInnerToken.kind == .text, nextInnerToken.kind == .text
+                            {
+                                // combine adjacent text tokens if they're both highlighted
+                                var newTokens: [DeclarationRenderSection.Token] = previousInnerTokens.dropLast()
+                                newTokens.append(.init(
+                                    text: previousInnerToken.text + nextInnerToken.text,
+                                    kind: .text))
+                                token = .init(
+                                    text: "",
+                                    kind: .highlightDiff,
+                                    tokens: newTokens)
+                            } else {
+                                // fold adjacent highlighted tokens into the same token list
+                                token = .init(
+                                    text: previousToken.text,
+                                    kind: previousToken.kind,
+                                    tokens: (previousToken.tokens ?? []) + (token.tokens ?? []))
+                            }
                         } else {
                             // otherwise, just save off the previous token so we can store the next
                             // one for the next iteration

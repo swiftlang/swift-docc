@@ -19,12 +19,19 @@ extension DeclarationRenderSection.Token {
     init(
         fragment: SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment,
         identifier: String?,
-        highlightDiff: Bool? = nil
+        highlightDiff: Bool = false
     ) {
-        self.text = fragment.spelling
-        self.kind = Kind(rawValue: fragment.kind.rawValue) ?? .text
-        self.identifier = identifier
-        self.preciseIdentifier = fragment.preciseIdentifier
-        self.highlightDiff = highlightDiff
+        let token = Self.init(
+            text: fragment.spelling,
+            kind: Kind(rawValue: fragment.kind.rawValue) ?? .text,
+            tokens: nil,
+            identifier: identifier,
+            preciseIdentifier: fragment.preciseIdentifier)
+
+        if highlightDiff {
+            self.init(text: "", kind: .highlightDiff, tokens: [token])
+        } else {
+            self = token
+        }
     }
 }
