@@ -1,0 +1,393 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)"
+  },
+  "module": {
+    "name": "FancyOverloads",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 12,
+          "minor": 4
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.class",
+        "displayName": "Class"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads7MyClassC",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClass"
+      ],
+      "names": {
+        "title": "MyClass",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "class"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "docComment": {
+        "module": "FancyOverloads",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 9,
+                "character": 4
+              },
+              "end": {
+                "line": 9,
+                "character": 25
+              }
+            },
+            "text": "This is a cool class."
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyClass"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClass",
+        "myFunc(param:)"
+      ],
+      "names": {
+        "title": "myFunc(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "myFunc"
+          },
+          {
+            "kind": "text",
+            "spelling": "<"
+          },
+          {
+            "kind": "genericParameter",
+            "spelling": "S"
+          },
+          {
+            "kind": "text",
+            "spelling": ">("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "param"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "S",
+            "preciseIdentifier": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "S",
+                "preciseIdentifier": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "S",
+            "index": 0,
+            "depth": 0
+          }
+        ],
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "S",
+            "rhs": "StringProtocol",
+            "rhsPrecise": "s:Sy"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "myFunc"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "S"
+        },
+        {
+          "kind": "text",
+          "spelling": ">("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "S",
+          "preciseIdentifier": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "where"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "S"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "StringProtocol",
+          "preciseIdentifier": "s:Sy"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads7MyClassC6myFunc5paramySi_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyClass",
+        "myFunc(param:)"
+      ],
+      "names": {
+        "title": "myFunc(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "myFunc"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "param"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "myFunc"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "s:9FancyOverloads7MyClassC6myFunc5paramySi_tF",
+      "target": "s:9FancyOverloads7MyClassC"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF",
+      "target": "s:9FancyOverloads7MyClassC"
+    }
+  ]
+}
