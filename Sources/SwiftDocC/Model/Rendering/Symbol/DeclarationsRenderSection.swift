@@ -276,6 +276,7 @@ extension DeclarationRenderSection.Token: RenderJSONDiffable {
 
         diffBuilder.addDifferences(atKeyPath: \.text, forKey: CodingKeys.text)
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
 
         return diffBuilder.differences
     }
