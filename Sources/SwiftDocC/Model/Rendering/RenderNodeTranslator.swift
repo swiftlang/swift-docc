@@ -1546,16 +1546,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Children of the current symbol that have not been curated manually in a task group will all
             // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
-            let alreadyCurated = Set(sections.flatMap { $0.identifiers })
             let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
             
-            sections.append(contentsOf: groups.compactMap { group in
-                let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                guard !newReferences.isEmpty else { return nil }
-                
+            for group in groups {
+                let newReferences = group.references
                 contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
-                return TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences))
-            })
+
+                // If the section has been manually curated, merge the references of both the automatic curation and the manual curation into one section (rdar://61899214).
+                if let duplicateSectionIndex = sections.firstIndex(where: { $0.title == group.title }) {
+                    let originalSection = sections[duplicateSectionIndex]
+                    let combinedReferences = originalSection.identifiers + newReferences.map { $0.absoluteString }
+                    sections[duplicateSectionIndex] = TaskGroupRenderSection(title: originalSection.title, abstract: originalSection.abstract, discussion: originalSection.discussion, identifiers: combinedReferences)
+                } else {
+                    sections.append(TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences)))
+                }
+            }
             
             // Place "bottom" rendering preference automatic task groups
             // after any user-defined task groups but before automatic curation.
