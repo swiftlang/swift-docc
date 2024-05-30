@@ -34,7 +34,17 @@ class ConvertSubcommandTests: XCTestCase {
         // create template dir
         let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
-        
+
+        // store the template environment if it exists, and restore it after we mess with it
+        let existingTemplate = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
+        defer {
+            if let existingTemplate = existingTemplate {
+                SetEnvironmentVariable(TemplateOption.environmentVariableKey, existingTemplate)
+            } else {
+                UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
+            }
+        }
+
         // Tests a single input.
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
