@@ -20,26 +20,31 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         withExtension: "docc",
         subdirectory: "Test Bundles"
     )!
-    
+
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template",
         withExtension: nil,
         subdirectory: "Test Resources"
     )!
-    
+
     func testSourceRepositoryAllArgumentsSpecified() throws {
+        let checkoutPath = "checkout path"
+        var absoluteCheckoutPath = URL(fileURLWithPath: checkoutPath).absoluteString
+        let startIndex = absoluteCheckoutPath.index(absoluteCheckoutPath.startIndex, offsetBy: 7)
+        absoluteCheckoutPath = String(absoluteCheckoutPath[startIndex...])
+
         for sourceService in ["github", "gitlab", "bitbucket"] {
             try assertSourceRepositoryArguments(
-                checkoutPath: "checkout path",
+                checkoutPath: checkoutPath,
                 sourceService: sourceService,
                 sourceServiceBaseURL: "https://example.com/path/to/base"
             ) { action in
-                XCTAssertEqual(action.sourceRepository?.checkoutPath, "checkout path")
+                XCTAssertEqual(action.sourceRepository?.checkoutPath, absoluteCheckoutPath)
                 XCTAssertEqual(action.sourceRepository?.sourceServiceBaseURL.absoluteString, "https://example.com/path/to/base")
             }
         }
     }
-    
+
     func testDoesNotSetSourceRepositoryIfBothCheckoutPathAndsourceServiceBaseURLArgumentsAreMissing() throws {
         try assertSourceRepositoryArguments(
             checkoutPath: nil,
@@ -49,7 +54,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             XCTAssertNil(action.sourceRepository)
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceIsSpecifiedButNotSourceServiceBaseURL() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -67,7 +72,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceBaseURLIsSpecifiedButNotSourceService() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -85,7 +90,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceBaseURLIsInvalid() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -100,7 +105,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenCheckoutPathIsNotSpecified() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -118,7 +123,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     func testThrowsValidationErrorWhenSourceServiceIsInvalid() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(
@@ -133,7 +138,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             )
         }
     }
-    
+
     private func assertSourceRepositoryArguments(
         checkoutPath: String?,
         sourceService: String?,
@@ -141,7 +146,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         assertion: ((ConvertAction) throws -> Void)? = nil
     ) throws {
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
+
         var arguments: [String] = [testBundleURL.path]
         if let checkoutPath {
             arguments.append(contentsOf: ["--checkout-path", checkoutPath])
@@ -152,9 +157,9 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         if let sourceServiceBaseURL {
             arguments.append(contentsOf: ["--source-service-base-url", sourceServiceBaseURL])
         }
-        
+
         let convertOptions = try Docc.Convert.parse(arguments)
-        
+
         let result = try ConvertAction(fromConvertCommand: convertOptions)
         try assertion?(result)
     }
