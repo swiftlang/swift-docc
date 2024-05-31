@@ -784,6 +784,62 @@ class AutomaticCurationTests: XCTestCase {
             "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
         ])
     }
+    
+    func testAutomaticallyCuratedSymbolTopicsAreMergedWithManuallyCuratedTopics() throws {
+         for kind in availableNonExtensionSymbolKinds {
+             let containerID = "some-container-id"
+             let memberID = "some-member-id"
+             let topicSectionTitle = AutomaticCuration.groupTitle(for: kind)
+
+             let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+                 JSONFile(name: "ModuleName.symbols.json",
+                          content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                             makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                             makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                          ], relationships: [
+                             .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
+                          ])),
+                 TextFile(name: "SomeArticle.md", utf8Content: """
+              # Some article
+              
+              An article with some content.
+              """),
+                 TextFile(name: "SomeExtension.md", utf8Content: """
+             # ``ModuleName/SomeClass``
+             
+             Curate an article under a manually curated section and leave the symbol documentation to automatic curation.
+             
+             ## Topics
+             
+             ### \(topicSectionTitle)
+             
+             - <doc:SomeArticle>
+             """),
+             ])
+             let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+             let (_, bundle, context) = try loadBundle(from: catalogURL)
+
+             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift))
+
+             // Compile docs and verify the generated Topics section
+             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+             let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
+
+             // Verify that there are no duplicate sections in `SomeClass`'s "Topics" section
+             XCTAssertEqual(renderNode.topicSections.map { $0.title }, [topicSectionTitle])
+
+             // Verify that uncurated element `ModuleName/SomeClass/someMember` is
+             // automatically curated in `SomeClass`'s "Topics" under the existing manually curated topics section
+             // along with manually curated article "SomeArticle"
+             XCTAssertEqual([
+                 "doc://CatalogName/documentation/CatalogName/SomeArticle",
+                 "doc://CatalogName/documentation/ModuleName/SomeClass/someMember",
+             ], renderNode.topicSections.first?.identifiers)
+
+             // Verify that the merged section under `SideClass`'s "Topics" is correctly marked as containing manual content
+             XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
+         }
+     }
 }
 
 private func makeSymbol(
