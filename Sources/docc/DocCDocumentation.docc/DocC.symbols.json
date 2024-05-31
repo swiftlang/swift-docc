@@ -4121,7 +4121,7 @@
             "text" : ""
           },
           {
-            "text" : "> Note: Starting with version 5.11, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In"
+            "text" : "> Note: Starting with version 6.0, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In"
           },
           {
             "text" : "earlier versions, the `Redirected` directive is only supported as a top-level directive."

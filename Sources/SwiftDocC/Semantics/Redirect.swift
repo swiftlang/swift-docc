@@ -21,7 +21,7 @@ import Markdown
 /// @Redirected(from: "another/old/path/to/this/page")
 /// ```
 ///
-/// > Note: Starting with version 5.11, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In
+/// > Note: Starting with version 6.0, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In
 /// earlier versions, the `Redirected` directive is only supported as a top-level directive.
 ///
 /// ### Setting up Redirects
