@@ -28,18 +28,22 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
     )!
 
     func testSourceRepositoryAllArgumentsSpecified() throws {
-        let checkoutPath = "checkout path"
-        var absoluteCheckoutPath = URL(fileURLWithPath: checkoutPath).absoluteString
-        let startIndex = absoluteCheckoutPath.index(absoluteCheckoutPath.startIndex, offsetBy: 7)
-        absoluteCheckoutPath = String(absoluteCheckoutPath[startIndex...])
+        let tempDir = try createTemporaryDirectory(pathComponents: "addFileToCreateValidDirectory")
+        
+        // removing file:// prefix from checkout path because the directory is not
+        // recognized as a valid directory with it
+        let checkoutPath = tempDir.absoluteString
+        let startIndex = checkoutPath.index(checkoutPath.startIndex, offsetBy: 7)
+        let absoluteCheckoutPath = String(checkoutPath[startIndex...])
+
 
         for sourceService in ["github", "gitlab", "bitbucket"] {
             try assertSourceRepositoryArguments(
-                checkoutPath: checkoutPath,
+                checkoutPath: absoluteCheckoutPath,
                 sourceService: sourceService,
                 sourceServiceBaseURL: "https://example.com/path/to/base"
             ) { action in
-                XCTAssertEqual(action.sourceRepository?.checkoutPath, absoluteCheckoutPath)
+                XCTAssertEqual(action.sourceRepository?.checkoutPath, "\(absoluteCheckoutPath)/")
                 XCTAssertEqual(action.sourceRepository?.sourceServiceBaseURL.absoluteString, "https://example.com/path/to/base")
             }
         }
@@ -54,7 +58,29 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             XCTAssertNil(action.sourceRepository)
         }
     }
-
+    
+    func testThrowsValidationErrorWhenCheckoutPathIsInvalid() throws {
+        let tempDir = try createTemporaryDirectory(named: "tmp").appendingPathComponent("InvalidDirectory", isDirectory: false)
+        let absoluteCheckoutPath = tempDir.absoluteString
+        
+        for sourceService in ["github", "gitlab", "bitbucket"] {
+            XCTAssertThrowsError(
+                try assertSourceRepositoryArguments(
+                checkoutPath: absoluteCheckoutPath,
+                sourceService: sourceService,
+                sourceServiceBaseURL: "https://example.com/path/to/base"
+                )
+            ) { error in
+                XCTAssertEqual(
+                    (error as? ValidationError)?.message,
+                    """
+                    Checkout path directory '\(absoluteCheckoutPath)' doesn't exist for --checkout-path argument.
+                    """
+                )
+            }
+        }
+    }
+    
     func testThrowsValidationErrorWhenSourceServiceIsSpecifiedButNotSourceServiceBaseURL() throws {
         XCTAssertThrowsError(
             try assertSourceRepositoryArguments(

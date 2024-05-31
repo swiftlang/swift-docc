@@ -33,14 +33,12 @@ public struct SourceRepository {
         formatLineNumber: @escaping (Int) -> String
     ) {
 
-
-//        guard FileManager.default.directoryExists(atPath: checkoutPath) else {
-//            throw ValidationError("User provided checkout-path argument {checkoutPath} is invalid.")
-//        }
+        // Get the absolute path of a file without the file:// prefix because this function used to only
+        // expect absolute paths from a user and didn't convert checkoutPath to a URL and back.
         let absoluteCheckoutPath = URL(fileURLWithPath: checkoutPath).absoluteString
         let startIndex = absoluteCheckoutPath.index(absoluteCheckoutPath.startIndex, offsetBy: 7)
-        
         self.checkoutPath = String(absoluteCheckoutPath[startIndex...])
+
         self.sourceServiceBaseURL = sourceServiceBaseURL
         self.formatLineNumber = formatLineNumber
     }

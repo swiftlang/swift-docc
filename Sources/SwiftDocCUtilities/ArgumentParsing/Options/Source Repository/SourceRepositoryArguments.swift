@@ -15,7 +15,7 @@ import SwiftDocC
 /// Command-line arguments for specifying the catalog's source repository information.
 public struct SourceRepositoryArguments: ParsableArguments {
     public init() {}
-    
+
     /// The root path on disk of the repository's checkout.
     @Option(
         help: ArgumentHelp(
@@ -23,7 +23,7 @@ public struct SourceRepositoryArguments: ParsableArguments {
         )
     )
     public var checkoutPath: String?
-    
+
     /// The source code service used to host the project's sources.
     ///
     /// Required when using `--source-service-base-url`. Supported values are `github`, `gitlab`, and `bitbucket`.
@@ -36,7 +36,7 @@ public struct SourceRepositoryArguments: ParsableArguments {
         )
     )
     public var sourceService: String?
-    
+
     /// The base URL where the source service hosts the project's sources.
     ///
     /// Required when using `--source-service`. For example, `https://github.com/my-org/my-repo/blob/main`.
@@ -81,7 +81,10 @@ extension SourceRepository {
             guard let sourceServiceBaseURL = URL(string: sourceServiceBaseURL), sourceServiceBaseURL.scheme != nil, sourceServiceBaseURL.host != nil else {
                 throw ValidationError("Invalid URL '\(sourceServiceBaseURL)' for '--source-service-base-url' argument.")
             }
-            
+
+
+
+
             switch sourceService.lowercased() {
             case "github":
                 self = .github(checkoutPath: checkoutPath, sourceServiceBaseURL: sourceServiceBaseURL)
@@ -93,6 +96,10 @@ extension SourceRepository {
                 throw ValidationError(
                     "Unsupported source service '\(sourceService)'. Use 'github', 'gitlab', or 'bitbucket'."
                 )
+            }
+
+            guard FileManager.default.directoryExists(atPath: checkoutPath) else {
+                throw ValidationError("Checkout path directory '\(checkoutPath)' doesn't exist for --checkout-path argument.")
             }
         }
     }
