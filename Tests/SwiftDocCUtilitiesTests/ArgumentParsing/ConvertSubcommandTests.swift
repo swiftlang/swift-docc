@@ -26,6 +26,17 @@ class ConvertSubcommandTests: XCTestCase {
         Docc.Convert._errorLogHandle = .none
     }
 
+    override func setUpWithError() throws {
+        // By default, run all tests in a temporary directory to ensure that they are not affected
+        // by the machine environment.
+        let priorWorkingDirectory = FileManager.default.currentDirectoryPath
+        let temporaryDirectory = try createTemporaryDirectory()
+        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path())
+        addTeardownBlock {
+            FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
+        }
+    }
+
     /// Saves the current value of the documentation template environment variable, and adds a test teardown block to restore it.
     func saveCurrentTemplateEnvironmentVariable() {
         let existingTemplate = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
