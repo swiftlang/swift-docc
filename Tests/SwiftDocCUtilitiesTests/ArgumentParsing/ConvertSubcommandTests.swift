@@ -31,7 +31,7 @@ class ConvertSubcommandTests: XCTestCase {
         // by the machine environment.
         let priorWorkingDirectory = FileManager.default.currentDirectoryPath
         let temporaryDirectory = try createTemporaryDirectory()
-        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path())
+        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path)
         addTeardownBlock {
             FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
         }
