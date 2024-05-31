@@ -2001,13 +2001,13 @@
             "text" : ""
           },
           {
-            "text" : "When the ``style`` property is ``Style\/conceptual``, the symbol's name is rendered as \"conceptual\"—same as article names or tutorial names —where applicable. The default style is ``Style\/conceptual``."
+            "text" : "When the ``style`` property is ``Style\/conceptual``, the symbol's name is rendered as \"conceptual\"---same as article names or tutorial names---where applicable. The default style is ``Style\/conceptual``."
           },
           {
             "text" : ""
           },
           {
-            "text" : "When the ``style`` property is ``Style\/symbol``, the symbol's name is rendered as \"symbol\"—same as article names or tutorial names —where applicable. The default style is ``Style\/conceptual``."
+            "text" : "When the ``style`` property is ``Style\/symbol``, the symbol's name is rendered as \"symbol\"---same as article names or tutorial names---where applicable. The default style is ``Style\/conceptual``."
           },
           {
             "text" : ""
@@ -2247,34 +2247,34 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation."
+            "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation."
           },
           {
             "text" : ""
           },
           {
-            "text" : "When the ``behavior`` property is ``Behavior\/append``, the content from the documentation-extension file is added after the content from"
-          },
-          {
-            "text" : "the in-source documentation for that symbol."
-          },
-          {
-            "text" : "If a documentation-extension file doesn't have a `DocumentationExtension` directive, then it has the ``Behavior\/append`` behavior."
+            "text" : "By default, content from the documentation-extension file is added after the content from the in-source documentation for that symbol."
           },
           {
             "text" : ""
           },
           {
-            "text" : "When the ``behavior`` property is ``Behavior\/override``, the content from the documentation-extension file completely replaces the content"
+            "text" : "You get this default behavior in two cases:"
           },
           {
-            "text" : "from the in-source documentation for that symbol"
+            "text" : "- when the documentation-extension file doesn't have a `DocumentationExtension` directive"
+          },
+          {
+            "text" : "- when the `DocumentationExtension` directive explicitly specifies the ``Behavior\/append`` behavior"
           },
           {
             "text" : ""
           },
           {
-            "text" : "This directive is only valid within a ``Metadata`` directive:"
+            "text" : "The other merge behavior completely replaces the content from the in-source documentation for that symbol with the content from the documentation-extension file. To get this behavior, specify ``Behavior\/override`` as the merge behavior."
+          },
+          {
+            "text" : ""
           },
           {
             "text" : "```"
@@ -2292,10 +2292,16 @@
             "text" : "```"
           },
           {
+            "text" : ""
+          },
+          {
+            "text" : "The `DocumentationExtension` is only valid within a ``Metadata`` directive."
+          },
+          {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - mergeBehavior: The merge behavior for this documentation extension."
+            "text" : "  - mergeBehavior: A value of `append` or `override`, denoting whether an extension file's content amends or replaces the in-source documentation."
           },
           {
             "text" : "     **(required)**"
@@ -4094,13 +4100,28 @@
             "text" : ""
           },
           {
-            "text" : "If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL."
+            "text" : "If the page has moved more than once you can add multiple  `Redirected` directives, each specifying one previous URL. For example:"
           },
           {
             "text" : ""
           },
           {
-            "text" : "> Note: Starting with version 5.11, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In"
+            "text" : "```md"
+          },
+          {
+            "text" : "@Redirected(from: \"old\/path\/to\/this\/page\")"
+          },
+          {
+            "text" : "@Redirected(from: \"another\/old\/path\/to\/this\/page\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Note: Starting with version 6.0, the `Redirected` directive is supported both top-level and as a member of a ``Metadata`` directive. In"
           },
           {
             "text" : "earlier versions, the `Redirected` directive is only supported as a top-level directive."
@@ -4121,10 +4142,19 @@
             "text" : ""
           },
           {
-            "text" : "To find each page's `Redirected` values, pass the `--emit-digest` flag to DocC and read the \"linkable-entities.json\" file that this makes DocC write to the output directory. "
+            "text" : "To find each page’s Redirected values, pass the `--emit-digest` flag to DocC."
           },
           {
-            "text" : "Each \"entity\" in that file has a \"path\"---which represents the current relative path of that page---and an optional list of \"redirects\"---which represent all the `Redirected` values for page as they were authored in the markup. You can write either relative redirect values or absolute redirect values depending on what information you need to set HTTP \"301 Moved Permanently\" redirects on your web server."
+            "text" : "This flag configures DocC to write additional metadata files to the output directory."
+          },
+          {
+            "text" : "One of these files, `linkable-entities.json`, contains summarized information about all pages and on-page landmarks that you can link to from outside the DocC documentation."
+          },
+          {
+            "text" : "Each of these \"entities\" has a `\"path\"`---which represents the current relative path of that page---and an optional list of `\"redirects\"`---which represent all the `Redirected` values for page as they were authored in the markup."
+          },
+          {
+            "text" : "You can write either relative redirect values or absolute redirect values in the markup depending on what information you need when setting up HTTP \"301 Moved Permanently\" redirects on your web server."
           },
           {
             "text" : "- Parameters:"
@@ -5553,16 +5583,34 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive to set this page as a documentation root-level node."
+            "text" : "Configures an article to become a top-level page."
           },
           {
             "text" : ""
           },
           {
-            "text" : "This directive is only valid within a top-level ``Metadata`` directive:"
+            "text" : "If your documentation only consists of articles, without any framework documentation or other top-level pages, DocC will use the only article or the article with the same base name as the documentation catalog ('.docc' directory) as the top-level page."
           },
           {
-            "text" : "```"
+            "text" : "If the documentation doesn't contain an article with the same base name as the documentation catalog, DocC will synthesize a minimal top-level page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "To customize which article is the top-level page of your documentation, add a `TechnologyRoot` directive within a `Metadata` directive in that article:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "# Page Title"
+          },
+          {
+            "text" : ""
           },
           {
             "text" : "@Metadata {"
@@ -5575,6 +5623,45 @@
           },
           {
             "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Earlier Versions:"
+          },
+          {
+            "text" : "> Before Swift-DocC 6.0, article-only documentation catalogs require one of the articles to be marked as a `TechnologyRoot`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Containing Elements"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The following items can include a technology root element:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``Metadata``"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## See Also"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- <doc:formatting-your-documentation-content>"
           }
         ]
       },
