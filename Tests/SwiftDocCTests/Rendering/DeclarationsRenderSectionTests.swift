@@ -149,6 +149,6 @@ class DeclarationsRenderSectionTests: XCTestCase {
         let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
 
         XCTAssertEqual(declarationsSection.declarations.count, 2)
-        XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.macOS] }))
+        XCTAssert(declarationsSection.declarations.allSatisfy({ $0.platforms == [.iOS, .macOS] }))
     }
 }
