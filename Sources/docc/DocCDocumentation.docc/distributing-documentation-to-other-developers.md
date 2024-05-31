@@ -30,7 +30,7 @@ or use Xcode's _Build Documentation_ command.
 
 Alternatively, use the `docc` command-line tool directly, for example:
 
-```shell 
+```shell
 docc convert MyNewPackage.docc \
   --fallback-display-name MyNewPackage \
   --fallback-bundle-identifier com.example.MyNewPackage \
@@ -61,7 +61,7 @@ service configuration flags like so:
 docc convert […] \
     --source-service github \
     --source-service-base-url https://github.com/<org>/<repo>/blob/<branch> \
-    --checkout-path <absolute path to local checkout>
+    --checkout-path <absolute or relative path to local checkout>
 ```
 
 **GitLab**
@@ -69,7 +69,7 @@ docc convert […] \
 docc convert […] \
     --source-service gitlab \
     --source-service-base-url https://gitlab.com/<org>/<repo>/-/tree/<branch> \
-    --checkout-path <absolute path to local checkout>
+    --checkout-path <absolute or relative path to local checkout>
 ```
 
 **BitBucket**
@@ -77,11 +77,8 @@ docc convert […] \
 docc convert […] \
     --source-service bitbucket \
     --source-service-base-url https://bitbucket.org/<org>/<repo>/src/<branch> \
-    --checkout-path <absolute path to local checkout>
+    --checkout-path <absolute or relative path to local checkout>
 ```
-
-> Note: The option `--checkout-path` expects an absolute path to where the package 
-is checked out, not a relative path.
 
 These arguments can also be provided to `swift package generate-documentation`
 if you're using the SwiftPM DocC Plugin or via the `OTHER_DOCC_FLAGS` build
@@ -115,22 +112,22 @@ https://www.example.com/documentation/MyNewPackage/MyNewProtocol
 
 #### Host a Documentation Archive with a File Server
 
-You can host documentation archives you create with DocC from the Swift 5.7 
-toolchain and later using a regular file server. By default, the server hosts 
-the documentation at the root of the website, like the "MyNewPackage" example 
-above. To host the documentation at a specific subpath, pass a custom hosting 
+You can host documentation archives you create with DocC from the Swift 5.7
+toolchain and later using a regular file server. By default, the server hosts
+the documentation at the root of the website, like the "MyNewPackage" example
+above. To host the documentation at a specific subpath, pass a custom hosting
 base path for the `--hosting-base-path` option when you build the documentation
-archive. 
+archive.
 
-```shell 
+```shell
 docc convert MyNewPackage.docc \
   --additional-symbol-graph-dir .build \
   --output-dir MyNewPackage.doccarchive \
-  --hosting-base-path MyProject/Base/Path 
+  --hosting-base-path MyProject/Base/Path
 ```
 
 DocC adds the provided hosting base path before the path of each documentation
-page. For example, the URL to view for `MyNewProtocol` protocol in the 
+page. For example, the URL to view for `MyNewProtocol` protocol in the
 `MyNewPackage` documentation might resemble the following:
 
 ```
@@ -147,9 +144,9 @@ the `DOCC_HOSTING_BASE_PATH` build setting when building documentation in Xcode.
 
 #### Host a Documentation Archive Using Custom Routing
 
-A file server is the recommended solution to host your documentation. But, if 
+A file server is the recommended solution to host your documentation. But, if
 you need more control over how the server hosts your content, you can configure
-the request routing of your web server so it responds to documentation requests 
+the request routing of your web server so it responds to documentation requests
 with the data and assets within the documentation archive.
 
 > Note: The following sections use Apache as an example. Other web server
@@ -186,7 +183,7 @@ RewriteRule .* MyNewPackage.doccarchive/$0 [L]
 ```
 
 With these rules in place, the web server provides access to the contents of
-the documentation archive. 
+the documentation archive.
 
 After configuring your web server to host a documentation archive, keep it up
 to date by using a continuous integration workflow that builds the
