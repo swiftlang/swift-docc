@@ -27,7 +27,6 @@ class DeclarationsRenderSectionTests: XCTestCase {
             (.internalParam, "internalParam"),
             (.externalParam, "externalParam"),
             (.label, "label"),
-            (.highlightDiff, "highlightDiff"),
         ]
 
         for (token, string) in values {
@@ -75,46 +74,6 @@ class DeclarationsRenderSectionTests: XCTestCase {
                         )
                     ),
                 ])
-            )
-        }
-    }
-
-    func testDecodingTokensWithTokenArray() throws {
-        let values: [(DeclarationRenderSection.Token.Kind, String)] = [
-            (.keyword, "keyword"),
-            (.attribute, "attribute"),
-            (.number, "number"),
-            (.string, "string"),
-            (.identifier, "identifier"),
-            (.typeIdentifier, "typeIdentifier"),
-            (.genericParameter, "genericParameter"),
-            (.text, "text"),
-            (.internalParam, "internalParam"),
-            (.externalParam, "externalParam"),
-            (.label, "label"),
-            (.highlightDiff, "highlightDiff"),
-        ]
-
-        for (token, string) in values {
-            let jsonData = """
-            {
-                "text": "",
-                "kind": "\(string)",
-                "tokens": [
-                    {
-                        "text": "",
-                        "kind": "\(string)"
-                    }
-                ]
-            }
-            """.data(using: .utf8)!
-
-            XCTAssertEqual(
-                try JSONDecoder().decode(DeclarationRenderSection.Token.self, from: jsonData),
-                DeclarationRenderSection.Token(
-                    text: "",
-                    kind: token,
-                    tokens: [.init(text: "", kind: token)])
             )
         }
     }
@@ -236,9 +195,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             .init(text: "(", kind: .text),
             .init(text: "param", kind: .externalParam),
             .init(text: ": ", kind: .text),
-            .init(text: "", kind: .highlightDiff, tokens: [
-                .init(text: "Int", kind: .typeIdentifier, preciseIdentifier: "s:Si"),
-            ]),
+            .init(text: "Int", kind: .typeIdentifier, preciseIdentifier: "s:Si", highlight: .changed),
             .init(text: ")", kind: .text),
         ])
 
@@ -247,28 +204,23 @@ class DeclarationsRenderSectionTests: XCTestCase {
                 .init(text: "func", kind: .keyword),
                 .init(text: " ", kind: .text),
                 .init(text: "myFunc", kind: .identifier),
-                .init(text: "", kind: .highlightDiff, tokens: [
-                    .init(text: "<", kind: .text),
-                    .init(text: "S", kind: .genericParameter),
-                    .init(text: ">", kind: .text),
-                ]),
+                .init(text: "<", kind: .text, highlight: .changed),
+                .init(text: "S", kind: .genericParameter, highlight: .changed),
+                .init(text: ">", kind: .text, highlight: .changed),
                 .init(text: "(", kind: .text),
                 .init(text: "param", kind: .externalParam),
                 .init(text: ": ", kind: .text),
-                .init(text: "", kind: .highlightDiff, tokens: [
-                    .init(
-                        text: "S",
-                        kind: .typeIdentifier,
-                        preciseIdentifier: "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"),
-                ]),
+                .init(
+                    text: "S",
+                    kind: .typeIdentifier,
+                    preciseIdentifier: "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp",
+                    highlight: .changed),
                 .init(text: ") ", kind: .text),
-                .init(text: "", kind: .highlightDiff, tokens: [
-                    .init(text: "where", kind: .keyword),
-                    .init(text: " ", kind: .text),
-                    .init(text: "S", kind: .typeIdentifier),
-                    .init(text: " : ", kind: .text),
-                    .init(text: "StringProtocol", kind: .typeIdentifier, preciseIdentifier: "s:Sy"),
-                ])
+                .init(text: "where", kind: .keyword, highlight: .changed),
+                .init(text: " ", kind: .text, highlight: .changed),
+                .init(text: "S", kind: .typeIdentifier, highlight: .changed),
+                .init(text: " : ", kind: .text, highlight: .changed),
+                .init(text: "StringProtocol", kind: .typeIdentifier, preciseIdentifier: "s:Sy", highlight: .changed),
             ],
         ])
     }

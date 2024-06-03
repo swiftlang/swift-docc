@@ -25,7 +25,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
             /// Convert a ``SymbolGraph`` declaration fragment into a ``DeclarationRenderSection/Token``
             /// by resolving any symbol USRs to the appropriate reference link.
-            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment, highlightDiff: Bool? = nil) -> DeclarationRenderSection.Token {
+            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment, highlight: Bool) -> DeclarationRenderSection.Token {
                 let reference: ResolvedTopicReference?
                 if let preciseIdentifier = fragment.preciseIdentifier,
                    let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
@@ -37,13 +37,13 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 }
 
                 // Add the declaration token
-                return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString, highlightDiff: highlightDiff)
+                return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString, highlight: highlight)
             }
 
-            /// Convenience overload for `translateFragment(_:highlightDiff:)` that can be used in
+            /// Convenience wrapper for `translateFragment(_:highlight:)` that can be used in
             /// an iterator mapping.
             func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
-                return translateFragment(fragment, highlightDiff: nil)
+                return translateFragment(fragment, highlight: false)
             }
 
             /// Translate a whole ``SymbolGraph`` declaration to a ``DeclarationRenderSection``
@@ -61,7 +61,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         commonIndex += 1
                     } else {
                         // fragment is unique to this declaration, render highlighted
-                        translatedDeclaration.append(translateFragment(fragment, highlightDiff: true))
+                        translatedDeclaration.append(translateFragment(fragment, highlight: true))
                     }
                 }
 
@@ -71,8 +71,8 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 for var token in translatedDeclaration {
                     if var previousToken = currentToken {
                         if previousToken.kind == .text,
-                           previousToken.highlightDiff == true,
-                           token.highlightDiff != true,
+                           previousToken.highlight == .changed,
+                           token.highlight == nil,
                            previousToken.text.last?.isWhitespace == true
                         {
                             // if we've ended a span of highlighted tokens with trailing whitespace,
@@ -82,7 +82,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                 previousToken = .init(
                                     text: previousToken.text,
                                     kind: .text,
-                                    highlightDiff: nil)
+                                    highlight: nil)
                             } else {
                                 // otherwise, split off the trailing whitespace into a new token and
                                 // save off the rest of the highlighted text
@@ -91,17 +91,17 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                 processedDeclaration.append(.init(
                                     text: trimmedText,
                                     kind: .text,
-                                    highlightDiff: previousToken.highlightDiff))
+                                    highlight: previousToken.highlight))
 
                                 // save the trailing whitespace into `previousToken` so we can
                                 // potentially combine it with the next token below
                                 previousToken = .init(
                                     text: String(trailingWhitespace),
                                     kind: .text,
-                                    highlightDiff: nil)
+                                    highlight: nil)
                             }
-                        } else if previousToken.highlightDiff != true,
-                                  token.highlightDiff == true,
+                        } else if previousToken.highlight == nil,
+                                  token.highlight == .changed,
                                   token.kind == .text,
                                   token.text.first?.isWhitespace == true
                         {
@@ -113,7 +113,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                 token = .init(
                                     text: token.text,
                                     kind: .text,
-                                    highlightDiff: nil)
+                                    highlight: nil)
                             } else {
                                 // otherwise, split the whitespace into a new token and save the
                                 // remainder back into the token being processed
@@ -122,13 +122,13 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                 token = .init(
                                     text: trimmedText,
                                     kind: .text,
-                                    highlightDiff: token.highlightDiff)
+                                    highlight: token.highlight)
                                 // if we can combine the whitespace with the previous token, do that
                                 if previousToken.kind == .text {
                                     previousToken = .init(
                                         text: previousToken.text + leadingWhitespace,
                                         kind: .text,
-                                        highlightDiff: previousToken.highlightDiff)
+                                        highlight: previousToken.highlight)
                                 } else {
                                     // otherwise, save off the previous token and create a new token
                                     // with just the whitespace in it
@@ -136,20 +136,20 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                                     previousToken = .init(
                                         text: String(leadingWhitespace),
                                         kind: .text,
-                                        highlightDiff: nil)
+                                        highlight: nil)
                                 }
                             }
                         }
 
                         if previousToken.kind == .text,
                             token.kind == .text,
-                            previousToken.highlightDiff == token.highlightDiff
+                            previousToken.highlight == token.highlight
                         {
                             // combine adjacent text tokens if they're both highlighted or plain
                             token = .init(
                                 text: previousToken.text + token.text,
                                 kind: .text,
-                                highlightDiff: previousToken.highlightDiff)
+                                highlight: previousToken.highlight)
                         } else {
                             // otherwise, just save off the previous token so we can store the next
                             // one for the next iteration

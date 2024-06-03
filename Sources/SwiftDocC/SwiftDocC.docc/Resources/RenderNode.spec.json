@@ -2617,8 +2617,11 @@
                     "preciseIdentifier": {
                         "type": "string"
                     },
-                    "highlightDiff": {
-                        "type": "boolean"
+                    "highlight": {
+                        "type": "string",
+                        "enum": [
+                            "changed"
+                        ]
                     }
                 }
             },

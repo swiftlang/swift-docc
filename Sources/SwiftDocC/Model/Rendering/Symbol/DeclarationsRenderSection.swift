@@ -115,7 +115,14 @@ public struct DeclarationRenderSection: Codable, Equatable {
         /// If the token is a known symbol, its precise identifier as vended in the symbol graph.
         public let preciseIdentifier: String?
 
-        public let highlightDiff: Bool?
+        /// The kind of highlight the token should be rendered with.
+        public let highlight: Highlight?
+
+        /// The kinds of highlights that can be applied to a token.
+        public enum Highlight: String, Codable, RawRepresentable {
+            /// A highlight representing generalized change, not specifically added or removed.
+            case changed
+        }
 
         /// Creates a new declaration token with optional identifier and precise identifier.
         /// - Parameters:
@@ -128,19 +135,19 @@ public struct DeclarationRenderSection: Codable, Equatable {
             kind: Kind,
             identifier: String? = nil,
             preciseIdentifier: String? = nil,
-            highlightDiff: Bool? = nil
+            highlight: Highlight? = nil
         ) {
             self.text = text
             self.kind = kind
             self.identifier = identifier
             self.preciseIdentifier = preciseIdentifier
-            self.highlightDiff = highlightDiff
+            self.highlight = highlight
         }
         
         // MARK: - Codable
         
         private enum CodingKeys: CodingKey {
-            case text, kind, identifier, preciseIdentifier, highlightDiff, otherDeclarations
+            case text, kind, identifier, preciseIdentifier, highlight, otherDeclarations
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -150,7 +157,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
             try container.encode(kind, forKey: .kind)
             try container.encodeIfPresent(identifier, forKey: .identifier)
             try container.encodeIfPresent(preciseIdentifier, forKey: .preciseIdentifier)
-            try container.encodeIfPresent(highlightDiff, forKey: .highlightDiff)
+            try container.encodeIfPresent(highlight, forKey: .highlight)
         }
         
         public init(from decoder: Decoder) throws {
@@ -160,7 +167,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
             kind = try container.decode(Kind.self, forKey: .kind)
             preciseIdentifier = try container.decodeIfPresent(String.self, forKey: .preciseIdentifier)
             identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
-            highlightDiff = try container.decodeIfPresent(Bool.self, forKey: .highlightDiff)
+            highlight = try container.decodeIfPresent(Highlight.self, forKey: .highlight)
 
             if let reference = identifier {
                 decoder.registerReferences([reference])

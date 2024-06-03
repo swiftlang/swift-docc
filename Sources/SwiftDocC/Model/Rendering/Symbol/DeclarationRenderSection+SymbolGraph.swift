@@ -19,12 +19,16 @@ extension DeclarationRenderSection.Token {
     init(
         fragment: SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment,
         identifier: String?,
-        highlightDiff: Bool? = nil
+        highlight: Bool = false
     ) {
         self.text = fragment.spelling
         self.kind = Kind(rawValue: fragment.kind.rawValue) ?? .text
         self.identifier = identifier
         self.preciseIdentifier = fragment.preciseIdentifier
-        self.highlightDiff = highlightDiff
+        if highlight {
+            self.highlight = .changed
+        } else {
+            self.highlight = nil
+        }
     }
 }
