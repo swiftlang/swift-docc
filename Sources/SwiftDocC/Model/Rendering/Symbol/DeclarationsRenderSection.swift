@@ -80,9 +80,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         public let text: String
         /// The token programming kind.
         public let kind: Kind
-        /// Any child tokens, used for `highlightDiff`-type tokens.
-        public let tokens: [Token]?
-
+        
         /// The list of all expected tokens in a declaration.
         public enum Kind: String, Codable, RawRepresentable {
             /// A known keyword, like "class" or "var".
@@ -107,8 +105,6 @@ public struct DeclarationRenderSection: Codable, Equatable {
             case externalParam
             /// A label that precedes an identifier.
             case label
-            /// A container for tokens that should be highlighted as distinct from sibling declarations.
-            case highlightDiff
         }
         
         /// If the token is a known symbol, its identifier.
@@ -119,6 +115,8 @@ public struct DeclarationRenderSection: Codable, Equatable {
         /// If the token is a known symbol, its precise identifier as vended in the symbol graph.
         public let preciseIdentifier: String?
 
+        public let highlightDiff: Bool?
+
         /// Creates a new declaration token with optional identifier and precise identifier.
         /// - Parameters:
         ///   - text: The text content of the token.
@@ -128,21 +126,21 @@ public struct DeclarationRenderSection: Codable, Equatable {
         public init(
             text: String,
             kind: Kind,
-            tokens: [Token]? = nil,
             identifier: String? = nil,
-            preciseIdentifier: String? = nil
+            preciseIdentifier: String? = nil,
+            highlightDiff: Bool? = nil
         ) {
             self.text = text
             self.kind = kind
-            self.tokens = tokens
             self.identifier = identifier
             self.preciseIdentifier = preciseIdentifier
+            self.highlightDiff = highlightDiff
         }
         
         // MARK: - Codable
         
         private enum CodingKeys: CodingKey {
-            case text, kind, tokens, identifier, preciseIdentifier, otherDeclarations
+            case text, kind, identifier, preciseIdentifier, highlightDiff, otherDeclarations
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -150,9 +148,9 @@ public struct DeclarationRenderSection: Codable, Equatable {
             
             try container.encode(text, forKey: .text)
             try container.encode(kind, forKey: .kind)
-            try container.encodeIfPresent(tokens, forKey: .tokens)
             try container.encodeIfPresent(identifier, forKey: .identifier)
             try container.encodeIfPresent(preciseIdentifier, forKey: .preciseIdentifier)
+            try container.encodeIfPresent(highlightDiff, forKey: .highlightDiff)
         }
         
         public init(from decoder: Decoder) throws {
@@ -160,9 +158,9 @@ public struct DeclarationRenderSection: Codable, Equatable {
             
             text = try container.decode(String.self, forKey: .text)
             kind = try container.decode(Kind.self, forKey: .kind)
-            tokens = try container.decodeIfPresent([Token].self, forKey: .tokens)
             preciseIdentifier = try container.decodeIfPresent(String.self, forKey: .preciseIdentifier)
             identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
+            highlightDiff = try container.decodeIfPresent(Bool.self, forKey: .highlightDiff)
 
             if let reference = identifier {
                 decoder.registerReferences([reference])
@@ -276,7 +274,6 @@ extension DeclarationRenderSection.Token: RenderJSONDiffable {
 
         diffBuilder.addDifferences(atKeyPath: \.text, forKey: CodingKeys.text)
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
-        diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
 
         return diffBuilder.differences
     }
