@@ -25,10 +25,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
             /// Convert a ``SymbolGraph`` declaration fragment into a ``DeclarationRenderSection/Token``
             /// by resolving any symbol USRs to the appropriate reference link.
-            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment, highlight: Bool) -> DeclarationRenderSection.Token {
+            func translateFragment(
+                _ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment,
+                highlight: Bool
+            ) -> DeclarationRenderSection.Token {
                 let reference: ResolvedTopicReference?
                 if let preciseIdentifier = fragment.preciseIdentifier,
-                   let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                    let resolved = renderNodeTranslator.context.localOrExternalReference(
+                        symbolID: preciseIdentifier
+                    )
                 {
                     reference = resolved
                     renderNodeTranslator.collectedTopicReferences.append(resolved)
@@ -37,12 +42,18 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 }
 
                 // Add the declaration token
-                return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString, highlight: highlight)
+                return DeclarationRenderSection.Token(
+                    fragment: fragment,
+                    identifier: reference?.absoluteString,
+                    highlight: highlight
+                )
             }
 
             /// Convenience wrapper for `translateFragment(_:highlight:)` that can be used in
             /// an iterator mapping.
-            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
+            func translateFragment(
+                _ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment
+            ) -> DeclarationRenderSection.Token {
                 return translateFragment(fragment, highlight: false)
             }
 
@@ -65,114 +76,20 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     }
                 }
 
-                // post-process the declaration to combine adjacent text fragments
-                var processedDeclaration: [DeclarationRenderSection.Token] = []
-                var currentToken: DeclarationRenderSection.Token? = nil
-                for var token in translatedDeclaration {
-                    if var previousToken = currentToken {
-                        if previousToken.kind == .text,
-                           previousToken.highlight == .changed,
-                           token.highlight == nil,
-                           previousToken.text.last?.isWhitespace == true
-                        {
-                            // if we've ended a span of highlighted tokens with trailing whitespace,
-                            // trim the space out of the highlighted section before continuing
-                            if previousToken.text.allSatisfy(\.isWhitespace) {
-                                // if the last token was all whitespace, just convert it to be unhighlighted
-                                previousToken = .init(
-                                    text: previousToken.text,
-                                    kind: .text,
-                                    highlight: nil)
-                            } else {
-                                // otherwise, split off the trailing whitespace into a new token and
-                                // save off the rest of the highlighted text
-                                let trimmedText = previousToken.text.removingTrailingWhitespace()
-                                let trailingWhitespace = previousToken.text.suffix(previousToken.text.count - trimmedText.count)
-                                processedDeclaration.append(.init(
-                                    text: trimmedText,
-                                    kind: .text,
-                                    highlight: previousToken.highlight))
-
-                                // save the trailing whitespace into `previousToken` so we can
-                                // potentially combine it with the next token below
-                                previousToken = .init(
-                                    text: String(trailingWhitespace),
-                                    kind: .text,
-                                    highlight: nil)
-                            }
-                        } else if previousToken.highlight == nil,
-                                  token.highlight == .changed,
-                                  token.kind == .text,
-                                  token.text.first?.isWhitespace == true
-                        {
-                            // if we're about to start a span of highlighted tokens with leading
-                            // whitespace, trim the space out of the highlighted section before
-                            // continuing
-                            if token.text.allSatisfy(\.isWhitespace) {
-                                // if this token is all whitespace, just convert it to be unhighlighted
-                                token = .init(
-                                    text: token.text,
-                                    kind: .text,
-                                    highlight: nil)
-                            } else {
-                                // otherwise, split the whitespace into a new token and save the
-                                // remainder back into the token being processed
-                                let trimmedText = token.text.removingLeadingWhitespace()
-                                let leadingWhitespace = token.text.prefix(token.text.count - trimmedText.count)
-                                token = .init(
-                                    text: trimmedText,
-                                    kind: .text,
-                                    highlight: token.highlight)
-                                // if we can combine the whitespace with the previous token, do that
-                                if previousToken.kind == .text {
-                                    previousToken = .init(
-                                        text: previousToken.text + leadingWhitespace,
-                                        kind: .text,
-                                        highlight: previousToken.highlight)
-                                } else {
-                                    // otherwise, save off the previous token and create a new token
-                                    // with just the whitespace in it
-                                    processedDeclaration.append(previousToken)
-                                    previousToken = .init(
-                                        text: String(leadingWhitespace),
-                                        kind: .text,
-                                        highlight: nil)
-                                }
-                            }
-                        }
-
-                        if previousToken.kind == .text,
-                            token.kind == .text,
-                            previousToken.highlight == token.highlight
-                        {
-                            // combine adjacent text tokens if they're both highlighted or plain
-                            token = .init(
-                                text: previousToken.text + token.text,
-                                kind: .text,
-                                highlight: previousToken.highlight)
-                        } else {
-                            // otherwise, just save off the previous token so we can store the next
-                            // one for the next iteration
-                            processedDeclaration.append(previousToken)
-                        }
-                    }
-                    currentToken = token
-                }
-                if let currentToken = currentToken {
-                    processedDeclaration.append(currentToken)
-                }
-
-                return processedDeclaration
+                return postProcessTokens(translatedDeclaration)
             }
 
-            typealias OverloadDeclaration = (declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment], reference: ResolvedTopicReference)
+            typealias OverloadDeclaration = (
+                declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],
+                reference: ResolvedTopicReference
+            )
 
             func renderOtherDeclarationsTokens(
                 from overloadDeclarations: [OverloadDeclaration],
                 displayIndex: Int,
                 commonFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]
             ) -> DeclarationRenderSection.OtherDeclarations {
-                var otherDeclarations = [DeclarationRenderSection.OtherDeclarations.Declaration]()
+                var otherDeclarations: [DeclarationRenderSection.OtherDeclarations.Declaration] = []
 
                 for overloadDeclaration in overloadDeclarations {
                     let translatedDeclaration = translateDeclaration(
@@ -183,75 +100,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                         identifier: overloadDeclaration.reference.absoluteString))
 
                     // Add a topic reference to the overload
-                    renderNodeTranslator.collectedTopicReferences.append(overloadDeclaration.reference)
+                    renderNodeTranslator.collectedTopicReferences.append(
+                        overloadDeclaration.reference
+                    )
                 }
 
                 return .init(declarations: otherDeclarations, displayIndex: displayIndex)
             }
 
-            /// "Pre-process" a declaration fragment by eagerly splitting apart text fragments
-            /// into chunks that are more likely to be held in common with other declarations.
-            ///
-            /// This method exists to clean up the diff visualization in circumstances where parts
-            /// of a text fragment are shared in common, but have been combined with other text
-            /// that is not shared. For example, a declaration such as `myFunc<T>(param: T)` will
-            /// have a text fragment `>(` before the parameter list, which is technically not
-            /// shared with a similar declaration `myFunc(param: Int)` which only has a `(`
-            /// fragment.
-            ///
-            /// Text should be broken up in three scenarios:
-            /// 1. Before a parenthesis or comma, as in the previous example,
-            /// 2. Before and after whitespace, to increase the chances of matching non-whitespace
-            ///    tokens with each other, and
-            /// 3. After a `?` character, to eagerly separate optional parameter types from their
-            ///    surrounding syntax.
-            ///
-            /// > Note: Any adjacent text fragments that are both shared or highlighted should
-            /// > be recombined after translation, to allow Swift-DocC-Render to correctly format
-            /// > Swift declarations into multiple lines. This is performed as part of
-            /// > `translateDeclaration(_:commonFragments:)` above.
-            func preProcessFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-                guard fragment.kind == .text, !fragment.spelling.isEmpty else {
-                    return [fragment]
-                }
-                var textPartitions: [String] = []
-                var substringIndex = fragment.spelling.startIndex
-                var currentElement = fragment.spelling[substringIndex]
-
-                func areInSameChunk(_ currentElement: Character, _ nextElement: Character) -> Bool {
-                    if "(),".contains(nextElement) {
-                        // an open paren means we have a token like `>(` which should be split
-                        // a close paren means we have a token like ` = nil)` which should be split
-                        // a comma is similar to the close paren situation
-                        return false
-                    } else if currentElement.isWhitespace != nextElement.isWhitespace {
-                        // break whitespace into their own blocks
-                        return false
-                    } else if currentElement == "?" {
-                        // if we have a token like `?>` or similar we should break the fragment
-                        return false
-                    } else {
-                        return true
-                    }
-                }
-
-                // FIXME: replace this with `chunked(by:)` if we add swift-algorithms as a dependency
-                for (nextIndex, nextElement) in fragment.spelling.indexed().dropFirst() {
-                    if !areInSameChunk(currentElement, nextElement) {
-                        textPartitions.append(String(fragment.spelling[substringIndex..<nextIndex]))
-                        substringIndex = nextIndex
-                    }
-                    currentElement = nextElement
-                }
-
-                if substringIndex != fragment.spelling.endIndex {
-                    textPartitions.append(String(fragment.spelling[substringIndex...]))
-                }
-
-                return textPartitions.map({ .init(kind: .text, spelling: $0, preciseIdentifier: nil) })
-            }
-
-            var declarations = [DeclarationRenderSection]()
+            var declarations: [DeclarationRenderSection] = []
             for pair in declaration {
                 let (platforms, declaration) = pair
 
@@ -260,25 +117,41 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 // If this symbol has overloads, render their declarations as well.
                 if let overloads = symbol.overloadsVariants[trait],
-                   let overloadDeclarations = symbol.overloadsVariants[trait]?.references.compactMap({ overloadReference -> OverloadDeclaration? in
-                    guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol else {
-                        return nil
-                    }
+                    let overloadDeclarations = symbol.overloadsVariants[trait]?.references
+                        .compactMap({ overloadReference -> OverloadDeclaration? in
+                            guard let overload = try? renderNodeTranslator.context
+                                .entity(with: overloadReference).semantic as? Symbol
+                            else {
+                                return nil
+                            }
 
-                    let declarationFragments = overload.declarationVariants[trait]?.values.first?.declarationFragments
-                    assert(declarationFragments != nil, "Overloaded symbols must have declaration fragments.")
-                    return declarationFragments.map({ (declaration: $0, reference: overloadReference )})
-                }), !overloadDeclarations.isEmpty {
+                            let declarationFragments = overload.declarationVariants[trait]?.values
+                                .first?
+                                .declarationFragments
+                            assert(
+                                declarationFragments != nil,
+                                "Overloaded symbols must have declaration fragments."
+                            )
+                            return declarationFragments.map({
+                                (declaration: $0, reference: overloadReference)
+                            })
+                        }), !overloadDeclarations.isEmpty
+                {
                     // Pre-process the declarations by splitting text fragments apart to increase legibility
                     let mainDeclaration = declaration.declarationFragments.flatMap(preProcessFragment(_:))
-                    let processedOverloadDeclarations = overloadDeclarations.map({ ($0.declaration.flatMap(preProcessFragment(_:)), $0.reference) })
+                    let processedOverloadDeclarations = overloadDeclarations.map({
+                        ($0.declaration.flatMap(preProcessFragment(_:)), $0.reference)
+                    })
                     let preProcessedDeclarations = [mainDeclaration] + processedOverloadDeclarations.map(\.0)
 
                     // Collect the "common fragments" so we can highlight the ones that are different
                     // in each declaration
                     let commonFragments = longestCommonSubsequence(preProcessedDeclarations)
 
-                    renderedTokens = translateDeclaration(mainDeclaration, commonFragments: commonFragments)
+                    renderedTokens = translateDeclaration(
+                        mainDeclaration,
+                        commonFragments: commonFragments
+                    )
                     otherDeclarations = renderOtherDeclarationsTokens(
                         from: processedOverloadDeclarations,
                         displayIndex: overloads.displayIndex,
@@ -297,7 +170,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 declarations.append(
                     DeclarationRenderSection(
-                        languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
+                        languages: [
+                            trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
+                        ],
                         platforms: platformNames,
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
@@ -311,13 +186,16 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
-                        let platformNames = platforms
+                        let platformNames =
+                            platforms
                             .compactMap { $0 }
                             .sorted(by: \.rawValue)
 
                         declarations.append(
                             DeclarationRenderSection(
-                                languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
+                                languages: [
+                                    trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
+                                ],
                                 platforms: platformNames,
                                 tokens: renderedTokens
                             )
@@ -329,6 +207,222 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             return DeclarationsRenderSection(declarations: declarations)
         }
     }
+}
+
+fileprivate extension DeclarationRenderSection.Token {
+    /// Whether this token is a text token with a changed highlight.
+    var isHighlightedText: Bool {
+        self.highlight == .changed && self.kind == .text
+    }
+
+    /// Create a new token with all the data of the given token, but optionally with new text.
+    init(cloning source: Self, withText newText: String? = nil) {
+        let text = newText ?? source.text
+        self.init(
+            text: text,
+            kind: source.kind,
+            identifier: source.identifier,
+            preciseIdentifier: source.preciseIdentifier,
+            highlight: source.highlight)
+    }
+
+    /// Create a new token with all the data of the given token, but with a new highlight and optionally with new text.
+    init(
+        cloning source: Self,
+        withText newText: String? = nil,
+        withHighlight newHighlight: Highlight?
+    ) {
+        let text = newText ?? source.text
+        self.init(
+            text: text,
+            kind: source.kind,
+            identifier: source.identifier,
+            preciseIdentifier: source.preciseIdentifier,
+            highlight: newHighlight)
+    }
+
+    /// Create a new ``Kind/text`` token with the given text and highlight.
+    init(plainText text: String, highlight: Highlight? = nil) {
+        self.init(text: text, kind: .text, highlight: highlight)
+    }
+}
+
+/// "Post-process" a sequence of declaration tokens by recombining text tokens and cleaning up
+/// highlighted spans of tokens.
+///
+/// The output of `preProcessFragment` is suitable for differencing, but causes unexpected results
+/// when handed directly to Swift-DocC-Render and applied to its declaration formatter. This
+/// function recombines adjacent tokens so that the declaration formatter can correctly see the
+/// structure of a declaration and format it accordingly.
+///
+/// In addition, this function takes the opportunity to trim whitespace at the beginning and end of
+/// highlighted spans of tokens, to beautify the resulting declaration.
+fileprivate func postProcessTokens(
+    _ tokens: [DeclarationRenderSection.Token]
+) -> [DeclarationRenderSection.Token] {
+    var processedTokens: [DeclarationRenderSection.Token] = []
+
+    // This function iterates a list of tokens, keeping track of a "previous token" and comparing it
+    // against the "current token" to perform the following transformations:
+    //
+    // 1. Trim whitespace from the end of a highlighted token if the following token is not
+    //    highlighted.
+    // 2. Trim whitespace from the beginning of a highlighted token if the previous token was not
+    //    highlighted.
+    // 3. Concatenate plain-text tokens if they are both highlighted or both not highlighted.
+
+    /// If the given tokens are both plain-text tokens with the same highlight, return a token with
+    /// both tokens' texts.
+    func concatenateTokens(
+        _ lhs: DeclarationRenderSection.Token,
+        _ rhs: DeclarationRenderSection.Token
+    ) -> DeclarationRenderSection.Token? {
+        guard lhs.kind == .text, rhs.kind == .text, lhs.highlight == rhs.highlight else {
+            return nil
+        }
+        return .init(cloning: lhs, withText: lhs.text + rhs.text)
+    }
+
+    var previousToken: DeclarationRenderSection.Token? = nil
+    for var currentToken in tokens {
+        if var previousToken = previousToken {
+            // First, check whether the tokens we have start or end a highlighted span, and whether
+            // that span started or ended (respectively) with whitespace. If so, break off that
+            // whitespace into a new, unhighlighted token, and save any excess tokens accordingly.
+            // This is complicated by the fact that the whitespace token could be all whitespace,
+            // removing the need to create a new token. Both of these branches also "fall through"
+            // to the concatenation check below, in case the creation of a new unhighlighted token
+            // allows it to be combined with the current token.
+
+            // If the previous token was a highlighted plain-text token that ended with whitespace,
+            // and the current token is not highlighted, then remove the highlighting for the
+            // whitespace.
+            if previousToken.isHighlightedText,
+                currentToken.highlight == nil,
+                previousToken.text.last?.isWhitespace == true
+            {
+                if previousToken.text.allSatisfy(\.isWhitespace) {
+                    // if the last token was all whitespace, just convert it to be unhighlighted
+                    previousToken = .init(cloning: previousToken, withHighlight: nil)
+                } else {
+                    // otherwise, split the trailing whitespace into a new token
+                    let trimmedText = previousToken.text.removingTrailingWhitespace()
+                    let trailingWhitespace = previousToken.text.suffix(
+                        previousToken.text.count - trimmedText.count
+                    )
+                    processedTokens.append(.init(cloning: previousToken, withText: trimmedText))
+
+                    previousToken = .init(plainText: String(trailingWhitespace))
+                }
+            } else if previousToken.highlight == nil,
+                currentToken.isHighlightedText,
+                currentToken.text.first?.isWhitespace == true
+            {
+                // Vice versa: If the current token is a highlighted plain-text token that begins
+                // with whitespace, and the previous token is not highlighted, then remove the
+                // highlighting for that whitespace.
+
+                if currentToken.text.allSatisfy(\.isWhitespace) {
+                    // if this token is all whitespace, just convert it to be unhighlighted
+                    currentToken = .init(cloning: currentToken, withHighlight: nil)
+                } else {
+                    // otherwise, split the leading whitespace into a new token
+                    let trimmedText = currentToken.text.removingLeadingWhitespace()
+                    let leadingWhitespace = currentToken.text.prefix(
+                        currentToken.text.count - trimmedText.count
+                    )
+                    currentToken = .init(cloning: currentToken, withText: trimmedText)
+
+                    // if we can combine the whitespace with the previous token, do that
+                    let whitespaceToken = DeclarationRenderSection.Token(plainText: String(leadingWhitespace))
+                    if let combinedToken = concatenateTokens(previousToken, whitespaceToken) {
+                        previousToken = combinedToken
+                    } else {
+                        processedTokens.append(previousToken)
+                        previousToken = whitespaceToken
+                    }
+                }
+            }
+
+            if let combinedToken = concatenateTokens(previousToken, currentToken) {
+                // if we could combine the tokens, save it to the current token so it becomes the
+                // "previous" token at the end of the loop
+                currentToken = combinedToken
+            } else {
+                // otherwise, just save off the previous token so we can store the next
+                // one for the next iteration
+                processedTokens.append(previousToken)
+            }
+        }
+        previousToken = currentToken
+    }
+    if let lastToken = previousToken {
+        processedTokens.append(lastToken)
+    }
+
+    return processedTokens
+}
+
+/// "Pre-process" a declaration fragment by eagerly splitting apart text fragments into chunks that
+/// are more likely to be held in common with other declarations.
+///
+/// This method exists to clean up the diff visualization in circumstances where parts of a text
+/// fragment are shared in common, but have been combined with other text that is not shared. For
+/// example, a declaration such as `myFunc<T>(param: T)` will have a text fragment `>(` before the
+/// parameter list, which is technically not shared with a similar declaration `myFunc(param: Int)`
+/// which only has a `(` fragment.
+///
+/// Text should be broken up in three scenarios:
+/// 1. Before a parenthesis or comma, as in the previous example,
+/// 2. Before and after whitespace, to increase the chances of matching non-whitespace tokens with
+///    each other, and
+/// 3. After a `?` character, to eagerly separate optional parameter types from their surrounding
+///    syntax.
+///
+/// > Note: Any adjacent text fragments that are both shared or highlighted should be recombined
+/// > after translation, to allow Swift-DocC-Render to correctly format Swift declarations into
+/// > multiple lines. This is performed as part of `translateDeclaration(_:commonFragments:)` above.
+fileprivate func preProcessFragment(
+    _ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment
+) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    guard fragment.kind == .text, !fragment.spelling.isEmpty else {
+        return [fragment]
+    }
+    var textPartitions: [String] = []
+    var substringIndex = fragment.spelling.startIndex
+    var currentElement = fragment.spelling[substringIndex]
+
+    func areInSameChunk(_ currentElement: Character, _ nextElement: Character) -> Bool {
+        if "(),".contains(nextElement) {
+            // an open paren means we have a token like `>(` which should be split
+            // a close paren means we have a token like ` = nil)` which should be split
+            // a comma is similar to the close paren situation
+            return false
+        } else if currentElement.isWhitespace != nextElement.isWhitespace {
+            // break whitespace into their own blocks
+            return false
+        } else if currentElement == "?" {
+            // if we have a token like `?>` or similar we should break the fragment
+            return false
+        } else {
+            return true
+        }
+    }
+
+    // FIXME: replace this with `chunked(by:)` if we add swift-algorithms as a dependency
+    for (nextIndex, nextElement) in fragment.spelling.indexed().dropFirst() {
+        if !areInSameChunk(currentElement, nextElement) {
+            textPartitions.append(String(fragment.spelling[substringIndex..<nextIndex]))
+            substringIndex = nextIndex
+        }
+        currentElement = nextElement
+    }
+
+    if substringIndex != fragment.spelling.endIndex {
+        textPartitions.append(String(fragment.spelling[substringIndex...]))
+    }
+
+    return textPartitions.map({ .init(kind: .text, spelling: $0, preciseIdentifier: nil) })
 }
 
 /// Calculate the "longest common subsequence" of a list of sequences.
