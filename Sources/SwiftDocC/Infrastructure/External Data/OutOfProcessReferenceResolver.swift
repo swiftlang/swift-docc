@@ -143,6 +143,14 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         return (reference, entity)
     }
     
+    private func isBetaEntity(platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability]) -> Bool {
+        guard !platforms.isEmpty else {
+            return false
+        }
+        
+        return platforms.allSatisfy { $0.isBeta == true }
+    }
+    
     private func makeEntity(with resolvedInformation: ResolvedInformation, reference: String) -> LinkResolver.ExternalEntity {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedInformation.kind, semantic: nil)
         
@@ -155,7 +163,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             kind: kind,
             role: role,
             fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
-            isBeta: (resolvedInformation.platforms ?? []).contains(where: { $0.isBeta == true }),
+            isBeta: isBetaEntity(platforms: resolvedInformation.platforms ?? []),
             isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
             images: resolvedInformation.topicImages ?? []
         )

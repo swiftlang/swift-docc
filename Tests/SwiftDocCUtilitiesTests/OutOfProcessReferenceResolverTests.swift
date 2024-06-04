@@ -112,6 +112,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(entity.topicRenderReference.title, "Resolved Title")
         XCTAssertEqual(entity.topicRenderReference.abstract, [.text("Resolved abstract for this topic.")])
 
+        XCTAssertFalse(entity.topicRenderReference.isBeta)
+        
         XCTAssertEqual(entity.sourceLanguages.count, 3)
 
         let availableSourceLanguages = entity.sourceLanguages.sorted()
@@ -702,5 +704,154 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 completion(response)
             }
         }
+    }
+    
+    func assertSymbolBetaStatus(platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability], expectedStatus isBeta: Bool, file: StaticString = #file, line: UInt = #line, makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws
+                                -> OutOfProcessReferenceResolver
+    ) throws {
+        let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
+            kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
+            url: URL(string: "doc://com.test.bundle/something")!,
+            title: "Resolved Title",
+            abstract: "Resolved abstract for this topic.",
+            language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
+            availableLanguages: [],
+            platforms: platforms,
+            declarationFragments: nil,
+            topicImages: nil,
+            references: nil,
+            variants: []
+        )
+                
+        let resolver = try makeResolver(testMetadata)
+        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle", file: file, line: line)
+
+        // Resolve the reference
+        let unresolved = TopicReference.unresolved(
+            UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!))
+        guard case .success(let resolvedReference) = resolver.resolve(unresolved) else {
+            XCTFail("Unexpectedly failed to resolve reference")
+            return
+        }
+        
+        // Resolve the symbol
+        let topicLinkEntity = resolver.entity(with: resolvedReference)
+
+        XCTAssertEqual(topicLinkEntity.topicRenderReference.isBeta, isBeta, file: file, line: line)
+        
+        // Resolve the symbol
+        let (_, symbolEntity) = try XCTUnwrap(resolver.symbolReferenceAndEntity(withPreciseIdentifier: "abc123"), "Unexpectedly failed to resolve symbol")
+        
+        XCTAssertEqual(symbolEntity.topicRenderReference.isBeta, isBeta, file: file, line: line)
+
+    }
+    
+    func testResolvingSymbolBetaStatusProcess() throws {
+        #if os(macOS)
+        func makeResolver(testMetadata: OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver {
+            let temporaryFolder = try createTemporaryDirectory()
+            let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
+            
+            let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
+            
+            try """
+        #!/bin/bash
+        echo '{"bundleIdentifier":"com.test.bundle"}'            # Write this resolver's bundle identifier
+        read                                                     # Wait for docc to send a symbol USR
+        echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
+        read                                                     # Wait for docc to send a symbol USR
+        echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
+        """.write(to: executableLocation, atomically: true, encoding: .utf8)
+            
+            // `0o0700` is `-rwx------` (read, write, & execute only for owner)
+            try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
+            XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
+            
+            return try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
+        }
+        
+        // All platforms are in beta
+        try assertSymbolBetaStatus(platforms: [
+            .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
+            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+        ], expectedStatus: true, makeResolver: makeResolver)
+        
+        // One platform is stable, the other two are in beta
+        try assertSymbolBetaStatus(platforms: [
+            .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
+            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+        ], expectedStatus: false, makeResolver: makeResolver)
+        
+        // No platforms explicitly supported
+        try assertSymbolBetaStatus(platforms: [
+        ], expectedStatus: false, makeResolver: makeResolver)
+
+        #endif
+    }
+    
+    func testResolvingSymbolBetaStatusService() throws {
+        func makeResolver(testMetadata: OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver {
+            let server = DocumentationServer()
+            server.register(service: MockService { message in
+                XCTAssertEqual(message.type, "resolve-reference")
+                XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+                do {
+                    let payload = try XCTUnwrap(message.payload)
+                    let request = try JSONDecoder()
+                        .decode(
+                            ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                            from: payload
+                        )
+                    
+                    XCTAssertEqual(request.convertRequestIdentifier, "convert-id")
+                    
+                    switch request.payload {
+                    case .symbol(let preciseIdentifier):
+                        XCTAssertEqual(preciseIdentifier, "abc123")
+                    case .topic(let url):
+                        XCTAssertEqual(url, URL(string: "doc://com.test.bundle/something")!)
+                    default:
+                        XCTFail("Unexpected request")
+                        return nil
+                    }
+
+                    let response = DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(
+                            OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata))
+                    )
+                    return response
+                } catch {
+                    XCTFail(error.localizedDescription)
+                    return nil
+                }
+            })
+
+            return try OutOfProcessReferenceResolver(
+                bundleIdentifier: "com.test.bundle",
+                server: server,
+                convertRequestIdentifier: "convert-id"
+            )
+        }
+        
+        // All platforms are in beta
+        try assertSymbolBetaStatus(platforms: [
+            .init(name: "fooOS", introduced: "1.2.3", isBeta: true),
+            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+        ], expectedStatus: true, makeResolver: makeResolver)
+        
+        // One platform is stable, the other two are in beta
+        try assertSymbolBetaStatus(platforms: [
+            .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
+            .init(name: "barOS", introduced: "1.2.3", isBeta: true),
+            .init(name: "bazOS", introduced: "1.2.3", isBeta: true),
+        ], expectedStatus: false, makeResolver: makeResolver)
+        
+        // No platforms explicitly supported
+        try assertSymbolBetaStatus(platforms: [
+        ], expectedStatus: false, makeResolver: makeResolver)
     }
 }
