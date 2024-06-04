@@ -143,14 +143,6 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         return (reference, entity)
     }
     
-    private func isBetaEntity(platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability]) -> Bool {
-        guard !platforms.isEmpty else {
-            return false
-        }
-        
-        return platforms.allSatisfy { $0.isBeta == true }
-    }
-    
     private func makeEntity(with resolvedInformation: ResolvedInformation, reference: String) -> LinkResolver.ExternalEntity {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(resolvedInformation.kind, semantic: nil)
         
@@ -163,7 +155,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             kind: kind,
             role: role,
             fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
-            isBeta: isBetaEntity(platforms: resolvedInformation.platforms ?? []),
+            isBeta: resolvedInformation.isBeta,
             isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
             images: resolvedInformation.topicImages ?? []
         )
@@ -595,6 +587,15 @@ extension OutOfProcessReferenceResolver {
         
         /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
         public var variants: [Variant]?
+       
+        /// A value that indicates whether this symbol is under development and likely to change.
+        var isBeta: Bool {
+            guard let platforms, !platforms.isEmpty else {
+                return false
+            }
+            
+            return platforms.allSatisfy { $0.isBeta == true }
+        }
         
         /// Creates a new resolved information value with all its values.
         ///
