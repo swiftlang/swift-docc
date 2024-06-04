@@ -19,8 +19,17 @@ class ConvertSubcommandTests: XCTestCase {
     
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!
-    
-    override func setUp() {
+
+    override func setUpWithError() throws {
+        // By default, run all tests in a temporary directory to ensure that they are not affected
+        // by the machine environment.
+        let priorWorkingDirectory = FileManager.default.currentDirectoryPath
+        let temporaryDirectory = try createTemporaryDirectory()
+        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path)
+        addTeardownBlock {
+            FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
+        }
+
         // By default, send all warnings to `.none` instead of filling the
         // test console output with unrelated messages.
         Docc.Convert._errorLogHandle = .none
@@ -35,17 +44,6 @@ class ConvertSubcommandTests: XCTestCase {
             } else {
                 UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             }
-        }
-    }
-
-    override func setUpWithError() throws {
-        // By default, run all tests in a temporary directory to ensure that they are not affected
-        // by the machine environment.
-        let priorWorkingDirectory = FileManager.default.currentDirectoryPath
-        let temporaryDirectory = try createTemporaryDirectory()
-        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path)
-        addTeardownBlock {
-            FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
         }
     }
 
