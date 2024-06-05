@@ -128,7 +128,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                             let declarationFragments = overload.declarationVariants[trait]?.values
                                 .first?
                                 .declarationFragments
-                            assert(
+                            precondition(
                                 declarationFragments != nil,
                                 "Overloaded symbols must have declaration fragments."
                             )
