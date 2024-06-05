@@ -388,7 +388,7 @@ fileprivate func preProcessFragment(
     guard fragment.kind == .text, !fragment.spelling.isEmpty else {
         return [fragment]
     }
-    var textPartitions: [String] = []
+    var textPartitions: [Substring] = []
     var substringIndex = fragment.spelling.startIndex
     var currentElement = fragment.spelling[substringIndex]
 
@@ -412,17 +412,17 @@ fileprivate func preProcessFragment(
     // FIXME: replace this with `chunked(by:)` if we add swift-algorithms as a dependency
     for (nextIndex, nextElement) in fragment.spelling.indexed().dropFirst() {
         if !areInSameChunk(currentElement, nextElement) {
-            textPartitions.append(String(fragment.spelling[substringIndex..<nextIndex]))
+            textPartitions.append(fragment.spelling[substringIndex..<nextIndex])
             substringIndex = nextIndex
         }
         currentElement = nextElement
     }
 
     if substringIndex != fragment.spelling.endIndex {
-        textPartitions.append(String(fragment.spelling[substringIndex...]))
+        textPartitions.append(fragment.spelling[substringIndex...])
     }
 
-    return textPartitions.map({ .init(kind: .text, spelling: $0, preciseIdentifier: nil) })
+    return textPartitions.map({ .init(kind: .text, spelling: String($0), preciseIdentifier: nil) })
 }
 
 /// Calculate the "longest common subsequence" of a list of sequences.
