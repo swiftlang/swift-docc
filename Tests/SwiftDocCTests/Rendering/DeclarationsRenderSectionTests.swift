@@ -224,4 +224,42 @@ class DeclarationsRenderSectionTests: XCTestCase {
             ],
         ])
     }
+
+    func testDontHighlightWhenOverloadsAreDisabled() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "FancyOverloads",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "FancyOverloads", identifier: "com.test.example"),
+                CopyOfFile(original: symbolGraphFile),
+            ])
+        ])
+
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+
+        for hash in ["1dd3k", "4alrf"] {
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/FancyOverloads/MyClass/myFunc(param:)-\(hash)",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(
+                context: context,
+                bundle: bundle,
+                identifier: reference,
+                source: nil
+            )
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+            XCTAssertEqual(declarationsSection.declarations.count, 1)
+            let declarations = try XCTUnwrap(declarationsSection.declarations.first)
+
+            XCTAssert(declarations.tokens.allSatisfy({ $0.highlight == nil }))
+        }
+    }
 }
