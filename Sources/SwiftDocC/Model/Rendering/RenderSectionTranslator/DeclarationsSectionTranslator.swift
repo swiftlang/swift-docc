@@ -140,9 +140,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     // Pre-process the declarations by splitting text fragments apart to increase legibility
                     let mainDeclaration = declaration.declarationFragments.flatMap(preProcessFragment(_:))
                     let processedOverloadDeclarations = overloadDeclarations.map({
-                        ($0.declaration.flatMap(preProcessFragment(_:)), $0.reference)
+                        OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference)
                     })
-                    let preProcessedDeclarations = [mainDeclaration] + processedOverloadDeclarations.map(\.0)
+                    let preProcessedDeclarations = [mainDeclaration] + processedOverloadDeclarations.map(\.declaration)
 
                     // Collect the "common fragments" so we can highlight the ones that are different
                     // in each declaration
