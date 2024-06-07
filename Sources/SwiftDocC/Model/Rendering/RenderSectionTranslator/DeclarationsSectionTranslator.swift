@@ -215,32 +215,6 @@ fileprivate extension DeclarationRenderSection.Token {
         self.highlight == .changed && self.kind == .text
     }
 
-    /// Create a new token with all the data of the given token, but optionally with new text.
-    init(cloning source: Self, withText newText: String? = nil) {
-        let text = newText ?? source.text
-        self.init(
-            text: text,
-            kind: source.kind,
-            identifier: source.identifier,
-            preciseIdentifier: source.preciseIdentifier,
-            highlight: source.highlight)
-    }
-
-    /// Create a new token with all the data of the given token, but with a new highlight and optionally with new text.
-    init(
-        cloning source: Self,
-        withText newText: String? = nil,
-        withHighlight newHighlight: Highlight?
-    ) {
-        let text = newText ?? source.text
-        self.init(
-            text: text,
-            kind: source.kind,
-            identifier: source.identifier,
-            preciseIdentifier: source.preciseIdentifier,
-            highlight: newHighlight)
-    }
-
     /// Create a new ``Kind/text`` token with the given text and highlight.
     init(plainText text: String, highlight: Highlight? = nil) {
         self.init(text: text, kind: .text, highlight: highlight)
@@ -280,7 +254,9 @@ fileprivate func postProcessTokens(
         guard lhs.kind == .text, rhs.kind == .text, lhs.highlight == rhs.highlight else {
             return nil
         }
-        return .init(cloning: lhs, withText: lhs.text + rhs.text)
+        var result = lhs
+        result.text += rhs.text
+        return result
     }
 
     var previousToken: DeclarationRenderSection.Token? = nil
@@ -303,14 +279,15 @@ fileprivate func postProcessTokens(
             {
                 if previousToken.text.allSatisfy(\.isWhitespace) {
                     // if the last token was all whitespace, just convert it to be unhighlighted
-                    previousToken = .init(cloning: previousToken, withHighlight: nil)
+                    previousToken.highlight = nil
                 } else {
                     // otherwise, split the trailing whitespace into a new token
                     let trimmedText = previousToken.text.removingTrailingWhitespace()
                     let trailingWhitespace = previousToken.text.suffix(
                         previousToken.text.count - trimmedText.count
                     )
-                    processedTokens.append(.init(cloning: previousToken, withText: trimmedText))
+                    previousToken.text = trimmedText
+                    processedTokens.append(previousToken)
 
                     previousToken = .init(plainText: String(trailingWhitespace))
                 }
@@ -324,14 +301,14 @@ fileprivate func postProcessTokens(
 
                 if currentToken.text.allSatisfy(\.isWhitespace) {
                     // if this token is all whitespace, just convert it to be unhighlighted
-                    currentToken = .init(cloning: currentToken, withHighlight: nil)
+                    currentToken.highlight = nil
                 } else {
                     // otherwise, split the leading whitespace into a new token
                     let trimmedText = currentToken.text.removingLeadingWhitespace()
                     let leadingWhitespace = currentToken.text.prefix(
                         currentToken.text.count - trimmedText.count
                     )
-                    currentToken = .init(cloning: currentToken, withText: trimmedText)
+                    currentToken.text = trimmedText
 
                     // if we can combine the whitespace with the previous token, do that
                     let whitespaceToken = DeclarationRenderSection.Token(plainText: String(leadingWhitespace))

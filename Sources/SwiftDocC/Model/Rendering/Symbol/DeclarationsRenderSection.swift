@@ -77,7 +77,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
     /// For example, `123` is represented as a single token of kind "number".
     public struct Token: Codable, Hashable, Equatable {
         /// The token text content.
-        public let text: String
+        public var text: String
         /// The token programming kind.
         public let kind: Kind
         
@@ -116,7 +116,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
         public let preciseIdentifier: String?
 
         /// The kind of highlight the token should be rendered with.
-        public let highlight: Highlight?
+        public var highlight: Highlight?
 
         /// The kinds of highlights that can be applied to a token.
         public enum Highlight: String, Codable, RawRepresentable {
