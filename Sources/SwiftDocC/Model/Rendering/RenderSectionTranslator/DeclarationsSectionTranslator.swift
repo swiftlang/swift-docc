@@ -215,6 +215,11 @@ fileprivate extension DeclarationRenderSection.Token {
         self.highlight == .changed && self.kind == .text
     }
 
+    /// Whether this token has any highlight applied to it.
+    var isHighlighted: Bool {
+        self.highlight != nil
+    }
+
     /// Create a new ``Kind/text`` token with the given text and highlight.
     init(plainText text: String, highlight: Highlight? = nil) {
         self.init(text: text, kind: .text, highlight: highlight)
@@ -274,7 +279,7 @@ fileprivate func postProcessTokens(
             // and the current token is not highlighted, then remove the highlighting for the
             // whitespace.
             if previousToken.isHighlightedText,
-                currentToken.highlight == nil,
+                !currentToken.isHighlighted,
                 previousToken.text.last?.isWhitespace == true
             {
                 if previousToken.text.allSatisfy(\.isWhitespace) {
@@ -291,7 +296,7 @@ fileprivate func postProcessTokens(
 
                     previousToken = .init(plainText: String(trailingWhitespace))
                 }
-            } else if previousToken.highlight == nil,
+            } else if !previousToken.isHighlighted,
                 currentToken.isHighlightedText,
                 currentToken.text.first?.isWhitespace == true
             {
