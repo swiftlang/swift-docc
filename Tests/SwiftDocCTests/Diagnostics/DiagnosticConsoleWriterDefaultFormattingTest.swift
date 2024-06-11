@@ -422,6 +422,27 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             // There are no lines before line 1
             return logStorage.text
         }
+        
+        // Highlight the "Title" word on line 1
+        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 3), end: (line: 1, column: 8)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:1:3-1:8
+            1 + # \u{001B}[1;32mTitle\u{001B}[0;0m
+            2 |
+            3 | A very short article with only an abstract.
+            """)
+                       
+        // Highlight the "short" word on line 3
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 13)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:8-3:13
+            1 | # Title
+            2 |
+            3 + A very \u{001B}[1;32mshort\u{001B}[0;0m article with only an abstract.
+            """)
+        
         // Highlight a line before the start of the file
         XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)), """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
