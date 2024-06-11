@@ -269,83 +269,79 @@ fileprivate func postProcessTokens(
         return result
     }
 
-    var previousToken: DeclarationRenderSection.Token? = nil
-    for var currentToken in tokens {
-        if var previousToken = previousToken {
-            // First, check whether the tokens we have start or end a highlighted span, and whether
-            // that span started or ended (respectively) with whitespace. If so, break off that
-            // whitespace into a new, unhighlighted token, and save any excess tokens accordingly.
-            // This is complicated by the fact that the whitespace token could be all whitespace,
-            // removing the need to create a new token. Both of these branches also "fall through"
-            // to the concatenation check below, in case the creation of a new unhighlighted token
-            // allows it to be combined with the current token.
+    guard var previousToken = tokens.first else { return [] }
+    for var currentToken in tokens.dropFirst() {
+        // First, check whether the tokens we have start or end a highlighted span, and whether
+        // that span started or ended (respectively) with whitespace. If so, break off that
+        // whitespace into a new, unhighlighted token, and save any excess tokens accordingly.
+        // This is complicated by the fact that the whitespace token could be all whitespace,
+        // removing the need to create a new token. Both of these branches also "fall through"
+        // to the concatenation check below, in case the creation of a new unhighlighted token
+        // allows it to be combined with the current token.
 
-            // If the previous token was a highlighted plain-text token that ended with whitespace,
-            // and the current token is not highlighted, then remove the highlighting for the
-            // whitespace.
-            if previousToken.isHighlightedText,
-                !currentToken.isHighlighted,
-                previousToken.text.last?.isWhitespace == true
-            {
-                if previousToken.text.allSatisfy(\.isWhitespace) {
-                    // if the last token was all whitespace, just convert it to be unhighlighted
-                    previousToken.highlight = nil
-                } else {
-                    // otherwise, split the trailing whitespace into a new token
-                    let trimmedText = previousToken.text.removingTrailingWhitespace()
-                    let trailingWhitespace = previousToken.text.suffix(
-                        previousToken.text.count - trimmedText.count
-                    )
-                    previousToken.text = trimmedText
-                    processedTokens.append(previousToken)
-
-                    previousToken = .init(plainText: String(trailingWhitespace))
-                }
-            } else if !previousToken.isHighlighted,
-                currentToken.isHighlightedText,
-                currentToken.text.first?.isWhitespace == true
-            {
-                // Vice versa: If the current token is a highlighted plain-text token that begins
-                // with whitespace, and the previous token is not highlighted, then remove the
-                // highlighting for that whitespace.
-
-                if currentToken.text.allSatisfy(\.isWhitespace) {
-                    // if this token is all whitespace, just convert it to be unhighlighted
-                    currentToken.highlight = nil
-                } else {
-                    // otherwise, split the leading whitespace into a new token
-                    let trimmedText = currentToken.text.removingLeadingWhitespace()
-                    let leadingWhitespace = currentToken.text.prefix(
-                        currentToken.text.count - trimmedText.count
-                    )
-                    currentToken.text = trimmedText
-
-                    // if we can combine the whitespace with the previous token, do that
-                    let whitespaceToken = DeclarationRenderSection.Token(plainText: String(leadingWhitespace))
-                    if let combinedToken = concatenateTokens(previousToken, whitespaceToken) {
-                        previousToken = combinedToken
-                    } else {
-                        processedTokens.append(previousToken)
-                        previousToken = whitespaceToken
-                    }
-                }
-            }
-
-            if let combinedToken = concatenateTokens(previousToken, currentToken) {
-                // if we could combine the tokens, save it to the current token so it becomes the
-                // "previous" token at the end of the loop
-                currentToken = combinedToken
+        // If the previous token was a highlighted plain-text token that ended with whitespace,
+        // and the current token is not highlighted, then remove the highlighting for the
+        // whitespace.
+        if previousToken.isHighlightedText,
+            !currentToken.isHighlighted,
+            previousToken.text.last?.isWhitespace == true
+        {
+            if previousToken.text.allSatisfy(\.isWhitespace) {
+                // if the last token was all whitespace, just convert it to be unhighlighted
+                previousToken.highlight = nil
             } else {
-                // otherwise, just save off the previous token so we can store the next
-                // one for the next iteration
+                // otherwise, split the trailing whitespace into a new token
+                let trimmedText = previousToken.text.removingTrailingWhitespace()
+                let trailingWhitespace = previousToken.text.suffix(
+                    previousToken.text.count - trimmedText.count
+                )
+                previousToken.text = trimmedText
                 processedTokens.append(previousToken)
+
+                previousToken = .init(plainText: String(trailingWhitespace))
             }
+        } else if !previousToken.isHighlighted,
+            currentToken.isHighlightedText,
+            currentToken.text.first?.isWhitespace == true
+        {
+            // Vice versa: If the current token is a highlighted plain-text token that begins
+            // with whitespace, and the previous token is not highlighted, then remove the
+            // highlighting for that whitespace.
+
+            if currentToken.text.allSatisfy(\.isWhitespace) {
+                // if this token is all whitespace, just convert it to be unhighlighted
+                currentToken.highlight = nil
+            } else {
+                // otherwise, split the leading whitespace into a new token
+                let trimmedText = currentToken.text.removingLeadingWhitespace()
+                let leadingWhitespace = currentToken.text.prefix(
+                    currentToken.text.count - trimmedText.count
+                )
+                currentToken.text = trimmedText
+
+                // if we can combine the whitespace with the previous token, do that
+                let whitespaceToken = DeclarationRenderSection.Token(plainText: String(leadingWhitespace))
+                if let combinedToken = concatenateTokens(previousToken, whitespaceToken) {
+                    previousToken = combinedToken
+                } else {
+                    processedTokens.append(previousToken)
+                    previousToken = whitespaceToken
+                }
+            }
+        }
+
+        if let combinedToken = concatenateTokens(previousToken, currentToken) {
+            // if we could combine the tokens, save it to the current token so it becomes the
+            // "previous" token at the end of the loop
+            currentToken = combinedToken
+        } else {
+            // otherwise, just save off the previous token so we can store the next
+            // one for the next iteration
+            processedTokens.append(previousToken)
         }
         previousToken = currentToken
     }
-    if let lastToken = previousToken {
-        processedTokens.append(lastToken)
-    }
+    processedTokens.append(previousToken)
 
     return processedTokens
 }
