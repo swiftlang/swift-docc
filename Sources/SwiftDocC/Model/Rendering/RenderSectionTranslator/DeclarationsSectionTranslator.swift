@@ -108,6 +108,32 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return .init(declarations: otherDeclarations, displayIndex: displayIndex)
             }
 
+            func collectOverloadDeclarations(from overloads: Symbol.Overloads) -> [OverloadDeclaration]? {
+                let declarations = overloads.references.compactMap { overloadReference -> OverloadDeclaration? in
+                    guard let overload = try? renderNodeTranslator.context
+                        .entity(with: overloadReference).semantic as? Symbol
+                    else {
+                        return nil
+                    }
+
+                    let declarationFragments = overload.declarationVariants[trait]?.values
+                        .first?
+                        .declarationFragments
+                    precondition(
+                        declarationFragments != nil,
+                        "Overloaded symbols must have declaration fragments."
+                    )
+                    return declarationFragments.map({
+                        (declaration: $0, reference: overloadReference)
+                    })
+                }
+
+                guard !declarations.isEmpty else {
+                    return nil
+                }
+                return declarations
+            }
+
             var declarations: [DeclarationRenderSection] = []
             for pair in declaration {
                 let (platforms, declaration) = pair
@@ -117,25 +143,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 // If this symbol has overloads, render their declarations as well.
                 if let overloads = symbol.overloadsVariants[trait],
-                    let overloadDeclarations = symbol.overloadsVariants[trait]?.references
-                        .compactMap({ overloadReference -> OverloadDeclaration? in
-                            guard let overload = try? renderNodeTranslator.context
-                                .entity(with: overloadReference).semantic as? Symbol
-                            else {
-                                return nil
-                            }
-
-                            let declarationFragments = overload.declarationVariants[trait]?.values
-                                .first?
-                                .declarationFragments
-                            precondition(
-                                declarationFragments != nil,
-                                "Overloaded symbols must have declaration fragments."
-                            )
-                            return declarationFragments.map({
-                                (declaration: $0, reference: overloadReference)
-                            })
-                        }), !overloadDeclarations.isEmpty
+                    let overloadDeclarations = collectOverloadDeclarations(from: overloads)
                 {
                     // Pre-process the declarations by splitting text fragments apart to increase legibility
                     let mainDeclaration = declaration.declarationFragments.flatMap(preProcessFragment(_:))
