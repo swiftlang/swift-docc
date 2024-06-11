@@ -134,6 +134,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return declarations
             }
 
+            func sortPlatformNames(_ platforms: [PlatformName?]) -> [PlatformName?] {
+                platforms.sorted { (lhs, rhs) -> Bool in
+                    guard let lhsValue = lhs, let rhsValue = rhs else {
+                        return lhs == nil
+                    }
+                    return lhsValue.rawValue < rhsValue.rawValue
+                }
+            }
+
             var declarations: [DeclarationRenderSection] = []
             let languages = [
                 trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
@@ -172,17 +181,10 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     otherDeclarations = nil
                 }
 
-                let platformNames = platforms.sorted { (lhs, rhs) -> Bool in
-                    guard let lhsValue = lhs, let rhsValue = rhs else {
-                        return lhs == nil
-                    }
-                    return lhsValue.rawValue < rhsValue.rawValue
-                }
-
                 declarations.append(
                     DeclarationRenderSection(
                         languages: languages,
-                        platforms: platformNames,
+                        platforms: sortPlatformNames(platforms),
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
                     )
@@ -192,10 +194,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             if let alternateDeclarations = symbol.alternateDeclarationVariants[trait] {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
-                    let platformNames =
-                        platforms
-                        .compactMap { $0 }
-                        .sorted(by: \.rawValue)
+                    let platformNames = sortPlatformNames(platforms)
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
