@@ -343,19 +343,18 @@ extension DefaultDiagnosticConsoleFormatter {
         
         let sourceLines = readSourceLines(url)
 
-        guard !sourceLines.isEmpty
-        else {
-            return "\n--> \(formattedSourcePath(url)):\(diagnosticRange.lowerBound.line):\(diagnosticRange.lowerBound.column)-\(diagnosticRange.upperBound.line):\(diagnosticRange.upperBound.column)"
+        guard sourceLines.indices.contains(diagnosticRange.lowerBound.line - 1), sourceLines.indices.contains(diagnosticRange.upperBound.line - 1) else {
+            return "\n--> \(formattedSourcePath(url)):\(max(1, diagnosticRange.lowerBound.line)):\(max(1, diagnosticRange.lowerBound.column))-\(max(1, diagnosticRange.upperBound.line)):\(max(1, diagnosticRange.upperBound.column))"
         }
         
         // A range containing the source lines and some surrounding context.
-        let sourceRange = Range(
+        let sourceLinesToDisplay = Range(
             uncheckedBounds: (
-                lower: max(1, diagnosticRange.lowerBound.line - Self.contextSize) - 1,
-                upper: min(sourceLines.count, diagnosticRange.upperBound.line + Self.contextSize)
+                lower: diagnosticRange.lowerBound.line - Self.contextSize - 1,
+                upper: diagnosticRange.upperBound.line + Self.contextSize
             )
-        )
-        let maxLinePrefixWidth = String(sourceRange.upperBound).count
+        ).clamped(to: sourceLines.indices)
+        let maxLinePrefixWidth = String(sourceLinesToDisplay.upperBound).count
         
         var suggestionsPerLocation = [SourceLocation: [String]]()
         for solution in solutions {
@@ -380,8 +379,8 @@ extension DefaultDiagnosticConsoleFormatter {
         result.append(        "\(formattedSourcePath(url)):\(diagnosticRange.lowerBound.line):\(diagnosticRange.lowerBound.column)-\(diagnosticRange.upperBound.line):\(diagnosticRange.upperBound.column)"
         )
 
-        for (sourceLineIndex, sourceLine) in sourceLines[sourceRange].enumerated() {
-            let lineNumber = sourceLineIndex + sourceRange.lowerBound + 1
+        for (sourceLineIndex, sourceLine) in sourceLines[sourceLinesToDisplay].enumerated() {
+            let lineNumber = sourceLineIndex + sourceLinesToDisplay.lowerBound + 1
             let linePrefix = "\(lineNumber)".padding(toLength: maxLinePrefixWidth, withPad: " ", startingAt: 0)
 
             let highlightedSource = highlightSource(
