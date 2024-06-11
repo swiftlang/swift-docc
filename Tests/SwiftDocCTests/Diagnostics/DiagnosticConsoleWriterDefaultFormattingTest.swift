@@ -443,6 +443,26 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             3 + A very \u{001B}[1;32mshort\u{001B}[0;0m article with only an abstract.
             """)
         
+        // Extend the highlight beyond the end of that line
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 100)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:8-3:100
+            1 | # Title
+            2 |
+            3 + A very \u{001B}[1;32mshort article with only an abstract.\u{001B}[0;0m
+            """)
+        
+        // Extend the highlight beyond the start of that line
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: -4), end: (line: 3, column: 13)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:1-3:13
+            1 | # Title
+            2 |
+            3 + \u{001B}[1;32mA very short\u{001B}[0;0m article with only an abstract.
+            """)
+        
         // Highlight a line before the start of the file
         XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)), """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m

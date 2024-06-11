@@ -376,8 +376,7 @@ extension DefaultDiagnosticConsoleFormatter {
         // Example:
         //   --> /path/to/file.md:1:10-2:20
         result.append("\n\(String(repeating: " ", count: maxLinePrefixWidth))--> ")
-        result.append(        "\(formattedSourcePath(url)):\(diagnosticRange.lowerBound.line):\(diagnosticRange.lowerBound.column)-\(diagnosticRange.upperBound.line):\(diagnosticRange.upperBound.column)"
-        )
+        result.append(        "\(formattedSourcePath(url)):\(max(1, diagnosticRange.lowerBound.line)):\(max(1, diagnosticRange.lowerBound.column))-\(max(1, diagnosticRange.upperBound.line)):\(max(1, diagnosticRange.upperBound.column))")
 
         for (sourceLineIndex, sourceLine) in sourceLines[sourceLinesToDisplay].enumerated() {
             let lineNumber = sourceLineIndex + sourceLinesToDisplay.lowerBound + 1
@@ -482,7 +481,7 @@ extension DefaultDiagnosticConsoleFormatter {
 
         let sourceLineUTF8 = sourceLine.utf8
         
-        let highlightStart = range.lowerBound.column - 1
+        let highlightStart = max(0, range.lowerBound.column - 1)
         let highlightEnd = range.upperBound.column - 1
         
         assert(highlightStart <= sourceLineUTF8.count, {
