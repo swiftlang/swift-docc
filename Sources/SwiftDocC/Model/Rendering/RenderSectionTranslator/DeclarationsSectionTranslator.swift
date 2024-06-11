@@ -135,6 +135,9 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             }
 
             var declarations: [DeclarationRenderSection] = []
+            let languages = [
+                trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
+            ]
             for pair in declaration {
                 let (platforms, declaration) = pair
 
@@ -178,9 +181,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 declarations.append(
                     DeclarationRenderSection(
-                        languages: [
-                            trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
-                        ],
+                        languages: languages,
                         platforms: platformNames,
                         tokens: renderedTokens,
                         otherDeclarations: otherDeclarations
@@ -191,19 +192,16 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             if let alternateDeclarations = symbol.alternateDeclarationVariants[trait] {
                 for pair in alternateDeclarations {
                     let (platforms, decls) = pair
+                    let platformNames =
+                        platforms
+                        .compactMap { $0 }
+                        .sorted(by: \.rawValue)
                     for alternateDeclaration in decls {
                         let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
 
-                        let platformNames =
-                            platforms
-                            .compactMap { $0 }
-                            .sorted(by: \.rawValue)
-
                         declarations.append(
                             DeclarationRenderSection(
-                                languages: [
-                                    trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id
-                                ],
+                                languages: languages,
                                 platforms: platformNames,
                                 tokens: renderedTokens
                             )
