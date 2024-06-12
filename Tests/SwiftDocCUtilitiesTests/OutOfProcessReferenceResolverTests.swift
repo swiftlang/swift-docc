@@ -51,10 +51,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         #endif
     }
     
-    func assertResolvesTopicLink(
-        makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws
-            -> OutOfProcessReferenceResolver
-    ) throws {
+    func assertResolvesTopicLink(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
             url: URL(string: "doc://com.test.bundle/something")!,
@@ -134,7 +131,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         if case .replace(let variantFragment) = fragmentVariant.patch.first {
             XCTAssertEqual(variantFragment, [.init(text: "variant declaration fragment", kind: .text, preciseIdentifier: nil)])
         } else {
-           XCTFail("Unexpected fragments variant patch")
+            XCTFail("Unexpected fragments variant patch")
         }
     }
     
@@ -207,10 +204,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         })
     }
     
-    func assertResolvesSymbol(
-        makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws
-            -> OutOfProcessReferenceResolver
-    ) throws {
+    func assertResolvesSymbol(makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver) throws {
         let lightCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name.jpg"))
         let darkCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name-dark.jpg"))
         
@@ -706,8 +700,10 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         }
     }
     
-    func assertSymbolBetaStatus(platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability], expectedStatus isBeta: Bool, file: StaticString = #file, line: UInt = #line, makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws
-                                -> OutOfProcessReferenceResolver
+    func assertSymbolBetaStatus(
+        platforms: [OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability], expectedStatus isBeta: Bool,
+        file: StaticString = #file, line: UInt = #line,
+        makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws -> OutOfProcessReferenceResolver
     ) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
@@ -756,11 +752,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             
             try """
         #!/bin/bash
-        echo '{"bundleIdentifier":"com.test.bundle"}'            # Write this resolver's bundle identifier
-        read                                                     # Wait for docc to send a symbol USR
-        echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
-        read                                                     # Wait for docc to send a symbol USR
-        echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
+        echo '{"bundleIdentifier":"com.test.bundle"}'           # Write this resolver's bundle identifier
+        read                                                    # Wait for docc to send a symbol USR
+        echo '{"resolvedInformation":\(encodedMetadata)}'       # Respond with the test metadata (above)
+        read                                                    # Wait for docc to send a symbol USR
+        echo '{"resolvedInformation":\(encodedMetadata)}'       # Respond with the test metadata (above)
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
             
             // `0o0700` is `-rwx------` (read, write, & execute only for owner)
