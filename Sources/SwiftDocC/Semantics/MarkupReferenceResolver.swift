@@ -12,21 +12,21 @@ import Foundation
 import Markdown
 import SymbolKit
 
-fileprivate func invalidLinkDestinationProblem(destination: String, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")
+private func invalidLinkDestinationProblem(destination: String, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    let diagnostic = Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
-fileprivate func disabledLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
-    return Problem(diagnostic: Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
+private func disabledLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    return Problem(diagnostic: Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
 }
 
-fileprivate func unknownSnippetSliceProblem(snippetPath: String, slice: String, source: URL?, range: SourceRange?) -> Problem {
-    let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
+private func unknownSnippetSliceProblem(snippetPath: String, slice: String, range: SourceRange?) -> Problem {
+    let diagnostic = Diagnostic(source: range?.source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
-fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+private func removedLinkDestinationProblem(reference: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     var solutions = [Solution]()
     if let range, reference.pathComponents.count > 3 {
         // The first three path components are "/", "documentation", and the module name, so drop those
@@ -35,7 +35,7 @@ fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference
             .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
         ]))
     }
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.")
+    let diagnostic = Diagnostic(source: range?.source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.")
     return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
@@ -59,7 +59,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     // This property offers a customization point for when we need to try
     // resolving links in other contexts than the current one to provide more
     // precise diagnostics.
-    var problemForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ source: URL?, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Problem?)? = nil
+    var problemForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Problem?)? = nil
 
     private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> ResolvedTopicReference? {
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {
@@ -68,10 +68,10 @@ struct MarkupReferenceResolver: MarkupRewriter {
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
                 if node.isEmptyExtension {
-                    problems.append(removedLinkDestinationProblem(reference: resolved, source: range?.source, range: range, severity: severity))
+                    problems.append(removedLinkDestinationProblem(reference: resolved, range: range, severity: severity))
                     return nil
                 } else if !context.topicGraph.isLinkable(node.reference) {
-                    problems.append(disabledLinkDestinationProblem(reference: resolved, source: range?.source, range: range, severity: severity))
+                    problems.append(disabledLinkDestinationProblem(reference: resolved, range: range, severity: severity))
                     return nil
                 }
             }
@@ -79,7 +79,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             
         case .failure(let unresolved, let error):
             if let callback = problemForUnresolvedReference,
-               let problem = callback(unresolved, range?.source, range, fromSymbolLink, error.message) {
+               let problem = callback(unresolved, range, fromSymbolLink, error.message) {
                 problems.append(problem)
                 return nil
             }
@@ -116,7 +116,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
-            problems.append(invalidLinkDestinationProblem(destination: destination, source: link.range?.source, range: link.range, severity: .warning))
+            problems.append(invalidLinkDestinationProblem(destination: destination, range: link.range, severity: .warning))
             return link
         }
         guard url.components.scheme == ResolvedTopicReference.urlScheme else {
@@ -139,7 +139,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> ResolvedTopicReference? {
         if let cached = context.referenceIndex[unresolvedDestination] {
             guard context.topicGraph.isLinkable(cached) == true else {
-                problems.append(disabledLinkDestinationProblem(reference: cached, source: range?.source, range: range, severity: .warning))
+                problems.append(disabledLinkDestinationProblem(reference: cached, range: range, severity: .warning))
                 return nil
             }
             return cached
@@ -182,7 +182,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                    let snippetMixin = try? context.entity(with: resolved).symbol?
                     .mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet {
                     guard snippetMixin.slices[requestedSlice] != nil else {
-                        problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, source: blockDirective.nameLocation?.source, range: blockDirective.nameRange))
+                        problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, range: blockDirective.nameRange))
                         return blockDirective
                     }
                     argumentText.append(", slice: \"\(requestedSlice)\"")

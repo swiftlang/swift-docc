@@ -213,14 +213,14 @@ struct ReferenceResolver: SemanticVisitor {
         let parent = inheritanceParentReference
         let context = self.context
         
-        markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
+        markupResolver.problemForUnresolvedReference = { unresolved, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
             if let parent, let range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
-                        return Problem(diagnostic: Diagnostic(source: source,
+                        return Problem(diagnostic: Diagnostic(source: range.source,
                             severity: .warning, range: range,
                             identifier: "org.swift.docc.UnresolvableLinkWhenInherited",
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
