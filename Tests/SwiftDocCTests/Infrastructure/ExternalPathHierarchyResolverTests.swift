@@ -938,7 +938,8 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
     }
     
     private func makeLinkResolversForTestBundle(named testBundleName: String, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> LinkResolvers {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName, configureContext: configureContext)
+        let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
+        let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: configureContext)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         

@@ -102,14 +102,14 @@ extension XCTestCase {
         )
     }
     
-    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:], configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, configureContext: configureContext)
+        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
     }
     
-    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:], configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (DocumentationBundle, DocumentationContext) {
-        let (_, bundle, context) = try testBundleAndContext(named: name, codeListings: codeListings, externalResolvers: externalResolvers, configureContext: configureContext)
+    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+        let (_, bundle, context) = try testBundleAndContext(named: name, codeListings: codeListings, externalResolvers: externalResolvers)
         return (bundle, context)
     }
     
