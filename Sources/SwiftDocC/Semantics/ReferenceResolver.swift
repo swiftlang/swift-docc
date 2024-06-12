@@ -226,6 +226,7 @@ struct ReferenceResolver: SemanticVisitor {
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
                             possibleSolutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
+                                    // FIXME: The resolved reference path isn't the same as the authorable link.
                                     Replacement(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
