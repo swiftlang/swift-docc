@@ -45,14 +45,12 @@ fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
     var bundle: DocumentationBundle
-    var source: URL?
     var problems = [Problem]()
     var rootReference: ResolvedTopicReference
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, source: URL?, rootReference: ResolvedTopicReference) {
+    init(context: DocumentationContext, bundle: DocumentationBundle, rootReference: ResolvedTopicReference) {
         self.context = context
         self.bundle = bundle
-        self.source = source
         self.rootReference = rootReference
     }
 
@@ -70,38 +68,31 @@ struct MarkupReferenceResolver: MarkupRewriter {
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
                 if node.isEmptyExtension {
-                    problems.append(removedLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
+                    problems.append(removedLinkDestinationProblem(reference: resolved, source: range?.source, range: range, severity: severity))
                     return nil
                 } else if !context.topicGraph.isLinkable(node.reference) {
-                    problems.append(disabledLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
+                    problems.append(disabledLinkDestinationProblem(reference: resolved, source: range?.source, range: range, severity: severity))
                     return nil
                 }
             }
             return resolved
             
         case .failure(let unresolved, let error):
-            if let rangeLowerBoundSource = range?.lowerBound.source,
-               let rangeUpperBoundSource = range?.upperBound.source,
-               let source,
-               source != rangeLowerBoundSource || source != rangeUpperBoundSource {
-                return nil
-            }
-
             if let callback = problemForUnresolvedReference,
-               let problem = callback(unresolved, source, range, fromSymbolLink, error.message) {
+               let problem = callback(unresolved, range?.source, range, fromSymbolLink, error.message) {
                 problems.append(problem)
                 return nil
             }
             
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
+            problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }
 
     mutating func visitImage(_ image: Image) -> Markup? {
         if let reference = image.reference(in: bundle), !context.resourceExists(with: reference) {
-            problems.append(unresolvedResourceProblem(resource: reference, source: source, range: image.range, severity: .warning))
+            problems.append(unresolvedResourceProblem(resource: reference, source: image.range?.source, range: image.range, severity: .warning))
         }
 
         var image = image
@@ -125,7 +116,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         guard let url = ValidatedURL(parsingAuthoredLink: destination) else {
-            problems.append(invalidLinkDestinationProblem(destination: destination, source: source, range: link.range, severity: .warning))
+            problems.append(invalidLinkDestinationProblem(destination: destination, source: link.range?.source, range: link.range, severity: .warning))
             return link
         }
         guard url.components.scheme == ResolvedTopicReference.urlScheme else {
@@ -148,7 +139,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> ResolvedTopicReference? {
         if let cached = context.referenceIndex[unresolvedDestination] {
             guard context.topicGraph.isLinkable(cached) == true else {
-                problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: range, severity: .warning))
+                problems.append(disabledLinkDestinationProblem(reference: cached, source: range?.source, range: range, severity: .warning))
                 return nil
             }
             return cached
@@ -177,6 +168,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     }
 
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> Markup? {
+        let source = blockDirective.range?.source
         switch blockDirective.name {
         case Snippet.directiveName:
             var problems = [Problem]()
@@ -209,7 +201,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                     unresolvedResourceProblem(
                         resource: imageMedia.source,
                         expectedType: .image,
-                        source: source,
+                        source: blockDirective.range?.source,
                         range: imageMedia.originalMarkup.range,
                         severity: .warning
                     )

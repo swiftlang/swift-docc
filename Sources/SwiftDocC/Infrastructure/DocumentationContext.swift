@@ -519,77 +519,92 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         results.sync({ $0.reserveCapacity(references.count) })
 
         let resolveNodeWithReference: (ResolvedTopicReference) -> Void = { [unowned self] reference in
-            if var documentationNode = try? entity(with: reference), documentationNode.semantic is Article || documentationNode.semantic is Symbol {
-                for doc in documentationNode.docChunks {
-                    let source: URL?
-                    switch doc.source {
-                    case _ where documentationNode.semantic is Article,
-                            .documentationExtension:
-                        source = documentLocationMap[reference]
-                    case .sourceCode(let location, _):
-                        // For symbols, first check if we should reference resolve
-                        // inherited docs or not. If we don't inherit the docs
-                        // we should also skip reference resolving the chunk.
-                        if let semantic = documentationNode.semantic as? Symbol,
-                           let origin = semantic.origin, !externalMetadata.inheritDocs
-                        {
-                            // If the two symbols are coming from different modules,
-                            // regardless if they are in the same bundle
-                            // (for example Foundation and SwiftUI), skip link resolving.
-                            if let originSymbol = documentationCache[origin.identifier]?.semantic as? Symbol,
-                               originSymbol.moduleReference != semantic.moduleReference {
-                                continue
-                            }
-                        }
-
-                        source = location?.url()
-                    }
-
-                    // Find the inheritance parent, if the docs are inherited.
-                    let inheritanceParentReference: ResolvedTopicReference?
-                    if let origin = (documentationNode.semantic as? Symbol)?.origin,
-                       let originReference = documentationCache.reference(symbolID: origin.identifier)
-                    {
-                        inheritanceParentReference = originReference
-                    } else {
-                        inheritanceParentReference = nil
-                    }
-
-                    var resolver = ReferenceResolver(context: self, bundle: bundle, source: source, rootReference: reference, inheritanceParentReference: inheritanceParentReference)
+            guard var documentationNode = try? entity(with: reference),
+                  documentationNode.semantic is Article || documentationNode.semantic is Symbol
+            else {
+                return
+            }
                     
-                    // Update the cache with the resolved node.
-                    // We aggressively release used memory, since we're copying all semantic objects
-                    // on the line below while rewriting nodes with the resolved content.
-                    documentationNode.semantic = autoreleasepool { resolver.visit(documentationNode.semantic) }
-                    
-                    let pageImageProblems = documentationNode.metadata?.pageImages.compactMap { pageImage in
-                        return resolver.resolve(
-                            resource: pageImage.source,
-                            range: pageImage.originalMarkup.range,
-                            severity: .warning
-                        )
-                    } ?? []
-                    
-                    resolver.problems.append(contentsOf: pageImageProblems)
-
-                    var problems = resolver.problems
-
-                    if case .sourceCode(_, let offset) = doc.source, documentationNode.kind.isSymbol {
-                        // Offset all problem ranges by the start location of the
-                        // source comment in the context of the complete file.
-                        if let docRange = offset {
-                            for i in problems.indices {
-                                problems[i].offsetWithRange(docRange)
-                            }
-                        } else {
-                            problems.removeAll()
-                        }
+            let inheritanceParentReference: ResolvedTopicReference?
+            // Check if this documentation is inherited.
+            if let symbolSemantic = documentationNode.semantic as? Symbol,
+               let origin = symbolSemantic.origin,
+               let originReference = documentationCache.reference(symbolID: origin.identifier)
+            {
+                inheritanceParentReference = originReference
+                
+                // Check if we should skip resolving links for inherited documentation
+                if !externalMetadata.inheritDocs,
+                   // Check that this symbol only has documentation from an in-source documentation comment
+                   documentationNode.docChunks.count == 1,
+                   case .sourceCode = documentationNode.docChunks.first?.source,
+                   // Check that that documentation comment is inherited from a symbol belonging to another module
+                   let originSymbolSemantic = documentationCache[originReference]?.semantic as? Symbol,
+                   symbolSemantic.moduleReference != originSymbolSemantic.moduleReference
+                {
+                    // Don't resolve any links for this symbol.
+                    return
+                }
+            } else {
+                inheritanceParentReference = nil
+            }
+            
+            var resolver = ReferenceResolver(context: self, bundle: bundle, rootReference: reference, inheritanceParentReference: inheritanceParentReference)
+            
+            // Update the node with the markup that contains resolved references instead of authored links.
+            documentationNode.semantic = autoreleasepool { 
+                // We use an autorelease pool to release used memory as soon as possible, since the resolver will copy each semantic value
+                // to rewrite it and replace the authored links with resolved reference strings instead.
+                resolver.visit(documentationNode.semantic)
+            }
+            
+            let problems: [Problem]
+            if documentationNode.semantic is Article {
+                // Diagnostics for articles have correct source ranges and don't need to be modified.
+                problems = resolver.problems
+            } else {
+                // Diagnostics for in-source documentation comments need to be offset based on the start location of the comment in the source file.
+                
+                // Get the source location
+                var inSourceDocumentationCommentSource: URL?
+                var inSourceDocumentationCommentOffset: SymbolGraph.LineList.SourceRange?
+                for docChunk in documentationNode.docChunks {
+                    guard case .sourceCode(let location, let offset) = docChunk.source else { continue }
+                    inSourceDocumentationCommentSource = location?.url
+                    inSourceDocumentationCommentOffset = offset
+                    break
+                }
+                
+                // Post-process and filter out unwanted diagnostics (for example from inherited documentation comments)
+                problems = resolver.problems.compactMap { problem in
+                    guard let source = problem.diagnostic.source else {
+                        // Ignore any diagnostic without a source location. These can't be meaningfully presented to the user.
+                        return nil
                     }
-
-                    let result: LinkResolveResult = (reference: reference, node: documentationNode, problems: problems)
-                    results.sync({ $0.append(result) })
+                    
+                    if source == inSourceDocumentationCommentSource, let inSourceDocumentationCommentOffset {
+                        // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
+                        var modifiedProblem = problem
+                        modifiedProblem.offsetWithRange(inSourceDocumentationCommentOffset)
+                        return modifiedProblem
+                    } 
+                    
+                    // Diagnostics from documentation extension files have correct source ranges and don't need to be modified.
+                    return problem
                 }
             }
+            
+            // Also resolve the node's page images. This isn't part of the node's 'semantic' value (resolved above).
+            let pageImageProblems = documentationNode.metadata?.pageImages.compactMap { pageImage in
+                return resolver.resolve(
+                    resource: pageImage.source,
+                    range: pageImage.originalMarkup.range,
+                    severity: .warning
+                )
+            } ?? []
+            
+            let result: LinkResolveResult = (reference: reference, node: documentationNode, problems: problems + pageImageProblems)
+            results.sync({ $0.append(result) })
         }
 
         // Resolve links concurrently if there are no external resolvers.
@@ -604,7 +619,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Record symbol links as symbol "mentions" for automatic cross references
                 // on rendered symbol documentation.
                 if let article = result.node.semantic as? Article,
-                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) {
+                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) 
+                {
                     for markup in article.abstractSection?.content ?? [] {
                         var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 2)
                         mentions.visit(markup)
@@ -652,7 +668,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = technologyResult.source
                 let unresolvedTechnology = technologyResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, bundle: bundle)
                 let technology = resolver.visit(unresolvedTechnology) as! Technology
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -724,7 +740,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = tutorialResult.source
                 let unresolvedTutorial = tutorialResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, bundle: bundle)
                 let tutorial = resolver.visit(unresolvedTutorial) as! Tutorial
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -758,7 +774,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = articleResult.source
                 let unresolvedTutorialArticle = articleResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, bundle: bundle)
                 let article = resolver.visit(unresolvedTutorialArticle) as! TutorialArticle
                 diagnosticEngine.emit(resolver.problems)
                             
