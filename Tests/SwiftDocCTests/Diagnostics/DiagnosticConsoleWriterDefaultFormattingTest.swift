@@ -390,6 +390,108 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         }
     }
     
+    func testClampsDiagnosticRangeToSourceRange() throws {
+        let fs = try TestFileSystem(folders: [
+            Folder(name: "Something.docc", content: [
+                TextFile(name: "Article.md", utf8Content: """
+                # Title
+                
+                A very short article with only an abstract.
+                """)
+            ])
+        ])
+        
+        let summary = "Test diagnostic summary"
+        let explanation = "Test diagnostic explanation."
+        
+        let bundle = try XCTUnwrap(fs.bundles().first)
+        let baseURL = bundle.baseURL
+        let source = try XCTUnwrap(bundle.markupURLs.first)
+        
+        typealias Location = (line: Int, column: Int)
+        func logMessageFor(start: Location, end: Location) throws -> String {
+            let range = SourceLocation(line: start.line, column: start.column, source: source)..<SourceLocation(line: end.line, column: end.column, source: source)
+            
+            let logStorage = LogHandle.LogStorage()
+            let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
+            
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
+            consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
+            try consumer.flush()
+            
+            // There are no lines before line 1
+            return logStorage.text
+        }
+        
+        // Highlight the "Title" word on line 1
+        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 3), end: (line: 1, column: 8)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:1:3-1:8
+            1 + # \u{001B}[1;32mTitle\u{001B}[0;0m
+            2 |
+            3 | A very short article with only an abstract.
+            """)
+                       
+        // Highlight the "short" word on line 3
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 13)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:8-3:13
+            1 | # Title
+            2 |
+            3 + A very \u{001B}[1;32mshort\u{001B}[0;0m article with only an abstract.
+            """)
+        
+        // Extend the highlight beyond the end of that line
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 100)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:8-3:100
+            1 | # Title
+            2 |
+            3 + A very \u{001B}[1;32mshort article with only an abstract.\u{001B}[0;0m
+            """)
+        
+        // Extend the highlight beyond the start of that line
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: -4), end: (line: 3, column: 13)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:1-3:13
+            1 | # Title
+            2 |
+            3 + \u{001B}[1;32mA very short\u{001B}[0;0m article with only an abstract.
+            """)
+        
+        // Highlight a line before the start of the file
+        XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:1:1-1:5
+            """)
+        
+        // Highlight a line after the end of the file
+        XCTAssertEqual(try logMessageFor(start: (line: 100, column: 1), end: (line: 100, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:100:1-100:5
+            """)
+        
+        // Extended the highlighted lines before the start of the file
+        XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: 1, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:1:1-1:5
+            """)
+        
+        // Extended the highlighted lines after the end of the file
+        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 1), end: (line: 100, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:1:1-100:5
+            """)
+    }
+    
     func testEmitAdditionReplacementSolution() throws {
         func problemsLoggerOutput(possibleSolutions: [Solution]) -> String {
             let logger = Logger()
@@ -399,8 +501,8 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             try? consumer.flush()
             return logger.output
         }
-        let sourcelocation = SourceLocation(line: 1, column: 1, source: nil)
-        let range = sourcelocation..<sourcelocation
+        let sourceLocation = SourceLocation(line: 1, column: 1, source: nil)
+        let range = sourceLocation..<sourceLocation
         XCTAssertEqual(
             problemsLoggerOutput(possibleSolutions: [
                 Solution(summary: "Create a sloth.", replacements: [
