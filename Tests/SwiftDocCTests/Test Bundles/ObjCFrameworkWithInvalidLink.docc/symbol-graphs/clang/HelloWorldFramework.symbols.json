@@ -67,12 +67,12 @@
           {
             "range": {
               "end": {
-                "character": 52,
-                "line": 10
+                "character": 51,
+                "line": 9
               },
               "start": {
-                "character": 5,
-                "line": 10
+                "character": 4,
+                "line": 9
               }
             },
             "text": "Project version number for HelloWorldFramework."
@@ -89,8 +89,8 @@
       },
       "location": {
         "position": {
-          "character": 26,
-          "line": 11
+          "character": 25,
+          "line": 10
         },
         "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
       },
@@ -155,12 +155,12 @@
           {
             "range": {
               "end": {
-                "character": 52,
-                "line": 13
+                "character": 51,
+                "line": 12
               },
               "start": {
-                "character": 5,
-                "line": 13
+                "character": 4,
+                "line": 12
               }
             },
             "text": "Project version string for HelloWorldFramework."
@@ -177,8 +177,8 @@
       },
       "location": {
         "position": {
-          "character": 39,
-          "line": 14
+          "character": 38,
+          "line": 13
         },
         "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
       },
@@ -231,12 +231,12 @@
           {
             "range": {
               "end": {
-                "character": 40,
-                "line": 21
+                "character": 39,
+                "line": 20
               },
               "start": {
-                "character": 5,
-                "line": 21
+                "character": 4,
+                "line": 20
               }
             },
             "text": "Manage hello world related logging."
@@ -253,8 +253,8 @@
       },
       "location": {
         "position": {
-          "character": 12,
-          "line": 22
+          "character": 11,
+          "line": 21
         },
         "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
       },
@@ -349,12 +349,12 @@
           {
             "range": {
               "end": {
-                "character": 71,
-                "line": 24
+                "character": 70,
+                "line": 23
               },
               "start": {
-                "character": 5,
-                "line": 24
+                "character": 4,
+                "line": 23
               }
             },
             "text": "Log a hello world message. This line contains an ``invalid`` link."
@@ -362,12 +362,12 @@
           {
             "range": {
               "end": {
-                "character": 4,
-                "line": 25
+                "character": 3,
+                "line": 24
               },
               "start": {
-                "character": 4,
-                "line": 25
+                "character": 3,
+                "line": 24
               }
             },
             "text": ""
@@ -375,12 +375,12 @@
           {
             "range": {
               "end": {
-                "character": 18,
-                "line": 26
+                "character": 17,
+                "line": 25
               },
               "start": {
-                "character": 5,
-                "line": 26
+                "character": 4,
+                "line": 25
               }
             },
             "text": "- Parameters:"
@@ -388,12 +388,12 @@
           {
             "range": {
               "end": {
-                "character": 31,
-                "line": 27
+                "character": 30,
+                "line": 26
               },
               "start": {
-                "character": 5,
-                "line": 27
+                "character": 4,
+                "line": 26
               }
             },
             "text": "  - log: The string to log"
@@ -401,12 +401,12 @@
           {
             "range": {
               "end": {
-                "character": 52,
-                "line": 28
+                "character": 51,
+                "line": 27
               },
               "start": {
-                "character": 5,
-                "line": 28
+                "character": 4,
+                "line": 27
               }
             },
             "text": "  - prefixWith: Prefix the log with this string"
@@ -478,8 +478,8 @@
       },
       "location": {
         "position": {
-          "character": 1,
-          "line": 29
+          "character": 0,
+          "line": 28
         },
         "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
       },
@@ -533,8 +533,8 @@
       },
       "location": {
         "position": {
-          "character": 9,
-          "line": 19
+          "character": 8,
+          "line": 18
         },
         "uri": "file:///Users/admin/HelloWorldFramework/HelloWorldFramework/HelloWorldFramework.h"
       },
