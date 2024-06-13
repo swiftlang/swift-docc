@@ -820,6 +820,30 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             to: "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
         )
     }
+    
+    func testBetaInformationPreserved() throws {
+        let platformMetadata = [
+            "macOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
+            "watchOS": PlatformVersion(VersionTriplet(2, 0, 0), beta: true),
+            "tvOS": PlatformVersion(VersionTriplet(3, 0, 0), beta: true),
+            "iOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+            "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
+        ]
+        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle") { context in
+            context.externalMetadata.currentPlatforms = platformMetadata
+        }
+        
+        // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
+        try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
+        
+        // MyOtherClass is available on some beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=3.0.0)
+        try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyOtherClass", isBeta: false)
+        
+        // MyThirdClass has no platform availability information
+        try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyThirdClass", isBeta: false)
+
+    }
 
     // MARK: Test helpers
     
@@ -864,6 +888,23 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             }
         }
         
+        func assertBetaStatus(
+            authoredLink: String,
+            isBeta: Bool,
+            file: StaticString = #file,
+            line: UInt = #line
+        ) throws {
+            try assertResults(authoredLink: authoredLink) { result, label in
+                switch result {
+                case .success(let resolved):
+                    let entity = externalResolver.entity(resolved)
+                    XCTAssertEqual(entity.topicRenderReference.isBeta, isBeta, file: file, line: line)
+                case .failure(_, let errorInfo):
+                    XCTFail("Unexpectedly failed to resolve \(label) link: \(errorInfo.message) \(errorInfo.solutions.map(\.summary).joined(separator: ", "))", file: file, line: line)
+                }
+            }
+        }
+        
         func assertFailsToResolve(
             authoredLink: String,
             errorMessage: String,
@@ -896,8 +937,10 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String) throws -> LinkResolvers {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
+    private func makeLinkResolversForTestBundle(named testBundleName: String, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> LinkResolvers {
+        let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
+        let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: configureContext)
+        
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
         let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.identifier)

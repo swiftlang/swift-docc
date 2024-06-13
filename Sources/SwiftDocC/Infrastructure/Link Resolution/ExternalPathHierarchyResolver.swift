@@ -182,6 +182,15 @@ private extension Sequence<DeclarationRenderSection.Token> {
 // MARK: ExternalEntity
 
 private extension LinkDestinationSummary {
+    /// A value that indicates whether this symbol is under development and likely to change.
+    var isBeta: Bool {
+        guard let platforms, !platforms.isEmpty else {
+            return false
+        }
+        
+        return platforms.allSatisfy { $0.isBeta == true }
+    }
+    
     /// Create a topic render render reference for this link summary and its content variants.
     func topicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
@@ -215,7 +224,7 @@ private extension LinkDestinationSummary {
             navigatorTitleVariants: .init(defaultValue: nil),
             estimatedTime: nil,
             conformance: nil,
-            isBeta: platforms?.contains(where: { $0.isBeta == true }) ?? false,
+            isBeta: isBeta,
             isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true }) ?? false,
             defaultImplementationCount: nil,
             propertyListKeyNames: nil,
