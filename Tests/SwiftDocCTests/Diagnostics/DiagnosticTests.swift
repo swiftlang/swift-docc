@@ -81,10 +81,10 @@ class DiagnosticTests: XCTestCase {
     func testOffsetDiagnostics() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
-        let source = "Test a ``Reference`` in a sentence."
-        let markup = Document(parsing: source, options: .parseSymbolLinks)
+        let content = "Test a ``Reference`` in a sentence."
+        let markup = Document(parsing: content, source: URL(string: "/tmp/foo.symbols.json"), options: .parseSymbolLinks)
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: URL(string: "/tmp/foo.symbols.json"), rootReference: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
+        var resolver = ReferenceResolver(context: context, bundle: bundle, rootReference: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
         
         // Resolve references
         _ = resolver.visitMarkup(markup)
