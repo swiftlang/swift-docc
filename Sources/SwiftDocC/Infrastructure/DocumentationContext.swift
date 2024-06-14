@@ -566,14 +566,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Diagnostics for in-source documentation comments need to be offset based on the start location of the comment in the source file.
                 
                 // Get the source location
-                var inSourceDocumentationCommentSource: URL?
-                var inSourceDocumentationCommentOffset: SymbolGraph.LineList.SourceRange?
-                for docChunk in documentationNode.docChunks {
-                    guard case .sourceCode(let location, let offset) = docChunk.source else { continue }
-                    inSourceDocumentationCommentSource = location?.url
-                    inSourceDocumentationCommentOffset = offset
-                    break
-                }
+                let inSourceDocumentationCommentInfo = documentationNode.inSourceDocumentationChunk
                 
                 // Post-process and filter out unwanted diagnostics (for example from inherited documentation comments)
                 problems = resolver.problems.compactMap { problem in
@@ -582,10 +575,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         return nil
                     }
                     
-                    if source == inSourceDocumentationCommentSource, let inSourceDocumentationCommentOffset {
+                    if source == inSourceDocumentationCommentInfo?.url, let offset = inSourceDocumentationCommentInfo?.offset {
                         // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
                         var modifiedProblem = problem
-                        modifiedProblem.offsetWithRange(inSourceDocumentationCommentOffset)
+                        modifiedProblem.offsetWithRange(offset)
                         return modifiedProblem
                     } 
                     
