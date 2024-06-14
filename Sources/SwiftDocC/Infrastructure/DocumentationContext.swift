@@ -518,6 +518,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let results = Synchronized<[LinkResolveResult]>([])
         results.sync({ $0.reserveCapacity(references.count) })
 
+        func inheritsDocumentationFromOtherModule(_ documentationNode: DocumentationNode, symbolOriginReference: ResolvedTopicReference) -> Bool {
+            // Check that this symbol only has documentation from an in-source documentation comment
+            guard documentationNode.docChunks.count == 1,
+                  case .sourceCode = documentationNode.docChunks.first?.source
+            else {
+                return false
+            }
+            
+            // Check that that documentation comment is inherited from a symbol belonging to another module
+            guard let symbolSemantic = documentationNode.semantic as? Symbol,
+                  let originSymbolSemantic = documentationCache[symbolOriginReference]?.semantic as? Symbol
+            else {
+                return false
+            }
+            return symbolSemantic.moduleReference != originSymbolSemantic.moduleReference
+        }
+        
         let resolveNodeWithReference: (ResolvedTopicReference) -> Void = { [unowned self] reference in
             guard var documentationNode = try? entity(with: reference),
                   documentationNode.semantic is Article || documentationNode.semantic is Symbol
@@ -525,31 +542,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 return
             }
                     
-            let inheritanceParentReference: ResolvedTopicReference?
-            // Check if this documentation is inherited.
-            if let symbolSemantic = documentationNode.semantic as? Symbol,
-               let origin = symbolSemantic.origin,
-               let originReference = documentationCache.reference(symbolID: origin.identifier)
+            let symbolOriginReference = (documentationNode.semantic as? Symbol)?.origin.flatMap { origin in
+                documentationCache.reference(symbolID: origin.identifier)
+            }
+            // Check if we should skip resolving links for inherited documentation from other modules.
+            if !externalMetadata.inheritDocs,
+                let symbolOriginReference,
+                inheritsDocumentationFromOtherModule(documentationNode, symbolOriginReference: symbolOriginReference)
             {
-                inheritanceParentReference = originReference
-                
-                // Check if we should skip resolving links for inherited documentation
-                if !externalMetadata.inheritDocs,
-                   // Check that this symbol only has documentation from an in-source documentation comment
-                   documentationNode.docChunks.count == 1,
-                   case .sourceCode = documentationNode.docChunks.first?.source,
-                   // Check that that documentation comment is inherited from a symbol belonging to another module
-                   let originSymbolSemantic = documentationCache[originReference]?.semantic as? Symbol,
-                   symbolSemantic.moduleReference != originSymbolSemantic.moduleReference
-                {
-                    // Don't resolve any links for this symbol.
-                    return
-                }
-            } else {
-                inheritanceParentReference = nil
+                // Don't resolve any links for this symbol.
+                return
             }
             
-            var resolver = ReferenceResolver(context: self, bundle: bundle, rootReference: reference, inheritanceParentReference: inheritanceParentReference)
+            var resolver = ReferenceResolver(context: self, bundle: bundle, rootReference: reference, inheritanceParentReference: symbolOriginReference)
             
             // Update the node with the markup that contains resolved references instead of authored links.
             documentationNode.semantic = autoreleasepool { 
