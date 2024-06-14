@@ -814,11 +814,21 @@ class ReferenceResolverTests: XCTestCase {
             let problem = try XCTUnwrap(problems.first)
             XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'NotFoundArticle'")
             XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/Something.swift")
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 3)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 3)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 44)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 59)
         }
         do {
             let problem = try XCTUnwrap(problems.dropFirst().first)
             XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'NotFoundSymbol'")
             XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/Something.swift")
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 3)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 3)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 18)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 32)
         }
         
         // These other links to ``OtherNotFoundSymbol`` and <doc:OtherNotFoundArticle> also won't resolve.
@@ -826,11 +836,19 @@ class ReferenceResolverTests: XCTestCase {
             let problem = try XCTUnwrap(problems.dropFirst(2).first)
             XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'OtherNotFoundArticle'")
             XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/SomeCatalog.docc/Something.md")
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 5)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 5)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 55)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 75)
         }
         do {
             let problem = try XCTUnwrap(problems.dropFirst(3).first)
             XCTAssertEqual(problem.diagnostic.summary, "Can't resolve 'OtherNotFoundSymbol'")
             XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/SomeCatalog.docc/Something.md")
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 5)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 5)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 24)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 43)
         }
         
         // This image name won't resolve: ![Some image that's not found](some-not-found-image)
@@ -838,6 +856,11 @@ class ReferenceResolverTests: XCTestCase {
             let problem = try XCTUnwrap(problems.dropFirst(4).first)
             XCTAssertEqual(problem.diagnostic.summary, "Resource 'not-found-image' couldn't be found")
             XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/Something.swift")
+            // Note: `ReferenceResolver` doesn't offset diagnostics. That happens in `DocumentationContext/resolveLinks(curatedReferences:bundle:)`
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 5)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 5)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 32)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 79)
         }
         
         // This other image name also won't resolve: ![Some other image that's not found](other-not-found-image)
@@ -845,6 +868,10 @@ class ReferenceResolverTests: XCTestCase {
             let problem = try XCTUnwrap(problems.dropFirst(5).first)
             XCTAssertEqual(problem.diagnostic.summary, "Resource 'other-not-found-image' couldn't be found")
             XCTAssertEqual(problem.diagnostic.source?.path, "/Users/username/path/to/SomeCatalog.docc/Something.md")
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 43)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 102)
         }
     }
 }
