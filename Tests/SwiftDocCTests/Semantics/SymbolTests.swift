@@ -965,9 +965,11 @@ class SymbolTests: XCTestCase {
 
             // SymbolKit.SymbolGraph.LineList.SourceRange.Position is indexed from 0, whereas
             // (absolute) Markdown.SourceLocations are indexed from 1
-            let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { lineNumber, lineText in
-                .init(text: lineText, range: .init(start: .init(line: lineNumber, character: 0), end: .init(line: lineNumber, character: lineText.count)))
-            })
+            let newDocComment = SymbolGraph.LineList(
+                docComment.components(separatedBy: .newlines).enumerated().map { lineNumber, lineText in
+                        .init(text: lineText, range: .init(start: .init(line: lineNumber, character: 0), end: .init(line: lineNumber, character: lineText.count)))
+                },
+                uri: "file:///Users/username/path/to/Something.swift")
             graph.symbols[myFunctionUSR]?.docComment = newDocComment
             
             let newGraphData = try JSONEncoder().encode(graph)

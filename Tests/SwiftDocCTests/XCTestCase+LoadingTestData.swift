@@ -238,7 +238,6 @@ extension XCTestCase {
         var referenceResolver = MarkupReferenceResolver(
             context: context,
             bundle: bundle,
-            source: source,
             rootReference: bundle.rootReference
         )
         

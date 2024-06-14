@@ -2856,7 +2856,7 @@ Document
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
-        // Verify that by default we don't inherit docs and we gernerate default abstract.
+        // Verify that by default we don't inherit docs and we generate default abstract.
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)

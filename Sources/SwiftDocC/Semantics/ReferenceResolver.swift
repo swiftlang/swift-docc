@@ -92,9 +92,6 @@ struct ReferenceResolver: SemanticVisitor {
     /// The bundle in which visited documents reside.
     var bundle: DocumentationBundle
     
-    /// The source document being analyzed.
-    var source: URL?
-    
     /// Problems found while trying to resolve references.
     var problems = [Problem]()
     
@@ -103,10 +100,9 @@ struct ReferenceResolver: SemanticVisitor {
     /// If the documentation is inherited, the reference of the parent symbol.
     var inheritanceParentReference: ResolvedTopicReference?
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, source: URL?, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
+    init(context: DocumentationContext, bundle: DocumentationBundle, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
         self.context = context
         self.bundle = bundle
-        self.source = source
         self.rootReference = rootReference ?? bundle.rootReference
         self.inheritanceParentReference = inheritanceParentReference
     }
@@ -118,7 +114,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
             return .failure(unresolved, error)
         }
     }
@@ -128,7 +124,7 @@ struct ReferenceResolver: SemanticVisitor {
     */
     func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
         if !context.resourceExists(with: resource) {
-            return unresolvedResourceProblem(resource: resource, source: source, range: range, severity: severity)
+            return unresolvedResourceProblem(resource: resource, source: range?.source, range: range, severity: severity)
         } else {
             return nil
         }
@@ -213,23 +209,24 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Semantic {
-        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, source: source, rootReference: rootReference)
+        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: rootReference)
         let parent = inheritanceParentReference
         let context = self.context
         
-        markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
+        markupResolver.problemForUnresolvedReference = { unresolved, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
             if let parent, let range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
-                        return Problem(diagnostic: Diagnostic(source: source,
+                        return Problem(diagnostic: Diagnostic(source: range.source,
                             severity: .warning, range: range,
                             identifier: "org.swift.docc.UnresolvableLinkWhenInherited",
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
                             possibleSolutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
+                                    // FIXME: The resolved reference path isn't the same as the authorable link.
                                     Replacement(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
@@ -291,7 +288,7 @@ struct ReferenceResolver: SemanticVisitor {
         var uniqueReferences = Set<TopicReference>()
         let newTutorialReferencesWithoutDupes = newTutorialReferences.filter { newTutorialReference in
             guard !uniqueReferences.contains(newTutorialReference.topic) else {
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)")
+                let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)")
                 let solutions = newTutorialReference.originalMarkup.range.map {
                     return [Solution(summary: "Remove duplicate \(TutorialReference.directiveName.singleQuoted) directive", replacements: [
                         Replacement(range: $0, replacement: "")
