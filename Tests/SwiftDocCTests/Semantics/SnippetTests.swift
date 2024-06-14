@@ -65,7 +65,7 @@ class SnippetTests: XCTestCase {
         @Snippet(path: "Test/Snippets/DoesntExist")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, source: nil, rootReference: context.rootModules[0])
+        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
         XCTAssertEqual(1, resolver.problems.count)
         resolver.problems.first.map {

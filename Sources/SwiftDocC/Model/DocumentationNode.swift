@@ -94,6 +94,16 @@ public struct DocumentationNode {
     /// property.
     var docChunks: [DocumentationChunk]
     
+    /// Returns information about the node's in-source documentation comment chunk, or `nil` if the node doesn't have an in-source documentation chunk.
+    var inSourceDocumentationChunk: (url: URL?, offset: SymbolGraph.LineList.SourceRange?)? {
+        for docChunk in docChunks {
+            guard case .sourceCode(let location, let offset) = docChunk.source else { continue }
+            
+            return (url: location?.url, offset: offset)
+        }
+        return nil
+    }
+    
     /// Linkable in-content sections.
     var anchorSections = [AnchorSection]()
     
