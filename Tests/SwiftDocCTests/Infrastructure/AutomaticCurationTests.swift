@@ -29,8 +29,8 @@ class AutomaticCurationTests: XCTestCase {
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
-                            makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                            makeSymbol(id: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                            makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                         ],
                         relationships: [
                             .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
@@ -64,7 +64,7 @@ class AutomaticCurationTests: XCTestCase {
                             //     func someFunction() { }
                             // }
                             makeSymbol(
-                                identifier: extensionID,
+                                id: extensionID,
                                 kind: .extension,
                                 // The extension has the path component of the extended type
                                 pathComponents: ["Something"],
@@ -74,7 +74,7 @@ class AutomaticCurationTests: XCTestCase {
                                 ]
                             ),
                             // No matter what type `ExtendedModule.Something` is, always add a function in the extension
-                            makeSymbol(identifier: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
+                            makeSymbol(id: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
                         ],
                         relationships: [
                             .init(source: extensionID, target: containerID, kind: .extensionTo, targetFallback: "ExtendedModule.Something"),
@@ -796,8 +796,8 @@ class AutomaticCurationTests: XCTestCase {
              let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
                  JSONFile(name: "ModuleName.symbols.json",
                           content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                             makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
-                             makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                             makeSymbol(id: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                             makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                           ], relationships: [
                              .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
                           ])),

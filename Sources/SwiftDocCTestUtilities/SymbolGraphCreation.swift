@@ -78,16 +78,15 @@ extension XCTestCase {
     // MARK: Symbol
     
     package func makeSymbol(
-        identifier usr: String,
-        sourceLanguage: SourceLanguage = .swift,
+        id: String,
+        language: SourceLanguage = .swift,
         kind kindID: SymbolGraph.Symbol.KindIdentifier,
         pathComponents: [String],
         docComment: String? = nil,
         accessLevel: SymbolGraph.Symbol.AccessControl = .init(rawValue: "public"), // Defined internally in SwiftDocC
         location: (position: SymbolGraph.LineList.SourceRange.Position, url: URL)? = (defaultSymbolPosition, defaultSymbolURL),
         signature: SymbolGraph.Symbol.FunctionSignature? = nil,
-        otherMixins: [any Mixin] = [],
-        isVirtual: Bool = false
+        otherMixins: [any Mixin] = []
     ) -> SymbolGraph.Symbol {
         precondition(!pathComponents.isEmpty, "Need at least one path component to name the symbol")
         
@@ -100,7 +99,7 @@ extension XCTestCase {
         }
         
         return SymbolGraph.Symbol(
-            identifier: SymbolGraph.Symbol.Identifier(precise: usr, interfaceLanguage: sourceLanguage.id),
+            identifier: SymbolGraph.Symbol.Identifier(precise: id, interfaceLanguage: language.id),
             names: makeSymbolNames(name: pathComponents.first!),
             pathComponents: pathComponents,
             docComment: docComment.map {
@@ -112,8 +111,7 @@ extension XCTestCase {
             },
             accessLevel: accessLevel,
             kind: makeSymbolKind(kindID),
-            mixins: makeMixins(mixins),
-            isVirtual: isVirtual
+            mixins: makeMixins(mixins)
         )
     }
     

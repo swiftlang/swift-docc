@@ -671,8 +671,8 @@ class DocumentationContextTests: XCTestCase {
     func testUsesMultipleDocExtensionFilesWithSameName() throws {
         
         // Generate 2 different symbols with the same name.
-        let someSymbol = makeSymbol(identifier: "someEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["SomeDirectory", "MyEnum"])
-        let anotherSymbol = makeSymbol(identifier: "anotherEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["AnotherDirectory", "MyEnum"])
+        let someSymbol = makeSymbol(id: "someEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["SomeDirectory", "MyEnum"])
+        let anotherSymbol = makeSymbol(id: "anotherEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["AnotherDirectory", "MyEnum"])
         let symbols: [SymbolGraph.Symbol] = [someSymbol, anotherSymbol]
         
         // Create a catalog with doc extension files with the same filename for each symbol.
@@ -4495,16 +4495,16 @@ let expected = """
                         symbols: [
                             // Any class declaration.
                             makeSymbol(
-                                identifier: "some-class-id",
-                                sourceLanguage: .objectiveC,
+                                id: "some-class-id",
+                                language: .objectiveC,
                                 kind: .class,
                                 pathComponents: ["SomeClass"]
                             ),
                             
                             // extern NSErrorDomain const SomeErrorDomain;
                             makeSymbol(
-                                identifier: "some-error-domain-id",
-                                sourceLanguage: .objectiveC,
+                                id: "some-error-domain-id",
+                                language: .objectiveC,
                                 kind: .var,
                                 pathComponents: ["SomeErrorDomain"]
                             ),
@@ -4513,14 +4513,14 @@ let expected = """
                             //     SomeErrorCodeSomeCase = 1
                             // };
                             makeSymbol(
-                                identifier: "some-error-code-id",
-                                sourceLanguage: .objectiveC,
+                                id: "some-error-code-id",
+                                language: .objectiveC,
                                 kind: .enum,
                                 pathComponents: ["SomeErrorCode"]
                             ),
                             makeSymbol(
-                                identifier: "some-error-code-case-id",
-                                sourceLanguage: .objectiveC,
+                                id: "some-error-code-case-id",
+                                language: .objectiveC,
                                 kind: .case,
                                 pathComponents: ["SomeErrorCode", "SomeErrorCodeSomeCase"]
                             ),
@@ -4537,7 +4537,7 @@ let expected = """
                         symbols: [
                             // The Swift representation of the Objective-C class above.
                             makeSymbol(
-                                identifier: "some-class-id",
+                                id: "some-class-id",
                                 kind: .class,
                                 pathComponents: ["SomeClass"]
                             ),
@@ -4553,33 +4553,33 @@ let expected = """
                             //     }
                             // }
                             makeSymbol(
-                                identifier: "some-error-domain-id",
+                                id: "some-error-domain-id",
                                 kind: .var,
                                 pathComponents: ["SomeErrorDomain"]
                             ),
                             
                             makeSymbol(
-                                identifier: "some-error-id",
+                                id: "some-error-id",
                                 kind: .struct,
                                 pathComponents: ["SomeError"]
                             ),
                             makeSymbol(
-                                identifier: "some-error-domain-property-id",
+                                id: "some-error-domain-property-id",
                                 kind: .typeProperty,
                                 pathComponents: ["SomeError", "errorDomain"]
                             ),
                             makeSymbol(
-                                identifier: "some-error-code-property-id",
+                                id: "some-error-code-property-id",
                                 kind: .typeProperty,
                                 pathComponents: ["SomeError", "code"]
                             ),
                             makeSymbol(
-                                identifier: "some-error-code-id",
+                                id: "some-error-code-id",
                                 kind: .enum,
                                 pathComponents: ["SomeError", "Code"]
                             ),
                             makeSymbol(
-                                identifier: "some-error-code-case-id",
+                                id: "some-error-code-case-id",
                                 kind: .case,
                                 pathComponents: ["SomeError", "Code", "someCase"]
                             ),
@@ -4703,10 +4703,10 @@ let expected = """
         let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
         ] }
         
         let tempURL = try createTempFolder(content: [
@@ -4780,10 +4780,10 @@ let expected = """
         let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
         ] }
 
         let tempURL = try createTempFolder(content: [
@@ -4830,10 +4830,10 @@ let expected = """
         let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every non overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
         ] }
         
         let tempURL = try createTempFolder(content: [
@@ -4925,15 +4925,15 @@ let expected = """
                     moduleName: "ModuleName",
                     platform: .init(operatingSystem: .init(name: "macosx")),
                     symbols: [
-                        makeSymbol(identifier: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
-                        makeSymbol(identifier: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
                     ])),
                 JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     platform: .init(operatingSystem: .init(name: "ios")),
                     symbols: [
-                        makeSymbol(identifier: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
-                        makeSymbol(identifier: "symbol-3", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-3", kind: symbolKind, pathComponents: ["SymbolName"]),
                     ])),
             ])
         ])
@@ -5003,14 +5003,14 @@ let expected = """
                     moduleName: "ModuleName",
                     platform: .init(operatingSystem: .init(name: "macosx")),
                     symbols: [
-                        makeSymbol(identifier: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
                     ])),
                 JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     platform: .init(operatingSystem: .init(name: "ios")),
                     symbols: [
-                        makeSymbol(identifier: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
-                        makeSymbol(identifier: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
                     ])),
             ])
         ])
@@ -5078,14 +5078,14 @@ let expected = """
                     moduleName: "ModuleName",
                     platform: .init(operatingSystem: .init(name: "macosx")),
                     symbols: [
-                        makeSymbol(identifier: "RegularSymbol", kind: .class, pathComponents: ["RegularSymbol"]),
+                        makeSymbol(id: "RegularSymbol", kind: .class, pathComponents: ["RegularSymbol"]),
                     ])),
                 JSONFile(name: "OtherModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "OtherModule",
                     platform: .init(operatingSystem: .init(name: "macosx")),
                     symbols: [
-                        makeSymbol(identifier: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
-                        makeSymbol(identifier: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
                     ])),
             ])
         ])

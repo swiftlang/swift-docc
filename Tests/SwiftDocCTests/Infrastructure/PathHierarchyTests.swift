@@ -1457,7 +1457,7 @@ class PathHierarchyTests: XCTestCase {
     func testContinuesSearchingIfNonSymbolMatchesSymbolLink() throws {
         let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                makeSymbol(identifier: "some-class-id", kind: .class, pathComponents: ["SomeClass"])
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"])
             ])),
             
             TextFile(name: "Some-Article.md", utf8Content: """
@@ -1804,7 +1804,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "Module.symbols.json", content: makeSymbolGraph(
                 moduleName: "Module",
                 symbols: symbolPaths.map { 
-                    makeSymbol(identifier: $0.joined(separator: "."), kind: .class, pathComponents: $0)
+                    makeSymbol(id: $0.joined(separator: "."), kind: .class, pathComponents: $0)
                 }
             )),
         ])
@@ -1842,7 +1842,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
                     symbols: [
-                        makeSymbol(identifier: containerID, sourceLanguage: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
                     ]
                 )),
             ]),
@@ -1851,14 +1851,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(identifier: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        makeSymbol(identifier: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1885,7 +1885,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(identifier: containerID, sourceLanguage: .objectiveC, kind: .typealias, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .typealias, pathComponents: ["ContainerName"]),
                     ]
                 )),
             ]),
@@ -1894,14 +1894,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(identifier: containerID, kind: .struct, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        makeSymbol(identifier: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1928,8 +1928,8 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
                     symbols: [
-                        makeSymbol(identifier: containerID, sourceLanguage: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
-                        makeSymbol(identifier: memberID, sourceLanguage: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]), // member starts with uppercase "M"
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]), // member starts with uppercase "M"
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1941,8 +1941,8 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(identifier: containerID, kind: .class, pathComponents: ["ContainerName"]),
-                        makeSymbol(identifier: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"]), // member starts with lowercase "m"
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"]), // member starts with lowercase "m"
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -1969,7 +1969,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(identifier: containerID, sourceLanguage: .objectiveC, kind: .class, pathComponents: ["ObjectiveCContainerName"]),
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ObjectiveCContainerName"]),
                     ]
                 )),
             ]),
@@ -1978,14 +1978,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SwiftContainerName"]),
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["SwiftContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        makeSymbol(identifier: memberID, kind: .property, pathComponents: ["SwiftContainerName", "MemberName"])
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["SwiftContainerName", "MemberName"])
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2012,9 +2012,9 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    makeSymbol(identifier: containerID, kind: .class, pathComponents: ["ContainerName"]),
-                    makeSymbol(identifier: otherID, kind: .class, pathComponents: ["ContainerName"]),
-                    makeSymbol(identifier: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName1"]),
+                    makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                    makeSymbol(id: otherID, kind: .class, pathComponents: ["ContainerName"]),
+                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName1"]),
                 ],
                 relationships: [
                     .init(source: memberID, target: containerID, kind: .optionalMemberOf, targetFallback: nil),
@@ -2037,7 +2037,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    makeSymbol(identifier: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"]),
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"]),
                 ],
                 relationships: []
             )),
@@ -2136,7 +2136,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    makeSymbol(identifier: symbolID, kind: .class, pathComponents: ["SymbolName"]),
+                    makeSymbol(id: symbolID, kind: .class, pathComponents: ["SymbolName"]),
                 ],
                 relationships: []
             )),
@@ -2170,9 +2170,9 @@ class PathHierarchyTests: XCTestCase {
                 moduleName: "ModuleName",
                 platform: .init(operatingSystem: .init(name: platformName)),
                 symbols: [
-                    makeSymbol(identifier: protocolID, kind: .class, pathComponents: ["SomeProtocolName"]),
-                    makeSymbol(identifier: protocolRequirementID, kind: .class, pathComponents: ["SomeProtocolName", "someProtocolRequirement()"]),
-                    makeSymbol(identifier: defaultImplementationID, kind: .class, pathComponents: ["SomeConformingType", "someProtocolRequirement()"]),
+                    makeSymbol(id: protocolID, kind: .class, pathComponents: ["SomeProtocolName"]),
+                    makeSymbol(id: protocolRequirementID, kind: .class, pathComponents: ["SomeProtocolName", "someProtocolRequirement()"]),
+                    makeSymbol(id: defaultImplementationID, kind: .class, pathComponents: ["SomeConformingType", "someProtocolRequirement()"]),
                 ],
                 relationships: [
                     .init(source: protocolRequirementID, target: protocolID, kind: .requirementOf, targetFallback: nil),

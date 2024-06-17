@@ -23,7 +23,7 @@ class AutoCapitalizationTests: XCTestCase {
             moduleName: "ModuleName",
             symbols: [
                 makeSymbol(
-                    identifier: "symbol-id",
+                    id: "symbol-id",
                     kind: .func,
                     pathComponents: ["functionName(...)"],
                     docComment: docComment,

@@ -595,8 +595,8 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             moduleName: "ModuleName",
             symbols: [
                 makeSymbol(
-                    identifier: "symbol-id",
-                    sourceLanguage: sourceLanguage,
+                    id: "symbol-id",
+                    language: sourceLanguage,
                     kind: .func,
                     pathComponents: ["functionName(...)"],
                     docComment: docComment,
