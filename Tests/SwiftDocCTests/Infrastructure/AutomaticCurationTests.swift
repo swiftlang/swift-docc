@@ -69,7 +69,9 @@ class AutomaticCurationTests: XCTestCase {
                                 // The extension has the path component of the extended type
                                 pathComponents: ["Something"],
                                 // Specify the extended symbol's symbol kind
-                                swiftExtension: .init(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                                otherMixins: [
+                                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                                ]
                             ),
                             // No matter what type `ExtendedModule.Something` is, always add a function in the extension
                             makeSymbol(identifier: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
@@ -840,25 +842,4 @@ class AutomaticCurationTests: XCTestCase {
              XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
          }
      }
-}
-
-private func makeSymbol(
-    identifier: String,
-    kind: SymbolGraph.Symbol.KindIdentifier,
-    pathComponents: [String],
-    swiftExtension: SymbolGraph.Symbol.Swift.Extension? = nil
-) -> SymbolGraph.Symbol {
-    var mixins = [String: Mixin]()
-    if let swiftExtension {
-        mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
-    }
-    return SymbolGraph.Symbol(
-        identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-        names: .init(title: pathComponents.last!, navigator: nil, subHeading: nil, prose: nil),
-        pathComponents: pathComponents,
-        docComment: nil,
-        accessLevel: .public,
-        kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
-        mixins: mixins
-    )
 }
