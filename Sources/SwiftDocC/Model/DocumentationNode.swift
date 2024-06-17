@@ -463,7 +463,7 @@ public struct DocumentationNode {
             
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
             let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
-            let offset = symbol.offsetAdjustedForInterfaceLanguage()
+            let offset = symbol.docComment?.lines.first?.range
 
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
