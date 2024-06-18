@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -163,6 +163,13 @@ public extension Collection where Element: DocCSymbolRepresentable {
         }
     }
 }
+
+// DocCSymbolRepresentable inherits from Equatable. If SymbolKit added Equatable conformance in the future, this could behave differently.
+// It's reasonable to expect that symbols with the same unique ID would be equal but it's possible that SymbolKit's implementation would consider more symbol properties.
+//
+// In the long term we should try to phase out DocCSymbolRepresentable since it doesn't reflect how DocC resolves links or disambiguated symbols in links.
+extension SymbolGraph.Symbol: @retroactive Equatable {}
+extension UnifiedSymbolGraph.Symbol: @retroactive Equatable {}
 
 extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     public var preciseIdentifier: String? {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,8 +86,8 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
 }
 
 // SwiftDocCUtilities imports SwiftDocC. SwiftDocC does not link against ArgumentParser (because it isn't about CLI). We conform here because this is the first place that we can. We implement in DocC.
-extension DocumentationCoverageLevel: ExpressibleByArgument {}
-extension DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation: ExpressibleByArgument {}
+extension DocumentationCoverageLevel: @retroactive ExpressibleByArgument {}
+extension DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation: @retroactive ExpressibleByArgument {}
 
 extension DocumentationCoverageOptions {
     public init(from arguments: DocumentationCoverageOptionsArgument) {

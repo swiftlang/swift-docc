@@ -283,7 +283,8 @@ class RowTests: XCTestCase {
 
 }
 
-extension RenderBlockContent: ExpressibleByStringLiteral {
+// RenderBlockContent is defined in SwiftDocC. We would know if we added public ExpressibleByStringLiteral conformance (which is unlikely).
+extension RenderBlockContent: @retroactive ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self = RenderBlockContent.paragraph(Paragraph(inlineContent: [.text(value)]))
     }

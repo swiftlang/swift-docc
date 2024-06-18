@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,7 +10,9 @@
 
 import SymbolKit
 
-extension SymbolGraph.Symbol.AccessControl: Comparable {
+// SymbolKit doesn't define any access control values ("open", "public", "internal", "filePrivate", and "private", are defined in SwiftDocC).
+// Since AccessControl only has a string raw value, it's unlikely that SymbolKit would add a Comparable default implementation.
+extension SymbolGraph.Symbol.AccessControl: @retroactive Comparable {
     private var level: Int? {
         switch self {
         case .private : return 1

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -57,7 +57,8 @@ func directiveUSR(_ directiveName: String) -> String {
     "__docc_universal_symbol_reference_$\(directiveName)"
 }
 
-extension SymbolGraph.Symbol.DeclarationFragments.Fragment: ExpressibleByStringInterpolation {
+// This conformance it only relevant to the `generate-symbol-graph` script.
+extension SymbolGraph.Symbol.DeclarationFragments.Fragment: @retroactive ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
     }
@@ -71,7 +72,8 @@ extension SymbolGraph.Symbol.DeclarationFragments.Fragment: ExpressibleByStringI
     }
 }
 
-extension SymbolGraph.LineList.Line: ExpressibleByStringInterpolation {
+// This conformance it only relevant to the `generate-symbol-graph` script.
+extension SymbolGraph.LineList.Line: @retroactive ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(text: value, range: nil)
     }
