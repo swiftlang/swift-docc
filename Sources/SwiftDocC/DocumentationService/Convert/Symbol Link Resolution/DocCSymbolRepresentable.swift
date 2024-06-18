@@ -164,12 +164,14 @@ public extension Collection where Element: DocCSymbolRepresentable {
     }
 }
 
+#if compiler(>=6)
 // DocCSymbolRepresentable inherits from Equatable. If SymbolKit added Equatable conformance in the future, this could behave differently.
 // It's reasonable to expect that symbols with the same unique ID would be equal but it's possible that SymbolKit's implementation would consider more symbol properties.
 //
 // In the long term we should try to phase out DocCSymbolRepresentable since it doesn't reflect how DocC resolves links or disambiguated symbols in links.
 extension SymbolGraph.Symbol: @retroactive Equatable {}
 extension UnifiedSymbolGraph.Symbol: @retroactive Equatable {}
+#endif
 
 extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     public var preciseIdentifier: String? {

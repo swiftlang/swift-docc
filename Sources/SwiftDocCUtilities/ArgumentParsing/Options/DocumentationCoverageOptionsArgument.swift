@@ -86,8 +86,10 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
 }
 
 // SwiftDocCUtilities imports SwiftDocC. SwiftDocC does not link against ArgumentParser (because it isn't about CLI). We conform here because this is the first place that we can. We implement in DocC.
-extension DocumentationCoverageLevel: @retroactive ExpressibleByArgument {}
-extension DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation: @retroactive ExpressibleByArgument {}
+//
+// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+extension SwiftDocC.DocumentationCoverageLevel: ArgumentParser.ExpressibleByArgument {}
+extension SwiftDocC.DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation: ArgumentParser.ExpressibleByArgument {}
 
 extension DocumentationCoverageOptions {
     public init(from arguments: DocumentationCoverageOptionsArgument) {

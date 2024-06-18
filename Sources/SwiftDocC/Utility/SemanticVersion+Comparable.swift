@@ -15,7 +15,9 @@ import SymbolKit
 //
 // If a future SymbolKit implementation considers the "prerelease" and "buildMetadata" components _after_ the
 // "major", "minor", and "patch" components, that remains compatible with the behavior that SwiftDocC expects.
-extension SymbolGraph.SemanticVersion: @retroactive Comparable {
+//
+// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+extension SymbolKit.SymbolGraph.SemanticVersion: Swift.Comparable {
     /// Compares two semantic versions.
     public static func < (lhs: SymbolGraph.SemanticVersion, rhs: SymbolGraph.SemanticVersion) -> Bool {
         return (lhs.major, lhs.minor, lhs.patch) < (rhs.major, rhs.minor, rhs.patch)

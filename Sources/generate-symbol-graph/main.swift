@@ -58,7 +58,9 @@ func directiveUSR(_ directiveName: String) -> String {
 }
 
 // This conformance it only relevant to the `generate-symbol-graph` script.
-extension SymbolGraph.Symbol.DeclarationFragments.Fragment: @retroactive ExpressibleByStringInterpolation {
+//
+// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
     }
@@ -73,7 +75,9 @@ extension SymbolGraph.Symbol.DeclarationFragments.Fragment: @retroactive Express
 }
 
 // This conformance it only relevant to the `generate-symbol-graph` script.
-extension SymbolGraph.LineList.Line: @retroactive ExpressibleByStringInterpolation {
+//
+// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(text: value, range: nil)
     }
