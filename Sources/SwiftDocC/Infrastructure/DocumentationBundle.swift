@@ -68,7 +68,8 @@ public struct DocumentationBundle {
     }
     
     /// Code listings extracted from the documented modules' source, indexed by their identifier.
-    public var attributedCodeListings: [String: AttributedCodeListing]
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
+    public var attributedCodeListings: [String: AttributedCodeListing] = [:]
     
     /// Symbol Graph JSON files for the modules documented by this bundle.
     public let symbolGraphURLs: [URL]
@@ -100,7 +101,6 @@ public struct DocumentationBundle {
     /// - Parameters:
     ///   - info: Information about the bundle.
     ///   - baseURL: A URL prefix to be appended to the relative presentation URL.
-    ///   - attributedCodeListings: Code listings extracted from the documented modules' source, indexed by their identifier.
     ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
     ///   - markupURLs: DocC Markup files of the bundle.
     ///   - miscResourceURLs: Miscellaneous resources of the bundle.
@@ -110,7 +110,6 @@ public struct DocumentationBundle {
     public init(
         info: Info,
         baseURL: URL = URL(string: "/")!,
-        attributedCodeListings: [String: AttributedCodeListing] = [:],
         symbolGraphURLs: [URL],
         markupURLs: [URL],
         miscResourceURLs: [URL],
@@ -120,7 +119,6 @@ public struct DocumentationBundle {
     ) {
         self.info = info
         self.baseURL = baseURL
-        self.attributedCodeListings = attributedCodeListings
         self.symbolGraphURLs = symbolGraphURLs
         self.markupURLs = markupURLs
         self.miscResourceURLs = miscResourceURLs
@@ -132,6 +130,22 @@ public struct DocumentationBundle {
         self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
+    }
+    
+    @available(*, deprecated, renamed: "init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)", message: "Use 'init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)' instead. This deprecated API will be removed after 6.1 is released")
+    public init(
+        info: Info,
+        baseURL: URL = URL(string: "/")!,
+        attributedCodeListings: [String: AttributedCodeListing] = [:],
+        symbolGraphURLs: [URL],
+        markupURLs: [URL],
+        miscResourceURLs: [URL],
+        customHeader: URL? = nil,
+        customFooter: URL? = nil,
+        themeSettings: URL? = nil
+    ) {
+        self.init(info: info, baseURL: baseURL, symbolGraphURLs: symbolGraphURLs, markupURLs: markupURLs, miscResourceURLs: miscResourceURLs, customHeader: customHeader, customFooter: customFooter, themeSettings: themeSettings)
+        self.attributedCodeListings = attributedCodeListings
     }
     
     public private(set) var rootReference: ResolvedTopicReference

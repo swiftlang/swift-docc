@@ -113,11 +113,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
         expectedNumberOfAmbiguousSymbols: Int
     ) throws {
         // Build a bundle with an unusual number of overloaded symbols
-        let (_, _, context) = try testBundleAndContext(
-            copying: "OverloadedSymbols",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         // Collect the overloaded symbols nodes from the built bundle
         let ambiguousSymbols = context.documentationCache
@@ -171,11 +167,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testLinkComponentInitialization() throws {
-        let (_, _, context) = try testBundleAndContext(
-            copying: "OverloadedSymbols",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         var count = 0
         for (reference, documentationNode) in context.documentationCache {

@@ -49,7 +49,6 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
                 defaultCodeListingLanguage: nil
             ),
             baseURL: testBundleWithLanguageDefault.baseURL,
-            attributedCodeListings: testBundleWithLanguageDefault.attributedCodeListings,
             symbolGraphURLs: testBundleWithLanguageDefault.symbolGraphURLs,
             markupURLs: testBundleWithLanguageDefault.markupURLs,
             miscResourceURLs: testBundleWithLanguageDefault.miscResourceURLs

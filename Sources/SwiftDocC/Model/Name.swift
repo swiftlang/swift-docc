@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,13 +20,19 @@ extension DocumentationNode {
         /// The name of a conceptual document is its title.
         case conceptual(title: String)
         /// The name of the symbol is derived from its declaration.
-        case symbol(declaration: AttributedCodeListing.Line)
+        @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
+        case _symbol(declaration: AttributedCodeListing.Line)
+        /// The name of the symbol.
+        case symbol(name: String)
         
         public func hash(into hasher: inout Hasher) {
             switch self {
             case .conceptual(let text):
                 hasher.combine(text)
-            case .symbol(let declaration):
+            case .symbol(let name):
+                hasher.combine(name)
+                
+            case ._symbol(let declaration):
                 hasher.combine(declaration)
             }
         }
@@ -35,9 +41,23 @@ extension DocumentationNode {
             switch self {
             case .conceptual(let title):
                 return title
-            case .symbol(let declaration):
+            case .symbol(let name):
+                return name
+                
+            case ._symbol(let declaration):
                 return declaration.tokens.map { $0.description }.joined(separator: " ")
             }
+        }
+        
+        var plainText: String {
+            description
+        }
+        
+        @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
+        static func symbol(declaration: AttributedCodeListing.Line) -> Name {
+            // This static function exists so that `Name.symbol(declaration:)` is available while 
+            // still allowing switching over the two "symbol" name cases.
+            Name._symbol(declaration: declaration)
         }
     }
 }

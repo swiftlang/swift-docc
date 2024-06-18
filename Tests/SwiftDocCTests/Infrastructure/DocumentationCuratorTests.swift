@@ -341,7 +341,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
