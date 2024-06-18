@@ -19,9 +19,6 @@ extension DocumentationNode {
     public enum Name: Hashable, CustomStringConvertible {
         /// The name of a conceptual document is its title.
         case conceptual(title: String)
-        /// The name of the symbol is derived from its declaration.
-        @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
-        case _symbol(declaration: AttributedCodeListing.Line)
         /// The name of the symbol.
         case symbol(name: String)
         
@@ -31,9 +28,6 @@ extension DocumentationNode {
                 hasher.combine(text)
             case .symbol(let name):
                 hasher.combine(name)
-                
-            case ._symbol(let declaration):
-                hasher.combine(declaration)
             }
         }
         
@@ -43,9 +37,6 @@ extension DocumentationNode {
                 return title
             case .symbol(let name):
                 return name
-                
-            case ._symbol(let declaration):
-                return declaration.tokens.map { $0.description }.joined(separator: " ")
             }
         }
         
@@ -57,7 +48,7 @@ extension DocumentationNode {
         static func symbol(declaration: AttributedCodeListing.Line) -> Name {
             // This static function exists so that `Name.symbol(declaration:)` is available while 
             // still allowing switching over the two "symbol" name cases.
-            Name._symbol(declaration: declaration)
+            Name.symbol(name: declaration.tokens.first?.description ?? "")
         }
     }
 }
