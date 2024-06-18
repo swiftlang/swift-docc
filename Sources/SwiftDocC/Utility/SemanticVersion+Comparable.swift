@@ -11,12 +11,13 @@
 import Foundation
 import SymbolKit
 
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
+//
 // If SymbolKit adds Comparable conformance it's reasonable to expect that its behavior would be compatible.
 //
-// If a future SymbolKit implementation considers the "prerelease" and "buildMetadata" components _after_ the
-// "major", "minor", and "patch" components, that remains compatible with the behavior that SwiftDocC expects.
-//
-// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+// As long as a hypothetical future SymbolKit implementation considers "major", "minor", and "patch" before comparing the "prerelease" and "buildMetadata"
+// components, the behavior will remain compatible with what SwiftDocC expects.
 extension SymbolKit.SymbolGraph.SemanticVersion: Swift.Comparable {
     /// Compares two semantic versions.
     public static func < (lhs: SymbolGraph.SemanticVersion, rhs: SymbolGraph.SemanticVersion) -> Bool {

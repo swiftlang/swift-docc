@@ -10,10 +10,11 @@
 
 import SymbolKit
 
-// SymbolKit doesn't define any access control values ("open", "public", "internal", "filePrivate", and "private", are defined in SwiftDocC).
-// Since AccessControl only has a string raw value, it's unlikely that SymbolKit would add a Comparable default implementation.
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
-// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+// SymbolKit doesn't define any access control values ("open", "public", "internal", "filePrivate", and "private", are defined in SwiftDocC).
+// Because AccessControl only has a string raw value, it's unlikely that SymbolKit would add a Comparable conformance and default implementation.
 extension SymbolKit.SymbolGraph.Symbol.AccessControl: Swift.Comparable {
     private var level: Int? {
         switch self {

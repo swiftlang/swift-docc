@@ -283,9 +283,10 @@ class RowTests: XCTestCase {
 
 }
 
-// RenderBlockContent is defined in SwiftDocC. We would know if we added public ExpressibleByStringLiteral conformance (which is unlikely).
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
-// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+// It is safe to add a retroactively conformance here because the other module (SwiftDocC) is in the same package.
 extension SwiftDocC.RenderBlockContent: Swift.ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self = RenderBlockContent.paragraph(Paragraph(inlineContent: [.text(value)]))

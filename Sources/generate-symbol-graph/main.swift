@@ -57,9 +57,10 @@ func directiveUSR(_ directiveName: String) -> String {
     "__docc_universal_symbol_reference_$\(directiveName)"
 }
 
-// This conformance it only relevant to the `generate-symbol-graph` script.
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
-// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+// This conformance it only relevant to the `generate-symbol-graph` script.
 extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
@@ -74,9 +75,10 @@ extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.Expr
     }
 }
 
-// This conformance it only relevant to the `generate-symbol-graph` script.
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
 //
-// Since `@retroactive` is new in the Swift 6 compiler, use the backwards compatible syntax (fully-qualified types) to declare retroactive conformance.
+// This conformance it only relevant to the `generate-symbol-graph` script. 
 extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(text: value, range: nil)
