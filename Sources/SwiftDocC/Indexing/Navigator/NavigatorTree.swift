@@ -109,7 +109,6 @@ public class NavigatorTree {
      - Parameters:
         - url: The file URL from which the tree should be read.
         - bundleIdentifier: The bundle identifier used to generate the mapping topicID to node on tree.
-        - interfaceLanguages: A set containing the indication about the interface languages a tree contains.
         - timeout: The amount of time we can load a batch of items from data, once the timeout time pass,
                    the reading process will reschedule asynchronously using the given queue.
         - delay: The delay to wait before schedule the next read. Default: 0.01 seconds.
@@ -117,7 +116,7 @@ public class NavigatorTree {
         - presentationIdentifier: Defines if nodes should have a presentation identifier useful in presentation contexts.
         - broadcast: The callback to update get updates of the current process.
      */
-    public func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
+    public func read(from url: URL, bundleIdentifier: String? = nil, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
         let data = try Data(contentsOf: url)
         let readingCursor = ReadingCursor(data: data)
         self.readingCursor = readingCursor
@@ -182,6 +181,11 @@ public class NavigatorTree {
         }
         
         self.root = root
+    }
+    
+    @available(*, deprecated, renamed: "read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)", message: "Use 'read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)' instead. This deprecated API will be removed after 6.1 is released")
+    public func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
+        try self.read(from: url, bundleIdentifier: bundleIdentifier, timeout: timeout, delay: delay, queue: queue, presentationIdentifier: presentationIdentifier, broadcast: broadcast)
     }
         
     /**
@@ -261,7 +265,6 @@ public class NavigatorTree {
      - Parameters:
         - url: The file URL from which the tree should be read.
         - bundleIdentifier: The bundle identifier used to generate the mapping topicID to node on tree.
-        - interfaceLanguages: A set containing the indication about the interface languages a tree contains.
         - atomically: Defines if the read should be atomic.
         - presentationIdentifier: Defines if nodes should have a presentation identifier useful in presentation contexts.
         - onNodeRead: An action to perform after reading a node. This allows clients to perform arbitrary actions on the node while it is being read from disk. This is useful for clients wanting to attach data to ``NavigatorTree/Node/attributes``.
@@ -269,25 +272,21 @@ public class NavigatorTree {
     static func read(
         from url: URL,
         bundleIdentifier: String? = nil,
-        interfaceLanguages: Set<InterfaceLanguage>,
         atomically: Bool = true,
         presentationIdentifier: String? = nil,
         onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
     ) throws -> NavigatorTree {
-        let interfaceLanguageMap = Dictionary(uniqueKeysWithValues: interfaceLanguages.map{ ($0.mask, $0)})
         let path = url.path
         if atomically {
             return try readAtomically(
                 from: path,
                 bundleIdentifier: bundleIdentifier,
-                interfaceLanguageMap: interfaceLanguageMap,
                 presentationIdentifier: presentationIdentifier,
                 onNodeRead: onNodeRead)
         }
         return try read(
             from: path,
             bundleIdentifier: bundleIdentifier,
-            interfaceLanguageMap: interfaceLanguageMap,
             presentationIdentifier: presentationIdentifier,
             onNodeRead: onNodeRead)
     }
@@ -296,7 +295,6 @@ public class NavigatorTree {
     fileprivate static func readAtomically(
         from path: String,
         bundleIdentifier: String? = nil,
-        interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage],
         presentationIdentifier: String? = nil,
         onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
     ) throws -> NavigatorTree {
@@ -347,7 +345,6 @@ public class NavigatorTree {
     fileprivate static func read(
         from path: String,
         bundleIdentifier: String? = nil,
-        interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage],
         presentationIdentifier: String? = nil,
         onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
     ) throws -> NavigatorTree {
