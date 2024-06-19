@@ -32,6 +32,16 @@ extension Metadata {
     /// @Available("My Package", introduced: "1.0")
     /// ```
     ///
+    /// Only strings which are valid semantic version numbers may be passed to the second argument. Specifying an incomplete version number is allowed, as long as all components of the version are valid numbers:
+    ///
+    /// ```markdown
+    /// @Available("My Package", introduced: "1.0.0")
+    /// @Available("My Package", introduced: "1.0")
+    /// @Available("My Package", introduced: "1")
+    /// ```
+    ///
+    /// If an invalid semantic version number is provided, a compiler warning will be issued and the directive will be ignored.
+    ///
     /// This directive is available on both articles and documentation extension files. In extension
     /// files, the information overrides any information from the symbol itself.
     ///
