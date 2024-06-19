@@ -133,12 +133,7 @@ class SampleDownloadTests: XCTestCase {
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
     }
 

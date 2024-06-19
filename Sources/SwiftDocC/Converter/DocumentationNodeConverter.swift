@@ -38,7 +38,7 @@ public struct DocumentationNodeConverter {
     ///   - source: The source file for the documentation node.
     /// - Returns: The render node representation of the documentation node.
     public func convert(_ node: DocumentationNode, at source: URL?) throws -> RenderNode {
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return translator.visit(node.semantic) as! RenderNode
     }
 }

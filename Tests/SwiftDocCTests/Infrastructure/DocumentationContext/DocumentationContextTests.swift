@@ -1925,7 +1925,7 @@ let expected = """
             )
         }
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
@@ -2529,7 +2529,7 @@ let expected = """
         
         // Render declaration and compare token kinds with symbol graph
         let symbol = myFunc.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         let declarationTokens = renderNode.primaryContentSections.mapFirst { section -> [String]? in
@@ -2673,7 +2673,7 @@ let expected = """
         let node = try context.entity(with: reference)
 
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
         return (node, renderNode)

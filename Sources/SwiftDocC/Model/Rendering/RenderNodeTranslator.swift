@@ -1745,7 +1745,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var context: DocumentationContext
     var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
-    var source: URL?
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
     var fileReferences: [String: FileReference] = [:]
@@ -1952,7 +1951,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         context: DocumentationContext,
         bundle: DocumentationBundle,
         identifier: ResolvedTopicReference,
-        source: URL?,
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
@@ -1962,7 +1960,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.context = context
         self.bundle = bundle
         self.identifier = identifier
-        self.source = source
         self.renderContext = renderContext
         self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs

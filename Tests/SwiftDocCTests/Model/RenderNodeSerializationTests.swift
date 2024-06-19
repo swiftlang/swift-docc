@@ -108,7 +108,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         checkRoundTrip(renderNode)
@@ -131,7 +131,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing article markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         let renderNode = translator.visit(article) as! RenderNode
         checkRoundTrip(renderNode)
@@ -156,7 +156,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         let data = try encode(renderNode: renderNode)
@@ -206,7 +206,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
 
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
 
         var renderNode = translator.visit(article) as! RenderNode
 

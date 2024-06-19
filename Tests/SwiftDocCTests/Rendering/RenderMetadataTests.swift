@@ -152,7 +152,7 @@ class RenderMetadataTests: XCTestCase {
 
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "BundleWithRelativePathAmbiguity")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Dependency"])

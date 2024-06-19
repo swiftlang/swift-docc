@@ -94,7 +94,6 @@ public class DocumentationContextConverter {
             context: context,
             bundle: bundle,
             identifier: node.reference,
-            source: source,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
             emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
