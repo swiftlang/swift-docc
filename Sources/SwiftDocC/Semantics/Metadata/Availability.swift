@@ -92,7 +92,7 @@ extension Metadata {
 
         /// The platform version that this page applies to.
         @DirectiveArgumentWrapped
-        public var introduced: String
+        public var introduced: VersionTriplet
 
         // FIXME: `isBeta` and `isDeprecated` properties/arguments
         // cf. https://github.com/apple/swift-docc/issues/441
@@ -108,5 +108,34 @@ extension Metadata {
         init(originalMarkup: Markdown.BlockDirective) {
             self.originalMarkup = originalMarkup
         }
+    }
+}
+
+extension VersionTriplet: DirectiveArgumentValueConvertible {
+    init?(rawDirectiveArgumentValue: String) {
+        // Split the string into major, minor and patch components
+        let availabilityComponents = rawDirectiveArgumentValue.split(separator: ".", maxSplits: 2)
+        guard !availabilityComponents.isEmpty else {
+            return nil
+        }
+        
+        // If any of the components are missing, default to 0
+        var intAvailabilityComponents = [0, 0, 0]
+        for (index, component) in availabilityComponents.enumerated() {
+            // If any of the components isn't a number, the input is not valid
+            guard let intComponent = Int(component) else {
+                return nil
+            }
+            
+            intAvailabilityComponents[index] = intComponent
+        }
+        
+        self.major = intAvailabilityComponents[0]
+        self.minor = intAvailabilityComponents[1]
+        self.patch = intAvailabilityComponents[2]
+    }
+
+    static func allowedValues() -> [String]? {
+        nil
     }
 }

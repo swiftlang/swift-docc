@@ -1566,7 +1566,7 @@ class SemaToRenderNodeTests: XCTestCase {
             let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
             
             XCTAssertEqual(platforms.count,6)
-            let versionString = version.stringRepresentation(precisionUpToNonsignificant: .patch)
+            let versionString = VersionTriplet(semanticVersion: version).stringRepresentation(precisionUpToNonsignificant: .patch)
             
             XCTAssertEqual(platforms[0].name, "Mac Catalyst")
             XCTAssertEqual(platforms[0].introduced, versionString)
