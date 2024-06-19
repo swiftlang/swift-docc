@@ -55,10 +55,10 @@ extension VersionTriplet {
 /// Availability information of a symbol on a specific platform.
 public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     /// The name of the platform on which the symbol is available.
-    public var name: String?
+    public let name: String?
     
     /// The version of the platform SDK introducing the symbol.
-    public var introduced: String?
+    public let introduced: String?
     
     /// The version of the platform SDK deprecating the symbol.
     public var deprecated: String?
@@ -82,7 +82,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     public var unconditionallyUnavailable: Bool?
     
     /// If `true`, the symbol is introduced in a beta version of this platform.
-    public var isBeta: Bool?
+    public let isBeta: Bool?
     
     private enum CodingKeys: String, CodingKey {
         case name, introducedAt, deprecatedAt, obsoletedAt, message, renamed, deprecated, unavailable
@@ -131,12 +131,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         renamed = availability.renamed
         unconditionallyUnavailable = availability.isUnconditionallyUnavailable
         unconditionallyDeprecated = availability.isUnconditionallyDeprecated
-        
-        if let introducedVersion, let current, current.beta, introducedVersion == current.version {
-            isBeta = true
-        } else {
-            isBeta = false
-        }
+        isBeta = AvailabilityRenderItem.isBeta(introduced: introducedVersion, current: current)
     }
 
     init?(_ availability: Metadata.Availability, current: PlatformVersion?) {
@@ -146,6 +141,15 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
         introduced = availability.introduced.stringRepresentation(precisionUpToNonsignificant: .minor)
+        isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
+    }
+    
+    static func isBeta(introduced: VersionTriplet?, current: PlatformVersion?) -> Bool {
+        guard let introduced, let current, current.beta, introduced == current.version else {
+            return false
+        }
+        
+        return true
     }
     
     /// Creates a new item with the given platform name and version string.
