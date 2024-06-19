@@ -3314,7 +3314,7 @@ Document
         XCTAssertEqual(documentationNode.availableVariantTraits.count, 2, "This page has Swift and Objective-C variants")
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(documentationNode, at: nil)
+        let renderNode = try converter.convert(documentationNode)
         
         let topicSectionsVariants = renderNode.topicSectionsVariants
         
@@ -3376,7 +3376,7 @@ Document
         XCTAssertEqual(documentationNode.availableVariantTraits.count, 1)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(documentationNode, at: nil)
+        let renderNode = try converter.convert(documentationNode)
         
         let topicSection = renderNode.topicSectionsVariants.defaultValue
         
@@ -3395,7 +3395,7 @@ Document
             let node = try context.entity(with: root)
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let renderNode = try converter.convert(node, at: nil)
+            let renderNode = try converter.convert(node)
             
             let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
             XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
@@ -3428,7 +3428,7 @@ Document
             let node = try context.entity(with: reference)
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let renderNode = try converter.convert(node, at: nil)
+            let renderNode = try converter.convert(node)
             
             let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
             XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [

@@ -27,8 +27,8 @@ class DocumentationContextConverterTests: XCTestCase {
         for identifier in context.knownPages {
             let documentationNode = try XCTUnwrap(try context.entity(with: identifier))
             
-            let renderNode1 = try perNodeConverter.convert(documentationNode, at: nil)
-            let renderNode2 = try bulkNodeConverter.renderNode(for: documentationNode, at: nil)
+            let renderNode1 = try perNodeConverter.convert(documentationNode)
+            let renderNode2 = try bulkNodeConverter.renderNode(for: documentationNode)
             
             // Compare the two nodes are identical
             let data1 = try encoder.encode(renderNode1)
@@ -55,8 +55,7 @@ class DocumentationContextConverterTests: XCTestCase {
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: true)
             
-            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(
-                for: fillIntroducedSymbolNode, at: nil))
+            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(for: fillIntroducedSymbolNode))
             XCTAssertEqual(renderNode.metadata.sourceFileURI, "file:///tmp/FillIntroduced.swift")
         }
         
@@ -66,8 +65,7 @@ class DocumentationContextConverterTests: XCTestCase {
                 context: context,
                 renderContext: renderContext)
             
-            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(
-                for: fillIntroducedSymbolNode, at: nil))
+            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(for: fillIntroducedSymbolNode))
             XCTAssertNil(renderNode.metadata.sourceFileURI)
         }
     }
@@ -88,8 +86,7 @@ class DocumentationContextConverterTests: XCTestCase {
                 emitSymbolAccessLevels: true
             )
             
-            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(
-                for: fillIntroducedSymbolNode, at: nil))
+            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(for: fillIntroducedSymbolNode))
             XCTAssertEqual(renderNode.metadata.symbolAccessLevel, "public")
         }
         
@@ -99,8 +96,7 @@ class DocumentationContextConverterTests: XCTestCase {
                 context: context,
                 renderContext: renderContext)
             
-            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(
-                for: fillIntroducedSymbolNode, at: nil))
+            let renderNode = try XCTUnwrap(documentationContextConverter.renderNode(for: fillIntroducedSymbolNode))
             XCTAssertNil(renderNode.metadata.symbolAccessLevel)
         }
     }

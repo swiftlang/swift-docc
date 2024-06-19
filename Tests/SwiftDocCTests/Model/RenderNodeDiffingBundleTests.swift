@@ -289,10 +289,9 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNodeFirst = try XCTUnwrap(converter.renderNode(for: entity, at: source))
-            let renderNodeSecond = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNodeFirst = try XCTUnwrap(converter.renderNode(for: entity))
+            let renderNodeSecond = try XCTUnwrap(converter.renderNode(for: entity))
             
             let differences = renderNodeSecond._difference(from: renderNodeFirst)
             XCTAssertTrue(differences.isEmpty, "Both render nodes should be identical.")
@@ -310,9 +309,8 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                    sourceLanguage: .swift))
         var renderContext = RenderContext(documentationContext: contextOriginal, bundle: bundleOriginal)
         var converter = DocumentationContextConverter(bundle: bundleOriginal, context: contextOriginal, renderContext: renderContext)
-        var fileURL = try XCTUnwrap(contextOriginal.documentURL(for: nodeOriginal.reference))
         
-        let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal, at: fileURL))
+        let renderNodeOriginal = try XCTUnwrap(converter.renderNode(for: nodeOriginal))
         
         // Make copy of the bundle on disk, modify the document, and write it
         let (_, bundleModified, contextModified) = try testBundleAndContext(copying: bundleName) { url in
@@ -323,9 +321,8 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                                                                    sourceLanguage: .swift))
         renderContext = RenderContext(documentationContext: contextModified, bundle: bundleModified)
         converter = DocumentationContextConverter(bundle: bundleModified, context: contextModified, renderContext: renderContext)
-        fileURL = try XCTUnwrap(contextModified.documentURL(for: nodeModified.reference))
         
-        let renderNodeModified = try XCTUnwrap(converter.renderNode(for: nodeModified, at: fileURL))
+        let renderNodeModified = try XCTUnwrap(converter.renderNode(for: nodeModified))
         
         let differences = renderNodeModified._difference(from: renderNodeOriginal)
         
