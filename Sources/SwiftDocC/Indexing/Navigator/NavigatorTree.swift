@@ -99,9 +99,6 @@ public class NavigatorTree {
     /// The broadcast callback notifies a listener about the latest items loaded from the disk.
     public typealias BroadcastCallback = (_ items: [NavigatorTree.Node], _ isCompleted: Bool, _ error: Error?) -> Void
     
-    // A reference to the reading cursor.
-    internal var readingCursor: ReadingCursor? = nil
-    
     /**
      Read a tree from disk from a given path.
      The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.
@@ -119,7 +116,6 @@ public class NavigatorTree {
     public func read(from url: URL, bundleIdentifier: String? = nil, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
         let data = try Data(contentsOf: url)
         let readingCursor = ReadingCursor(data: data)
-        self.readingCursor = readingCursor
         
         func __read() {
             let deadline = DispatchTime.now() + timeout
@@ -140,7 +136,6 @@ public class NavigatorTree {
                 
                 guard let item = NavigatorItem(rawValue: objectData) else {
                     broadcast?(processedNodes, false, Error.invalidData)
-                    self.readingCursor = nil
                     break
                 }
                 
@@ -170,7 +165,6 @@ public class NavigatorTree {
                 queue.async(flags: .barrier) {
                     broadcast?(processedNodes, true, nil)
                 }
-                self.readingCursor = nil
             }
         }
         
