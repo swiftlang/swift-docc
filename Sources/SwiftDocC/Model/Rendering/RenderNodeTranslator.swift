@@ -45,9 +45,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
-    /// Whether tutorials that are not curated in a tutorials overview should be translated.
-    var shouldRenderUncuratedTutorials: Bool = false
-    
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
@@ -974,11 +971,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return nil
     }
 
-    /// The current module context for symbols.
-    private var currentSymbolModuleName: String? = nil
-    /// The current symbol context.
-    private var currentSymbol: ResolvedTopicReference? = nil
-
     /// Renders automatically generated task groups
     private mutating func renderAutomaticTaskGroupsSection(_ taskGroups: [AutomaticTaskGroupSection], contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
         return taskGroups.map { group in
@@ -1207,8 +1199,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
-
-        currentSymbol = identifier
         
         /*
          FIXME: We shouldn't be doing this kind of crawling here.
@@ -1673,7 +1663,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(contentCompiler.linkReferences, to: &node)
         addReferences(linkReferences, to: &node)
         
-        currentSymbol = nil
         return node
     }
 
