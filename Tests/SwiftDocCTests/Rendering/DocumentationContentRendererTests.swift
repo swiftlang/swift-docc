@@ -169,7 +169,7 @@ private extension DocumentationContentRendererTests {
                 .swift,
                 .init(id: DocumentationDataVariantsTrait.otherLanguage.interfaceLanguage!)
             ],
-            name: DocumentationNode.Name.symbol(declaration: AttributedCodeListing.Line()),
+            name: .symbol(name: ""),
             markup: Document(parsing: ""),
             semantic: nil,
             platformNames: nil
