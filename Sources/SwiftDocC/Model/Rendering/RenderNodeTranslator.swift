@@ -353,7 +353,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
     /// Returns a description of the total estimated duration to complete the tutorials of the given technology.
     /// - Returns: The estimated duration, or `nil` if there are no tutorials with time estimates.
-    private func totalEstimatedDuration(for technology: Technology) -> String? {
+    private func totalEstimatedDuration() -> String? {
         var totalDurationMinutes: Int? = nil
 
         for node in context.breadthFirstSearch(from: identifier) {
@@ -378,7 +378,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = technology.intro.title
         node.metadata.category = technology.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
-        node.metadata.estimatedTime = totalEstimatedDuration(for: technology)
+        node.metadata.estimatedTime = totalEstimatedDuration()
         node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
