@@ -171,31 +171,134 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
         let (_, bundle, context) = try loadBundle(from: tempURL)
 
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/FancyOverloads/MyClass/myFunc(param:)-2rd6z",
-            sourceLanguage: .swift
-        )
-        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
-        let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
-        XCTAssertEqual(declarationsSection.declarations.count, 1)
-        let declarations = try XCTUnwrap(declarationsSection.declarations.first)
+        // Make sure that type decorators like arrays, dictionaries, and optionals are correctly highlighted.
+        do {
+            // func overload1(param: Int) {} // <- overload group
+            // func overload1(param: Int?) {}
+            // func overload1(param: [Int]) {}
+            // func overload1(param: [Int]?) {}
+            // func overload1(param: Set<Int>) {}
+            // func overload1(param: [Int: Int]) {}
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/FancyOverloads/overload1(param:)-8nk5z",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(
+                context: context,
+                bundle: bundle,
+                identifier: reference,
+                source: nil
+            )
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+            XCTAssertEqual(declarationsSection.declarations.count, 1)
+            let declarations = try XCTUnwrap(declarationsSection.declarations.first)
 
-        XCTAssertEqual(
-            ComparisonDeclaration(tokens: declarations.tokens).tokens,
-            ["func myFunc(param: ", .hl("Int"), ")"]
-        )
+            XCTAssertEqual(
+                ComparisonDeclaration(tokens: declarations.tokens).tokens,
+                ["func overload1(param: Int)"]
+            )
 
-        XCTAssertEqual(declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }), [
-            ["func myFunc", .hl("<S>"), "(param: ", .hl("S"), ") ", .hl("where S : StringProtocol")]
-        ])
+            XCTAssertEqual(
+                declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }),
+                [
+                    ["func overload1(param: Int", .hl("?"),                        ")"],
+                    ["func overload1(param: ", .hl("Set<"), "Int",  .hl(">"),      ")"],
+                    ["func overload1(param: ", .hl("["),    "Int ", .hl(": Int]"), ")"],
+                    ["func overload1(param: ", .hl("["),    "Int",  .hl("]"),      ")"],
+                    ["func overload1(param: ", .hl("["),    "Int",  .hl("]?"),     ")"],
+                ]
+            )
+        }
+
+        // Verify the behavior of the highlighter in the face of tuples and closures, which can
+        // confuse the differencing code with excess parentheses and commas.
+        do {
+            // func overload2(p1: Int, p2: Int) {}
+            // func overload2(p1: (Int, Int), p2: Int) {}
+            // func overload2(p1: Int, p2: (Int, Int)) {}
+            // func overload2(p1: (Int) -> (), p2: Int) {}
+            // func overload2(p1: (Int) -> Int, p2: Int) {}
+            // func overload2(p1: (Int) -> Int?, p2: Int) {}
+            // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/FancyOverloads/overload2(p1:p2:)-4p1sq",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(
+                context: context,
+                bundle: bundle,
+                identifier: reference,
+                source: nil
+            )
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+            XCTAssertEqual(declarationsSection.declarations.count, 1)
+            let declarations = try XCTUnwrap(declarationsSection.declarations.first)
+
+            XCTAssertEqual(
+                ComparisonDeclaration(tokens: declarations.tokens).tokens,
+                ["func overload2(p1: ", .hl("(("), "Int", .hl(") -> Int)?"), ", p2: Int)"]
+            )
+
+            XCTAssertEqual(
+                declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }),
+                [
+                    ["func overload2(p1: ", .hl("("), "Int", .hl(") -> ()"), ", p2: Int)"],
+                    ["func overload2(p1: ", .hl("("), "Int", .hl(") -> Int"), ", p2: Int)"],
+                    ["func overload2(p1: ", .hl("("), "Int", .hl(") -> Int?"), ", p2: Int)"],
+                    // FIXME: adjust the token processing so that the comma inside the tuple isn't treated as common?
+                    // (it breaks the declaration pretty-printer in Swift-DocC-Render and causes it to skip pretty-printing)
+                    ["func overload2(p1: ", .hl("("), "Int, ", .hl("Int),"), " p2: Int)"],
+                    // FIXME: adjust the token processing so that the common parenthesis is always the final one
+                    ["func overload2(p1: Int, p2: ", .hl("("), "Int", .hl(", Int"), ")", .hl(")")],
+                    ["func overload2(p1: Int, p2: Int)"],
+                ]
+            )
+        }
+
+        // Verify that the presence of type parameters doesn't cause the opening parenthesis of an
+        // argument list to also be highlighted, since it is combined into the same token as the
+        // closing angle bracket in the symbol graph. Also ensure that the leading space of the
+        // rendered where clause is not highlighted.
+        do {
+            // func overload3(_ p: [Int: Int]) {} // <- overload group
+            // func overload3<T: Hashable>(_ p: [T: T]) {}
+            // func overload3<K: Hashable, V>(_ p: [K: V]) {}
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/FancyOverloads/overload3(_:)-xql2",
+                sourceLanguage: .swift
+            )
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+            var translator = RenderNodeTranslator(
+                context: context,
+                bundle: bundle,
+                identifier: reference,
+                source: nil
+            )
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+            XCTAssertEqual(declarationsSection.declarations.count, 1)
+            let declarations = try XCTUnwrap(declarationsSection.declarations.first)
+
+            XCTAssertEqual(
+                ComparisonDeclaration(tokens: declarations.tokens).tokens,
+                ["func overload3(_ p: [", .hl("Int"), " : ", .hl("Int"), "])"]
+            )
+
+            XCTAssertEqual(
+                declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }),
+                [
+                    ["func overload3", .hl("<K, V>"), "(_ p: [", .hl("K"), " : ", .hl("V"), "]) ", .hl("where K : Hashable")],
+                    ["func overload3", .hl("<T>"), "(_ p: [", .hl("T"), " : ", .hl("T"), "]) ", .hl("where T : Hashable")],
+                ]
+            )
+        }
     }
 
     func testDontHighlightWhenOverloadsAreDisabled() throws {
@@ -214,10 +317,10 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
         let (_, bundle, context) = try loadBundle(from: tempURL)
 
-        for hash in ["1dd3k", "4alrf"] {
+        for hash in ["7eht8", "8p1lo", "858ja"] {
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/MyClass/myFunc(param:)-\(hash)",
+                path: "/documentation/FancyOverloads/overload3(_:)-\(hash)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)

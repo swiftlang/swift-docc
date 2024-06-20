@@ -5,7 +5,7 @@
       "minor": 6,
       "patch": 0
     },
-    "generator": "Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)"
+    "generator": "Apple Swift version 6.0 (swiftlang-6.0.0.3.300 clang-1600.0.20.10)"
   },
   "module": {
     "name": "FancyOverloads",
@@ -24,88 +24,18 @@
   "symbols": [
     {
       "kind": {
-        "identifier": "swift.class",
-        "displayName": "Class"
+        "identifier": "swift.func",
+        "displayName": "Function"
       },
       "identifier": {
-        "precise": "s:9FancyOverloads7MyClassC",
+        "precise": "s:9FancyOverloads9overload3yySDyS2iGF",
         "interfaceLanguage": "swift"
       },
       "pathComponents": [
-        "MyClass"
+        "overload3(_:)"
       ],
       "names": {
-        "title": "MyClass",
-        "navigator": [
-          {
-            "kind": "identifier",
-            "spelling": "MyClass"
-          }
-        ],
-        "subHeading": [
-          {
-            "kind": "keyword",
-            "spelling": "class"
-          },
-          {
-            "kind": "text",
-            "spelling": " "
-          },
-          {
-            "kind": "identifier",
-            "spelling": "MyClass"
-          }
-        ]
-      },
-      "docComment": {
-        "module": "FancyOverloads",
-        "lines": [
-          {
-            "range": {
-              "start": {
-                "line": 9,
-                "character": 4
-              },
-              "end": {
-                "line": 9,
-                "character": 25
-              }
-            },
-            "text": "This is a cool class."
-          }
-        ]
-      },
-      "declarationFragments": [
-        {
-          "kind": "keyword",
-          "spelling": "class"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "identifier",
-          "spelling": "MyClass"
-        }
-      ],
-      "accessLevel": "public"
-    },
-    {
-      "kind": {
-        "identifier": "swift.method",
-        "displayName": "Instance Method"
-      },
-      "identifier": {
-        "precise": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF",
-        "interfaceLanguage": "swift"
-      },
-      "pathComponents": [
-        "MyClass",
-        "myFunc(param:)"
-      ],
-      "names": {
-        "title": "myFunc(param:)",
+        "title": "overload3(_:)",
         "subHeading": [
           {
             "kind": "keyword",
@@ -117,7 +47,351 @@
           },
           {
             "kind": "identifier",
-            "spelling": "myFunc"
+            "spelling": "overload3"
+          },
+          {
+            "kind": "text",
+            "spelling": "(["
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": " : "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "])"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": " : "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload3"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "p"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ["
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "])"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload22p12p2ySi_Sit_SitF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload2(p1:p2:)"
+      ],
+      "names": {
+        "title": "overload2(p1:p2:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "), "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ", "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ")"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "), "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload3yySDyxxGSHRzlF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload3(_:)"
+      ],
+      "names": {
+        "title": "overload3(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload3"
           },
           {
             "kind": "text",
@@ -125,11 +399,856 @@
           },
           {
             "kind": "genericParameter",
-            "spelling": "S"
+            "spelling": "T"
           },
           {
             "kind": "text",
-            "spelling": ">("
+            "spelling": ">(["
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "T",
+            "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxxGSHRzlF1TL_xmfp"
+          },
+          {
+            "kind": "text",
+            "spelling": " : "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "T",
+            "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxxGSHRzlF1TL_xmfp"
+          },
+          {
+            "kind": "text",
+            "spelling": "])"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "T",
+                "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxxGSHRzlF1TL_xmfp"
+              },
+              {
+                "kind": "text",
+                "spelling": " : "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "T",
+                "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxxGSHRzlF1TL_xmfp"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "T",
+            "index": 0,
+            "depth": 0
+          }
+        ],
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "T",
+            "rhs": "Hashable",
+            "rhsPrecise": "s:SH"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload3"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "T"
+        },
+        {
+          "kind": "text",
+          "spelling": ">("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "p"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ["
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "T",
+          "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxxGSHRzlF1TL_xmfp"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "T",
+          "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxxGSHRzlF1TL_xmfp"
+        },
+        {
+          "kind": "text",
+          "spelling": "]) "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "where"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "T"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Hashable",
+          "preciseIdentifier": "s:SH"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload3(_:)"
+      ],
+      "names": {
+        "title": "overload3(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload3"
+          },
+          {
+            "kind": "text",
+            "spelling": "<"
+          },
+          {
+            "kind": "genericParameter",
+            "spelling": "K"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "genericParameter",
+            "spelling": "V"
+          },
+          {
+            "kind": "text",
+            "spelling": ">(["
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "K",
+            "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF1KL_xmfp"
+          },
+          {
+            "kind": "text",
+            "spelling": " : "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "V",
+            "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF1VL_q_mfp"
+          },
+          {
+            "kind": "text",
+            "spelling": "])"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "K",
+                "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF1KL_xmfp"
+              },
+              {
+                "kind": "text",
+                "spelling": " : "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "V",
+                "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF1VL_q_mfp"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "K",
+            "index": 0,
+            "depth": 0
+          },
+          {
+            "name": "V",
+            "index": 1,
+            "depth": 0
+          }
+        ],
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "K",
+            "rhs": "Hashable",
+            "rhsPrecise": "s:SH"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload3"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "K"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "V"
+        },
+        {
+          "kind": "text",
+          "spelling": ">("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "p"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ["
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "K",
+          "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF1KL_xmfp"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "V",
+          "preciseIdentifier": "s:9FancyOverloads9overload3yySDyxq_GSHRzr0_lF1VL_q_mfp"
+        },
+        {
+          "kind": "text",
+          "spelling": "]) "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "where"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "K"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Hashable",
+          "preciseIdentifier": "s:SH"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload22p12p2ySi_SitF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload2(p1:p2:)"
+      ],
+      "names": {
+        "title": "overload2(p1:p2:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload15paramySDyS2iG_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload1(param:)"
+      ],
+      "names": {
+        "title": "overload1(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload1"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "param"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ["
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": " : "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "])"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": " : "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload1"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ["
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "])"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload15paramySaySiGSg_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload1(param:)"
+      ],
+      "names": {
+        "title": "overload1(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload1"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "param"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ["
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "]?)"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "]?"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload1"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ["
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "]?)"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload15paramySiSg_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload1(param:)"
+      ],
+      "names": {
+        "title": "overload1(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload1"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
           },
           {
             "kind": "externalParam",
@@ -141,12 +1260,12 @@
           },
           {
             "kind": "typeIdentifier",
-            "spelling": "S",
-            "preciseIdentifier": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
           },
           {
             "kind": "text",
-            "spelling": ")"
+            "spelling": "?)"
           }
         ]
       },
@@ -165,8 +1284,12 @@
               },
               {
                 "kind": "typeIdentifier",
-                "spelling": "S",
-                "preciseIdentifier": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
               }
             ]
           }
@@ -175,23 +1298,6 @@
           {
             "kind": "text",
             "spelling": "()"
-          }
-        ]
-      },
-      "swiftGenerics": {
-        "parameters": [
-          {
-            "name": "S",
-            "index": 0,
-            "depth": 0
-          }
-        ],
-        "constraints": [
-          {
-            "kind": "conformance",
-            "lhs": "S",
-            "rhs": "StringProtocol",
-            "rhsPrecise": "s:Sy"
           }
         ]
       },
@@ -206,19 +1312,11 @@
         },
         {
           "kind": "identifier",
-          "spelling": "myFunc"
+          "spelling": "overload1"
         },
         {
           "kind": "text",
-          "spelling": "<"
-        },
-        {
-          "kind": "genericParameter",
-          "spelling": "S"
-        },
-        {
-          "kind": "text",
-          "spelling": ">("
+          "spelling": "("
         },
         {
           "kind": "externalParam",
@@ -230,52 +1328,30 @@
         },
         {
           "kind": "typeIdentifier",
-          "spelling": "S",
-          "preciseIdentifier": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp"
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
         },
         {
           "kind": "text",
-          "spelling": ") "
-        },
-        {
-          "kind": "keyword",
-          "spelling": "where"
-        },
-        {
-          "kind": "text",
-          "spelling": " "
-        },
-        {
-          "kind": "typeIdentifier",
-          "spelling": "S"
-        },
-        {
-          "kind": "text",
-          "spelling": " : "
-        },
-        {
-          "kind": "typeIdentifier",
-          "spelling": "StringProtocol",
-          "preciseIdentifier": "s:Sy"
+          "spelling": "?)"
         }
       ],
       "accessLevel": "public"
     },
     {
       "kind": {
-        "identifier": "swift.method",
-        "displayName": "Instance Method"
+        "identifier": "swift.func",
+        "displayName": "Function"
       },
       "identifier": {
-        "precise": "s:9FancyOverloads7MyClassC6myFunc5paramySi_tF",
+        "precise": "s:9FancyOverloads9overload22p12p2yS2icSg_SitF",
         "interfaceLanguage": "swift"
       },
       "pathComponents": [
-        "MyClass",
-        "myFunc(param:)"
+        "overload2(p1:p2:)"
       ],
       "names": {
-        "title": "myFunc(param:)",
+        "title": "overload2(p1:p2:)",
         "subHeading": [
           {
             "kind": "keyword",
@@ -287,7 +1363,597 @@
           },
           {
             "kind": "identifier",
-            "spelling": "myFunc"
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": (("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ") -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")?, "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": (("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ") -> "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ")?"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": (("
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ") -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")?, "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload22p12p2yS2iXE_SitF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload2(p1:p2:)"
+      ],
+      "names": {
+        "title": "overload2(p1:p2:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ") -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ") -> "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ") -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload22p12p2ySiSgSiXE_SitF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload2(p1:p2:)"
+      ],
+      "names": {
+        "title": "overload2(p1:p2:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ") -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "?, "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ") -> "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "?"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ") -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "?, "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload15paramySi_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload1(param:)"
+      ],
+      "names": {
+        "title": "overload1(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload1"
           },
           {
             "kind": "text",
@@ -351,7 +2017,7 @@
         },
         {
           "kind": "identifier",
-          "spelling": "myFunc"
+          "spelling": "overload1"
         },
         {
           "kind": "text",
@@ -376,18 +2042,641 @@
         }
       ],
       "accessLevel": "public"
-    }
-  ],
-  "relationships": [
-    {
-      "kind": "memberOf",
-      "source": "s:9FancyOverloads7MyClassC6myFunc5paramySi_tF",
-      "target": "s:9FancyOverloads7MyClassC"
     },
     {
-      "kind": "memberOf",
-      "source": "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF",
-      "target": "s:9FancyOverloads7MyClassC"
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload15paramyShySiG_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload1(param:)"
+      ],
+      "names": {
+        "title": "overload1(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload1"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "param"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Set",
+            "preciseIdentifier": "s:Sh"
+          },
+          {
+            "kind": "text",
+            "spelling": "<"
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ">)"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Set",
+                "preciseIdentifier": "s:Sh"
+              },
+              {
+                "kind": "text",
+                "spelling": "<"
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ">"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload1"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Set",
+          "preciseIdentifier": "s:Sh"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ">)"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload22p12p2yySiXE_SitF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload2(p1:p2:)"
+      ],
+      "names": {
+        "title": "overload2(p1:p2:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ") -> (), "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ") -> ()"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ") -> (), "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload22p12p2ySi_Si_SittF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload2(p1:p2:)"
+      ],
+      "names": {
+        "title": "overload2(p1:p2:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload2"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p1"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "p2"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "))"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "p1",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p1"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          },
+          {
+            "name": "p2",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "p2"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ", "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": ")"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload2"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p1"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "p2"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "))"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:9FancyOverloads9overload15paramySaySiG_tF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "overload1(param:)"
+      ],
+      "names": {
+        "title": "overload1(param:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "overload1"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "param"
+          },
+          {
+            "kind": "text",
+            "spelling": ": ["
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": "])"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": ["
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              },
+              {
+                "kind": "text",
+                "spelling": "]"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "overload1"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": ["
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": "])"
+        }
+      ],
+      "accessLevel": "public"
     }
-  ]
+  ],
+  "relationships": []
 }
