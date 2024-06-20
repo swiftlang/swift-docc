@@ -188,40 +188,13 @@ class DeclarationsRenderSectionTests: XCTestCase {
         XCTAssertEqual(declarationsSection.declarations.count, 1)
         let declarations = try XCTUnwrap(declarationsSection.declarations.first)
 
-        XCTAssertEqual(declarations.tokens, [
-            .init(text: "func", kind: .keyword),
-            .init(text: " ", kind: .text),
-            .init(text: "myFunc", kind: .identifier),
-            .init(text: "(", kind: .text),
-            .init(text: "param", kind: .externalParam),
-            .init(text: ": ", kind: .text),
-            .init(text: "Int", kind: .typeIdentifier, preciseIdentifier: "s:Si", highlight: .changed),
-            .init(text: ")", kind: .text),
-        ])
+        XCTAssertEqual(
+            ComparisonDeclaration(tokens: declarations.tokens).tokens,
+            ["func myFunc(param: ", .hl("Int"), ")"]
+        )
 
-        XCTAssertEqual(declarations.otherDeclarations?.declarations.map(\.tokens), [
-            [
-                .init(text: "func", kind: .keyword),
-                .init(text: " ", kind: .text),
-                .init(text: "myFunc", kind: .identifier),
-                .init(text: "<", kind: .text, highlight: .changed),
-                .init(text: "S", kind: .genericParameter, highlight: .changed),
-                .init(text: ">", kind: .text, highlight: .changed),
-                .init(text: "(", kind: .text),
-                .init(text: "param", kind: .externalParam),
-                .init(text: ": ", kind: .text),
-                .init(
-                    text: "S",
-                    kind: .typeIdentifier,
-                    preciseIdentifier: "s:9FancyOverloads7MyClassC6myFunc5paramyx_tSyRzlF1SL_xmfp",
-                    highlight: .changed),
-                .init(text: ") ", kind: .text),
-                .init(text: "where", kind: .keyword, highlight: .changed),
-                .init(text: " ", kind: .text, highlight: .changed),
-                .init(text: "S", kind: .typeIdentifier, highlight: .changed),
-                .init(text: " : ", kind: .text, highlight: .changed),
-                .init(text: "StringProtocol", kind: .typeIdentifier, preciseIdentifier: "s:Sy", highlight: .changed),
-            ],
+        XCTAssertEqual(declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }), [
+            ["func myFunc", .hl("<S>"), "(param: ", .hl("S"), ") ", .hl("where S : StringProtocol")]
         ])
     }
 
@@ -261,5 +234,48 @@ class DeclarationsRenderSectionTests: XCTestCase {
 
             XCTAssert(declarations.tokens.allSatisfy({ $0.highlight == nil }))
         }
+    }
+}
+
+enum ComparisonToken: Equatable, ExpressibleByStringLiteral {
+    case plain(String)
+    case hl(String)
+
+    init(fromRenderToken token: DeclarationRenderSection.Token) {
+        if token.highlight == nil {
+            self = .plain(token.text)
+        } else {
+            self = .hl(token.text)
+        }
+    }
+
+    init(stringLiteral value: StringLiteralType) {
+        self = .plain(value)
+    }
+}
+
+struct ComparisonDeclaration: Equatable {
+    let tokens: [ComparisonToken]
+
+    init(tokens: [DeclarationRenderSection.Token]) {
+        var processedTokens: [ComparisonToken] = []
+        guard var currentToken = tokens.first.map({ ComparisonToken.init(fromRenderToken: $0) }) else {
+            self.tokens = []
+            return
+        }
+
+        for nextToken in tokens.dropFirst() {
+            if nextToken.highlight == nil, case let .plain(text) = currentToken {
+                currentToken = .plain(text + nextToken.text)
+            } else if nextToken.highlight != nil, case let .hl(text) = currentToken {
+                currentToken = .hl(text + nextToken.text)
+            } else {
+                processedTokens.append(currentToken)
+                currentToken = .init(fromRenderToken: nextToken)
+            }
+        }
+        processedTokens.append(currentToken)
+
+        self.tokens = processedTokens
     }
 }
