@@ -178,12 +178,12 @@ func aBlackListedFunc() {
 
     func testDisabledByDefault() throws {
         // Create a test bundle with some non-inclusive content.
-        let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
         
         // Load the bundle
-        let (_, _, context) = try loadBundle(from: bundleURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: .error, configureContext: nil)
+        let (_, _, context) = try loadBundle(from: bundleURL, externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: .error, configureContext: nil)
         XCTAssertEqual(context.problems.count, 0)
     }
 
@@ -198,7 +198,7 @@ func aBlackListedFunc() {
         ]
         
         // Create a test bundle with some non-inclusive content.
-        let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
 
@@ -206,7 +206,7 @@ func aBlackListedFunc() {
             let (severity, enabled) = expectation
             
             // Load the bundle
-            let (_, _, context) = try loadBundle(from: bundleURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: severity, configureContext: nil)
+            let (_, _, context) = try loadBundle(from: bundleURL, externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: severity, configureContext: nil)
             // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
             XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)
         }

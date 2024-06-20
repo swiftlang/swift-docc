@@ -76,7 +76,6 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         return [
             DocumentationBundle(
                 info: info,
-                attributedCodeListings: [:],
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: topLevelPages,
                 miscResourceURLs: []

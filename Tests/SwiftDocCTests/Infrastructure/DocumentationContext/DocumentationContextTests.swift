@@ -2642,7 +2642,7 @@ let expected = """
             try text.write(to: referencesURL, atomically: true, encoding: .utf8)
             
             // Load the bundle & reference resolve symbol graph docs
-            let (_, _, context) = try loadBundle(from: targetURL, codeListings: [:])
+            let (_, _, context) = try loadBundle(from: targetURL)
             
             guard context.problems.count == 5 else {
                 XCTFail("Expected 5 problems during reference resolving; got \(context.problems.count)")
@@ -2779,7 +2779,7 @@ let expected = """
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
+        let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
                 .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
@@ -3949,7 +3949,7 @@ let expected = """
     // Verifies if the context fails to resolve non-resolvable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
