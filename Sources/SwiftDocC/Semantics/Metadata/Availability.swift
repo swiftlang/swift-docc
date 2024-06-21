@@ -99,7 +99,7 @@ extension Metadata {
         /// The platform that this argument's information applies to.
         @DirectiveArgumentWrapped(name: .unnamed)
         public var platform: Platform
-        
+
         /// The platform version that this page applies to.
         @DirectiveArgumentWrapped(name: .custom("introduced"))
         public var introducedVersion: VersionTriplet
@@ -122,9 +122,16 @@ extension Metadata {
 }
 
 extension VersionTriplet: DirectiveArgumentValueConvertible {
+    static let separator = "."
+    
     init?(rawDirectiveArgumentValue: String) {
+        guard !rawDirectiveArgumentValue.hasSuffix(VersionTriplet.separator),
+              !rawDirectiveArgumentValue.hasPrefix(VersionTriplet.separator) else {
+            return nil
+        }
+        
         // Split the string into major, minor and patch components
-        let availabilityComponents = rawDirectiveArgumentValue.split(separator: ".", maxSplits: 2)
+        let availabilityComponents = rawDirectiveArgumentValue.split(separator: .init(VersionTriplet.separator), maxSplits: 2)
         guard !availabilityComponents.isEmpty else {
             return nil
         }
