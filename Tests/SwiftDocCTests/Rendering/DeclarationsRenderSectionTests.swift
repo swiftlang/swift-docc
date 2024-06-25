@@ -197,18 +197,30 @@ class DeclarationsRenderSectionTests: XCTestCase {
             let declarations = try XCTUnwrap(declarationsSection.declarations.first)
 
             XCTAssertEqual(
-                ComparisonDeclaration(tokens: declarations.tokens).tokens,
-                ["func overload1(param: Int)"]
+                declarationAndHighlights(for: declarations.tokens),
+                [
+                    "func overload1(param: Int)",
+                    "                          ",
+                ]
             )
 
             XCTAssertEqual(
-                declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }),
+                declarations.otherDeclarations?.declarations.flatMap({ declarationAndHighlights(for: $0.tokens) }),
                 [
-                    ["func overload1(param: Int", .hl("?"),                        ")"],
-                    ["func overload1(param: ", .hl("Set<"), "Int",  .hl(">"),      ")"],
-                    ["func overload1(param: ", .hl("["),    "Int ", .hl(": Int]"), ")"],
-                    ["func overload1(param: ", .hl("["),    "Int",  .hl("]"),      ")"],
-                    ["func overload1(param: ", .hl("["),    "Int",  .hl("]?"),     ")"],
+                    "func overload1(param: Int?)",
+                    "                         ~ ",
+
+                    "func overload1(param: Set<Int>)",
+                    "                      ~~~~   ~ ",
+
+                    "func overload1(param: [Int : Int])",
+                    "                      ~    ~~~~~~ ",
+
+                    "func overload1(param: [Int])",
+                    "                      ~   ~ ",
+
+                    "func overload1(param: [Int]?)",
+                    "                      ~   ~~ ",
                 ]
             )
         }
@@ -241,22 +253,36 @@ class DeclarationsRenderSectionTests: XCTestCase {
             let declarations = try XCTUnwrap(declarationsSection.declarations.first)
 
             XCTAssertEqual(
-                ComparisonDeclaration(tokens: declarations.tokens).tokens,
-                ["func overload2(p1: ", .hl("(("), "Int", .hl(") -> Int)?"), ", p2: Int)"]
+                declarationAndHighlights(for: declarations.tokens),
+                [
+                    "func overload2(p1: ((Int) -> Int)?, p2: Int)",
+                    "                   ~~   ~~~~~~~~~~          "
+                ]
             )
 
             XCTAssertEqual(
-                declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }),
+                declarations.otherDeclarations?.declarations.flatMap({ declarationAndHighlights(for: $0.tokens) }),
                 [
-                    ["func overload2(p1: ", .hl("("), "Int", .hl(") -> ()"), ", p2: Int)"],
-                    ["func overload2(p1: ", .hl("("), "Int", .hl(") -> Int"), ", p2: Int)"],
-                    ["func overload2(p1: ", .hl("("), "Int", .hl(") -> Int?"), ", p2: Int)"],
+                    "func overload2(p1: (Int) -> (), p2: Int)",
+                    "                   ~   ~~~~~~~          ",
+
+                    "func overload2(p1: (Int) -> Int, p2: Int)",
+                    "                   ~   ~~~~~~~~          ",
+
+                    "func overload2(p1: (Int) -> Int?, p2: Int)",
+                    "                   ~   ~~~~~~~~~          ",
+
                     // FIXME: adjust the token processing so that the comma inside the tuple isn't treated as common?
                     // (it breaks the declaration pretty-printer in Swift-DocC-Render and causes it to skip pretty-printing)
-                    ["func overload2(p1: ", .hl("("), "Int, ", .hl("Int),"), " p2: Int)"],
+                    "func overload2(p1: (Int, Int), p2: Int)",
+                    "                   ~     ~~~~~         ",
+
                     // FIXME: adjust the token processing so that the common parenthesis is always the final one
-                    ["func overload2(p1: Int, p2: ", .hl("("), "Int", .hl(", Int"), ")", .hl(")")],
-                    ["func overload2(p1: Int, p2: Int)"],
+                    "func overload2(p1: Int, p2: (Int, Int))",
+                    "                            ~   ~~~~~ ~",
+
+                    "func overload2(p1: Int, p2: Int)",
+                    "                                ",
                 ]
             )
         }
@@ -287,15 +313,21 @@ class DeclarationsRenderSectionTests: XCTestCase {
             let declarations = try XCTUnwrap(declarationsSection.declarations.first)
 
             XCTAssertEqual(
-                ComparisonDeclaration(tokens: declarations.tokens).tokens,
-                ["func overload3(_ p: [", .hl("Int"), " : ", .hl("Int"), "])"]
+                declarationAndHighlights(for: declarations.tokens),
+                [
+                    "func overload3(_ p: [Int : Int])",
+                    "                     ~~~   ~~~  ",
+                ]
             )
 
             XCTAssertEqual(
-                declarations.otherDeclarations?.declarations.map({ ComparisonDeclaration(tokens: $0.tokens).tokens }),
+                declarations.otherDeclarations?.declarations.flatMap({ declarationAndHighlights(for: $0.tokens) }),
                 [
-                    ["func overload3", .hl("<K, V>"), "(_ p: [", .hl("K"), " : ", .hl("V"), "]) ", .hl("where K : Hashable")],
-                    ["func overload3", .hl("<T>"), "(_ p: [", .hl("T"), " : ", .hl("T"), "]) ", .hl("where T : Hashable")],
+                    "func overload3<K, V>(_ p: [K : V]) where K : Hashable",
+                    "              ~~~~~~       ~   ~   ~~~~~~~~~~~~~~~~~~",
+
+                    "func overload3<T>(_ p: [T : T]) where T : Hashable",
+                    "              ~~~       ~   ~   ~~~~~~~~~~~~~~~~~~",
                 ]
             )
         }
@@ -340,45 +372,10 @@ class DeclarationsRenderSectionTests: XCTestCase {
     }
 }
 
-enum ComparisonToken: Equatable, ExpressibleByStringLiteral {
-    case plain(String)
-    case hl(String)
-
-    init(fromRenderToken token: DeclarationRenderSection.Token) {
-        if token.highlight == nil {
-            self = .plain(token.text)
-        } else {
-            self = .hl(token.text)
-        }
-    }
-
-    init(stringLiteral value: StringLiteralType) {
-        self = .plain(value)
-    }
-}
-
-struct ComparisonDeclaration: Equatable {
-    let tokens: [ComparisonToken]
-
-    init(tokens: [DeclarationRenderSection.Token]) {
-        var processedTokens: [ComparisonToken] = []
-        guard var currentToken = tokens.first.map({ ComparisonToken.init(fromRenderToken: $0) }) else {
-            self.tokens = []
-            return
-        }
-
-        for nextToken in tokens.dropFirst() {
-            if nextToken.highlight == nil, case let .plain(text) = currentToken {
-                currentToken = .plain(text + nextToken.text)
-            } else if nextToken.highlight != nil, case let .hl(text) = currentToken {
-                currentToken = .hl(text + nextToken.text)
-            } else {
-                processedTokens.append(currentToken)
-                currentToken = .init(fromRenderToken: nextToken)
-            }
-        }
-        processedTokens.append(currentToken)
-
-        self.tokens = processedTokens
-    }
+/// Render a list of declaration tokens as a plain-text decoration and as a plain-text rendering of which characters are highlighted.
+func declarationAndHighlights(for tokens: [DeclarationRenderSection.Token]) -> [String] {
+    [
+        tokens.map({ $0.text }).joined(),
+        tokens.map({ String(repeating: $0.highlight == .changed ? "~" : " ", count: $0.text.count) }).joined()
+    ]
 }
