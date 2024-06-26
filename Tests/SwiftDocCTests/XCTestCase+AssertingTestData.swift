@@ -23,6 +23,7 @@ extension XCTestCase {
         title expectedTitle: String,
         navigatorTitle expectedNavigatorTitle: String?,
         abstract expectedAbstract: String?,
+        attributes expectedAttributes: [RenderAttribute]? = nil,
         declarationTokens expectedDeclarationTokens: [String]?,
         endpointTokens expectedEndpointTokens: [String]? = nil,
         httpParameters expectedHTTPParameters: [String]? = nil,
@@ -58,6 +59,15 @@ extension XCTestCase {
             renderNode.identifier.sourceLanguage.id,
             expectedSourceLanguage,
             failureMessageForField("source language id"),
+            file: file,
+            line: line
+        )
+        
+        let attributesSection = renderNode.primaryContentSections.compactMap { $0 as? AttributesRenderSection }.first
+        XCTAssertEqual(
+            attributesSection?.attributes,
+            expectedAttributes,
+            failureMessageForField("attributes"),
             file: file,
             line: line
         )
@@ -155,7 +165,7 @@ extension XCTestCase {
             line: line
         )
         
-        if let expectedSeeAlsoSectionIdentifiers = expectedSeeAlsoSectionIdentifiers {
+        if let expectedSeeAlsoSectionIdentifiers {
             XCTAssertEqual(
                 renderNode.seeAlsoSections.flatMap(\.identifiers),
                 expectedSeeAlsoSectionIdentifiers,

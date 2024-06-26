@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -78,17 +78,15 @@ final class ExternalPathHierarchyResolver {
     }
 
     /// Returns the external entity for a symbol's unique identifier or `nil` if that symbol isn't known in this external context.
-    func entity(symbolID usr: String) -> ExternalEntity? {
-        // TODO: Resolve external symbols by USR (rdar://116085974) (There is nothing calling this function)
-        // This function has an optional return value since it's not easy to check what module a symbol belongs to based on its identifier.
+    func symbolReferenceAndEntity(symbolID usr: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
         guard let reference = symbols[usr] else { return nil }
-        return entity(reference)
+        return (reference, entity(reference))
     }
     
     /// Returns the external entity for a reference that was successfully resolved by this external resolver.
     ///
-    /// - Important: Passing a resolved reference that wasn't resolved by this resolver will result in a fatal error.
-    func entity(_ reference: ResolvedTopicReference) -> ExternalEntity {
+    /// - Precondition: The `reference` was previously resolved by this resolver.
+    func entity(_ reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
         guard let resolvedInformation = content[reference] else {
             fatalError("The resolver should only be asked for entities that it resolved.")
         }
@@ -163,19 +161,19 @@ final class ExternalPathHierarchyResolver {
         }
     }
     
-    convenience init(dependencyArchive: URL) throws {
+    convenience init(dependencyArchive: URL, fileManager: FileManagerProtocol) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
         let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
         let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")
         
         self.init(
-            linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: Data(contentsOf: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: Data(contentsOf: entityURL))
+            linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: fileManager.contents(of: linkHierarchyFile)),
+            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: fileManager.contents(of: entityURL))
         )
     }
 }
 
-private extension Sequence where Element == DeclarationRenderSection.Token {
+private extension Sequence<DeclarationRenderSection.Token> {
     func plainTextDeclaration() -> String {
         return self.map(\.text).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
     }
@@ -183,33 +181,16 @@ private extension Sequence where Element == DeclarationRenderSection.Token {
 
 // MARK: ExternalEntity
 
-extension ExternalPathHierarchyResolver {
-    /// The minimal information about an external entity necessary to render links to it on another page.
-    struct ExternalEntity {
-        /// The render reference for this external topic.
-        var topicRenderReference: TopicRenderReference
-        /// Any dependencies for the render reference.
-        ///
-        /// For example, if the external content contains links or images, those are included here.
-        var renderReferenceDependencies: RenderReferenceDependencies
-        /// The different source languages for which this page is available.
-        var sourceLanguages: Set<SourceLanguage>
-        
-        /// Create a topic content for be cached in a render reference store.
-        func topicContent() -> RenderReferenceStore.TopicContent {
-            return .init(
-                renderReference: topicRenderReference,
-                canonicalPath: nil,
-                taskGroups: nil,
-                source: nil,
-                isDocumentationExtensionContent: false,
-                renderReferenceDependencies: renderReferenceDependencies
-            )
-        }
-    }
-}
-
 private extension LinkDestinationSummary {
+    /// A value that indicates whether this symbol is under development and likely to change.
+    var isBeta: Bool {
+        guard let platforms, !platforms.isEmpty else {
+            return false
+        }
+        
+        return platforms.allSatisfy { $0.isBeta == true }
+    }
+    
     /// Create a topic render render reference for this link summary and its content variants.
     func topicRenderReference() -> TopicRenderReference {
         let (kind, role) = DocumentationContentRenderer.renderKindAndRole(kind, semantic: nil)
@@ -235,7 +216,7 @@ private extension LinkDestinationSummary {
             identifier: .init(referenceURL.absoluteString),
             titleVariants: titleVariants,
             abstractVariants: abstractVariants,
-            url: referenceURL.absoluteString,
+            url: relativePresentationURL.absoluteString,
             kind: kind,
             required: false,
             role: role,
@@ -243,12 +224,10 @@ private extension LinkDestinationSummary {
             navigatorTitleVariants: .init(defaultValue: nil),
             estimatedTime: nil,
             conformance: nil,
-            isBeta: platforms?.contains(where: { $0.isBeta == true }) ?? false,
+            isBeta: isBeta,
             isDeprecated: platforms?.contains(where: { $0.unconditionallyDeprecated == true }) ?? false,
             defaultImplementationCount: nil,
-            titleStyle: self.kind.isSymbol ? .symbol : .title,
-            name: title,
-            ideTitle: nil,
+            propertyListKeyNames: nil,
             tags: nil,
             images: topicImages ?? []
         )

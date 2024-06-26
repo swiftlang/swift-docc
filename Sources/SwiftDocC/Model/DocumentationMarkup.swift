@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -73,6 +73,14 @@ struct DocumentationMarkup {
         case end
     }
     
+    /// Directives which are removed from the markdown content after being parsed.
+    private static let directivesRemovedFromContent = [
+        Comment.directiveName,
+        Metadata.directiveName,
+        Options.directiveName,
+        Redirect.directiveName,
+    ]
+
     // MARK: - Parsed Data
     
     /// The documentation title, if found.
@@ -146,7 +154,7 @@ struct DocumentationMarkup {
                         // Found deprecation notice in the abstract.
                         deprecation = MarkupContainer(directive.children)
                         return
-                    } else if directive.name == Comment.directiveName || directive.name == Metadata.directiveName || directive.name == Options.directiveName {
+                    } else if Self.directivesRemovedFromContent.contains(directive.name) {
                         // These directives don't affect content so they shouldn't break us out of
                         // the automatic abstract section.
                         return
@@ -199,7 +207,7 @@ struct DocumentationMarkup {
                     discussionIndex = index
                 }
                 
-                guard let discussionIndex = discussionIndex else { return }
+                guard let discussionIndex else { return }
                 
                 // Level 2 heading found inside discussion
                 if let heading = child as? Heading, heading.level == 2 {
@@ -235,7 +243,7 @@ struct DocumentationMarkup {
                     if heading.level == 2 {
                         switch heading.plainText {
                         case SeeAlsoSection.title:
-                            if let topicsIndex = topicsIndex, topicsFirstTaskGroupIndex != nil {
+                            if let topicsIndex, topicsFirstTaskGroupIndex != nil {
                                 topicsSection = TopicsSection(content: markup.children(at: topicsIndex ..< index))
                             }
                             currentSection = .seeAlso
@@ -267,7 +275,7 @@ struct DocumentationMarkup {
             if currentSection == .seeAlso {
                 // Level 2 heading found inside See Also
                 if child is Heading {
-                    if let seeAlsoIndex = seeAlsoIndex {
+                    if let seeAlsoIndex {
                         seeAlsoSection = SeeAlsoSection(content: markup.children(at: seeAlsoIndex ..< index))
                     }
                     currentSection = .end

@@ -57,6 +57,36 @@ class TopicGraphTests: XCTestCase {
             graph.addEdge(from: testNodeWithTitle("C"), to: testNodeWithTitle("A"))
             return graph
         }
+
+        /// Return a graph with overload group information:
+        ///
+        /// ```
+        /// Parent
+        ///   -> A
+        ///   -> B
+        ///   -> Overload Group
+        ///     -> A
+        ///     -> B
+        /// ```
+        static var withOverloadGroup: TopicGraph {
+            var graph = TopicGraph()
+
+            let parent = testNodeWithTitle("Parent")
+            let group = testNodeWithTitle("Overload Group")
+            let a = testNodeWithTitle("A")
+            let b = testNodeWithTitle("B")
+
+            graph.addEdge(from: parent, to: a)
+            graph.addEdge(from: parent, to: b)
+            graph.addEdge(from: parent, to: group)
+
+            graph.addEdge(from: group, to: a)
+            graph.addEdge(from: group, to: b)
+
+            graph.nodes[group.reference]?.isOverloadGroup = true
+
+            return graph
+        }
     }
     func testNodes() {
         XCTAssertEqual(1, TestGraphs.withOneNode.nodes.count)
@@ -154,71 +184,43 @@ class TopicGraphTests: XCTestCase {
     func testBreadthFirstSearch() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseBreadthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "B", "D", "C", "E"],
-                       visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "B", "D", "C", "E"], visited)
     }
     
     func testBreadthFirstSearchWithCycle() {
         let graph = TestGraphs.withCycle
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseBreadthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "B", "C"],
-                       visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "B", "C"], visited)
     }
     
     func testBreadthFirstSearchEarlyStop() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseBreadthFirst(from: A) {
-            visited.append($0)
-            return .stop
-        }
-        XCTAssertEqual(["A"], visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).prefix(1).map(\.title)
+        XCTAssertEqual(["A"], visited)
     }
     
     func testDepthFirstSearch() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseDepthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "D", "E", "B", "C"],
-                       visited.map { $0.title })
+        let visited = graph.depthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "D", "E", "B", "C"], visited)
     }
     
     func testDepthFirstSearchWithCycle() {
         let graph = TestGraphs.withCycle
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseDepthFirst(from: A) {
-            visited.append($0)
-            return .continue
-        }
-        XCTAssertEqual(["A", "B", "C"],
-                       visited.map { $0.title })
+        let visited = graph.breadthFirstSearch(from: A.reference).map(\.title)
+        XCTAssertEqual(["A", "B", "C"], visited)
     }
     
     func testDepthFirstSearchEarlyStop() {
         let graph = TestGraphs.complex
         let A = TestGraphs.testNodeWithTitle("A")
-        var visited = [TopicGraph.Node]()
-        graph.traverseDepthFirst(from: A) {
-            visited.append($0)
-            return .stop
-        }
-        XCTAssertEqual(["A"], visited.map { $0.title })
+        let visited = graph.depthFirstSearch(from: A.reference).prefix(1).map(\.title)
+        XCTAssertEqual(["A"], visited)
     }
     
     func testEveryEdgeSourceHasNode() {
@@ -273,5 +275,15 @@ class TopicGraphTests: XCTestCase {
                 }
             }
         }
+    }
+
+    func testCollectOverloads() {
+        let graph = TestGraphs.withOverloadGroup
+        let overloadGroup = TestGraphs.testNodeWithTitle("Overload Group")
+
+        XCTAssertEqual(graph.overloads(of: overloadGroup.reference), [
+            TestGraphs.testNodeWithTitle("A").reference,
+            TestGraphs.testNodeWithTitle("B").reference,
+        ])
     }
 }

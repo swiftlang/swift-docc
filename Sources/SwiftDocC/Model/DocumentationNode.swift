@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -94,6 +94,16 @@ public struct DocumentationNode {
     /// property.
     var docChunks: [DocumentationChunk]
     
+    /// Returns information about the node's in-source documentation comment chunk, or `nil` if the node doesn't have an in-source documentation chunk.
+    var inSourceDocumentationChunk: (url: URL?, offset: SymbolGraph.LineList.SourceRange?)? {
+        for docChunk in docChunks {
+            guard case .sourceCode(let location, let offset) = docChunk.source else { continue }
+            
+            return (url: location?.url, offset: offset)
+        }
+        return nil
+    }
+    
     /// Linkable in-content sections.
     var anchorSections = [AnchorSection]()
     
@@ -107,20 +117,41 @@ public struct DocumentationNode {
         } else if let discussionVariants = (semantic as? Symbol)?.discussionVariants {
             discussionSections = discussionVariants.allValues.map(\.variant)
         } else {
-            return
+            discussionSections = []
+        }
+        
+        anchorSections.removeAll()
+        var seenAnchorTitles = Set<String>()
+        
+        func addAnchorSection(title: String) {
+            // To preserve the order of headings and task groups in the content, we use *both* a `Set` and
+            // an `Array` to ensure unique titles and to accumulate the linkable anchor section elements.
+            guard !title.isEmpty, !seenAnchorTitles.contains(title) else { return }
+            seenAnchorTitles.insert(title)
+            anchorSections.append(
+                AnchorSection(reference: reference.withFragment(title), title: title)
+            )
         }
         
         for discussion in discussionSections {
             for child in discussion.content {
-                // For any non-H1 Heading sections found in the topic's discussion
-                // create an `AnchorSection` and add it to `anchorSections`
-                // so we can index all anchors found in the bundle for link resolution.
                 if let heading = child as? Heading, heading.level > 1 {
-                    anchorSections.append(
-                        AnchorSection(reference: reference.withFragment(heading.plainText), title: heading.plainText)
-                    )
+                    addAnchorSection(title: heading.plainText)
                 }
             }
+        }
+        
+        let taskGroups: [TaskGroup]?
+        if let article = semantic as? Article {
+            taskGroups = article.topics?.taskGroups
+        } else if let symbol = semantic as? Symbol {
+            taskGroups = symbol.topics?.taskGroups
+        } else {
+            taskGroups = nil
+        }
+        
+        for taskGroup in taskGroups ?? [] {
+            addAnchorSection(title: taskGroup.heading?.plainText ?? "Topics")
         }
     }
     
@@ -135,6 +166,7 @@ public struct DocumentationNode {
     ///   - markup: The markup that makes up the content for the node.
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
+    ///   - isVirtual: `true` if the node represents a virtual element that doesn't represent a rendered page of documentation, `false` otherwise.
     public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
@@ -163,8 +195,8 @@ public struct DocumentationNode {
     ///
     /// - Parameters:
     ///   - reference: The unique reference to the node.
-    ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformName: The name of the platforms for which the node is available.
+    ///   - unifiedSymbol: The symbol to create a documentation node for.
+    ///   - moduleData: The module that the symbol belongs to.
     ///   - moduleName: The name of the module that the symbol belongs to.
     init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, moduleData: SymbolGraph.Module, moduleReference: ResolvedTopicReference) {
         self.reference = reference
@@ -175,7 +207,7 @@ public struct DocumentationNode {
         
         self.kind = Self.kind(for: defaultSymbol)
         self.sourceLanguage = reference.sourceLanguage
-        self.name = .symbol(declaration: .init([.plain(defaultSymbol.names.title)]))
+        self.name = .symbol(name: defaultSymbol.names.title)
         self.symbol = defaultSymbol
         self.unifiedSymbol = unifiedSymbol
         self.isVirtual = moduleData.isVirtual
@@ -202,7 +234,12 @@ public struct DocumentationNode {
             }
             return nil
         }
-        
+
+        let overloadVariants = DocumentationDataVariants(
+            swiftVariant: unifiedSymbol.unifiedOverloadData.map { overloadData in
+                Symbol.Overloads(references: [], displayIndex: overloadData.overloadGroupIndex)
+            })
+
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
@@ -279,10 +316,12 @@ public struct DocumentationNode {
             httpParametersSectionVariants: .empty,
             httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty,
-            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
+            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) }),
+            overloadsVariants: overloadVariants
         )
 
         try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)
+        semanticSymbol.mergeAvailabilities(unifiedSymbol: unifiedSymbol)
         self.semantic = semanticSymbol
     }
 
@@ -312,7 +351,7 @@ public struct DocumentationNode {
         var deprecated: DeprecatedSection? = markupModel.deprecation.map { DeprecatedSection.init(content: $0.elements) }
 
         // When deprecation is not authored explicitly, try using a deprecation message from annotation.
-        if deprecated == nil, let symbolAvailability = symbolAvailability {
+        if deprecated == nil, let symbolAvailability {
             let availabilityData = AvailabilityParser(symbolAvailability)
             deprecated = availabilityData.deprecationMessage().map(DeprecatedSection.init(text:))
         }
@@ -325,7 +364,7 @@ public struct DocumentationNode {
             case .conceptual:
                 self.name = .conceptual(title: displayName.name)
             case .symbol:
-                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+                self.name = .symbol(name: displayName.name)
             }
             semantic.titleVariants = semantic.titleVariants.map { _ in
                 displayName.name
@@ -352,17 +391,15 @@ public struct DocumentationNode {
             defaultVariantValue: documentationExtension?.redirects
         )
         
-        if let returns = markupModel.discussionTags?.returns, !returns.isEmpty {
-            semantic.returnsSectionVariants = DocumentationDataVariants(
-                defaultVariantValue: ReturnsSection(content: returns[0].contents)
-            )
-        }
+        let filter = ParametersAndReturnValidator(diagnosticEngine: engine, docChunkSources: docChunks.map(\.source))
+        let (parametersSectionVariants, returnsSectionVariants) = filter.makeParametersAndReturnsSections(
+            markupModel.discussionTags?.parameters,
+            markupModel.discussionTags?.returns,
+            unifiedSymbol
+        )
         
-        if let parameters = markupModel.discussionTags?.parameters, !parameters.isEmpty {
-            semantic.parametersSectionVariants = DocumentationDataVariants(
-                defaultVariantValue: ParametersSection(parameters: parameters)
-            )
-        }
+        semantic.parametersSectionVariants = parametersSectionVariants
+        semantic.returnsSectionVariants = returnsSectionVariants
         
         if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
             // Record the keys extracted from the markdown
@@ -417,9 +454,16 @@ public struct DocumentationNode {
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
 
+            let docCommentLocation: SymbolGraph.Symbol.Location? = {
+                if let uri = docComment.uri, let position = docComment.lines.first?.range?.start {
+                    return .init(uri: uri, position: position)
+                }
+                return symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)
+            }()
+            
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
-            let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
-            let offset = symbol.offsetAdjustedForInterfaceLanguage()
+            let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
+            let offset = symbol.docComment?.lines.first?.range
 
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
@@ -455,18 +499,18 @@ public struct DocumentationNode {
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
                     
-                    if let offset = offset {
+                    if let offset {
                         problem.offsetWithRange(offset)
                     }
                     
                     engine.emit(problem)
                 }
             }
-
+            
             documentationChunks = [
                 DocumentationChunk(
                     source: .sourceCode(
-                        location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self),
+                        location: docCommentLocation, // The documentation chunk represents the doc comment's location, which isn't necessarily the symbol's location.
                         offset: offset
                     ),
                     markup: docCommentMarkup
@@ -527,6 +571,7 @@ public struct DocumentationNode {
         case .`typeProperty`: return .typeProperty
         case .`typeSubscript`: return .typeSubscript
         case .`typealias`: return .typeAlias
+        case .union: return .union
         case .`var`: return .globalVariable
         case .module: return .module
         case .extendedModule: return .extendedModule
@@ -544,11 +589,10 @@ public struct DocumentationNode {
     /// - Parameters:
     ///   - reference: The unique reference to the node.
     ///   - symbol: The symbol to create a documentation node for.
-    ///   - platformNames: The names of the platforms for which the node is available.
-    ///   - moduleName: The name of the module that the symbol belongs to.
+    ///   - platformName: The names of the platform that the symbol is available for.
+    ///   - moduleReference: A reference to the module that the symbol belongs to.
     ///   - article: The documentation extension content for this symbol.
     ///   - engine:The engine that collects any problems encountered during initialization.
-    ///   - bystanderModules: An optional list of cross-import module names.
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine) {
         self.reference = reference
         
@@ -566,10 +610,10 @@ public struct DocumentationNode {
             case .conceptual:
                 self.name = .conceptual(title: displayName.name)
             case .symbol:
-                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+                self.name = .symbol(name: displayName.name)
             }
         } else {
-            self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
+            self.name = .symbol(name: symbol.names.title)
         }
         self.symbol = symbol
         
@@ -593,11 +637,11 @@ public struct DocumentationNode {
         platformNames = Set(operatingSystemName.map { PlatformName(operatingSystemName: $0).rawValue })
         availableSourceLanguages = languages
         
-        if let article = article {
+        if let article {
             // Prefer authored deprecation summary over docs.
             deprecated = article.deprecationSummary.map { DeprecatedSection.init(content: $0.elements) }
         }
-        if deprecated == nil, let symbolAvailability = symbolAvailability {
+        if deprecated == nil, let symbolAvailability {
             let availabilityData = AvailabilityParser(symbolAvailability)
             deprecated = availabilityData.deprecationMessage().map(DeprecatedSection.init(text:))
         }

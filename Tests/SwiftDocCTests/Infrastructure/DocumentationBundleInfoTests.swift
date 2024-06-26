@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,7 +36,10 @@ class DocumentationBundleInfoTests: XCTestCase {
         let info = try DocumentationBundle.Info(from: infoPlistData)
 
         XCTAssertEqual(
-            info.defaultAvailability?.modules["MyKit"]?.map({ "\($0.platformName.displayName) \($0.platformVersion)" }).sorted(),
+            info.defaultAvailability?
+                .modules["MyKit"]?
+                .map({ "\($0.platformName.displayName) \($0.introducedVersion ?? "")" })
+                .sorted(),
             ["Mac Catalyst 13.5", "macOS 10.15.1"]
         )
     }
@@ -177,6 +180,12 @@ class DocumentationBundleInfoTests: XCTestCase {
                     <dict>
                         <key>name</key>
                         <string>Mac Catalyst</string>
+                        <key>version</key>
+                        <string>11.1</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iPadOS</string>
                         <key>version</key>
                         <string>11.1</string>
                     </dict>
@@ -327,7 +336,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                 errorTypeChecking = false
             }
             XCTAssertTrue(errorTypeChecking)
-            XCTAssertEqual(error.localizedDescription, "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line 24")
+            XCTAssert(error.localizedDescription.starts(with: "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line"))
         }
     }
     
@@ -404,5 +413,33 @@ class DocumentationBundleInfoTests: XCTestCase {
                 version: nil
             )
         )
+    }
+
+    func testFeatureFlags() throws {
+        let infoPlistWithFeatureFlags = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>Info Plist Display Name</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.info.Plist</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CDExperimentalFeatureFlags</key>
+            <dict>
+                <key>ExperimentalOverloadedSymbolPresentation</key>
+                <true/>
+            </dict>
+        </dict>
+        </plist>
+        """
+
+        let infoPlistWithFeatureFlagsData = Data(infoPlistWithFeatureFlags.utf8)
+        let info = try DocumentationBundle.Info(
+            from: infoPlistWithFeatureFlagsData,
+            bundleDiscoveryOptions: nil)
+
+        let featureFlags = try XCTUnwrap(info.featureFlags)
+        XCTAssertTrue(try XCTUnwrap(featureFlags.experimentalOverloadedSymbolPresentation))
     }
 }

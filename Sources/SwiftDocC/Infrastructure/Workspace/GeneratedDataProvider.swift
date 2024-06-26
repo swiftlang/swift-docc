@@ -76,7 +76,6 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         return [
             DocumentationBundle(
                 info: info,
-                attributedCodeListings: [:],
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: topLevelPages,
                 miscResourceURLs: []
@@ -102,7 +101,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
                     The information provided as command line arguments is not enough to generate a documentation bundle:
                     """
                 
-                if let underlyingError = underlyingError {
+                if let underlyingError {
                     errorMessage += """
                     \((underlyingError as? DescribedError)?.errorDescription ?? underlyingError.localizedDescription)
                     

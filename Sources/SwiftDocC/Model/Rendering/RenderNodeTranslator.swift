@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -198,7 +198,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
         // The way to curate tutorials is to link them from a Technology page and that generates the following hierarchy:
         // technology -> volume -> chapter -> tutorial.
-        let technologyPath = context.pathsTo(identifier, options: [.preferTechnologyRoot])[0]
+        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
         
         if technologyPath.count >= 2 {
             let volume = technologyPath[technologyPath.count - 2]
@@ -225,16 +225,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Get all the tutorials and tutorial articles in the learning path, ordered.
 
         var surroundingTopics = [(reference: ResolvedTopicReference, kind: DocumentationNode.Kind)]()
-        context.traverseBreadthFirst(from: volume) { node in
-            if node.kind == .tutorial || node.kind == .tutorialArticle {
-                surroundingTopics.append((node.reference, node.kind))
-            }
-            return .continue
+        for node in context.breadthFirstSearch(from: volume) where node.kind == .tutorial || node.kind == .tutorialArticle {
+            surroundingTopics.append((node.reference, node.kind))
         }
         
         // Find the tutorial or article that comes after the current page, if one exists.
         let nextTopicIndex = surroundingTopics.firstIndex(where: { $0.reference == identifier }).map { $0 + 1 }
-        if let nextTopicIndex = nextTopicIndex, nextTopicIndex < surroundingTopics.count {
+        if let nextTopicIndex, nextTopicIndex < surroundingTopics.count {
             let nextTopicReference = surroundingTopics[nextTopicIndex]
             let nextTopicReferenceIdentifier = visitResolvedTopicReference(nextTopicReference.reference) as! RenderReferenceIdentifier
             let nextTopic = try! context.entity(with: nextTopicReference.reference).semantic as! Abstracted & Titled
@@ -362,19 +359,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
     private func totalEstimatedDuration(for technology: Technology) -> String? {
         var totalDurationMinutes: Int? = nil
 
-        context.traverseBreadthFirst(from: identifier) { node in
-            if let entity = try? context.entity(with: node.reference),
-                let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
-            {
-                if totalDurationMinutes == nil {
-                    totalDurationMinutes = 0
-                }
-                totalDurationMinutes! += durationMinutes
+        for node in context.breadthFirstSearch(from: identifier) {
+            guard let entity = try? context.entity(with: node.reference),
+                  let durationMinutes = (entity.semantic as? Timed)?.durationMinutes
+            else {
+                continue
             }
-
-            return .continue
+            
+            if totalDurationMinutes == nil {
+                totalDurationMinutes = 0
+            }
+            totalDurationMinutes! += durationMinutes
         }
-
 
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
@@ -428,7 +424,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             var renderReference: TopicRenderReference
             var dependencies: RenderReferenceDependencies
             
-            if let renderContext = renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
+            if let renderContext, let prerendered = renderContext.store.content(for: reference)?.renderReference as? TopicRenderReference,
                 let renderReferenceDependencies = renderContext.store.content(for: reference)?.renderReferenceDependencies {
                 renderReference = prerendered
                 dependencies = renderReferenceDependencies
@@ -448,7 +444,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
-                if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
+                if let renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
                     dependencyRenderReference = prerendered
                 } else {
                     var dependencies = RenderReferenceDependencies()
@@ -476,7 +472,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return renderReferences
     }
     
-    private func addReferences<Reference>(_ references: [String: Reference], to node: inout RenderNode) where Reference: RenderReference {
+    private func addReferences(_ references: [String: some RenderReference], to node: inout RenderNode) {
         node.references.merge(references) { _, new in new }
     }
 
@@ -493,7 +489,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     public mutating func visitVideoMedia(_ videoMedia: VideoMedia) -> RenderTree? {
-        return createAndRegisterRenderReference(forMedia: videoMedia.source, poster: videoMedia.poster)
+        return createAndRegisterRenderReference(
+            forMedia: videoMedia.source,
+            poster: videoMedia.poster,
+            altText: videoMedia.altText
+        )
     }
     
     public mutating func visitChapter(_ chapter: Chapter) -> RenderTree? {
@@ -604,20 +604,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = article.title!.plainText
         
         // Detect the article modules from its breadcrumbs.
-        let modules = context.pathsTo(identifier).compactMap({ path -> ResolvedTopicReference? in
-            return path.mapFirst(where: { ancestor in
-                guard let ancestorNode = try? context.entity(with: ancestor) else { return nil }
-                return (ancestorNode.semantic as? Symbol)?.moduleReference
-            })
-        })
-        let moduleNames = Set(modules).compactMap { reference -> String? in
-            guard let node = try? context.entity(with: reference) else { return nil }
-            switch node.name {
-            case .conceptual(let title):
-                return title
-            case .symbol(let declaration):
-                return declaration.tokens.map { $0.description }.joined(separator: " ")
+        var modules = Set<ResolvedTopicReference>()
+        for reference in context.topicGraph.reverseEdgesGraph.breadthFirstSearch(from: identifier) {
+            if let moduleReference = (try? context.entity(with: reference).semantic as? Symbol)?.moduleReference {
+                modules.insert(moduleReference)
             }
+        }
+        
+        let moduleNames = modules.compactMap { reference -> String? in
+            guard let node = try? context.entity(with: reference) else { return nil }
+            return node.name.plainText
         }
         if !moduleNames.isEmpty {
             node.metadata.modules = moduleNames.map({
@@ -806,7 +802,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             
             // Automatic See Also section
-            if let seeAlso = try! AutomaticCuration.seeAlso(
+            if let seeAlso = AutomaticCuration.seeAlso(
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
@@ -919,7 +915,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Guaranteed to have at least one path
-        let technologyPath = context.pathsTo(identifier, options: [.preferTechnologyRoot])[0]
+        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
                 
         node.sections.append(intro)
         
@@ -953,7 +949,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return node
     }
     
-    private mutating func contentLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) -> [ContentLayout] where MarkupLayouts.Element == MarkupLayout {
+    private mutating func contentLayouts(_ markupLayouts: some Sequence<MarkupLayout>) -> [ContentLayout] {
         return markupLayouts.map { content in
             switch content {
             case .markup(let markup):
@@ -992,7 +988,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 abstract: nil,
                 discussion: nil,
                 identifiers: group.references.map(\.url.absoluteString),
-                generated: true
+                generated: true,
+                anchor: urlReadableFragment(group.title)
             )
         }
     }
@@ -1144,7 +1141,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     default: break
                     }
                     return nil
-                }
+                },
+                anchor: group.heading.map { urlReadableFragment($0.plainText) } ?? "Topics"
             )
             
             // rdar://74617294 If a task group doesn't have any symbol or external links it shouldn't be rendered
@@ -1232,7 +1230,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: symbol.extendedModuleVariants,
             transform: { (_, value) in
                 let relatedModules: [String]?
-                if value != moduleName.displayName {
+                // Don't add the module name of extensions made in the compiled module.
+                if (value != moduleName.displayName) && (value != moduleName.symbolName) {
                     relatedModules = [value]
                 } else {
                     relatedModules = nil
@@ -1375,7 +1374,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
+                    AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
+                    MentionsSectionTranslator(referencingSymbol: identifier),
                     DiscussionSectionTranslator(),
                 ]
             )
@@ -1399,7 +1400,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
         
-        if let sourceRepository = sourceRepository {
+        if let sourceRepository {
             node.metadata.remoteSourceVariants = VariantCollection<RenderMetadata.RemoteSource?>(
                 from: symbol.locationVariants
             ) { _, location in
@@ -1424,7 +1425,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         if let externalID = symbol.externalID,
-           let symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+           let symbolIdentifiersWithExpandedDocumentation
         {
             node.metadata.hasNoExpandedDocumentation = !symbolIdentifiersWithExpandedDocumentation.contains(externalID)
         }
@@ -1439,10 +1440,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             var groupSections = [RelationshipsRenderSection]()
             
-            let eligibleGroups = relationships.groups
-                .sorted(by: { (group1, group2) -> Bool in
-                    return group1.sectionOrder < group2.sectionOrder
-                })
+            let eligibleGroups = relationships.groups.sorted(by: \.sectionOrder)
             
             for group in eligibleGroups {
                 // destination url → symbol title
@@ -1455,23 +1453,29 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     
                     switch destination {
                     case .resolved(.success(let resolved)):
-                        let node = try! context.entity(with: resolved)
-                        let resolver = LinkTitleResolver(context: context, source: resolved.url)
-                        let resolvedTitle = resolver.title(for: node)
-                        destinationsMap[destination] = resolvedTitle?[trait]
-
-                        let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
-
-                        if !dropLink {
-                            // Add relationship to render references
+                        if let node = context.documentationCache[resolved] {
+                            let resolver = LinkTitleResolver(context: context, source: resolved.url)
+                            let resolvedTitle = resolver.title(for: node)
+                            destinationsMap[destination] = resolvedTitle?[trait]
+                            
+                            let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
+                            
+                            if !dropLink {
+                                // Add relationship to render references
+                                collectedTopicReferences.append(resolved)
+                            } else if let topicUrl = ValidatedURL(resolved.url) {
+                                // If the topic isn't linkable (e.g. an extended type), then we shouldn't
+                                // add a resolved relationship - deconstruct the resolved reference so
+                                // we can still display it, though
+                                let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
+                                let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
+                                collectedUnresolvedTopicReferences.append(reference)
+                            }
+                        } else if let entity = context.externalCache[resolved] {
                             collectedTopicReferences.append(resolved)
-                        } else if let topicUrl = ValidatedURL(resolved.url) {
-                            // If the topic isn't linkable (e.g. an extended type), then we shouldn't
-                            // add a resolved relationship - deconstruct the resolved reference so
-                            // we can still display it, though
-                            let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
-                            let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
-                            collectedUnresolvedTopicReferences.append(reference)
+                            destinationsMap[destination] = entity.topicRenderReference.title
+                        } else {
+                            fatalError("A successfully resolved reference should have either local or external content.")
                         }
 
                     case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
@@ -1511,7 +1515,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let topics = symbol.topicsVariants[trait]
             
             var sections = [TaskGroupRenderSection]()
-            if let topics = topics, !topics.taskGroups.isEmpty {
+            if let topics, !topics.taskGroups.isEmpty {
                 // Allowed symbol traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
@@ -1537,16 +1541,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Children of the current symbol that have not been curated manually in a task group will all
             // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
-            let alreadyCurated = Set(sections.flatMap { $0.identifiers })
             let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
             
-            sections.append(contentsOf: groups.compactMap { group in
-                let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                guard !newReferences.isEmpty else { return nil }
-                
+            for group in groups {
+                let newReferences = group.references
                 contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
-                return TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences))
-            })
+
+                // If the section has been manually curated, merge the references of both the automatic curation and the manual curation into one section (rdar://61899214).
+                if let duplicateSectionIndex = sections.firstIndex(where: { $0.title == group.title }) {
+                    let originalSection = sections[duplicateSectionIndex]
+                    // Combining all references here without checking for duplicates should be safe,
+                    // because the automatic curation of topics only returns symbols that haven't already been manually curated.
+                    let combinedReferences = originalSection.identifiers + newReferences.map { $0.absoluteString }
+                    sections[duplicateSectionIndex] = TaskGroupRenderSection(title: originalSection.title, abstract: originalSection.abstract, discussion: originalSection.discussion, identifiers: combinedReferences)
+                } else {
+                    sections.append(TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences)))
+                }
+            }
             
             // Place "bottom" rendering preference automatic task groups
             // after any user-defined task groups but before automatic curation.
@@ -1599,7 +1610,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     title: group.heading,
                     abstract: nil,
                     discussion: nil,
-                    identifiers: group.references.map({ $0.url!.absoluteString })
+                    identifiers: group.references.map({ $0.url!.absoluteString }),
+                    anchor: urlReadableFragment(group.heading)
                 )
             }
         } ?? .init(defaultValue: [])
@@ -1627,7 +1639,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             
             // Curate the current node's siblings as further See Also groups.
-            if let seeAlso = try! AutomaticCuration.seeAlso(
+            if let seeAlso = AutomaticCuration.seeAlso(
                 for: documentationNode,
                 withTraits: allowedTraits,
                 context: context,
@@ -1745,9 +1757,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
+        guard let introducedVersion = moduleAvailability.introducedVersion else { return false }
         guard
             // Check if we have a symbol availability version and a target platform version
-            let moduleVersion = Version(versionString: moduleAvailability.platformVersion),
+            let moduleVersion = Version(versionString: introducedVersion),
             // We require at least two components for a platform version (e.g. 10.15 or 10.15.1)
             moduleVersion.count >= 2,
             // Verify we're building against this platform
@@ -1780,10 +1793,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Prepare for rendering
         let renderedAvailability = moduleAvailability
-            .map({ availability -> AvailabilityRenderItem in
+            .filter({ $0.versionInformation != .unavailable })
+            .compactMap({ availability -> AvailabilityRenderItem? in
+                guard let availabilityIntroducedVersion = availability.introducedVersion else { return nil }
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
-                    introduced: availability.platformVersion,
+                    introduced: availabilityIntroducedVersion,
                     isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
                 )
             })
@@ -1827,17 +1842,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
     }
     
-    private mutating func convert_fragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
+    private mutating func convertFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
         return fragments.map { token -> DeclarationRenderSection.Token in
-            
-            // Create a reference if one found
-            var reference: ResolvedTopicReference?
+            let reference: ResolvedTopicReference?
             if let preciseIdentifier = token.preciseIdentifier,
-               let resolved = self.context.symbolIndex[preciseIdentifier] {
+               let resolved = self.context.localOrExternalReference(symbolID: preciseIdentifier)
+            {
                 reference = resolved
                 
                 // Add relationship to render references
                 self.collectedTopicReferences.append(resolved)
+            } else {
+                reference = nil
             }
             
             // Add the declaration token
@@ -1858,10 +1874,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var introducedVersion: String? = nil 
         var typeDetails: [TypeDetails]? = nil
         
-        if let symbol = symbol {
+        if let symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = symbol.declarationFragments {
-                renderedTokens = convert_fragments(fragments)
+                renderedTokens = convertFragments(fragments)
             }
                 
             // Populate attributes
@@ -1900,7 +1916,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // If there is only 1 type declaration found, it would be redundant with declaration, so skip it.
                 let typeDeclarations = constraint.compactMap { $0.fragments }
                 if typeDeclarations.count > 1 {
-                    let allowedTypes = typeDeclarations.map { convert_fragments($0) }
+                    let allowedTypes = typeDeclarations.map { convertFragments($0) }
                     attributes.append(RenderAttribute.allowedTypes(allowedTypes))
                 }
             }
@@ -1988,7 +2004,7 @@ extension ContentLayout: RenderTree {}
 
 extension ContentRenderSection: RenderTree {}
 
-private extension Sequence where Element == SourceLanguage {
+private extension Sequence<SourceLanguage> {
     func matchesOneOf(traits: Set<DocumentationDataVariantsTrait>) -> Bool {
         traits.contains(where: {
             guard let languageID = $0.interfaceLanguage,

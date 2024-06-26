@@ -17,7 +17,7 @@ public protocol DiagnosticConsumer: AnyObject {
     func receive(_ problems: [Problem])
     
     /// Inform the consumer that the engine has sent all diagnostics for this build.
-    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released")
     func finalize() throws
     
     /// Inform the consumer that the engine has sent all diagnostics in a given context.
@@ -32,7 +32,7 @@ public protocol DiagnosticFormattingConsumer: DiagnosticConsumer {
 
 public extension DiagnosticConsumer {
     // Deprecated for suppressing the warning emitted when calling `finalize()`
-    @available(*, deprecated, message: "This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.0 is released")
     func flush() throws {
         try finalize()
     }

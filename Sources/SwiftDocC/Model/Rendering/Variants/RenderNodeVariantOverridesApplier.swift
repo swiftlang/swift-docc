@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -43,11 +43,9 @@ public struct RenderNodeVariantOverridesApplier {
         var variantOverrides: VariantOverrides?
     }
     
-    /// An error that occured while applying overrides in a render node.
+    @available(*, deprecated, message: "This error is never raised. This deprecated API will be removed after 6.0 is released")
     public enum Error: DescribedError {
-        /// An error indicating that the error node is corrupted or malformed.
         case corruptedRenderNode
-        
         public var errorDescription: String {
             switch self {
             case .corruptedRenderNode:

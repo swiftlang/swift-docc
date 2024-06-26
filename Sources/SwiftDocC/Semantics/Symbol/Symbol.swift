@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,12 +30,12 @@ import SymbolKit
 /// - ``platformNameVariants``
 /// - ``moduleReference``
 /// - ``extendedModuleVariants``
-/// - ``bystanderModuleNames``
 /// - ``isRequiredVariants``
 /// - ``externalIDVariants``
 /// - ``accessLevelVariants``
 /// - ``deprecatedSummaryVariants``
 /// - ``declarationVariants``
+/// - ``attributesVariants``
 /// - ``locationVariants``
 /// - ``constraintsVariants``
 /// - ``originVariants``
@@ -145,9 +145,12 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         defaultVariantValue: [:]
     )
 
-    /// The symbols alternate declarations in each language variant the symbol is available in.
+    /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
+    /// The symbol's possible values in each language variant the symbol is available in.
+    public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
+    
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
 
     /// The symbol's availability or conformance constraints, in each language variant the symbol is available in.
@@ -235,6 +238,16 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
     var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
+    
+    struct Overloads {
+         /// References to other symbols that overload this one.
+         let references: [ResolvedTopicReference]
+         /// The index where this symbol's should be displayed (inserted) among the overloads declarations.
+         let displayIndex: Int
+    }
+    
+    /// References to other symbols that overload this one.
+    var overloadsVariants: DocumentationDataVariants<Overloads>
 
     /// Creates a new symbol with the given data.
     init(
@@ -252,6 +265,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>,
         mixinsVariants: DocumentationDataVariants<[String: Mixin]>,
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
+        alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
         defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
         relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .init(),
         abstractSectionVariants: DocumentationDataVariants<AbstractSection>,
@@ -268,7 +282,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         redirectsVariants: DocumentationDataVariants<[Redirect]>,
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
-        automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: [])
+        automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: []),
+        overloadsVariants: DocumentationDataVariants<Overloads> = .init(defaultVariantValue: nil)
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
@@ -289,10 +304,12 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         
         self.deprecatedSummaryVariants = deprecatedSummaryVariants
         self.declarationVariants = declarationVariants
+        self.alternateDeclarationVariants = alternateDeclarationVariants
         
         self.mixinsVariants = mixinsVariants
         
         for (trait, variant) in mixinsVariants.allValues {
+            var attributes: [RenderAttribute.Kind: Any] = [:]
             for item in variant.values {
                 switch item {
                 case let declaration as SymbolGraph.Symbol.DeclarationFragments:
@@ -305,10 +322,36 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                 case let spi as SymbolGraph.Symbol.SPI:
                     self.isSPIVariants[trait] = spi.isSPI
                 case let alternateDeclarations as SymbolGraph.Symbol.AlternateDeclarations:
-                    self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
+                    // If alternate declarations weren't set explicitly use the ones from the mixins.
+                    if !self.alternateDeclarationVariants.hasVariant(for: trait) {
+                        self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
+                    }
+                case let attribute as SymbolGraph.Symbol.Minimum:
+                    attributes[.minimum] = attribute.value
+                case let attribute as SymbolGraph.Symbol.Maximum:
+                    attributes[.maximum] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MinimumExclusive:
+                    attributes[.minimumExclusive] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MaximumExclusive:
+                    attributes[.maximumExclusive] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MinimumLength:
+                    attributes[.minimumLength] = attribute.value
+                case let attribute as SymbolGraph.Symbol.MaximumLength:
+                    attributes[.maximumLength] = attribute.value
+                case let attribute as SymbolGraph.Symbol.DefaultValue:
+                    attributes[.default] = attribute.value
+                
+                case let attribute as SymbolGraph.Symbol.TypeDetails:
+                    attributes[.allowedTypes] = attribute.value
+                case let attribute as SymbolGraph.Symbol.AllowedValues:
+                    attributes[.allowedValues] = attribute.value
                 default: break;
                 }
             }
+            if !attributes.isEmpty {
+                self.attributesVariants[trait] = attributes
+            }
+
         }
         
         if !relationshipsVariants.isEmpty {
@@ -331,6 +374,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.redirectsVariants = redirectsVariants
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
+        self.overloadsVariants = overloadsVariants
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
@@ -341,7 +385,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// - Parameters:
     ///    - extendedModule: The name of the extended module.
     ///    - extendedSymbolKind: The kind of the extended symbol.
-    ///    - constraint: The new generic constraints to add.
+    ///    - newConstraint: The new generic constraints to add.
     public func addSwiftExtensionConstraint(
         extendedModule: String,
         extendedSymbolKind: SymbolGraph.Symbol.KindIdentifier? = nil,
@@ -403,11 +447,11 @@ extension Symbol {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, selector: UnifiedSymbolGraph.Selector) throws {
+    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateDeclarations: SymbolGraph.Symbol.AlternateDeclarations?, selector: UnifiedSymbolGraph.Selector) throws {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
-        if let platformName = platformName,
+        if let platformName,
             let existingKey = declarationVariants[trait]?.first(
                 where: { pair in
                     return pair.value.declarationFragments == mergingDeclaration.declarationFragments
@@ -432,9 +476,38 @@ extension Symbol {
                 declarationVariants[trait]?[[nil]] = mergingDeclaration
             }
         }
+        
+        if let alternateDeclarations {
+            let mergingAlternateDeclarations = alternateDeclarations.declarations
+            if let platformName,
+               let existingKey = alternateDeclarationVariants[trait]?.first(
+                    where: { pair in
+                        return pair.value.map { $0.declarationFragments } == mergingAlternateDeclarations.map { $0.declarationFragments }
+                    }
+                )?.key
+            {
+                guard !existingKey.contains(nil) else {
+                    throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(identifier)
+                }
+
+                let platform = PlatformName(operatingSystemName: platformName)
+                if !existingKey.contains(platform) {
+                    // Matches one of the existing declarations, append to the existing key.
+                    let currentDeclaration = alternateDeclarationVariants[trait]?.removeValue(forKey: existingKey)!
+                    alternateDeclarationVariants[trait]?[existingKey + [platform]] = currentDeclaration
+                }
+            } else {
+                // Add new declaration
+                if let name = platformName {
+                    alternateDeclarationVariants[trait]?[[PlatformName.init(operatingSystemName: name)]] = mergingAlternateDeclarations
+                } else {
+                    alternateDeclarationVariants[trait]?[[nil]] = mergingAlternateDeclarations
+                }
+            }
+        }
 
         // Merge the new symbol with the existing availability. If a value already exist, only override if it's for this platform.
-        if let symbolAvailability = symbolAvailability,
+        if let symbolAvailability,
             symbolAvailability.availability.isEmpty == false || availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
         {
             var items = availabilityVariants[trait]?.availability ?? []
@@ -463,20 +536,42 @@ extension Symbol {
         for (selector, mixins) in unifiedSymbol.mixins {
             if let mergingDeclaration = mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments {
                 let availability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+                let alternateDeclarations = mixins[SymbolGraph.Symbol.AlternateDeclarations.mixinKey] as? SymbolGraph.Symbol.AlternateDeclarations
 
-                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, selector: selector)
+                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, alternateDeclarations: alternateDeclarations, selector: selector)
+            }
+        }
+    }
+    
+    /// Merge the different availability variants defined in the unified symbol,
+    /// and update the availability of the canonical symbol to consider all the different availability mixins instead of only the first one.
+    func mergeAvailabilities(unifiedSymbol: UnifiedSymbolGraph.Symbol) {
+        for (selector, mixins) in unifiedSymbol.mixins {
+            let trait = DocumentationDataVariantsTrait(for: selector)
+            if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
+                unifiedSymbolAvailability.availability.forEach { availabilityItem in
+                    guard let availabilityVariantTrait = availabilityVariants[trait] else { return }
+                    if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                        return
+                    }
+                    availabilityVariants[trait]?.availability.append(availabilityItem)
+                }
             }
         }
     }
 }
 
-extension Dictionary where Key == String, Value == Mixin {
+extension [String: Mixin] {
     func getValueIfPresent<T>(for mixinType: T.Type) -> T? where T: Mixin {
         return self[mixinType.mixinKey] as? T
     }
 }
 
 // MARK: Accessors for the first variant of symbol properties.
+
+// Extend the Symbol class to account for legacy code that didn't account for symbols having multiple
+// language representations. New code should be written to work with the variants so that it supports
+// language specific content.
 
 extension Symbol {
     /// The kind of the first variant of this symbol, such as protocol or variable.
@@ -498,7 +593,7 @@ extension Symbol {
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
     /// The first variant of the symbol's extended module, if available
-    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 5.12 is released")
+    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 6.0 is released")
     public var extendedModule: String? { extendedModuleVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.
@@ -628,10 +723,12 @@ extension Symbol {
         get { mixinsVariants.firstValue }
         set { mixinsVariants.firstValue = newValue }
     }
-    
+
     /// Any automatically created task groups of the first variant of the symbol.
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
     }
+
+    // Don't add additional functions here. See the comment above about legacy code.
 }

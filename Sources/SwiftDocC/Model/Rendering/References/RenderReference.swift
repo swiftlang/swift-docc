@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -69,10 +69,17 @@ extension URLReference {
     ///
     /// The converter that writes the built documentation to the file system is responsible for copying the referenced file to this destination.
     /// 
-    /// - Parameter path: The path of the file.
+    /// - Parameters:
+    ///   - path: The path of the file.
+    ///   - prefixComponent: An optional path component to add before the path of the file.
     /// - Returns: The destination URL for the given file path.
-    func destinationURL(for path: String) -> URL {
-        return Self.baseURL.appendingPathComponent(path, isDirectory: false)
+    func destinationURL(for path: String, prefixComponent: String?) -> URL {
+        var url = Self.baseURL
+        if let bundleName = prefixComponent {
+            url.appendPathComponent(bundleName, isDirectory: true)
+        }
+        url.appendPathComponent(path, isDirectory: false)
+        return url
     }
 }
 

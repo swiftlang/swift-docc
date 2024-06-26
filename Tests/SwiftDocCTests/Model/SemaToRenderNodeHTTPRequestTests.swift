@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
     func testBaseRenderNodeFromHTTPRequest() throws {
         let (_, context) = try testBundleAndContext(named: "HTTPRequests")
         
-        let expectedPageUSRsAndLangs: [String : Set<SourceLanguage>] = [
+        let expectedPageUSRsAndLanguages: [String : Set<SourceLanguage>] = [
             // Get Artist endpoint - ``Get_Artist``:
             "rest:test:get:v1/artists/{}": [.data],
             
@@ -34,9 +34,9 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             "s:FooSwift": [.swift],
         ]
         
-        let expectedPageUSRs: Set<String> = Set(expectedPageUSRsAndLangs.keys)
+        let expectedPageUSRs: Set<String> = Set(expectedPageUSRsAndLanguages.keys)
         
-        let expectedNonpageUSRs: Set<String> = [
+        let expectedNonPageUSRs: Set<String> = [
             // id path parameter - ``id``:
             "rest:test:get:v1/artists/{}@p=id",
             // limit query parameter - ``limit``:
@@ -56,10 +56,10 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         ]
         
         // Verify we have the right number of cached nodes.
-        XCTAssertEqual(context.documentationCache.values.count, expectedPageUSRsAndLangs.count + expectedNonpageUSRs.count)
+        XCTAssertEqual(context.documentationCache.count, expectedPageUSRsAndLanguages.count + expectedNonPageUSRs.count)
         
         // Verify each node matches the expectations.
-        for documentationNode in context.documentationCache.values {
+        for (_, documentationNode) in context.documentationCache {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
             
             if documentationNode.kind.isPage {
@@ -67,10 +67,10 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                     expectedPageUSRs.contains(symbolUSR),
                     "Unexpected symbol page: \(symbolUSR)"
                 )
-                XCTAssertEqual(documentationNode.availableSourceLanguages, expectedPageUSRsAndLangs[symbolUSR])
+                XCTAssertEqual(documentationNode.availableSourceLanguages, expectedPageUSRsAndLanguages[symbolUSR])
             } else {
                 XCTAssertTrue(
-                    expectedNonpageUSRs.contains(symbolUSR),
+                    expectedNonPageUSRs.contains(symbolUSR),
                     "Unexpected symbol non-page: \(symbolUSR)"
                 )
             }
@@ -85,7 +85,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         
         assertExpectedContent(
             frameworkRenderNode,
-            sourceLanguage: "swift",  // Swift wins default when multiple langauges present
+            sourceLanguage: "swift",  // Swift wins default when multiple languages present
             symbolKind: "module",
             title: "HTTPRequests",
             navigatorTitle: nil,
@@ -211,7 +211,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         // Confirm docs for request body
         let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
         XCTAssertNotNil(body)
-        if let body = body {
+        if let body {
             XCTAssertEqual(["Simple body."], body.content?.paragraphText)
             XCTAssertEqual("application/json", body.mimeType)
         }
@@ -267,14 +267,14 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         // Confirm docs for request body
         let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
         XCTAssertNotNil(body)
-        if let body = body {
+        if let body {
             XCTAssertEqual(["Uploaded payload."], body.content?.paragraphText)
             XCTAssertEqual("multipart/form-data", body.mimeType)
             
             // Confirm docs for body parameters
             let parameters = body.parameters
             XCTAssertNotNil(parameters)
-            if let parameters = parameters {
+            if let parameters {
                 XCTAssertEqual(2, parameters.count)
                 if parameters.count > 0 {
                     XCTAssertEqual("artist", parameters[0].name)

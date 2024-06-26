@@ -50,7 +50,7 @@
       {
         "children" : [
           {
-            "title" : "Task Group Excercising Symbol Links",
+            "title" : "Task Group Exercising Symbol Links",
             "type" : "groupMarker"
           },
           {
@@ -774,9 +774,12 @@
       }
     ]
   },
+  "includedArchiveIdentifiers": [
+    "org.swift.docc.example"
+  ],
   "schemaVersion" : {
     "major" : 0,
     "minor" : 1,
-    "patch" : 1
+    "patch" : 2
   }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -57,13 +57,17 @@ func directiveUSR(_ directiveName: String) -> String {
     "__docc_universal_symbol_reference_$\(directiveName)"
 }
 
-extension SymbolGraph.Symbol.DeclarationFragments.Fragment: ExpressibleByStringInterpolation {
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
+//
+// This conformance it only relevant to the `generate-symbol-graph` script.
+extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments.Fragment: Swift.ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(kind: .text, spelling: value, preciseIdentifier: nil)
     }
     
-    init<S: StringProtocol>(
-        _ value: S,
+    init(
+        _ value: some StringProtocol,
         kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind = .text,
         preciseIdentifier: String? = nil
     ) {
@@ -71,7 +75,11 @@ extension SymbolGraph.Symbol.DeclarationFragments.Fragment: ExpressibleByStringI
     }
 }
 
-extension SymbolGraph.LineList.Line: ExpressibleByStringInterpolation {
+// Use fully-qualified types to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
+//
+// This conformance it only relevant to the `generate-symbol-graph` script. 
+extension SymbolKit.SymbolGraph.LineList.Line: Swift.ExpressibleByStringInterpolation {
     public init(stringLiteral value: String) {
         self.init(text: value, range: nil)
     }
@@ -506,7 +514,7 @@ func declarationFragments(
             $0 == " " || $0 == "?"
         }
         
-        if let splitLocation = splitLocation {
+        if let splitLocation {
             fragments.append(
                 .init(
                     argument.typeDisplayName.prefix(upTo: splitLocation),

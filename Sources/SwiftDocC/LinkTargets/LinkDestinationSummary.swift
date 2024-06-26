@@ -333,9 +333,15 @@ public extension DocumentationNode {
             case .tutorial, .tutorialArticle, .technology, .technologyOverview, .chapter, .volume, .onPageLandmark:
                 taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
             default:
-                taskGroups = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
+                var topicSectionGroups: [LinkDestinationSummary.TaskGroup] = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
+
+                if let overloadChildren = context.topicGraph.overloads(of: self.reference), !overloadChildren.isEmpty {
+                    topicSectionGroups.append(.init(title: "Overloads", identifiers: overloadChildren.map(\.absoluteString)))
+                }
+
+                taskGroups = topicSectionGroups
                 for variant in renderNode.topicSectionsVariants.variants {
-                    taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
+                    taskGroupVariants[variant.traits] = renderNode.topicSectionsVariants.value(for: variant.traits).map { group in .init(title: group.title, identifiers: group.identifiers) }
                 }
             }
         } else {
@@ -363,7 +369,7 @@ extension Abstracted {
     /// - Parameter compiler: The content compiler to render the abstract.
     /// - Returns: The rendered abstract, or `nil` of the element doesn't have an abstract.
     func renderedAbstract(using compiler: inout RenderContentCompiler) -> LinkDestinationSummary.Abstract? {
-        guard let abstract = abstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstract).first else {
+        guard let abstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstract).first else {
             return nil
         }
         return p.inlineContent
@@ -491,7 +497,7 @@ extension LinkDestinationSummary {
     }
 }
 
-private extension Dictionary where Key == [PlatformName?], Value == SymbolGraph.Symbol.DeclarationFragments {
+private extension [[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments] {
     func mainRenderFragments() -> SymbolGraph.Symbol.DeclarationFragments? {
         guard count > 1 else {
             return first?.value
@@ -662,7 +668,7 @@ extension LinkDestinationSummary.Variant {
         self.traits = traits
         
         let kindID = try container.decodeIfPresent(String.self, forKey: .kind)
-        if let kindID = kindID {
+        if let kindID {
             guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
                 throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
             }
@@ -672,7 +678,7 @@ extension LinkDestinationSummary.Variant {
         }
         
         let languageID = try container.decodeIfPresent(String.self, forKey: .language)
-        if let languageID = languageID {
+        if let languageID {
             guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
                 throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
             }

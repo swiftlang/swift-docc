@@ -1,14 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 import XCTest
 import SymbolKit
@@ -467,7 +467,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.sections[2].kind, .callToAction)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 0)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 0)
         
         XCTAssertNil(renderNode.metadata.roleHeading)
         XCTAssertEqual(renderNode.metadata.title, "Making an Augmented Reality App")
@@ -622,7 +622,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.references.count, 13)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 1)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 1)
         
         guard let introImageReference = renderNode.references["intro.png"] as? ImageReference else {
             XCTFail("Missing intro.png image reference")
@@ -878,7 +878,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.references.count, 13)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 3, "Expected three chapters as children.")
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 3, "Expected three chapters as children.")
         
         guard let introImageReference = renderNode.references["intro.png"] as? ImageReference else {
             XCTFail("Missing intro.png image reference")
@@ -1050,7 +1050,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
-        XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Excercising Symbol Links")
+        XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Exercising Symbol Links")
         XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(.init(inlineContent: [$0])) }.paragraphText.joined(), "Task Group abstract text.")
         
         guard let discussion = renderNode.topicSections[0].discussion as? ContentRenderSection else {
@@ -1060,9 +1060,9 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(discussion.kind, RenderSectionKind.content)
         
         // Test childrenRelationships are handled correctly
-        let children = renderNode.childrenRelationship()
+        let children = renderNode.navigatorChildren(for: nil)
         XCTAssertEqual(children.count, renderNode.topicSections.count)
-        XCTAssertEqual(children.first?.name, "Task Group Excercising Symbol Links")
+        XCTAssertEqual(children.first?.name, "Task Group Exercising Symbol Links")
         XCTAssertEqual(children.first?.references.count, 3)
         
         let groupDiscussionParagraphPrefixes = discussion.content.paragraphText
@@ -1173,75 +1173,29 @@ class SemaToRenderNodeTests: XCTestCase {
     }
 
     func testCompileSymbolWithExternalReferences() throws {
-        class TestSymbolResolver: ExternalSymbolResolver {
-            
-            let bundleIdentifier = "com.test.external.symbols"
-            
-            public func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
-                let symbol = Symbol(
-                    kindVariants: .init(swiftVariant: TestSymbolResolver.symbolKind(forNodeKind: .protocol)),
-                    titleVariants: .init(swiftVariant: "ExternalResolvedSymbolTitle"),
-                    subHeadingVariants: .init(swiftVariant: nil),
-                    navigatorVariants: .init(swiftVariant: nil),
-                    roleHeadingVariants: .init(swiftVariant: "ExternalResolvedSymbolRoleHeading"),
-                    platformNameVariants: .init(swiftVariant: nil),
-                    moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
-                    externalIDVariants: .init(swiftVariant: nil),
-                    accessLevelVariants: .init(swiftVariant: nil),
-                    availabilityVariants: .init(swiftVariant: nil),
-                    deprecatedSummaryVariants: .init(swiftVariant: nil),
-                    mixinsVariants: .init(swiftVariant: nil),
-                    abstractSectionVariants: .init(swiftVariant: nil),
-                    discussionVariants: .init(swiftVariant: nil),
-                    topicsVariants: .init(swiftVariant: nil),
-                    seeAlsoVariants: .init(swiftVariant: nil),
-                    returnsSectionVariants: .init(swiftVariant: nil),
-                    parametersSectionVariants: .init(swiftVariant: nil),
-                    dictionaryKeysSectionVariants: .init(swiftVariant: nil),
-                    httpEndpointSectionVariants: .init(swiftVariant: nil),
-                    httpBodySectionVariants: .init(swiftVariant: nil),
-                    httpParametersSectionVariants: .init(swiftVariant: nil),
-                    httpResponsesSectionVariants: .init(swiftVariant: nil),
-                    redirectsVariants: .init(swiftVariant: nil)
+        class TestSymbolResolver: GlobalExternalSymbolResolver {
+            func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+                let reference = ResolvedTopicReference(bundleIdentifier: "com.test.external.symbols", path: "/\(preciseIdentifier)", sourceLanguage: .objectiveC)
+                
+                let entity = LinkResolver.ExternalEntity(
+                    topicRenderReference: TopicRenderReference(
+                        identifier: .init(reference.absoluteString),
+                        title: "SymbolName ( \(preciseIdentifier) )",
+                        abstract: [],
+                        url: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)",
+                        kind: .symbol,
+                        role: "ExternalResolvedSymbolRoleHeading",
+                        estimatedTime: nil
+                    ),
+                    renderReferenceDependencies: .init(),
+                    sourceLanguages: [.objectiveC]
                 )
-                
-                return DocumentationNode(
-                    reference: ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: "/\(preciseIdentifier)", sourceLanguage: .objectiveC),
-                    kind: .protocol,
-                    sourceLanguage: .objectiveC,
-                    availableSourceLanguages: [.objectiveC],
-                    name: .conceptual(title: "SymbolName ( \(preciseIdentifier) )"),
-                    markup: Paragraph(),
-                    semantic: symbol,
-                    platformNames: nil
-                )
-            }
-            
-            public func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL? {
-                guard reference.bundleIdentifier == bundleIdentifier, let preciseIdentifier = reference.url.pathComponents.last else {
-                    return nil
-                }
-                
-                return URL(string: "/documentation/FrameworkName/path/to/symbol/\(preciseIdentifier)")!
-            }
-            
-            public func preciseIdentifier(forExternalSymbolReference reference: TopicReference) -> String? {
-                let url: URL
-                switch reference {
-                case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
-                    guard unresolved.bundleIdentifier == bundleIdentifier else { return nil }
-                    url = unresolved.topicURL.url
-                case .resolved(.success(let resolved)):
-                    guard resolved.bundleIdentifier == bundleIdentifier else { return nil }
-                    url = resolved.url
-                }
-                
-                return url.pathComponents.last
+                return (reference, entity)
             }
         }
         
-        class TestReferenceResolver: ExternalReferenceResolver {
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+        class TestReferenceResolver: ExternalDocumentationSource {
+            func resolve(_ reference: TopicReference) -> TopicReferenceResolutionResult {
                 .success(
                     ResolvedTopicReference(
                         bundleIdentifier: "com.test.external",
@@ -1251,31 +1205,29 @@ class SemaToRenderNodeTests: XCTestCase {
                 )
             }
             
-            func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
-                DocumentationNode(
-                    reference: reference,
-                    kind: .collection,
-                    sourceLanguage: .swift,
-                    name: .conceptual(title: "Title for \(reference.url.path)"),
-                    markup: Document(
-                        Paragraph(
-                            Text("Abstract for \(reference.url.path)")
-                        )
+            func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
+                let (kind, role) = DocumentationContentRenderer.renderKindAndRole(.collection, semantic: nil)
+                return LinkResolver.ExternalEntity(
+                    topicRenderReference: TopicRenderReference(
+                        identifier: .init(reference.absoluteString),
+                        title: "Title for \(reference.url.path)",
+                        abstract: [.text("Abstract for \(reference.url.path)")],
+                        url: reference.url.path,
+                        kind: kind,
+                        role: role,
+                        estimatedTime: nil
                     ),
-                    semantic: nil
+                    renderReferenceDependencies: .init(),
+                    sourceLanguages: [.swift]
                 )
-            }
-            
-            func urlForResolvedReference(_ reference: ResolvedTopicReference) -> URL {
-                reference.url
             }
         }
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
         
-        context.externalReferenceResolvers = ["com.test.external": TestReferenceResolver()]
-        context.externalSymbolResolver = TestSymbolResolver()
+        context.externalDocumentationSources = ["com.test.external": TestReferenceResolver()]
+        context.globalExternalSymbolResolver = TestSymbolResolver()
         
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -1285,23 +1237,18 @@ class SemaToRenderNodeTests: XCTestCase {
         let bundle = workspace.bundles.values.first!
         
         // Symbols are loaded
-        XCTAssertFalse(context.symbolIndex.isEmpty)
+        XCTAssertFalse(context.documentationCache.isEmpty)
         
         // MyProtocol is loaded
-        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
-              let myProtocolSymbol = myProtocol.semantic as? Symbol else {
-            XCTFail("`MyProtocol` not found in symbol graph")
-            return
-        }
+        let myProtocol = try XCTUnwrap(context.documentationCache["s:5MyKit0A5ProtocolP"], "`MyProtocol` not found in symbol graph")
+        let myProtocolSymbol = try XCTUnwrap(myProtocol.semantic as? Symbol)
         
         // Verify that various symbols that exist are referenced in the symbol graph file have been resolved and added to the symbol index
-        
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("p:hPP"), "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:Si"), "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation3URLV"), "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation4DataV"), "External symbol from declaration was resolved and added to the index")
-        
-        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:5Foundation0A5NSCodableP"), "External symbol from symbol graph relationship was resolved and added to the index")
+        XCTAssertNotNil(context.externalCache["p:hPP"])
+        XCTAssertNotNil(context.externalCache["s:Si"])
+        XCTAssertNotNil(context.externalCache["s:10Foundation3URLV"])
+        XCTAssertNotNil(context.externalCache["s:10Foundation4DataV"])
+        XCTAssertNotNil(context.externalCache["s:5Foundation0A5NSCodableP"])
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myProtocol.reference, source: nil)
 
@@ -1348,7 +1295,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(
             renderNode.relationshipSections[0].identifiers.sorted(),
             ["doc://com.test.external.symbols/s:5Foundation0A5EarhartP", "doc://com.test.external.symbols/s:5Foundation0A5NSCodableP"],
-            "Since this is a protcol and it has conformsTo relationships to two other protocols, there are two 'Inherits From' references"
+            "Since this is a protocol and it has conformsTo relationships to two other protocols, there are two 'Inherits From' references"
         )
         
         XCTAssertNotNil(renderNode.references["doc://com.test.external.symbols/s:5Foundation0A5EarhartP"] as? TopicRenderReference)
@@ -1557,10 +1504,11 @@ class SemaToRenderNodeTests: XCTestCase {
         // Ensure the availability has platform and version.
         let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
         
-        // Verify there are 4 availability items in the symbol graph
-        XCTAssertEqual(symbol.availability?.availability.count, 4)
+        // Verify there are 6 availability items in the symbol graph
+        XCTAssertEqual(symbol.availability?.availability.count, 6)
 
-        // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid.
+        // Verify only 3 availability items are rendered, since the iOS availability in the graph fixture is invalid
+        // and therefore Catalyst and iPadOS are also invalid.
         XCTAssertEqual(platforms.count, 3)
         
         XCTAssertEqual(platforms[0].name, "macOS")
@@ -1580,7 +1528,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Override with both a low and a high value
         for version in [SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1), SymbolGraph.SemanticVersion(major: 99, minor: 99, patch: 99)] {
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
                 // Duplicate the symbol graph
                 let myKitURL = url.appendingPathComponent("mykit-iOS.symbols.json")
                 let myClassUSR = "s:5MyKit0A5ClassC"
@@ -1617,20 +1565,17 @@ class SemaToRenderNodeTests: XCTestCase {
             // Ensure the availability has platform and version.
             let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
             
-            XCTAssertEqual(platforms.count, 4)
+            XCTAssertEqual(platforms.count,6)
             let versionString = version.stringRepresentation(precisionUpToNonsignificant: .patch)
             
-            XCTAssertEqual(platforms[0].name, "iOS")
+            XCTAssertEqual(platforms[0].name, "Mac Catalyst")
             XCTAssertEqual(platforms[0].introduced, versionString)
             
-            XCTAssertEqual(platforms[1].name, "macOS")
+            XCTAssertEqual(platforms[1].name, "iOS")
             XCTAssertEqual(platforms[1].introduced, versionString)
             
-            XCTAssertEqual(platforms[2].name, "tvOS")
+            XCTAssertEqual(platforms[2].name, "iPadOS")
             XCTAssertEqual(platforms[2].introduced, versionString)
-            
-            XCTAssertEqual(platforms[3].name, "watchOS")
-            XCTAssertEqual(platforms[3].introduced, versionString)
         }
     }
     
@@ -1878,7 +1823,7 @@ Document
 
         try content.write(to: targetURL.appendingPathComponent("article2.md"), atomically: true, encoding: .utf8)
 
-        let (_, bundle, context) = try loadBundle(from: targetURL, codeListings: [:])
+        let (_, bundle, context) = try loadBundle(from: targetURL)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article2", sourceLanguage: .swift))
         let article = node.semantic as! Article
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
@@ -1961,7 +1906,7 @@ Document
     }
     
     func testRendersBetaViolators() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle", codeListings: [:])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -2096,7 +2041,7 @@ Document
     }
     
     func testRendersDeprecatedViolator() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle", codeListings: [:])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
         // Make the referenced symbol deprecated
         do {
@@ -2119,7 +2064,7 @@ Document
     }
 
     func testDoesNotRenderDeprecatedViolator() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle", codeListings: [:])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
         // Make the referenced symbol deprecated
         do {
@@ -2143,7 +2088,7 @@ Document
     }
     
     func testRendersDeprecatedViolatorForUnconditionallyDeprecatedReference() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle", codeListings: [:])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
         // Make the referenced symbol deprecated
         do {
@@ -2599,7 +2544,7 @@ Document
     func testRenderAsides() throws {
         let asidesSGFURL = Bundle.module.url(
             forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: asidesSGFURL, to: url.appendingPathComponent("Asides.symbols.json"))
         }
         defer {
@@ -2644,7 +2589,7 @@ Document
         let sgURL = Bundle.module.url(
             forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5MyProtocol0Afunc()"#)
@@ -2670,7 +2615,7 @@ Document
         let sgURL = Bundle.module.url(
             forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle but
             // from the MyKit module.
             try String(contentsOf: sgURL)
@@ -2724,7 +2669,7 @@ Document
 
     /// Tests doc extensions are matched to inherited symbols
     func testInheritedSymbolDocExtension() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try? """
             # ``SideKit/SideClass/Element/inherited()``
             Doc extension abstract.
@@ -2867,12 +2812,12 @@ Document
         for testData in testData {
             let sgURL = Bundle.module.url(forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
          
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 // Replace the out-of-bundle origin with a symbol from the same bundle but
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
                 
-                graph.symbols["s:7SideKit0A5::SYNTESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
+                graph.symbols["s:7SideKit0A5::SYNTHESIZED::inheritedFF"]?.docComment = try JSONDecoder().decode(SymbolGraph.LineList.self, from: testData.docCommentJSON.data(using: .utf8)!)
                 
                 try JSONEncoder().encode(graph)
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
@@ -2911,7 +2856,7 @@ Document
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
-        // Verify that by default we don't inherit docs and we gernerate default abstract.
+        // Verify that by default we don't inherit docs and we generate default abstract.
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
@@ -3009,14 +2954,46 @@ Document
             {"type":"aside", "style":"note", "name":"See Also",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"And this other thing."}]}]},
             {"type":"aside", "style":"note", "name":"Throws",
-                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]}
+                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]},
             ]
             """)
+
+        // While decoding, overwrite the style with the name, if both are specified. We expect the style's raw value
+        // to be "Custom Title", not "important" in this example.
+        try assertJSONRepresentation(
+            RenderBlockContent.aside(
+                .init(
+                    style: .init(rawValue: "Custom Title"),
+                    content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))]
+                )
+            ),
+            """
+            {
+              "type": "aside",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "inlineContent": [
+                    {
+                      "type": "text",
+                      "text": "This is a custom title..."
+                    }
+                  ]
+                }
+              ],
+              "style": "important",
+              "name": "Custom Title"
+            }
+            """)
+            
+        for style in Aside.Kind.allCases.map({ RenderBlockContent.AsideStyle(asideKind: $0) }) + [.init(displayName: "Custom Title")] {
+            try assertRoundTripCoding(RenderBlockContent.aside(.init(style: style, content: [.paragraph(.init(inlineContent: [.text("This is a custom title...")]))])))
+        }
     }
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.
     func testLinkToDeprecatedSymbolViaDirectiveIsDeprecated() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit/MyProtocol``
             @DeprecationSummary {
@@ -3036,7 +3013,7 @@ Document
     }
     
     func testCustomSymbolDisplayNames() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit``
             
@@ -3068,6 +3045,7 @@ Document
          
         let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         let protocolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let functionReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
         
         // Verify the MyKit module
         
@@ -3102,7 +3080,7 @@ Document
         XCTAssertEqual((moduleRenderNode.references[protocolReference.absoluteString] as? TopicRenderReference)?.title, "My custom symbol name")
         
         let protocolNode = try context.entity(with: protocolReference)
-        XCTAssertEqual(protocolNode.name, .symbol(declaration: .init([.plain("My custom symbol name")])))
+        XCTAssertEqual(protocolNode.name, .symbol(name: "My custom symbol name"))
         let protocolSymbol = try XCTUnwrap(protocolNode.semantic as? Symbol)
         XCTAssertEqual(protocolSymbol.title, "My custom symbol name")
         
@@ -3121,6 +3099,17 @@ Document
         for moduleVariant in protocolRenderNode.metadata.modulesVariants.variants {
             XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
         }
+        
+        // Verify the MyFunction node
+        
+        let functionNode = try context.entity(with: functionReference)
+        let functionSymbol = try XCTUnwrap(functionNode.semantic as? Symbol)
+        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: functionNode.reference, source: nil)
+        let functionRenderNode = try XCTUnwrap(translator.visit(functionSymbol) as? RenderNode)
+        XCTAssertTrue(functionRenderNode.metadata.modulesVariants.variants.isEmpty)
+        // Test that the symbol name `MyKit` is not added as a related module.
+        XCTAssertNil((functionRenderNode.metadata.modulesVariants.defaultValue!.first!.relatedModules))
+        XCTAssertTrue(functionRenderNode.metadata.extendedModuleVariants.variants.isEmpty)
     }
     
     /// Tests that we correctly resolve links in automatic inherited API Collections.
@@ -3337,8 +3326,7 @@ Document
             "doc://org.swift.MixedFramework/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()"
         ])
         
-        let objcTopicSectionVariant = try XCTUnwrap(topicSectionsVariants.variants.first { $0.traits[0] == .interfaceLanguage("occ") })
-        let objcTopicSection = objcTopicSectionVariant.applyingPatchTo(swiftTopicSection)
+        let objcTopicSection = topicSectionsVariants.value(for: [.interfaceLanguage("occ")])
         
         XCTAssertEqual(objcTopicSection.first?.title, "Something Objective-C only")
         XCTAssertEqual(objcTopicSection.first?.abstract?.plainText, "This link is only for Objective-C")
@@ -3397,5 +3385,103 @@ Document
         XCTAssertEqual(topicSection.first?.identifiers, [
             "doc://unit-test/documentation/unit-test/article"
         ])
+    }
+    
+    func testAutomaticCurationForRefinedSymbols() throws {
+        let (_, bundle, context) = try testBundleAndContext(named: "GeometricalShapes")
+        
+        do {
+            let root = try XCTUnwrap(context.soleRootModuleReference)
+            let node = try context.entity(with: root)
+            
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node, at: nil)
+            
+            let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
+            XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Structures",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+            ])
+            
+            let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
+            XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Structures",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
+                
+                "Variables",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero",
+                
+                "Functions",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/TLACircleMake"
+            ])
+        }
+        
+        do {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/GeometricalShapes/Circle", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node, at: nil)
+            
+            let swiftTopicSections = renderNode.topicSectionsVariants.defaultValue
+            XCTAssertEqual(swiftTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Initializers",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init()",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(center:radius:)",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/init(string:)",
+                
+                "Instance Properties",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/debugDescription",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isEmpty",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/isNull",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
+                
+                "Instance Methods", 
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/intersects(_:)",
+                
+                "Type Properties", 
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/defaultRadius",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/null",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
+            ])
+            
+            let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
+            XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
+                "Instance Properties",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",
+                "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/radius",
+            ])
+        }
+    }
+    
+    func testThematicBreak() throws {
+        let source = """
+
+        ---
+
+        """
+        
+        let markup = Document(parsing: source, options: .parseBlockDirectives)
+        
+        XCTAssertEqual(markup.childCount, 1)
+        
+        let (bundle, context) = try testBundleAndContext()
+        
+        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/TestThematicBreak", sourceLanguage: .swift))
+        
+        let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
+        let expectedContent: [RenderBlockContent] = [
+            .thematicBreak
+        ]
+        
+        XCTAssertEqual(expectedContent, renderContent)
     }
 }

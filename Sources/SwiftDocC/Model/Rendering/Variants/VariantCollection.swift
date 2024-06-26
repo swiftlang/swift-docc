@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,7 +33,7 @@ public struct VariantCollection<Value: Codable>: Codable {
     ///
     /// - Parameters:
     ///   - defaultValue: The default value of the variant.
-    ///   - variantOverrides: The trait-specific overrides for the value.
+    ///   - variants: The trait-specific overrides for the value.
     public init(defaultValue: Value, variants: [Variant] = []) {
         self.defaultValue = defaultValue
         self.variants = variants
@@ -50,7 +50,7 @@ public struct VariantCollection<Value: Codable>: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(defaultValue)
-        addVariantsToEncoder(encoder)
+        addVariantsToEncoder(encoder, isDefaultValueEncoded: true)
     }
     
     /// Adds the variants of the collection to the given encoder.
@@ -63,7 +63,7 @@ public struct VariantCollection<Value: Codable>: Codable {
     func addVariantsToEncoder(
         _ encoder: Encoder,
         pointer: JSONPointer? = nil,
-        isDefaultValueEncoded: Bool = true
+        isDefaultValueEncoded: Bool
     ) {
         let overrides = variants.map { variant in
             VariantOverride(

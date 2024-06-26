@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -36,6 +36,26 @@ class String_WhitespaceTests: XCTestCase {
         
         XCTAssertEqual("Words: with, various. punctuation! as - separators".replacingWhitespaceAndPunctuation(with: "-"),
                        "Words-with-various-punctuation-as-separators")
+    }
+    
+    func testTrimmingWhitespace() {
+        XCTAssertEqual("".removingLeadingWhitespace(), "")
+        XCTAssertEqual("".removingTrailingWhitespace(), "")
+        
+        XCTAssertEqual("ABC".removingLeadingWhitespace(), "ABC")
+        XCTAssertEqual("ABC".removingTrailingWhitespace(), "ABC")
+        
+        XCTAssertEqual("\t ABC\t ".removingLeadingWhitespace(), "ABC\t ", "Removing leading whitespace doesn't remove trailing whitespace")
+        XCTAssertEqual("\t ABC\t ".removingTrailingWhitespace(), "\t ABC", "Removing trailing whitespace doesn't remove leading whitespace")
+        
+        XCTAssertEqual("\t ".removingLeadingWhitespace(), "", "All characters are whitespace")
+        XCTAssertEqual("\t ".removingTrailingWhitespace(), "", "All characters are whitespace")
+        
+        XCTAssertEqual("\n ABC \n".removingLeadingWhitespace(), "ABC \n", "Newline is considered a whitespace character")
+        XCTAssertEqual("\n ABC \n".removingTrailingWhitespace(), "\n ABC", "Newline is considered a whitespace character")
+        
+        XCTAssertEqual("start ABC end".removingLeadingWhitespace(), "start ABC end", "Only removes whitespace at the start and end of the string")
+        XCTAssertEqual("start ABC end".removingTrailingWhitespace(), "start ABC end", "Only removes whitespace at the start and end of the string")
     }
 }
 

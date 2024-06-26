@@ -42,14 +42,12 @@ extension PathHierarchy.FileRepresentation {
                     at: identifierMap[node.identifier]!,
                     to: Node(
                         name: node.name,
-                        isDisfavoredInCollision: node.isDisfavoredInCollision,
+                        rawSpecialBehavior: node.specialBehaviors.rawValue,
                         children: node.children.values.flatMap({ tree in
                             var disambiguations = [Node.Disambiguation]()
-                            for (kind, kindTree) in tree.storage {
-                                for (hash, childNode) in kindTree where childNode.identifier != nil { // nodes without identifiers can't be found in the tree
-                                    disambiguations.append(.init(kind: kind, hash: hash, nodeID: identifierMap[childNode.identifier]!))
+                            for element in tree.storage where element.node.identifier != nil { // nodes without identifiers can't be found in the tree
+                                disambiguations.append(.init(kind: element.kind, hash: element.hash, nodeID: identifierMap[element.node.identifier]!))
                                 }
-                            }
                             return disambiguations
                         }),
                         symbolID: node.symbol?.identifier
@@ -68,19 +66,6 @@ extension PathHierarchy.FileRepresentation {
         mapCreatedIdentifiers(Array(lookup.keys))
     }
 }
-
-#if swift(<5.8)
-// This makes 'initializeElement(at:to:)' available before Swift 5.8.
-// Proposal: https://github.com/apple/swift-evolution/blob/main/proposals/0370-pointer-family-initialization-improvements.md
-// Implementation: https://github.com/apple/swift/blob/main/stdlib/public/core/UnsafeBufferPointer.swift.gyb#L1031
-private extension UnsafeMutableBufferPointer {
-    func initializeElement(at index: UnsafeMutableBufferPointer<Element>.Index, to value: Element) {
-        assert(startIndex <= index && index < endIndex)
-        let p = baseAddress!.advanced(by: index)
-        p.initialize(to: value)
-    }
-}
-#endif
 
 extension PathHierarchy {
     /// A file representation of a path hierarchy.
@@ -101,10 +86,10 @@ extension PathHierarchy {
         /// The container of tutorial overview pages.
         var tutorialOverviewContainer: Int
         
-        /// A node in the
+        /// A node in the hierarchy.
         struct Node: Codable {
             var name: String
-            var isDisfavoredInCollision: Bool = false
+            var rawSpecialBehavior: Int = 0
             var children: [Disambiguation] = []
             var symbolID: SymbolGraph.Symbol.Identifier?
             
@@ -120,7 +105,7 @@ extension PathHierarchy {
 extension PathHierarchy.FileRepresentation.Node {
     enum CodingKeys: String, CodingKey {
         case name
-        case isDisfavoredInCollision = "disfavored"
+        case rawSpecialBehavior = "disfavored"
         case children
         case symbolID
     }
@@ -129,7 +114,7 @@ extension PathHierarchy.FileRepresentation.Node {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
-        self.isDisfavoredInCollision = try container.decodeIfPresent(Bool.self, forKey: .isDisfavoredInCollision) ?? false
+        self.rawSpecialBehavior = try container.decodeIfPresent(Int.self, forKey: .rawSpecialBehavior) ?? 0
         self.children = try container.decodeIfPresent([Disambiguation].self, forKey: .children) ?? []
         self.symbolID = try container.decodeIfPresent(SymbolGraph.Symbol.Identifier.self, forKey: .symbolID)
     }
@@ -138,7 +123,9 @@ extension PathHierarchy.FileRepresentation.Node {
         var container: KeyedEncodingContainer = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(self.name, forKey: .name)
-        try container.encodeIfTrue(self.isDisfavoredInCollision, forKey: .isDisfavoredInCollision)
+        if rawSpecialBehavior > 0 {
+            try container.encode(rawSpecialBehavior, forKey: .rawSpecialBehavior)
+        }
         try container.encodeIfNotEmpty(self.children, forKey: .children)
         try container.encodeIfPresent(symbolID, forKey: .symbolID)
     }

@@ -21,7 +21,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) {
             return Semantic.Analyses.extractExactlyOne(
                 childType: Child.self,
                 parentDirective: directive,
@@ -35,16 +35,16 @@ extension Semantic.Analyses {
         }
     }
     
-    static func extractExactlyOne<Children: Sequence>(
+    static func extractExactlyOne(
         childType: DirectiveConvertible.Type,
         parentDirective: BlockDirective,
-        children: Children,
+        children: some Sequence<Markup>,
         source: URL?,
         for bundle: DocumentationBundle,
         in context: DocumentationContext,
         severityIfNotFound: DiagnosticSeverity? = .warning,
         problems: inout [Problem]
-    ) -> (DirectiveConvertible?, remainder: MarkupContainer) where Children.Element == Markup {
+    ) -> (DirectiveConvertible?, remainder: MarkupContainer) {
         let (candidates, remainder) = children.categorize { child -> BlockDirective? in
             guard let childDirective = child as? BlockDirective,
                 childType.canConvertDirective(childDirective) else {
@@ -54,7 +54,7 @@ extension Semantic.Analyses {
         }
         
         guard let candidate = candidates.first else {
-            if let severityIfNotFound = severityIfNotFound {
+            if let severityIfNotFound {
                 let diagnostic = Diagnostic(
                     source: source,
                     severity: severityIfNotFound,
@@ -74,7 +74,7 @@ extension Semantic.Analyses {
         // Even if a single child is optional, having duplicates is thus far always a warning
         // because it would become ambiguous which child to choose as the one.
         
-        if let severityIfNotFound = severityIfNotFound {
+        if let severityIfNotFound {
             for candidate in candidates.suffix(from: 1) {
                 let diagnostic = Diagnostic(
                     source: source,
@@ -94,16 +94,14 @@ extension Semantic.Analyses {
         return (childType.init(from: candidate, source: source, for: bundle, in: context, problems: &problems), MarkupContainer(remainder))
     }
     
-    /**
-     Checks a parent directive for the presence of exactly one of two child directives—but not both—to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
-     */
+    /// Checks a parent directive for the presence of exactly one of two child directives---but not both---to be converted to a type ``SemanticAnalysis/Result``. If so, return that child and the remainder.
     public struct HasExactlyOneOf<Parent: Semantic & DirectiveConvertible, Child1: Semantic & DirectiveConvertible, Child2: Semantic & DirectiveConvertible>: SemanticAnalysis {
         let severityIfNotFound: DiagnosticSeverity?
         public init(severityIfNotFound: DiagnosticSeverity?) {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child1?, Child2?, remainder: MarkupContainer) {
             let (candidates, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -153,7 +151,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
 
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) {
             let (foundImage, foundVideo, remainder) = HasExactlyOneOf<Parent, ImageMedia, VideoMedia>(severityIfNotFound: severityIfNotFound).analyze(directive, children: children, source: source, for: bundle, in: context, problems: &problems)
             return (foundImage ?? foundVideo, remainder)
         }
@@ -166,7 +164,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Media?, remainder: MarkupContainer) {
             let (mediaDirectives, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective else {
                     return nil
@@ -226,7 +224,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
 
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [ListElement]? where Children.Element == Markup {
+        public func analyze(_ directive: BlockDirective, children: some Sequence<Markup>, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [ListElement]? {
             var validElements: [ListElement] = []
 
             var (lists, notLists) = directive.children.categorize { $0 as? UnorderedList }

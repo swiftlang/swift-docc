@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -104,7 +104,6 @@ public struct CoverageDataEntry: CustomStringConvertible, Codable {
     }
 
     /// Outputs a short table summarizing the coverage statistics for a list of data entries.
-    /// - Parameter coverageInfo: An array of entries to summarize.
     public static func generateSummary(
         of coverageInfo: [CoverageDataEntry],
         shouldGenerateBrief: Bool,
@@ -371,7 +370,7 @@ extension CoverageDataEntry {
                 )
                 let total = children.count
                 let documented = children.filter {
-                    (context.nodeWithSymbolIdentifier($0.reference.description)?.semantic as? Symbol)?.abstractSection != nil
+                    (context.documentationCache[$0.reference.description]?.semantic as? Symbol)?.abstractSection != nil
                 }.count
 
                 if total == 0 {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,7 @@
 import XCTest
 import Markdown
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
@@ -232,12 +233,12 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
         consumer.receive([problem])
         try? consumer.flush()
-        print(logger.output)
+        
         XCTAssertEqual(logger.output, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
           --> TestTutorial.tutorial:44:59-44:138
-        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
         43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
         44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
         45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
@@ -245,32 +246,48 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         """)
     }
 
-    func testDisplaysSource_WithEmojis_ProperlyHighlightsSource() {
-        let identifier = "org.swift.docc.test-identifier"
+    func testDisplaysSourceAndProperlyHighlightsRangesSpanningEmoji() throws {
+        let fs = try TestFileSystem(folders: [
+            Folder(name: "Something.docc", content: [
+                Folder(name: "Nested folder", content: [
+                    TextFile(name: "Article.md", utf8Content: """
+                    # Title
+                    
+                    A short abstract with emoji 💻 in it.
+                    
+                    @Metadata {
+                      @TechnologyRoot
+                    }
+                    
+                    """)
+                ])
+            ])
+        ])
+        
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
-        let baseURL =  Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let source = baseURL.appendingPathComponent("TestTutorial.tutorial")
-        let range = SourceLocation(line: 39, column: 4, source: source)..<SourceLocation(line: 39, column: 53, source: source)
+        
+        let bundle = try XCTUnwrap(fs.bundles().first)
+        let baseURL = bundle.baseURL
+        let source = try XCTUnwrap(bundle.markupURLs.first)
+        let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 36, source: source)
 
-        let logger = Logger()
-        let consumer = DiagnosticConsoleWriter(logger, baseURL: baseURL, highlight: true)
+        let logStorage = LogHandle.LogStorage()
+        let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
 
-        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-        consumer.receive([problem])
-        try? consumer.flush()
-        print(logger.output)
-        XCTAssertEqual(logger.output, """
+        let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
+        consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
+        try consumer.flush()
+        
+        XCTAssertEqual(logStorage.text, """
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
-          --> TestTutorial.tutorial:39:4-39:53
-        37 |    }
-        38 |    
-        39 +    \u{001B}[1;32m@Section(title: "Create a New AR Project 💻") {\u{001B}[0;0m
-        40 |       @ContentAndMedia {
-        41 |          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+         --> Something.docc/Nested folder/Article.md:3:18-3:36
+        1 | # Title
+        2 |
+        3 + A short abstract \u{001B}[1;32mwith emoji 💻 in\u{001B}[0;0m it.
+        4 |
+        5 | @Metadata {
         """)
     }
 
@@ -304,12 +321,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.flush()
 
-            print(logger.output)
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;0m
@@ -329,12 +345,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.flush()
 
-            print(logger.output)
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
@@ -361,12 +376,11 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.flush()
 
-            print(logger.output)
             XCTAssertEqual(logger.output, """
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
@@ -374,5 +388,208 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
             """)
         }
+    }
+    
+    func testClampsDiagnosticRangeToSourceRange() throws {
+        let fs = try TestFileSystem(folders: [
+            Folder(name: "Something.docc", content: [
+                TextFile(name: "Article.md", utf8Content: """
+                # Title
+                
+                A very short article with only an abstract.
+                """)
+            ])
+        ])
+        
+        let summary = "Test diagnostic summary"
+        let explanation = "Test diagnostic explanation."
+        
+        let bundle = try XCTUnwrap(fs.bundles().first)
+        let baseURL = bundle.baseURL
+        let source = try XCTUnwrap(bundle.markupURLs.first)
+        
+        typealias Location = (line: Int, column: Int)
+        func logMessageFor(start: Location, end: Location) throws -> String {
+            let range = SourceLocation(line: start.line, column: start.column, source: source)..<SourceLocation(line: end.line, column: end.column, source: source)
+            
+            let logStorage = LogHandle.LogStorage()
+            let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
+            
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
+            consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
+            try consumer.flush()
+            
+            // There are no lines before line 1
+            return logStorage.text
+        }
+        
+        // Highlight the "Title" word on line 1
+        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 3), end: (line: 1, column: 8)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:1:3-1:8
+            1 + # \u{001B}[1;32mTitle\u{001B}[0;0m
+            2 |
+            3 | A very short article with only an abstract.
+            """)
+                       
+        // Highlight the "short" word on line 3
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 13)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:8-3:13
+            1 | # Title
+            2 |
+            3 + A very \u{001B}[1;32mshort\u{001B}[0;0m article with only an abstract.
+            """)
+        
+        // Extend the highlight beyond the end of that line
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: 8), end: (line: 3, column: 100)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:8-3:100
+            1 | # Title
+            2 |
+            3 + A very \u{001B}[1;32mshort article with only an abstract.\u{001B}[0;0m
+            """)
+        
+        // Extend the highlight beyond the start of that line
+        XCTAssertEqual(try logMessageFor(start: (line: 3, column: -4), end: (line: 3, column: 13)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+             --> Something.docc/Article.md:3:1-3:13
+            1 | # Title
+            2 |
+            3 + \u{001B}[1;32mA very short\u{001B}[0;0m article with only an abstract.
+            """)
+        
+        // Highlight a line before the start of the file
+        XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: -4, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:1:1-1:5
+            """)
+        
+        // Highlight a line after the end of the file
+        XCTAssertEqual(try logMessageFor(start: (line: 100, column: 1), end: (line: 100, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:100:1-100:5
+            """)
+        
+        // Extended the highlighted lines before the start of the file
+        XCTAssertEqual(try logMessageFor(start: (line: -4, column: 1), end: (line: 1, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:1:1-1:5
+            """)
+        
+        // Extended the highlighted lines after the end of the file
+        XCTAssertEqual(try logMessageFor(start: (line: 1, column: 1), end: (line: 100, column: 5)), """
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
+            \(explanation)
+            --> Something.docc/Article.md:1:1-100:5
+            """)
+    }
+    
+    func testEmitAdditionReplacementSolution() throws {
+        func problemsLoggerOutput(possibleSolutions: [Solution]) -> String {
+            let logger = Logger()
+            let consumer = DiagnosticConsoleWriter(logger, highlight: true)
+            let problem = Problem(diagnostic: Diagnostic(source: URL(fileURLWithPath: "/path/to/file.md"), severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: possibleSolutions)
+            consumer.receive([problem])
+            try? consumer.flush()
+            return logger.output
+        }
+        let sourceLocation = SourceLocation(line: 1, column: 1, source: nil)
+        let range = sourceLocation..<sourceLocation
+        XCTAssertEqual(
+            problemsLoggerOutput(possibleSolutions: [
+                Solution(summary: "Create a sloth.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = "slothy"
+                        var slothDiet = .vegetarian
+                        """
+                    )
+                ])
+            ]),
+            """
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            --> /path/to/file.md
+            Create a sloth.
+            suggestion:
+            0 + var slothName = \"slothy\"
+            1 + var slothDiet = .vegetarian
+            """
+        )
+        
+        XCTAssertEqual(
+            problemsLoggerOutput(possibleSolutions: [
+                Solution(summary: "Create a sloth.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = "slothy"
+                        var slothDiet = .vegetarian
+                        """
+                    ),
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = SlothGenerator().generateName()
+                        var slothDiet = SlothGenerator().generateDiet()
+                        """
+                    )
+                ])
+            ]),
+            """
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            --> /path/to/file.md
+            Create a sloth.
+            suggestion:
+            0 + var slothName = "slothy"
+            1 + var slothDiet = .vegetarian
+            suggestion:
+            0 + var slothName = SlothGenerator().generateName()
+            1 + var slothDiet = SlothGenerator().generateDiet()
+            """
+        )
+        
+        XCTAssertEqual(
+            problemsLoggerOutput(possibleSolutions: [
+                Solution(summary: "Create a sloth.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var slothName = "slothy"
+                        var slothDiet = .vegetarian
+                        """
+                    ),
+                ]),
+                Solution(summary: "Create a bee.", replacements: [
+                    Replacement(
+                        range: range,
+                        replacement: """
+                        var beeName = "Bee"
+                        var beeDiet = .vegetarian
+                        """
+                    )
+                ])
+            ]),
+            """
+            \u{1B}[1;33mwarning: Test diagnostic\u{1B}[0;0m
+            --> /path/to/file.md
+            Create a sloth.
+            suggestion:
+            0 + var slothName = "slothy"
+            1 + var slothDiet = .vegetarian
+            Create a bee.
+            suggestion:
+            0 + var beeName = "Bee"
+            1 + var beeDiet = .vegetarian
+            """
+        )
     }
 }

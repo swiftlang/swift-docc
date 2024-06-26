@@ -73,7 +73,7 @@
                                     }
                                 }
                             },
-                            "colors": {
+                            "color": {
                                 "type": "object",
                                 "description": "An object where each key represents the name of a color variable referenced in the renderer. A CSS property in the form `--color-[key]` will either be created or overwritten with the value associated with it.",
                                 "properties": {

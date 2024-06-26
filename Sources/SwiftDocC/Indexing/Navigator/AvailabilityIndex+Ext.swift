@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,7 +35,7 @@ extension AvailabilityIndex {
         
         public func isIntroduced(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
-            if let introduced = introduced {
+            if let introduced {
                 return introduced == platform.version
             }
             return false
@@ -43,7 +43,7 @@ extension AvailabilityIndex {
         
         public func isAvailable(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
-            if let introduced = introduced {
+            if let introduced {
                 return platform.version >= introduced
             }
             return true
@@ -51,7 +51,7 @@ extension AvailabilityIndex {
         
         public func isDeprecated(on platform: Platform) -> Bool {
             guard self.platformName == platform.name else { return false }
-            if let deprecated = deprecated {
+            if let deprecated {
                 return platform.version > deprecated
             }
             return false
@@ -112,7 +112,7 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         self.name = name
         
         let id = try values.decodeIfPresent(String.self, forKey: .id)
-        if let id = id {
+        if let id {
             self.id = id
         } else {
             // Default to a lowercased version of the name if an ID isn't provided
@@ -259,6 +259,8 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         public static let watchOS = Platform.Name(name: "watchOS", mask: 1 << 3)
         public static let tvOS = Platform.Name(name: "tvOS", mask: 1 << 4)
         public static let macCatalyst = Platform.Name(name: "Mac Catalyst", mask: 1 << 5)
+        public static let iPadOS = Platform.Name(name: "iPadOS", mask: 1 << 6)
+        public static let visionOS = Platform.Name(name: "visionOS", mask: 1 << 7)
         
         // A mask including all the platforms
         public static let any = Platform.Name(name: "all", mask: ID.max)
@@ -284,6 +286,10 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
                 return .tvOS
             case "mac catalyst":
                 return .macCatalyst
+            case "ipados":
+                return .iPadOS
+            case "visionos":
+                return .visionOS
             default:
                 return .undefined
             }

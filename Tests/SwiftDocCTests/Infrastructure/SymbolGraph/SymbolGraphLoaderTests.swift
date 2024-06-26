@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -179,7 +179,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
-            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -199,7 +199,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
-            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.documentationCache["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -379,6 +379,1131 @@ class SymbolGraphLoaderTests: XCTestCase {
                 .formatVersion.description,
             "9.9.9"
         )
+    }
+
+    func testDefaulAvailabilityWhenMissingSGFs() throws {
+        // Symbol from SGF
+        let symbol = """
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@A",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+            },
+            "accessLevel": "public",
+            "availability" : [
+                {
+                  "domain" : "tvos",
+                  "introduced" : {
+                    "major" : 12,
+                    "minor" : 0,
+                    "patch" : 0
+                  }
+                }
+            ]
+        }
+        """
+        let symbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: symbol,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0,
+                 "patch" : 0
+               },
+               "name" : "tvos"
+             }
+            """
+        )
+        var infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>version</key>
+                        <string>8.0</string>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Create symbol graph file
+        let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
+        try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
+        // Create Info.plist
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        var (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we add iOS and the corresponding fallback platforms (iPadOS and Catalyst)
+        // when the SGF does not exists for these platforms but are defined in the Info.plist.
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        
+        infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we don't add iOS and fallback platforms when the SGF does not exists for these platforms
+        // and are not defined in the Info.plist.
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        
+        infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>version</key>
+                        <string>8.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>Mac Catalyst</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we add iOS and the corresponding fallback platforms (iPadOS and Catalyst)
+        // except the ones marked as unavailable and the SGF does not exists for these platforms.
+        XCTAssertTrue(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion == SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertTrue(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion == SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+    }
+    
+    func testFallbackAvailabilityVersion() throws {
+        // Symbol from SG
+        let symbol = """
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@A",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+            },
+            "accessLevel": "public",
+            "availability" : [
+                {
+                  "domain" : "iOS",
+                  "introduced" : {
+                    "major" : 12,
+                    "minor" : 0,
+                    "patch" : 0
+                  }
+                }
+            ]
+        }
+        """
+        let symbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: symbol,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0,
+                 "patch" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        )
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Create symbol graph
+        let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
+        try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        let (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we get the availability for the fallback platforms with the same version as iOS.
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+    }
+    
+    func testFallbackPlatformsDontOverrideSourceAvailability() throws {
+        // Symbol from SG
+        let symbolGraphStringiOS = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [
+                    {
+                      "domain" : "iOS",
+                      "introduced" : {
+                        "major" : 12,
+                        "minor" : 0,
+                        "patch" : 0
+                      }
+                    }
+                ]
+            }
+            """,
+            platform: """
+                "operatingSystem" : {
+                   "minimumVersion" : {
+                     "major" : 12,
+                     "minor" : 0,
+                     "patch" : 0
+                   },
+                   "name" : "ios"
+                 }
+            """
+        )
+        let symbolGraphStringCatalyst = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [
+                    {
+                      "domain" : "macCatalyst",
+                      "introduced" : {
+                        "major" : 6,
+                        "minor" : 5,
+                        "patch" : 0
+                      }
+                    }
+                ]
+            }
+            """,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 6,
+                 "minor" : 5,
+                 "patch" : 0
+               },
+               "name" : "macCatalyst"
+             }
+            """
+        )
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Create symbol graph
+        try symbolGraphStringiOS.write(to: targetURL.appendingPathComponent("MyModule-ios.symbols.json"), atomically: true, encoding: .utf8)
+        try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        let (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we don't fallback to iOS if there's availability to the platform from source.
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })!.introducedVersion, SymbolGraph.SemanticVersion(major: 6, minor: 5, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        
+    }
+    
+    func testDefaultAvailabilityDontOverrideSourceAvailability() throws {
+        // Symbol from SGF
+        let iosSymbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [
+                    {
+                      "domain" : "iOS",
+                      "introduced" : {
+                        "major" : 12,
+                        "minor" : 0
+                      }
+                    }
+                ]
+            }
+            """,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        )
+        let catalystSymbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [
+                    {
+                      "domain" : "macCatalyst",
+                      "introduced" : {
+                        "major" : 6,
+                        "minor" : 5
+                      }
+                    }
+                ]
+            }
+            """,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 6,
+                 "minor" : 5
+               },
+               "name" : "macCatalyst"
+             }
+            """
+        )
+        // Plist entries
+        let infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>version</key>
+                        <string>8.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>Mac Catalyst</string>
+                        <key>version</key>
+                        <string>8.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iPadOS</string>
+                        <key>version</key>
+                        <string>8.0</string>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Create symbol graph
+        try iosSymbolGraphString.write(to: targetURL.appendingPathComponent("MyModule-ios.symbols.json"), atomically: true, encoding: .utf8)
+        try catalystSymbolGraphString.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
+        // Create info list
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        let (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we don't display default availability because we have availability information from source.
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 6, minor: 5, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iPadOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
+    }
+    
+    func testDefaultAvailabilityFillSourceAvailability() throws {
+        // Symbol from SGF
+        let symbol = """
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@A",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+            },
+            "accessLevel": "public",
+            "availability" : [
+                {
+                   "domain" : "tvos",
+                   "introduced" : {
+                        "major" : 10,
+                        "minor" : 0
+                   }
+                }
+            ]
+        }
+        """
+        let symbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: symbol,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 10,
+                 "minor" : 0
+               },
+               "name" : "tvos"
+             }
+            """
+        )
+        // Plist entries
+        let infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>version</key>
+                        <string>8.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>Mac Catalyst</string>
+                        <key>version</key>
+                        <string>7.0</string>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iPadOS</string>
+                        <key>version</key>
+                        <string>6.0</string>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Create symbol graph
+        let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
+        try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
+        // Create info list
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        let (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we fill the missing source availability using the default availability information from the Info.plist.
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 7, minor: 0, patch: 0))
+    }
+    
+    func testUnconditionallyunavailablePlatforms() throws {
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Symbol from SGF
+        try makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [{
+                    "domain" : "iOS",
+                    "introduced" : {
+                        "major" : 10,
+                        "minor" : 0
+                    }
+                }]
+            }
+            """,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        ).write(to: targetURL.appendingPathComponent("MyModule-ios.symbols.json"), atomically: true, encoding: .utf8)
+        try makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [{
+                    "domain" : "maccatalyst",
+                    "introduced" : {
+                        "major" : 12,
+                        "minor" : 0
+                    }
+                }]
+            }
+            """,
+            platform: """
+            "environment" : "macabi",
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0,
+                 "patch" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
+        // Plist entries
+        let infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>Mac Catalyst</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iPadOS</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        // Create info list
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        var (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we don't add iPadOS availability since is marked as unavailable but
+        // we do add catalyst since we provide source availbility for that platform
+        // and the info.plsit don't override information coming from the SGF.
+        XCTAssertTrue(availability.count == 2)
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+
+        try makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            """,
+            platform: """
+            """
+        ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
+        (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        
+        // Verify we don't add Catalyst availability since it's not part
+        // of the SGFs.
+        XCTAssertTrue(availability.count == 1)
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "maccatalyst" }))
+        XCTAssertNil(availability.first(where: { $0.domain?.rawValue == "iPadOS" }))
+    }
+    
+    func testSymbolUnavailablePerPlatform() throws {
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Symbol from SGF
+        try makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [{
+                    "domain" : "iOS",
+                    "introduced" : {
+                        "major" : 10,
+                        "minor" : 0
+                    }
+                }]
+            }
+            """,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0,
+                 "patch" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        ).write(to: targetURL.appendingPathComponent("MyModule-ios.symbols.json"), atomically: true, encoding: .utf8)
+        try makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public",
+                "availability" : [{
+                    "domain" : "macCatalyst",
+                    "introduced" : {
+                        "major" : 12,
+                        "minor" : 0
+                    }
+                }]
+            },
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@B",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Bar"
+                ],
+                "names": {
+                    "title": "Bar",
+                },
+                "accessLevel": "public",
+                "availability" : [{
+                    "domain" : "macCatalyst",
+                    "introduced" : {
+                        "major" : 12,
+                        "minor" : 0,
+                        "patch" : 0
+                    }
+                }]
+            }
+            """,
+            platform: """
+            "environment" : "macabi",
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        ).write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
+        // Load the bundle & reference resolve symbol graph docs
+        var (_, _, context) = try loadBundle(from: targetURL)
+        guard let availabilityFoo = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        guard let availabilityBar = (context.documentationCache["c:@F@B"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@B'")
+            return
+        }
+        
+        // // Verify we don't add Catalyst availability for since it's not part
+        // of it's SG and iPadOS since it's set as unavailable.
+        XCTAssertTrue(availabilityFoo.count == 3)
+        XCTAssertTrue(availabilityBar.count == 1)
+        XCTAssertNotNil(availabilityFoo.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availabilityFoo.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNotNil(availabilityFoo.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        XCTAssertNotNil(availabilityBar.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        
+        // Plist entries
+        let infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>iOS</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>Mac Catalyst</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                    <dict>
+                        <key>name</key>
+                        <string>iPadOS</string>
+                        <key>unavailable</key>
+                        <true/>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        // Create info list
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        (_, _, context) = try loadBundle(from: targetURL)
+        guard let availabilityFoo = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        guard let availabilityBar = (context.documentationCache["c:@F@B"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@B'")
+            return
+        }
+        XCTAssertTrue(availabilityFoo.count == 2)
+        XCTAssertTrue(availabilityBar.count == 1)
+        XCTAssertNotNil(availabilityFoo.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+        XCTAssertNotNil(availabilityFoo.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNil(availabilityFoo.first(where: { $0.domain?.rawValue == "iPadOS" }))
+        XCTAssertNotNil(availabilityBar.first(where: { $0.domain?.rawValue == "macCatalyst" }))
+    }
+    
+    func testDefaultModuleAvailability() throws {
+        // Create an empty bundle
+        let targetURL = try createTemporaryDirectory(named: "test.docc")
+        // Symbol from SGF
+        try makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: """
+            {
+                "kind": {
+                    "displayName" : "Instance Property",
+                    "identifier" : "swift.property"
+                },
+                "identifier": {
+                    "precise": "c:@F@A",
+                    "interfaceLanguage": "swift"
+                },
+                "pathComponents": [
+                    "Foo"
+                ],
+                "names": {
+                    "title": "Foo",
+                },
+                "accessLevel": "public"
+            }
+            """,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 12,
+                 "minor" : 0,
+                 "patch" : 0
+               },
+               "name" : "macosx"
+             }
+            """
+        ).write(to: targetURL.appendingPathComponent("MyModule-swift.symbols.json"), atomically: true, encoding: .utf8)
+        // Plist entries
+        let infoPlist = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>MyModule</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.apple.MyModule</string>
+            <key>CFBundleVersion</key>
+            <string>0.1.0</string>
+            <key>CDAppleDefaultAvailability</key>
+            <dict>
+                <key>MyModule</key>
+                <array>
+                    <dict>
+                        <key>name</key>
+                        <string>macOS</string>
+                        <key>version</key>
+                        <string>10.0</string>
+                    </dict>
+                </array>
+            </dict>
+        </dict>
+        </plist>
+        """
+        let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+        try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+        let (_, _, context) = try loadBundle(from: targetURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
+    }
+    
+    func testCanonicalPlatformNameUniformity() throws {
+        
+        let testBundle = Folder(name: "TestBundle.docc", content: [
+            TextFile(name: "Info.plist", utf8Content: """
+            <plist version="1.0">
+            <dict>
+                <key>CFBundleDisplayName</key>
+                <string>MyModule</string>
+                <key>CFBundleIdentifier</key>
+                <string>com.apple.MyModule</string>
+                <key>CFBundleVersion</key>
+                <string>0.1.0</string>
+                <key>CDAppleDefaultAvailability</key>
+                <dict>
+                    <key>MyModule</key>
+                    <array>
+                        <dict>
+                            <key>name</key>
+                            <string>Mac Catalyst</string>
+                            <key>version</key>
+                            <string>1.0</string>
+                        </dict>
+                    </array>
+                </dict>
+            </dict>
+            </plist>
+            """),
+            Folder(name: "Symbols", content: [
+                TextFile(name: "MyModule-tvos-objc.symbols.json", utf8Content: makeSymbolGraphString(
+                    moduleName: "MyModule",
+                    symbols: """
+                  {
+                    "accessLevel" : "public",
+                    "availability" : [
+                        {
+                          "domain" : "tvos",
+                          "introduced" : {
+                            "major" : 15,
+                            "minor" : 2,
+                            "patch" : 0
+                          }
+                        },
+                    ],
+                    "declarationFragments" : [],
+                    "functionSignature" : {
+                      "parameters" : [],
+                      "returns" : []
+                    },
+                    "identifier" : {
+                      "interfaceLanguage" : "objective-c",
+                      "precise" : "c:@F@A"
+                    },
+                    "kind" : {
+                        "displayName" : "Instance Property",
+                        "identifier" : "objective-c.property"
+                    },
+                    "names" : {
+                      "subHeading" : [],
+                      "title" : "A"
+                    },
+                    "pathComponents" : ["A"]
+                  }
+                """,
+                    platform: """
+                 "operatingSystem" : {
+                   "minimumVersion" : {
+                     "major" : 12,
+                     "minor" : 0,
+                     "patch" : 0
+                   },
+                   "name" : "tvos"
+                 }
+                """
+                )),
+                TextFile(name: "MyModule-catalyst-objc.symbols.json", utf8Content: makeSymbolGraphString(moduleName: "MyModule", symbols: """
+                  {
+                    "accessLevel" : "public",
+                    "availability" : [
+                        {
+                          "domain" : "maccatalyst",
+                          "introduced" : {
+                            "major" : 15,
+                            "minor" : 2,
+                            "patch" : 0
+                          }
+                        },
+                    ],
+                    "declarationFragments" : [],
+                    "functionSignature" : {
+                      "parameters" : [],
+                      "returns" : []
+                    },
+                    "identifier" : {
+                      "interfaceLanguage" : "objective-c",
+                      "precise" : "c:@F@A"
+                    },
+                    "kind" : {
+                        "displayName" : "Instance Property",
+                        "identifier" : "objective-c.property"
+                    },
+                    "names" : {
+                      "subHeading" : [],
+                      "title" : "A"
+                    },
+                    "pathComponents" : ["A"]
+                  }
+                """,
+                 platform: """
+                 "environment" : "macabi",
+                 "operatingSystem" : {
+                    "minimumVersion" : {
+                      "major" : 12,
+                      "minor" : 0,
+                      "patch" : 0
+                    },
+                    "name" : "ios"
+                 }
+                 """)),
+            ]),
+        ])
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try testBundle.write(inside: tempURL)
+        let (_, _, context) = try loadBundle(from: bundleURL)
+        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@A'")
+            return
+        }
+        // Verify we use one canonical platform name 'macCatalyst' for both
+        // 'Mac Catalyst' (info.plist) and 'maccatalyst' (SGF).
+        XCTAssertTrue(availability.count == 2)
+        XCTAssertTrue(availability.filter({ $0.domain?.rawValue == "macCatalyst" }).count == 1)
+        XCTAssertTrue(availability.filter({ $0.domain?.rawValue == "maccatalyst" }).count == 0)
     }
     
     // MARK: - Helpers

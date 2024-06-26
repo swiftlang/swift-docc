@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -46,7 +46,7 @@ extension PathHierarchy {
         ///
         /// Includes information about:
         /// - The path to the non-symbol match.
-        case nonSymbolMatchForSymbolLink(path: Substring)
+        case nonSymbolMatchForSymbolLink(path: String)
         
         /// Encountered an unknown disambiguation for a found node.
         ///
@@ -150,8 +150,8 @@ extension PathHierarchy.Error {
             let solutions: [Solution] = candidates
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
-                        Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations, to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
+                        Replacement(range: replacementRange, replacement: disambiguation)
                     ])
                 }
             
@@ -169,7 +169,7 @@ extension PathHierarchy.Error {
             // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
             // only make suggestions for similarly spelled structs.
             let filteredNearMisses = nearMisses.filter { name in
-                (try? partialResult.node.children[name]?.find(nextPathComponent.kind.map(String.init), nextPathComponent.hash.map(String.init))) != nil
+                (try? partialResult.node.children[name]?.find(nextPathComponent.disambiguation)) != nil
             }
 
             let pathPrefix = partialResult.pathPrefix
@@ -222,7 +222,7 @@ extension PathHierarchy.Error {
         }
     }
     
-    private static func replacementOperationDescription<S1: StringProtocol, S2: StringProtocol>(from: S1, to: S2) -> String {
+    private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {
         if from.isEmpty {
             return "Insert \(to.singleQuoted)"
         }

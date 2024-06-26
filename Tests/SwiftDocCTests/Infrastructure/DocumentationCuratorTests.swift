@@ -145,6 +145,83 @@ class DocumentationCuratorTests: XCTestCase {
         )
     }
     
+    func testModuleUnderTechnologyRoot() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+            try """
+            # Root curating a module
+
+            @Metadata {
+               @TechnologyRoot
+            }
+            
+            Curating a module from a technology root should not generated any warnings.
+            
+            ## Topics
+            
+            - ``SourceLocations``
+            
+            """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
+        
+        guard let moduleNode = context.documentationCache["SourceLocations"],
+              let pathToRoot = context.finitePaths(to: moduleNode.reference).first,
+              let root = pathToRoot.first else {
+            
+            XCTFail("Module doesn't have technology root as a predecessor in its path")
+            return
+        }
+        
+        XCTAssertEqual(root.path, "/documentation/Root")
+        XCTAssertEqual(crawler.problems.count, 0)
+            
+    }
+        
+    func testModuleUnderAncestorOfTechnologyRoot() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SourceLocations") { url in
+            try """
+            # Root with ancestor curating a module
+            
+            This is a root article that enables testing the behavior of it's ancestors.
+            
+            @Metadata {
+               @TechnologyRoot
+            }
+            
+            ## Topics
+            - <doc:Ancestor>
+            
+            
+            """.write(to: url.appendingPathComponent("Root.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # Ancestor of root
+            
+            Linking to a module shouldn't raise errors due to this article being an ancestor of a technology root.
+
+            ## Topics
+            - ``SourceLocations``
+
+            """.write(to: url.appendingPathComponent("Ancestor.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let _ = DocumentationCurator.init(in: context, bundle: bundle)
+        XCTAssert(context.problems.isEmpty, "Expected no problems. Found: \(context.problems.map(\.diagnostic.summary))")
+        
+        guard let moduleNode = context.documentationCache["SourceLocations"],
+              let pathToRoot = context.shortestFinitePath(to: moduleNode.reference),
+              let root = pathToRoot.first else {
+            
+            XCTFail("Module doesn't have technology root as a predecessor in its path")
+            return
+        }
+        
+        XCTAssertEqual(root.path, "/documentation/Root")
+    }
+
+
     func testSymbolLinkResolving() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
@@ -264,7 +341,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -376,14 +453,14 @@ class DocumentationCuratorTests: XCTestCase {
         // Verify that the ONLY curation for `TopClass/name` is the manual curation under `MyArticle`
         // and the automatic curation under `TopClass` is not present.
         let nameReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
-        XCTAssertEqual(context.pathsTo(nameReference).map({ $0.map(\.path) }), [
+        XCTAssertEqual(context.finitePaths(to: nameReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
 
         // Verify that the BOTH manual curations for `TopClass/age` are preserved
         // even if one of the manual curations overlaps with the inheritance edge from the symbol graph.
         let ageReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
-        XCTAssertEqual(context.pathsTo(ageReference).map({ $0.map(\.path) }), [
+        XCTAssertEqual(context.finitePaths(to: ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
@@ -396,7 +473,7 @@ class DocumentationCuratorTests: XCTestCase {
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         
-        XCTAssertEqual(context.pathsTo(reference).map({ $0.map({ $0.path }) }), [
+        XCTAssertEqual(context.finitePaths(to: reference).map({ $0.map({ $0.path }) }), [
             [
                 "/documentation/TestBed",
                 "/documentation/TestBed/TopClass",

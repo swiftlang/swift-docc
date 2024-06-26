@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -150,10 +150,6 @@ class SymbolTests: XCTestCase {
                 """,
             articleContent: """
                 # Leading heading is ignored
-                
-                @Metadata {
-                   @DocumentationExtension(mergeBehavior: append)
-                }
                 """
         )
         XCTAssert(problems.isEmpty)
@@ -538,7 +534,7 @@ class SymbolTests: XCTestCase {
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
         }
-        let symbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:")?.semantic as? Symbol)
+        let symbol = try XCTUnwrap(context.documentationCache["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
 
         XCTAssertEqual(symbol.abstract?.format(), "Allocate and initialize a new card with the given rank and suit.")
 
@@ -571,7 +567,7 @@ class SymbolTests: XCTestCase {
 
             ## Topics
 
-            ### Unresolvable curation
+            ### Curation that won't resolve
 
             - ``UnresolvableClassInMyClassTopicCuration``
             - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -641,7 +637,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -689,7 +685,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -737,7 +733,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -782,7 +778,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -829,7 +825,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -876,7 +872,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -923,7 +919,7 @@ class SymbolTests: XCTestCase {
 
         ## Topics
 
-        ### Unresolvable curation
+        ### Curation that won't resolve
 
         - ``UnresolvableClassInMyClassTopicCuration``
         - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
@@ -969,9 +965,11 @@ class SymbolTests: XCTestCase {
 
             // SymbolKit.SymbolGraph.LineList.SourceRange.Position is indexed from 0, whereas
             // (absolute) Markdown.SourceLocations are indexed from 1
-            let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { lineNumber, lineText in
-                .init(text: lineText, range: .init(start: .init(line: lineNumber, character: 0), end: .init(line: lineNumber, character: lineText.count)))
-            })
+            let newDocComment = SymbolGraph.LineList(
+                docComment.components(separatedBy: .newlines).enumerated().map { lineNumber, lineText in
+                        .init(text: lineText, range: .init(start: .init(line: lineNumber, character: 0), end: .init(line: lineNumber, character: lineText.count)))
+                },
+                uri: "file:///Users/username/path/to/Something.swift")
             graph.symbols[myFunctionUSR]?.docComment = newDocComment
             
             let newGraphData = try JSONEncoder().encode(graph)
@@ -1223,7 +1221,7 @@ class SymbolTests: XCTestCase {
             try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
         }
         
-        guard let original = context.nodeWithSymbolIdentifier(myFunctionUSR), let symbol = original.symbol, let symbolSemantic = original.semantic as? Symbol else {
+        guard let original = context.documentationCache[myFunctionUSR], let symbol = original.symbol, let symbolSemantic = original.semantic as? Symbol else {
             XCTFail("Couldn't find the expected symbol", file: (file), line: line)
             enum TestHelperError: Error { case missingExpectedMyFuctionSymbol }
             throw TestHelperError.missingExpectedMyFuctionSymbol

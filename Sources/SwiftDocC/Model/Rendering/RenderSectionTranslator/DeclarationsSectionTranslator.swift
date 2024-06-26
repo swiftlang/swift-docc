@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,32 +18,55 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
         renderNode: inout RenderNode,
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
-        translateSectionToVariantCollection(
-            documentationDataVariants: symbol.declarationVariants
-        ) { trait, declaration -> RenderSection? in
+        translateSectionToVariantCollection(documentationDataVariants: symbol.declarationVariants) { trait, declaration -> RenderSection? in
             guard !declaration.isEmpty else {
                 return nil
             }
 
-            func translateFragment(_ token: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
-                // Create a reference if one found
-                var reference: ResolvedTopicReference?
-                if let preciseIdentifier = token.preciseIdentifier,
-                   let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
+            func translateFragment(_ fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
+                let reference: ResolvedTopicReference?
+                if let preciseIdentifier = fragment.preciseIdentifier,
+                   let resolved = renderNodeTranslator.context.localOrExternalReference(symbolID: preciseIdentifier)
+                {
                     reference = resolved
-
-                    // Add relationship to render references
                     renderNodeTranslator.collectedTopicReferences.append(resolved)
+                } else {
+                    reference = nil
                 }
 
                 // Add the declaration token
-                return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
+                return DeclarationRenderSection.Token(fragment: fragment, identifier: reference?.absoluteString)
+            }
+
+            func renderOtherDeclarationsTokens(from overloads: Symbol.Overloads) -> DeclarationRenderSection.OtherDeclarations {
+                var otherDeclarations = [DeclarationRenderSection.OtherDeclarations.Declaration]()
+                for overloadReference in overloads.references {
+                    guard let overload = try? renderNodeTranslator.context.entity(with: overloadReference).semantic as? Symbol else {
+                        continue
+                    }
+
+                    let declarationFragments = overload.declarationVariants[trait]?.values.first?.declarationFragments
+                    assert(declarationFragments != nil, "Overloaded symbols must have declaration fragments.")
+                    guard let declarationFragments else { continue }
+
+                    let declarationTokens = declarationFragments.map(translateFragment)
+                    otherDeclarations.append(
+                        .init(
+                            tokens: declarationTokens,
+                            identifier: overloadReference.absoluteString
+                        )
+                    )
+
+                    // Add a topic reference to the overload
+                    renderNodeTranslator.collectedTopicReferences.append(overloadReference)
+                }
+                return .init(declarations: otherDeclarations, displayIndex: overloads.displayIndex)
             }
 
             var declarations = [DeclarationRenderSection]()
             for pair in declaration {
                 let (platforms, declaration) = pair
-                
+
                 let renderedTokens = declaration.declarationFragments.map(translateFragment)
 
                 let platformNames = platforms.sorted { (lhs, rhs) -> Bool in
@@ -52,12 +75,16 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     }
                     return lhsValue.rawValue < rhsValue.rawValue
                 }
-                
+
+                // If this symbol has overloads, render their declarations as well.
+                let otherDeclarations = symbol.overloadsVariants[trait].map({ renderOtherDeclarationsTokens(from: $0) })
+
                 declarations.append(
                     DeclarationRenderSection(
                         languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
                         platforms: platformNames,
-                        tokens: renderedTokens
+                        tokens: renderedTokens,
+                        otherDeclarations: otherDeclarations
                     )
                 )
             }

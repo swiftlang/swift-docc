@@ -60,7 +60,7 @@
       "location" : "https://github.com/apple/swift-docc-symbolkit",
       "state" : {
         "branch" : "main",
-        "revision" : "3889b9673fcf1f1e9651b9143289b6ede462c958"
+        "revision" : "65e3b951e957ed04e4a5c9a61548e47eb37ea0b6"
       }
     },
     {
@@ -78,7 +78,7 @@
       "location" : "https://github.com/apple/swift-markdown.git",
       "state" : {
         "branch" : "main",
-        "revision" : "e5ab90941a8415304b4a4e403253bd59fef00b5a"
+        "revision" : "75bd31951f69b9df43d433b75152d8add1692378"
       }
     },
     {

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -90,7 +90,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testAmbigousProtocolMember() throws {
+    func testAmbiguousProtocolMember() throws {
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstMember
@@ -113,23 +113,17 @@ class DocCSymbolRepresentableTests: XCTestCase {
         expectedNumberOfAmbiguousSymbols: Int
     ) throws {
         // Build a bundle with an unusual number of overloaded symbols
-        let (_, _, context) = try testBundleAndContext(
-            copying: "OverloadedSymbols",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         // Collect the overloaded symbols nodes from the built bundle
-        let ambiguousSymbols = context.symbolIndex.values
-            .compactMap { context.documentationCache[$0]?.symbol }
+        let ambiguousSymbols = context.documentationCache
+            .compactMap { $0.value.symbol }
             .filter { $0.names.title.lowercased() == symbolTitle.lowercased() }
         XCTAssertEqual(ambiguousSymbols.count, expectedNumberOfAmbiguousSymbols)
         
         // Find the documentation node based on what we expect the correct link to be
         let correctReferenceToSelect = try XCTUnwrap(
-            context.symbolIndex.values.first {
-                $0.absoluteString == correctLink
-            }
+            context.documentationCache.allReferences.first(where: { $0.absoluteString == correctLink })
         )
         let correctSymbolToSelect = try XCTUnwrap(
             context.documentationCache[correctReferenceToSelect]?.symbol
@@ -173,31 +167,24 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testLinkComponentInitialization() throws {
-        let (_, _, context) = try testBundleAndContext(
-            copying: "OverloadedSymbols",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         var count = 0
-        try context.symbolIndex.values.forEach { reference in
+        for (reference, documentationNode) in context.documentationCache {
             guard let symbolLink = AbsoluteSymbolLink(string: reference.absoluteString) else {
-                return
+                continue
             }
-            let documentationNode = try XCTUnwrap(context.documentationCache[reference])
             
             // The `asLinkComponent` property of DocCSymbolRepresentable doesn't have the context
             // to know what type disambiguation information it should use, so it always includes
             // all the available disambiguation information. Because of this,
             // we want to restrict to symbols that require both.
             guard case .kindAndPreciseIdentifier = symbolLink.basePathComponents.last?.disambiguationSuffix else {
-                return
+                continue
             }
             
             // Create a link component from the symbol information
-            let linkComponent = try XCTUnwrap(
-                documentationNode.symbol?.asLinkComponent
-            )
+            let linkComponent = try XCTUnwrap(documentationNode.symbol?.asLinkComponent)
             
             // Confirm that link component we created is the same on the compiler
             // created in a full documentation build.

@@ -48,9 +48,10 @@ let simpleListItemTags = [
     "recommendedover",
 ]
 
-extension Collection where Element == InlineMarkup {
-    private func splitNameAndContent() -> (String, [Markup])? {
-        guard let initialTextNode = first as? Text else {
+extension Sequence<InlineMarkup> {
+    private func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [Markup], range: SourceRange?)? {
+        var iterator = makeIterator()
+        guard let initialTextNode = iterator.next() as? Text else {
             return nil
         }
 
@@ -59,49 +60,68 @@ extension Collection where Element == InlineMarkup {
             return nil
         }
 
-        let parameterName = initialText.prefix(upTo: colonIndex)
+        let nameStartIndex = initialText[...colonIndex].lastIndex(of: " ").map { initialText.index(after: $0) } ?? initialText.startIndex
+        let parameterName = initialText[nameStartIndex..<colonIndex]
         guard !parameterName.isEmpty else {
             return nil
         }
         let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
-        let remainingChildren = self.dropFirst()
 
-        let newContent: [Markup] = [
-            Paragraph([Text(String(remainingInitialText))] + Array(remainingChildren))
-        ]
-        return (String(parameterName), newContent)
+        var newInlineContent: [InlineMarkup] = [Text(String(remainingInitialText))]
+        while let more = iterator.next() {
+            newInlineContent.append(more)
+        }
+        let newContent: [Markup] = [Paragraph(newInlineContent)]
+        
+        let nameRange: SourceRange? = initialTextNode.range.map { fullRange in
+            var start = fullRange.lowerBound
+            start.column += initialText.utf8.distance(from: initialText.startIndex, to: nameStartIndex)
+            var end = start
+            end.column += parameterName.utf8.count
+            return start ..< end
+        }
+        
+        let itemRange: SourceRange? = sequence(first: initialTextNode as Markup, next: { $0.parent })
+            .mapFirst(where: { $0 as? ListItem })?.range
+        
+        return (
+            String(parameterName),
+            nameRange,
+            newContent,
+            itemRange
+        )
     }
     
-    func extractParameter() -> Parameter? {
-        if let (name, content) = splitNameAndContent() {
-            return Parameter(name: name, contents: content)
+    func extractParameter(standalone: Bool) -> Parameter? {
+        if let (name, nameRange, content, itemRange) = splitNameAndContent() {
+            return Parameter(name: name, nameRange: nameRange, contents: content, range: itemRange, isStandalone: standalone)
         }
         return nil
     }
     
     func extractDictionaryKey() -> DictionaryKey? {
-        if let (name, content) = splitNameAndContent() {
+        if let (name, _, content, _) = splitNameAndContent() {
             return DictionaryKey(name: name, contents: content)
         }
         return nil
     }
     
     func extractHTTPParameter() -> HTTPParameter? {
-        if let (name, content) = splitNameAndContent() {
+        if let (name, _, content, _) = splitNameAndContent() {
             return HTTPParameter(name: name, source: nil, contents: content)
         }
         return nil
     }
     
     func extractHTTPBodyParameter() -> HTTPParameter? {
-        if let (name, content) = splitNameAndContent() {
+        if let (name, _, content, _) = splitNameAndContent() {
             return HTTPParameter(name: name, source: "body", contents: content)
         }
         return nil
     }
     
     func extractHTTPResponse() -> HTTPResponse? {
-        if let (name, content) = splitNameAndContent() {
+        if let (name, _, content, _) = splitNameAndContent() {
             let statusCode = UInt(name) ?? 0
             return HTTPResponse(statusCode: statusCode, reason: nil, mediaType: nil, contents: content)
         }
@@ -404,11 +424,11 @@ extension ListItem {
      ```
      */
     func extractStandaloneParameter() -> Parameter? {
-        guard let remainder = extractTag(TaggedListItemExtractor.parameterTag) else {
+        guard extractTag(TaggedListItemExtractor.parameterTag) != nil else {
             return nil
         }
-        return remainder.extractParameter()
-
+        // Don't use the return value from `extractTag` here. It drops the range and source information from the markup which means that we can't present diagnostics about the parameter.
+        return (child(at: 0) as? Paragraph)?.inlineChildren.extractParameter(standalone: true)
     }
 
     /**
@@ -442,13 +462,13 @@ extension ListItem {
             for child in parameterList.children {
                 guard let listItem = child as? ListItem,
                       let firstParagraph = listItem.child(at: 0) as? Paragraph,
-                      let parameter = Array(firstParagraph.inlineChildren).extractParameter() else {
+                      var parameter = Array(firstParagraph.inlineChildren).extractParameter(standalone: false) else {
                     continue
                 }
                 // Don't forget the rest of the content under this parameter list item.
-                let contents = parameter.contents + Array(listItem.children.dropFirst(1))
+                parameter.contents += Array(listItem.children.dropFirst(1))
 
-                parameters.append(Parameter(name: parameter.name, contents: contents))
+                parameters.append(parameter)
             }
         }
         return parameters
@@ -483,7 +503,7 @@ extension ListItem {
         guard let remainder = extractTag(TaggedListItemExtractor.returnsTag + ":") else {
             return nil
         }
-        return Return(contents: [Paragraph(remainder)])
+        return Return(contents: [Paragraph(remainder)], range: range)
     }
 
     /**

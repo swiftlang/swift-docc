@@ -75,6 +75,13 @@
             "major": 13,
             "minor": 0
           }
+        },
+        {
+          "domain": "macCatalyst",
+          "deprecated": {
+            "major": 10,
+            "minor": 0
+          }
         }
       ],
       "pathComponents" : [

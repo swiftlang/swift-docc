@@ -1,0 +1,241 @@
+{
+  "metadata": {
+      "formatVersion" : {
+          "major" : 1
+      },
+      "generator" : "app/1.0"
+  },
+  "module" : {
+    "name" : "MyKit",
+    "platform" : {
+      "architecture" : "x86_64",
+      "vendor" : "apple",
+      "operatingSystem" : {
+        "name" : "macosx",
+        "minimumVersion" : {
+          "major" : 1,
+          "minor" : 0,
+          "patch" : 0
+        }
+      }
+    }
+  },
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.class",
+        "displayName" : "Class"
+      },
+      "names" : {
+        "title" : "MyClass",
+        "subHeading" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "class"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "MyClass"
+            }
+        ],
+        "navigator" : [
+            {
+              "kind" : "identifier",
+              "spelling" : "MyClassNavigator"
+            }
+        ]
+      },
+      "availability" : [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 1,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "watchOS",
+          "introduced": {
+            "major": 2,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOS",
+          "introduced": {
+            "major": 3,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "iOS",
+          "introduced": {
+            "major": 4,
+            "minor": 0
+          }
+        }
+      ],
+      "pathComponents" : [
+        "MyClass"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassC",
+        "interfaceLanguage": "swift"
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyClass"
+        }
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.class",
+        "displayName" : "Class"
+      },
+      "names" : {
+        "title" : "MyOtherClass",
+        "subHeading" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "class"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "MyOtherClass"
+            }
+        ],
+        "navigator" : [
+            {
+              "kind" : "identifier",
+              "spelling" : "MyOtherClassNavigator"
+            }
+        ]
+      },
+      "availability" : [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 1,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "watchOS",
+          "introduced": {
+            "major": 2,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOS",
+          "introduced": {
+            "major": 3,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "iOS",
+          "introduced": {
+            "major": 3,
+            "minor": 0
+          }
+        }
+      ],
+      "pathComponents" : [
+        "MyOtherClass"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5MyOtherClassC",
+        "interfaceLanguage": "swift"
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyOtherClass"
+        }
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.class",
+        "displayName" : "Class"
+      },
+      "names" : {
+        "title" : "MyThirdClass",
+        "subHeading" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "class"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "MyThirdClass"
+            }
+        ],
+        "navigator" : [
+            {
+              "kind" : "identifier",
+              "spelling" : "MyThirdClassNavigator"
+            }
+        ]
+      },
+      "availability" : [],
+      "pathComponents" : [
+        "MyThirdClass"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5MyThirdClassC",
+        "interfaceLanguage": "swift"
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyThirdClass"
+        }
+      ]
+    },
+
+  ],
+  "relationships" : []
+}

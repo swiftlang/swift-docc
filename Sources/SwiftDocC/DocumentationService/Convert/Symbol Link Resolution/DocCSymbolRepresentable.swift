@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -112,8 +112,8 @@ extension AbsoluteSymbolLink.LinkComponent {
     /// This means that the element has the same name (case-sensitive)
     /// and, if the symbol link has a disambiguation suffix, the given element has the same
     /// type or usr.
-    private func fullyRepresentsSymbol<SymbolType: DocCSymbolRepresentable>(
-        _ symbol: SymbolType
+    private func fullyRepresentsSymbol(
+        _ symbol: some DocCSymbolRepresentable
     ) -> Bool {
         guard name == symbol.title else {
             return false
@@ -139,7 +139,7 @@ public extension Collection where Element: DocCSymbolRepresentable {
     /// Given a collection of colliding symbols, returns the disambiguation suffix required
     /// for each symbol to disambiguate it from the others in the collection.
     var requiredDisambiguationSuffixes: [(shouldAddIdHash: Bool, shouldAddKind: Bool)] {
-        guard let first = first else {
+        guard let first else {
             return []
         }
         
@@ -163,6 +163,15 @@ public extension Collection where Element: DocCSymbolRepresentable {
         }
     }
 }
+
+#if compiler(>=6)
+// DocCSymbolRepresentable inherits from Equatable. If SymbolKit added Equatable conformance in the future, this could behave differently.
+// It's reasonable to expect that symbols with the same unique ID would be equal but it's possible that SymbolKit's implementation would consider more symbol properties.
+//
+// In the long term we should try to phase out DocCSymbolRepresentable since it doesn't reflect how DocC resolves links or disambiguated symbols in links.
+extension SymbolGraph.Symbol: @retroactive Equatable {}
+extension UnifiedSymbolGraph.Symbol: @retroactive Equatable {}
+#endif
 
 extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     public var preciseIdentifier: String? {

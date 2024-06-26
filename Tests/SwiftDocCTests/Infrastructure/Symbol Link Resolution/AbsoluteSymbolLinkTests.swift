@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -223,11 +223,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testCompileSymbolGraphAndValidateLinks() throws {
-        let (_, _, context) = try testBundleAndContext(
-            copying: "TestBundle",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "TestBundle")
         let expectedDescriptions = [
             // doc://org.swift.docc.example/documentation/FillIntroduced:
             """
@@ -520,26 +516,22 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             }
             """,
         ]
-        XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
+        XCTAssertEqual(expectedDescriptions.count, context.documentationCache.symbolReferences.count)
         
-        let validatedSymbolLinkDescriptions = context.symbolIndex.values
+        let validatedSymbolLinkDescriptions = context.documentationCache.symbolReferences
             .map(\.url.absoluteString)
             .sorted()
             .compactMap(AbsoluteSymbolLink.init(string:))
             .map(\.description)
         
-        XCTAssertEqual(validatedSymbolLinkDescriptions.count, context.symbolIndex.count)
+        XCTAssertEqual(validatedSymbolLinkDescriptions.count, context.documentationCache.symbolReferences.count)
         for (symbolLinkDescription, expectedDescription) in zip(validatedSymbolLinkDescriptions, expectedDescriptions) {
             XCTAssertEqual(symbolLinkDescription, expectedDescription)
         }
     }
     
     func testCompileOverloadedSymbolGraphAndValidateLinks() throws {
-        let (_, _, context) = try testBundleAndContext(
-            copying: "OverloadedSymbols",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
         let expectedDescriptions = [
             // doc://com.shapes.ShapeKit/documentation/ShapeKit:
@@ -844,28 +836,24 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             """,
         ]
         
-        XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
+        XCTAssertEqual(expectedDescriptions.count, context.documentationCache.count)
         
-        let validatedSymbolLinkDescriptions = context.symbolIndex.values
+        let validatedSymbolLinkDescriptions = context.documentationCache.allReferences
             .map(\.url.absoluteString)
             .sorted()
             .compactMap(AbsoluteSymbolLink.init(string:))
             .map(\.description)
         
-        XCTAssertEqual(validatedSymbolLinkDescriptions.count, context.symbolIndex.count)
+        XCTAssertEqual(validatedSymbolLinkDescriptions.count, context.documentationCache.count)
         for (symbolLinkDescription, expectedDescription) in zip(validatedSymbolLinkDescriptions, expectedDescriptions) {
             XCTAssertEqual(symbolLinkDescription, expectedDescription)
         }
     }
     
     func testLinkComponentStringConversion() throws {
-        let (_, _, context) = try testBundleAndContext(
-            copying: "OverloadedSymbols",
-            excludingPaths: [],
-            codeListings: [:]
-        )
+        let (_, _, context) = try testBundleAndContext(named: "OverloadedSymbols")
         
-        let bundlePathComponents = context.symbolIndex.values
+        let bundlePathComponents = context.documentationCache.allReferences
             .flatMap(\.pathComponents)
         
         

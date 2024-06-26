@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,51 +93,41 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String, identifier: String, versionString: String = "1.0", developmentRegion: String = "en") {
+    public init(displayName: String? = nil, identifier: String? = nil, versionString: String = "1.0") {
         self.content = Content(
             displayName: displayName,
             identifier: identifier,
-            versionString: versionString,
-            developmentRegion: developmentRegion
+            versionString: versionString
         )
     }
 
     public struct Content: Codable, Equatable {
-        public let displayName: String
-        public let identifier: String
-        public let versionString: String
-        public let developmentRegion: String
+        public let displayName: String?
+        public let identifier: String?
+        public let versionString: String?
 
-        fileprivate init(displayName: String, identifier: String, versionString: String, developmentRegion: String) {
+        fileprivate init(displayName: String?, identifier: String?, versionString: String) {
             self.displayName = displayName
             self.identifier = identifier
             self.versionString = versionString
-            self.developmentRegion = developmentRegion
         }
 
         enum CodingKeys: String, CodingKey {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
             case versionString = "CFBundleVersion"
-            case developmentRegion = "CFBundleDevelopmentRegion"
         }
     }
 
     public func data() throws -> Data {
-        // TODO: Replace this with PropertListEncoder (see below) when it's available in swift-corelibs-foundation
-        // https://github.com/apple/swift-corelibs-foundation/commit/d2d72f88d93f7645b94c21af88a7c9f69c979e4f
-        let infoPlist = [
+        let encoder = PropertyListEncoder()
+        encoder.outputFormat = .xml
+        
+        return try encoder.encode([
             Content.CodingKeys.displayName.rawValue: content.displayName,
             Content.CodingKeys.identifier.rawValue: content.identifier,
             Content.CodingKeys.versionString.rawValue: content.versionString,
-            Content.CodingKeys.developmentRegion.rawValue: content.developmentRegion,
-        ]
-
-        return try PropertyListSerialization.data(
-            fromPropertyList: infoPlist,
-            format: .xml,
-            options: 0
-        )
+        ])
     }
 }
 
@@ -259,5 +249,136 @@ extension XCTestCase {
         let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
         try folder.write(to: temporaryDirectory)
         return temporaryDirectory
+    }
+}
+
+// MARK: Dump
+
+extension Folder {
+    /// Creates a file and folder hierarchy from the given file paths.
+    ///
+    /// ## Example
+    /// For example, `makeStructure(filePaths: ["one/two/a.json", "one/two/b.json"])` creates the following files and folders.
+    /// ```
+    /// one/
+    /// ╰─ two/
+    ///    ├─ a.json
+    ///    ╰─ b.json
+    /// ```
+    ///
+    /// - Note: If there are more than one first path component in the provided paths, the return value will contain more than one element.
+    public static func makeStructure(
+        filePaths: [String],
+        isEmptyDirectoryCheck: (String) -> Bool = { _ in false }
+    ) -> [File] {
+        guard !filePaths.isEmpty else {
+            return []
+        }
+        typealias Path = [String]
+        
+        func _makeStructure(paths: [Path], accumulatedBasePath: String) -> [File] {
+            assert(paths.allSatisfy { !$0.isEmpty })
+            
+            let grouped = [String: [Path]](grouping: paths, by: { $0.first! }).mapValues {
+                $0.map { Array($0.dropFirst()) }
+            }
+            
+            return grouped.map { pathComponent, remaining in
+                let absolutePath = "\(accumulatedBasePath)/\(pathComponent)"
+                if remaining == [[]] && !isEmptyDirectoryCheck(absolutePath) {
+                    return TextFile(name: pathComponent, utf8Content: "")
+                } else {
+                    return Folder(name: pathComponent, content: _makeStructure(paths: remaining.filter { !$0.isEmpty }, accumulatedBasePath: absolutePath))
+                }
+            }
+        }
+        
+        if filePaths.allSatisfy({ $0.hasPrefix("/")}) {
+            let subPaths = filePaths.map { $0.dropFirst() }.filter { !$0.isEmpty }
+            return [Folder(name: "", content: _makeStructure(paths: subPaths.map { String($0).components(separatedBy: CharacterSet(charactersIn: "/")) }, accumulatedBasePath: ""))]
+        }
+        
+        return _makeStructure(paths: filePaths.map { $0.components(separatedBy: CharacterSet(charactersIn: "/")) }, accumulatedBasePath: "")
+    }
+}
+
+/// A node in a tree structure that can be printed into a visual representation for debugging.
+private struct DumpableNode {
+    var name: String
+    var children: [DumpableNode]?
+    
+    init(_ file: File) {
+        if let folder = file as? Folder {
+            name = file.name
+            children = folder.content.map { DumpableNode($0) }
+        } else {
+            name = file.name
+            children = nil
+        }
+    }
+}
+
+extension File {
+    /// Returns a stable string representation of the file and folder hierarchy that can be checked in tests.
+    ///
+    /// ## Example
+    /// ```swift
+    /// Folder(name: "one", content: [
+    ///     Folder(name: "two", content: [
+    ///         TextFile(name: "a.json", utf8Content: ""),
+    ///         TextFile(name: "b.json", utf8Content: ""),
+    ///     ])
+    /// ])
+    /// ```
+    /// The string `dump()` for the folder hierarchy above is shown below:
+    /// ```
+    /// one/
+    /// ╰─ two/
+    ///    ├─ a.json
+    ///    ╰─ b.json
+    /// ```
+    public func dump() -> String {
+        Self.dump(.init(self))
+            .trimmingCharacters(in: .newlines) // remove the trailing newline
+    }
+
+    private static func dump(_ node: DumpableNode, decorator: String = "") -> String {
+        var result = ""
+        result.append(decorator)
+        if !decorator.isEmpty {
+            result.append("─ ")
+        }
+        result.append(node.name)
+        guard let children = node.children else {
+            return result + "\n"
+        }
+        result.append("/\n")
+        
+        let sortedChildren = children.sorted(by: { lhs, rhs in
+            // Sort files before folders if the folder name is a prefix of the file name
+            switch (lhs.children, rhs.children) {
+            case (nil, nil):
+                return lhs.name < rhs.name
+            case (nil, _) where lhs.name.hasPrefix(rhs.name):
+                return true
+            case (_, nil) where rhs.name.hasPrefix(lhs.name):
+                return false
+            default:
+                return lhs.name < rhs.name
+            }
+        })
+        
+        for (index, child) in sortedChildren.enumerated() {
+            var decorator = decorator
+            if decorator.hasSuffix("├") {
+                decorator = decorator.dropLast() + "│  "
+            }
+            if decorator.hasSuffix("╰") {
+                decorator = decorator.dropLast() + "   "
+            }
+            let newDecorator = decorator + (index == sortedChildren.count-1 ? "╰" : "├")
+            result.append(dump(child, decorator: newDecorator))
+        }
+        return result
     }
 }

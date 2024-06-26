@@ -37,7 +37,7 @@ struct RenderHierarchyTranslator {
     ///   - omittingChapters: If `true`, don't include chapters in the returned hierarchy.
     /// - Returns: A tuple of 1) a tutorials hierarchy and 2) the root reference of the tutorials hierarchy.
     mutating func visitTechnologyNode(_ reference: ResolvedTopicReference, omittingChapters: Bool = false) -> (hierarchy: RenderHierarchy, technology: ResolvedTopicReference)? {
-        let paths = context.pathsTo(reference, options: [.preferTechnologyRoot])
+        let paths = context.finitePaths(to: reference, options: [.preferTechnologyRoot])
         
         // If the node is a technology return immediately without generating breadcrumbs
         if let _ = (try? context.entity(with: reference))?.semantic as? Technology {
@@ -196,7 +196,7 @@ struct RenderHierarchyTranslator {
     /// multiple times under other API symbols, articles, or API collections. This method
     /// returns all the paths (breadcrumbs) between the framework landing page and the given symbol.
     mutating func visitSymbol(_ symbolReference: ResolvedTopicReference) -> RenderHierarchy {
-        let pathReferences = context.pathsTo(symbolReference)
+        let pathReferences = context.finitePaths(to: symbolReference)
         pathReferences.forEach({
             collectedTopicReferences.formUnion($0)
         })

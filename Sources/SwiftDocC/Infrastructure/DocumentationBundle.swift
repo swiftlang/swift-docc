@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,8 +23,6 @@ import Foundation
  - ``displayName``
  - ``identifier``
  - ``version``
- - ``defaultCodeListingLanguage``
- - ``defaultAvailability``
  */
 public struct DocumentationBundle {
     public enum PropertyListError: DescribedError {
@@ -70,7 +68,8 @@ public struct DocumentationBundle {
     }
     
     /// Code listings extracted from the documented modules' source, indexed by their identifier.
-    public var attributedCodeListings: [String: AttributedCodeListing]
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
+    public var attributedCodeListings: [String: AttributedCodeListing] = [:]
     
     /// Symbol Graph JSON files for the modules documented by this bundle.
     public let symbolGraphURLs: [URL]
@@ -81,13 +80,13 @@ public struct DocumentationBundle {
     /// Miscellaneous resources of the bundle.
     public let miscResourceURLs: [URL]
 
-    /// Custom HTML file to use as the header for rendered output.
+    /// A custom HTML file to use as the header for rendered output.
     public let customHeader: URL?
 
-    /// Custom HTML file to use as the footer for rendered output.
+    /// A custom HTML file to use as the footer for rendered output.
     public let customFooter: URL?
 
-    /// JSON settings file used to theme renderer output.
+    /// A custom JSON settings file used to theme renderer output.
     public let themeSettings: URL?
     
     /**
@@ -102,16 +101,15 @@ public struct DocumentationBundle {
     /// - Parameters:
     ///   - info: Information about the bundle.
     ///   - baseURL: A URL prefix to be appended to the relative presentation URL.
-    ///   - attributedCodeListings: Code listings extracted from the documented modules' source, indexed by their identifier.
     ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
     ///   - markupURLs: DocC Markup files of the bundle.
     ///   - miscResourceURLs: Miscellaneous resources of the bundle.
-    ///   - customHeader: Custom HTML file to use as the header for rendered output.
-    ///   - customFooter: Custom HTML file to use as the footer for rendered output.
+    ///   - customHeader: A custom HTML file to use as the header for rendered output.
+    ///   - customFooter: A custom HTML file to use as the footer for rendered output.
+    ///   - themeSettings: A custom JSON settings file used to theme renderer output.
     public init(
         info: Info,
         baseURL: URL = URL(string: "/")!,
-        attributedCodeListings: [String: AttributedCodeListing] = [:],
         symbolGraphURLs: [URL],
         markupURLs: [URL],
         miscResourceURLs: [URL],
@@ -121,7 +119,6 @@ public struct DocumentationBundle {
     ) {
         self.info = info
         self.baseURL = baseURL
-        self.attributedCodeListings = attributedCodeListings
         self.symbolGraphURLs = symbolGraphURLs
         self.markupURLs = markupURLs
         self.miscResourceURLs = miscResourceURLs
@@ -133,6 +130,22 @@ public struct DocumentationBundle {
         self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
+    }
+    
+    @available(*, deprecated, renamed: "init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)", message: "Use 'init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)' instead. This deprecated API will be removed after 6.1 is released")
+    public init(
+        info: Info,
+        baseURL: URL = URL(string: "/")!,
+        attributedCodeListings: [String: AttributedCodeListing] = [:],
+        symbolGraphURLs: [URL],
+        markupURLs: [URL],
+        miscResourceURLs: [URL],
+        customHeader: URL? = nil,
+        customFooter: URL? = nil,
+        themeSettings: URL? = nil
+    ) {
+        self.init(info: info, baseURL: baseURL, symbolGraphURLs: symbolGraphURLs, markupURLs: markupURLs, miscResourceURLs: miscResourceURLs, customHeader: customHeader, customFooter: customFooter, themeSettings: themeSettings)
+        self.attributedCodeListings = attributedCodeListings
     }
     
     public private(set) var rootReference: ResolvedTopicReference

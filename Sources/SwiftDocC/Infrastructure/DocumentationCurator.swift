@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -81,7 +81,7 @@ struct DocumentationCurator {
         
         // Check if the link has been externally resolved already.
         if let bundleID = unresolved.topicURL.components.host,
-           context.externalReferenceResolvers[bundleID] != nil || context.fallbackReferenceResolvers[bundleID] != nil {
+           context.externalDocumentationSources[bundleID] != nil || context.convertServiceFallbackResolver != nil {
             if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
                 return resolvedExternalReference
             } else {
@@ -127,7 +127,9 @@ struct DocumentationCurator {
     }
     
     private func isReference(_ childReference: ResolvedTopicReference, anAncestorOf nodeReference: ResolvedTopicReference) -> Bool {
-        return context.pathsTo(nodeReference).contains { $0.contains(childReference) }
+        context.topicGraph.reverseEdgesGraph
+            .breadthFirstSearch(from: nodeReference)
+            .contains(childReference)
     }
     
     /// Crawls the topic graph starting at a given root node, curates articles during.
@@ -212,7 +214,7 @@ struct DocumentationCurator {
                     if let range = link.range {
                         return range
                     }
-                    if let topics = topics,
+                    if let topics,
                         topics.originalLinkRangesByGroup.count > groupIndex,
                         topics.originalLinkRangesByGroup[groupIndex].count > linkIndex {
                         return topics.originalLinkRangesByGroup[groupIndex][linkIndex]
@@ -229,10 +231,20 @@ struct DocumentationCurator {
                     (childDocumentationNode.kind == .article || childDocumentationNode.kind.isSymbol || childDocumentationNode.kind == .tutorial || childDocumentationNode.kind == .tutorialArticle) else {
                         continue
                 }
-                
-                guard childDocumentationNode.kind != .module else {
-                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
-                    continue
+
+                // Allow curating a module node from a manual technology root.
+                if childDocumentationNode.kind == .module {
+                    func isTechnologyRoot(_ reference: ResolvedTopicReference) -> Bool {
+                        guard let node = context.topicGraph.nodeWithReference(reference) else { return false }
+                        return node.kind == .module && documentationNode.kind.isSymbol == false
+                    }
+        
+                    let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.reachableRoots(from: nodeReference).contains(where: isTechnologyRoot)
+
+                    if !hasTechnologyRoot {
+                        problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
+                        continue
+                    }
                 }
                 
                 // Verify we are not creating a graph cyclic relationship.

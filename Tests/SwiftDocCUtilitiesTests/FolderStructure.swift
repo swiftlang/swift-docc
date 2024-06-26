@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -73,9 +73,8 @@ extension InfoPlist: AssertableFile {
             let displayName = infoPlist?["CFBundleIdentifier"]
             let identifier = infoPlist?["CFBundleVersion"]
             let versionString = infoPlist?["CFBundleDevelopmentRegion"]
-            let developmentRegion = infoPlist?["CFBundleDisplayName"]
             
-            XCTAssert(displayName == content.displayName && identifier == content.identifier && versionString == content.versionString && developmentRegion == content.developmentRegion,
+            XCTAssert(displayName == content.displayName && identifier == content.identifier && versionString == content.versionString,
                       "File '\(name)' should contain the correct information.", file: (file), line: line)
             
         } catch {

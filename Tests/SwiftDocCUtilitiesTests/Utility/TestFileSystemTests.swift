@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,9 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocC
-@testable import SwiftDocCUtilities
-import SwiftDocCTestUtilities
+@testable import SwiftDocCTestUtilities
 
 class TestFileSystemTests: XCTestCase {
     
@@ -22,7 +20,7 @@ class TestFileSystemTests: XCTestCase {
         XCTAssertTrue(try fs.bundles().isEmpty)
         var isDirectory = ObjCBool(false)
         XCTAssertTrue(fs.fileExists(atPath: "/", isDirectory: &isDirectory))
-        XCTAssertEqual(fs.files.keys.sorted(), ["/"], "The root (/) should be the only existing path.")
+        XCTAssertEqual(fs.files.keys.sorted(), ["/", "/tmp"], "The root (/) should be the only existing path.")
         XCTAssertTrue(isDirectory.boolValue)
         XCTAssertFalse(fs.disableWriting)
     }
@@ -51,14 +49,15 @@ class TestFileSystemTests: XCTestCase {
         // Verify correct file tree
         XCTAssertEqual(fs.dump(), """
         /
-        /additional
-        /main
-        /main/nested
-        /main/nested/myfile.txt
+        ├─ additional/
+        ├─ main/
+        │  ╰─ nested/
+        │     ╰─ myfile.txt
+        ╰─ tmp/
         """)
     }
 
-    func makeTestFS() throws -> TestFileSystem {
+    private func makeTestFS() throws -> TestFileSystem {
         let folder = Folder(name: "main", content: [
             Folder(name: "nested", content: [
                 TextFile(name: "myfile1.txt", utf8Content: "text"),
@@ -70,13 +69,39 @@ class TestFileSystemTests: XCTestCase {
         
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/nested
-        /main/nested/myfile1.txt
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
 
         return fs
+    }
+    
+    func testDumpSubpath() throws {
+        let fs = try makeTestFS()
+        XCTAssertEqual(fs.dump(), """
+        /
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
+        """)
+        
+        XCTAssertEqual(fs.dump(subHierarchyFrom: "/main"), """
+        main/
+        ╰─ nested/
+           ├─ myfile1.txt
+           ╰─ myfile2.txt
+        """)
+        
+        XCTAssertEqual(fs.dump(subHierarchyFrom: "/main/nested"), """
+        nested/
+        ├─ myfile1.txt
+        ╰─ myfile2.txt
+        """)
     }
     
     func testCopyFiles() throws {
@@ -85,11 +110,12 @@ class TestFileSystemTests: XCTestCase {
         try fs.copyItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/myfile1.txt
-        /main/nested
-        /main/nested/myfile1.txt
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ├─ myfile1.txt
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -99,13 +125,14 @@ class TestFileSystemTests: XCTestCase {
         try fs.copyItem(at: URL(string: "/main/nested")!, to: URL(string: "/copy")!)
         XCTAssertEqual(fs.dump(), """
         /
-        /copy
-        /copy/myfile1.txt
-        /copy/myfile2.txt
-        /main
-        /main/nested
-        /main/nested/myfile1.txt
-        /main/nested/myfile2.txt
+        ├─ copy/
+        │  ├─ myfile1.txt
+        │  ╰─ myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -116,10 +143,11 @@ class TestFileSystemTests: XCTestCase {
         try fs.moveItem(at: URL(string: "/main/nested/myfile1.txt")!, to: URL(string: "/main/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/myfile1.txt
-        /main/nested
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ├─ myfile1.txt
+        │  ╰─ nested/
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -129,10 +157,11 @@ class TestFileSystemTests: XCTestCase {
         try fs.moveItem(at: URL(string: "/main/nested")!, to: URL(string: "/main/new")!)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/new
-        /main/new/myfile1.txt
-        /main/new/myfile2.txt
+        ├─ main/
+        │  ╰─ new/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
     
@@ -142,9 +171,10 @@ class TestFileSystemTests: XCTestCase {
         try fs.removeItem(at: URL(string: "/main/nested/myfile1.txt")!)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/nested
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
 
@@ -154,7 +184,8 @@ class TestFileSystemTests: XCTestCase {
         try fs.removeItem(at: URL(string: "/main/nested")!)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
+        ├─ main/
+        ╰─ tmp/
         """)
     }
 
@@ -172,22 +203,24 @@ class TestFileSystemTests: XCTestCase {
         try fs.createDirectory(at: URL(string: "/main/nested/inner")!, withIntermediateDirectories: false)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/nested
-        /main/nested/inner
-        /main/nested/myfile1.txt
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ inner/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
 
         try fs.createDirectory(at: URL(string: "/main/nested/inner2")!, withIntermediateDirectories: true)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/nested
-        /main/nested/inner
-        /main/nested/inner2
-        /main/nested/myfile1.txt
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ inner/
+        │     ├─ inner2/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
 
         // Test it throws when parent folder is missing
@@ -197,14 +230,15 @@ class TestFileSystemTests: XCTestCase {
         try fs.createDirectory(at: URL(string: "/main/nested/missing/inner4")!, withIntermediateDirectories: true)
         XCTAssertEqual(fs.dump(), """
         /
-        /main
-        /main/nested
-        /main/nested/inner
-        /main/nested/inner2
-        /main/nested/missing
-        /main/nested/missing/inner4
-        /main/nested/myfile1.txt
-        /main/nested/myfile2.txt
+        ├─ main/
+        │  ╰─ nested/
+        │     ├─ inner/
+        │     ├─ inner2/
+        │     ├─ missing/
+        │     │  ╰─ inner4/
+        │     ├─ myfile1.txt
+        │     ╰─ myfile2.txt
+        ╰─ tmp/
         """)
     }
     
@@ -216,12 +250,13 @@ class TestFileSystemTests: XCTestCase {
         
         XCTAssertEqual(fs.dump(), """
         /
-        /one
-        /one/two
-        /one/two/three
-        /one/two/three/four
-        /one/two/three/four/five
-        /one/two/three/four/five/six
+        ├─ one/
+        │  ╰─ two/
+        │     ╰─ three/
+        │        ╰─ four/
+        │           ╰─ five/
+        │              ╰─ six/
+        ╰─ tmp/
         """)
     }
     
@@ -283,5 +318,33 @@ class TestFileSystemTests: XCTestCase {
         XCTAssert(bundle.markupURLs.allSatisfy(\.isFileURL))
         XCTAssert(bundle.miscResourceURLs.allSatisfy(\.isFileURL))
         XCTAssert(bundle.symbolGraphURLs.allSatisfy(\.isFileURL))
+    }
+    
+    func testBundleDiscovery() throws {
+        let somethingSymbolGraphData = try JSONEncoder().encode(makeSymbolGraph(moduleName: "Something"))
+        
+        do {
+            let fs = try TestFileSystem(folders: [
+                Folder(name: "CatalogName.docc", content: [
+                    InfoPlist(displayName: "DisplayName", identifier: "com.example"),
+                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
+                ])
+            ])
+            let bundle = try XCTUnwrap(fs.bundles().first)
+            XCTAssertEqual(bundle.displayName, "DisplayName", "Display name is read from Info.plist")
+            XCTAssertEqual(bundle.identifier, "com.example", "Identifier is read from Info.plist")
+        }
+         
+        do {
+            let fs = try TestFileSystem(folders: [
+                Folder(name: "CatalogName.docc", content: [
+                    // No Info.plist
+                    DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
+                ])
+            ])
+            let bundle = try XCTUnwrap(fs.bundles().first)
+            XCTAssertEqual(bundle.displayName, "CatalogName", "Display name is derived from catalog name")
+            XCTAssertEqual(bundle.displayName, "CatalogName", "Identifier is derived the display name")
+        }
     }
 }

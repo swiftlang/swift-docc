@@ -17,12 +17,24 @@ public struct FeatureFlags: Codable {
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
 
-    /// Whether or not experimental support for parsing Doxygen commands is enabled.
-    @available(*, deprecated, message: "Doxygen support is now enabled by default. This deprecated API will be removed after 5.10 is released")
-    public var isExperimentalDoxygenSupportEnabled = false
-    
     /// Whether or not experimental support for emitting a serialized version of the local link resolution information is enabled.
     public var isExperimentalLinkHierarchySerializationEnabled = false
+    
+    /// Whether or not experimental support for combining overloaded symbol pages is enabled.
+    public var isExperimentalOverloadedSymbolPresentationEnabled = false
+    
+    /// Whether experimental support for automatically rendering links on symbol documentation to articles
+    /// that mention that symbol.
+    public var isExperimentalMentionedInEnabled = false
+    
+    /// Whether or not support for validating parameters and return value documentation is enabled.
+    public var isParametersAndReturnsValidationEnabled = true
+    
+    @available(*, deprecated, renamed: "isParametersAndReturnsValidationEnabled", message: "Use 'isParametersAndReturnsValidationEnabled' instead. This deprecated API will be removed after 6.1 is released")
+    public var isExperimentalParametersAndReturnsValidationEnabled: Bool {
+        get { isParametersAndReturnsValidationEnabled }
+        set { isParametersAndReturnsValidationEnabled = newValue }
+    }
     
     /// Creates a set of feature flags with the given values.
     ///
@@ -33,5 +45,12 @@ public struct FeatureFlags: Codable {
     public init(
         additionalFlags: [String : Bool] = [:]
     ) {
+    }
+
+    /// Set feature flags that were loaded from a bundle's Info.plist.
+    internal mutating func loadFlagsFromBundle(_ bundleFlags: DocumentationBundle.Info.BundleFeatureFlags) {
+        if let overloadsPresentation = bundleFlags.experimentalOverloadedSymbolPresentation {
+            self.isExperimentalOverloadedSymbolPresentationEnabled = overloadsPresentation
+        }
     }
 }

@@ -187,7 +187,7 @@ extension RelationshipsRenderSection {
 
 extension TaskGroupRenderSection {
     public var headings: [String] {
-        guard let title = title else { return [] }
+        guard let title else { return [] }
         return [title]
     }
     
@@ -328,15 +328,15 @@ extension AttributesRenderSection {
 
 extension PlistDetailsRenderSection {
     public var headings: [String] {
-        if let ideTitle = details.ideTitle {
-            return [details.name, ideTitle]
+        if let displayName = details.displayName {
+            return [details.rawKey, displayName]
         } else {
-            return [details.name]
+            return [details.rawKey]
         }
     }
     
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
-        return [details.name, details.ideTitle ?? ""].joined(separator: " ")
+        return [details.rawKey, details.displayName ?? ""].joined(separator: " ")
     }
 }
 
@@ -363,7 +363,7 @@ extension SampleDownloadSection {
     }
 }
 
-extension Sequence where Element == ContentLayout {
+extension Sequence<ContentLayout> {
     func rawIndexableTextContent(references: [String: RenderReference]) -> String {
         return map { layout -> String in
             switch layout {

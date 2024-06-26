@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,6 +27,9 @@ extension CodingUserInfoKey {
     static let variantOverrides = CodingUserInfoKey(rawValue: "variantOverrides")!
     
     static let baseEncodingPath = CodingUserInfoKey(rawValue: "baseEncodingPath")!
+    
+    /// A user info key to indicate a base path for local asset URLs.
+    static let assetPrefixComponent = CodingUserInfoKey(rawValue: "assetPrefixComponent")!
 }
 
 extension Encoder {
@@ -45,12 +48,12 @@ extension Encoder {
     ///
     /// These references will then be encoded at a later stage by `TopicRenderReferenceEncoder`.
     var skipsEncodingReferences: Bool {
-        guard let userInfoValue = userInfo[.skipsEncodingReferences] as? Bool else {
-            // The value doesn't exist so we should encode reference. Return false.
-            return false
-        }
-        
-        return userInfoValue
+        userInfo[.skipsEncodingReferences] as? Bool ?? false
+    }
+    
+    /// A base path to use when creating destination URLs for local assets (images, videos, downloads, etc.)
+    var assetPrefixComponent: String? {
+        userInfo[.assetPrefixComponent] as? String
     }
 }
 
@@ -81,12 +84,7 @@ extension JSONEncoder {
     /// These references will then be encoded at a later stage by `TopicRenderReferenceEncoder`.
     var skipsEncodingReferences: Bool {
         get {
-            guard let userInfoValue = userInfo[.skipsEncodingReferences] as? Bool else {
-                // The value doesn't exist so we should encode reference. Return false.
-                return false
-            }
-            
-            return userInfoValue
+            userInfo[.skipsEncodingReferences] as? Bool ?? false
         }
         set {
             userInfo[.skipsEncodingReferences] = newValue
@@ -104,13 +102,14 @@ public enum RenderJSONEncoder {
     /// process which should not be shared in other encoding units. Instead, call this API to create a new encoder for each render node you want to encode.
     ///
     /// - Parameters:
-    ///     - prettyPrint: If `true`, the encoder formats its output to make it easy to read; if `false`, the output is compact.
-    ///     - emitVariantOverrides: Whether the encoder should emit the top-level ``RenderNode/variantOverrides`` property that holds language-
-    ///     specific documentation data.
+    ///   - prettyPrint: If `true`, the encoder formats its output to make it easy to read; if `false`, the output is compact.
+    ///   - emitVariantOverrides: Whether the encoder should emit the top-level ``RenderNode/variantOverrides`` property that holds language-specific documentation data.
+    ///   - assetPrefixComponent: A path component to include in destination URLs for local assets (images, videos, downloads, etc.)
     /// - Returns: The new JSON encoder.
     public static func makeEncoder(
         prettyPrint: Bool = shouldPrettyPrintOutputJSON,
-        emitVariantOverrides: Bool = true
+        emitVariantOverrides: Bool = true,
+        assetPrefixComponent: String? = nil
     ) -> JSONEncoder {
         let encoder = JSONEncoder()
         
@@ -124,6 +123,9 @@ public enum RenderJSONEncoder {
         
         if emitVariantOverrides {
             encoder.userInfo[.variantOverrides] = VariantOverrides()
+        }
+        if let bundleIdentifier = assetPrefixComponent {
+            encoder.userInfo[.assetPrefixComponent] = bundleIdentifier
         }
         
         return encoder
@@ -211,7 +213,7 @@ public extension RenderNode {
         do {
             // If there is no topic reference cache, just encode the reference.
             // To skim a little off the duration we first do a quick check if the key is present at all.
-            guard let renderReferenceCache = renderReferenceCache else {
+            guard let renderReferenceCache else {
                 return try encoder.encode(self)
             }
             

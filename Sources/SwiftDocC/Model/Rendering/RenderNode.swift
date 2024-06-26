@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,7 +35,7 @@ import Foundation
 /// are organized by traits (e.g., language) and it's up to the client to determine which trait is most appropriate for them. For example, a client that wants to
 /// process the Objective-C version of documentation should apply the overrides associated with the `interfaceLanguage: objc` trait.
 ///
-/// Use the ``RenderJSONEncoder/makeEncoder(prettyPrint:emitVariantOverrides:)`` API to instantiate a JSON encoder that's configured
+/// Use the ``RenderJSONEncoder/makeEncoder(prettyPrint:emitVariantOverrides:assetPrefixComponent:)`` API to instantiate a JSON encoder that's configured
 /// to accumulate variant overrides and emit them to the ``variantOverrides`` property.
 ///
 /// The overrides are emitted in the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.

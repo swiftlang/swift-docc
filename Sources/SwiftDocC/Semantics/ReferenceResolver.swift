@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
+func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     var notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
@@ -33,8 +33,8 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
     }
     
     var solutions: [Solution] = []
-    if let referenceSourceRange = referenceSourceRange {
-        if let note = errorInfo.note, let source = source {
+    if let referenceSourceRange {
+        if let note = errorInfo.note, let source {
             notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
         }
         
@@ -42,7 +42,7 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
     }
     
     let diagnosticRange: SourceRange?
-    if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange = referenceSourceRange {
+    if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange {
         rangeAdjustment.offsetWithRange(referenceSourceRange)
         diagnosticRange = rangeAdjustment
     } else {
@@ -62,7 +62,7 @@ func unresolvedResourceProblem(
 ) -> Problem {
     let summary: String
     let identifier: String
-    if let expectedType = expectedType {
+    if let expectedType {
         identifier = "org.swift.docc.unresolvedResource.\(expectedType)"
         summary = "\(expectedType) resource \(resource.path.singleQuoted) couldn't be found"
     } else {
@@ -92,9 +92,6 @@ struct ReferenceResolver: SemanticVisitor {
     /// The bundle in which visited documents reside.
     var bundle: DocumentationBundle
     
-    /// The source document being analyzed.
-    var source: URL?
-    
     /// Problems found while trying to resolve references.
     var problems = [Problem]()
     
@@ -103,10 +100,9 @@ struct ReferenceResolver: SemanticVisitor {
     /// If the documentation is inherited, the reference of the parent symbol.
     var inheritanceParentReference: ResolvedTopicReference?
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, source: URL?, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
+    init(context: DocumentationContext, bundle: DocumentationBundle, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
         self.context = context
         self.bundle = bundle
-        self.source = source
         self.rootReference = rootReference ?? bundle.rootReference
         self.inheritanceParentReference = inheritanceParentReference
     }
@@ -118,7 +114,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            problems.append(unresolvedReferenceProblem(source: range?.source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
             return .failure(unresolved, error)
         }
     }
@@ -128,7 +124,7 @@ struct ReferenceResolver: SemanticVisitor {
     */
     func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
         if !context.resourceExists(with: resource) {
-            return unresolvedResourceProblem(resource: resource, source: source, range: range, severity: severity)
+            return unresolvedResourceProblem(resource: resource, source: range?.source, range: range, severity: severity)
         } else {
             return nil
         }
@@ -213,23 +209,24 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Semantic {
-        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, source: source, rootReference: rootReference)
+        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: rootReference)
         let parent = inheritanceParentReference
         let context = self.context
         
-        markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
+        markupResolver.problemForUnresolvedReference = { unresolved, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
-            if let parent = parent, let range = range {
+            if let parent, let range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
-                        return Problem(diagnostic: Diagnostic(source: source,
+                        return Problem(diagnostic: Diagnostic(source: range.source,
                             severity: .warning, range: range,
                             identifier: "org.swift.docc.UnresolvableLinkWhenInherited",
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
                             possibleSolutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
+                                    // FIXME: The resolved reference path isn't the same as the authorable link.
                                     Replacement(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
@@ -291,7 +288,7 @@ struct ReferenceResolver: SemanticVisitor {
         var uniqueReferences = Set<TopicReference>()
         let newTutorialReferencesWithoutDupes = newTutorialReferences.filter { newTutorialReference in
             guard !uniqueReferences.contains(newTutorialReference.topic) else {
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)")
+                let diagnostic = Diagnostic(source: chapter.originalMarkup.range?.source, severity: .warning, range: newTutorialReference.originalMarkup.range, identifier: "org.swift.docc.\(Chapter.self).Duplicate\(TutorialReference.self)", summary: "Duplicate \(TutorialReference.directiveName.singleQuoted) directive refers to \(newTutorialReference.topic.description.singleQuoted)")
                 let solutions = newTutorialReference.originalMarkup.range.map {
                     return [Solution(summary: "Remove duplicate \(TutorialReference.directiveName.singleQuoted) directive", replacements: [
                         Replacement(range: $0, replacement: "")
@@ -385,7 +382,7 @@ struct ReferenceResolver: SemanticVisitor {
         )
     }
 
-    private mutating func visitMarkupLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) -> [MarkupLayout] where MarkupLayouts.Element == MarkupLayout {
+    private mutating func visitMarkupLayouts(_ markupLayouts: some Sequence<MarkupLayout>) -> [MarkupLayout] {
         return markupLayouts.map { content in
             switch content {
             case .markup(let markup): return .markup(visitMarkupContainer(markup) as! MarkupContainer)
@@ -411,8 +408,8 @@ struct ReferenceResolver: SemanticVisitor {
         switch node.name {
         case .conceptual(let documentTitle):
             return documentTitle
-        case .symbol(let declaration):
-            return node.symbol?.names.title ?? declaration.tokens.map { $0.description }.joined(separator: " ")
+        case .symbol(let name):
+            return node.symbol?.names.title ?? name
         }
     }
     
@@ -438,7 +435,7 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newParametersVariants = symbol.parametersSectionVariants.map { parametersSection -> ParametersSection in
             let parameters = parametersSection.parameters.map {
-                Parameter(name: $0.name, contents: $0.contents.map { visitMarkup($0) })
+                Parameter(name: $0.name, nameRange: $0.nameRange, contents: $0.contents.map { visitMarkup($0) }, range: $0.range, isStandalone: $0.isStandalone)
             }
             return ParametersSection(parameters: parameters)
         }
@@ -456,7 +453,10 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newHTTPBodyVariants = symbol.httpBodySectionVariants.map { httpBodySection -> HTTPBodySection in
             let oldBody = httpBodySection.body
-            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, parameters: oldBody.parameters, symbol: oldBody.symbol)
+            let newBodyParameters = oldBody.parameters.map {
+                HTTPParameter(name: $0.name, source: $0.source, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
+            }
+            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, parameters: newBodyParameters, symbol: oldBody.symbol)
             return HTTPBodySection(body: newBody)
         }
         let newHTTPParametersVariants = symbol.httpParametersSectionVariants.map { httpParametersSection -> HTTPParametersSection in
@@ -490,6 +490,7 @@ struct ReferenceResolver: SemanticVisitor {
             deprecatedSummaryVariants: newDeprecatedSummaryVariants,
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,
+            alternateDeclarationVariants: symbol.alternateDeclarationVariants,
             defaultImplementationsVariants: symbol.defaultImplementationsVariants,
             relationshipsVariants: symbol.relationshipsVariants,
             abstractSectionVariants: newAbstractVariants,
@@ -506,7 +507,8 @@ struct ReferenceResolver: SemanticVisitor {
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
-            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
+            automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants,
+            overloadsVariants: symbol.overloadsVariants
         )
     }
     
@@ -518,7 +520,7 @@ struct ReferenceResolver: SemanticVisitor {
 
 fileprivate extension URL {
     var isLikelyWebURL: Bool {
-        if let scheme = scheme, scheme.hasPrefix("http") {
+        if let scheme, scheme.hasPrefix("http") {
             return true
         }
         return false
@@ -527,7 +529,7 @@ fileprivate extension URL {
 
 extension Image {
     func reference(in bundle: DocumentationBundle) -> ResourceReference? {
-        guard let source = source else {
+        guard let source else {
             return ResourceReference(bundleIdentifier: bundle.identifier, path: "")
         }
         

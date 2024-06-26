@@ -1,0 +1,368 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Swift 5.9"
+    },
+    "module": {
+        "name": "AlternateDeclarations",
+        "platform": {
+            "architecture": "arm64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "ios",
+                "minimumVersion": {
+                    "major": 18,
+                    "minor": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)MyClass",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MyClass"
+            ],
+            "names": {
+                "title": "MyClass",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyClass"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyClass"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "MyClass"
+                }
+            ],
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)MyClass(im)presentWithCompletion:",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MyClass",
+                "present(completion:)"
+            ],
+            "names": {
+                "title": "present(completion:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "present"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "externalParam",
+                        "spelling": "completion"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": (("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Void",
+                        "preciseIdentifier": "s:s4Voida"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")!)"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "completion",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "completion"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": (("
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Bool",
+                                "preciseIdentifier": "s:Sb"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ") -> "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Void",
+                                "preciseIdentifier": "s:s4Voida"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ")!"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Void",
+                        "preciseIdentifier": "s:s4Voida"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "present"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "externalParam",
+                    "spelling": "completion"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": (("
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Void",
+                    "preciseIdentifier": "s:s4Voida"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")!)"
+                }
+            ],
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)MyClass(im)presentWithCompletion:",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MyClass",
+                "present()"
+            ],
+            "names": {
+                "title": "present()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "present"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "() "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "async"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "present"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "() "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "async"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "open"
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)MyClass",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:objc(cs)MyClass(im)presentWithCompletion:",
+            "target": "c:objc(cs)MyClass"
+        },
+        {
+            "kind": "inheritsFrom",
+            "source": "c:objc(cs)MyClass",
+            "target": "c:objc(cs)NSObject",
+            "targetFallback": "ObjectiveC.NSObject"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)MyClass",
+            "target": "s:SH",
+            "targetFallback": "Swift.Hashable"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)MyClass",
+            "target": "s:s23CustomStringConvertibleP",
+            "targetFallback": "Swift.CustomStringConvertible"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)MyClass",
+            "target": "s:s7CVarArgP",
+            "targetFallback": "Swift.CVarArg"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)MyClass",
+            "target": "c:objc(pl)NSObject",
+            "targetFallback": "ObjectiveC.NSObjectProtocol"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:objc(cs)MyClass(im)presentWithCompletion:",
+            "target": "c:objc(cs)MyClass"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)MyClass",
+            "target": "s:s28CustomDebugStringConvertibleP",
+            "targetFallback": "Swift.CustomDebugStringConvertible"
+        }
+    ]
+}

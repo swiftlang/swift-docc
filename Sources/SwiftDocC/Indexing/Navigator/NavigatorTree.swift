@@ -480,20 +480,54 @@ public class NavigatorTree {
         
         /// Copy the current node and children to new instances preserving the node item.
         public func copy() -> NavigatorTree.Node {
+            // DocC detects cyclic curation and avoids adding it to the topic graph.
+            // However, the navigator is based on the render node's topic sections which still has the cycle.
+            //
+            // Because the navigator nodes are shared instances, the cycle needs to be broken at each occurrence to correctly unroll it.
+            // For example, consider this hierarchy:
+            //
+            //   1       2
+            //   │       │
+            //   ▼       ▼
+            //   3 ────▶ 4
+            //   ▲       │
+            //   └── 5 ◀─┘
+            //
+            // When approaching the cycle from `1`, it unrolls as `1, 3, 4, 5` but when approaching it from `2` it unrolls as `2, 4, 5, 3`.
+            // This ensures a consistent structure for the navigation tree, no matter which render node was indexed first.
+            //
+            // Alternatively we could process the entire graph and break the cycle based on which node has the shortest path from the root.
+            // However, because DocC already warns about the cyclic curation, it seem sufficient to create a consistent navigation tree,
+            // even if it's not as small as it could be if we were using a more sophisticated graph algorithm.
+            
             return _copy([])
         }
         
-        /// Private version of the logic to copy the current node and children to new instances preserving the node item.
-        /// - Parameter hierarchy: The set containing the parent items to avoid entering in an infinite loop.
-        private func _copy(_ hierarchy: Set<NavigatorItem>) -> NavigatorTree.Node {
+        /// The private copy implementation which tracks the already encountered items to avoid an infinite recursion.
+        private func _copy(_ seen: Set<NavigatorItem>) -> NavigatorTree.Node {
             let mirror = NavigatorTree.Node(item: item, bundleIdentifier: bundleIdentifier)
-            guard !hierarchy.contains(item) else { return mirror } // Avoid to enter in an infity loop.
-            var updatedHierarchy = hierarchy
-            if let parentItem = parent?.item { updatedHierarchy.insert(parentItem) }
-            children.forEach { (child) in
-                let childCopy = child._copy(updatedHierarchy)
+            guard !seen.contains(item) else { return mirror } // Avoid an infinite recursion.
+            var seen = seen
+            seen.insert(item)
+            
+            // Avoid repeating children that have already occurred in this path through the navigation hierarchy.
+            let childrenNotAlreadyEncountered = children.filter { !seen.contains($0.item) }
+            for (child, indexAfter) in zip(childrenNotAlreadyEncountered, 1...) {
+                // If the child is a group marker, ensure that the group is not empty by checking that it's followed by a non-group.
+                // If we didn't do this, we could end up with empty groups if all the children had already been encountered higher up in the hierarchy.
+                if child.item.pageType == NavigatorIndex.PageType.groupMarker.rawValue {
+                    guard indexAfter < childrenNotAlreadyEncountered.endIndex,
+                          childrenNotAlreadyEncountered[indexAfter].item.pageType != NavigatorIndex.PageType.groupMarker.rawValue
+                    else {
+                        // This group is empty. Skip copying it.
+                        continue
+                    }
+                    // This group is not empty. Include a copy of it
+                }
+                let childCopy = child._copy(seen)
                 mirror.add(child: childCopy)
             }
+            
             return mirror
         }
         

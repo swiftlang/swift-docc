@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -52,7 +52,7 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssert(reflectedDirective.arguments.isEmpty)
         
-        XCTAssertEqual(reflectedDirective.childDirectives.count, 11)
+        XCTAssertEqual(reflectedDirective.childDirectives.count, 12)
         
         XCTAssertEqual(
             reflectedDirective.childDirectives["DocumentationExtension"]?.propertyLabel,
@@ -132,10 +132,10 @@ class DirectiveMirrorTests: XCTestCase {
     }
 }
 
-fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedArgument {
+private extension RandomAccessCollection<DirectiveMirror.ReflectedArgument> {
     /// Look for an argument named `name` or log an XCTest failure.
-    subscript<S: StringProtocol>(
-        _ name: S,
+    subscript(
+        _ name: some StringProtocol,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DirectiveMirror.ReflectedArgument? {
@@ -149,7 +149,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
             }
         }
         
-        guard let match = match else {
+        guard let match else {
             XCTFail("Expected argument named \(name.singleQuoted)", file: file, line: line)
             return nil
         }
@@ -158,10 +158,10 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
     }
 }
 
-fileprivate extension RandomAccessCollection where Element == DirectiveMirror.ReflectedChildDirective {
+private extension RandomAccessCollection<DirectiveMirror.ReflectedChildDirective> {
     /// Look for an argument named `name` or log an XCTest failure.
-    subscript<S: StringProtocol>(
-        _ name: S,
+    subscript(
+        _ name: some StringProtocol,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> DirectiveMirror.ReflectedChildDirective? {
@@ -169,7 +169,7 @@ fileprivate extension RandomAccessCollection where Element == DirectiveMirror.Re
             return childDirective.name == name
         }
         
-        guard let match = match else {
+        guard let match else {
             XCTFail("Expected child directive named \(name.singleQuoted)", file: file, line: line)
             return nil
         }

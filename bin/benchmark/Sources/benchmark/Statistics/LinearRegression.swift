@@ -10,7 +10,7 @@
 
 import Foundation
 
-extension Collection where Element == Double {
+extension Collection<Double> {
     /// Analyses the metric series' values for signs of bias in the data.
     ///
     /// - Note: This is not a scientific measurement.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import Markdown
 fileprivate extension Optional {
     /// If self is not `nil`, run the given block.
     func unwrap(_ block: (Wrapped) -> Void) {
-        if let self = self {
+        if let self {
             block(self)
         }
     }
@@ -40,17 +40,17 @@ struct ExternalReferenceWalker: SemanticVisitor {
     /// A markup walker to use for collecting links from markup elements.
     private var markupResolver: ExternalMarkupReferenceWalker
     
-    /// Collected external links while walking the given elements.
-    var collectedExternalReferences: [UnresolvedTopicReference] {
-        return markupResolver.collectedExternalLinks.map { url -> UnresolvedTopicReference in
-            return .init(topicURL: url)
+    /// Collected unresolved external references, grouped by the bundle ID.
+    var collectedExternalReferences: [BundleIdentifier: [UnresolvedTopicReference]] {
+        return markupResolver.collectedExternalLinks.mapValues { links in
+            links.map(UnresolvedTopicReference.init(topicURL:))
         }
     }
     
-    /// Creates a new semantic walker.
-    /// - Parameter bundle: All links with a bundle ID different than this bundle's are considered external and collected.
-    init(bundle: DocumentationBundle) {
-        self.markupResolver = ExternalMarkupReferenceWalker(bundle: bundle)
+    /// Creates a new semantic walker that collects links to other documentation sources.
+    /// - Parameter localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
+    init(localBundleID: BundleIdentifier) {
+        self.markupResolver = ExternalMarkupReferenceWalker(localBundleID: localBundleID)
     }
     
     mutating func visitCode(_ code: Code) { }
@@ -159,7 +159,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
         article.deprecationSummary.unwrap { visitMarkupContainer($0) }
     }
 
-    private mutating func visitMarkupLayouts<MarkupLayouts: Sequence>(_ markupLayouts: MarkupLayouts) where MarkupLayouts.Element == MarkupLayout {
+    private mutating func visitMarkupLayouts(_ markupLayouts: some Sequence<MarkupLayout>) {
         markupLayouts.forEach { content in
             switch content {
             case .markup(let markup): visitMarkupContainer(markup)
@@ -174,21 +174,58 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
 
     mutating func visitComment(_ comment: Comment) { }
-    
+
+    mutating func visitSection(_ section: Section) {
+        for markup in section.content { visitMarkup(markup) }
+    }
+
+    mutating func visitSectionVariants(_ variants: DocumentationDataVariants<some Section>) {
+        for variant in variants.allValues.map(\.variant) {
+            visitSection(variant)
+        }
+    }
+
     mutating func visitSymbol(_ symbol: Symbol) {
-        symbol.abstractSection.unwrap { visitMarkup($0.paragraph) }
-        symbol.discussion.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.topics.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.seeAlso.unwrap { $0.content.forEach { visitMarkup($0) }}
-        symbol.returnsSection.unwrap { $0.content.forEach { visitMarkup($0) }}
-        
-        symbol.parametersSection.unwrap {
-            $0.parameters.forEach {
-                $0.contents.forEach { visitMarkup($0) }
+
+        visitSectionVariants(symbol.abstractSectionVariants)
+        visitSectionVariants(symbol.discussionVariants)
+        visitSectionVariants(symbol.topicsVariants)
+        visitSectionVariants(symbol.seeAlsoVariants)
+        visitSectionVariants(symbol.returnsSectionVariants)
+        visitSectionVariants(symbol.deprecatedSummaryVariants)
+
+        if let parametersSection = symbol.parametersSection {
+            for parameter in parametersSection.parameters {
+                for markup in parameter.contents { visitMarkup(markup) }
+            }
+        }
+
+        for dictionaryKeysSection in symbol.dictionaryKeysSectionVariants.allValues.map(\.variant) {
+            for dictionaryKeys in dictionaryKeysSection.dictionaryKeys {
+                for markup in dictionaryKeys.contents { visitMarkup(markup) }
+            }
+        }
+
+        for httpParametersSection in symbol.httpParametersSectionVariants.allValues.map(\.variant) {
+            for param in httpParametersSection.parameters {
+                for markup in param.contents { visitMarkup(markup) }
+            }
+        }
+
+        for httpResponsesSection in symbol.httpResponsesSectionVariants.allValues.map(\.variant) {
+            for param in httpResponsesSection.responses {
+                for markup in param.contents { visitMarkup(markup) }
+            }
+        }
+
+        for httpBodySection in symbol.httpBodySectionVariants.allValues.map(\.variant) {
+            for markup in httpBodySection.body.contents { visitMarkup(markup) }
+            for parameter in httpBodySection.body.parameters {
+                for markup in parameter.contents { visitMarkup(markup) }
             }
         }
     }
-    
+
     mutating func visitDeprecationSummary(_ summary: DeprecationSummary) {
         visit(summary.content)
     }

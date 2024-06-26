@@ -33,6 +33,15 @@ public final class DiagnosticEngine {
         }
     }
     
+    /// Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.
+    /// - Parameter predicate: A closure that takes one of the engine's consumers as its argument and returns a Boolean value that indicates whether the passed consumer represents a match.
+    /// - Returns: `true` if the engine contains a consumer that satisfies predicate; otherwise, `false`.
+    public func hasConsumer(matching predicate: (DiagnosticConsumer) throws -> Bool) rethrows -> Bool {
+        try consumers.sync {
+            try $0.values.contains(where: predicate)
+        }
+    }
+    
     /// Determines whether warnings will be treated as errors.
     private let treatWarningsAsErrors: Bool
 
@@ -89,14 +98,14 @@ public final class DiagnosticEngine {
 
         workQueue.async { [weak self] in
             // If the engine isn't around then return early
-            guard let self = self else { return }
+            guard let self else { return }
             for consumer in self.consumers.sync({ $0.values }) {
                 consumer.receive(filteredProblems)
             }
         }
     }
     
-    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 5.11 is released")
+    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released")
     public func finalize() {
         flush()
     }

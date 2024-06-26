@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
         forResource: "Availability.symbols", withExtension: "json", subdirectory: "Test Resources")!
     
     func testSortingAtRenderTime() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: self.availabilitySGFURL, to: url.appendingPathComponent("Availability.symbols.json"))
         }
         defer {
@@ -34,11 +34,13 @@ class AvailabilityRenderOrderTests: XCTestCase {
         // Additionally verify all the platforms have their correctly spelled name including spaces.
         XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), [
             "iOS 12.0", "iOS App Extension 12.0",
-            "macOS 10.12", "macOS App Extension 10.12",
+            "iPadOS 12.0",
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
+            "macOS 10.12", "macOS App Extension 10.12",
             "tvOS 12.0", "tvOS App Extension 12.0",
+            "visionOS 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2",
+            "Swift 4.2"
         ])
         
         // Test roundtrip to verify availability items are correctly
@@ -50,11 +52,13 @@ class AvailabilityRenderOrderTests: XCTestCase {
         let roundtripNode = try RenderNode.decode(fromJSON: roundtripData)
         XCTAssertEqual(roundtripNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), [
             "iOS 12.0", "iOS App Extension 12.0",
-            "macOS 10.12", "macOS App Extension 10.12",
+            "iPadOS 12.0",
             "Mac Catalyst 2.0", "Mac Catalyst App Extension 1.0",
+            "macOS 10.12", "macOS App Extension 10.12",
             "tvOS 12.0", "tvOS App Extension 12.0",
+            "visionOS 12.0",
             "watchOS 6.0", "watchOS App Extension 6.0",
-            "Swift 4.2",
+            "Swift 4.2"
         ])
     }
 }

@@ -165,7 +165,7 @@ class RenderNodeSerializationTests: XCTestCase {
         XCTAssertNotNil(renderNode.projectFiles())
         XCTAssertEqual(renderNode.projectFiles()?.url.lastPathComponent, "project.zip")
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 0)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 0)
         XCTAssertEqual(renderNode.downloadReferences().count, 1)
         
         // Check the output of the dictionary
@@ -225,7 +225,7 @@ class RenderNodeSerializationTests: XCTestCase {
             let kind: RenderNode.Kind
         }
         func decodeKind(jsonString: String) throws -> RenderNode.Kind {
-            return try JSONDecoder().decode(Wrapper.self, from: "{ \"kind\" : \(jsonString) }".data(using: .utf8)!).kind
+            return try JSONDecoder().decode(RenderNode.Kind.self, from: Data(jsonString.utf8))
         }
         
         // Both values can be decoded

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -43,7 +43,7 @@ enum GeneratedDocumentationTopics {
         mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
             let fromType: String
             let typeSimpleName: String
-            if let originSymbol = originSymbol, originSymbol.pathComponents.count > 1 {
+            if let originSymbol, originSymbol.pathComponents.count > 1 {
                 // If we have a resolved symbol for the source origin, use its path components to
                 // find the name of the parent by dropping the last path component.
                 let parentSymbolPathComponents = originSymbol.pathComponents.dropLast()
@@ -175,18 +175,7 @@ enum GeneratedDocumentationTopics {
             )
         }
 
-        // Create a temp node in order to generate the automatic curation
-        let temporaryCollectionNode = DocumentationNode(
-            reference: collectionReference,
-            kind: .collectionGroup,
-            sourceLanguage: automaticCurationSourceLanguage,
-            availableSourceLanguages: automaticCurationSourceLanguages,
-            name: DocumentationNode.Name.conceptual(title: title),
-            markup: Document(parsing: ""),
-            semantic: Article(markup: nil, metadata: nil, redirects: nil, options: [:])
-        )
-        
-        let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTraits: [], context: context)
+        let collectionTaskGroups = try AutomaticCuration.topics(for: identifiers, inInheritedSymbolsAPICollection: true, withTraits: [], context: context)
             .map { taskGroup in
                 AutomaticTaskGroupSection(
                     // Force-unwrapping the title since automatically-generated task groups always have a title.
@@ -251,17 +240,17 @@ enum GeneratedDocumentationTopics {
             // Check the relationship type
             if relationship.kind == .memberOf,
                // Check that there is origin information (i.e. the symbol is inherited)
-               let origin = relationship.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] as? SymbolGraph.Relationship.SourceOrigin,
+               let origin = relationship[mixin: SymbolGraph.Relationship.SourceOrigin.self],
                // Resolve the containing type
-               let parent = context.nodeWithSymbolIdentifier(relationship.target),
+               let parent = context.documentationCache[relationship.target],
                // Resolve the child
-               let child = context.nodeWithSymbolIdentifier(relationship.source),
+               let child = context.documentationCache[relationship.source],
                // Get the child symbol
                let childSymbol = child.symbol,
                // Get the swift extension data
-               let extends = childSymbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension
+               let extends = childSymbol[mixin: SymbolGraph.Symbol.Swift.Extension.self]
             {
-                let originSymbol = context.nodeWithSymbolIdentifier(origin.identifier)?.symbol
+                let originSymbol = context.documentationCache[origin.identifier]?.symbol
                 
                 // Add the inherited symbol to the index.
                 try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)
@@ -277,4 +266,10 @@ enum GeneratedDocumentationTopics {
         }
     }
     
+    static func isInheritedSymbolsAPICollectionNode(_ reference: ResolvedTopicReference, in topicGraph: TopicGraph) -> Bool {
+        guard let node = topicGraph.nodeWithReference(reference) else { return false }
+        return !node.isResolvable
+            && node.kind == .collection
+            && node.source == .external
+    }
 }

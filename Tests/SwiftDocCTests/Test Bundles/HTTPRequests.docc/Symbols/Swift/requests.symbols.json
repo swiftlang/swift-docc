@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "Manual"
+  },
+  "module": {
+    "name": "HTTPRequests",
+    "platform": {
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 1,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "test"
+      }
+    }
+  },
+  "relationships": [
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "class FooSwift"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "swift",
+        "precise": "s:FooSwift"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "title": "FooSwift"
+      },
+      "pathComponents": [
+        "FooSwift"
+      ]
+    }
+  ]
+}

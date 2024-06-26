@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ protocol ListableItem {}
 extension RenderBlockContent.ListItem: ListableItem {}
 extension RenderBlockContent.TermListItem: ListableItem {}
 
-extension Collection where Element == RenderBlockContent.ListItem {
+extension Collection<RenderBlockContent.ListItem> {
     
     /// Detects term list items in a collection of list items and converts
     /// them to term list items for rendering while preserving non-term
@@ -118,7 +118,7 @@ extension RenderBlockContent.TermListItem {
     }
 }
 
-extension Collection where Element == RenderInlineContent {
+extension Collection<RenderInlineContent> {
     
     /// Separate the inline contents into the contents that should be used for the
     /// term and the contents that should be used for the definition.
@@ -286,22 +286,20 @@ extension RenderInlineContent {
 }
 
 extension String {
-    
-    /// The result of removing whitespace from the beginning of the string.
+    /// Returns a new string made by removing whitespace from the beginning of the string.
     func removingLeadingWhitespace() -> String {
-        var trimmedString = self
-        while trimmedString.first?.isWhitespace == true {
-            trimmedString = String(trimmedString.dropFirst())
+        guard let index = self.firstIndex(where: { !$0.isWhitespace }) else { return "" }
+        if index == startIndex {
+            // Avoid a potential copy if the string doesn't have any leading whitespace.
+            return self
         }
-        return trimmedString
+        return String(self[index...])
     }
     
-    /// The result of removing whitespace from the end of the string.
+    /// Returns a new string made by removing whitespace from the end of the string.
     func removingTrailingWhitespace() -> String {
-        var trimmedString = self
-        while trimmedString.last?.isWhitespace == true {
-            trimmedString = String(trimmedString.dropLast())
-        }
-        return trimmedString
+        guard let index = self.lastIndex(where: { !$0.isWhitespace }) else { return "" }
+        // It's not worth checking if the index is at the end because `index(before: endIndex)` is slower than not checking.
+        return String(self[...index])
     }
 }

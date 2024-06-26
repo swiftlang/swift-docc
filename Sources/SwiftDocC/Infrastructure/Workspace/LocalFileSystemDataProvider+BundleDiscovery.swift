@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -141,7 +141,7 @@ extension LocalFileSystemDataProvider {
     }
 }
 
-fileprivate extension Array where Element == FSNode {
+fileprivate extension [FSNode] {
     /// Returns the first file that matches a given predicate.
     /// - Parameter predicate: A closure that takes a file as its argument and returns a Boolean value indicating whether the file should be returned from this function.
     /// - Throws: Any error that the predicate closure raises.
@@ -174,23 +174,5 @@ fileprivate extension Array where Element == FSNode {
         }
         
         return matches
-    }
-}
-
-/// An issue discovering a bundle in a workspace.
-enum WorkspaceError: DescribedError {
-    /// The bundle was missing an Info.plist file.
-    case missingInfoPlist(url: URL)
-    /// The root element of the Info.plist file was an array rather than a dictionary.
-    case notADictionaryAtRoot(url: URL)
-    
-    /// A plain-text representation of the error.
-    var errorDescription: String {
-        switch self {
-        case .missingInfoPlist(let url):
-            return "A bundle was found in the workspace at '\(url)' but it was missing an Info.plist."
-        case .notADictionaryAtRoot(let url):
-            return "A bundle was found in the workspace but its Info.plist at '\(url)' was not structured correctly: it contained a root array rather than a root dictionary."
-        }
     }
 }

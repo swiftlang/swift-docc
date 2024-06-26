@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,17 +12,6 @@ import Foundation
 
 /// A container for a collection of data. Each data can have multiple variants.
 struct DataAssetManager {
-    enum Error: DescribedError {
-        case invalidImageAsset(URL)
-        
-        var errorDescription: String {
-            switch self {
-                case .invalidImageAsset(let url):
-                    return "The dimensions of the image at \(url.path.singleQuoted) could not be computed because the file is not a valid image."
-            }
-        }
-    }
-    
     var storage = [String: DataAsset]()
     
     // A "file name with no extension" to "file name with extension" index
@@ -113,13 +102,11 @@ struct DataAssetManager {
         return (reference: dataReference, traits: traitCollection, metadata: metadata)
     }
     
-    /**
-     Registers a collection of data and determines their trait collection.
-
-     Data objects which have a file name ending with '~dark' are associated to their light variant.
-     - Throws: Will throw `Error.invalidImageAsset(URL)` if fails to read the size of an image asset (e.g. the file is corrupt).
-     */
-    mutating func register<Datas: Collection>(data datas: Datas, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws where Datas.Element == URL {
+    
+    /// Registers a collection of data and determines their trait collection.
+    ///
+    /// Data objects which have a file name ending with '~dark' are associated to their light variant.
+    mutating func register(data datas: some Collection<URL>, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws {
         for dataURL in datas {
             let meta = try referenceMetaInformationForDataURL(dataURL, dataProvider: dataProvider, bundle: documentationBundle)
 
@@ -200,6 +187,7 @@ public struct DataAsset: Codable, Equatable {
     /// - Parameters:
     ///   - url: The location of the variant.
     ///   - traitCollection: The trait collection associated with the variant.
+    ///   - metadata: Metadata specific to this variant of the asset.
     public mutating func register(_ url: URL, with traitCollection: DataTraitCollection, metadata: Metadata = Metadata()) {
         variants[traitCollection] = url
         self.metadata[url] = metadata

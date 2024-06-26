@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,12 @@ import XCTest
 import SymbolKit
 
 extension XCTestCase {
-    public func makeSymbolGraph(moduleName: String, symbols: [SymbolGraph.Symbol] = [], relationships: [SymbolGraph.Relationship] = []) -> SymbolGraph {
+    public func makeSymbolGraph(
+        moduleName: String,
+        platform: SymbolGraph.Platform = .init(),
+        symbols: [SymbolGraph.Symbol] = [],
+        relationships: [SymbolGraph.Relationship] = []
+    ) -> SymbolGraph {
         return SymbolGraph(
             metadata: SymbolGraph.Metadata(
                 formatVersion: SymbolGraph.SemanticVersion(major: 0, minor: 6, patch: 0),
@@ -22,14 +27,14 @@ extension XCTestCase {
             ),
             module: SymbolGraph.Module(
                 name: moduleName,
-                platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
+                platform: platform
             ),
             symbols: symbols,
             relationships: relationships
         )
     }
     
-    public func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "") -> String {
+    public func makeSymbolGraphString(moduleName: String, symbols: String = "", relationships: String = "", platform: String = "") -> String {
         return """
         {
           "metadata": {
@@ -42,7 +47,7 @@ extension XCTestCase {
           },
           "module": {
               "name": "\(moduleName)",
-              "platform": { }
+              "platform": { \(platform) }
           },
           "relationships" : [
             \(relationships)

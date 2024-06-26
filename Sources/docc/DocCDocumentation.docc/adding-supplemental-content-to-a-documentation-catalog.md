@@ -60,9 +60,21 @@ Create a sloth and assign personality traits and abilities.
 Sloths are complex creatures that require careful creation and a suitable
 habitat.
 ...
-````
+```
 
-To add an article to your documentation catalog, use a text editor and create a file with an appropriate title and add a `.md` extension.
+To add an article to your documentation catalog, use a text editor and create a
+file with an appropriate title and add an `.md` extension.
+
+> Important:
+> DocC uses the article's lowercased file name, with consecutive
+> sequences of whitespace and punctuation replaced with a hyphen (`-`), as a
+> path component in the URL for that page.
+>
+> If two or more articles have the same file name, DocC will raise a warning
+> and skip building documentation for all but one of those articles.
+>
+> DocC doesn't display the article file name in content. Instead, it uses the
+> title from the level 1 header in places where the article is referenced.
 
 After the Overview section, additional sections and subsections use a double
 hash (##) for a level 2 header, and a triple hash (###) for a level 3 header.
@@ -82,62 +94,51 @@ about organizing your project's documentation, see
  
 ### Add Extension Files to Append to or Override Source Documentation Comments
 
-Although writing documentation comments in source files has many benefits, in some
-circumstances it makes more sense to separate the content from the source
-files, such as:
+Although writing documentation comments in source files has many benefits, in some circumstances it makes more sense to separate content from the source files, such as:
 
 * When you include thorough code listings or numerous images that increase the
   size of your documentation and make source files difficult to manage
 * When your source documentation comments focus on the implementation of your
   code, and aren't appropriate for external documentation
 
-In cases like these, DocC supports supplementing or completely replacing source
-documentation comments with content in extension files. To add an extension file to your
-documentation catalog, create a file within the documentation catalog, then modify the first line of the file to identify the symbol that the file relates to.
+To add an extension file to your documentation catalog, create a file within the
+documentation catalog, then modify the first line of the file to identify the
+symbol that the file relates to using a symbol link in a level 1 header. For
+more information on linking to symbols, see
+<doc:linking-to-symbols-and-other-content>.
 
-> Important: The symbol path for the page title of an extension file need to start
-with the name of a top-level symbol or the name of the framework.
+DocC ignores file names of documentation extensions; you can choose any file
+name you would like as long as it uses an `.md` extension. DocC determines the
+URL path of source documentation from the symbol's name, type and parent type
+among other things.
 
-If the symbol already has source documentation comments, add a
-`DocumentationExtension` directive to specify whether the content of the
-extension file appends to or overrides the source documentation comments. Add
-the `DocumentationExtension` after the first line of the file that specifies
-the symbol, using the following format:
+> Important: If DocC can't resolve the symbol link in the level 1 header of the
+> extension file, it will raise a warning about the link and skip the rest of
+> the content of that extension file.
+>
+> DocC resolves symbol links in extension file headers relative to the module.
+> To create an extension file for a nested type or member symbol, start the
+> symbol link with the name of the top-level symbol that contains the nested
+> type or member symbol. You can optionally prefix the symbol link with the
+> name of the module, but DocC does not require this prefix.
 
-````markdown
-@Metadata {
-    @DocumentationExtension(mergeBehavior: [append or override])
-}
-````
-
-The `mergeBehavior` parameter determines whether DocC adds the extension file's
-content to the bottom of the source documentation comments, or replaces
-the source documentation comments entirely.
-
-To add the extension file's content to source documentation comments, use
-`append` for the `mergeBehavior`. For example, to add a section
-about the sleeping habits of sloths to the `Sloth` type, the extension file
-contains the following:
+By default, the extension file's content adds to the symbol's existing source documentation comment. 
+You can leave key information in the documentation comment---where it's available to people reading the source code---and use the extension file for longer documentation, code examples, images, and for organizing you documentation hierarchy. 
+For example, to add a section about the sleeping habits of sloths to the `Sloth` type, the extension file contains the following:
 
 ```markdown
-# ``SlothCreator/Sloth``
-
-@Metadata {
-    @DocumentationExtension(mergeBehavior: append)
-}
+# ``Sloth``
 
 ## Sleeping Habits
 
 Sloths sleep in trees by curling into a ball and hanging by their claws.
-````
+```
 
-Alternatively, to completely replace the source documentation comments, use
-`override`. In this case, you add content after the directive that DocC uses
-when generating documentation. For example, to replace the source documentation
-comments of the `Sloth` type in SlothCreator, the extension file contains the following:
+If the symbol's existing source documentation focuses on implementation and isn't appropriate for external documentation, you can completely replace the documentation comment's content with the extension file's content by adding a ``DocumentationExtension`` directive. 
+For example, to replace the source documentation comments of the `Sloth` type in SlothCreator, the extension file contains the following:
 
 ```markdown
-# ``SlothCreator/Sloth``
+# ``Sloth``
 
 @Metadata {
     @DocumentationExtension(mergeBehavior: override)
@@ -148,9 +149,9 @@ This overrides the in-source summary.
 ## Overview
 
 This content overrides in-source content.
-````
+```
 
 For more information on `Metadata` and other directives, see
 <doc:Metadata>.
 
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

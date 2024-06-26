@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,6 +9,7 @@
 */
 
 import XCTest
+import SymbolKit
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
 
@@ -217,7 +218,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
             XCTAssertEqual(summary.taskGroups, [
                 .init(
-                    title: "Task Group Excercising Symbol Links",
+                    title: "Task Group Exercising Symbol Links",
                     identifiers: [
                         // MyClass is curated 3 times using different syntax.
                         summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
@@ -418,19 +419,19 @@ class ExternalLinkableTests: XCTestCase {
             }
             
             // TODO: DataAsset doesn't round-trip encode/decode
-            summary.references = summary.references?.compactMap {
-                guard var imageRef = $0 as? ImageReference else { return nil }
+            summary.references = summary.references?.compactMap { (original: RenderReference) -> RenderReference? in
+                guard var imageRef = original as? ImageReference else { return nil }
                 imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
-                    return imageRef.destinationURL(for: variant.lastPathComponent)
+                    return imageRef.destinationURL(for: variant.lastPathComponent, prefixComponent: bundle.identifier)
                 }
                 imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
-                    return (imageRef.destinationURL(for: key.lastPathComponent), value)
+                    return (imageRef.destinationURL(for: key.lastPathComponent, prefixComponent: bundle.identifier), value)
                 })
                 return imageRef as RenderReference
             }
             
             
-            let encoded = try JSONEncoder().encode(summary)
+            let encoded = try RenderJSONEncoder.makeEncoder(assetPrefixComponent: bundle.identifier).encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
             XCTAssertEqual(decoded, summary)
         }
@@ -461,7 +462,7 @@ class ExternalLinkableTests: XCTestCase {
                     ]
                 ),
             ])
-            XCTAssertEqual(summary.availableLanguages.sorted(by: \.id), [.objectiveC, .swift])
+            XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
             
@@ -522,7 +523,7 @@ class ExternalLinkableTests: XCTestCase {
                 """
             )
             
-            XCTAssertEqual(summary.availableLanguages.sorted(by: \.id), [.objectiveC, .swift])
+            XCTAssertEqual(summary.availableLanguages.sorted(), [.swift, .objectiveC])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar(cm)myStringFunction:error:")
             XCTAssertEqual(summary.declarationFragments, [
@@ -650,5 +651,118 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertNil(decoded.references)
         
         XCTAssert(decoded.variants.isEmpty)
+    }
+
+    /// Ensure that the task group link summary for overload group pages doesn't overwrite any manual curation.
+    func testOverloadSymbolsWithManualCuration() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolGraph = SymbolGraph.init(
+            metadata: .init(formatVersion: .init(string: "1.0.0")!, generator: "unit-test"),
+            module: .init(name: "MyModule", platform: .init()),
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:MyClass", interfaceLanguage: "swift"),
+                    names: .init(title: "MyClass", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyClass"],
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                    mixins: [:]
+                ),
+                .init(
+                    identifier: .init(precise: "s:MyClass:myFunc-1", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyClass", "myFunc()"],
+                    docComment: .init([
+                        .init(
+                            text: """
+                            A wonderful overloaded function.
+
+                            ## Topics
+
+                            ### Other Cool Symbols
+
+                            - ``MyStruct``
+                            """,
+                            range: nil)
+                    ]),
+                    accessLevel: .public,
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]
+                ),
+                .init(
+                    identifier: .init(precise: "s:MyClass:myFunc-2", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyClass", "myFunc()"],
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]
+                ),
+                .init(
+                    identifier: .init(precise: "s:MyStruct", interfaceLanguage: "swift"),
+                    names: .init(title: "MyStruct", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyStruct"],
+                    docComment: nil,
+                    accessLevel: .public,
+                    kind: .init(parsedIdentifier: .struct, displayName: "Structure"),
+                    mixins: [:]
+                ),
+            ],
+            relationships: [
+                .init(
+                    source: "s:MyClass:myFunc-1",
+                    target: "s:MyClass",
+                    kind: .memberOf,
+                    targetFallback: nil
+                ),
+                .init(
+                    source: "s:MyClass:myFunc-2",
+                    target: "s:MyClass",
+                    kind: .memberOf,
+                    targetFallback: nil
+                ),
+            ]
+        )
+
+        let bundleFolderHierarchy = Folder(name: "unit-test.docc", content: [
+            JSONFile(name: "MyModule.symbols.json", content: symbolGraph),
+            InfoPlist(displayName: "MyModule", identifier: "com.example.mymodule")
+        ])
+        let workspace = DocumentationWorkspace()
+        let context = try! DocumentationContext(dataProvider: workspace)
+
+        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
+
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        try workspace.registerProvider(dataProvider)
+
+        let bundle = context.bundle(identifier: "com.example.mymodule")!
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyModule/MyClass/myFunc()-9sdsh", sourceLanguage: .swift))
+        let renderNode = try converter.convert(node, at: nil)
+
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = summaries[0]
+
+        let taskGroups = try XCTUnwrap(pageSummary.taskGroups)
+
+        guard taskGroups.count == 2 else {
+            XCTFail("Expected 2 task groups, found \(taskGroups.count): \(taskGroups.map(\.title))")
+            return
+        }
+
+        XCTAssertEqual(taskGroups[0].title, "Other Cool Symbols")
+        XCTAssertEqual(taskGroups[0].identifiers, [
+            "doc://com.example.mymodule/documentation/MyModule/MyStruct"
+        ])
+
+        XCTAssertEqual(taskGroups[1].title, "Overloads")
+        XCTAssertEqual(Set(taskGroups[1].identifiers), [
+            "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7pr",
+            "doc://com.example.mymodule/documentation/MyModule/MyClass/myFunc()-9a7po",
+        ])
     }
 }

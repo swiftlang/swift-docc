@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -37,16 +37,6 @@ public final class PreviewAction: Action, RecreatingContext {
     /// A test configuration allowing running multiple previews for concurrent testing.
     static var allowConcurrentPreviews = false
 
-    enum Error: DescribedError {
-        case technologyNotFound, cannotConvert
-        var errorDescription: String {
-            switch self {
-                case .technologyNotFound: return "A technology page not found in context."
-                case .cannotConvert: return "Unable to run documentation conversion."
-            }
-        }
-    }
-
     private let context: DocumentationContext
     private let workspace: DocumentationWorkspace
     private let printHTMLTemplatePath: Bool
@@ -76,7 +66,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///
     /// - Parameters:
     ///   - port: The port number used by the preview server.
-    ///   - convertAction: The action used to convert the documentation bundle before preview.
+    ///   - createConvertAction: A closure that returns the action used to convert the documentation before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
     ///   - workspace: The documentation workspace used by the action's documentation context.
     ///   - context: The documentation context for the action.

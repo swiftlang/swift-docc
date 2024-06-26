@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 import XCTest
-@testable import SwiftDocC
+@_spi(ExternalLinks) @testable import SwiftDocC
 import Markdown
 
 class ExternalTopicsGraphHashTests: XCTestCase {
@@ -18,24 +18,28 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     let externalSymbolResolver = TestSymbolResolver()
     
     /// A resolver returning mock symbols.
-    class TestSymbolResolver: ExternalSymbolResolver {
-        func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
-            return DocumentationNode(reference: .init(bundleIdentifier: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift), kind: .class, sourceLanguage: .swift, name: DocumentationNode.Name.conceptual(title: preciseIdentifier), markup: Paragraph([Text("Docs")]), semantic: nil)
-        }
-        
-        func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL? {
-            return URL(string: "https://host\(reference.path)")!
-        }
-        
-        func preciseIdentifier(forExternalSymbolReference reference: TopicReference) -> String? {
-            return nil
+    class TestSymbolResolver: GlobalExternalSymbolResolver {
+        func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
+            let reference = ResolvedTopicReference(bundleIdentifier: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
+            let entity = LinkResolver.ExternalEntity(
+                topicRenderReference: TopicRenderReference(
+                    identifier: .init(preciseIdentifier),
+                    title: preciseIdentifier,
+                    abstract: [],
+                    url: "/" + preciseIdentifier,
+                    kind: .symbol,
+                    estimatedTime: nil
+                ),
+                renderReferenceDependencies: .init(),
+                sourceLanguages: [.swift]
+            )
+            return (reference, entity)
         }
     }
     
     func testNoMetricAddedIfNoExternalTopicsAreResolved() throws {
         // Load bundle without using external resolvers
         let (_, context) = try testBundleAndContext(named: "TestBundle")
-        XCTAssertTrue(context.externallyResolvedSymbols.isEmpty)
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
         // Try adding external topics metrics
@@ -75,7 +79,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             return testBenchmark.metrics[0].result
         }
         .compactMap { value -> String? in
-            guard let value = value,
+            guard let value,
                 case MetricValue.checksum(let hash) = value else { return nil }
             return hash
         }
@@ -105,7 +109,6 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             
             // Verify that links and symbols were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
-            XCTAssertFalse(context.externallyResolvedSymbols.isEmpty)
             
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
@@ -115,7 +118,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             return testBenchmark.metrics[0].result
         }
         .compactMap { value -> String? in
-            guard let value = value,
+            guard let value,
                 case MetricValue.checksum(let hash) = value else { return nil }
             return hash
         }

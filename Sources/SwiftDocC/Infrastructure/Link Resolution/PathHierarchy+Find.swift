@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,14 +18,7 @@ extension PathHierarchy {
     /// - Returns: Returns the unique identifier for the found match or raises an error if no match can be found.
     /// - Throws: Raises a ``PathHierarchy/Error`` if no match can be found.
     func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws -> ResolvedIdentifier {
-        let node = try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols)
-        if node.identifier == nil {
-            throw Error.unfindableMatch(node)
-        }
-        if onlyFindSymbols, node.symbol == nil {
-            throw Error.nonSymbolMatchForSymbolLink(path: rawPath[...])
-        }
-        return node.identifier
+        return try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols).identifier
     }
     
     private func findNode(path rawPath: String, parentID: ResolvedIdentifier?, onlyFindSymbols: Bool) throws -> Node {
@@ -115,7 +108,7 @@ extension PathHierarchy {
                     }
                 }
             }
-            let topLevelNames = Set(modules.map(\.name) + [articlesContainer.name, tutorialContainer.name])
+            let topLevelNames = Set(modules.map(\.name) + (onlyFindSymbols ? [] : [articlesContainer.name, tutorialContainer.name]))
             
             if isAbsolute, FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
                 throw Error.moduleNotFound(
@@ -140,7 +133,7 @@ extension PathHierarchy {
                     return try searchForNodeInModules()
                 } catch {
                     // If the node couldn't be found in the modules, search the non-matching parent to achieve a more specific error message
-                    if let parentID = parentID {
+                    if let parentID {
                         return try searchForNode(descendingFrom: lookup[parentID]!, pathComponents: path, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPath)
                     }
                     throw error
@@ -179,9 +172,33 @@ extension PathHierarchy {
             }
         }
         
-        if !isAbsolute, let parentID = parentID {
-            // If this is a relative link with a known starting point, search from that node up the hierarchy.
-            return try searchForNodeUpTheHierarchy(from: lookup[parentID]!, path: remaining)
+        if !isAbsolute, let parentID {
+            // If this is a relative link with a known starting point, search from that node (or its language counterpoint) up the hierarchy.
+            var startingPoint = lookup[parentID]!
+            
+            // If the known starting point has multiple language representations, check which language representation to search from.
+            if let firstComponent = remaining.first, let counterpoint = startingPoint.counterpart {
+                switch (startingPoint.anyChildMatches(firstComponent), counterpoint.anyChildMatches(firstComponent)) {
+                // If only one of the language representations match the first path components, use that as the starting point
+                case (true, false):
+                    break
+                case (false, true):
+                    startingPoint = counterpoint
+                    
+                // Otherwise, there isn't a clear starting point. Pick one based on the languages to get stable behavior across builds.
+                case _ where startingPoint.languages.contains(.swift):
+                    break
+                case _ where counterpoint.languages.contains(.swift):
+                    startingPoint = counterpoint
+                default:
+                    // Only symbols have counterpoints which means that each node should always have at least one language
+                    if counterpoint.languages.map(\.id).min()! < startingPoint.languages.map(\.id).min()! {
+                        startingPoint = counterpoint
+                    }
+                }
+            }
+            
+            return try searchForNodeUpTheHierarchy(from: startingPoint, path: remaining)
         }
         return try searchForNodeInModules()
     }
@@ -192,98 +209,121 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        var node = startingPoint
-        var remaining = pathComponents[...]
+        // All code paths through this function wants to perform extra verification on the return value before returning it to the caller.
+        // To accomplish that, the core implementation happens in `_innerImplementation`, which is called once, right below its definition.
         
-        // Third, search for the match relative to the start node.
-        if remaining.isEmpty {
-            // If all path components were consumed, then the start of the search is the match.
-            return node
-        }
-        
-        // Search for the remaining components from the node
-        while true {
-            let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
+        func _innerImplementation(
+            descendingFrom startingPoint: Node,
+            pathComponents: ArraySlice<PathComponent>,
+            onlyFindSymbols: Bool,
+            rawPathForError: String
+        ) throws -> Node {
+            var node = startingPoint
+            var remaining = pathComponents[...]
             
-            do {
-                guard let child = try children.find(pathComponent.kind, pathComponent.hash) else {
-                    // The search has ended with a node that doesn't have a child matching the next path component.
-                    throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
-                }
-                node = child
-                remaining = remaining.dropFirst()
-                if remaining.isEmpty {
-                    // If all path components are consumed, then the match is found.
-                    return child
-                }
-            } catch DisambiguationContainer.Error.lookupCollision(let collisions) {
-                func handleWrappedCollision() throws -> Node {
-                    try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
-                }
+            // Search for the match relative to the start node.
+            if remaining.isEmpty {
+                // If all path components were consumed, then the start of the search is the match.
+                return node
+            }
+            
+            // Search for the remaining components from the node
+            while true {
+                let (children, pathComponent) = try findChildContainer(node: &node, remaining: remaining, rawPathForError: rawPathForError)
                 
-                // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
-                
-                guard let nextPathComponent = remaining.dropFirst().first else {
-                    // This was the last path component so there's nothing to look ahead.
-                    //
-                    // It's possible for a symbol that exist on multiple languages to collide with itself.
-                    // Check if the collision can be resolved by finding a unique symbol or an otherwise preferred match.
-                    var uniqueCollisions: [String: Node] = [:]
-                    for (node, _) in collisions {
-                        guard let symbol = node.symbol else {
-                            // Non-symbol collisions should have already been resolved
-                            return try handleWrappedCollision()
-                        }
-                        
-                        let id = symbol.identifier.precise
-                        if symbol.identifier.interfaceLanguage == "swift" || !uniqueCollisions.keys.contains(id) {
-                            uniqueCollisions[id] = node
-                        }
-                        
-                        guard uniqueCollisions.count < 2 else {
-                            // Encountered more than one unique symbol
-                            return try handleWrappedCollision()
-                        }
+                do {
+                    guard let child = try children.find(pathComponent.disambiguation) else {
+                        // The search has ended with a node that doesn't have a child matching the next path component.
+                        throw makePartialResultError(node: node, remaining: remaining, rawPathForError: rawPathForError)
                     }
-                    // A wrapped error would have been raised while iterating over the collection.
-                    return uniqueCollisions.first!.value
-                }
-                
-                // Look ahead one path component to narrow down the list of collisions. 
-                // For each collision where the next path component can be found unambiguously, return that matching node one level down.
-                let possibleMatchesOneLevelDown = collisions.compactMap {
-                    return try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.kind, nextPathComponent.hash)
-                }
-                let onlyPossibleMatch: Node?
-                
-                if possibleMatchesOneLevelDown.count == 1 {
-                    // Only one of the collisions found a match for the next path component
-                    onlyPossibleMatch = possibleMatchesOneLevelDown.first!
-                } else if !possibleMatchesOneLevelDown.isEmpty, possibleMatchesOneLevelDown.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatchesOneLevelDown.first!.symbol?.identifier.precise }) {
-                    // It's also possible that different language representations of the same symbols appear as different collisions.
-                    // If _all_ collisions that can find the next path component are the same symbol, then we prefer the Swift version of that symbol.
-                    onlyPossibleMatch = possibleMatchesOneLevelDown.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatchesOneLevelDown.first!
-                } else {
-                    onlyPossibleMatch = nil
-                }
-                
-                if let onlyPossibleMatch = onlyPossibleMatch {
-                    // If we found only a single match one level down then we've processed both this path component and the next.
-                    remaining = remaining.dropFirst(2)
+                    node = child
+                    remaining = remaining.dropFirst()
                     if remaining.isEmpty {
-                        // If that was the end of the path we can simply return the result.
-                        return onlyPossibleMatch
-                    } else {
-                        // Otherwise we continue looping over the remaining path components.
-                        node = onlyPossibleMatch
-                        continue
+                        // If all path components are consumed, then the match is found.
+                        return child
                     }
+                } catch DisambiguationContainer.Error.lookupCollision(let collisions) {
+                    func handleWrappedCollision() throws -> Node {
+                        let match = try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+                        return match
+                    }
+                    
+                    // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
+                    
+                    guard let nextPathComponent = remaining.dropFirst().first else {
+                        // This was the last path component so there's nothing to look ahead.
+                        //
+                        // It's possible for a symbol that exist on multiple languages to collide with itself.
+                        // Check if the collision can be resolved by finding a unique symbol or an otherwise preferred match.
+                        var uniqueCollisions: [String: Node] = [:]
+                        for (node, _) in collisions {
+                            guard let symbol = node.symbol else {
+                                // Non-symbol collisions should have already been resolved
+                                return try handleWrappedCollision()
+                            }
+                            
+                            let id = symbol.identifier.precise
+                            if symbol.identifier.interfaceLanguage == "swift" || !uniqueCollisions.keys.contains(id) {
+                                uniqueCollisions[id] = node
+                            }
+                            
+                            guard uniqueCollisions.count < 2 else {
+                                // Encountered more than one unique symbol
+                                return try handleWrappedCollision()
+                            }
+                        }
+                        // A wrapped error would have been raised while iterating over the collection.
+                        return uniqueCollisions.first!.value
+                    }
+                    
+                    // Look ahead one path component to narrow down the list of collisions.
+                    // For each collision where the next path component can be found unambiguously, return that matching node one level down.
+                    let possibleMatchesOneLevelDown = collisions.compactMap {
+                        try? $0.node.children[String(nextPathComponent.name)]?.find(nextPathComponent.disambiguation)
+                    }
+                    let onlyPossibleMatch: Node?
+                    
+                    if possibleMatchesOneLevelDown.count == 1 {
+                        // Only one of the collisions found a match for the next path component
+                        onlyPossibleMatch = possibleMatchesOneLevelDown.first!
+                    } else if !possibleMatchesOneLevelDown.isEmpty, possibleMatchesOneLevelDown.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatchesOneLevelDown.first!.symbol?.identifier.precise }) {
+                        // It's also possible that different language representations of the same symbols appear as different collisions.
+                        // If _all_ collisions that can find the next path component are the same symbol, then we prefer the Swift version of that symbol.
+                        onlyPossibleMatch = possibleMatchesOneLevelDown.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatchesOneLevelDown.first!
+                    } else {
+                        onlyPossibleMatch = nil
+                    }
+                    
+                    if let onlyPossibleMatch {
+                        // If we found only a single match one level down then we've processed both this path component and the next.
+                        remaining = remaining.dropFirst(2)
+                        if remaining.isEmpty {
+                            // If that was the end of the path we can simply return the result.
+                            return onlyPossibleMatch
+                        } else {
+                            // Otherwise we continue looping over the remaining path components.
+                            node = onlyPossibleMatch
+                            continue
+                        }
+                    }
+                    
+                    // Couldn't resolve the collision by look ahead.
+                    return try handleWrappedCollision()
                 }
-                
-                // Couldn't resolve the collision by look ahead.
-                return try handleCollision(node: node, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
             }
         }
+        
+        // Run the core implementation, defined above.
+        let node = try _innerImplementation(descendingFrom: startingPoint, pathComponents: pathComponents, onlyFindSymbols: onlyFindSymbols, rawPathForError: rawPathForError)
+        
+        // Perform extra validation on the return value before returning it to the caller.
+        if node.identifier == nil {
+            throw Error.unfindableMatch(node)
+        }
+        if onlyFindSymbols, node.symbol == nil {
+            throw Error.nonSymbolMatchForSymbolLink(path: rawPathForError)
+        }
+        return node
     }
                         
     private func handleCollision(
@@ -293,7 +333,7 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        if let favoredMatch = collisions.singleMatch({ $0.node.isDisfavoredInCollision == false }) {
+        if let favoredMatch = collisions.singleMatch({ $0.node.specialBehaviors.contains(.disfavorInLinkCollision) == false }) {
             return favoredMatch.node
         }
         // If a module has the same name as the article root (which is named after the bundle display name) then its possible
@@ -331,29 +371,52 @@ extension PathHierarchy {
         remaining: ArraySlice<PathComponent>,
         rawPathForError: String
     ) -> Error {
-        if let disambiguationTree = node.children[String(remaining.first!.name)] {
-            return Error.unknownDisambiguation(
+        guard let disambiguationTree = node.children[String(remaining.first!.name)] else {
+            return Error.unknownName(
                 partialResult: (
                     node,
                     pathForError(of: rawPathForError, droppingLast: remaining.count)
                 ),
                 remaining: Array(remaining),
-                candidates: disambiguationTree.disambiguatedValues().map {
-                    (node: $0.value, disambiguation: String($0.disambiguation.makeSuffix().dropFirst()))
-                }
+                availableChildren: Set(node.children.keys)
             )
         }
-        
-        return Error.unknownName(
+
+        // Use a empty disambiguation suffix for the preferred symbol, if there
+        // is one, which will trigger the warning to suggest removing the
+        // suffix entirely.
+        let candidates = disambiguationTree.disambiguatedValues()
+        let favoredSuffix = favoredSuffix(from: candidates)
+        let suffixes = candidates.map { $0.disambiguation.makeSuffix() }
+        let candidatesAndSuffixes = zip(candidates, suffixes).map { (candidate, suffix) in
+            if suffix == favoredSuffix {
+                return (node: candidate.value, disambiguation: "")
+            } else {
+                return (node: candidate.value, disambiguation: suffix)
+            }
+        }
+        return Error.unknownDisambiguation(
             partialResult: (
                 node,
                 pathForError(of: rawPathForError, droppingLast: remaining.count)
             ),
             remaining: Array(remaining),
-            availableChildren: Set(node.children.keys)
+            candidates: candidatesAndSuffixes
         )
     }
-    
+
+    /// Check if exactly one of the given candidate symbols is preferred, because it is not disfavored
+    /// for link resolution and all the other symbols are.
+    /// - Parameters:
+    ///   - from: An array of candidate node and disambiguation tuples.
+    /// - Returns: An optional string set to the disambiguation suffix string, without the hyphen separator e.g. "abc123",
+    ///            or nil if there is no preferred symbol.
+    private func favoredSuffix(from candidates: [(value: PathHierarchy.Node, disambiguation: PathHierarchy.DisambiguationContainer.Disambiguation)]) -> String? {
+        return candidates.singleMatch({
+            !$0.value.specialBehaviors.contains(PathHierarchy.Node.SpecialBehaviors.disfavorInLinkCollision)
+        })?.disambiguation.makeSuffix()
+    }
+
     private func pathForError(
         of rawPath: String,
         droppingLast trailingComponentsToDrop: Int
@@ -382,8 +445,7 @@ extension PathHierarchy {
         if let match = node.children[pathComponent.full] {
             // The path component parsing may treat dash separated words as disambiguation information.
             // If the parsed name didn't match, also try the original.
-            pathComponent.kind = nil
-            pathComponent.hash = nil
+            pathComponent.disambiguation = nil
             return (match, pathComponent)
         } else if let match = node.children[String(pathComponent.name)] {
             return (match, pathComponent)
@@ -404,48 +466,40 @@ extension PathHierarchy.DisambiguationContainer {
         case lookupCollision([(node: PathHierarchy.Node, disambiguation: String)])
     }
     
-    fileprivate func find(_ kind: Substring?, _ hash: Substring?) throws -> PathHierarchy.Node? {
-        try find(kind.map(String.init), hash.map(String.init))
-    }
     /// Attempts to find a value in the disambiguation tree based on partial disambiguation information.
     ///
     /// There are 3 possible results:
     ///  - No match is found; indicated by a `nil` return value.
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
-    func find(_ kind: String?, _ hash: String?) throws -> PathHierarchy.Node? {
-        if let kind = kind {
-            // Need to match the provided kind
-            guard let subtree = storage[kind] else { return nil }
-            if let hash = hash {
-                return subtree[hash]
-            } else if subtree.count == 1 {
-                return subtree.values.first
-            } else {
-                // Subtree contains more than one match.
-                throw Error.lookupCollision(subtree.map { ($0.value, $0.key) })
+    func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
+        if storage.count <= 1, disambiguation == nil {
+            return storage.first?.node
+        }
+        
+        switch disambiguation {
+        case .kindAndHash(let kind, let hash):
+            switch (kind, hash) {
+            case (let kind?, let hash?):
+                return storage.first(where: { $0.kind == kind && $0.hash == hash })?.node
+            case (let kind?, nil):
+                let matches = storage.filter({ $0.kind == kind })
+                guard matches.count <= 1 else {
+                    // Suggest not only hash disambiguation, but also type signature disambiguation.
+                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.value()) })
+                }
+                return matches.first?.node
+            case (nil, let hash?):
+                let matches = storage.filter({ $0.hash == hash })
+                guard matches.count <= 1 else {
+                    throw Error.lookupCollision(matches.map { ($0.node, $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
+                }
+                return matches.first?.node
+            case (nil, nil):
+                break
             }
-        } else if storage.count == 1, let subtree = storage.values.first {
-            // Tree only contains one kind subtree
-            if let hash = hash {
-                return subtree[hash]
-            } else if subtree.count == 1 {
-                return subtree.values.first
-            } else {
-                // Subtree contains more than one match.
-                throw Error.lookupCollision(subtree.map { ($0.value, $0.key) })
-            }
-        } else if let hash = hash {
-            // Need to match the provided hash
-            let kinds = storage.filter { $0.value.keys.contains(hash) }
-            if kinds.isEmpty {
-                return nil
-            } else if kinds.count == 1 {
-                return kinds.first!.value[hash]
-            } else {
-                // Subtree contains more than one match
-                throw Error.lookupCollision(kinds.map { ($0.value[hash]!, $0.key) })
-            }
+        case nil:
+            break
         }
         // Disambiguate by a mix of kinds and USRs
         throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.value()) })
@@ -453,6 +507,12 @@ extension PathHierarchy.DisambiguationContainer {
 }
 
 // MARK: Private helper extensions
+
+// Allow optional substrings to be compared to non-optional strings
+private func == (lhs: (some StringProtocol)?, rhs: some StringProtocol) -> Bool {
+     guard let lhs else { return false }
+     return lhs == rhs
+ }
 
 private extension Sequence {
     /// Returns the only element of the sequence that satisfies the given predicate.
@@ -480,17 +540,13 @@ private extension PathHierarchy.Node {
             return true
         }
         // Otherwise, check if the node's symbol matches the provided disambiguation
-        else if let symbol = symbol {
-            guard name == component.name else {
-                return false
+        else if let symbol, let disambiguation = component.disambiguation {
+            switch disambiguation {
+            case .kindAndHash(let kind, let hash):
+                return name == component.name
+                    && (kind == nil || kind! == symbol.kind.identifier.identifier)
+                    && (hash == nil || hash! == symbol.identifier.precise.stableHashString)
             }
-            if let kind = component.kind, kind != symbol.kind.identifier.identifier {
-                return false
-            }
-            if let hash = component.hash, hash != symbol.identifier.precise.stableHashString {
-                return false
-            }
-            return true
         }
         
         return false

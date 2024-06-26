@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Render Node API",
-        "version": "0.3.0",
+        "version": "0.4.2",
         "title": "Render Node API"
     },
     "paths": { },
@@ -438,6 +438,9 @@
                         "$ref": "#/components/schemas/Video"
                     },
                     {
+                        "$ref": "#/components/schemas/ThematicBreak"
+                    },
+                    {
                         "$ref": "#/components/schemas/Aside"
                     },
                     {
@@ -692,6 +695,20 @@
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "ThematicBreak": {
+                "type": "object",
+                "required": [
+                    "type"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "thematicBreak"
+                        ]
                     }
                 }
             },
@@ -2443,6 +2460,9 @@
             "DocumentationPrimaryRenderSection": {
                 "oneOf": [
                     {
+                        "$ref": "#/components/schemas/MentionsRenderSection"
+                    },
+                    {
                         "$ref": "#/components/schemas/DeclarationsRenderSection"
                     },
                     {
@@ -2476,6 +2496,21 @@
                         "$ref": "#/components/schemas/PropertiesSection"
                     }
                 ]
+            },
+            "MentionsRenderSection": {
+                "required": [
+                    "kind",
+                    "mentions"
+                ],
+                "type": "object",
+                "properties": {
+                    "mentions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
             },
             "DeclarationsRenderSection": {
                 "required": [
@@ -2517,7 +2552,46 @@
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
                         }
+                    },
+                    "otherDeclarations": {
+                        "$ref": "#/components/schemas/OtherDeclarations"
                     }
+                }
+            },
+            "OtherDeclarations": {
+                "required": [
+                    "declarations",
+                    "displayIndex"
+                ],
+                "type": "object",
+                "properties": {
+                    "declarations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/OtherDeclaration"
+                        }
+                     },
+                     "displayIndex": {
+                         "type": "integer"
+                     }
+                }
+            },
+            "OtherDeclaration": {
+                "required": [
+                    "tokens",
+                    "identifier"
+                ],
+                "type": "object",
+                "properties": {
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                     },
+                     "identifier": {
+                         "type": "string"
+                     }
                 }
             },
             "DeclarationToken": {
@@ -2630,6 +2704,9 @@
                     },
                     "generated": {
                         "type": "boolean"
+                    },
+                    "anchor": {
+                        "type": "string"
                     }
                 }
             },

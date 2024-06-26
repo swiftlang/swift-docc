@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -47,10 +47,13 @@ final class RenderIndexTests: XCTestCase {
                       }
                     ]
                   },
+                  "includedArchiveIdentifiers": [
+                    "org.swift.docc.example"
+                  ],
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                   }
                 }
                 """#
@@ -520,10 +523,13 @@ final class RenderIndexTests: XCTestCase {
                       }
                     ]
                   },
+                  "includedArchiveIdentifiers": [
+                    "org.swift.MixedLanguageFramework"
+                  ],
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                   }
                 }
                 """#
@@ -559,6 +565,29 @@ final class RenderIndexTests: XCTestCase {
         ) { renderIndex in
             // Let's check that the "deprecated" key is correctly parsed into the isDeprecated field of RenderIndex.Node.
             XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isBeta)
+        }
+    }
+
+    func testRenderIndexGenerationWithNamespaceNode() throws {
+        try testRenderIndexGenerationFromJSON("""
+        {
+            "interfaceLanguages": {
+                "occ": [
+                    {
+                        "path": "/documentation/framework/foo",
+                        "title": "Foo",
+                        "type": "namespace"
+                    }
+                ]
+            },
+            "schemaVersion": {
+                "major": 0,
+                "minor": 1,
+                "patch": 0
+            }
+        }
+        """) { renderIndex in
+            XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["occ"])[0].type == "namespace")
         }
     }
     
@@ -632,10 +661,13 @@ final class RenderIndexTests: XCTestCase {
                         }
                     ]
                 },
+                "includedArchiveIdentifiers": [
+                  "com.test.example"
+                ],
                 "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 1
+                    "patch": 2
                 }
             }
             """#))
@@ -672,7 +704,7 @@ final class RenderIndexTests: XCTestCase {
                       "identifier" : "plus.svg",
                       "variants" : [
                         {
-                          "url" : "\/images\/plus.svg",
+                          "url" : "\/images\/org.swift.docc.Book\/plus.svg",
                           "traits" : [
                             "1x",
                             "light"
@@ -682,10 +714,13 @@ final class RenderIndexTests: XCTestCase {
                       ]
                     }
                   },
+                  "includedArchiveIdentifiers": [
+                    "org.swift.docc.Book"
+                  ],
                   "schemaVersion" : {
                     "major" : 0,
                     "minor" : 1,
-                    "patch" : 1
+                    "patch" : 2
                   }
                 }
                 """#

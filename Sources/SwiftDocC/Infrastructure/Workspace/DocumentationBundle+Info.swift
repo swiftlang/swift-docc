@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -32,7 +32,10 @@ extension DocumentationBundle {
         
         /// The default kind for the various modules in the bundle.
         public var defaultModuleKind: String?
-        
+
+        /// The parsed feature flags that were set for this bundle.
+        internal var featureFlags: BundleFeatureFlags?
+
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
@@ -43,7 +46,8 @@ extension DocumentationBundle {
             case defaultCodeListingLanguage = "CDDefaultCodeListingLanguage"
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
-            
+            case featureFlags = "CDExperimentalFeatureFlags"
+
             var argumentName: String? {
                 switch self {
                 case .displayName:
@@ -56,7 +60,7 @@ extension DocumentationBundle {
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
                     return "--fallback-default-module-kind"
-                case .defaultAvailability:
+                case .defaultAvailability, .featureFlags:
                     return nil
                 }
             }
@@ -110,14 +114,14 @@ extension DocumentationBundle {
             bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil,
             derivedDisplayName: String? = nil
         ) throws {
-            if let infoPlist = infoPlist {
+            if let infoPlist {
                 let propertyListDecoder = PropertyListDecoder()
                 
-                if let options = options {
+                if let options {
                     propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
                 }
                 
-                if let derivedDisplayName = derivedDisplayName {
+                if let derivedDisplayName {
                     propertyListDecoder.userInfo[.derivedDisplayName] = derivedDisplayName
                 }
                 
@@ -176,10 +180,10 @@ extension DocumentationBundle {
                 _ expectedType: T.Type,
                 with key: CodingKeys
             ) throws -> T where T : Decodable {
-                if let bundleDiscoveryOptions = bundleDiscoveryOptions {
+                if let bundleDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
                     ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
-                } else if let values = values {
+                } else if let values {
                     return try values.decode(T.self, forKey: key)
                 } else {
                     throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
@@ -231,6 +235,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
+            self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
         }
         
         init(
@@ -239,7 +244,8 @@ extension DocumentationBundle {
             version: String? = nil,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
-            defaultAvailability: DefaultAvailability? = nil
+            defaultAvailability: DefaultAvailability? = nil,
+            featureFlags: BundleFeatureFlags? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -247,21 +253,23 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
+            self.featureFlags = featureFlags
         }
     }
 }
 
 extension BundleDiscoveryOptions {
     /// Creates new bundle discovery options with the given information.
-    ///
+    /// 
     /// The given fallback values will be used if any of the discovered bundles are missing that
     /// value in their Info.plist configuration file.
-    ///
+    /// 
     /// - Parameters:
     ///   - fallbackDisplayName: A fallback display name for the bundle.
     ///   - fallbackIdentifier: A fallback identifier for the bundle.
     ///   - fallbackVersion: A fallback version for the bundle.
     ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
+    ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
     public init(
@@ -294,6 +302,8 @@ extension BundleDiscoveryOptions {
                 value = fallbackDefaultAvailability
             case .defaultModuleKind:
                 value = fallbackDefaultModuleKind
+            case .featureFlags:
+                value = nil
             }
             
             guard let unwrappedValue = value else {

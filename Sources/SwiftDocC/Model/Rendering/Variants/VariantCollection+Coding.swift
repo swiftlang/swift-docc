@@ -40,11 +40,11 @@ extension KeyedEncodingContainer {
     }
     
     /// Encodes the given variant collection for its non-empty values.
-    mutating func encodeVariantCollectionIfNotEmpty<Value>(
-        _ variantCollection: VariantCollection<Value>,
+    mutating func encodeVariantCollectionIfNotEmpty(
+        _ variantCollection: VariantCollection<some Collection>,
         forKey key: Key,
         encoder: Encoder
-    ) throws where Value: Collection {
+    ) throws {
         try encodeIfNotEmpty(variantCollection.defaultValue, forKey: key)
         
         variantCollection.mapValues { value in
@@ -61,11 +61,11 @@ extension KeyedEncodingContainer {
     }
     
     /// Encodes the given variant collection.
-    mutating func encodeVariantCollectionIfNotEmpty<Value>(
-        _ variantCollection: VariantCollection<Value?>,
+    mutating func encodeVariantCollectionIfNotEmpty(
+        _ variantCollection: VariantCollection<(some Collection)?>,
         forKey key: Key,
         encoder: Encoder
-    ) throws where Value: Collection {
+    ) throws {
         if let defaultValue = variantCollection.defaultValue {
             try encodeIfNotEmpty(defaultValue, forKey: key)
         }
@@ -112,7 +112,9 @@ extension KeyedEncodingContainer {
                 encoder,
                 
                 // Add the index to the encoder's coding path, since the coding path refers to the array.
-                pointer: JSONPointer(from: encoder.codingPath + [key, JSON.IntegerKey(index)])
+                pointer: JSONPointer(from: encoder.codingPath + [key, JSON.IntegerKey(index)]),
+                // Since `nil` default values are filtered out above, we need to know when to `add` instead of `replace` an item.
+                isDefaultValueEncoded: variantCollection.defaultValue != nil
             )
         }
     }

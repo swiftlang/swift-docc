@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,6 +22,9 @@ extension ConvertAction {
         
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
         FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = convert.enableExperimentalLinkHierarchySerialization
+        FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
+        FeatureFlags.current.isExperimentalMentionedInEnabled = convert.enableExperimentalMentionedIn
+        FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -41,7 +44,7 @@ extension ConvertAction {
         // into a dictionary. This will throw with a descriptive error upon failure.
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.platforms)
 
-        let additionalSymbolGraphFiles = convert.additionalSymbolGraphFiles + symbolGraphFiles(
+        let additionalSymbolGraphFiles = (convert as _DeprecatedSymbolGraphFilesAccess).additionalSymbolGraphFiles + symbolGraphFiles(
             in: convert.additionalSymbolGraphDirectory
         )
         
@@ -84,6 +87,7 @@ extension ConvertAction {
             inheritDocs: convert.enableInheritedDocs,
             treatWarningsAsErrors: convert.warningsAsErrors,
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
+            experimentalModifyCatalogWithGeneratedCuration: convert.experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: convert.transformForStaticHosting,
             allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
@@ -94,9 +98,14 @@ extension ConvertAction {
 }
 
 private func symbolGraphFiles(in directory: URL?) -> [URL] {
-    guard let directory = directory else { return [] }
+    guard let directory else { return [] }
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
         .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
 }
+
+private protocol _DeprecatedSymbolGraphFilesAccess {
+    var additionalSymbolGraphFiles: [URL] { get }
+}
+extension Docc.Convert: _DeprecatedSymbolGraphFilesAccess {}
