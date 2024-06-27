@@ -413,16 +413,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func preResolveModuleNames() {
         for reference in rootModules {
             if let node = try? entity(with: reference) {
-                let displayName: String
-                switch node.name {
-                case .conceptual(let title):
-                    displayName = title
-                case .symbol(let declaration):
-                    displayName = declaration.tokens.map { $0.description }.joined()
-                }
                 // A module node should always have a symbol.
                 // Remove the fallback value and force unwrap `node.symbol` on the main branch: https://github.com/apple/swift-docc/issues/249
-                moduleNameCache[reference] = (displayName, node.symbol?.names.title ?? reference.lastPathComponent)
+                moduleNameCache[reference] = (node.name.plainText, node.symbol?.names.title ?? reference.lastPathComponent)
             }
         }
     }
@@ -2877,6 +2870,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - unresolvedCodeListingReference: The code listing reference to resolve.
     ///   - parent: The topic the code listing reference appears in.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
         return dataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
     }

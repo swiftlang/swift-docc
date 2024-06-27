@@ -11,6 +11,7 @@
 /// A code block represented as lines of lexical tokens.
 ///
 /// Use attributed code listings to represent code written in a specific programming language.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
 public struct AttributedCodeListing: Hashable {
     /// The source-code language for this code listing.
     public let sourceLanguage: SourceLanguage?
@@ -30,6 +31,7 @@ public struct AttributedCodeListing: Hashable {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
 extension AttributedCodeListing {
     /// A single line of tokenized code in an attributed code listing.
     public struct Line: Hashable {
@@ -66,6 +68,7 @@ extension AttributedCodeListing {
     }
 }
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
 extension AttributedCodeListing.Line {
     /// An element in a line of code.
     public enum Token: Hashable, CustomStringConvertible {

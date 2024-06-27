@@ -408,8 +408,8 @@ struct ReferenceResolver: SemanticVisitor {
         switch node.name {
         case .conceptual(let documentTitle):
             return documentTitle
-        case .symbol(let declaration):
-            return node.symbol?.names.title ?? declaration.tokens.map { $0.description }.joined(separator: " ")
+        case .symbol(let name):
+            return node.symbol?.names.title ?? name
         }
     }
     

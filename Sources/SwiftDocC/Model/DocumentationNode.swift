@@ -207,7 +207,7 @@ public struct DocumentationNode {
         
         self.kind = Self.kind(for: defaultSymbol)
         self.sourceLanguage = reference.sourceLanguage
-        self.name = .symbol(declaration: .init([.plain(defaultSymbol.names.title)]))
+        self.name = .symbol(name: defaultSymbol.names.title)
         self.symbol = defaultSymbol
         self.unifiedSymbol = unifiedSymbol
         self.isVirtual = moduleData.isVirtual
@@ -364,7 +364,7 @@ public struct DocumentationNode {
             case .conceptual:
                 self.name = .conceptual(title: displayName.name)
             case .symbol:
-                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+                self.name = .symbol(name: displayName.name)
             }
             semantic.titleVariants = semantic.titleVariants.map { _ in
                 displayName.name
@@ -610,10 +610,10 @@ public struct DocumentationNode {
             case .conceptual:
                 self.name = .conceptual(title: displayName.name)
             case .symbol:
-                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+                self.name = .symbol(name: displayName.name)
             }
         } else {
-            self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
+            self.name = .symbol(name: symbol.names.title)
         }
         self.symbol = symbol
         
