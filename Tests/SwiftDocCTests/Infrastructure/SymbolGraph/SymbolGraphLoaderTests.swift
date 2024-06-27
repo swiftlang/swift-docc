@@ -429,12 +429,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         var infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -473,12 +467,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -802,12 +790,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -905,12 +887,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -1045,12 +1021,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -1247,12 +1217,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -1340,12 +1304,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -1378,12 +1336,6 @@ class SymbolGraphLoaderTests: XCTestCase {
             TextFile(name: "Info.plist", utf8Content: """
             <plist version="1.0">
             <dict>
-                <key>CFBundleDisplayName</key>
-                <string>MyModule</string>
-                <key>CFBundleIdentifier</key>
-                <string>com.apple.MyModule</string>
-                <key>CFBundleVersion</key>
-                <string>0.1.0</string>
                 <key>CDAppleDefaultAvailability</key>
                 <dict>
                     <key>MyModule</key>
@@ -1596,12 +1548,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -1625,13 +1571,9 @@ class SymbolGraphLoaderTests: XCTestCase {
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
         let (_, _, context) = try loadBundle(from: targetURL)
-        guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@A'")
-            return
-        }
+        let availability = try XCTUnwrap((context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability)
         // Verify we fallback to iOS even if there's default availability for the Catalyst platform.
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "macCatalyst" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 12, minor: 0, patch: 0))
     }
     
@@ -1674,12 +1616,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlist = """
         <plist version="1.0">
         <dict>
-            <key>CFBundleDisplayName</key>
-            <string>MyModule</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
