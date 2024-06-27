@@ -155,6 +155,10 @@ extension VersionTriplet: DirectiveArgumentValueConvertible {
     static func allowedValues() -> [String]? {
         nil
     }
+    
+    static func expectedFormat() -> String? {
+        return "a semantic version number ('[0-9]+(.[0-9]+)?(.[0-9]+)?')"
+    }
 }
 
 extension Metadata.Availability {

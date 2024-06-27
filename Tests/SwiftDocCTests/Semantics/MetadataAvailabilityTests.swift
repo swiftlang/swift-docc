@@ -23,7 +23,12 @@ class MetadataAvailabilityTests: XCTestCase {
             
             XCTAssertEqual(2, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
             XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.unlabeled", "org.swift.docc.HasArgument.introduced"])
+            XCTAssertEqual(diagnosticExplanations, [
+                "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
+                "Available expects an argument for an unnamed parameter that\'s convertible to \'Platform\'"
+            ])
         }
     }
 
@@ -46,6 +51,7 @@ class MetadataAvailabilityTests: XCTestCase {
     func testInvalidIntroducedFormat() throws {
         let source = """
         @Metadata {
+            @TechnologyRoot
             @Available(Package, introduced: \"\")
             @Available(Package, introduced: \".\")
             @Available(Package, introduced: \"1.\")
@@ -58,9 +64,13 @@ class MetadataAvailabilityTests: XCTestCase {
         """
 
         try assertDirective(Metadata.self, source: source) { directive, problems in
-            XCTAssertEqual(9, problems.count)
+            XCTAssertEqual(8, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.introduced.ConversionFailed", "org.swift.docc.Metadata.NoConfiguration"])
+            let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
+            XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.introduced.ConversionFailed"])
+            XCTAssertEqual(diagnosticExplanations, [
+                "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
+            ])
         }
     }
     
