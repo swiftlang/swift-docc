@@ -1624,7 +1624,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL, codeListings: [:])
+        let (_, _, context) = try loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
@@ -1707,7 +1707,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         try symbolGraphStringCatalyst.write(to: targetURL.appendingPathComponent("MyModule-catalyst.symbols.json"), atomically: true, encoding: .utf8)
         try infoPlist.write(to: targetURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        let (_, _, context) = try loadBundle(from: targetURL, codeListings: [:])
+        let (_, _, context) = try loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@A"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@A'")
             return
