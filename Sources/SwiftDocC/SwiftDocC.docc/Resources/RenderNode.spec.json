@@ -2616,6 +2616,12 @@
                     },
                     "preciseIdentifier": {
                         "type": "string"
+                    },
+                    "highlight": {
+                        "type": "string",
+                        "enum": [
+                            "changed"
+                        ]
                     }
                 }
             },
