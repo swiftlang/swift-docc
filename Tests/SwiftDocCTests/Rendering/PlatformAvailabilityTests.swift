@@ -53,7 +53,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availability.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssertFalse(iosAvailability.isBeta ?? false)
+        XCTAssert(iosAvailability.isBeta != true)
     }
 
     /// Ensure that adding `@Available` directives in an extension file overrides the symbol's availability.
@@ -77,7 +77,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availability.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssertFalse(iosAvailability.isBeta ?? false)
+        XCTAssert(iosAvailability.isBeta != true)
     }
 
     func testMultiplePlatformAvailabilityFromArticle() throws {
@@ -208,7 +208,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availability.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssert(iosAvailability.isBeta ?? false)
+        XCTAssert(iosAvailability.isBeta == true)
     }
 
     func testMultipleBetaPlatformAvailabilityFromArticle() throws {
@@ -273,7 +273,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let iosAvailability = try XCTUnwrap(availability.first)
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
-        XCTAssert(iosAvailability.isBeta ?? false)
+        XCTAssert(iosAvailability.isBeta == true)
     }
 
     
