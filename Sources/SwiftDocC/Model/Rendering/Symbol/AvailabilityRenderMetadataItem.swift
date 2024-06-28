@@ -11,7 +11,7 @@
 import Foundation
 import SymbolKit
 
-extension VersionTriplet {
+extension SemanticVersion {
     enum Precision: Int {
         case all = 0, patch, minor
         
@@ -45,10 +45,21 @@ extension VersionTriplet {
             .joined(separator: ".")
     }
     
-    init(semanticVersion: SymbolGraph.SemanticVersion) {
+    init(_ semanticVersion: SymbolGraph.SemanticVersion) {
         self.major = semanticVersion.major
         self.minor = semanticVersion.minor
         self.patch = semanticVersion.patch
+        self.prerelease = semanticVersion.prerelease
+        self.buildMetadata = semanticVersion.buildMetadata
+    }
+    
+    /// Compares a version triplet to a semantic version.
+    /// - Parameter version: A version triplet to compare to this semantic version.
+    /// - Returns: Returns whether the given triple represents the same version as the current version.
+    func isEqualToVersionTriplet(_ version: VersionTriplet) -> Bool {
+        return major == version.major &&
+            minor == version.minor &&
+            patch == version.patch
     }
 }
 
@@ -123,10 +134,10 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         let platformName = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) })
         name = platformName?.displayName
         
-        let introducedVersion = availability.introducedVersion.flatMap { VersionTriplet(semanticVersion: $0) }
+        let introducedVersion = availability.introducedVersion.flatMap { SemanticVersion($0) }
         introduced = introducedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
-        deprecated = availability.deprecatedVersion.flatMap { VersionTriplet(semanticVersion: $0).stringRepresentation(precisionUpToNonsignificant: .minor) }
-        obsoleted = availability.obsoletedVersion.flatMap { VersionTriplet(semanticVersion: $0).stringRepresentation(precisionUpToNonsignificant: .minor) }
+        deprecated = availability.deprecatedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
+        obsoleted = availability.obsoletedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
         message = availability.message
         renamed = availability.renamed
         unconditionallyUnavailable = availability.isUnconditionallyUnavailable
@@ -144,8 +155,8 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
     }
     
-    private static func isBeta(introduced: VersionTriplet?, current: PlatformVersion?) -> Bool {
-        guard let introduced, let current, current.beta, introduced == current.version else {
+    private static func isBeta(introduced: SemanticVersion?, current: PlatformVersion?) -> Bool {
+        guard let introduced, let current, current.beta, introduced.isEqualToVersionTriplet(current.version) else {
             return false
         }
         

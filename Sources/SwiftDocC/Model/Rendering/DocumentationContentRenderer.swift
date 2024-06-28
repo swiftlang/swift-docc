@@ -230,7 +230,7 @@ public class DocumentationContentRenderer {
             }
 
             // Verify that the current platform is in beta and the version number matches the introduced platform version.
-            guard current.beta && VersionTriplet(semanticVersion: introduced) == current.version else {
+            guard current.beta && SemanticVersion(introduced).isEqualToVersionTriplet(current.version) else {
                 return false
             }
         }

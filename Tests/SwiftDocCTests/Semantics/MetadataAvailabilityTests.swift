@@ -86,7 +86,7 @@ class MetadataAvailabilityTests: XCTestCase {
         try assertDirective(Metadata.self, source: source) { directive, problems in
             let directive = try XCTUnwrap(directive)
             let platforms = directive.availability.map { $0.platform }
-            let introducedVersions = directive.availability.map { $0.introducedVersion }
+            let introducedVersions = directive.availability.map { $0.introduced }
 
             
             
@@ -97,9 +97,9 @@ class MetadataAvailabilityTests: XCTestCase {
                 .other("Package")
             ])
             XCTAssertEqual(introducedVersions, [
-                VersionTriplet(3, 5, 2),
-                VersionTriplet(3, 5, 0),
-                VersionTriplet(3, 0, 0)
+                SemanticVersion(major: 3, minor: 5, patch: 2),
+                SemanticVersion(major: 3, minor: 5, patch: 0),
+                SemanticVersion(major: 3, minor: 0, patch: 0)
             ])
 
             XCTAssertEqual(0, problems.count)

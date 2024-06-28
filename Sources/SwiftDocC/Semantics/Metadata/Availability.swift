@@ -102,7 +102,7 @@ extension Metadata {
 
         /// The platform version that this page applies to.
         @DirectiveArgumentWrapped
-        public var introduced: VersionTriplet
+        public var introduced: SemanticVersion
 
         // FIXME: `isBeta` and `isDeprecated` properties/arguments
         // cf. https://github.com/apple/swift-docc/issues/441
@@ -121,17 +121,17 @@ extension Metadata {
     }
 }
 
-extension VersionTriplet: DirectiveArgumentValueConvertible {
+extension SemanticVersion: DirectiveArgumentValueConvertible {
     static let separator = "."
     
     init?(rawDirectiveArgumentValue: String) {
-        guard !rawDirectiveArgumentValue.hasSuffix(VersionTriplet.separator),
-              !rawDirectiveArgumentValue.hasPrefix(VersionTriplet.separator) else {
+        guard !rawDirectiveArgumentValue.hasSuffix(Self.separator),
+              !rawDirectiveArgumentValue.hasPrefix(Self.separator) else {
             return nil
         }
         
         // Split the string into major, minor and patch components
-        let availabilityComponents = rawDirectiveArgumentValue.split(separator: .init(VersionTriplet.separator), maxSplits: 2)
+        let availabilityComponents = rawDirectiveArgumentValue.split(separator: .init(Self.separator), maxSplits: 2)
         guard !availabilityComponents.isEmpty else {
             return nil
         }
