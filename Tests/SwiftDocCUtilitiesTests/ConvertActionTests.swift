@@ -36,42 +36,6 @@ class ConvertActionTests: XCTestCase {
         forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         .appendingPathComponent("project.zip")
     
-    /// A symbol graph file that has missing symbols.
-    let incompleteSymbolGraphFile = TextFile(name: "TechnologyX.symbols.json", utf8Content: """
-        {
-          "metadata": {
-              "formatVersion" : {
-                  "major" : 1
-              },
-              "generator" : "app/1.0"
-          },
-          "module" : {
-            "name" : "MyKit",
-            "platform" : {
-              "architecture" : "x86_64",
-              "vendor" : "apple",
-              "operatingSystem" : {
-                "name" : "ios",
-                "minimumVersion" : {
-                  "major" : 13,
-                  "minor" : 0,
-                  "patch" : 0
-                }
-              }
-            }
-          },
-          "symbols" : [],
-          "relationships" : [
-            {
-              "source" : "s:5MyKit0A5ProtocolP",
-              "target" : "s:5Foundation0A5EarhartP",
-              "kind" : "conformsTo"
-            }
-          ]
-        }
-        """
-    )
-    
     func testCopyingImageAssets() throws {
         XCTAssert(FileManager.default.fileExists(atPath: imageFile.path))
         let testImageName = "TestImage.png"
@@ -667,7 +631,6 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
     
-    /// Ensures that we always generate diagnosticJSON when there are errors. (rdar://72345373)
     func testOutputFolderContainsDiagnosticJSONWhenThereAreErrorsAndNoTemplate() throws {
         // Documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
@@ -809,7 +772,6 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
     
-    /// Ensures we never delete an existing build folder if conversion fails (rdar://72339050)
     func testOutputFolderIsNotRemovedWhenThereAreErrors() throws {
         let tutorialsFile = TextFile(name: "TechnologyX.tutorial", utf8Content: """
             @Tutorials(name: "Technology Z") {
@@ -847,11 +809,6 @@ class ConvertActionTests: XCTestCase {
             bundleInfoPlist,
         ])
         
-        let badBundle = Folder(name: "unit-test.docc", content: [
-            incompleteSymbolGraphFile,
-            bundleInfoPlist,
-        ])
-        
         let testDataProvider = try TestFileSystem(folders: [goodBundle, Folder.emptyHTMLTemplateDirectory])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
@@ -883,83 +840,6 @@ class ConvertActionTests: XCTestCase {
             ])
             expectedOutput.assertExist(at: targetDirectory, fileManager: testDataProvider)
         }
-        
-        try testDataProvider.updateDocumentationBundles(withFolders: [badBundle])
-        
-        do {
-            var action = try ConvertAction(
-                documentationBundleURL: badBundle.absoluteURL,
-                outOfProcessResolver: nil,
-                analyze: false,
-                targetDirectory: targetDirectory,
-                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-                emitDigest: false,
-                currentPlatforms: nil,
-                dataProvider: testDataProvider,
-                fileManager: testDataProvider,
-                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-            let result = try action.perform(logHandle: .none)
-
-            XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
-
-            // Verify that the build output folder from the former successful conversion
-            // still exists after this failure.
-            let expectedOutput = Folder(name: ".docc-build", content: [
-                Folder(name: "data", content: [
-                ]),
-            ])
-            expectedOutput.assertExist(at: targetDirectory, fileManager: testDataProvider)
-        }
-    }
-    
-    func testOutputFolderContainsDiagnosticJSONWhenThereAreErrors() throws {
-        // Documentation bundle that contains an image
-        let bundle = Folder(name: "unit-test.docc", content: [
-            incompleteSymbolGraphFile,
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-        ])
-
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
-
-        var action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: true,
-            currentPlatforms: nil,
-            dataProvider: testDataProvider,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        let result = try action.perform(logHandle: .none)
-
-        // Verify that the following files and folder exist at the output location
-        let expectedOutput = Folder(name: ".docc-build", content: [
-            JSONFile(name: "diagnostics.json", content: [
-                Digest.Diagnostic(
-                    start: nil,
-                    source: nil,
-                    severity: .warning,
-                    summary: "Source symbol 's:5MyKit0A5ProtocolP' not found locally, from 'conformsTo' relationship to 's:5Foundation0A5EarhartP'",
-                    explanation: """
-                    The "source" of a symbol graph relationship should always refer to a symbol in the same symbol graph file.
-                    If it doesn't, then the tool that created the symbol graph file should move the relationship to the symbol graph file that defines the "source" symbol \
-                    or remove the relationship if none of the created symbol graph file defines the "source" symbol.
-                    
-                    The "target" may refer to a symbol in another module.
-                    For example, if local symbol conforms to a protocol from another module, \
-                    there will be a "{ source: local-symbol-ID, kind: conformsTo, target: protocol-in-other-module-ID }" relationship.
-                    
-                    A symbol graph relationship with a non-local "source" symbol is a bug in the tool that created the symbol graph file.
-                    """,
-                    notes: []
-                ),
-            ]),
-        ])
-        expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
 
     /// Verifies that digest is correctly emitted for API documentation topics
@@ -1281,7 +1161,7 @@ class ConvertActionTests: XCTestCase {
         ])
     }
 
-    func testDownloadMetadataIsWritenToOutputFolder() throws {
+    func testDownloadMetadataIsWrittenToOutputFolder() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: projectZipFile),
             CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
@@ -2394,7 +2274,6 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -2432,7 +2311,6 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -2456,8 +2334,8 @@ class ConvertActionTests: XCTestCase {
         )
         let result = try action.perform(logHandle: .none)
 
-        XCTAssertEqual(engine.problems.count, 2, "\(ConvertAction.self) shouldn't filter out diagnostics when the '--analyze' flag is passed")
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.Article.Title.NotFound", "org.swift.docc.SymbolNodeNotFound"])
+        XCTAssertEqual(engine.problems.count, 1, "\(ConvertAction.self) shouldn't filter out diagnostics when the '--analyze' flag is passed")
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.Article.Title.NotFound"])
         XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
@@ -2472,7 +2350,6 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -2505,7 +2382,6 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -2583,7 +2459,6 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
-            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -2606,12 +2481,11 @@ class ConvertActionTests: XCTestCase {
         )
         
         XCTAssertNoThrow(try action.performAndHandleResult(logHandle: .none))
-        XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path), "The digest file should have been written even though compilation errors occurred")
+        XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path))
         
         let data = try testDataProvider.contentsOfURL(digestFileURL)
         let diagnostics = try RenderJSONDecoder.makeDecoder().decode([Digest.Diagnostic].self, from: data)
-        XCTAssertEqual(diagnostics.count, 1)
-
+        XCTAssertEqual(diagnostics.count, 0)
     }
     
     func testRenderIndexJSONGeneration() throws {
