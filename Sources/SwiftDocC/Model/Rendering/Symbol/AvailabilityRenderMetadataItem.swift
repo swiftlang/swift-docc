@@ -55,10 +55,10 @@ extension VersionTriplet {
 /// Availability information of a symbol on a specific platform.
 public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     /// The name of the platform on which the symbol is available.
-    public let name: String?
+    public var name: String?
     
     /// The version of the platform SDK introducing the symbol.
-    public let introduced: String?
+    public var introduced: String?
     
     /// The version of the platform SDK deprecating the symbol.
     public var deprecated: String?
@@ -82,7 +82,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     public var unconditionallyUnavailable: Bool?
     
     /// If `true`, the symbol is introduced in a beta version of this platform.
-    public let isBeta: Bool?
+    public var isBeta: Bool?
     
     private enum CodingKeys: String, CodingKey {
         case name, introducedAt, deprecatedAt, obsoletedAt, message, renamed, deprecated, unavailable
