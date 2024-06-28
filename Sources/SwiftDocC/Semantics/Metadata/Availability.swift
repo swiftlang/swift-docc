@@ -101,15 +101,15 @@ extension Metadata {
         public var platform: Platform
 
         /// The platform version that this page applies to.
-        @DirectiveArgumentWrapped(name: .custom("introduced"))
-        public var introducedVersion: VersionTriplet
+        @DirectiveArgumentWrapped
+        public var introduced: VersionTriplet
 
         // FIXME: `isBeta` and `isDeprecated` properties/arguments
         // cf. https://github.com/apple/swift-docc/issues/441
 
         static var keyPaths: [String : AnyKeyPath] = [
             "platform"     : \Availability._platform,
-            "introducedVersion"   : \Availability._introducedVersion,
+            "introduced"   : \Availability._introduced,
         ]
 
         public let originalMarkup: Markdown.BlockDirective
@@ -158,21 +158,5 @@ extension VersionTriplet: DirectiveArgumentValueConvertible {
     
     static func expectedFormat() -> String? {
         return "a semantic version number ('[0-9]+(.[0-9]+)?(.[0-9]+)?')"
-    }
-}
-
-extension Metadata.Availability {
-    /// The platform version that this page applies to.
-    @available(*, deprecated, renamed: "introducedVersion", message: "Use 'introducedVersion' instead. This deprecated API will be removed after 6.1 is released")
-    public var introduced: String {
-        get {
-            self.introducedVersion.stringRepresentation()
-        }
-        set {
-            guard let version = VersionTriplet(rawDirectiveArgumentValue: newValue) else {
-                return
-            }
-            self.introducedVersion = version
-        }
     }
 }

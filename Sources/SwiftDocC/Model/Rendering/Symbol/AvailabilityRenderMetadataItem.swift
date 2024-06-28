@@ -140,8 +140,8 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
 
         let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
-        introduced = availability.introducedVersion.stringRepresentation(precisionUpToNonsignificant: .minor)
-        isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introducedVersion, current: current)
+        introduced = availability.introduced.stringRepresentation(precisionUpToNonsignificant: .minor)
+        isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
     }
     
     private static func isBeta(introduced: VersionTriplet?, current: PlatformVersion?) -> Bool {
