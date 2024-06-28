@@ -74,35 +74,42 @@ class MetadataAvailabilityTests: XCTestCase {
         }
     }
     
-    func testValidIntroducedFormat() throws {
+    func testValidSemanticVersionFormat() throws {
         let source = """
         @Metadata {
-            @Available(iOS, introduced: \"3.5.2\")
-            @Available(macOS, introduced: \"3.5\")
-            @Available(Package, introduced: \"3\")
+            @Available(iOS, introduced: \"3.5.2\", deprecated: \"5.6.7\")
+            @Available(macOS, introduced: \"3.5\", deprecated: \"5.6\")
+            @Available(Package, introduced: \"3\", deprecated: \"5\")
         }
         """
 
         try assertDirective(Metadata.self, source: source) { directive, problems in
-            let directive = try XCTUnwrap(directive)
-            let platforms = directive.availability.map { $0.platform }
-            let introducedVersions = directive.availability.map { $0.introduced }
+            XCTAssertEqual(0, problems.count)
 
-            
-            
+            let directive = try XCTUnwrap(directive)
             XCTAssertEqual(3, directive.availability.count)
+
+            let platforms = directive.availability.map { $0.platform }
             XCTAssertEqual(platforms, [
                 .iOS,
                 .macOS,
                 .other("Package")
             ])
+            
+            let introducedVersions = directive.availability.map { $0.introduced }
             XCTAssertEqual(introducedVersions, [
                 SemanticVersion(major: 3, minor: 5, patch: 2),
                 SemanticVersion(major: 3, minor: 5, patch: 0),
                 SemanticVersion(major: 3, minor: 0, patch: 0)
             ])
+                        
+            let deprecatedVersions = directive.availability.map { $0.deprecated }
+            XCTAssertEqual(deprecatedVersions, [
+                SemanticVersion(major: 5, minor: 6, patch: 7),
+                SemanticVersion(major: 5, minor: 6, patch: 0),
+                SemanticVersion(major: 5, minor: 0, patch: 0)
+            ])
 
-            XCTAssertEqual(0, problems.count)
         }
     }
 
@@ -122,7 +129,7 @@ class MetadataAvailabilityTests: XCTestCase {
         checkPlatforms += [
             "Package",
             "\"My Package\"", // Also check a platform with spaces in the name
-            // FIXME: Test validArguments with the `*` platform once that's introduced (https://github.com/apple/swift-docc/issues/441)
+            // FIXME: Test validArguments with the `*` platform once that's introduced (https://github.com/apple/swift-docc/issues/969)
 //            "*",
         ]
         

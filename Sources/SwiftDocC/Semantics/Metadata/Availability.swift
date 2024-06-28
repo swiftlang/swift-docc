@@ -74,7 +74,7 @@ extension Metadata {
                     }
                 }
                 if rawValue == "*" {
-                    // Reserve the `*` platform for when `isBeta` and `isDeprecated` can be implemented
+                    // Reserve the `*` platform for when we have decided on how `*` availability should be displayed (https://github.com/apple/swift-docc/issues/969)
                     return nil
                 } else {
                     self = .other(rawValue)
@@ -106,7 +106,7 @@ extension Metadata {
 
         /// The platform version that this page was deprecated in.
         @DirectiveArgumentWrapped
-        public var deprecated: String? = nil
+        public var deprecated: SemanticVersion? = nil
 
         static var keyPaths: [String : AnyKeyPath] = [
             "platform"     : \Availability._platform,
