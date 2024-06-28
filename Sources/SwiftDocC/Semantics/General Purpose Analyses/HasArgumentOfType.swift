@@ -82,25 +82,22 @@ extension Semantic.Analyses {
             let arguments = directive.arguments(problems: &problems)
             let source = directive.range?.lowerBound.source
             let diagnosticArgumentName = argumentName.isEmpty ? "unlabeled" : argumentName
-            let diagnosticArgumentDescription: String
-            if argumentName.isEmpty {
-                diagnosticArgumentDescription = "an unnamed parameter"
+            let diagnosticArgumentDescription = if argumentName.isEmpty {
+                "an unnamed parameter"
             } else {
-                diagnosticArgumentDescription = "the \(argumentName.singleQuoted) parameter"
+                "the \(argumentName.singleQuoted) parameter"
             }
-            let diagnosticExplanation: String
-            if let expectedFormat {
-                diagnosticExplanation = """
-                    \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
-                    that's convertible to \(expectedFormat)
-                    """
+            let diagnosticExplanation = if let expectedFormat {
+                """
+                \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
+                that's convertible to \(expectedFormat)
+                """
             } else {
-                diagnosticExplanation = """
-                    \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
-                    that's convertible to \(valueTypeDiagnosticName.singleQuoted)
-                    """
+                """
+                \(Parent.directiveName) expects an argument for \(diagnosticArgumentDescription) \
+                that's convertible to \(valueTypeDiagnosticName.singleQuoted)
+                """
             }
-            
             guard let argument = arguments[argumentName] else {
                 if let severity = severityIfNotFound {
                     let diagnostic = Diagnostic(
