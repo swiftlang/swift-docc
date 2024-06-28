@@ -946,8 +946,18 @@ class ConvertActionTests: XCTestCase {
                     start: nil,
                     source: nil,
                     severity: .error,
-                    summary: "Symbol with identifier 's:5MyKit0A5ProtocolP' couldn't be found",
-                    explanation: nil,
+                    summary: "Source symbol 's:5MyKit0A5ProtocolP' not found locally, from 'conformsTo' relationship to 's:5Foundation0A5EarhartP'",
+                    explanation: """
+                    The "source" of a symbol graph relationship should always refer to a symbol in the same symbol graph file.
+                    If it doesn't, then the tool that created the symbol graph file should move the relationship to the symbol graph file that defines the "source" symbol \
+                    or remove the relationship if none of the created symbol graph file defines the "source" symbol.
+                    
+                    The "target" may refer to a symbol in another module.
+                    For example, if local symbol conforms to a protocol from another module, \
+                    there will be a "{ source: local-symbol-ID, kind: conformsTo, target: protocol-in-other-module-ID }" relationship.
+                    
+                    A symbol graph relationship with a non-local "source" symbol is a bug in the tool that created the symbol graph file.
+                    """,
                     notes: []
                 ),
             ]),

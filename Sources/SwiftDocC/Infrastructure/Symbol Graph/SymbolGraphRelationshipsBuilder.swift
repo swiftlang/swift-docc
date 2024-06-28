@@ -12,11 +12,42 @@ import SymbolKit
 
 /// A set of functions that add relationship information to a topic graph.
 struct SymbolGraphRelationshipsBuilder {
-    /// A namespace for creation of topic-graph related problems.
-    enum NodeProblem {
-        /// Returns a problem about a node with the given precise identifier not being found.
-        static func notFound(_ identifier: String) -> Problem {
-            return Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolNodeNotFound", summary: "Symbol with identifier \(identifier.singleQuoted) couldn't be found"), possibleSolutions: [])
+    /// A namespace for creation of symbol-graph-builder related problems.
+    private enum NodeProblem {
+        /// Returns a problem about a source symbol of a given relationship not being found locally.
+        static func sourceNotFound(_ relationship: SymbolGraph.Relationship) -> Problem {
+            return Problem(
+                diagnostic: Diagnostic(
+                    source: nil, severity: .error, range: nil,identifier: "org.swift.docc.SymbolNodeNotFound",
+                    summary: "Source symbol \(relationship.source.singleQuoted) not found locally, from \(relationship.kind.rawValue.singleQuoted) relationship to \(relationship.target.singleQuoted)",
+                    explanation: """
+                    The "source" of a symbol graph relationship should always refer to a symbol in the same symbol graph file.
+                    If it doesn't, then the tool that created the symbol graph file should move the relationship to the symbol graph file that defines the "source" symbol \
+                    or remove the relationship if none of the created symbol graph file defines the "source" symbol.
+                    
+                    The "target" may refer to a symbol in another module.
+                    For example, if local symbol conforms to a protocol from another module, \
+                    there will be a "{ source: local-symbol-ID, kind: conformsTo, target: protocol-in-other-module-ID }" relationship.
+                    
+                    A symbol graph relationship with a non-local "source" symbol is a bug in the tool that created the symbol graph file.
+                    """
+                ),
+                possibleSolutions: []
+            )
+        }
+        /// Returns a problem about a target symbol of an overload group not being found locally.
+        static func overloadGroupNotFound(_ relationship: SymbolGraph.Relationship) -> Problem {
+            return Problem(
+                diagnostic: Diagnostic(
+                    source: nil, severity: .error, range: nil,identifier: "org.swift.docc.SymbolNodeNotFound",
+                    summary: "Overload group \(relationship.source.singleQuoted) not found locally, from \(relationship.kind.rawValue.singleQuoted) relationship of \(relationship.source.singleQuoted)",
+                    explanation: """
+                    Both the "source" and "target" of an \(relationship.kind.rawValue.singleQuoted) symbol graph relationships with should always refer to symbols in the same symbol graph file.
+                    A \(relationship.kind.rawValue.singleQuoted) symbol graph relationship with a non-local "target" symbol is a bug in the tool that created the symbol graph file.
+                    """
+                ),
+                possibleSolutions: []
+            )
         }
         /// Returns a problem about a node with the given reference not being found.
         static func invalidReference(_ reference: String) -> Problem {
@@ -47,7 +78,7 @@ struct SymbolGraphRelationshipsBuilder {
               let implementorSymbol = implementorNode.semantic as? Symbol
         else {
             // The source node for implementation relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            engine.emit(NodeProblem.sourceNotFound(edge))
             return
         }
         
@@ -97,7 +128,7 @@ struct SymbolGraphRelationshipsBuilder {
             // Make the implementation a child of the requirement
             guard let childReference = localCache.reference(symbolID: edge.source) else {
                 // The child wasn't found, invalid reference in relationship.
-                engine.emit(SymbolGraphRelationshipsBuilder.NodeProblem.notFound(edge.source))
+                engine.emit(SymbolGraphRelationshipsBuilder.NodeProblem.sourceNotFound(edge))
                 return
             }
             
@@ -132,7 +163,7 @@ struct SymbolGraphRelationshipsBuilder {
               let conformingSymbol = conformingNode.semantic as? Symbol
         else {
             // The source node for conformance relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            engine.emit(NodeProblem.sourceNotFound(edge))
             return
         }
         
@@ -221,7 +252,7 @@ struct SymbolGraphRelationshipsBuilder {
               let childSymbol = childNode.semantic as? Symbol
         else {
             // The source node for inheritance relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            engine.emit(NodeProblem.sourceNotFound(edge))
             return
         }
         
@@ -321,7 +352,7 @@ struct SymbolGraphRelationshipsBuilder {
               let requiredSymbol = requiredNode.semantic as? Symbol
         else {
             // The source node for requirement relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            engine.emit(NodeProblem.sourceNotFound(edge))
             return
         }
         requiredSymbol.isRequired = required
@@ -438,11 +469,11 @@ struct SymbolGraphRelationshipsBuilder {
         engine: DiagnosticEngine
     ) {
         guard let overloadNode = localCache[edge.source] else {
-            engine.emit(NodeProblem.notFound(edge.source))
+            engine.emit(NodeProblem.sourceNotFound(edge))
             return
         }
         guard let overloadGroupNode = localCache[edge.target] else {
-            engine.emit(NodeProblem.notFound(edge.target))
+            engine.emit(NodeProblem.overloadGroupNotFound(edge))
             return
         }
 
