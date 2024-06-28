@@ -900,10 +900,7 @@ class ConvertActionTests: XCTestCase {
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
             let result = try action.perform(logHandle: .none)
 
-            XCTAssert(
-                result.didEncounterError,
-                "We expect errors to occur during during conversion of the bad test bundle."
-            )
+            XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
 
             // Verify that the build output folder from the former successful conversion
             // still exists after this failure.
@@ -945,7 +942,7 @@ class ConvertActionTests: XCTestCase {
                 Digest.Diagnostic(
                     start: nil,
                     source: nil,
-                    severity: .error,
+                    severity: .warning,
                     summary: "Source symbol 's:5MyKit0A5ProtocolP' not found locally, from 'conformsTo' relationship to 's:5Foundation0A5EarhartP'",
                     explanation: """
                     The "source" of a symbol graph relationship should always refer to a symbol in the same symbol graph file.
@@ -2421,8 +2418,8 @@ class ConvertActionTests: XCTestCase {
         )
         let result = try action.perform(logHandle: .none)
 
-        XCTAssertEqual(engine.problems.count, 1, "\(ConvertAction.self) didn't filter out diagnostics above the 'error' level.")
-        XCTAssert(result.didEncounterError)
+        XCTAssertEqual(engine.problems.count, 0, "\(ConvertAction.self) didn't filter out diagnostics at-or-above the 'error' level.")
+        XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
     }
 
     func testDiagnosticLevelIgnoredWhenAnalyzeIsPresent() throws {
@@ -2461,7 +2458,7 @@ class ConvertActionTests: XCTestCase {
 
         XCTAssertEqual(engine.problems.count, 2, "\(ConvertAction.self) shouldn't filter out diagnostics when the '--analyze' flag is passed")
         XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.Article.Title.NotFound", "org.swift.docc.SymbolNodeNotFound"])
-        XCTAssert(result.didEncounterError)
+        XCTAssertFalse(result.didEncounterError, "The issues with this test bundle are not severe enough to fail the build.")
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
 
@@ -2495,9 +2492,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error"
         )
-        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
-            XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
-        }
+        XCTAssertNoThrow(try action.performAndHandleResult(logHandle: .none))
     }
     
     func testWritesDiagnosticFileWhenThrowingError() throws {
@@ -2537,9 +2532,7 @@ class ConvertActionTests: XCTestCase {
         
         // TODO: Support TestFileSystem in DiagnosticFileWriter
         XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
-        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none)) { error in
-            XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
-        }
+        XCTAssertNoThrow(try action.performAndHandleResult(logHandle: .none))
         XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
     }
 
@@ -2612,7 +2605,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         
-        XCTAssertThrowsError(try action.performAndHandleResult(logHandle: .none), "The test bundle should have thrown an error about an incomplete symbol graph file")
+        XCTAssertNoThrow(try action.performAndHandleResult(logHandle: .none))
         XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path), "The digest file should have been written even though compilation errors occurred")
         
         let data = try testDataProvider.contentsOfURL(digestFileURL)

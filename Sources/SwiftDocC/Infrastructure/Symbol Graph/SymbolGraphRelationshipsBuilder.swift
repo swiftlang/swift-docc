@@ -18,7 +18,7 @@ struct SymbolGraphRelationshipsBuilder {
         static func sourceNotFound(_ relationship: SymbolGraph.Relationship) -> Problem {
             return Problem(
                 diagnostic: Diagnostic(
-                    source: nil, severity: .error, range: nil,identifier: "org.swift.docc.SymbolNodeNotFound",
+                    source: nil, severity: .warning, range: nil,identifier: "org.swift.docc.SymbolNodeNotFound",
                     summary: "Source symbol \(relationship.source.singleQuoted) not found locally, from \(relationship.kind.rawValue.singleQuoted) relationship to \(relationship.target.singleQuoted)",
                     explanation: """
                     The "source" of a symbol graph relationship should always refer to a symbol in the same symbol graph file.
