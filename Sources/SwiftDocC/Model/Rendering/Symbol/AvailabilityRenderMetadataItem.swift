@@ -144,7 +144,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introducedVersion, current: current)
     }
     
-    static func isBeta(introduced: VersionTriplet?, current: PlatformVersion?) -> Bool {
+    private static func isBeta(introduced: VersionTriplet?, current: PlatformVersion?) -> Bool {
         guard let introduced, let current, current.beta, introduced == current.version else {
             return false
         }
