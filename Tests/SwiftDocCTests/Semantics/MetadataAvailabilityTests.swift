@@ -109,8 +109,7 @@ class MetadataAvailabilityTests: XCTestCase {
     func testValidIntroducedDirective() throws {
         // Assemble all the combinations of arguments you could give
         let validArguments: [String] = [
-            // FIXME: Uncomment once `deprecated` is implemented in @Available (https://github.com/apple/swift-docc/issues/441)
-//            "deprecated: \"1.0\"",
+          "deprecated: \"1.0\"",
         ]
         // separate those that give a version so we can test the `*` platform separately
         var validArgumentsWithVersion = ["introduced: \"1.0\""]
@@ -132,20 +131,16 @@ class MetadataAvailabilityTests: XCTestCase {
                 try assertValidAvailability(source: "@Available(\(platform), \(args))")
             }
         }
-
-        // also test for giving no platform
-        for args in validArguments {
-            try assertValidAvailability(source: "@Available(\(args))")
-        }
     }
         
     /// Basic validity test for giving several directives.
     func testMultipleAvailabilityDirectives() throws {
-        // FIXME: Add a `deprecated` argument here once implemented in @Available (https://github.com/apple/swift-docc/issues/441)
         let source = """
         @Metadata {
             @Available(macOS, introduced: "11.0")
             @Available(iOS, introduced: "15.0")
+            @Available(watchOS, introduced: "7.0", deprecated: "9.0")
+            @Available("My Package", introduced: "0.1", deprecated: "1.0")
         }
         """
         try assertValidMetadata(source: source)

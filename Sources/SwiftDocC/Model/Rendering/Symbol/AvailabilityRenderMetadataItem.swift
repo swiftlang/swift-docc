@@ -152,6 +152,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
         let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
         introduced = availability.introduced.stringRepresentation(precisionUpToNonsignificant: .minor)
+        deprecated = availability.deprecated
         isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
     }
     
