@@ -34,12 +34,13 @@ extension Metadata {
     /// @Available("My Package", introduced: "1.0")
     /// ```
     ///
-    /// Only strings which are valid semantic version numbers may be passed to the second argument. Specifying an incomplete version number is allowed, as long as all components of the version are valid numbers:
+    /// Only strings which are valid semantic version numbers may be passed to the `introduced` and `deprecated` arguments. Specifying an incomplete version number is allowed, as long as all components of the version are valid numbers:
     ///
     /// ```markdown
     /// @Available("My Package", introduced: "1.0.0")
     /// @Available("My Package", introduced: "1.0")
     /// @Available("My Package", introduced: "1")
+    /// @Available("My Package", introduced: "1.0.0", deprecated: "2.3.2")
     /// ```
     ///
     /// If an invalid semantic version number is provided, a compiler warning will be issued and the directive will be ignored.
