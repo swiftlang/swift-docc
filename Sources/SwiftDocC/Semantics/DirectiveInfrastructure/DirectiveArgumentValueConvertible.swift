@@ -16,6 +16,13 @@ protocol DirectiveArgumentValueConvertible {
     init?(rawDirectiveArgumentValue: String)
     
     static func allowedValues() -> [String]?
+    static func expectedFormat() -> String?
+}
+
+extension DirectiveArgumentValueConvertible {
+    static func expectedFormat() -> String? {
+        return nil
+    }
 }
 
 extension RawRepresentable where Self: DirectiveArgumentValueConvertible, RawValue == String {
