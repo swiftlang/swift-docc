@@ -288,7 +288,7 @@ def install(args, env):
     
 def get_build_target(args):
   """Returns the target-triple of the current machine or for cross-compilation."""
-  # Adapted from https://github.com/apple/swift-package-manager/blob/fde9916d/Utilities/bootstrap#L296
+  # Adapted from https://github.com/swiftlang/swift-package-manager/blob/fde9916d/Utilities/bootstrap#L296
   command = [args.swift_exec, '-print-target-info']
   target_info_json = subprocess.check_output(command, stderr=subprocess.PIPE, universal_newlines=True).strip()
   args.target_info = json.loads(target_info_json)

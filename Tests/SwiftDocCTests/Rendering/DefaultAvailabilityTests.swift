@@ -71,9 +71,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is used for modules
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), expectedDefaultAvailability)
@@ -82,9 +81,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is used for symbols with no explicit availability
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), [expectedDefaultAvailability.last ?? ""])
@@ -93,9 +91,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is NOT used for symbols with explicit availability
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertNotEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), expectedDefaultAvailability)
@@ -120,9 +117,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // verify that the Mac Catalyst platform's name (including a space) is rendered correctly
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
@@ -136,9 +132,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test whether we:
         // 1) Fallback on iOS when Mac Catalyst availability is missing
         // 2) Render [Beta] or not for Mac Catalyst's inherited iOS availability
-        let source = context.documentURL(for: reference)
         let node = try context.entity(with: reference)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         
         XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), expected, file: (file), line: line)
@@ -203,9 +198,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
@@ -224,7 +218,6 @@ class DefaultAvailabilityTests: XCTestCase {
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             
             // Add some available and unavailable platforms to the symbol
@@ -237,7 +230,7 @@ class DefaultAvailabilityTests: XCTestCase {
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
             ])
             
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             // Verify that the 'watchOS' & 'tvOS' platforms are filtered out because the symbol is unavailable
@@ -363,12 +356,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: node.reference,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")

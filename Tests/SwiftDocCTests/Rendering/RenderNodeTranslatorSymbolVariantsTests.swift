@@ -1168,12 +1168,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> (),
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: identifier,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         
         configureRenderNodeTranslator(&translator)
         

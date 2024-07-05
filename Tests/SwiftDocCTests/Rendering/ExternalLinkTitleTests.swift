@@ -25,7 +25,7 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let result = translator.visit(MarkupContainer(document.children)) as! [RenderBlockContent]
         
         return (translator, result)

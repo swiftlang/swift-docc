@@ -45,9 +45,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
-    /// Whether tutorials that are not curated in a tutorials overview should be translated.
-    var shouldRenderUncuratedTutorials: Bool = false
-    
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
@@ -356,7 +353,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
     /// Returns a description of the total estimated duration to complete the tutorials of the given technology.
     /// - Returns: The estimated duration, or `nil` if there are no tutorials with time estimates.
-    private func totalEstimatedDuration(for technology: Technology) -> String? {
+    private func totalEstimatedDuration() -> String? {
         var totalDurationMinutes: Int? = nil
 
         for node in context.breadthFirstSearch(from: identifier) {
@@ -381,7 +378,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = technology.intro.title
         node.metadata.category = technology.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
-        node.metadata.estimatedTime = totalEstimatedDuration(for: technology)
+        node.metadata.estimatedTime = totalEstimatedDuration()
         node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
@@ -974,11 +971,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return nil
     }
 
-    /// The current module context for symbols.
-    private var currentSymbolModuleName: String? = nil
-    /// The current symbol context.
-    private var currentSymbol: ResolvedTopicReference? = nil
-
     /// Renders automatically generated task groups
     private mutating func renderAutomaticTaskGroupsSection(_ taskGroups: [AutomaticTaskGroupSection], contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
         return taskGroups.map { group in
@@ -1207,8 +1199,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
-
-        currentSymbol = identifier
         
         /*
          FIXME: We shouldn't be doing this kind of crawling here.
@@ -1673,7 +1663,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(contentCompiler.linkReferences, to: &node)
         addReferences(linkReferences, to: &node)
         
-        currentSymbol = nil
         return node
     }
 
@@ -1745,7 +1734,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var context: DocumentationContext
     var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
-    var source: URL?
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
     var fileReferences: [String: FileReference] = [:]
@@ -1952,7 +1940,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         context: DocumentationContext,
         bundle: DocumentationBundle,
         identifier: ResolvedTopicReference,
-        source: URL?,
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
@@ -1962,7 +1949,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.context = context
         self.bundle = bundle
         self.identifier = identifier
-        self.source = source
         self.renderContext = renderContext
         self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs

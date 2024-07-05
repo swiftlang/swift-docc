@@ -409,9 +409,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 try builder.index(renderNode: renderNode)
             }
             
@@ -598,9 +597,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -643,10 +641,9 @@ Root
         fromDecodedBuilder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             XCTAssertNil(renderNode.variantOverrides)
             try fromMemoryBuilder.index(renderNode: renderNode)
             
@@ -875,9 +872,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 try builder.index(renderNode: renderNode)
             }
             
@@ -924,9 +920,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                let renderNode = try converter.convert(entity, at: source)
+                let renderNode = try converter.convert(entity)
                 try builder.index(renderNode: renderNode)
             }
             
@@ -1003,9 +998,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                var renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                var renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 
                 if renderNode.identifier.path == "/documentation/MyKit" {
                     guard let reference = renderNode.topicSections.first?.identifiers.first else {
@@ -1064,9 +1058,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -1169,9 +1162,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -1199,9 +1191,8 @@ Root
         builder.navigatorIndex?.pathHasher = .fnv1
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -1645,9 +1636,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try converter.convert(entity, at: source)
+            let renderNode = try converter.convert(entity)
             try builder.index(renderNode: renderNode)
         }
         
@@ -1962,9 +1952,8 @@ Root
         builder.setup()
 
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
 
