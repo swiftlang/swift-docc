@@ -11,7 +11,7 @@
 import Foundation
 import SymbolKit
 
-extension SymbolGraph.SemanticVersion {
+extension SemanticVersion {
     enum Precision: Int {
         case all = 0, patch, minor
         
@@ -43,6 +43,14 @@ extension SymbolGraph.SemanticVersion {
         return components[0...renderUpToIndex]
             .map { "\($0)" }
             .joined(separator: ".")
+    }
+    
+    init(_ semanticVersion: SymbolGraph.SemanticVersion) {
+        self.major = semanticVersion.major
+        self.minor = semanticVersion.minor
+        self.patch = semanticVersion.patch
+        self.prerelease = semanticVersion.prerelease
+        self.buildMetadata = semanticVersion.buildMetadata
     }
     
     /// Compares a version triplet to a semantic version.
@@ -125,28 +133,32 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     init(_ availability: SymbolGraph.Symbol.Availability.AvailabilityItem, current: PlatformVersion?) {
         let platformName = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) })
         name = platformName?.displayName
-        introduced = availability.introducedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
-        deprecated = availability.deprecatedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
-        obsoleted = availability.obsoletedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
+        
+        let introducedVersion = availability.introducedVersion.flatMap { SemanticVersion($0) }
+        introduced = introducedVersion?.stringRepresentation(precisionUpToNonsignificant: .minor)
+        deprecated = availability.deprecatedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
+        obsoleted = availability.obsoletedVersion.flatMap { SemanticVersion($0).stringRepresentation(precisionUpToNonsignificant: .minor) }
         message = availability.message
         renamed = availability.renamed
         unconditionallyUnavailable = availability.isUnconditionallyUnavailable
         unconditionallyDeprecated = availability.isUnconditionallyDeprecated
-        
-        if let introducedVersion = availability.introducedVersion, let current, current.beta, introducedVersion.isEqualToVersionTriplet(current.version) {
-            isBeta = true
-        } else {
-            isBeta = false
-        }
+        isBeta = AvailabilityRenderItem.isBeta(introduced: introducedVersion, current: current)
     }
 
     init?(_ availability: Metadata.Availability, current: PlatformVersion?) {
-        // FIXME: Deprecated/Beta markings need platform versions to display properly in Swift-DocC-Render (rdar://56897597)
-        // Fill in the appropriate values here when that's fixed (https://github.com/apple/swift-docc/issues/441)
-
         let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
-        introduced = availability.introduced
+        introduced = availability.introduced.stringRepresentation(precisionUpToNonsignificant: .minor)
+        deprecated = availability.deprecated.flatMap { $0.stringRepresentation(precisionUpToNonsignificant: .minor) }
+        isBeta = AvailabilityRenderItem.isBeta(introduced: availability.introduced, current: current)
+    }
+    
+    private static func isBeta(introduced: SemanticVersion?, current: PlatformVersion?) -> Bool {
+        guard let introduced, let current, current.beta, introduced.isEqualToVersionTriplet(current.version) else {
+            return false
+        }
+        
+        return true
     }
     
     /// Creates a new item with the given platform name and version string.
