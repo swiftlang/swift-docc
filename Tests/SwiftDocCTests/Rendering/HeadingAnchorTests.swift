@@ -40,7 +40,7 @@ class HeadingAnchorTests: XCTestCase {
         let node = try context.entity(with: reference)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
-        let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: nil))
+        let renderNode = try XCTUnwrap(converter.renderNode(for: node))
 
         // Check heading anchors are encoded
         let contentSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)

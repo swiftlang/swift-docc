@@ -102,7 +102,7 @@ class AutoCapitalizationTests: XCTestCase {
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -149,7 +149,7 @@ class AutoCapitalizationTests: XCTestCase {
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -190,7 +190,7 @@ class AutoCapitalizationTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         let returnsSectionTranslator = ReturnsSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedReturns = returnsSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let returnsRenderSection = translatedReturns?.defaultValue?.section as! ContentRenderSection

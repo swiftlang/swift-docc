@@ -42,7 +42,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Label is Text.")
@@ -72,7 +72,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertNil(renderNode.metadata.conformance)
     }
@@ -101,7 +101,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertNil(renderNode.metadata.conformance)
     }
@@ -131,7 +131,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element is MyClass.")
     }
@@ -161,7 +161,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol and Equatable.")
     }
@@ -192,7 +192,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol, Equatable, and Hashable.")
     }
@@ -222,7 +222,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in
@@ -260,7 +260,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in

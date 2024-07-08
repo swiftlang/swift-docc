@@ -174,7 +174,7 @@ Root
         
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
-        let readTree = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true)
+        let readTree = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, atomically: true)
         
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
@@ -195,7 +195,7 @@ Root
         XCTAssertTrue(validateTree(node: readTree.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: readTree.root, validator: emptyPresentationIdentifierValidator), "The tree has a presentation identifier set which should not be present.")
         
-        let treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
+        let treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, atomically: true, presentationIdentifier: "com.example.test")
         
         let presentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == "com.example.test"
@@ -213,7 +213,6 @@ Root
         let treeWithAttributes = try NavigatorTree.read(
             from: indexURL,
             bundleIdentifier: testBundleIdentifier,
-            interfaceLanguages: [.swift],
             atomically: true,
             presentationIdentifier: "com.example.test",
             onNodeRead: addAttributes
@@ -232,7 +231,6 @@ Root
         let treeWithAttributesNonAtomic = try NavigatorTree.read(
             from: indexURL,
             bundleIdentifier: testBundleIdentifier,
-            interfaceLanguages: [.swift],
             atomically: false,
             presentationIdentifier: "com.example.test",
             onNodeRead: addAttributes
@@ -257,7 +255,6 @@ Root
         _ = try NavigatorTree.read(
             from: indexURL,
             bundleIdentifier: uniqueTestBundleIdentifier,
-            interfaceLanguages: [.swift],
             atomically: true
         )
         
@@ -275,7 +272,7 @@ Root
         try original.write(to: indexURL)
 
         measure {
-            _ = try! NavigatorTree.read(from: indexURL, interfaceLanguages: [.swift], atomically: true)
+            _ = try! NavigatorTree.read(from: indexURL, atomically: true)
         }
 #endif
     }
@@ -297,7 +294,7 @@ Root
         let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
         
         let readTree = NavigatorTree()
-        try! readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main) { (nodes, completed, error) in
+        try! readTree.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main) { (nodes, completed, error) in
             counter += 1
             XCTAssertNil(error)
             if completed { expectation.fulfill() }
@@ -310,7 +307,7 @@ Root
         
         let expectation2 = XCTestExpectation(description: "Load the tree asynchronously, again with presentation identifier.")
         let readTreePresentationIdentifier = NavigatorTree()
-        try! readTreePresentationIdentifier.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main, presentationIdentifier: "com.example.test") { (nodes, completed, error) in
+        try! readTreePresentationIdentifier.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main, presentationIdentifier: "com.example.test") { (nodes, completed, error) in
             XCTAssertNil(error)
             if completed { expectation2.fulfill() }
         }
@@ -336,7 +333,7 @@ Root
         let indexURL = targetURL.appendingPathComponent("nav.index")
                 
         let readTree = NavigatorTree()
-        XCTAssertThrowsError(try readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
+        XCTAssertThrowsError(try readTree.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
         
         try XCTAssertEqual(
             RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
@@ -371,7 +368,7 @@ Root
         let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
         
         let readTree = NavigatorTree()
-        try! readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main) { (nodes, completed, error) in
+        try! readTree.read(from: indexURL, timeout: 0.25, queue: DispatchQueue.main) { (nodes, completed, error) in
             counter += 1
             XCTAssertNil(error)
             if completed { expectation.fulfill() }
@@ -412,9 +409,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 try builder.index(renderNode: renderNode)
             }
             
@@ -601,9 +597,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -646,10 +641,9 @@ Root
         fromDecodedBuilder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             XCTAssertNil(renderNode.variantOverrides)
             try fromMemoryBuilder.index(renderNode: renderNode)
             
@@ -878,9 +872,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 try builder.index(renderNode: renderNode)
             }
             
@@ -927,9 +920,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                let renderNode = try converter.convert(entity, at: source)
+                let renderNode = try converter.convert(entity)
                 try builder.index(renderNode: renderNode)
             }
             
@@ -1006,9 +998,8 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
-                var renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                var renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 
                 if renderNode.identifier.path == "/documentation/MyKit" {
                     guard let reference = renderNode.topicSections.first?.identifiers.first else {
@@ -1067,9 +1058,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -1172,9 +1162,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -1202,9 +1191,8 @@ Root
         builder.navigatorIndex?.pathHasher = .fnv1
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         
@@ -1648,9 +1636,8 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try converter.convert(entity, at: source)
+            let renderNode = try converter.convert(entity)
             try builder.index(renderNode: renderNode)
         }
         
@@ -1965,9 +1952,8 @@ Root
         builder.setup()
 
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
 

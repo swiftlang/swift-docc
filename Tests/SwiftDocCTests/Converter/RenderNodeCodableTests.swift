@@ -203,12 +203,7 @@ class RenderNodeCodableTests: XCTestCase {
         )
         context.topicGraph.addNode(topicGraphNode)
         
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let node = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         XCTAssertEqual(node.topicSectionsStyle, .compactGrid)
         
