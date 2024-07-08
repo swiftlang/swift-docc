@@ -494,8 +494,8 @@ of a documentation page and can be processed by a renderer such as
 For more in-depth technical information about Swift-DocC, please refer to the
 project's technical documentation:
 
-- [`SwiftDocC` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdocc/)
-- [`SwiftDocCUtilities` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdoccutilities/)
+- [`SwiftDocC` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdocc/)
+- [`SwiftDocCUtilities` framework documentation](https://swiftlang.github.io/swift-docc/documentation/swiftdoccutilities/)
 
 ### Related Projects
 
