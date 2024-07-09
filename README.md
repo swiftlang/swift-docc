@@ -19,6 +19,15 @@ Swift-DocC is being actively developed. For more information about the
 Swift-DocC project, see the introductory blog post
 [here](https://swift.org/blog/swift-docc/).
 
+## Contributing to Swift-DocC
+
+The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
+the best place to get help with Swift-DocC and discuss future plans.
+
+As an open-source project, we value any contribution made to this tool.
+Please see the [contributing guide](/CONTRIBUTING.md) for more information on how to 
+contribute and build DocC from source.
+
 ## Getting Started with DocC
 
 `docc` is the command line interface (CLI) for Swift-DocC and provides
@@ -102,13 +111,4 @@ All user-facing features must be discussed
 in the [Swift Forums](https://forums.swift.org/c/development/swift-docc)
 before being enabled by default.
 
-## Contributing to Swift-DocC
-
-The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
-the best place to get help with Swift-DocC and discuss future plans.
-
-As an open-source project, we value any contribution made to this tool.
-Please see the [contributing guide](/CONTRIBUTING.md) for more information on how to 
-contribute and build DocC from source.
-
-<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->
