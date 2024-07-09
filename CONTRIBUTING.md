@@ -36,7 +36,7 @@ from the community.
 
 Before contributing code or documentation to Swift-DocC,
 we encourage you to first open a 
-[GitHub issue](https://github.com/apple/swift-docc/issues/new/choose) 
+[GitHub issue](https://github.com/swiftlang/swift-docc/issues/new/choose) 
 for a bug report or feature request.
 This will allow us to provide feedback on the proposed change.
 However, this is not a requirement. If your contribution is small in scope,
@@ -256,7 +256,7 @@ mkdir .build/swift-docc-symbol-graphs \
 #### 2. Set the path to your renderer
 
 The best place to get started with Swift-DocC-Render is with the
-instructions in the [project's README](https://github.com/apple/swift-docc-render).
+instructions in the [project's README](https://github.com/swiftlang/swift-docc-render).
 
 If you have Xcode 13 or later installed, you can use the version of Swift-DocC-Render
 that comes included in Xcode with:
@@ -266,11 +266,11 @@ export DOCC_HTML_DIR="$(dirname $(xcrun --find docc))/../share/docc/render"
 ```
 
 Alternatively, you can clone the 
-[Swift-DocC-Render-Artifact repository](https://github.com/apple/swift-docc-render-artifact)
+[Swift-DocC-Render-Artifact repository](https://github.com/swiftlang/swift-docc-render-artifact)
 and use a recent pre-built copy of the renderer:
 
 ```sh
-git clone https://github.com/apple/swift-docc-render-artifact.git
+git clone https://github.com/swiftlang/swift-docc-render-artifact.git
 ```
 
 Then point the `DOCC_HTML_DIR` environment variable
@@ -453,7 +453,7 @@ If you do not have commit access, please ask one of the code owners to trigger t
 ## Your First Contribution
 
 Unsure of where to begin contributing to Swift-DocC? You can start by looking at
-the issues on the [good first issue](https://github.com/apple/swift-docc/contribute)
+the issues on the [good first issue](https://github.com/swiftlang/swift-docc/contribute)
 page.
 
 Once you've found an issue to work on,
@@ -489,7 +489,7 @@ More concretely, Swift-DocC understands the following kinds of inputs:
 Swift-DocC outputs a machine-readable archive of the compiled documentation.
 This archive contains _render JSON_ files, which fully describe the contents
 of a documentation page and can be processed by a renderer such as
-[Swift-DocC-Render](https://github.com/apple/swift-docc-render).
+[Swift-DocC-Render](https://github.com/swiftlang/swift-docc-render).
 
 For more in-depth technical information about Swift-DocC, please refer to the
 project's technical documentation:
@@ -502,7 +502,7 @@ project's technical documentation:
  - As of Swift 5.5, the [Swift Compiler](https://github.com/apple/swift) is able to 
   emit _Symbol Graph_ files as part of the compilation process.
    
- - [SymbolKit](https://github.com/apple/swift-docc-symbolkit) is a Swift package containing
+ - [SymbolKit](https://github.com/swiftlang/swift-docc-symbolkit) is a Swift package containing
   the specification and reference model for the _Symbol Graph_ File Format.
   
  - [Swift Markdown](https://github.com/apple/swift-markdown) is a 
@@ -510,7 +510,7 @@ project's technical documentation:
   Markdown documents. It includes support for the Block Directive elements
   that Swift-DocC's tutorial files rely on.
    
- - [Swift-DocC-Render](https://github.com/apple/swift-docc-render) 
+ - [Swift-DocC-Render](https://github.com/swiftlang/swift-docc-render) 
   is a web application that understands and renders
   Swift-DocC's _render JSON_ format.
    

@@ -250,7 +250,7 @@ Most notably:
 - ``PageImage`` allows you to set a header image of a page.
 - ``PageColor`` allows you to set an accent color of a page.
 
-[1]: https://github.com/apple/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
+[1]: https://github.com/swiftlang/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
 [3]: https://mportiz08.github.io/swift-docc/documentation/docc
 [4]: https://mportiz08.github.io/swift-docc/theme-settings.json

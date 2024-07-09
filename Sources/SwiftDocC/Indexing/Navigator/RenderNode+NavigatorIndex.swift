@@ -131,7 +131,7 @@ extension NavigatorIndexableRenderNodeRepresentation {
     func navigatorTitle() -> String? {
         let tokens: [DeclarationRenderSection.Token]?
         
-        // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (github.com/apple/swift-docc/issues/176).
+        // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (github.com/swiftlang/swift-docc/issues/176).
         if identifier.sourceLanguage == .swift || (metadata.navigatorTitle ?? []).isEmpty {
             let pageType = navigatorPageType()
             guard !typesThatShouldNotUseNavigatorTitle.contains(pageType) else {
