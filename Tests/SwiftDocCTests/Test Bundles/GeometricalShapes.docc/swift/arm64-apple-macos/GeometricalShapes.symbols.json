@@ -5,7 +5,7 @@
       "minor": 6,
       "patch": 0
     },
-    "generator": "Apple Swift version 5.10 (swiftlang-5.10.0.13 clang-1500.3.9.4)"
+    "generator": "Apple Swift version 6.0 (swiftlang-6.0.0.4.52 clang-1600.0.21.1.3)"
   },
   "module": {
     "name": "GeometricalShapes",
@@ -292,6 +292,7 @@
           }
         ]
       },
+      "functionSignature": {},
       "declarationFragments": [
         {
           "kind": "keyword",
@@ -686,6 +687,28 @@
           }
         ]
       },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "string",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "string"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ]
+      },
       "swiftExtension": {
         "extendedModule": "GeometricalShapes",
         "typeKind": "swift.struct"
@@ -860,6 +883,46 @@
           {
             "kind": "text",
             "spelling": ")"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "center",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "center"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "CGPoint",
+                "preciseIdentifier": "c:@S@CGPoint"
+              }
+            ]
+          },
+          {
+            "name": "radius",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "radius"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "CGFloat",
+                "preciseIdentifier": "s:14CoreFoundation7CGFloatV"
+              }
+            ]
           }
         ]
       },
@@ -1091,6 +1154,12 @@
       "kind": "memberOf",
       "source": "c:@F@TLACircleToString",
       "target": "c:@SA@TLACircle"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@SA@TLACircle",
+      "target": "s:s15BitwiseCopyableP",
+      "targetFallback": "Swift.BitwiseCopyable"
     },
     {
       "kind": "memberOf",

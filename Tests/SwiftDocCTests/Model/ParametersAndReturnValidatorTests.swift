@@ -196,6 +196,39 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
+    func testFunctionsThatCorrespondToPropertiesInAnotherLanguage() throws {
+        let (_, _, context) = try testBundleAndContext(named: "GeometricalShapes")
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
+        
+        // A small test helper to format markup for test assertions in this test.
+        func _format(_ markup: [any Markup]) -> String {
+            markup.map { $0.format() }.joined()
+        }
+        
+        let reference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "isEmpty" }))
+        let node = try context.entity(with: reference)
+        
+        let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
+        let swiftParameterNames = symbolSemantic.parametersSectionVariants.firstValue?.parameters
+        let objcParameterNames  = symbolSemantic.parametersSectionVariants.allValues.mapFirst(where: { (trait, variant) -> [Parameter]? in
+            guard trait.interfaceLanguage == SourceLanguage.objectiveC.id else { return nil }
+            return variant.parameters
+        })
+        
+        XCTAssertEqual(swiftParameterNames?.map(\.name), [])
+        XCTAssertEqual(objcParameterNames?.map(\.name), ["circle"])
+        XCTAssertEqual(objcParameterNames?.map { _format($0.contents) }, ["The circle to examine."])
+        
+        let swiftReturnsContent = symbolSemantic.returnsSection.map { _format($0.content) }
+        let objcReturnsContent  = symbolSemantic.returnsSectionVariants.allValues.mapFirst(where: { (trait, variant) -> String? in
+            guard trait.interfaceLanguage == SourceLanguage.objectiveC.id else { return nil }
+            return variant.content.map { $0.format() }.joined()
+        })
+        
+        XCTAssertEqual(swiftReturnsContent, "")
+        XCTAssertEqual(objcReturnsContent, "`YES` if the specified circle is empty; otherwise, `NO`.")
+    }
+    
     func testNoParameterDiagnosticWithoutFunctionSignature() throws {
         var symbolGraph = makeSymbolGraph(docComment: """
             Some function description
