@@ -226,7 +226,7 @@ struct ParametersAndReturnValidator {
             /// A Boolean value that indicates whether the current signature returns a known "void" value.
             var returnsKnownVoidValue: Bool {
                 guard let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
-                   let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language]
+                      let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language]
                 else {
                     return false
                 }
@@ -304,7 +304,7 @@ struct ParametersAndReturnValidator {
             return false
         }
         guard let swiftSignature = signatures[.swift],
-                swiftSignature.parameters.last?.name != "error"
+              swiftSignature.parameters.last?.name != "error"
         else {
             return false
         }
