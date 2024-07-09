@@ -43,7 +43,7 @@ class ConvertActionIndexerTests: XCTestCase {
         // Add /documentation/MyKit to the index, verify the tree dump
         do {
             let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
-            let renderNode = try converter.convert(context.entity(with: reference), at: nil)
+            let renderNode = try converter.convert(context.entity(with: reference))
 
             try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index1"), withIntermediateDirectories: false, attributes: nil)
             let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index1"), bundleIdentifier: context.registeredBundles.first!.identifier)
@@ -65,10 +65,10 @@ class ConvertActionIndexerTests: XCTestCase {
         // and verify the tree.
         do {
             let reference1 = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
-            let renderNode1 = try converter.convert(context.entity(with: reference1), at: nil)
+            let renderNode1 = try converter.convert(context.entity(with: reference1))
 
             let reference2 = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", sourceLanguage: .swift)
-            let renderNode2 = try converter.convert(context.entity(with: reference2), at: nil)
+            let renderNode2 = try converter.convert(context.entity(with: reference2))
 
             try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index2"), withIntermediateDirectories: false, attributes: nil)
             let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index2"), bundleIdentifier: context.registeredBundles.first!.identifier)

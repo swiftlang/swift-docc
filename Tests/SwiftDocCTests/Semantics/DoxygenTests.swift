@@ -102,7 +102,7 @@ class DoxygenTests: XCTestCase {
         ])
 
         // Verify the expected content in the render model
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
 
         XCTAssertEqual(renderNode.abstract, [.text("This is an abstract.")])

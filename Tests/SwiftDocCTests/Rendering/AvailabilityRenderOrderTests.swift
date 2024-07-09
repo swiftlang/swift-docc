@@ -26,7 +26,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
 
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify that all the symbol's availabilities were sorted into the order

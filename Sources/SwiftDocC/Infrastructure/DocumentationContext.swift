@@ -414,7 +414,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for reference in rootModules {
             if let node = try? entity(with: reference) {
                 // A module node should always have a symbol.
-                // Remove the fallback value and force unwrap `node.symbol` on the main branch: https://github.com/apple/swift-docc/issues/249
+                // Remove the fallback value and force unwrap `node.symbol` on the main branch: https://github.com/swiftlang/swift-docc/issues/249
                 moduleNameCache[reference] = (node.name.plainText, node.symbol?.names.title ?? reference.lastPathComponent)
             }
         }
@@ -1120,7 +1120,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // FIXME: Update with new SymbolKit API once available.
                 // This is a very inefficient way to gather the source languages
                 // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
-                // with github.com/apple/swift-docc-symbolkit/issues/32 and rdar://85982095.
+                // with github.com/swiftlang/swift-docc-symbolkit/issues/32 and rdar://85982095.
                 let symbolGraphLanguages = Set(
                     unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
                 )
@@ -1247,7 +1247,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     continue
                 }
                 
-                // FIXME: Resolve the link relative to the module https://github.com/apple/swift-docc/issues/516
+                // FIXME: Resolve the link relative to the module https://github.com/swiftlang/swift-docc/issues/516
                 let reference = TopicReference.unresolved(.init(topicURL: url))
                 switch resolve(reference, in: bundle.rootReference, fromSymbolLink: true) {
                 case .success(let resolved):
@@ -1264,7 +1264,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         // The ConvertService relies on old implementation detail where documentation extension files were always considered "resolved" even when they didn't match a symbol.
                         //
                         // Don't rely on this behavior for new functionality. The behavior will be removed once we have a new solution to meets the needs of the ConvertService. (rdar://108563483)
-                        // https://github.com/apple/swift-docc/issues/567
+                        // https://github.com/swiftlang/swift-docc/issues/567
                         //
                         // The process that interacts with the convert service is responsible for:
                         // - Distinguishing between documentation extension files that match symbols and documentation extension files that don't match symbols.
@@ -1950,7 +1950,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             path: path,
             sourceLanguages: availableSourceLanguages
                 // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
-                // (github.com/apple/swift-docc/issues/240).
+                // (github.com/swiftlang/swift-docc/issues/240).
                 ?? [.swift]
         )
         

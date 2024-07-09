@@ -34,6 +34,17 @@ extension Metadata {
     /// @Available("My Package", introduced: "1.0")
     /// ```
     ///
+    /// Only strings which are valid semantic version numbers may be passed to the `introduced` and `deprecated` arguments. Specifying an incomplete version number is allowed, as long as all components of the version are valid numbers:
+    ///
+    /// ```markdown
+    /// @Available("My Package", introduced: "1.0.0")
+    /// @Available("My Package", introduced: "1.0")
+    /// @Available("My Package", introduced: "1")
+    /// @Available("My Package", introduced: "1.0.0", deprecated: "2.3.2")
+    /// ```
+    ///
+    /// If an invalid semantic version number is provided, a compiler warning will be issued and the directive will be ignored.
+    ///
     /// This directive is available on both articles and documentation extension files. In extension
     /// files, the information overrides any information from the symbol itself.
     ///
@@ -64,7 +75,7 @@ extension Metadata {
                     }
                 }
                 if rawValue == "*" {
-                    // Reserve the `*` platform for when `isBeta` and `isDeprecated` can be implemented
+                    // Reserve the `*` platform for when we have decided on how `*` availability should be displayed (https://github.com/swiftlang/swift-docc/issues/969)
                     return nil
                 } else {
                     self = .other(rawValue)
@@ -92,11 +103,11 @@ extension Metadata {
 
         /// The platform version that this page was introduced in.
         @DirectiveArgumentWrapped
-        public var introduced: String
+        public var introduced: SemanticVersion
 
         /// The platform version that this page was deprecated in.
         @DirectiveArgumentWrapped
-        public var deprecated: String? = nil
+        public var deprecated: SemanticVersion? = nil
 
         static var keyPaths: [String : AnyKeyPath] = [
             "platform"     : \Availability._platform,
@@ -110,5 +121,45 @@ extension Metadata {
         init(originalMarkup: Markdown.BlockDirective) {
             self.originalMarkup = originalMarkup
         }
+    }
+}
+
+extension SemanticVersion: DirectiveArgumentValueConvertible {
+    static let separator = "."
+    
+    init?(rawDirectiveArgumentValue: String) {
+        guard !rawDirectiveArgumentValue.hasSuffix(Self.separator),
+              !rawDirectiveArgumentValue.hasPrefix(Self.separator) else {
+            return nil
+        }
+        
+        // Split the string into major, minor and patch components
+        let availabilityComponents = rawDirectiveArgumentValue.split(separator: .init(Self.separator), maxSplits: 2)
+        guard !availabilityComponents.isEmpty else {
+            return nil
+        }
+        
+        // If any of the components are missing, default to 0
+        var intAvailabilityComponents = [0, 0, 0]
+        for (index, component) in availabilityComponents.enumerated() {
+            // If any of the components isn't a number, the input is not valid
+            guard let intComponent = Int(component) else {
+                return nil
+            }
+            
+            intAvailabilityComponents[index] = intComponent
+        }
+        
+        self.major = intAvailabilityComponents[0]
+        self.minor = intAvailabilityComponents[1]
+        self.patch = intAvailabilityComponents[2]
+    }
+
+    static func allowedValues() -> [String]? {
+        nil
+    }
+    
+    static func expectedFormat() -> String? {
+        return "a semantic version number ('[0-9]+(.[0-9]+)?(.[0-9]+)?')"
     }
 }

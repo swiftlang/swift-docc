@@ -36,7 +36,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -71,7 +71,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -99,12 +99,7 @@ class DeprecationSummaryTests: XCTestCase {
 
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: node.reference,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
 
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -138,12 +133,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: node.reference,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -170,12 +160,7 @@ class DeprecationSummaryTests: XCTestCase {
       
       // Compile docs and verify contents
       let symbol = node.semantic as! Symbol
-      var translator = RenderNodeTranslator(
-          context: context,
-          bundle: bundle,
-          identifier: node.reference,
-          source: nil
-      )
+      var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
       
       guard let renderNode = translator.visit(symbol) as? RenderNode else {
           XCTFail("Could not compile the node")

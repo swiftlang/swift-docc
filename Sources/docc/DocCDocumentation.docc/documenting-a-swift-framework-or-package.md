@@ -30,7 +30,7 @@ To build documentation for your Swift framework or package, use the DocC command
 
 > Tip: You can also use the Swift-DocC Plugin to [build a documentation archive for a Swift package][plugin-docs].
 
-[plugin-docs]: https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
+[plugin-docs]: https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
 
 DocC uses the comments you write in your source code as the content for the 
 documentation pages it generates. At a minimum, add basic documentation 
@@ -75,9 +75,9 @@ manifest's Swift tools version is set to `5.5` or later.
 
 The preferred way of building documentation for your Swift package is by using
 the Swift-DocC Plugin. Refer to instructions in the plugin's 
-[documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
-to get started with [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
-and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
+[documentation](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
+to get started with [building](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
+and publishing your documentation to your [website](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
 
 You can also use the DocC command-line interface, as described in <doc:distributing-documentation-to-other-developers>.
 

@@ -35,10 +35,14 @@ public struct DocumentationNodeConverter {
     /// Convert a documentation node into a render node to get a self-contained, persistable representation of a given topic's data, so you can write it to disk, send it over a network, or otherwise process it.
     /// - Parameters:
     ///   - node: The documentation node to convert.
-    ///   - source: The source file for the documentation node.
     /// - Returns: The render node representation of the documentation node.
-    public func convert(_ node: DocumentationNode, at source: URL?) throws -> RenderNode {
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+    public func convert(_ node: DocumentationNode) throws -> RenderNode {
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return translator.visit(node.semantic) as! RenderNode
+    }
+    
+    @available(*, deprecated, renamed: "convert(_:)", message: "Use 'convert(_:)' instead. This deprecated API will be removed after 6.1 is released")
+    public func convert(_ node: DocumentationNode, at source: URL?) throws -> RenderNode {
+        return try convert(node)
     }
 }
