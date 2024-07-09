@@ -107,7 +107,7 @@ public class DocumentationContentRenderer {
     /// Returns the given amount of minutes as a string, for example: "1hr 10min".
     func formatEstimatedDuration(minutes: Int) -> String? {
         // TODO: Use DateComponentsFormatter once it's available on Linux (rdar://59787899) and 
-        // when Swift-DocC supports generating localized documentation (github.com/apple/swift-docc/issues/218), since
+        // when Swift-DocC supports generating localized documentation (github.com/swiftlang/swift-docc/issues/218), since
         // DateComponentsFormatter formats content based on the user's locale.
 //        let dateFormatter = DateComponentsFormatter()
 //        if #available(OSX 10.12, *) {

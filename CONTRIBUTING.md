@@ -36,7 +36,7 @@ from the community.
 
 Before contributing code or documentation to Swift-DocC,
 we encourage you to first open a 
-[GitHub issue](https://github.com/apple/swift-docc/issues/new/choose) 
+[GitHub issue](https://github.com/swiftlang/swift-docc/issues/new/choose) 
 for a bug report or feature request.
 This will allow us to provide feedback on the proposed change.
 However, this is not a requirement. If your contribution is small in scope,
@@ -453,7 +453,7 @@ If you do not have commit access, please ask one of the code owners to trigger t
 ## Your First Contribution
 
 Unsure of where to begin contributing to Swift-DocC? You can start by looking at
-the issues on the [good first issue](https://github.com/apple/swift-docc/contribute)
+the issues on the [good first issue](https://github.com/swiftlang/swift-docc/contribute)
 page.
 
 Once you've found an issue to work on,

@@ -2470,7 +2470,7 @@ let expected = """
         let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
         XCTAssertEqual(topicReference.title, "An article")
         
-        // This test also reproduce https://github.com/apple/swift-docc/issues/593
+        // This test also reproduce https://github.com/swiftlang/swift-docc/issues/593
         // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
         // the symbol link resolves to the symbol.
     }
