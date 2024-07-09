@@ -223,14 +223,14 @@ struct ParametersAndReturnValidator {
         
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
         for (trait, signature) in signatures {
-            /// A Boolean value indicating whether the current signature returns a known "void" value.
+            /// A Boolean value that indicates whether the current signature returns a known "void" value.
             var returnsKnownVoidValue: Bool {
-                if let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
+                guard let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
                    let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language]
-                {
-                    return signature.returns.allSatisfy { voidReturnValues.contains($0) }
+                else {
+                    return false
                 }
-                return false
+                return signature.returns.allSatisfy { voidReturnValues.contains($0) }
             }
             
             // Don't display any return value documentation for language representations that return nothing or that only return void.
