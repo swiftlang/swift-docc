@@ -25,7 +25,7 @@ Distributing your documentation involves the following steps:
 ### Generate a Publishable Archive of Your Documentation
 
 To create a documentation archive for a Swift package, use the [SwiftPM DocC
-Plugin](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
+Plugin](https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
 or use Xcode's _Build Documentation_ command.
 
 Alternatively, use the `docc` command-line tool directly, for example:
@@ -143,7 +143,7 @@ You can also configure the base path path via the `--hosting-base-path` option
 when [building documentation using the SwiftPM DocC Plugin][plugin-docs] or via
 the `DOCC_HOSTING_BASE_PATH` build setting when building documentation in Xcode.
 
-[plugin-docs]: https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
+[plugin-docs]: https://swiftlang.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
 
 #### Host a Documentation Archive Using Custom Routing
 

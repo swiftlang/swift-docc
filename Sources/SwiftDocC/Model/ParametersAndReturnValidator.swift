@@ -222,12 +222,19 @@ struct ParametersAndReturnValidator {
         var variants = DocumentationDataVariants<ReturnsSection>()
         
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
-        for (trait, signature) in signatures where !signature.returns.isEmpty {
-            // Don't display any return value documentation for language representations that only return void.
-            if let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
-               let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language],
-               signature.returns.allSatisfy({ voidReturnValues.contains($0) })
-            {
+        for (trait, signature) in signatures {
+            /// A Boolean value that indicates whether the current signature returns a known "void" value.
+            var returnsKnownVoidValue: Bool {
+                guard let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
+                      let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language]
+                else {
+                    return false
+                }
+                return signature.returns.allSatisfy { voidReturnValues.contains($0) }
+            }
+            
+            // Don't display any return value documentation for language representations that return nothing or that only return void.
+            if signature.returns.isEmpty || returnsKnownVoidValue {
                 traitsWithNonVoidReturnValues.remove(trait)
                 // Add an empty section so that this language doesn't fallback to another language's content.
                 variants[trait] = ReturnsSection(content: [])
@@ -273,7 +280,19 @@ struct ParametersAndReturnValidator {
             }
             signatures[DocumentationDataVariantsTrait(for: selector)] = signature
         }
-        return signatures.isEmpty ? nil : signatures
+        
+        guard !signatures.isEmpty else { return nil }
+        
+        // If the unified symbol has at least one function signature, fill in empty signatures for the other language representations.
+        //
+        // This, for example, makes it so that a functions in C which corresponds to property in Swift, displays its parameters and return value documentation
+        // for the C function representation, but not the Swift property representation of the documented symbol.
+        let traitsWithoutSignatures = Set(symbol.mainGraphSelectors.map { DocumentationDataVariantsTrait(for: $0) }).subtracting(signatures.keys)
+        for trait in traitsWithoutSignatures {
+            signatures[trait] = .init(parameters: [], returns: [])
+        }
+        
+        return signatures
     }
     
     /// Checks if the language specific function signatures describe a throwing function in Swift that bridges to an Objective-C method with a trailing error parameter.
@@ -285,7 +304,7 @@ struct ParametersAndReturnValidator {
             return false
         }
         guard let swiftSignature = signatures[.swift],
-                swiftSignature.parameters.last?.name != "error"
+              swiftSignature.parameters.last?.name != "error"
         else {
             return false
         }

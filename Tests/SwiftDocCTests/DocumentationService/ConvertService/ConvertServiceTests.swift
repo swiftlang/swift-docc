@@ -1524,7 +1524,7 @@ class ConvertServiceTests: XCTestCase {
                 let referenceStore = try XCTUnwrap(referenceStore)
                 
                 // The ConvertService relies on old implementation detail where documentation extension files were always considered "resolved" even when they didn't match a symbol. (rdar://108563483)
-                // https://github.com/apple/swift-docc/issues/567
+                // https://github.com/swiftlang/swift-docc/issues/567
                 
                 XCTAssertEqual(
                     Set(referenceStore.topics.keys.map(\.path)),
