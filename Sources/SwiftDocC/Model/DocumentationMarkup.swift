@@ -79,7 +79,6 @@ struct DocumentationMarkup {
         Metadata.directiveName,
         Options.directiveName,
         Redirect.directiveName,
-        DeprecationSummary.directiveName,
     ]
     
     private static let allowedSectionsForDeprecationSummary = [
@@ -155,6 +154,7 @@ struct DocumentationMarkup {
                directive.name == DeprecationSummary.directiveName,
                Self.allowedSectionsForDeprecationSummary.contains(currentSection) {
                 deprecation = MarkupContainer(directive.children)
+                return
             }
             
             // Parse an abstract, if found
