@@ -393,6 +393,62 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some return value description.")
     }
     
+    func testFunctionWithDifferentSignaturesOnDifferentPlatforms() throws {
+        let url = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                // One parameter, void return
+                JSONFile(name: "Platform1-ModuleName.symbols.json", content: makeSymbolGraph(
+                    platform: .init(operatingSystem: .init(name: "Platform1")),
+                    docComment: nil,
+                    sourceLanguage: .objectiveC,
+                    parameters: [(name: "first", externalName: nil)],
+                    returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+                )),
+                // Two parameters, void return
+                JSONFile(name: "Platform2-ModuleName.symbols.json", content: makeSymbolGraph(
+                    platform: .init(operatingSystem: .init(name: "Platform2")),
+                    docComment: nil,
+                    sourceLanguage: .objectiveC,
+                    parameters: [(name: "first", externalName: nil), (name: "second", externalName: nil)],
+                    returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+                )),
+                // One parameter, BOOL return
+                JSONFile(name: "Platform3-ModuleName.symbols.json", content: makeSymbolGraph(
+                    platform: .init(operatingSystem: .init(name: "Platform3")),
+                    docComment: nil,
+                    sourceLanguage: .objectiveC,
+                    parameters: [(name: "first", externalName: nil),],
+                    returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
+                )),
+                TextFile(name: "Extension.md", utf8Content: """
+                # ``functionName(...)``
+                
+                A documentation extension that documents both parameters
+                
+                - Parameters:
+                  - first: Some description of the parameter that is available on all three platforms.
+                  - second: Some description of the parameter that is only available on platform 2.
+                - Returns: Some description of the return value that is only available on platform 3.
+                """)
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: url)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let parameterSections = symbol.parametersSectionVariants
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["first", "second"])
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.first?.contents.map({ $0.format() }).joined(), "Some description of the parameter that is available on all three platforms.")
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "Some description of the parameter that is only available on platform 2.")
+        
+        let returnSections = symbol.returnsSectionVariants
+        XCTAssertEqual(returnSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some description of the return value that is only available on platform 3.")
+    }
+    
     func testFunctionWithErrorParameterButVoidType() throws {
         let url = try createTempFolder(content: [
             Folder(name: "unit-test.docc", content: [
@@ -619,6 +675,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     private func makeSymbolGraph(
+        platform: SymbolGraph.Platform = .init(),
         docComment: String?,
         sourceLanguage: SourceLanguage,
         parameters: [(name: String, externalName: String?)],
@@ -634,6 +691,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         
         return makeSymbolGraph(
             moduleName: "ModuleName",
+            platform: platform,
             symbols: [
                 .init(
                     identifier: .init(precise: "symbol-id", interfaceLanguage: sourceLanguage.id),

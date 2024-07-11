@@ -278,7 +278,35 @@ struct ParametersAndReturnValidator {
             guard let signature = mixin.getValueIfPresent(for: SymbolGraph.Symbol.FunctionSignature.self) else {
                 continue
             }
-            signatures[DocumentationDataVariantsTrait(for: selector)] = signature
+            
+            let trait = DocumentationDataVariantsTrait(for: selector)
+            // Check if we've already encountered a different signature for another platform
+            guard var existing = signatures.removeValue(forKey: trait) else {
+                signatures[trait] = signature
+                continue
+            }
+            
+            // An internal helper function that compares parameter names
+            func hasSameNames(_ lhs: SymbolGraph.Symbol.FunctionSignature.FunctionParameter, _ rhs: SymbolGraph.Symbol.FunctionSignature.FunctionParameter) -> Bool {
+                lhs.name == rhs.name && lhs.externalName == rhs.externalName
+            }
+            // If the two signatures have different parameters, add any missing parameters.
+            // This allows for documenting parameters that are only available on some platforms.
+            //
+            // Note: Doing this redundant `elementsEqual(_:by:)` check is significantly faster in the common case when all platforms have the same signature.
+            // In the rare case where platforms have different signatures, the overhead of checking `elementsEqual(_:by:)` first is too small to measure.
+            if !existing.parameters.elementsEqual(signature.parameters, by: hasSameNames) {
+                for case .insert(offset: let offset, element: let element, _) in signature.parameters.difference(from: existing.parameters, by: hasSameNames) {
+                    existing.parameters.insert(element, at: offset)
+                }
+            }
+            
+            // If the already encountered signature has a void return type, replace it with the non-void return type.
+            // This allows for documenting the return values that are only available on some platforms.
+            if existing.returns != signature.returns, existing.returns == knownVoidReturnValuesByLanguage[.init(id: selector.interfaceLanguage)] {
+                existing.returns = signature.returns
+            }
+            signatures[trait] = existing
         }
         
         guard !signatures.isEmpty else { return nil }
