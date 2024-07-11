@@ -74,7 +74,7 @@ struct DocumentationMarkup {
     }
     
     /// Directives which are removed from the markdown content after being parsed.
-    private static let directivesRemovedFromContent = [
+    internal static let directivesRemovedFromContent = [
         Comment.directiveName,
         Metadata.directiveName,
         Options.directiveName,
