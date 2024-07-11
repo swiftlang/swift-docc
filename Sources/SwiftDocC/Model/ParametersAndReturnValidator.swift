@@ -292,6 +292,9 @@ struct ParametersAndReturnValidator {
             }
             // If the two signatures have different parameters, add any missing parameters.
             // This allows for documenting parameters that are only available on some platforms.
+            //
+            // Note: Doing this redundant `elementsEqual(_:by:)` check is significantly faster in the common case when all platforms have the same signature.
+            // In the rare case where platforms have different signatures, the overhead of checking `elementsEqual(_:by:)` first is too small to measure.
             if !existing.parameters.elementsEqual(signature.parameters, by: hasSameNames) {
                 for case .insert(offset: let offset, element: let element, _) in signature.parameters.difference(from: existing.parameters, by: hasSameNames) {
                     existing.parameters.insert(element, at: offset)
