@@ -181,4 +181,66 @@ class DeprecationSummaryTests: XCTestCase {
       
       XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
   }
+    
+    func testDeprecationSummaryInDiscussionSection() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let node = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/CoolFramework/CoolClass/coolFunc()",
+                sourceLanguage: .swift
+            )
+        )
+        
+        // Compile docs and verify contents
+        let symbol = node.semantic as! Symbol
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        
+        guard let renderNode = translator.visit(symbol) as? RenderNode else {
+            XCTFail("Could not compile the node")
+            return
+        }
+        
+        // `coolFunc()` has deprecation information in both the symbol graph and the documentation extension; the deprecation information is part of the "Overview" section of the markup but it should still be parsed as expected.
+        let expected: [RenderInlineContent] = [
+            .text("Use the "),
+            .reference(
+                identifier: SwiftDocC.RenderReferenceIdentifier("doc://org.swift.docc.example/documentation/CoolFramework/CoolClass/init()"),
+                isActive: true,
+                overridingTitle: nil,
+                overridingTitleInlineContent: nil
+            ),
+            .text(" initializer instead."),
+        ]
+        
+        XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
+
+    }
+    
+    func testDeprecationSummaryWithMultiLineCommentSymbol() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let node = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/CoolFramework/CoolClass/init(config:cache:)",
+                sourceLanguage: .swift
+            )
+        )
+        
+        // Compile docs and verify contents
+        let symbol = node.semantic as! Symbol
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+        
+        guard let renderNode = translator.visit(symbol) as? RenderNode else {
+            XCTFail("Could not compile the node")
+            return
+        }
+        
+        // `init(config:cache:)` has deprecation information in both the symbol graph and the documentation extension; the symbol graph has multiple lines of documentation comments for the function, but adding deprecation information in the documentation extension should still work.
+        let expected: [RenderInlineContent] = [
+            .text("This initializer is deprecated as of version 1.0.0."),
+        ]
+        
+        XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
+    }
 }
