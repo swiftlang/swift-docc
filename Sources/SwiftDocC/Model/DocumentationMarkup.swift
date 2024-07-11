@@ -154,7 +154,7 @@ struct DocumentationMarkup {
                         // Found deprecation notice in the abstract.
                         deprecation = MarkupContainer(directive.children)
                         return
-                    } else if Self.directivesRemovedFromContent.contains(directive.name) {
+                    } else if BlockDirective.directivesRemovedFromContent.contains(directive.name) {
                         // These directives don't affect content so they shouldn't break us out of
                         // the automatic abstract section.
                         return

@@ -54,4 +54,11 @@ extension BlockDirective {
         Volume.directiveName,
         XcodeRequirement.directiveName
     ]
+    
+    static let directivesRemovedFromContent: [String] = [
+        Comment.directiveName,
+        Metadata.directiveName,
+        Options.directiveName,
+        Redirect.directiveName,
+    ]
 }
