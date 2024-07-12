@@ -105,10 +105,32 @@ struct PathHierarchy {
             if let language {
                 moduleNode.languages.insert(language)
             }
-            
+
+            var symbols = graph.symbols
+            var relationships = graph.relationships
+
+            // Overload group symbols are added directly to the unified graph, not any individual
+            // graphs, so load up any relevant symbols and relationships before continuing
+            if let unifiedSelector = UnifiedSymbolGraph.Selector(forSymbolGraph: graph),
+               let unifiedGraph = loader.unifiedGraphs[moduleNode.name],
+               !unifiedGraph.overloadGroupSymbols.isEmpty
+            {
+                for overloadGroupIdentifier in unifiedGraph.overloadGroupSymbols {
+                    if let unifiedSymbol = unifiedGraph.symbols[overloadGroupIdentifier],
+                       let overloadSymbol = SymbolGraph.Symbol(fromUnifiedSymbol: unifiedSymbol, selector: unifiedSelector) {
+                        symbols[overloadGroupIdentifier] = overloadSymbol
+                    }
+                }
+
+                let overloadRelationships = unifiedGraph.relationshipsByLanguage[unifiedSelector]?.filter({ relationship in
+                    unifiedGraph.overloadGroupSymbols.contains(relationship.source) || unifiedGraph.overloadGroupSymbols.contains(relationship.target)
+                }) ?? []
+                relationships.append(contentsOf: overloadRelationships)
+            }
+
             var nodes: [String: Node] = [:]
-            nodes.reserveCapacity(graph.symbols.count)
-            for (id, symbol) in graph.symbols {
+            nodes.reserveCapacity(symbols.count)
+            for (id, symbol) in symbols {
                 if let existingNode = allNodes[id]?.first(where: {
                     // If both identifiers are in the same language, they are the same symbol.
                     $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
@@ -148,7 +170,7 @@ struct PathHierarchy {
                 }
             }
 
-            for relationship in graph.relationships where relationship.kind == .overloadOf {
+            for relationship in relationships where relationship.kind == .overloadOf {
                 // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
                 // individual overload symbols in favor of resolving links to their overload group
                 // symbol.
@@ -157,7 +179,7 @@ struct PathHierarchy {
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
             var topLevelCandidates = nodes.filter { _, node in node.parent == nil }
-            for relationship in graph.relationships where relationship.kind.formsHierarchy {
+            for relationship in relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source], let expectedContainerName = sourceNode.symbol?.pathComponents.dropLast().last else {
                     continue
                 }
@@ -197,7 +219,7 @@ struct PathHierarchy {
                 }
             }
             
-            for relationship in graph.relationships where relationship.kind == .defaultImplementationOf {
+            for relationship in relationships where relationship.kind == .defaultImplementationOf {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
@@ -749,5 +771,31 @@ private extension SymbolGraph.Relationship.Kind {
         default:
             return false
         }
+    }
+}
+
+private extension SymbolGraph.Symbol {
+    init?(fromUnifiedSymbol symbol: UnifiedSymbolGraph.Symbol, selector: UnifiedSymbolGraph.Selector) {
+        guard let names = symbol.names[selector],
+              let pathComponents = symbol.pathComponents[selector],
+              let accessLevel = symbol.accessLevel[selector],
+              let kind = symbol.kind[selector] else {
+            return nil
+        }
+
+        // If this is an overloaded symbol, the graph collector will add new overload data into the
+        // unified mixins, so load both maps here
+        var mixins = symbol.mixins[selector] ?? [:]
+        mixins.merge(symbol.unifiedMixins, uniquingKeysWith: { $1 })
+
+        self.init(
+            identifier: .init(precise: symbol.uniqueIdentifier, interfaceLanguage: selector.interfaceLanguage),
+            names: names,
+            pathComponents: pathComponents,
+            docComment: symbol.docComment[selector],
+            accessLevel: accessLevel,
+            kind: kind,
+            mixins: mixins,
+            isVirtual: symbol.isVirtual[selector] ?? false)
     }
 }
