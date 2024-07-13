@@ -129,7 +129,7 @@ class MetadataAvailabilityTests: XCTestCase {
         checkPlatforms += [
             "Package",
             "\"My Package\"", // Also check a platform with spaces in the name
-            // FIXME: Test validArguments with the `*` platform once that's introduced (https://github.com/apple/swift-docc/issues/969)
+            // FIXME: Test validArguments with the `*` platform once that's introduced (https://github.com/swiftlang/swift-docc/issues/969)
 //            "*",
         ]
         

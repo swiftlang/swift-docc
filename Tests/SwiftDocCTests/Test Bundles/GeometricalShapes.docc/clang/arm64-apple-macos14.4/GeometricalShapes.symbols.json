@@ -5,7 +5,7 @@
       "minor": 5,
       "patch": 3
     },
-    "generator": "Apple clang version 15.0.0 (clang-1500.3.9.4)"
+    "generator": "Apple clang version 16.0.0 (clang-1600.0.21.4)"
   },
   "module": {
     "name": "GeometricalShapes",
@@ -74,6 +74,23 @@
           "spelling": ";"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 34,
+                "line": 12
+              },
+              "start": {
+                "character": 4,
+                "line": 12
+              }
+            },
+            "text": "The default radius of circles."
+          }
+        ]
+      },
       "identifier": {
         "interfaceLanguage": "objective-c",
         "precise": "c:@TLACircleDefaultRadius"
@@ -85,7 +102,7 @@
       "location": {
         "position": {
           "character": 21,
-          "line": 12
+          "line": 13
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -145,6 +162,23 @@
           "spelling": ";"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 21,
+                "line": 28
+              },
+              "start": {
+                "character": 4,
+                "line": 28
+              }
+            },
+            "text": "The empty circle."
+          }
+        ]
+      },
       "identifier": {
         "interfaceLanguage": "objective-c",
         "precise": "c:@TLACircleZero"
@@ -156,7 +190,7 @@
       "location": {
         "position": {
           "character": 23,
-          "line": 19
+          "line": 29
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -216,6 +250,23 @@
           "spelling": ";"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 51,
+                "line": 31
+              },
+              "start": {
+                "character": 4,
+                "line": 31
+              }
+            },
+            "text": "The null circle, representing an invalid value."
+          }
+        ]
+      },
       "identifier": {
         "interfaceLanguage": "objective-c",
         "precise": "c:@TLACircleNull"
@@ -227,7 +278,7 @@
       "location": {
         "position": {
           "character": 23,
-          "line": 20
+          "line": 32
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -288,6 +339,49 @@
           "spelling": ");"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 45,
+                "line": 23
+              },
+              "start": {
+                "character": 4,
+                "line": 23
+              }
+            },
+            "text": "Returns whether a circle has zero radius."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 46,
+                "line": 24
+              },
+              "start": {
+                "character": 4,
+                "line": 24
+              }
+            },
+            "text": "- Parameter circle: The circle to examine."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 71,
+                "line": 25
+              },
+              "start": {
+                "character": 4,
+                "line": 25
+              }
+            },
+            "text": "- Returns: `YES` if the specified circle is empty; otherwise, `NO`."
+          }
+        ]
+      },
       "functionSignature": {
         "parameters": [
           {
@@ -328,7 +422,7 @@
       "location": {
         "position": {
           "character": 5,
-          "line": 22
+          "line": 26
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -389,6 +483,49 @@
           "spelling": ");"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 59,
+                "line": 34
+              },
+              "start": {
+                "character": 4,
+                "line": 34
+              }
+            },
+            "text": "Returns whether the circle is equal to the null circle."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 46,
+                "line": 35
+              },
+              "start": {
+                "character": 4,
+                "line": 35
+              }
+            },
+            "text": "- Parameter circle: The circle to examine."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 71,
+                "line": 36
+              },
+              "start": {
+                "character": 4,
+                "line": 36
+              }
+            },
+            "text": "- Returns: `YES` if the specified circle is `nil`; otherwise, `NO`."
+          }
+        ]
+      },
       "functionSignature": {
         "parameters": [
           {
@@ -429,7 +566,7 @@
       "location": {
         "position": {
           "character": 5,
-          "line": 23
+          "line": 37
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -507,6 +644,75 @@
           "spelling": ");"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 42,
+                "line": 39
+              },
+              "start": {
+                "character": 4,
+                "line": 39
+              }
+            },
+            "text": "Returns whether two circles intersect."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 17,
+                "line": 40
+              },
+              "start": {
+                "character": 4,
+                "line": 40
+              }
+            },
+            "text": "- Parameters:"
+          },
+          {
+            "range": {
+              "end": {
+                "character": 44,
+                "line": 41
+              },
+              "start": {
+                "character": 4,
+                "line": 41
+              }
+            },
+            "text": "  - circle: The first circle to examine."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 50,
+                "line": 42
+              },
+              "start": {
+                "character": 4,
+                "line": 42
+              }
+            },
+            "text": "  - otherCircle: The second circle to examine."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 77,
+                "line": 43
+              },
+              "start": {
+                "character": 4,
+                "line": 43
+              }
+            },
+            "text": "- Returns: `YES` if the two specified circles intersect; otherwise, `NO`."
+          }
+        ]
+      },
       "functionSignature": {
         "parameters": [
           {
@@ -565,7 +771,7 @@
       "location": {
         "position": {
           "character": 5,
-          "line": 25
+          "line": 44
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -619,13 +825,43 @@
         },
         {
           "kind": "internalParam",
-          "spelling": "point"
+          "spelling": "circle"
         },
         {
           "kind": "text",
           "spelling": ");"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 78,
+                "line": 46
+              },
+              "start": {
+                "character": 4,
+                "line": 46
+              }
+            },
+            "text": "Returns a textual representation of the circle's center and radius values."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 47,
+                "line": 47
+              },
+              "start": {
+                "character": 4,
+                "line": 47
+              }
+            },
+            "text": "- Parameter circle: The circle to describe."
+          }
+        ]
+      },
       "functionSignature": {
         "parameters": [
           {
@@ -641,10 +877,10 @@
               },
               {
                 "kind": "internalParam",
-                "spelling": "point"
+                "spelling": "circle"
               }
             ],
-            "name": "point"
+            "name": "circle"
           }
         ],
         "returns": [
@@ -670,7 +906,7 @@
       "location": {
         "position": {
           "character": 10,
-          "line": 27
+          "line": 48
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -731,6 +967,49 @@
           "spelling": ");"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 60,
+                "line": 50
+              },
+              "start": {
+                "character": 4,
+                "line": 50
+              }
+            },
+            "text": "Creates a circle from a canonical string representation."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 114,
+                "line": 51
+              },
+              "start": {
+                "character": 4,
+                "line": 51
+              }
+            },
+            "text": "- Parameter string: A string containing center and radius values, in the format used by ``TLACircleToString``."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 145,
+                "line": 52
+              },
+              "start": {
+                "character": 4,
+                "line": 52
+              }
+            },
+            "text": "- Returns: A circle with the specified center and radius, or ``TLACircleNull``  if a center and radius value can't be parsed from the string."
+          }
+        ]
+      },
       "functionSignature": {
         "parameters": [
           {
@@ -771,7 +1050,7 @@
       "location": {
         "position": {
           "character": 10,
-          "line": 28
+          "line": 53
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -796,12 +1075,6 @@
     },
     {
       "accessLevel": "public",
-      "availability": [
-        {
-          "domain": "swift",
-          "isUnconditionallyUnavailable": true
-        }
-      ],
       "declarationFragments": [
         {
           "kind": "typeIdentifier",
@@ -831,7 +1104,7 @@
         },
         {
           "kind": "internalParam",
-          "spelling": "location"
+          "spelling": "center"
         },
         {
           "kind": "text",
@@ -848,13 +1121,82 @@
         },
         {
           "kind": "internalParam",
-          "spelling": "intensity"
+          "spelling": "radius"
         },
         {
           "kind": "text",
           "spelling": ");"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 67,
+                "line": 55
+              },
+              "start": {
+                "character": 4,
+                "line": 55
+              }
+            },
+            "text": "Creates a circle with the specified center location and radius."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 17,
+                "line": 56
+              },
+              "start": {
+                "character": 4,
+                "line": 56
+              }
+            },
+            "text": "- Parameters:"
+          },
+          {
+            "range": {
+              "end": {
+                "character": 41,
+                "line": 57
+              },
+              "start": {
+                "character": 4,
+                "line": 57
+              }
+            },
+            "text": "  - center: The center of the circle."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 41,
+                "line": 58
+              },
+              "start": {
+                "character": 4,
+                "line": 58
+              }
+            },
+            "text": "  - radius: The radius of the circle."
+          },
+          {
+            "range": {
+              "end": {
+                "character": 70,
+                "line": 59
+              },
+              "start": {
+                "character": 4,
+                "line": 59
+              }
+            },
+            "text": "- Returns: A circle with the specified center location and radius."
+          }
+        ]
+      },
       "functionSignature": {
         "parameters": [
           {
@@ -870,10 +1212,10 @@
               },
               {
                 "kind": "internalParam",
-                "spelling": "location"
+                "spelling": "center"
               }
             ],
-            "name": "location"
+            "name": "center"
           },
           {
             "declarationFragments": [
@@ -888,10 +1230,10 @@
               },
               {
                 "kind": "internalParam",
-                "spelling": "intensity"
+                "spelling": "radius"
               }
             ],
-            "name": "intensity"
+            "name": "radius"
           }
         ],
         "returns": [
@@ -913,7 +1255,7 @@
       "location": {
         "position": {
           "character": 10,
-          "line": 30
+          "line": 60
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -964,6 +1306,23 @@
           "spelling": ";"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 13,
+                "line": 15
+              },
+              "start": {
+                "character": 4,
+                "line": 15
+              }
+            },
+            "text": "A circle."
+          }
+        ]
+      },
       "identifier": {
         "interfaceLanguage": "objective-c",
         "precise": "c:@SA@TLACircle"
@@ -975,7 +1334,7 @@
       "location": {
         "position": {
           "character": 8,
-          "line": 14
+          "line": 16
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -1007,8 +1366,29 @@
         {
           "kind": "identifier",
           "spelling": "center"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 33,
+                "line": 17
+              },
+              "start": {
+                "character": 8,
+                "line": 17
+              }
+            },
+            "text": "The center of the circle."
+          }
+        ]
+      },
       "identifier": {
         "interfaceLanguage": "objective-c",
         "precise": "c:@SA@TLACircle@FI@center"
@@ -1020,7 +1400,7 @@
       "location": {
         "position": {
           "character": 12,
-          "line": 15
+          "line": 18
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },
@@ -1059,8 +1439,29 @@
         {
           "kind": "identifier",
           "spelling": "radius"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
         }
       ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 33,
+                "line": 19
+              },
+              "start": {
+                "character": 8,
+                "line": 19
+              }
+            },
+            "text": "The radius of the circle."
+          }
+        ]
+      },
       "identifier": {
         "interfaceLanguage": "objective-c",
         "precise": "c:@SA@TLACircle@FI@radius"
@@ -1072,7 +1473,7 @@
       "location": {
         "position": {
           "character": 12,
-          "line": 16
+          "line": 20
         },
         "uri": "file:///Users/username/path/to/GeometricalShapes/Circle.h"
       },

@@ -75,7 +75,7 @@ extension Metadata {
                     }
                 }
                 if rawValue == "*" {
-                    // Reserve the `*` platform for when we have decided on how `*` availability should be displayed (https://github.com/apple/swift-docc/issues/969)
+                    // Reserve the `*` platform for when we have decided on how `*` availability should be displayed (https://github.com/swiftlang/swift-docc/issues/969)
                     return nil
                 } else {
                     self = .other(rawValue)
