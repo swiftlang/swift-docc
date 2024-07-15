@@ -167,7 +167,7 @@ extension XCTestCase {
     
 // MARK: Constants
 
-private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
+private let defaultSymbolPosition = SymbolGraph.LineList.SourceRange.Position(line: 11, character: 17) // an arbitrary non-zero start position
 private let defaultSymbolURL = URL(fileURLWithPath: "/Users/username/path/to/SomeFile.swift")
 
 // MARK: - JSON strings
