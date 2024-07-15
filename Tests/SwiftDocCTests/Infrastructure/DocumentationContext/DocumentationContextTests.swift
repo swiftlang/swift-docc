@@ -1301,9 +1301,7 @@ class DocumentationContextTests: XCTestCase {
             let node = try context.entity(with: identifier)
             
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
-            
-            let source = context.documentURL(for: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: node))
             
             XCTAssertEqual(
                 !testData.expectsToResolveArticleReference,
@@ -1925,7 +1923,7 @@ let expected = """
             )
         }
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
@@ -2465,15 +2463,14 @@ let expected = """
         
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
-        let source = context.documentURL(for: moduleReference)
         
-        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode, at: source))
+        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode))
         let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
         
         let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
         XCTAssertEqual(topicReference.title, "An article")
         
-        // This test also reproduce https://github.com/apple/swift-docc/issues/593
+        // This test also reproduce https://github.com/swiftlang/swift-docc/issues/593
         // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
         // the symbol link resolves to the symbol.
     }
@@ -2529,7 +2526,7 @@ let expected = """
         
         // Render declaration and compare token kinds with symbol graph
         let symbol = myFunc.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         let declarationTokens = renderNode.primaryContentSections.mapFirst { section -> [String]? in
@@ -2642,7 +2639,7 @@ let expected = """
             try text.write(to: referencesURL, atomically: true, encoding: .utf8)
             
             // Load the bundle & reference resolve symbol graph docs
-            let (_, _, context) = try loadBundle(from: targetURL, codeListings: [:])
+            let (_, _, context) = try loadBundle(from: targetURL)
             
             guard context.problems.count == 5 else {
                 XCTFail("Expected 5 problems during reference resolving; got \(context.problems.count)")
@@ -2673,7 +2670,7 @@ let expected = """
         let node = try context.entity(with: reference)
 
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
         return (node, renderNode)
@@ -2779,7 +2776,7 @@ let expected = """
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
+        let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
                 .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
@@ -3174,20 +3171,20 @@ let expected = """
         // Verify that the links are resolved in the render model.
         let bundle = try XCTUnwrap(context.registeredBundles.first)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
         
         XCTAssertEqual(renderNode.topicSections.map(\.anchor), [
             "Another-topic-section"
         ])
         
         let firstReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
-        let firstRenderNode = try converter.convert(context.entity(with: firstReference), at: nil)
+        let firstRenderNode = try converter.convert(context.entity(with: firstReference))
         XCTAssertEqual(firstRenderNode.topicSections.map(\.anchor), [
             "Topics"
         ])
         
         let secondReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "Second" }))
-        let secondRenderNode = try converter.convert(context.entity(with: secondReference), at: nil)
+        let secondRenderNode = try converter.convert(context.entity(with: secondReference))
         XCTAssertEqual(secondRenderNode.topicSections.map(\.anchor), [
             "Some-topic-section"
         ])
@@ -3949,7 +3946,7 @@ let expected = """
     // Verifies if the context fails to resolve non-resolvable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.

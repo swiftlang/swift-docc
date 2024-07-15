@@ -157,6 +157,7 @@ extension AutomaticDirectiveConvertible {
                 severityIfNotFound: reflectedArgument.required ? .warning : nil,
                 argumentName: reflectedArgument.name,
                 allowedValues: reflectedArgument.allowedValues,
+                expectedFormat: reflectedArgument.expectedFormat,
                 convert: { argumentValue in
                     return reflectedArgument.parseArgument(bundle, argumentValue)
                 },

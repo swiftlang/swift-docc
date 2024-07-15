@@ -189,7 +189,6 @@ public class NavigatorIndex {
             navigatorTree = try NavigatorTree.read(
                 from: url.appendingPathComponent("navigator.index", isDirectory: false),
                 bundleIdentifier: bundleIdentifier,
-                interfaceLanguages: availabilityIndex.interfaceLanguages,
                 presentationIdentifier: presentationIdentifier,
                 onNodeRead: onNodeRead)
         } else {
@@ -394,7 +393,7 @@ public class NavigatorIndex {
     */
     public func readNavigatorTree(timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, broadcast: NavigatorTree.BroadcastCallback?) throws {
         let indexURL = url.appendingPathComponent("navigator.index")
-        try navigatorTree.read(from: indexURL, bundleIdentifier: bundleIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, timeout: timeout, delay: delay, queue: queue, broadcast: broadcast)
+        try navigatorTree.read(from: indexURL, bundleIdentifier: bundleIdentifier, timeout: timeout, delay: delay, queue: queue, broadcast: broadcast)
     }
     
     // MARK: - Data Query

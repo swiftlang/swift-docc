@@ -220,7 +220,7 @@ struct RenderContentCompiler: MarkupVisitor {
         }
         
         // FIXME: Links from this build already exist in the reference index and don't need to be resolved again.
-        // https://github.com/apple/swift-docc/issues/581
+        // https://github.com/swiftlang/swift-docc/issues/581
 
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil

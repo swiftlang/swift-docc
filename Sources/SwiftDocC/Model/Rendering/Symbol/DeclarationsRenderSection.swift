@@ -77,7 +77,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
     /// For example, `123` is represented as a single token of kind "number".
     public struct Token: Codable, Hashable, Equatable {
         /// The token text content.
-        public let text: String
+        public var text: String
         /// The token programming kind.
         public let kind: Kind
         
@@ -114,24 +114,40 @@ public struct DeclarationRenderSection: Codable, Equatable {
         
         /// If the token is a known symbol, its precise identifier as vended in the symbol graph.
         public let preciseIdentifier: String?
-        
+
+        /// The kind of highlight the token should be rendered with.
+        public var highlight: Highlight?
+
+        /// The kinds of highlights that can be applied to a token.
+        public enum Highlight: String, Codable, RawRepresentable {
+            /// A highlight representing generalized change, not specifically added or removed.
+            case changed
+        }
+
         /// Creates a new declaration token with optional identifier and precise identifier.
         /// - Parameters:
         ///   - text: The text content of the token.
         ///   - kind: The kind of the token.
         ///   - identifier: If the token refers to a known symbol, its identifier.
         ///   - preciseIdentifier: If the refers to a symbol, its precise identifier.
-        public init(text: String, kind: Kind, identifier: String? = nil, preciseIdentifier: String? = nil) {
+        public init(
+            text: String,
+            kind: Kind,
+            identifier: String? = nil,
+            preciseIdentifier: String? = nil,
+            highlight: Highlight? = nil
+        ) {
             self.text = text
             self.kind = kind
             self.identifier = identifier
             self.preciseIdentifier = preciseIdentifier
+            self.highlight = highlight
         }
         
         // MARK: - Codable
         
         private enum CodingKeys: CodingKey {
-            case text, kind, identifier, preciseIdentifier, otherDeclarations
+            case text, kind, identifier, preciseIdentifier, highlight, otherDeclarations
         }
         
         public func encode(to encoder: Encoder) throws {
@@ -141,6 +157,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
             try container.encode(kind, forKey: .kind)
             try container.encodeIfPresent(identifier, forKey: .identifier)
             try container.encodeIfPresent(preciseIdentifier, forKey: .preciseIdentifier)
+            try container.encodeIfPresent(highlight, forKey: .highlight)
         }
         
         public init(from decoder: Decoder) throws {
@@ -150,6 +167,7 @@ public struct DeclarationRenderSection: Codable, Equatable {
             kind = try container.decode(Kind.self, forKey: .kind)
             preciseIdentifier = try container.decodeIfPresent(String.self, forKey: .preciseIdentifier)
             identifier = try container.decodeIfPresent(String.self, forKey: .identifier)
+            highlight = try container.decodeIfPresent(Highlight.self, forKey: .highlight)
 
             if let reference = identifier {
                 decoder.registerReferences([reference])

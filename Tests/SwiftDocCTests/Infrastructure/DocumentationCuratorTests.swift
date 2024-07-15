@@ -341,7 +341,7 @@ class DocumentationCuratorTests: XCTestCase {
     }
     
     func testGroupLinkValidation() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { root in
             // Create a sidecar with invalid group links
             try! """
             # ``SideKit``
@@ -445,7 +445,7 @@ class DocumentationCuratorTests: XCTestCase {
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", symbol.topics?.taskGroups.first?.links.first?.destination)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
         
         // Verify the article identifier is included in the task group for the render node.
         XCTAssertEqual("doc://com.test.TestBed/documentation/TestBed/MyArticle", renderNode.topicSections.first?.identifiers.first)

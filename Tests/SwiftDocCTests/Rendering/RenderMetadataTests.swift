@@ -78,10 +78,8 @@ class RenderMetadataTests: XCTestCase {
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
             for identifier in context.knownPages {
-                let source = context.documentURL(for: identifier)
-                
                 let entity = try context.entity(with: identifier)
-                let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+                let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
                 
                 XCTAssertNotNil(renderNode.metadata.title, "Missing `title` in metadata for \(identifier.absoluteString) of kind \(entity.kind.id) in the \(bundleName) bundle")
                 
@@ -111,7 +109,7 @@ class RenderMetadataTests: XCTestCase {
         
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])
     }
@@ -138,7 +136,7 @@ class RenderMetadataTests: XCTestCase {
 
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "OverlayTest")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])
     }
@@ -152,7 +150,7 @@ class RenderMetadataTests: XCTestCase {
 
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "BundleWithRelativePathAmbiguity")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Dependency"])

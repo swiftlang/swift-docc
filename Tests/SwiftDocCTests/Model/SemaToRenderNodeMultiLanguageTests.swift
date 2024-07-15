@@ -448,7 +448,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")

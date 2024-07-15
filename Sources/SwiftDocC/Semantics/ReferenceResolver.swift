@@ -25,7 +25,7 @@ func unresolvedReferenceProblem(source: URL?, range: SourceRange?, severity: Dia
         } else {
             // FIXME: This assumes that the link uses the `<doc:my/reference>` syntax.
             // Links that use the [link text](doc:my/reference) syntax will have incorrect suggestion replacements.
-            // https://github.com/apple/swift-docc/issues/470
+            // https://github.com/swiftlang/swift-docc/issues/470
             
             // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
             return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
@@ -408,8 +408,8 @@ struct ReferenceResolver: SemanticVisitor {
         switch node.name {
         case .conceptual(let documentTitle):
             return documentTitle
-        case .symbol(let declaration):
-            return node.symbol?.names.title ?? declaration.tokens.map { $0.description }.joined(separator: " ")
+        case .symbol(let name):
+            return node.symbol?.names.title ?? name
         }
     }
     

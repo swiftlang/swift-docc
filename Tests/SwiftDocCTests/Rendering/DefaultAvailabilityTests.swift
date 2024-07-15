@@ -33,7 +33,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is loaded from Info.plist and applied during render time
     func testBundleWithDefaultAvailability() throws {
         // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
             
@@ -71,9 +71,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is used for modules
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), expectedDefaultAvailability)
@@ -82,9 +81,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is used for symbols with no explicit availability
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), [expectedDefaultAvailability.last ?? ""])
@@ -93,9 +91,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is NOT used for symbols with explicit availability
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertNotEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }), expectedDefaultAvailability)
@@ -105,7 +102,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is merged with beta status from the command line
     func testBundleWithDefaultAvailabilityInBetaDocs() throws {
         // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
@@ -120,9 +117,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // verify that the Mac Catalyst platform's name (including a space) is rendered correctly
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
@@ -136,9 +132,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test whether we:
         // 1) Fallback on iOS when Mac Catalyst availability is missing
         // 2) Render [Beta] or not for Mac Catalyst's inherited iOS availability
-        let source = context.documentURL(for: reference)
         let node = try context.entity(with: reference)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         
         XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), expected, file: (file), line: line)
@@ -148,7 +143,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Mac Catalyst info.plist availability and not on iOS availability.
     func testBundleWithMissingCatalystAvailability() throws {
         // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
             do {
                 try FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
                 try String(contentsOf: self.infoPlistAvailabilityURL).write(to: url.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
@@ -192,7 +187,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is not beta when not matching current target platform
     func testBundleWithDefaultAvailabilityNotInBetaDocs() throws {
         // Copy an Info.plist with default availability of macOS 10.15.1
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
@@ -203,9 +198,8 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
@@ -217,14 +211,13 @@ class DefaultAvailabilityTests: XCTestCase {
 
     // Test that a symbol is unavailable and default availability does not precede the "unavailable" attribute.
     func testUnavailableAvailability() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { _ in }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { _ in }
         
         // Set a beta status for the docs (which would normally be set via command line argument)
         context.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             
             // Add some available and unavailable platforms to the symbol
@@ -237,7 +230,7 @@ class DefaultAvailabilityTests: XCTestCase {
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
             ])
             
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
             // Verify that the 'watchOS' & 'tvOS' platforms are filtered out because the symbol is unavailable
@@ -348,7 +341,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
     // (i.e. a platform of '*' and unconditional deprecation) from showing up as deprecated.
     func testUniversalDeprecationWithDefaultAvailability() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: []) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
@@ -363,12 +356,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: node.reference,
-            source: nil
-        )
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")

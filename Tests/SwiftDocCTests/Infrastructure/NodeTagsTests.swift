@@ -33,7 +33,7 @@ class NodeTagsTests: XCTestCase {
         XCTAssertTrue(symbol.isSPI)
 
         // Verify the render node contains the SPI tag.
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
         XCTAssertEqual(renderNode.metadata.tags, [.spi])
@@ -44,7 +44,7 @@ class NodeTagsTests: XCTestCase {
         let moduleSymbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
 
         // Verify the render node contains the SPI tag.
-        var moduleTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var moduleTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let moduleRenderNode = try XCTUnwrap(moduleTranslator.visit(moduleSymbol) as? RenderNode)
         let linkReference = try XCTUnwrap(moduleRenderNode.references["doc://com.tests.spi/documentation/Minimal_docs/Test"] as? TopicRenderReference)
         
