@@ -149,7 +149,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         var renderReference = TopicRenderReference(
             identifier: .init(reference),
             title: resolvedInformation.title,
-            // The resolved information only stores the plain text abstract https://github.com/apple/swift-docc/issues/802
+            // The resolved information only stores the plain text abstract https://github.com/swiftlang/swift-docc/issues/802
             abstract: [.text(resolvedInformation.abstract)],
             url: resolvedInformation.url.path,
             kind: kind,
@@ -547,7 +547,7 @@ extension OutOfProcessReferenceResolver {
     public struct ResolvedInformation: Codable {
         // This type is duplicating the information from LinkDestinationSummary with some minor differences.
         // Changes generally need to be made in both places. It would be good to replace this with LinkDestinationSummary.
-        // FIXME: https://github.com/apple/swift-docc/issues/802
+        // FIXME: https://github.com/swiftlang/swift-docc/issues/802
         
         /// Information about the resolved kind.
         public let kind: DocumentationNode.Kind

@@ -112,7 +112,7 @@ extension XCTestCase {
     func renderNode(atPath path: String, fromTestBundleNamed testBundleName: String) throws -> RenderNode {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         return try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
     }
     

@@ -28,9 +28,8 @@ class MentionsRenderSectionTests: XCTestCase {
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift
         )
-        let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         let mentionsSection = try XCTUnwrap(renderNode.primaryContentSections.mapFirst { $0 as? MentionsRenderSection })
         XCTAssertEqual(1, mentionsSection.mentions.count)
@@ -47,9 +46,8 @@ class MentionsRenderSectionTests: XCTestCase {
             path: "/documentation/MentionedIn/MyClass/myFunction()",
             sourceLanguage: .swift
         )
-        let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
         let mentionsSection = renderNode.primaryContentSections.mapFirst { $0 as? MentionsRenderSection }
         XCTAssertNil(mentionsSection)

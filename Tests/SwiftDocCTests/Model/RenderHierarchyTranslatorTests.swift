@@ -102,7 +102,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         // Get a translated render node
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         guard let renderHierarchy = renderNode.hierarchy, case RenderHierarchy.tutorials(let hierarchy) = renderHierarchy else {

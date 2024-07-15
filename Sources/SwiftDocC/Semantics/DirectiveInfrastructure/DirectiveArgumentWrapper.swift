@@ -16,6 +16,7 @@ protocol _DirectiveArgumentProtocol {
     var required: Bool { get }
     var name: _DirectiveArgumentName { get }
     var allowedValues: [String]? { get }
+    var expectedFormat: String? { get }
     var hiddenFromDocumentation: Bool { get }
     
     var parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?) { get }
@@ -64,6 +65,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     let name: _DirectiveArgumentName
     let typeDisplayName: String
     let allowedValues: [String]?
+    let expectedFormat: String?
     let hiddenFromDocumentation: Bool
     
     let parseArgument: (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Any?)
@@ -99,6 +101,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
+        expectedFormat: String? = nil,
         hiddenFromDocumentation: Bool = false
     ) {
         self.init(
@@ -106,6 +109,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             name: name,
             transform: parseArgument,
             allowedValues: allowedValues,
+            expectedFormat: expectedFormat,
             required: nil,
             hiddenFromDocumentation: hiddenFromDocumentation
         )
@@ -116,6 +120,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
+        expectedFormat: String? = nil,
         hiddenFromDocumentation: Bool = false
     ) {
         self.init(
@@ -123,6 +128,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             name: name,
             transform: parseArgument,
             allowedValues: allowedValues,
+            expectedFormat: expectedFormat,
             required: nil,
             hiddenFromDocumentation: hiddenFromDocumentation
         )
@@ -133,6 +139,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         name: _DirectiveArgumentName,
         transform: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
         allowedValues: [String]?,
+        expectedFormat: String?,
         required: Bool?,
         hiddenFromDocumentation: Bool
     ) {
@@ -143,6 +150,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         self.typeDisplayName = typeDisplayNameDescription(defaultValue: value, required: required)
         self.parseArgument = transform
         self.allowedValues = allowedValues
+        self.expectedFormat = expectedFormat
         self.required = required
         self.hiddenFromDocumentation = hiddenFromDocumentation
     }
@@ -166,6 +174,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
+        expectedFormat: String? = nil,
         required: Bool,
         hiddenFromDocumentation: Bool = false
     ) {
@@ -174,6 +183,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             name: name,
             transform: parseArgument,
             allowedValues: allowedValues,
+            expectedFormat: expectedFormat,
             required: required,
             hiddenFromDocumentation: hiddenFromDocumentation
         )
@@ -185,6 +195,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
+        expectedFormat: String? = nil,
         required: Bool,
         hiddenFromDocumentation: Bool = false
     ) {
@@ -193,6 +204,7 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
             name: name,
             transform: parseArgument,
             allowedValues: allowedValues,
+            expectedFormat: expectedFormat,
             required: required,
             hiddenFromDocumentation: hiddenFromDocumentation
         )
@@ -229,6 +241,7 @@ extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertibl
             Value.init(rawDirectiveArgumentValue: argument)
         }
         self.allowedValues = Value.allowedValues()
+        self.expectedFormat = Value.expectedFormat()
         self.required = required
         self.hiddenFromDocumentation = hiddenFromDocumentation
     }
@@ -335,6 +348,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
         name: _DirectiveArgumentName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
         allowedValues: [String]? = nil,
+        expectedFormat: String? = nil,
         hiddenFromDocumentation: Bool = false
     ) {
         self.name = name
@@ -342,6 +356,7 @@ extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
         self.typeDisplayName = typeDisplayNameDescription(optionalDefaultValue: value, required: false)
         self.parseArgument = parseArgument
         self.allowedValues = allowedValues
+        self.expectedFormat = expectedFormat
         self.required = false
         self.hiddenFromDocumentation = hiddenFromDocumentation
     }

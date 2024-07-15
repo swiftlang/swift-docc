@@ -83,9 +83,8 @@ public class DocumentationContextConverter {
     /// Convert a documentation node into a render node to get a self-contained, persist-able representation of a given topic's data, so you can write it to disk, send it over a network, or otherwise process it.
     /// - Parameters:
     ///   - node: The documentation node to convert.
-    ///   - source: The source file for the documentation node.
     /// - Returns: The render node representation of the documentation node.
-    public func renderNode(for node: DocumentationNode, at source: URL?) throws -> RenderNode? {
+    public func renderNode(for node: DocumentationNode) throws -> RenderNode? {
         guard !node.isVirtual else {
             return nil
         }
@@ -94,7 +93,6 @@ public class DocumentationContextConverter {
             context: context,
             bundle: bundle,
             identifier: node.reference,
-            source: source,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
             emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
@@ -102,5 +100,10 @@ public class DocumentationContextConverter {
             symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
         )
         return translator.visit(node.semantic) as? RenderNode
+    }
+    
+    @available(*, deprecated, renamed: "renderNode(for:)", message: "Use 'renderNode(for:)' instead. This deprecated API will be removed after 6.1 is released")
+    public func renderNode(for node: DocumentationNode, at source: URL?) throws -> RenderNode? {
+        return try self.renderNode(for: node)
     }
 }
