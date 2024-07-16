@@ -106,31 +106,9 @@ struct PathHierarchy {
                 moduleNode.languages.insert(language)
             }
 
-            var symbols = graph.symbols
-            var relationships = graph.relationships
-
-            // Overload group symbols are added directly to the unified graph, not any individual
-            // graphs, so load up any relevant symbols and relationships before continuing
-            if let unifiedSelector = UnifiedSymbolGraph.Selector(forSymbolGraph: graph),
-               let unifiedGraph = loader.unifiedGraphs[moduleNode.name],
-               !unifiedGraph.overloadGroupSymbols.isEmpty
-            {
-                for overloadGroupIdentifier in unifiedGraph.overloadGroupSymbols {
-                    if let unifiedSymbol = unifiedGraph.symbols[overloadGroupIdentifier],
-                       let overloadSymbol = SymbolGraph.Symbol(fromUnifiedSymbol: unifiedSymbol, selector: unifiedSelector) {
-                        symbols[overloadGroupIdentifier] = overloadSymbol
-                    }
-                }
-
-                let overloadRelationships = unifiedGraph.relationshipsByLanguage[unifiedSelector]?.filter({ relationship in
-                    unifiedGraph.overloadGroupSymbols.contains(relationship.source) || unifiedGraph.overloadGroupSymbols.contains(relationship.target)
-                }) ?? []
-                relationships.append(contentsOf: overloadRelationships)
-            }
-
             var nodes: [String: Node] = [:]
-            nodes.reserveCapacity(symbols.count)
-            for (id, symbol) in symbols {
+            nodes.reserveCapacity(graph.symbols.count)
+            for (id, symbol) in graph.symbols {
                 if let existingNode = allNodes[id]?.first(where: {
                     // If both identifiers are in the same language, they are the same symbol.
                     $0.symbol!.identifier.interfaceLanguage == symbol.identifier.interfaceLanguage
@@ -170,7 +148,7 @@ struct PathHierarchy {
                 }
             }
 
-            for relationship in relationships where relationship.kind == .overloadOf {
+            for relationship in graph.relationships where relationship.kind == .overloadOf {
                 // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
                 // individual overload symbols in favor of resolving links to their overload group
                 // symbol.
@@ -179,7 +157,7 @@ struct PathHierarchy {
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
             var topLevelCandidates = nodes.filter { _, node in node.parent == nil }
-            for relationship in relationships where relationship.kind.formsHierarchy {
+            for relationship in graph.relationships where relationship.kind.formsHierarchy {
                 guard let sourceNode = nodes[relationship.source], let expectedContainerName = sourceNode.symbol?.pathComponents.dropLast().last else {
                     continue
                 }
@@ -219,7 +197,7 @@ struct PathHierarchy {
                 }
             }
             
-            for relationship in relationships where relationship.kind == .defaultImplementationOf {
+            for relationship in graph.relationships where relationship.kind == .defaultImplementationOf {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
@@ -305,7 +283,43 @@ struct PathHierarchy {
                 parent.add(symbolChild: node)
             }
         }
-        
+
+        // Overload group don't exist in the individual symbol graphs.
+        // Since overload groups don't change the _structure_ of the path hierarchy, we can add them after after all symbols for all platforms have already been added.
+        for unifiedGraph in loader.unifiedGraphs.values {
+            // Create nodes for all the overload groups
+            let overloadGroupNodes: [String: Node] = unifiedGraph.overloadGroupSymbols.reduce(into: [:]) { acc, uniqueID in
+                assert(allNodes[uniqueID] == nil,
+                       "Overload group ID \(uniqueID) already has a symbol node in the hierarchy: \(allNodes[uniqueID]!.map(\.name).sorted().joined(separator: ","))")
+                guard let unifiedSymbol = unifiedGraph.symbols[uniqueID] else { return }
+                guard let symbol = unifiedSymbol.defaultSymbol else {
+                    fatalError("Overload group \(uniqueID) doesn't have a default symbol.")
+                }
+                acc[uniqueID] = Node(symbol: symbol, name: symbol.pathComponents.last!)
+            }
+
+            for relationship in unifiedGraph.relationshipsByLanguage.flatMap(\.value) where relationship.kind == .overloadOf {
+                guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
+                    continue
+                }
+
+                for overloadedSymbolNode in overloadedSymbolNodes {
+                    // We want to disfavor the individual overload symbols in favor of resolving links to their overload group symbol.
+                    overloadedSymbolNode.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
+
+                    guard let parent = overloadedSymbolNode.parent else { continue }
+
+                    assert(groupNode.parent == nil || groupNode.parent === parent, """
+                    Unexpectedly grouped symbols with different locations in the symbol hierarchy:
+                    Group ID: \(groupNode.symbol!.identifier.precise)
+                    Locations: \(Set(overloadedSymbolNodes.map { $0.symbol!.pathComponents.joined(separator: "/") }.sorted()))
+                    """)
+                    parent.add(symbolChild: groupNode)
+                }
+                assert(groupNode.parent != nil, "Unexpectedly found no location in the hierarchy for overload group \(relationship.source)")
+            }
+        }
+
         assert(
             allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
             Every node should either have a parent node or be a root node. \
@@ -771,31 +785,5 @@ private extension SymbolGraph.Relationship.Kind {
         default:
             return false
         }
-    }
-}
-
-private extension SymbolGraph.Symbol {
-    init?(fromUnifiedSymbol symbol: UnifiedSymbolGraph.Symbol, selector: UnifiedSymbolGraph.Selector) {
-        guard let names = symbol.names[selector],
-              let pathComponents = symbol.pathComponents[selector],
-              let accessLevel = symbol.accessLevel[selector],
-              let kind = symbol.kind[selector] else {
-            return nil
-        }
-
-        // If this is an overloaded symbol, the graph collector will add new overload data into the
-        // unified mixins, so load both maps here
-        var mixins = symbol.mixins[selector] ?? [:]
-        mixins.merge(symbol.unifiedMixins, uniquingKeysWith: { $1 })
-
-        self.init(
-            identifier: .init(precise: symbol.uniqueIdentifier, interfaceLanguage: selector.interfaceLanguage),
-            names: names,
-            pathComponents: pathComponents,
-            docComment: symbol.docComment[selector],
-            accessLevel: accessLevel,
-            kind: kind,
-            mixins: mixins,
-            isVirtual: symbol.isVirtual[selector] ?? false)
     }
 }
