@@ -232,12 +232,13 @@ struct DocumentationCurator {
                         continue
                 }
                 
-                // A solution that suggest removing the list item that contain this link
+                // A solution that suggests removing the list item that contain this link
                 var removeListItemSolutions: [Solution] {
                     // Traverse the markup parents up to the nearest list item
                     guard let listItem = sequence(first: link as (any Markup), next: \.parent).mapFirst(where: { $0 as? ListItem }),
                           let listItemRange = listItem.range
                     else {
+                        assertionFailure("Unable to find the list item element that contains \(link.format()) in the markup for \(describeForDiagnostic(nodeReference).singleQuoted)")
                         return []
                     }
                     return [Solution(
@@ -272,7 +273,7 @@ struct DocumentationCurator {
                     problems.append(Problem(
                         diagnostic: Diagnostic(
                             source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
-                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cyclic documentation hierarchy",
+                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
                             explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles."),
                         possibleSolutions: removeListItemSolutions
                     ))
@@ -291,7 +292,10 @@ struct DocumentationCurator {
                     problems.append(Problem(
                         diagnostic: Diagnostic(
                             source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
-                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) forms a cyclic documentation hierarchy",
+                            summary: """
+                            Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) \
+                            forms \(cycleDescriptions.count == 1 ? "a cycle" : "\(cycleDescriptions.count) cycles")
+                            """,
                             explanation: """
                             \(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.
                             If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
@@ -318,7 +322,7 @@ struct DocumentationCurator {
 }
 
 private func prettyPrint(cycle: [ResolvedTopicReference]) -> String {
-    let pathDescription = cycle.map { describeForDiagnostic($0, withoutModuleName: true)}.joined(separator: " ━▶︎ ")
+    let pathDescription = cycle.map { describeForDiagnostic($0, withoutModuleName: true)}.joined(separator: " ─▶︎ ")
     return """
     ╭─▶︎ \(pathDescription) ─╮
     ╰\(String(repeating:"─", count: pathDescription.count + 3 /* "─▶︎ "*/ + 2 /* " ─"*/))╯

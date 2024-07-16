@@ -145,7 +145,7 @@ class DocumentationCuratorTests: XCTestCase {
         )
         XCTAssertEqual(
             cyclicReferenceProblem?.diagnostic.summary,
-            "Organizing 'MyKit/MyClass/myFunction()' under itself forms a cyclic documentation hierarchy"
+            "Organizing 'MyKit/MyClass/myFunction()' under itself forms a cycle"
         )
         XCTAssertEqual(cyclicReferenceProblem?.diagnostic.explanation, """
             Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy shouldn't contain cycles.
@@ -206,12 +206,12 @@ class DocumentationCuratorTests: XCTestCase {
         let curationProblem = try XCTUnwrap(context.problems.first)
         
         XCTAssertEqual(curationProblem.diagnostic.source?.lastPathComponent, "Third.md")
-        XCTAssertEqual(curationProblem.diagnostic.summary, "Organizing 'unit-test/First' under 'unit-test/Third' forms a cyclic documentation hierarchy")
+        XCTAssertEqual(curationProblem.diagnostic.summary, "Organizing 'unit-test/First' under 'unit-test/Third' forms a cycle")
         
         XCTAssertEqual(curationProblem.diagnostic.explanation, """
             Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy shouldn't contain cycles.
             If this link contributed to the documentation hierarchy it would introduce this cycle:
-            ╭─▶︎ Third ━▶︎ First ━▶︎ Second ─╮
+            ╭─▶︎ Third ─▶︎ First ─▶︎ Second ─╮
             ╰─────────────────────────────╯
             """)
         
