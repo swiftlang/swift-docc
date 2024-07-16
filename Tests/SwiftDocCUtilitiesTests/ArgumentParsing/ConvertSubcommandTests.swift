@@ -19,13 +19,34 @@ class ConvertSubcommandTests: XCTestCase {
     
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!
-    
-    override func setUp() {
+
+    override func setUpWithError() throws {
+        // By default, run all tests in a temporary directory to ensure that they are not affected
+        // by the machine environment.
+        let priorWorkingDirectory = FileManager.default.currentDirectoryPath
+        let temporaryDirectory = try createTemporaryDirectory()
+        FileManager.default.changeCurrentDirectoryPath(temporaryDirectory.path)
+        addTeardownBlock {
+            FileManager.default.changeCurrentDirectoryPath(priorWorkingDirectory)
+        }
+
         // By default, send all warnings to `.none` instead of filling the
         // test console output with unrelated messages.
         Docc.Convert._errorLogHandle = .none
+
+        // Set the documentation template to a well-defined default so that options parsing isn't
+        // affected by other tests' changing it.
+        let existingTemplate = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
+        addTeardownBlock {
+            if let existingTemplate = existingTemplate {
+                SetEnvironmentVariable(TemplateOption.environmentVariableKey, existingTemplate)
+            } else {
+                UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
+            }
+        }
     }
-    
+
     func testOptionsValidation() throws {
         // create source bundle directory
         let sourceURL = try createTemporaryDirectory(named: "documentation")
@@ -34,7 +55,7 @@ class ConvertSubcommandTests: XCTestCase {
         // create template dir
         let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
-        
+
         // Tests a single input.
         do {
             SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
@@ -137,8 +158,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
 
     func testDefaultCurrentWorkingDirectory() {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-
         XCTAssertTrue(
             FileManager.default.changeCurrentDirectoryPath(testBundleURL.path),
             "The test env is invalid if the current working directory is not set to the current working directory"
@@ -159,7 +178,6 @@ class ConvertSubcommandTests: XCTestCase {
         // Test throws on non-existing parent folder.
         for outputOption in ["-o", "--output-path"] {
             for path in ["/tmp/output", "/tmp", "/"] {
-                SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
                 XCTAssertThrowsError(try Docc.Convert.parse([
                     outputOption, fakeRootPath + path,
                     testBundleURL.path,
@@ -169,7 +187,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
 
     func testAnalyzerIsTurnedOffByDefault() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         let convertOptions = try Docc.Convert.parse([
             testBundleURL.path,
         ])
@@ -178,8 +195,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testInfoPlistFallbacks() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
         // Default to nil when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
@@ -226,8 +241,6 @@ class ConvertSubcommandTests: XCTestCase {
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
     @available(*, deprecated)
     func testAdditionalSymbolGraphFiles() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
         // Default to [] when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
@@ -291,8 +304,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testIndex() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
         let convertOptions = try Docc.Convert.parse([
             testBundleURL.path,
             "--index",
@@ -319,8 +330,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testWithoutBundle() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
         let convertOptions = try Docc.Convert.parse([
             "--fallback-display-name", "DisplayName",
             "--fallback-bundle-identifier", "com.example.test",
@@ -444,10 +453,7 @@ class ConvertSubcommandTests: XCTestCase {
         let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
-        defer {
-            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
-        }
-        
+
         let dependencyDir = try createTemporaryDirectory()
             .appendingPathComponent("SomeDependency.doccarchive", isDirectory: true)
         let fileManager = FileManager.default
@@ -513,7 +519,7 @@ class ConvertSubcommandTests: XCTestCase {
     
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
         UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
-        
+
         // Since there's no custom template set (and relative HTML template lookup isn't
         // supported in the test harness), we expect `transformForStaticHosting` to
         // be false in every possible scenario of the flag, even when explicitly requested.
@@ -546,8 +552,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testTransformForStaticHostingFlagWithHTMLTemplate() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
-        
         // Since we've provided an HTML template, we expect `transformForStaticHosting`
         // to be true by default, and when explicitly requested. It should only be false
         // when `--no-transform-for-static-hosting` is passed.
@@ -580,7 +584,6 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testTreatWarningAsError() throws {
-        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         do {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([])
