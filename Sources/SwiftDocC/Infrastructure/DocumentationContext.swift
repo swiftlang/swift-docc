@@ -1873,11 +1873,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
                 path: NodeURLGenerator.Path.documentation(path: title).stringValue,
-                sourceLanguages: [DocumentationContext.defaultLanguage(in: [])]
+                sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
             )
             // Add the technology root to the article's metadata
             let metadataMarkup: BlockDirective
             if let markup = articleResult.value.metadata?.originalMarkup as? BlockDirective {
+                assert(!markup.children.contains(where: { ($0 as? BlockDirective)?.name == "TechnologyRoot" }),
+                       "Nothing should try to synthesize a root page if there's already an explicit authored root page")
                 metadataMarkup = markup.withUncheckedChildren(
                     markup.children + [BlockDirective(name: "TechnologyRoot", children: [])]
                 ) as! BlockDirective
