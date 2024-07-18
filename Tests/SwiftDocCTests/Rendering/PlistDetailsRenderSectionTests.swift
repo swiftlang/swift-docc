@@ -18,7 +18,6 @@ class PlistDetailsRenderSectionTests: XCTestCase {
 
     func testDecoding() throws {
         
-        let tempURL = try createTemporaryDirectory()
         let symbolJSON = """
         {
           "accessLevel" : "public",
@@ -53,37 +52,29 @@ class PlistDetailsRenderSectionTests: XCTestCase {
         """
         
         let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbolJSON)
-        let symbolGraphURL = tempURL.appendingPathComponent("MyModule.symbols.json")
-        try symbolGraphString.write(to: tempURL.appendingPathComponent("MyModule.symbols.json"), atomically: true, encoding: .utf8)
-        
-        let workspace = DocumentationWorkspace()
-        let bundle = DocumentationBundle(
-            info: DocumentationBundle.Info(
-                displayName: "Test",
-                identifier: "com.example.test",
-                version: "1.2.3"
-            ),
-            baseURL: URL(string: "https://example.com/example")!,
-            symbolGraphURLs: [symbolGraphURL],
-            markupURLs: [],
-            miscResourceURLs: []
-        )
-        try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
-        let context = try DocumentationContext(dataProvider: workspace)
-        let symbol = try XCTUnwrap(context.documentationCache["plist:propertylistkey"]?.semantic as? Symbol)
-        let plistDetails = try XCTUnwrap(symbol.mixinsVariants.firstValue?[SymbolGraph.Symbol.PlistDetails.mixinKey] as? SymbolGraph.Symbol.PlistDetails)
-        XCTAssertEqual(
-            PlistDetailsSectionTranslator().generatePlistDetailsRenderSection(symbol, plistDetails: plistDetails),
-            PlistDetailsRenderSection(
-                kind: .plistDetails,
-                details: PlistDetailsRenderSection.Details(
-                    rawKey: "property-list-key",
-                    value: [TypeDetails(baseType: "string", arrayMode: true)],
-                    platforms: [],
-                    displayName: nil,
-                    titleStyle: .useDisplayName
-                )
-            )
-        )
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(node)
+        let section = try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PlistDetailsRenderSection }))
+                              
+       XCTAssertEqual(
+           section,
+           PlistDetailsRenderSection(
+               kind: .plistDetails,
+               details: PlistDetailsRenderSection.Details(
+                   rawKey: "property-list-key",
+                   value: [TypeDetails(baseType: "string", arrayMode: true)],
+                   platforms: [],
+                   displayName: nil,
+                   titleStyle: .useDisplayName
+               )
+           )
+       )
     }
 }

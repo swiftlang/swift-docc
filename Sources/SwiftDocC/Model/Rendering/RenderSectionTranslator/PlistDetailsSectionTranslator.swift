@@ -15,16 +15,14 @@ import SymbolKit
 struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
     
     func generatePlistDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PlistDetailsRenderSection {
-        // Depending on whether the symbol displays the raw key as the title,
-        // display the human-friendly name of the key in the details section.
-        let titleStyle = symbol.title == plistDetails.rawKey ? PropertyListTitleStyle.useRawKey : PropertyListTitleStyle.useDisplayName
-        
-        return PlistDetailsRenderSection(details: PlistDetailsRenderSection.Details(
+        PlistDetailsRenderSection(
+            details: PlistDetailsRenderSection.Details(
                 rawKey: plistDetails.rawKey,
                 value: [TypeDetails(baseType: plistDetails.baseType, arrayMode: plistDetails.arrayMode)],
                 platforms: [],
                 displayName: plistDetails.customTitle,
-                titleStyle: titleStyle
+                // If the symbol uses the raw key as its title, display its human-friendly name  in the details section.
+                titleStyle: symbol.title == plistDetails.rawKey ? .useRawKey : .useDisplayName
             )
         )
     }
@@ -33,7 +31,9 @@ struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
         guard let mixinVariant = symbol.mixinsVariants.allValues.first(where: { mixin in
             mixin.variant.keys.contains(SymbolGraph.Symbol.PlistDetails.mixinKey)
         }) else { return nil }
-        guard let plistDetails = mixinVariant.variant[SymbolGraph.Symbol.PlistDetails.mixinKey] as? SymbolGraph.Symbol.PlistDetails else {
+        guard let plistDetails = symbol.mixinsVariants.allValues.mapFirst(where: { mixin in
+            mixin.variant[SymbolGraph.Symbol.PlistDetails.mixinKey] as? SymbolGraph.Symbol.PlistDetails
+        }) else {
             return nil
         }
         let section = generatePlistDetailsRenderSection(symbol, plistDetails: plistDetails)
