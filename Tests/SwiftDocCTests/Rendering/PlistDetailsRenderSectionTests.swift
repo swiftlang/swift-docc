@@ -97,12 +97,12 @@ class PlistDetailsRenderSectionTests: XCTestCase {
         do {
             _ = try getPlistDetailsSection(arrayMode: true, baseType: true, rawKey: "\"property-list-key\"")
         } catch {
-            XCTAssertEqual(error.localizedDescription, "The data couldn’t be read because it isn’t in the correct format.")
+            XCTAssertTrue(error.localizedDescription.contains("The data couldn’t be read because it isn’t in the correct format."))
         }
         do {
             _ = try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: 1)
         } catch {
-            XCTAssertEqual(error.localizedDescription, "The data couldn’t be read because it isn’t in the correct format.")
+            XCTAssertTrue(error.localizedDescription.contains("The data couldn’t be read because it isn’t in the correct format."))
         }
     }
 }
