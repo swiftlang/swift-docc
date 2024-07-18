@@ -18,54 +18,56 @@ class PlistDetailsRenderSectionTests: XCTestCase {
 
     func testDecoding() throws {
         
-        let symbolJSON = """
-        {
-          "accessLevel" : "public",
-          "availability" : [],
-          "identifier" : {
-            "interfaceLanguage" : "plist",
-            "precise" : "plist:propertylistkey"
-          },
-          "kind" : {
-            "displayName" : "Property List Key",
-            "identifier" : "typealias"
-          },
-          "names" : {
-            "navigator" : [
-              {
-                "kind" : "identifier",
-                "spelling" : "propertylistkey"
+        func getPlistDetailsSection(arrayMode: CustomStringConvertible, baseType: CustomStringConvertible, rawKey: CustomStringConvertible) throws -> PlistDetailsRenderSection {
+            let symbolJSON = """
+            {
+              "accessLevel" : "public",
+              "availability" : [],
+              "identifier" : {
+                "interfaceLanguage" : "plist",
+                "precise" : "plist:propertylistkey"
+              },
+              "kind" : {
+                "displayName" : "Property List Key",
+                "identifier" : "typealias"
+              },
+              "names" : {
+                "navigator" : [
+                  {
+                    "kind" : "identifier",
+                    "spelling" : "propertylistkey"
+                  }
+                ],
+                "title" : "propertylistkey"
+              },
+              "pathComponents" : [
+                "Information-Property-List",
+                "propertylistkey"
+              ],
+              "plistDetails" : {
+                "arrayMode" : \(arrayMode),
+                "baseType" : \(baseType),
+                "rawKey" : \(rawKey)
               }
-            ],
-            "title" : "propertylistkey"
-          },
-          "pathComponents" : [
-            "Information-Property-List",
-            "propertylistkey"
-          ],
-          "plistDetails" : {
-            "arrayMode" : true,
-            "baseType" : "string",
-            "rawKey" : "property-list-key"
-          }
-        }
-        """
-        
-        let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbolJSON)
-        let tempURL = try createTempFolder(content: [
-            Folder(name: "unit-test.docc", content: [
-                TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
+            }
+            """
+            let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbolJSON)
+            let tempURL = try createTempFolder(content: [
+                Folder(name: "unit-test.docc", content: [
+                    TextFile(name: "MyModule.symbols.json", utf8Content: symbolGraphString)
+                ])
             ])
-        ])
-        let (_, bundle, context) = try loadBundle(from: tempURL)
-        let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(node)
-        let section = try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PlistDetailsRenderSection }))
-                              
-       XCTAssertEqual(
-           section,
-           PlistDetailsRenderSection(
+            let (_, bundle, context) = try loadBundle(from: tempURL)
+            let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let renderNode = try converter.convert(node)
+            return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PlistDetailsRenderSection }))
+        }
+        
+        // Assert that the Details section is correctly generated when passing valid values into the plistDetails JSON object.
+        XCTAssertEqual(
+            try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: "\"property-list-key\""),
+            PlistDetailsRenderSection(
                kind: .plistDetails,
                details: PlistDetailsRenderSection.Details(
                    rawKey: "property-list-key",
@@ -76,5 +78,31 @@ class PlistDetailsRenderSectionTests: XCTestCase {
                )
            )
        )
+        
+        XCTAssertEqual(
+            try getPlistDetailsSection(arrayMode: false, baseType: "\"string\"", rawKey: "\"property-list-key\""),
+            PlistDetailsRenderSection(
+               kind: .plistDetails,
+               details: PlistDetailsRenderSection.Details(
+                   rawKey: "property-list-key",
+                   value: [TypeDetails(baseType: "string", arrayMode: false)],
+                   platforms: [],
+                   displayName: nil,
+                   titleStyle: .useDisplayName
+               )
+           )
+       )
+        
+        // Assert that the Details section does not decode unsupported values.
+        do {
+            _ = try getPlistDetailsSection(arrayMode: true, baseType: true, rawKey: "\"property-list-key\"")
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "The data couldn’t be read because it isn’t in the correct format.")
+        }
+        do {
+            _ = try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: 1)
+        } catch {
+            XCTAssertEqual(error.localizedDescription, "The data couldn’t be read because it isn’t in the correct format.")
+        }
     }
 }
