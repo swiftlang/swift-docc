@@ -767,6 +767,18 @@
             "text" : "> Before Swift-DocC 6.0, the `@Available` directive didn't support the \"deprecated\" parameter."
           },
           {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip:"
+          },
+          {
+            "text" : "> In addition to specifying the version when you deprecated an API or documentation page,"
+          },
+          {
+            "text" : "> you can use the ``DeprecationSummary`` directive to provide the reader with additional information about the deprecation or refer them to a replacement API."
+          },
+          {
             "text" : "- Parameters:"
           },
           {
@@ -1951,6 +1963,126 @@
       },
       "pathComponents" : [
         "ContentAndMedia"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Swift-DocC",
+          "introduced" : {
+            "major" : 5,
+            "minor" : 5,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "DeprecationSummary"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Many in-source deprecation annotations—such as the `@available` attribute in Swift—allow you to specify a plain text deprecation message."
+          },
+          {
+            "text" : "You can use the `@DeprecationSummary` directive to override that deprecation message with one or more paragraphs of formatted documentation markup."
+          },
+          {
+            "text" : "For example,"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@DeprecationSummary {"
+          },
+          {
+            "text" : "    This method is unsafe because it could potentially cause buffer overruns."
+          },
+          {
+            "text" : "    Use ``getBytes(_:length:)`` or ``getBytes(_:range:)`` instead."
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can use the `@DeprecationSummary` directive top-level in both articles and documentation extension files."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "> Tip:"
+          },
+          {
+            "text" : "> If you are writing a custom deprecation summary message for an API or documentation page that isn't already deprecated,"
+          },
+          {
+            "text" : "> you should also deprecate it—using in-source annotations when possible or ``Available`` directives when in-source annotations aren't available—so that the reader knows the version when you deprecated that API or documentation page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$DeprecationSummary"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DeprecationSummary",
+            "spelling" : "DeprecationSummary"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "DeprecationSummary"
+          }
+        ],
+        "title" : "DeprecationSummary"
+      },
+      "pathComponents" : [
+        "DeprecationSummary"
       ]
     },
     {

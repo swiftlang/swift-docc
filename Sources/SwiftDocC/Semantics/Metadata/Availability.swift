@@ -40,6 +40,10 @@ extension Metadata {
     ///
     /// > Earlier Versions:
     /// > Before Swift-DocC 6.0, the `@Available` directive didn't support the "deprecated" parameter.
+    ///
+    /// > Tip:
+    /// > In addition to specifying the version when you deprecated an API or documentation page,
+    /// > you can use the ``DeprecationSummary`` directive to provide the reader with additional information about the deprecation or refer them to a replacement API.
     public final class Availability: Semantic, AutomaticDirectiveConvertible {
         public static let directiveName: String = "Available"
         public static let introducedVersion = "5.8"
