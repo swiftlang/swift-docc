@@ -134,7 +134,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
         .package(url: "https://github.com/apple/swift-nio.git", from: "2.53.0"),
-        .package(url: "https://github.com/apple/swift-markdown.git", branch: "main"),
+        .package(url: "https://github.com/swiftlang/swift-markdown.git", branch: "main"),
         .package(url: "https://github.com/swiftlang/swift-lmdb.git", branch: "main"),
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.2"),
         .package(url: "https://github.com/swiftlang/swift-docc-symbolkit", branch: "main"),
