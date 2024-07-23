@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// A semantic version-number triplet with major, minor, and patch components.
 public struct VersionTriplet: Equatable, Comparable {
@@ -40,6 +41,18 @@ public struct VersionTriplet: Equatable, Comparable {
         self.major = major
         self.minor = minor
         self.patch = patch
+    }
+
+    public init(_ semanticVersion: SemanticVersion) {
+        self.major = semanticVersion.major
+        self.minor = semanticVersion.minor
+        self.patch = semanticVersion.patch
+    }
+
+    public init(_ semanticVersion: SymbolGraph.SemanticVersion) {
+        self.major = semanticVersion.major
+        self.minor = semanticVersion.minor
+        self.patch = semanticVersion.patch
     }
 }
 

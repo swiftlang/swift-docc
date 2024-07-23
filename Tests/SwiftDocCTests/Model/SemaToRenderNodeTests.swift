@@ -1947,6 +1947,17 @@ Document
 
         // Beta platform matching the introduced version
         context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)]
+
+        do {
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+
+            // Verify platform beta was plumbed all the way to the render JSON
+            XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
+        }
+
+        // Beta platform earlier than the introduced version
+        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)]
         
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -1959,7 +1970,7 @@ Document
         // Set only some platforms to beta & the exact version MyClass is being introduced at
         context.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
-            "watchOS": PlatformVersion(VersionTriplet(3, 0, 0), beta: true),
+            "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
             "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
         ]
         
