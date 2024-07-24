@@ -73,14 +73,6 @@ struct DocumentationMarkup {
         case end
     }
     
-    /// Directives which are removed from the markdown content after being parsed.
-    static let directivesRemovedFromContent = [
-        Comment.directiveName,
-        Metadata.directiveName,
-        Options.directiveName,
-        Redirect.directiveName,
-    ]
-    
     private static let allowedSectionsForDeprecationSummary = [
         ParserSection.abstract,
         ParserSection.discussion,
