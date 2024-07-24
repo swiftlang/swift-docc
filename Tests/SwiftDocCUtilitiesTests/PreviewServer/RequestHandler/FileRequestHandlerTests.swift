@@ -144,7 +144,7 @@ class FileRequestHandlerTests: XCTestCase {
             ])
         ])
 
-        let request = makeRequestHead(uri: "https://invalid host.com", headers: [("Range", "bytes=0-1")])
+        let request = makeRequestHead(uri: "https://example-host.com:-80", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
