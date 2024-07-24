@@ -1864,21 +1864,47 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle containing the articles.
     private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) {
         let title = bundle.displayName
-        let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
-            BlockDirective(name: "TechnologyRoot", children: [])
-        ])
-        let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
+        
+        // An inner helper function to register a new root node from an article
+        func registerAsNewRootNode(_ articleResult: SemanticResult<Article>) {
+            uncuratedArticles.removeValue(forKey: articleResult.topicGraphNode.reference)
+            let title = articleResult.source.deletingPathExtension().lastPathComponent
+            // Create a new root-looking reference
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: NodeURLGenerator.Path.documentation(path: title).stringValue,
+                sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
+            )
+            // Add the technology root to the article's metadata
+            let metadataMarkup: BlockDirective
+            if let markup = articleResult.value.metadata?.originalMarkup as? BlockDirective {
+                assert(!markup.children.contains(where: { ($0 as? BlockDirective)?.name == "TechnologyRoot" }),
+                       "Nothing should try to synthesize a root page if there's already an explicit authored root page")
+                metadataMarkup = markup.withUncheckedChildren(
+                    markup.children + [BlockDirective(name: "TechnologyRoot", children: [])]
+                ) as! BlockDirective
+            } else {
+                metadataMarkup = BlockDirective(name: "Metadata", children: [
+                    BlockDirective(name: "TechnologyRoot", children: [])
+                ])
+            }
+            let article = Article(
+                markup: articleResult.value.markup,
+                metadata: Metadata(from: metadataMarkup, for: bundle, in: self),
+                redirects: articleResult.value.redirects,
+                options: articleResult.value.options
+            )
+            
+            let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: articleResult.topicGraphNode.source, title: title)
+            registerRootPages(from: [.init(value: article, source: articleResult.source, topicGraphNode: graphNode)], in: bundle)
+        }
         
         if articles.count == 1 {
             // This catalog only has one article, so we make that the root.
-            var onlyArticle = articles.removeFirst()
-            onlyArticle.value = Article(markup: onlyArticle.value.markup, metadata: metadata, redirects: onlyArticle.value.redirects, options: onlyArticle.value.options)
-            registerRootPages(from: [onlyArticle], in: bundle)
+            registerAsNewRootNode(articles.removeFirst())
         } else if let nameMatchIndex = articles.firstIndex(where: { $0.source.deletingPathExtension().lastPathComponent == title }) {
             // This catalog has an article with the same name as the catalog itself, so we make that the root.
-            var nameMatch = articles.remove(at: nameMatchIndex)
-            nameMatch.value = Article(markup: nameMatch.value.markup, metadata: metadata, redirects: nameMatch.value.redirects, options: nameMatch.value.options)
-            registerRootPages(from: [nameMatch], in: bundle)
+            registerAsNewRootNode(articles.remove(at: nameMatchIndex))
         } else {
             // There's no particular article to make into the root. Instead, create a new minimal root page.
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
@@ -1889,12 +1915,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
             
-            // Build up the "full" markup for an empty technology root article 
+            // Build up the "full" markup for an empty technology root article
+            let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
+                BlockDirective(name: "TechnologyRoot", children: [])
+            ])
             let markup = Document(
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
             )
-            
+            let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
             let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
                 reference: reference,

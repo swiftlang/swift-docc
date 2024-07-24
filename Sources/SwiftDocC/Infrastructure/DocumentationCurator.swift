@@ -231,6 +231,22 @@ struct DocumentationCurator {
                     (childDocumentationNode.kind == .article || childDocumentationNode.kind.isSymbol || childDocumentationNode.kind == .tutorial || childDocumentationNode.kind == .tutorialArticle) else {
                         continue
                 }
+                
+                // A solution that suggests removing the list item that contain this link
+                var removeListItemSolutions: [Solution] {
+                    // Traverse the markup parents up to the nearest list item
+                    guard let listItem = sequence(first: link as (any Markup), next: \.parent).mapFirst(where: { $0 as? ListItem }),
+                          let listItemRange = listItem.range
+                    else {
+                        assertionFailure("Unable to find the list item element that contains \(link.format()) in the markup for \(describeForDiagnostic(nodeReference).singleQuoted)")
+                        return []
+                    }
+                    return [Solution(
+                        summary: "Remove \(listItem.format().trimmingCharacters(in: .whitespacesAndNewlines).singleQuoted)",
+                        replacements: [Replacement(range: listItemRange, replacement: "")]
+                    )]
+                }
+                let topicSectionBaseExplanation = "Links in a \"Topics section\" are used to organize documentation into a hierarchy"
 
                 // Allow curating a module node from a manual technology root.
                 if childDocumentationNode.kind == .module {
@@ -242,19 +258,51 @@ struct DocumentationCurator {
                     let hasTechnologyRoot = isTechnologyRoot(nodeReference) || context.reachableRoots(from: nodeReference).contains(where: isTechnologyRoot)
 
                     if !hasTechnologyRoot {
-                        problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is a module, and modules only exist at the root"), possibleSolutions: []))
+                        problems.append(Problem(
+                            diagnostic: Diagnostic(
+                                source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.ModuleCuration",
+                                summary: "Organizing the module \(childReference.lastPathComponent.singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) isn't allowed",
+                                explanation: "\(topicSectionBaseExplanation). Modules should be roots in the documentation hierarchy."),
+                            possibleSolutions: removeListItemSolutions))
                         continue
                     }
                 }
                 
                 // Verify we are not creating a graph cyclic relationship.
                 guard childReference != nodeReference else {
-                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference", summary: "A symbol can't link to itself from within its Topics group in \(nodeReference.absoluteString.singleQuoted)"), possibleSolutions: []))
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
+                            summary: "Organizing \(describeForDiagnostic(childReference).singleQuoted) under itself forms a cycle",
+                            explanation: "\(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles."),
+                        possibleSolutions: removeListItemSolutions
+                    ))
                     continue
                 }
                 
                 guard !isReference(childReference, anAncestorOf: nodeReference) else {
-                    problems.append(Problem(diagnostic: Diagnostic(source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference", summary: "Linking to \((link.destination ?? "").singleQuoted) from a Topics group in \(nodeReference.absoluteString.singleQuoted) isn't allowed", explanation: "The former is an ancestor of the latter"), possibleSolutions: []))
+                    // Adding this edge in the topic graph _would_ introduce a cycle.
+                    // In order to produce more actionable diagnostics, create a new graph that has this cycle.
+                    var edges = context.topicGraph.edges
+                    edges[nodeReference, default: []].append(childReference)
+                    let graph = DirectedGraph(edges: edges)
+                    
+                    let cycleDescriptions: [String] = graph.cycles(from: nodeReference).map { prettyPrint(cycle: $0) }
+                    
+                    problems.append(Problem(
+                        diagnostic: Diagnostic(
+                            source: source(), severity: .warning, range: range(), identifier: "org.swift.docc.CyclicReference",
+                            summary: """
+                            Organizing \(describeForDiagnostic(childReference).singleQuoted) under \(describeForDiagnostic(nodeReference).singleQuoted) \
+                            forms \(cycleDescriptions.count == 1 ? "a cycle" : "\(cycleDescriptions.count) cycles")
+                            """,
+                            explanation: """
+                            \(topicSectionBaseExplanation). The documentation hierarchy shouldn't contain cycles.
+                            If this link contributed to the documentation hierarchy it would introduce \(cycleDescriptions.count == 1 ? "this cycle" : "these \(cycleDescriptions.count) cycles"):
+                            \(cycleDescriptions.joined(separator: "\n"))
+                            """),
+                        possibleSolutions: removeListItemSolutions
+                    ))
                     continue
                 }
                 
@@ -271,4 +319,19 @@ struct DocumentationCurator {
             }
         }
     }
+}
+
+private func prettyPrint(cycle: [ResolvedTopicReference]) -> String {
+    let pathDescription = cycle.map { describeForDiagnostic($0, withoutModuleName: true)}.joined(separator: " ─▶︎ ")
+    return """
+    ╭─▶︎ \(pathDescription) ─╮
+    ╰\(String(repeating:"─", count: pathDescription.count + 3 /* "─▶︎ "*/ + 2 /* " ─"*/))╯
+    """
+}
+
+private func describeForDiagnostic(_ reference: ResolvedTopicReference, withoutModuleName: Bool = false) -> String {
+    // The references that the curator crawls wouldn't result in a warning if they weren't in the same module.
+    // To avoid repeating a common prefix. The first two path components are the leading slash and "documentation".
+    // The third path component is the module name.
+    reference.pathComponents.dropFirst(withoutModuleName ? 3 : 2).joined(separator: "/")
 }
