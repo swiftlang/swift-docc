@@ -458,7 +458,7 @@ class ExternalLinkableTests: XCTestCase {
                 .init(
                     title: "Type Methods",
                     identifiers: [
-                        summary.referenceURL.appendingPathComponent("myStringFunction(_:)").absoluteString,
+                        summary.referenceURL.appendingPathComponent("myStringFunction(_:)").absoluteString.removingPercentEncoding!,
                     ]
                 ),
             ])
