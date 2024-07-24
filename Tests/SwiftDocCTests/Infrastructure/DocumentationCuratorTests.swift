@@ -13,6 +13,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 import Markdown
 
 class DocumentationCuratorTests: XCTestCase {
@@ -129,8 +130,11 @@ class DocumentationCuratorTests: XCTestCase {
         )
         XCTAssertEqual(
             moduleCurationProblem?.diagnostic.summary,
-            "Linking to \'doc://org.swift.docc.example/documentation/MyKit\' from a Topics group in \'doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()\' isn't allowed"
+            "Organizing the module 'MyKit' under 'MyKit/MyClass/myFunction()' isn't allowed"
         )
+        XCTAssertEqual(moduleCurationProblem?.diagnostic.explanation, """
+            Links in a "Topics section" are used to organize documentation into a hierarchy. Modules should be roots in the documentation hierarchy.
+            """)
         
         let cyclicReferenceProblem = myClassProblems.first(where: { $0.diagnostic.identifier == "org.swift.docc.CyclicReference" })
         XCTAssertNotNil(cyclicReferenceProblem)
@@ -141,8 +145,77 @@ class DocumentationCuratorTests: XCTestCase {
         )
         XCTAssertEqual(
             cyclicReferenceProblem?.diagnostic.summary,
-            "A symbol can't link to itself from within its Topics group in \'doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()\'"
+            "Organizing 'MyKit/MyClass/myFunction()' under itself forms a cycle"
         )
+        XCTAssertEqual(cyclicReferenceProblem?.diagnostic.explanation, """
+            Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy shouldn't contain cycles.
+            """)
+    }
+    
+    func testCyclicCurationDiagnostic() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                // A number of articles with this cyclic curation:
+                //
+                // Root──▶First──▶Second──▶Third─┐
+                //          ▲                    │
+                //          └────────────────────┘
+                TextFile(name: "Root.md", utf8Content: """
+                # Root
+                
+                @Metadata {
+                  @TechnologyRoot
+                }
+                
+                Curate the first article
+                
+                ## Topics
+                - <doc:First>
+                """),
+                
+                TextFile(name: "First.md", utf8Content: """
+                # First
+                
+                Curate the second article
+                
+                ## Topics
+                - <doc:Second>
+                """),
+                
+                TextFile(name: "Second.md", utf8Content: """
+                # Second
+                
+                Curate the third article
+                
+                ## Topics
+                - <doc:Third>
+                """),
+                
+                TextFile(name: "Third.md", utf8Content: """
+                # Third
+                
+                Form a cycle by curating the first article
+                ## Topics
+                - <doc:First>
+                """),
+            ])
+        ])
+        
+        let (_, _, context) = try loadBundle(from: tempURL)
+        XCTAssertEqual(context.problems.map(\.diagnostic.identifier), ["org.swift.docc.CyclicReference"])
+        let curationProblem = try XCTUnwrap(context.problems.first)
+        
+        XCTAssertEqual(curationProblem.diagnostic.source?.lastPathComponent, "Third.md")
+        XCTAssertEqual(curationProblem.diagnostic.summary, "Organizing 'unit-test/First' under 'unit-test/Third' forms a cycle")
+        
+        XCTAssertEqual(curationProblem.diagnostic.explanation, """
+            Links in a "Topics section" are used to organize documentation into a hierarchy. The documentation hierarchy shouldn't contain cycles.
+            If this link contributed to the documentation hierarchy it would introduce this cycle:
+            ╭─▶︎ Third ─▶︎ First ─▶︎ Second ─╮
+            ╰─────────────────────────────╯
+            """)
+        
+        XCTAssertEqual(curationProblem.possibleSolutions.map(\.summary), ["Remove '- <doc:First>'"])
     }
     
     func testModuleUnderTechnologyRoot() throws {

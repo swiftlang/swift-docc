@@ -74,11 +74,16 @@ struct DocumentationMarkup {
     }
     
     /// Directives which are removed from the markdown content after being parsed.
-    private static let directivesRemovedFromContent = [
+    static let directivesRemovedFromContent = [
         Comment.directiveName,
         Metadata.directiveName,
         Options.directiveName,
         Redirect.directiveName,
+    ]
+    
+    private static let allowedSectionsForDeprecationSummary = [
+        ParserSection.abstract,
+        ParserSection.discussion,
     ]
 
     // MARK: - Parsed Data
@@ -144,17 +149,21 @@ struct DocumentationMarkup {
                 }
             }
             
+            // The deprecation summary directive is allowed to have an effect in multiple sections of the content.
+            if let directive = child as? BlockDirective,
+               directive.name == DeprecationSummary.directiveName,
+               Self.allowedSectionsForDeprecationSummary.contains(currentSection) {
+                deprecation = MarkupContainer(directive.children)
+                return
+            }
+            
             // Parse an abstract, if found
             if currentSection == .abstract {
                 if abstractSection == nil, let firstParagraph = child as? Paragraph {
                     abstractSection = AbstractSection(paragraph: firstParagraph)
                     return
                 } else if let directive = child as? BlockDirective {
-                    if directive.name == DeprecationSummary.directiveName {
-                        // Found deprecation notice in the abstract.
-                        deprecation = MarkupContainer(directive.children)
-                        return
-                    } else if BlockDirective.directivesRemovedFromContent.contains(directive.name) {
+                    if BlockDirective.directivesRemovedFromContent.contains(directive.name) {
                         // These directives don't affect content so they shouldn't break us out of
                         // the automatic abstract section.
                         return
