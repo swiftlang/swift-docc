@@ -12,7 +12,6 @@ import Foundation
 
 import XCTest
 @testable import SwiftDocC
-@testable import SymbolKit
 
 class VersionTripletTest: XCTestCase {
     func testComparable() {
