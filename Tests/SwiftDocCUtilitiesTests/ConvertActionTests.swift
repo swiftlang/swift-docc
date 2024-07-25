@@ -1819,6 +1819,71 @@ class ConvertActionTests: XCTestCase {
         ])
     }
     
+    func testBetaInAvailabilityFallbackPlatforms() throws {
+        
+        func generateConvertAction(currentPlatforms: [String : PlatformVersion]) throws -> ConvertAction {
+            try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: currentPlatforms,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+            )
+        }
+        let bundle = Folder(name: "nested", content: [
+            Folder(name: "folders", content: [
+                Folder(name: "unit-test.docc", content: [
+                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                ]),
+            ])
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        
+        // Test whether the missing platforms copy the availability information from the fallback platform.
+        var action = try generateConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+        ])
+        // Test whether the non-missing platforms don't copy the availability information from the fallback platform.
+        action = try generateConvertAction(currentPlatforms: [
+            "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst": PlatformVersion(.init(11, 0, 0), beta: false)
+        ])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: false),
+            "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true)
+        ])
+        action = try generateConvertAction(currentPlatforms: [
+            "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
+            "iPadOS": PlatformVersion(.init(12, 0, 0), beta: false),
+            
+        ])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
+            "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
+            "iPadOS" : PlatformVersion(.init(12, 0, 0), beta: false),
+        ])
+        // Test whether the non-missing platforms don't copy the availability information from the non-fallback platform.
+        action = try generateConvertAction(currentPlatforms: [
+            "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
+            
+        ])
+        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+            "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
+        ])
+    }
+    
     func testResolvedTopicReferencesAreCachedByDefaultWhenConverting() throws {
         let bundle = Folder(
             name: "unit-test.docc",

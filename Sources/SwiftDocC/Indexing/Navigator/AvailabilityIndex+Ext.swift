@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -259,6 +259,8 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
         public static let watchOS = Platform.Name(name: "watchOS", mask: 1 << 3)
         public static let tvOS = Platform.Name(name: "tvOS", mask: 1 << 4)
         public static let macCatalyst = Platform.Name(name: "Mac Catalyst", mask: 1 << 5)
+        public static let iPadOS = Platform.Name(name: "iPadOS", mask: 1 << 6)
+        public static let visionOS = Platform.Name(name: "visionOS", mask: 1 << 7)
         
         // A mask including all the platforms
         public static let any = Platform.Name(name: "all", mask: ID.max)
@@ -284,6 +286,10 @@ public struct Platform: Hashable, CustomStringConvertible, Codable, Equatable {
                 return .tvOS
             case "mac catalyst":
                 return .macCatalyst
+            case "ipados":
+                return .iPadOS
+            case "visionos":
+                return .visionOS
             default:
                 return .undefined
             }

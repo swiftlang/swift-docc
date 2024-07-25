@@ -341,7 +341,7 @@ public extension DocumentationNode {
 
                 taskGroups = topicSectionGroups
                 for variant in renderNode.topicSectionsVariants.variants {
-                    taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
+                    taskGroupVariants[variant.traits] = renderNode.topicSectionsVariants.value(for: variant.traits).map { group in .init(title: group.title, identifiers: group.identifiers) }
                 }
             }
         } else {

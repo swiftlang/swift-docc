@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,28 +15,28 @@ import XCTest
 class VariantPatchOperationTests: XCTestCase {
     func testApplyingPatch() {
         let original = [1, 2, 3]
-        let addVariant = VariantCollection<[Int]>.Variant(traits: [], patch: [
+        let addVariant = makeVariantCollection(original, patch: [
             .add(value: [4, 5, 6])
         ])
-        XCTAssertEqual(addVariant.applyingPatchTo(original), [1, 2, 3, 4, 5, 6])
+        XCTAssertEqual(addVariant.value(for: testTraits), [1, 2, 3, 4, 5, 6])
         
-        let removeVariant = VariantCollection<[Int]>.Variant(traits: [], patch: [
+        let removeVariant = makeVariantCollection(original, patch: [
             .remove
         ])
-        XCTAssertEqual(removeVariant.applyingPatchTo(original), [])
+        XCTAssertEqual(removeVariant.value(for: testTraits), [])
         
-        let replaceVariant = VariantCollection<[Int]>.Variant(traits: [], patch: [
+        let replaceVariant = makeVariantCollection(original, patch: [
             .replace(value: [4, 5, 6])
         ])
-        XCTAssertEqual(replaceVariant.applyingPatchTo(original), [4, 5, 6])
+        XCTAssertEqual(replaceVariant.value(for: testTraits), [4, 5, 6])
         
-        let mixVariant = VariantCollection<[Int]>.Variant(traits: [], patch: [
+        let mixVariant = makeVariantCollection(original, patch: [
             .replace(value: [4, 5, 6]),
             .remove,
             .add(value: [6, 7]),
             .add(value: [8, 9]),
         ])
-        XCTAssertEqual(mixVariant.applyingPatchTo(original), [6, 7, 8, 9])
+        XCTAssertEqual(mixVariant.value(for: testTraits), [6, 7, 8, 9])
     }
     
     func testApplyingSeriesOfPatchOperations() {
@@ -62,8 +62,8 @@ class VariantPatchOperationTests: XCTestCase {
             "MNOPQR",
         ]
         for (index, expectedValue) in expectedValues.enumerated() {
-            let stringVariant = VariantCollection<String>.Variant(traits: [], patch: Array(stringPatches.prefix(index)))
-            XCTAssertEqual(stringVariant.applyingPatchTo("A"), expectedValue)
+            let stringVariant = makeVariantCollection("A", patch: Array(stringPatches.prefix(index)))
+            XCTAssertEqual(stringVariant.value(for: testTraits), expectedValue)
         }
     }
     
@@ -90,5 +90,13 @@ class VariantPatchOperationTests: XCTestCase {
             XCTFail("Expected remove operation")
             return
         }
+    }
+    
+    private let testTraits = [RenderNode.Variant.Trait.interfaceLanguage("unit-test")]
+    
+    private func makeVariantCollection<Value>(_ original: Value, patch: [VariantPatchOperation<Value>]) -> VariantCollection<Value> {
+        VariantCollection(defaultValue: original, variants: [
+            .init(traits: testTraits, patch: patch)
+        ])
     }
 }

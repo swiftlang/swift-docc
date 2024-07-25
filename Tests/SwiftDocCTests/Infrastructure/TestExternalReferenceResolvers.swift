@@ -105,7 +105,6 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
                 fragments: entityInfo.declarationFragments?.declarationFragments.map { fragment in
                     return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
                 },
-                titleStyle: entityInfo.kind.isSymbol ? .symbol : .title,
                 images: entityInfo.topicImages?.map(\.0) ?? []
             ),
             renderReferenceDependencies: dependencies,

@@ -467,7 +467,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.sections[2].kind, .callToAction)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 0)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 0)
         
         XCTAssertNil(renderNode.metadata.roleHeading)
         XCTAssertEqual(renderNode.metadata.title, "Making an Augmented Reality App")
@@ -622,7 +622,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.references.count, 13)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 1)
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 1)
         
         guard let introImageReference = renderNode.references["intro.png"] as? ImageReference else {
             XCTFail("Missing intro.png image reference")
@@ -878,7 +878,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         XCTAssertEqual(renderNode.references.count, 13)
         
-        XCTAssertEqual(renderNode.childrenRelationship().count, 3, "Expected three chapters as children.")
+        XCTAssertEqual(renderNode.navigatorChildren(for: nil).count, 3, "Expected three chapters as children.")
         
         guard let introImageReference = renderNode.references["intro.png"] as? ImageReference else {
             XCTFail("Missing intro.png image reference")
@@ -1060,7 +1060,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(discussion.kind, RenderSectionKind.content)
         
         // Test childrenRelationships are handled correctly
-        let children = renderNode.childrenRelationship()
+        let children = renderNode.navigatorChildren(for: nil)
         XCTAssertEqual(children.count, renderNode.topicSections.count)
         XCTAssertEqual(children.first?.name, "Task Group Exercising Symbol Links")
         XCTAssertEqual(children.first?.references.count, 3)
@@ -1566,7 +1566,7 @@ class SemaToRenderNodeTests: XCTestCase {
             let platforms = (renderNode.metadata.platforms ?? []).sorted(by: { lhs, rhs in lhs.name! < rhs.name! })
             
             XCTAssertEqual(platforms.count,6)
-            let versionString = version.stringRepresentation(precisionUpToNonsignificant: .patch)
+            let versionString = SemanticVersion(version).stringRepresentation(precisionUpToNonsignificant: .patch)
             
             XCTAssertEqual(platforms[0].name, "Mac Catalyst")
             XCTAssertEqual(platforms[0].introduced, versionString)
@@ -2856,7 +2856,7 @@ Document
         let node = try context.entity(with: myFuncReference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
-        // Verify that by default we don't inherit docs and we gernerate default abstract.
+        // Verify that by default we don't inherit docs and we generate default abstract.
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
@@ -3045,6 +3045,7 @@ Document
          
         let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         let protocolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let functionReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
         
         // Verify the MyKit module
         
@@ -3098,6 +3099,17 @@ Document
         for moduleVariant in protocolRenderNode.metadata.modulesVariants.variants {
             XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
         }
+        
+        // Verify the MyFunction node
+        
+        let functionNode = try context.entity(with: functionReference)
+        let functionSymbol = try XCTUnwrap(functionNode.semantic as? Symbol)
+        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: functionNode.reference, source: nil)
+        let functionRenderNode = try XCTUnwrap(translator.visit(functionSymbol) as? RenderNode)
+        XCTAssertTrue(functionRenderNode.metadata.modulesVariants.variants.isEmpty)
+        // Test that the symbol name `MyKit` is not added as a related module.
+        XCTAssertNil((functionRenderNode.metadata.modulesVariants.defaultValue!.first!.relatedModules))
+        XCTAssertTrue(functionRenderNode.metadata.extendedModuleVariants.variants.isEmpty)
     }
     
     /// Tests that we correctly resolve links in automatic inherited API Collections.
@@ -3314,8 +3326,7 @@ Document
             "doc://org.swift.MixedFramework/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()"
         ])
         
-        let objcTopicSectionVariant = try XCTUnwrap(topicSectionsVariants.variants.first { $0.traits[0] == .interfaceLanguage("occ") })
-        let objcTopicSection = objcTopicSectionVariant.applyingPatchTo(swiftTopicSection)
+        let objcTopicSection = topicSectionsVariants.value(for: [.interfaceLanguage("occ")])
         
         XCTAssertEqual(objcTopicSection.first?.title, "Something Objective-C only")
         XCTAssertEqual(objcTopicSection.first?.abstract?.plainText, "This link is only for Objective-C")
@@ -3392,8 +3403,7 @@ Document
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
             ])
             
-            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
-            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
             XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
                 "Structures",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle",
@@ -3443,8 +3453,7 @@ Document
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/zero"
             ])
             
-            let objcTopicSectionsVariant = try XCTUnwrap(renderNode.topicSectionsVariants.variants.first(where: { $0.traits == [.interfaceLanguage(SourceLanguage.objectiveC.id) ]}))
-            let objcTopicSections = objcTopicSectionsVariant.applyingPatchTo(swiftTopicSections)
+            let objcTopicSections = renderNode.topicSectionsVariants.value(for: .objectiveC)
             XCTAssertEqual(objcTopicSections.flatMap { [$0.title!] + $0.identifiers }, [
                 "Instance Properties",
                 "doc://GeometricalShapes/documentation/GeometricalShapes/Circle/center",

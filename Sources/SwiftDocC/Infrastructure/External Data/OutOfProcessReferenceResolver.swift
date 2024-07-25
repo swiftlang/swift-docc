@@ -155,9 +155,8 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             kind: kind,
             role: role,
             fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
-            isBeta: (resolvedInformation.platforms ?? []).contains(where: { $0.isBeta == true }),
+            isBeta: resolvedInformation.isBeta,
             isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
-            titleStyle: resolvedInformation.kind.isSymbol ? .symbol : .title,
             images: resolvedInformation.topicImages ?? []
         )
         for variant in resolvedInformation.variants ?? [] {
@@ -588,6 +587,15 @@ extension OutOfProcessReferenceResolver {
         
         /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
         public var variants: [Variant]?
+       
+        /// A value that indicates whether this symbol is under development and likely to change.
+        var isBeta: Bool {
+            guard let platforms, !platforms.isEmpty else {
+                return false
+            }
+            
+            return platforms.allSatisfy { $0.isBeta == true }
+        }
         
         /// Creates a new resolved information value with all its values.
         ///

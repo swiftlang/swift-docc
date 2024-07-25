@@ -518,78 +518,91 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let results = Synchronized<[LinkResolveResult]>([])
         results.sync({ $0.reserveCapacity(references.count) })
 
+        func inheritsDocumentationFromOtherModule(_ documentationNode: DocumentationNode, symbolOriginReference: ResolvedTopicReference) -> Bool {
+            // Check that this symbol only has documentation from an in-source documentation comment
+            guard documentationNode.docChunks.count == 1,
+                  case .sourceCode = documentationNode.docChunks.first?.source
+            else {
+                return false
+            }
+            
+            // Check that that documentation comment is inherited from a symbol belonging to another module
+            guard let symbolSemantic = documentationNode.semantic as? Symbol,
+                  let originSymbolSemantic = documentationCache[symbolOriginReference]?.semantic as? Symbol
+            else {
+                return false
+            }
+            return symbolSemantic.moduleReference != originSymbolSemantic.moduleReference
+        }
+        
         let resolveNodeWithReference: (ResolvedTopicReference) -> Void = { [unowned self] reference in
-            if var documentationNode = try? entity(with: reference), documentationNode.semantic is Article || documentationNode.semantic is Symbol {
-                for doc in documentationNode.docChunks {
-                    let source: URL?
-                    switch doc.source {
-                    case _ where documentationNode.semantic is Article,
-                            .documentationExtension:
-                        source = documentLocationMap[reference]
-                    case .sourceCode(let location, _):
-                        // For symbols, first check if we should reference resolve
-                        // inherited docs or not. If we don't inherit the docs
-                        // we should also skip reference resolving the chunk.
-                        if let semantic = documentationNode.semantic as? Symbol,
-                           let origin = semantic.origin, !externalMetadata.inheritDocs
-                        {
-                            // If the two symbols are coming from different modules,
-                            // regardless if they are in the same bundle
-                            // (for example Foundation and SwiftUI), skip link resolving.
-                            if let originSymbol = documentationCache[origin.identifier]?.semantic as? Symbol,
-                               originSymbol.moduleReference != semantic.moduleReference {
-                                continue
-                            }
-                        }
-
-                        source = location?.url()
-                    }
-
-                    // Find the inheritance parent, if the docs are inherited.
-                    let inheritanceParentReference: ResolvedTopicReference?
-                    if let origin = (documentationNode.semantic as? Symbol)?.origin,
-                       let originReference = documentationCache.reference(symbolID: origin.identifier)
-                    {
-                        inheritanceParentReference = originReference
-                    } else {
-                        inheritanceParentReference = nil
-                    }
-
-                    var resolver = ReferenceResolver(context: self, bundle: bundle, source: source, rootReference: reference, inheritanceParentReference: inheritanceParentReference)
+            guard var documentationNode = try? entity(with: reference),
+                  documentationNode.semantic is Article || documentationNode.semantic is Symbol
+            else {
+                return
+            }
                     
-                    // Update the cache with the resolved node.
-                    // We aggressively release used memory, since we're copying all semantic objects
-                    // on the line below while rewriting nodes with the resolved content.
-                    documentationNode.semantic = autoreleasepool { resolver.visit(documentationNode.semantic) }
-                    
-                    let pageImageProblems = documentationNode.metadata?.pageImages.compactMap { pageImage in
-                        return resolver.resolve(
-                            resource: pageImage.source,
-                            range: pageImage.originalMarkup.range,
-                            severity: .warning
-                        )
-                    } ?? []
-                    
-                    resolver.problems.append(contentsOf: pageImageProblems)
-
-                    var problems = resolver.problems
-
-                    if case .sourceCode(_, let offset) = doc.source, documentationNode.kind.isSymbol {
-                        // Offset all problem ranges by the start location of the
-                        // source comment in the context of the complete file.
-                        if let docRange = offset {
-                            for i in problems.indices {
-                                problems[i].offsetWithRange(docRange)
-                            }
-                        } else {
-                            problems.removeAll()
-                        }
+            let symbolOriginReference = (documentationNode.semantic as? Symbol)?.origin.flatMap { origin in
+                documentationCache.reference(symbolID: origin.identifier)
+            }
+            // Check if we should skip resolving links for inherited documentation from other modules.
+            if !externalMetadata.inheritDocs,
+                let symbolOriginReference,
+                inheritsDocumentationFromOtherModule(documentationNode, symbolOriginReference: symbolOriginReference)
+            {
+                // Don't resolve any links for this symbol.
+                return
+            }
+            
+            var resolver = ReferenceResolver(context: self, bundle: bundle, rootReference: reference, inheritanceParentReference: symbolOriginReference)
+            
+            // Update the node with the markup that contains resolved references instead of authored links.
+            documentationNode.semantic = autoreleasepool { 
+                // We use an autorelease pool to release used memory as soon as possible, since the resolver will copy each semantic value
+                // to rewrite it and replace the authored links with resolved reference strings instead.
+                resolver.visit(documentationNode.semantic)
+            }
+            
+            let problems: [Problem]
+            if documentationNode.semantic is Article {
+                // Diagnostics for articles have correct source ranges and don't need to be modified.
+                problems = resolver.problems
+            } else {
+                // Diagnostics for in-source documentation comments need to be offset based on the start location of the comment in the source file.
+                
+                // Get the source location
+                let inSourceDocumentationCommentInfo = documentationNode.inSourceDocumentationChunk
+                
+                // Post-process and filter out unwanted diagnostics (for example from inherited documentation comments)
+                problems = resolver.problems.compactMap { problem in
+                    guard let source = problem.diagnostic.source else {
+                        // Ignore any diagnostic without a source location. These can't be meaningfully presented to the user.
+                        return nil
                     }
-
-                    let result: LinkResolveResult = (reference: reference, node: documentationNode, problems: problems)
-                    results.sync({ $0.append(result) })
+                    
+                    if source == inSourceDocumentationCommentInfo?.url, let offset = inSourceDocumentationCommentInfo?.offset {
+                        // Diagnostics from an in-source documentation comment need to be offset based on the location of that documentation comment.
+                        var modifiedProblem = problem
+                        modifiedProblem.offsetWithRange(offset)
+                        return modifiedProblem
+                    } 
+                    
+                    // Diagnostics from documentation extension files have correct source ranges and don't need to be modified.
+                    return problem
                 }
             }
+            
+            // Also resolve the node's page images. This isn't part of the node's 'semantic' value (resolved above).
+            let pageImageProblems = documentationNode.metadata?.pageImages.compactMap { pageImage in
+                return resolver.resolve(
+                    resource: pageImage.source,
+                    range: pageImage.originalMarkup.range,
+                    severity: .warning
+                )
+            } ?? []
+            
+            let result: LinkResolveResult = (reference: reference, node: documentationNode, problems: problems + pageImageProblems)
+            results.sync({ $0.append(result) })
         }
 
         // Resolve links concurrently if there are no external resolvers.
@@ -604,7 +617,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Record symbol links as symbol "mentions" for automatic cross references
                 // on rendered symbol documentation.
                 if let article = result.node.semantic as? Article,
-                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) {
+                   case .article = DocumentationContentRenderer.roleForArticle(article, nodeKind: result.node.kind) 
+                {
                     for markup in article.abstractSection?.content ?? [] {
                         var mentions = SymbolLinkCollector(context: self, article: result.node.reference, baseWeight: 2)
                         mentions.visit(markup)
@@ -652,7 +666,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = technologyResult.source
                 let unresolvedTechnology = technologyResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, bundle: bundle)
                 let technology = resolver.visit(unresolvedTechnology) as! Technology
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -724,7 +738,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = tutorialResult.source
                 let unresolvedTutorial = tutorialResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, bundle: bundle)
                 let tutorial = resolver.visit(unresolvedTutorial) as! Tutorial
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -758,7 +772,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = articleResult.source
                 let unresolvedTutorialArticle = articleResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, bundle: bundle)
                 let article = resolver.visit(unresolvedTutorialArticle) as! TutorialArticle
                 diagnosticEngine.emit(resolver.problems)
                             
@@ -1857,21 +1871,47 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle containing the articles.
     private func synthesizeArticleOnlyRootPage(articles: inout [DocumentationContext.SemanticResult<Article>], bundle: DocumentationBundle) {
         let title = bundle.displayName
-        let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
-            BlockDirective(name: "TechnologyRoot", children: [])
-        ])
-        let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
+        
+        // An inner helper function to register a new root node from an article
+        func registerAsNewRootNode(_ articleResult: SemanticResult<Article>) {
+            uncuratedArticles.removeValue(forKey: articleResult.topicGraphNode.reference)
+            let title = articleResult.source.deletingPathExtension().lastPathComponent
+            // Create a new root-looking reference
+            let reference = ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: NodeURLGenerator.Path.documentation(path: title).stringValue,
+                sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
+            )
+            // Add the technology root to the article's metadata
+            let metadataMarkup: BlockDirective
+            if let markup = articleResult.value.metadata?.originalMarkup as? BlockDirective {
+                assert(!markup.children.contains(where: { ($0 as? BlockDirective)?.name == "TechnologyRoot" }),
+                       "Nothing should try to synthesize a root page if there's already an explicit authored root page")
+                metadataMarkup = markup.withUncheckedChildren(
+                    markup.children + [BlockDirective(name: "TechnologyRoot", children: [])]
+                ) as! BlockDirective
+            } else {
+                metadataMarkup = BlockDirective(name: "Metadata", children: [
+                    BlockDirective(name: "TechnologyRoot", children: [])
+                ])
+            }
+            let article = Article(
+                markup: articleResult.value.markup,
+                metadata: Metadata(from: metadataMarkup, for: bundle, in: self),
+                redirects: articleResult.value.redirects,
+                options: articleResult.value.options
+            )
+            
+            let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: articleResult.topicGraphNode.source, title: title)
+            registerRootPages(from: [.init(value: article, source: articleResult.source, topicGraphNode: graphNode)], in: bundle)
+        }
         
         if articles.count == 1 {
             // This catalog only has one article, so we make that the root.
-            var onlyArticle = articles.removeFirst()
-            onlyArticle.value = Article(markup: onlyArticle.value.markup, metadata: metadata, redirects: onlyArticle.value.redirects, options: onlyArticle.value.options)
-            registerRootPages(from: [onlyArticle], in: bundle)
+            registerAsNewRootNode(articles.removeFirst())
         } else if let nameMatchIndex = articles.firstIndex(where: { $0.source.deletingPathExtension().lastPathComponent == title }) {
             // This catalog has an article with the same name as the catalog itself, so we make that the root.
-            var nameMatch = articles.remove(at: nameMatchIndex)
-            nameMatch.value = Article(markup: nameMatch.value.markup, metadata: metadata, redirects: nameMatch.value.redirects, options: nameMatch.value.options)
-            registerRootPages(from: [nameMatch], in: bundle)
+            registerAsNewRootNode(articles.remove(at: nameMatchIndex))
         } else {
             // There's no particular article to make into the root. Instead, create a new minimal root page.
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
@@ -1882,12 +1922,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
             
-            // Build up the "full" markup for an empty technology root article 
+            // Build up the "full" markup for an empty technology root article
+            let metadataDirectiveMarkup = BlockDirective(name: "Metadata", children: [
+                BlockDirective(name: "TechnologyRoot", children: [])
+            ])
             let markup = Document(
                 Heading(level: 1, Text(title)),
                 metadataDirectiveMarkup
             )
-            
+            let metadata = Metadata(from: metadataDirectiveMarkup, for: bundle, in: self)
             let article = Article(markup: markup, metadata: metadata, redirects: nil, options: [:])
             let documentationNode = DocumentationNode(
                 reference: reference,

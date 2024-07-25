@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,7 +9,7 @@
 */
 
 /// A programming language.
-public struct SourceLanguage: Hashable, Codable {
+public struct SourceLanguage: Hashable, Codable, Comparable {
     /// The display name of the programming language.
     public var name: String
     /// A globally unique identifier for the language.
@@ -159,5 +159,16 @@ public struct SourceLanguage: Hashable, Codable {
         try container.encode(self.id, forKey: SourceLanguage.CodingKeys.id)
         try container.encodeIfNotEmpty(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
         try container.encode(self.linkDisambiguationID, forKey: SourceLanguage.CodingKeys.linkDisambiguationID)
+    }
+    
+    public static func < (lhs: SourceLanguage, rhs: SourceLanguage) -> Bool {
+        // Sort Swift before other languages.
+        if lhs == .swift {
+            return true
+        } else if rhs == .swift {
+            return false
+        }
+        // Otherwise, sort by ID for a stable order.
+        return lhs.id < rhs.id
     }
 }
