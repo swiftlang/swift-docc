@@ -53,13 +53,6 @@ public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConve
         self.buildMetadata = try container.decodeIfPresent(String.self, forKey: .buildMetadata)
     }
 
-    /// Create a semantic version from a Symbol Kit semantic version.
-    init(symbolGraphVersion: SymbolGraph.SemanticVersion) {
-        self.major = symbolGraphVersion.major
-        self.minor = symbolGraphVersion.minor
-        self.patch = symbolGraphVersion.patch
-    }
-
     /// Create a semantic version from a version triplet
     /// TODO: https://github.com/swiftlang/swift-docc/issues/970
     /// Migrate all the code to use semantic versions, and not version triplets.
