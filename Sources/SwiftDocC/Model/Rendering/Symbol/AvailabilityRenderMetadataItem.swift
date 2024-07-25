@@ -149,7 +149,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
             return false
         }
 
-        return VersionTriplet(introduced) >= current.version
+        return introduced >= SemanticVersion(versionTriplet: current.version)
     }
     
     /// Creates a new item with the given platform name and version string.
