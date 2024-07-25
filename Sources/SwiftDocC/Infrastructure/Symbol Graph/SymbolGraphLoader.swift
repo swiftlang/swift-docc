@@ -78,10 +78,6 @@ struct SymbolGraphLoader {
                 
                 configureSymbolGraph?(&symbolGraph)
 
-                if FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled {
-                    symbolGraph.createOverloadGroupSymbols()
-                }
-
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
@@ -149,8 +145,10 @@ struct SymbolGraphLoader {
         }
         
         self.symbolGraphs = loadedGraphs.mapValues(\.graph)
-        (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading()
-        
+        (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading(
+            createOverloadGroups: FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled
+        )
+
         for var unifiedGraph in unifiedGraphs.values {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
