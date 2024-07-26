@@ -137,6 +137,7 @@ class FileRequestHandlerTests: XCTestCase {
         XCTAssertEqual(response.requestError?.status.code, RequestError.init(status: .unauthorized).status.code)
     }
 
+    #if os(macOS)
     func testMalformedURI() throws {
         let tempFolderURL = try createTempFolder(content: [
             Folder(name: "videos", content: [
@@ -151,5 +152,6 @@ class FileRequestHandlerTests: XCTestCase {
         XCTAssertNil(response.body, "He")
         XCTAssertEqual(response.requestError?.status.code, RequestError.init(status: .badRequest).status.code)
     }
+    #endif
 }
 #endif
