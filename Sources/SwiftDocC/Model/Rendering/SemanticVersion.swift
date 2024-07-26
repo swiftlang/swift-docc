@@ -8,8 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SymbolKit
-
 /// A semantic version.
 ///
 /// A version that follows the [Semantic Versioning](https://semver.org) specification.
