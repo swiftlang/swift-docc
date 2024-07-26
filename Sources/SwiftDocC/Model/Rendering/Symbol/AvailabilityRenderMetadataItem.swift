@@ -52,15 +52,6 @@ extension SemanticVersion {
         self.prerelease = semanticVersion.prerelease
         self.buildMetadata = semanticVersion.buildMetadata
     }
-    
-    /// Compares a version triplet to a semantic version.
-    /// - Parameter version: A version triplet to compare to this semantic version.
-    /// - Returns: Returns whether the given triple represents the same version as the current version.
-    func isEqualToVersionTriplet(_ version: VersionTriplet) -> Bool {
-        return major == version.major &&
-            minor == version.minor &&
-            patch == version.patch
-    }
 }
 
 /// Availability information of a symbol on a specific platform.
@@ -154,11 +145,11 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     }
     
     private static func isBeta(introduced: SemanticVersion?, current: PlatformVersion?) -> Bool {
-        guard let introduced, let current, current.beta, introduced.isEqualToVersionTriplet(current.version) else {
+        guard let introduced, let current, current.beta else {
             return false
         }
-        
-        return true
+
+        return introduced >= SemanticVersion(versionTriplet: current.version)
     }
     
     /// Creates a new item with the given platform name and version string.

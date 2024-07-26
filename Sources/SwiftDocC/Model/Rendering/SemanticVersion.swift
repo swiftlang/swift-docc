@@ -11,8 +11,8 @@
 /// A semantic version.
 ///
 /// A version that follows the [Semantic Versioning](https://semver.org) specification.
-public struct SemanticVersion: Codable, Equatable, CustomStringConvertible {
-    
+public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConvertible {
+
     /// The major version number.
     ///
     /// For example, the `1` in `1.2.3`
@@ -49,6 +49,31 @@ public struct SemanticVersion: Codable, Equatable, CustomStringConvertible {
         self.patch = try container.decodeIfPresent(Int.self, forKey: .patch) ?? 0
         self.prerelease = try container.decodeIfPresent(String.self, forKey: .prerelease)
         self.buildMetadata = try container.decodeIfPresent(String.self, forKey: .buildMetadata)
+    }
+
+    // TODO: https://github.com/swiftlang/swift-docc/issues/970
+    // Migrate all the code to use semantic versions, and not version triplets.
+    /// Create a semantic version from a version triplet.
+    init(versionTriplet: VersionTriplet) {
+        self.major = versionTriplet.major
+        self.minor = versionTriplet.minor
+        self.patch = versionTriplet.patch
+    }
+
+    /// Compare one semantic version with another.
+    ///
+    /// - Parameters:
+    ///   - lhs: A version to compare.
+    ///   - rhs: Another version to compare.
+    ///
+    /// - Returns: a Boolean value that indicates whether the first version is less than the second version.
+    public static func < (lhs: SemanticVersion, rhs: SemanticVersion) -> Bool {
+        if lhs.major != rhs.major { return lhs.major < rhs.major }
+        if lhs.minor != rhs.minor { return lhs.minor < rhs.minor }
+        if lhs.patch != rhs.patch { return lhs.patch < rhs.patch }
+        // Note: don't compare the values of prerelease, even if it is
+        // present in both semantic versions.
+        return false // The version are equal
     }
 
     public var description: String {
