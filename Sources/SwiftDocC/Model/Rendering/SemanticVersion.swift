@@ -53,9 +53,9 @@ public struct SemanticVersion: Codable, Equatable, Comparable, CustomStringConve
         self.buildMetadata = try container.decodeIfPresent(String.self, forKey: .buildMetadata)
     }
 
-    /// Create a semantic version from a version triplet
-    /// TODO: https://github.com/swiftlang/swift-docc/issues/970
-    /// Migrate all the code to use semantic versions, and not version triplets.
+    // TODO: https://github.com/swiftlang/swift-docc/issues/970
+    // Migrate all the code to use semantic versions, and not version triplets.
+    /// Create a semantic version from a version triplet.
     init(versionTriplet: VersionTriplet) {
         self.major = versionTriplet.major
         self.minor = versionTriplet.minor
