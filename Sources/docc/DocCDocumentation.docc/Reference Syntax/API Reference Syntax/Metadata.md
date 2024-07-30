@@ -1,4 +1,4 @@
-# ``docc/Metadata``
+# ``Metadata``
 
 Use metadata directives to instruct DocC how to build certain documentation files.
 
@@ -82,6 +82,7 @@ previous versions, @Redirected must be used as a top level directive.
 ### Customizing the Availability Information of a Page
 
 - ``Available``
+- ``DeprecationSummary``
 
 ### Specifying an Additional URL of a Page
 
