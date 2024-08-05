@@ -436,7 +436,9 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(decoded, summary)
         }
     }
-    
+
+    // TODO: Remove this #if once https://github.com/apple/swift-corelibs-foundation/issues/5028 is resolved
+    #if os(macOS)
     func testVariantSummaries() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
@@ -591,7 +593,8 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(decoded, summary)
         }
     }
-    
+    #endif
+
     func testDecodingLegacyData() throws {
         let legacyData = """
         {

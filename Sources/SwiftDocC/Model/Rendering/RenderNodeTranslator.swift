@@ -1363,6 +1363,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPParametersSectionTranslator(parameterSource: .header),
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
+                    PlistDetailsSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
                     AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
@@ -1761,7 +1762,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Build a module availability version, defaulting the patch number to 0 if not provided (e.g. 10.15)
         let moduleVersionTriplet = VersionTriplet(moduleVersion[0], moduleVersion[1], moduleVersion.count > 2 ? moduleVersion[2] : 0)
         
-        return moduleVersionTriplet == targetPlatformVersion.version
+        // Consider the module beta if its version is greater than or equal to the target platform
+        return moduleVersionTriplet >= targetPlatformVersion.version
     }
     
     /// The default availability for modules in a given bundle and module.

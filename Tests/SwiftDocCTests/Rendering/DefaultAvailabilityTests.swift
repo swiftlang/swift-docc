@@ -106,10 +106,30 @@ class DefaultAvailabilityTests: XCTestCase {
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
-        
+
         // Set a beta status for the docs (which would normally be set via command line argument)
         context.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 1), beta: true),
+            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
+        ]
+
+        // Test if the module availability is also "beta" for the "macOS" platform,
+        // verify that the Mac Catalyst platform's name (including a space) is rendered correctly
+        do {
+            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+            let node = try context.entity(with: identifier)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+            let renderNode = translator.visit(node.semantic) as! RenderNode
+
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
+                "Mac Catalyst 13.5(beta)",
+                "macOS 10.15.1(beta)",
+            ])
+        }
+
+        // Repeat the assertions, but use an earlier platform version this time
+        context.externalMetadata.currentPlatforms = [
+            "macOS": PlatformVersion(VersionTriplet(10, 14, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ]
         
