@@ -148,6 +148,7 @@ extension Docc {
                 help: ArgumentHelp("Specify information about the current release of a platform.", discussion: """
                 Each platform's information is specified via separate "--platform" values using the following format: "name={platform name},version={semantic version}".
                 Optionally, the platform information can include a 'beta={true|false}' component. If no beta information is provided, the platform is considered not in beta.
+                If the platform is set to beta, any symbol introduced in a version equal to or greater than the specified semantic version will be marked as beta.
                 """)
             )
             var platforms: [String] = []
