@@ -194,7 +194,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
         visitSectionVariants(symbol.returnsSectionVariants)
         visitSectionVariants(symbol.deprecatedSummaryVariants)
 
-        if let parametersSection = symbol.parametersSection {
+        for parametersSection in symbol.parametersSectionVariants.allValues.map(\.variant) {
             for parameter in parametersSection.parameters {
                 for markup in parameter.contents { visitMarkup(markup) }
             }
