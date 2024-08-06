@@ -137,7 +137,7 @@ extension PathHierarchy.PathParser {
         var result = [Substring]()
         var scanner = PathComponentScanner(path[...])
         
-        let anchorResult = scanner.scanAnchorComponent()
+        let anchorResult = scanner.scanAnchorComponentAtEnd()
         
         while !scanner.isEmpty {
             let component = scanner.scanPathComponent()
@@ -177,7 +177,7 @@ private struct PathComponentScanner {
         // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
         if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
             return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd))
-                 + scanUntilSeparator()
+                 + scanUntilSeparatorAndThenSkipIt()
         }
         
         // If the next component is a C++ operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
@@ -186,7 +186,7 @@ private struct PathComponentScanner {
         {
             return scan(length: Self.cxxOperatorPrefixLength)
                  + scanUntil(index: remaining.unicodeScalars.firstIndex(where: { !$0.isValidCxxOperatorSymbol }))
-                 + scanUntilSeparator()
+                 + scanUntilSeparatorAndThenSkipIt()
         }
         
         if remaining.first == Self.separator {
@@ -195,10 +195,10 @@ private struct PathComponentScanner {
         }
         
         // If the string doesn't contain a slash then the rest of the string is the component
-        return scanUntilSeparator()
+        return scanUntilSeparatorAndThenSkipIt()
     }
     
-    mutating func scanAnchorComponent() -> Substring? {
+    mutating func scanAnchorComponentAtEnd() -> Substring? {
         guard let index = remaining.firstIndex(of: Self.anchorSeparator) else {
             return nil
         }
@@ -222,7 +222,7 @@ private struct PathComponentScanner {
         return remaining[..<index]
     }
     
-    private mutating func scanUntilSeparator() -> Substring {
+    private mutating func scanUntilSeparatorAndThenSkipIt() -> Substring {
         guard let index = remaining.firstIndex(of: Self.separator) else {
             defer { remaining.removeAll() }
             return remaining
