@@ -223,7 +223,6 @@ private struct PathComponentScanner {
     }
     
     private mutating func scanUntilSeparator() -> Substring {
-        // If the string doesn't contain a slash then the rest of the string is the component
         guard let index = remaining.firstIndex(of: Self.separator) else {
             defer { remaining.removeAll() }
             return remaining
