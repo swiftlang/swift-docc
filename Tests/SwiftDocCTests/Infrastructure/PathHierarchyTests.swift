@@ -2253,6 +2253,46 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("MyNumber//=(_:_:)", [("MyNumber", nil), ("/=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber////=(_:_:)", [("MyNumber", nil), ("///=(_:_:)", nil)])
         assertParsedPathComponents("MyNumber/+/-(_:_:)", [("MyNumber", nil), ("+/-(_:_:)", nil)])
+        
+        let knownCppOperators = [
+            // Arithmetic
+            "+", "-", "*", "/", "%",
+            // Bitwise arithmetic
+            "~", "&", "|", "^", "<<", ">>",
+            // Increment/Decrement
+            "++", "--",
+            // Logic
+            "!", "&&", "||",
+            // Comparison
+            "==", "!=", "<", ">", "<=", ">=", "<=>",
+            // Assignment
+            "=",
+            "+=", "-=", "*=", "/=", "%=",
+            "&=", "|=", "^=", "<<=", ">>=",
+            // Member access
+            "[]", "->", "->*", // "*" (indirection) and "&" (address of) are already covered as arithmetic operators above.
+            // Function call
+            "()",
+            // Other
+            ","
+        ]
+         
+        for operatorSymbol in knownCppOperators {
+            let operatorName = "operator\(operatorSymbol)"
+            assertParsedPathComponents(operatorName, [(operatorName, nil)])
+            assertParsedPathComponents("MyClass/\(operatorName)", [("MyClass", nil), (operatorName, nil)])
+            
+            // With disambiguation
+            assertParsedPathComponents("\(operatorName)-hash", [(operatorName, .kindAndHash(kind: nil, hash: "hash"))])
+            assertParsedPathComponents("\(operatorName)-func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
+            assertParsedPathComponents("\(operatorName)-c++.func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
+            assertParsedPathComponents("\(operatorName)-func.op-hash", [(operatorName, .kindAndHash(kind: "func.op", hash: "hash"))])
+            
+            // With a trailing anchor component
+            assertParsedPathComponents("\(operatorName)#SomeAnchor", [(operatorName, nil), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)-hash#SomeAnchor", [(operatorName, .kindAndHash(kind: nil, hash: "hash")), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)-func.op#SomeAnchor", [(operatorName, .kindAndHash(kind: "func.op", hash: nil)), ("SomeAnchor", nil)])
+        }
     }
     
     // MARK: Test helpers
@@ -2344,17 +2384,17 @@ class PathHierarchyTests: XCTestCase {
     
     private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #file, line: UInt = #line) {
         let (actual, _) = PathHierarchy.PathParser.parse(path: path)
-        XCTAssertEqual(actual.count, expected.count, file: file, line: line)
+        XCTAssertEqual(actual.count, expected.count, "Incorrect number of path components for \(path.singleQuoted)", file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
-            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component", file: file, line: line)
+            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component for \(path.singleQuoted)", file: file, line: line)
             switch (actualComponents.disambiguation, expectedComponents.1) {
             case (.kindAndHash(let actualKind, let actualHash), .kindAndHash(let expectedKind, let expectedHash)):
-                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation", file: file, line: line)
-                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation", file: file, line: line)
+                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation for \(path.singleQuoted)", file: file, line: line)
+                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation for \(path.singleQuoted)", file: file, line: line)
             case (nil, nil):
                 continue
             default:
-                XCTFail("Incorrect type of disambiguation", file: file, line: line)
+                XCTFail("Incorrect type of disambiguation for \(path.singleQuoted)", file: file, line: line)
             }
         }
     }

@@ -161,6 +161,9 @@ private struct PathComponentScanner {
     private static let anchorSeparator: Character = "#"
     private static let operatorEnd: Character = ")"
     
+    private static let cxxOperatorPrefix = "operator"
+    private static let cxxOperatorPrefixLength = cxxOperatorPrefix.count
+    
     init(_ original: Substring) {
         remaining = original
     }
@@ -188,7 +191,31 @@ private struct PathComponentScanner {
             component += remaining[..<index]
             remaining = remaining[index...].dropFirst() // drop the slash
             return component
+        }
+        
+        if remaining.starts(with: Self.cxxOperatorPrefix),
+           remaining.unicodeScalars.dropFirst(Self.cxxOperatorPrefixLength).first?.isValidCxxOperatorSymbol == true
+        {
+            var component = remaining.prefix(Self.cxxOperatorPrefixLength) // Don't include the operator symbols yet
+            remaining = remaining.dropFirst(Self.cxxOperatorPrefixLength)
             
+            // Scan a number of operator symbols
+            guard let operatorEndIndex = remaining.unicodeScalars.firstIndex(where: { !$0.isValidCxxOperatorSymbol }) else {
+                defer { remaining.removeAll() }
+                return component + remaining
+            }
+            
+            component += remaining[..<operatorEndIndex]
+            remaining = remaining[operatorEndIndex...]
+            
+            guard let index = remaining.firstIndex(of: Self.separator) else {
+                defer { remaining.removeAll() }
+                return component + remaining
+            }
+            
+            component += remaining[..<index]
+            remaining = remaining[index...].dropFirst() // drop the slash
+            return component
         }
         
         if remaining.first == Self.separator {
@@ -417,12 +444,22 @@ private extension Unicode.Scalar {
             return false
         }
     }
-        
+       
+    var isValidCxxOperatorSymbol: Bool {
+        switch value {
+        // ! % & ( ) * + , - / < = > [ ] ^ | ~
+        case 0x21, 0x25, 0x26, 0x28...0x2D, 0x2F, 0x3C...0x3E, 0x5B, 0x5D, 0x5E, 0x7C, 0x7E:
+            return true
+        default:
+            return false
+        }
+    }
+    
     var isValidOperatorHead: Bool {
         // See https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure#Operators
         switch value {
         case 
-            // ! % & & * + - . / < = > ? ^| ~
+            // ! % & * + - . / < = > ? ^| ~
             0x21, 0x25, 0x26, 0x2A, 0x2B, 0x2D...0x2F, 0x3C, 0x3D...0x3F, 0x5E, 0x7C, 0x7E,
             // ¡ ¢ £ ¤ ¥ ¦ §
             0xA1 ... 0xA7,
