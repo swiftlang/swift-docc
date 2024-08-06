@@ -159,7 +159,8 @@ private struct PathComponentScanner {
     
     static let separator: Character = "/"
     private static let anchorSeparator: Character = "#"
-    private static let operatorEnd: Character = ")"
+    
+    private static let swiftOperatorEnd: Character = ")"
     
     private static let cxxOperatorPrefix = "operator"
     private static let cxxOperatorPrefixLength = cxxOperatorPrefix.count
@@ -173,61 +174,55 @@ private struct PathComponentScanner {
     }
     
     mutating func scanPathComponent() -> Substring {
-        // If the next component is an operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidOperatorHead) {
-            guard let operatorEndIndex = remaining.firstIndex(of: Self.operatorEnd) else {
-                defer { remaining.removeAll() }
-                return remaining
-            }
-            
-            var component = remaining[..<operatorEndIndex]
-            remaining = remaining[operatorEndIndex...]
-            
-            guard let index = remaining.firstIndex(of: Self.separator) else {
-                defer { remaining.removeAll() }
-                return component + remaining
-            }
-            
-            component += remaining[..<index]
-            remaining = remaining[index...].dropFirst() // drop the slash
-            return component
+        // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
+        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
+            return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd))
+                 + scanUntilSeparator()
         }
         
+        // If the next component is a C++ operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
         if remaining.starts(with: Self.cxxOperatorPrefix),
            remaining.unicodeScalars.dropFirst(Self.cxxOperatorPrefixLength).first?.isValidCxxOperatorSymbol == true
         {
-            var component = remaining.prefix(Self.cxxOperatorPrefixLength) // Don't include the operator symbols yet
-            remaining = remaining.dropFirst(Self.cxxOperatorPrefixLength)
-            
-            // Scan a number of operator symbols
-            guard let operatorEndIndex = remaining.unicodeScalars.firstIndex(where: { !$0.isValidCxxOperatorSymbol }) else {
-                defer { remaining.removeAll() }
-                return component + remaining
-            }
-            
-            component += remaining[..<operatorEndIndex]
-            remaining = remaining[operatorEndIndex...]
-            
-            guard let index = remaining.firstIndex(of: Self.separator) else {
-                defer { remaining.removeAll() }
-                return component + remaining
-            }
-            
-            component += remaining[..<index]
-            remaining = remaining[index...].dropFirst() // drop the slash
-            return component
+            return scan(length: Self.cxxOperatorPrefixLength)
+                 + scanUntil(index: remaining.unicodeScalars.firstIndex(where: { !$0.isValidCxxOperatorSymbol }))
+                 + scanUntilSeparator()
         }
         
         if remaining.first == Self.separator {
-            guard let index = remaining.firstIndex(where: { $0 != Self.separator }) else {
-                defer { remaining.removeAll() }
-                return remaining
-            }
-            let slashPrefix = remaining[..<index]
-            remaining = remaining[index...]
-            return slashPrefix + scanPathComponent()
+            return scanUntil(index: remaining.firstIndex(where: { $0 != Self.separator }))
+                 + scanPathComponent()
         }
         
+        // If the string doesn't contain a slash then the rest of the string is the component
+        return scanUntilSeparator()
+    }
+    
+    mutating func scanAnchorComponent() -> Substring? {
+        guard let index = remaining.firstIndex(of: Self.anchorSeparator) else {
+            return nil
+        }
+        
+        defer { remaining = remaining[..<index] }
+        return remaining[index...].dropFirst() // drop the anchor separator
+    }
+    
+    private mutating func scan(length: Int) -> Substring {
+        defer { remaining = remaining.dropFirst(length) }
+        return remaining.prefix(length)
+    }
+    
+    private mutating func scanUntil(index: Substring.Index?) -> Substring {
+        guard let index = index else {
+            defer { remaining.removeAll() }
+            return remaining
+        }
+        
+        defer { remaining = remaining[index...] }
+        return remaining[..<index]
+    }
+    
+    private mutating func scanUntilSeparator() -> Substring {
         // If the string doesn't contain a slash then the rest of the string is the component
         guard let index = remaining.firstIndex(of: Self.separator) else {
             defer { remaining.removeAll() }
@@ -238,15 +233,6 @@ private struct PathComponentScanner {
             remaining = remaining[index...].dropFirst() // drop the slash
         }
         return remaining[..<index]
-    }
-    
-    mutating func scanAnchorComponent() -> Substring? {
-        guard let index = remaining.firstIndex(of: Self.anchorSeparator) else {
-            return nil
-        }
-        
-        defer { remaining = remaining[..<index] }
-        return remaining[index...].dropFirst() // drop the anchor separator
     }
 }
 
@@ -455,7 +441,7 @@ private extension Unicode.Scalar {
         }
     }
     
-    var isValidOperatorHead: Bool {
+    var isValidSwiftOperatorHead: Bool {
         // See https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure#Operators
         switch value {
         case 
