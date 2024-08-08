@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -127,6 +127,13 @@ extension Sequence<InlineMarkup> {
         }
         return nil
     }
+    
+    func extractPossibleValueTag() -> PossibleValueTag? {
+        if let (value, nameRange, content, itemRange) = splitNameAndContent() {
+            return PossibleValueTag(value: value, contents: content, nameRange: nameRange, range: itemRange)
+        }
+        return nil
+    }
 }
 
 extension ListItem {
@@ -235,6 +242,61 @@ extension ListItem {
             }
         }
         return dictionaryKeys
+    }
+    
+    /**
+    Extract a standalone possible value description from this list item.
+     
+    Expected form:
+     
+    ```markdown
+    - PossibleValue x: The meaning of x
+    ```
+    */
+    func extractStandalonePossibleValueTag() -> PossibleValueTag? {
+        guard let remainder = extractTag(TaggedListItemExtractor.possibleValueTag) else {
+            return nil
+        }
+        return remainder.extractPossibleValueTag()
+    }
+    
+    /**
+     Extracts an outline of possible values from a sublist underneath this list item.
+     
+     Expected form:
+     
+     ```markdown
+     - PossibleValues:
+       - x: Meaning of x
+       - y: Meaning of y
+     ```
+     */
+    func extractPossibleValueOutline() -> [PossibleValueTag]? {
+        guard extractTag(TaggedListItemExtractor.possibleValuesTag + ":") != nil else {
+           return nil
+        }
+        var possibleValues = [PossibleValueTag]()
+        
+        for child in children {
+            // The list `- PossibleValues:` should have one child, a list of values.
+            guard let possibleValuesList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` possible value form or else they are dropped.
+            for child in possibleValuesList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let possibleValue = Array(firstParagraph.inlineChildren).extractPossibleValueTag() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this possible value list item.
+                let contents = possibleValue.contents + Array(listItem.children.dropFirst(1))
+                possibleValues.append(PossibleValueTag(value: possibleValue.value, contents: contents, nameRange: possibleValue.nameRange, range: possibleValue.range))
+            }
+        }
+        return possibleValues
     }
 
     /**
@@ -538,6 +600,9 @@ struct TaggedListItemExtractor: MarkupRewriter {
     static let httpParametersTag = "httpparameters"
     static let httpBodyParameterTag = "httpbodyparameter"
     static let httpBodyParametersTag = "httpbodyparameters"
+    
+    static let possibleValueTag = "possiblevalue"
+    static let possibleValuesTag = "possiblevalues"
 
     var parameters = [Parameter]()
     var dictionaryKeys = [DictionaryKey]()
@@ -547,6 +612,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
     var returns = [Return]()
     var `throws` = [Throw]()
     var otherTags = [SimpleTag]()
+    var possibleValues = [PossibleValueTag]()
 
     init() {}
     
@@ -693,6 +759,16 @@ struct TaggedListItemExtractor: MarkupRewriter {
             // - todo: ...
             // etc.
             otherTags.append(simpleTag)
+            return nil
+        } else if let possibleValueOutline = listItem.extractPossibleValueOutline() {
+            // - PossibleValues:
+            //   - x: ...
+            //   - y: ...
+            possibleValues.append(contentsOf: possibleValueOutline)
+            return nil
+        } else if let possibleValueTag = listItem.extractStandalonePossibleValueTag() {
+            // - PossibleValue x:
+            possibleValues.append(possibleValueTag)
             return nil
         }
 

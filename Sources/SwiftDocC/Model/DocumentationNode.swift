@@ -311,6 +311,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             dictionaryKeysSectionVariants: .empty,
+            possibleValuesSectionVariants: .empty,
             httpEndpointSectionVariants: endpointVariants,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,
@@ -419,6 +420,41 @@ public struct DocumentationNode {
         if let responses = markupModel.discussionTags?.httpResponses, !responses.isEmpty {
             // Record the responses extracted from the markdown
             semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
+        }
+        
+        if let possibleValues = markupModel.discussionTags?.possibleValues, !possibleValues.isEmpty {
+            let validator = PossibleValuesSection.Validator(diagnosticEngine: engine)
+            guard let symbolAllowedValues = symbol?.mixins[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues else {
+                possibleValues.forEach { 
+                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: []))
+                }
+                return semantic.possibleValuesSectionVariants[.fallback] = PossibleValuesSection(possibleValues: [])
+            }
+            
+            // Drop possible values defined in the markdown that are not defined
+            // in the SymbolGraph and emit a warning.
+            var knownPossibleValues = possibleValues.filter { possibleValue in
+                if symbolAllowedValues.value.contains(where: { String($0) == possibleValue.value }) {
+                    return true
+                }
+                // Record problem about extra possible value.
+                engine.emit(
+                    validator.makeExtraPossibleValueProblem(possibleValue, knownPossibleValues: Set(symbolAllowedValues.value.map { String($0) }))
+                )
+                return false
+            }
+            
+            // Add the symbol possible values that are not documented.
+            symbolAllowedValues.value.forEach { possibleValue in
+                if !knownPossibleValues.contains(where: { $0.value == String(possibleValue) }) {
+                    knownPossibleValues.append(
+                        PossibleValueTag(value: String(possibleValue), contents: [])
+                    )
+                }
+            }
+            
+            // Record the possible values extracted from the markdown.
+            semantic.possibleValuesSectionVariants[.fallback] = PossibleValuesSection(possibleValues: knownPossibleValues)
         }
         
         options = documentationExtension?.options[.local]
@@ -670,6 +706,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
+            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possibleValues.isEmpty ? nil : PossibleValuesSection(possibleValues: $0.possibleValues) })),
             httpEndpointSectionVariants: .empty,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,

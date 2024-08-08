@@ -21,7 +21,6 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
         translateSectionToVariantCollection(
             documentationDataVariants: symbol.attributesVariants
         ) { _, attributes in
-            guard !attributes.isEmpty else { return nil }
             
             func translateFragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
                 return fragments.map { fragment in
@@ -40,7 +39,7 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
                 }
             }
             
-            return AttributesRenderSection(
+            let attributesRenderSection = AttributesRenderSection(
                 title: "Attributes",
                 attributes: attributes.compactMap { kind, attribute in
                     
@@ -64,13 +63,21 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
                         return RenderAttribute.allowedTypes(tokens)
                     case (.allowedValues, let values as [SymbolGraph.AnyScalar]):
                         let stringValues = values.map { String($0) }
-                        return RenderAttribute.allowedValues(stringValues)
+                        if symbol.possibleValuesSectionVariants.allValues.isEmpty {
+                            return RenderAttribute.allowedValues(stringValues)
+                        }
+                        return nil
                     default:
                         return nil
                     }
                     
                 }.sorted { $0.title < $1.title }
             )
+            guard let attributes = attributesRenderSection.attributes, !attributes.isEmpty else {
+                return nil
+            }
+            
+            return attributesRenderSection
         }
     }
     

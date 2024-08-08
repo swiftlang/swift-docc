@@ -1364,6 +1364,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
                     PlistDetailsSectionTranslator(),
+                    PossibleValuesSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
                     AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),

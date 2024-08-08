@@ -472,6 +472,10 @@ struct ReferenceResolver: SemanticVisitor {
             return HTTPResponsesSection(responses: responses)
         }
         
+        let possibleValuesVariants = symbol.possibleValuesSectionVariants.map { possibleValuesSection -> PossibleValuesSection in
+            return PossibleValuesSection(possibleValues: possibleValuesSection.possibleValues)
+        }
+        
         // It's important to carry over aggregate data like the merged declarations
         // or the merged default implementations to the new `Symbol` instance.
         
@@ -500,6 +504,7 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             dictionaryKeysSectionVariants: newDictionaryKeysVariants,
+            possibleValuesSectionVariants: possibleValuesVariants,
             httpEndpointSectionVariants: newHTTPEndpointVariants,
             httpBodySectionVariants: newHTTPBodyVariants,
             httpParametersSectionVariants: newHTTPParametersVariants,

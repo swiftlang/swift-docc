@@ -32,6 +32,9 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             
             // Swift class - ``FooSwift``:
             "s:FooSwift": [.swift],
+            
+            // Month dictionary - ``Month``:
+            "data:test:Month": [.data],
         ]
         
         let expectedPageUSRs: Set<String> = Set(expectedPageUSRsAndLangs.keys)
@@ -92,6 +95,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/Artist",
                 "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/Genre",
                 "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/FooSwift",
+                "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/Month",
             ],
             referenceTitles: [
                 "Artist",
@@ -99,10 +103,12 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "FooObjC",
                 "FooSwift",
                 "Genre",
+                "Month"
             ],
             referenceFragments: [
                 "object Artist",
                 "string Genre",
+                "string Month"
             ],
             failureMessage: { fieldName in
                 "'DictionaryData' module has unexpected content for '\(fieldName)'."
@@ -125,6 +131,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/Artist",
                 "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/Genre",
                 "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/FooObjC",
+                "doc://org.swift.docc.DictionaryData/documentation/DictionaryData/Month",
             ],
             referenceTitles: [
                 "Artist",
@@ -132,10 +139,12 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
                 "FooObjC",
                 "FooSwift",
                 "Genre",
+                "Month"
             ],
             referenceFragments: [
                 "object Artist",
                 "string Genre",
+                "string Month"
             ],
             failureMessage: { fieldName in
                 "'DictionaryData' module has unexpected content for '\(fieldName)'."
@@ -146,6 +155,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
     func testDictionaryRenderNodeHasExpectedContent() throws {
         let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
         let artistRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Artist")
+        let monthRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Month")
         
         assertExpectedContent(
             artistRenderNode,
