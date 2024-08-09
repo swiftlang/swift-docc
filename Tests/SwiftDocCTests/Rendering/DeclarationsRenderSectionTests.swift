@@ -345,6 +345,50 @@ class DeclarationsRenderSectionTests: XCTestCase {
             XCTAssert(declarations.tokens.allSatisfy({ $0.highlight == nil }))
         }
     }
+
+    func testOverloadConformanceDataIsSavedWithDeclarations() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "ConformanceOverloads",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "ConformanceOverloads", identifier: "com.test.example"),
+                CopyOfFile(original: symbolGraphFile),
+            ])
+        ])
+
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+
+        // MyClass<T>
+        // - myFunc() where T: Equatable
+        // - myFunc() where T: Hashable // <- overload group
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/ConformanceOverloads/MyClass/myFunc()-6gquc",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        let declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+        XCTAssertEqual(declarationsSection.declarations.count, 1)
+        let declarations = try XCTUnwrap(declarationsSection.declarations.first)
+
+        let otherDeclarations = try XCTUnwrap(declarations.otherDeclarations)
+        XCTAssertEqual(otherDeclarations.declarations.count, 1)
+
+        XCTAssertEqual(otherDeclarations.declarations.first?.conformance?.constraints, [
+            .codeVoice(code: "T"),
+            .text(" conforms to "),
+            .codeVoice(code: "Equatable"),
+            .text("."),
+        ])
+    }
 }
 
 /// Render a list of declaration tokens as a plain-text decoration and as a plain-text rendering of which characters are highlighted.
