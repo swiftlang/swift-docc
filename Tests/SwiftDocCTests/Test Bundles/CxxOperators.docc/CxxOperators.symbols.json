@@ -1,0 +1,7156 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple clang version 16.0.0 (clang-1600.0.24.1)"
+  },
+  "module": {
+    "name": "CxxOperators",
+    "platform": {
+      "architecture": "arm64",
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 11,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "macosx"
+      },
+      "vendor": "apple"
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator+#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator-#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator+#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator-#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator*#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator/#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator%#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator~#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator&#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator|#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator^#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator<<#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator>>#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator++#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator-#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator++#I#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator-#I#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator!#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator&&#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator||#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator==#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator!=#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator<#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator>#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator<=#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator>=#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator<=>#&1$@S@MyClass#1",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator=#1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator=#&&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@MyClass#&$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@MyClass#&&$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator+=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator-=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator*=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator/=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator%=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator&=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator|=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator^=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator<<=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator>>=#&1$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator*#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator&#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator->#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator->*#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@S@MyClass@F@operator,#&$@S@MyClass#",
+      "target": "c:@S@MyClass",
+      "targetFallback": "MyClass"
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "objective-c++.class"
+      },
+      "location": {
+        "position": {
+          "character": 6,
+          "line": 12
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "title": "MyClass"
+      },
+      "pathComponents": [
+        "MyClass"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "identifier",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": "();"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 29,
+                "line": 16
+              },
+              "start": {
+                "character": 8,
+                "line": 16
+              }
+            },
+            "text": "A default initializer"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@MyClass#"
+      },
+      "kind": {
+        "displayName": "Constructor",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 4,
+          "line": 17
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "title": "MyClass"
+      },
+      "pathComponents": [
+        "MyClass",
+        "MyClass"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator+"
+        },
+        {
+          "kind": "text",
+          "spelling": "() "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 23
+              },
+              "start": {
+                "character": 8,
+                "line": 23
+              }
+            },
+            "text": "An unary plus operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator+#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 24
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator+"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator+"
+          }
+        ],
+        "title": "operator+"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator+"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator-"
+        },
+        {
+          "kind": "text",
+          "spelling": "() "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 28
+              },
+              "start": {
+                "character": 8,
+                "line": 28
+              }
+            },
+            "text": "A unary minus operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator-#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 29
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator-"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator-"
+          }
+        ],
+        "title": "operator-"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator-"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator+"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 28,
+                "line": 34
+              },
+              "start": {
+                "character": 8,
+                "line": 34
+              }
+            },
+            "text": "An addition operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator+#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 35
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator+"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator+"
+          }
+        ],
+        "title": "operator+"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator+"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator-"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 39
+              },
+              "start": {
+                "character": 8,
+                "line": 39
+              }
+            },
+            "text": "A subtraction operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator-#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 40
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator-"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator-"
+          }
+        ],
+        "title": "operator-"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator-"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator*"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 33,
+                "line": 44
+              },
+              "start": {
+                "character": 8,
+                "line": 44
+              }
+            },
+            "text": "A multiplication operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator*#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 45
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator*"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator*"
+          }
+        ],
+        "title": "operator*"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator*"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator/"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 27,
+                "line": 49
+              },
+              "start": {
+                "character": 8,
+                "line": 49
+              }
+            },
+            "text": "A division operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator/#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 50
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator/"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator/"
+          }
+        ],
+        "title": "operator/"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator/"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator%"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 26,
+                "line": 54
+              },
+              "start": {
+                "character": 8,
+                "line": 54
+              }
+            },
+            "text": "A modulus operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator%#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 55
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator%"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator%"
+          }
+        ],
+        "title": "operator%"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator%"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator~"
+        },
+        {
+          "kind": "text",
+          "spelling": "() "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 64
+              },
+              "start": {
+                "character": 8,
+                "line": 64
+              }
+            },
+            "text": "A bitwise not operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator~#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 65
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator~"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator~"
+          }
+        ],
+        "title": "operator~"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator~"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator&"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 69
+              },
+              "start": {
+                "character": 8,
+                "line": 69
+              }
+            },
+            "text": "A bitwise and operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator&#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 70
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&"
+          }
+        ],
+        "title": "operator&"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator&"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator|"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 29,
+                "line": 74
+              },
+              "start": {
+                "character": 8,
+                "line": 74
+              }
+            },
+            "text": "A bitwise or operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator|#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 75
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator|"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator|"
+          }
+        ],
+        "title": "operator|"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator|"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator^"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 36,
+                "line": 79
+              },
+              "start": {
+                "character": 8,
+                "line": 79
+              }
+            },
+            "text": "A bitwise either-or operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator^#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 80
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator^"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator^"
+          }
+        ],
+        "title": "operator^"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator^"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator<<"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 37,
+                "line": 84
+              },
+              "start": {
+                "character": 8,
+                "line": 84
+              }
+            },
+            "text": "A bitwise left-shift operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator<<#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 85
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<<"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<<"
+          }
+        ],
+        "title": "operator<<"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator<<"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator>>"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 38,
+                "line": 89
+              },
+              "start": {
+                "character": 8,
+                "line": 89
+              }
+            },
+            "text": "A bitwise right-shift operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator>>#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 90
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>>"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>>"
+          }
+        ],
+        "title": "operator>>"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator>>"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator++"
+        },
+        {
+          "kind": "text",
+          "spelling": "();"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 32,
+                "line": 99
+              },
+              "start": {
+                "character": 8,
+                "line": 99
+              }
+            },
+            "text": "A pre-increment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator++#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 100
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator++"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator++"
+          }
+        ],
+        "title": "operator++"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator++"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator--"
+        },
+        {
+          "kind": "text",
+          "spelling": "();"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 32,
+                "line": 104
+              },
+              "start": {
+                "character": 8,
+                "line": 104
+              }
+            },
+            "text": "A pre-decrement operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator-#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 105
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator--"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator--"
+          }
+        ],
+        "title": "operator--"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator--"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator++"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:I",
+          "spelling": "int"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ""
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 33,
+                "line": 110
+              },
+              "start": {
+                "character": 8,
+                "line": 110
+              }
+            },
+            "text": "A post-increment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:I",
+                "spelling": "int"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": ""
+              }
+            ],
+            "name": ""
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator++#I#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 111
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator++"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator++"
+          }
+        ],
+        "title": "operator++"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator++"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator--"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:I",
+          "spelling": "int"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ""
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 33,
+                "line": 115
+              },
+              "start": {
+                "character": 8,
+                "line": 115
+              }
+            },
+            "text": "A post-decrement operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:I",
+                "spelling": "int"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": ""
+              }
+            ],
+            "name": ""
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator-#I#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 116
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator--"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator--"
+          }
+        ],
+        "title": "operator--"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator--"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator!"
+        },
+        {
+          "kind": "text",
+          "spelling": "() "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 35,
+                "line": 125
+              },
+              "start": {
+                "character": 8,
+                "line": 125
+              }
+            },
+            "text": "A logical negation operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator!#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 126
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator!"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator!"
+          }
+        ],
+        "title": "operator!"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator!"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator&&"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 130
+              },
+              "start": {
+                "character": 8,
+                "line": 130
+              }
+            },
+            "text": "A logical and operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator&&#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 131
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&&"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&&"
+          }
+        ],
+        "title": "operator&&"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator&&"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator||"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 39,
+                "line": 135
+              },
+              "start": {
+                "character": 8,
+                "line": 135
+              }
+            },
+            "text": "A logical inclusive or operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator||#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 136
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator||"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator||"
+          }
+        ],
+        "title": "operator||"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator||"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator=="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 28,
+                "line": 145
+              },
+              "start": {
+                "character": 8,
+                "line": 145
+              }
+            },
+            "text": "An equal-to operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator==#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 146
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator=="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator=="
+          }
+        ],
+        "title": "operator=="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator=="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator!="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 32,
+                "line": 150
+              },
+              "start": {
+                "character": 8,
+                "line": 150
+              }
+            },
+            "text": "An not-equal-to operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator!=#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 151
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator!="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator!="
+          }
+        ],
+        "title": "operator!="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator!="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator<"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 29,
+                "line": 156
+              },
+              "start": {
+                "character": 8,
+                "line": 156
+              }
+            },
+            "text": "An less-than operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator<#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 157
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<"
+          }
+        ],
+        "title": "operator<"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator<"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator>"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 32,
+                "line": 161
+              },
+              "start": {
+                "character": 8,
+                "line": 161
+              }
+            },
+            "text": "An greater-than operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator>#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 162
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>"
+          }
+        ],
+        "title": "operator>"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator>"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator<="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 38,
+                "line": 167
+              },
+              "start": {
+                "character": 8,
+                "line": 167
+              }
+            },
+            "text": "An less-than-or-equal operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator<=#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 168
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<="
+          }
+        ],
+        "title": "operator<="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator<="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:b",
+          "spelling": "bool"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator>="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 41,
+                "line": 172
+              },
+              "start": {
+                "character": 8,
+                "line": 172
+              }
+            },
+            "text": "An greater-than-or-equal operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:b",
+            "spelling": "bool"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator>=#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 9,
+          "line": 173
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>="
+          }
+        ],
+        "title": "operator>="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator>="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "identifier",
+          "preciseIdentifier": "c:@N@std",
+          "spelling": "std"
+        },
+        {
+          "kind": "text",
+          "spelling": "::"
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@N@std@N@__1@S@weak_ordering",
+          "spelling": "weak_ordering"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator<=>"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ") "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 39,
+                "line": 178
+              },
+              "start": {
+                "character": 8,
+                "line": 178
+              }
+            },
+            "text": "A three-way comparison operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "identifier",
+            "preciseIdentifier": "c:@N@std",
+            "spelling": "std"
+          },
+          {
+            "kind": "text",
+            "spelling": "::"
+          },
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@N@std@N@__1@S@weak_ordering",
+            "spelling": "weak_ordering"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator<=>#&1$@S@MyClass#1"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 23,
+          "line": 179
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<=>"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<=>"
+          }
+        ],
+        "title": "operator<=>"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator<=>"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 34,
+                "line": 188
+              },
+              "start": {
+                "character": 8,
+                "line": 188
+              }
+            },
+            "text": "A copy assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 189
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator="
+          }
+        ],
+        "title": "operator="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 48,
+                "line": 190
+              },
+              "start": {
+                "character": 8,
+                "line": 190
+              }
+            },
+            "text": "A pass-by-value copy assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator=#1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 191
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator="
+          }
+        ],
+        "title": "operator="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " && "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 34,
+                "line": 193
+              },
+              "start": {
+                "character": 8,
+                "line": 193
+              }
+            },
+            "text": "A move assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " && "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator=#&&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 194
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator="
+          }
+        ],
+        "title": "operator="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "identifier",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 26,
+                "line": 196
+              },
+              "start": {
+                "character": 8,
+                "line": 196
+              }
+            },
+            "text": "A copy constructor"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@MyClass#&$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Constructor",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 4,
+          "line": 197
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "title": "MyClass"
+      },
+      "pathComponents": [
+        "MyClass",
+        "MyClass"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "identifier",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " && "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 26,
+                "line": 198
+              },
+              "start": {
+                "character": 8,
+                "line": 198
+              }
+            },
+            "text": "A move constructor"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " && "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@MyClass#&&$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Constructor",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 4,
+          "line": 199
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MyClass"
+          }
+        ],
+        "title": "MyClass"
+      },
+      "pathComponents": [
+        "MyClass",
+        "MyClass"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator+="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 39,
+                "line": 205
+              },
+              "start": {
+                "character": 8,
+                "line": 205
+              }
+            },
+            "text": "An addition assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator+=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 206
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator+="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator+="
+          }
+        ],
+        "title": "operator+="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator+="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator-="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 41,
+                "line": 210
+              },
+              "start": {
+                "character": 8,
+                "line": 210
+              }
+            },
+            "text": "A subtraction assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator-=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 211
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator-="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator-="
+          }
+        ],
+        "title": "operator-="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator-="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator*="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 44,
+                "line": 215
+              },
+              "start": {
+                "character": 8,
+                "line": 215
+              }
+            },
+            "text": "A multiplication assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator*=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 216
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator*="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator*="
+          }
+        ],
+        "title": "operator*="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator*="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator/="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 38,
+                "line": 220
+              },
+              "start": {
+                "character": 8,
+                "line": 220
+              }
+            },
+            "text": "A division assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator/=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 221
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator/="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator/="
+          }
+        ],
+        "title": "operator/="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator/="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator%="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 37,
+                "line": 225
+              },
+              "start": {
+                "character": 8,
+                "line": 225
+              }
+            },
+            "text": "A modulus assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator%=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 226
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator%="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator%="
+          }
+        ],
+        "title": "operator%="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator%="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator&="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 41,
+                "line": 233
+              },
+              "start": {
+                "character": 8,
+                "line": 233
+              }
+            },
+            "text": "A bitwise and assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator&=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 234
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&="
+          }
+        ],
+        "title": "operator&="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator&="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator|="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 40,
+                "line": 238
+              },
+              "start": {
+                "character": 8,
+                "line": 238
+              }
+            },
+            "text": "A bitwise or assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator|=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 239
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator|="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator|="
+          }
+        ],
+        "title": "operator|="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator|="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator^="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 47,
+                "line": 243
+              },
+              "start": {
+                "character": 8,
+                "line": 243
+              }
+            },
+            "text": "A bitwise either-or assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator^=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 244
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator^="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator^="
+          }
+        ],
+        "title": "operator^="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator^="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator<<="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 48,
+                "line": 248
+              },
+              "start": {
+                "character": 8,
+                "line": 248
+              }
+            },
+            "text": "A bitwise left-shift assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator<<=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 249
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<<="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator<<="
+          }
+        ],
+        "title": "operator<<="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator<<="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator>>="
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 49,
+                "line": 253
+              },
+              "start": {
+                "character": 8,
+                "line": 253
+              }
+            },
+            "text": "A bitwise right-shift assignment operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator>>=#&1$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 12,
+          "line": 254
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>>="
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator>>="
+          }
+        ],
+        "title": "operator>>="
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator>>="
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator[]"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "identifier",
+          "preciseIdentifier": "c:@N@std",
+          "spelling": "std"
+        },
+        {
+          "kind": "text",
+          "spelling": "::"
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C",
+          "spelling": "string"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "key"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 35,
+                "line": 263
+              },
+              "start": {
+                "character": 8,
+                "line": 263
+              }
+            },
+            "text": "A static subscript operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "preciseIdentifier": "c:@N@std",
+                "spelling": "std"
+              },
+              {
+                "kind": "text",
+                "spelling": "::"
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C",
+                "spelling": "string"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "key"
+              }
+            ],
+            "name": "key"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 264
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator[]"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator[]"
+          }
+        ],
+        "title": "operator[]"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator[]"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:v",
+          "spelling": "void"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator[]"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "lhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "rhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 35,
+                "line": 268
+              },
+              "start": {
+                "character": 8,
+                "line": 268
+              }
+            },
+            "text": "A static subscript operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "lhs"
+              }
+            ],
+            "name": "lhs"
+          },
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "rhs"
+              }
+            ],
+            "name": "rhs"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 16,
+          "line": 269
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator[]"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator[]"
+          }
+        ],
+        "title": "operator[]"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator[]"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator*"
+        },
+        {
+          "kind": "text",
+          "spelling": "();"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 31,
+                "line": 274
+              },
+              "start": {
+                "character": 8,
+                "line": 274
+              }
+            },
+            "text": "An indirection operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator*#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 275
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator*"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator*"
+          }
+        ],
+        "title": "operator*"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator*"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " * "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator&"
+        },
+        {
+          "kind": "text",
+          "spelling": "();"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 30,
+                "line": 279
+              },
+              "start": {
+                "character": 8,
+                "line": 279
+              }
+            },
+            "text": "An address-of operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " *"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator&#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 280
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator&"
+          }
+        ],
+        "title": "operator&"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator&"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator->"
+        },
+        {
+          "kind": "text",
+          "spelling": "();"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 36,
+                "line": 285
+              },
+              "start": {
+                "character": 8,
+                "line": 285
+              }
+            },
+            "text": "A member-of-pointer operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator->#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 286
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator->"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator->"
+          }
+        ],
+        "title": "operator->"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator->"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator->*"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "const"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "preciseIdentifier": "c:@N@std",
+          "spelling": "std"
+        },
+        {
+          "kind": "text",
+          "spelling": "::"
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C",
+          "spelling": "string"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "key"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 47,
+                "line": 291
+              },
+              "start": {
+                "character": 8,
+                "line": 291
+              }
+            },
+            "text": "A pointer-to-member-of-pointer operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "keyword",
+                "spelling": "const"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "identifier",
+                "preciseIdentifier": "c:@N@std",
+                "spelling": "std"
+              },
+              {
+                "kind": "text",
+                "spelling": "::"
+              },
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C",
+                "spelling": "string"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "key"
+              }
+            ],
+            "name": "key"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator->*#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 292
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator->*"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator->*"
+          }
+        ],
+        "title": "operator->*"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator->*"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:v",
+          "spelling": "void"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator()"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "lhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "rhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 39,
+                "line": 301
+              },
+              "start": {
+                "character": 8,
+                "line": 301
+              }
+            },
+            "text": "A static function-call operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "lhs"
+              }
+            ],
+            "name": "lhs"
+          },
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "rhs"
+              }
+            ],
+            "name": "rhs"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 16,
+          "line": 302
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator()"
+          }
+        ],
+        "title": "operator()"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator()"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator()"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "arg1"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "arg2"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "arg3"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 42,
+                "line": 307
+              },
+              "start": {
+                "character": 8,
+                "line": 307
+              }
+            },
+            "text": "An instance function-call operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "arg1"
+              }
+            ],
+            "name": "arg1"
+          },
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "arg2"
+              }
+            ],
+            "name": "arg2"
+          },
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "arg3"
+              }
+            ],
+            "name": "arg3"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 308
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator()"
+          }
+        ],
+        "title": "operator()"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator()"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "operator,"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:@S@MyClass",
+          "spelling": "MyClass"
+        },
+        {
+          "kind": "text",
+          "spelling": " & "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "other"
+        },
+        {
+          "kind": "text",
+          "spelling": ");"
+        }
+      ],
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "end": {
+                "character": 24,
+                "line": 313
+              },
+              "start": {
+                "character": 8,
+                "line": 313
+              }
+            },
+            "text": "A comma operator"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "declarationFragments": [
+              {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "c:@S@MyClass",
+                "spelling": "MyClass"
+              },
+              {
+                "kind": "text",
+                "spelling": " & "
+              },
+              {
+                "kind": "internalParam",
+                "spelling": "other"
+              }
+            ],
+            "name": "other"
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:@S@MyClass",
+            "spelling": "MyClass"
+          },
+          {
+            "kind": "text",
+            "spelling": " &"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "objective-c++",
+        "precise": "c:@S@MyClass@F@operator,#&$@S@MyClass#"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "objective-c++.method"
+      },
+      "location": {
+        "position": {
+          "character": 13,
+          "line": 314
+        },
+        "uri": "file:///Users/username/path/to/CxxOperators.hpp"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "operator,"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "operator,"
+          }
+        ],
+        "title": "operator,"
+      },
+      "pathComponents": [
+        "MyClass",
+        "operator,"
+      ]
+    }
+  ]
+}
