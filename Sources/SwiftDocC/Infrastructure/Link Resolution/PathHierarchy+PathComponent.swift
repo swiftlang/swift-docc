@@ -51,9 +51,28 @@ extension PathHierarchy {
         typealias PathComponent = PathHierarchy.PathComponent
     }
 }
- 
+
 extension PathHierarchy.PathParser {
-    /// Parsed a documentation link path (and optional fragment) string into structured path component values.
+    /// Parses a documentation link path (and optional fragment) string into structured path component values.
+    ///
+    /// For example, a link string like `"/ModuleName/SymbolName-class//=(_:_:)-abc123#HeaderName"` will be parsed into:
+    /// ```
+    /// (
+    ///   components: [
+    ///     (name: "ModuleName"),
+    ///     (name: "SymbolName", kind: "class"),
+    ///     (name: "/=(_:_:)", hash: "abc123"),
+    ///     (name: "HeaderName")
+    ///   ],
+    ///   isAbsolute: true
+    /// )
+    /// ```
+    ///
+    /// A few things to note about this behavior:
+    ///  - The parser splits components based on both `"/"` and `"#"` (for the last component only)
+    ///  - The operator component includes `"/"`, even though that's a separator character.
+    ///  - The disambiguation separator character (`-`) isn't included in either of the disambiguated path components.
+    ///
     /// - Parameters:
     ///   - path: The documentation link string, containing a path and an optional fragment.
     /// - Returns: A pair of the parsed path components and a flag that indicate if the documentation link is absolute or not.
@@ -65,6 +84,9 @@ extension PathHierarchy.PathParser {
     }
     
     /// Parses a single path component string into a structured format.
+    ///
+    /// For example, a path component like `"SymbolName-class"` will be split into `(name: "SymbolName", kind: "class")`
+    /// and a path component like `"/=(_:_:)-abc123"` will be split into `(name: "/=(_:_:)", hash: "abc123")`.
     static func parse(pathComponent original: Substring) -> PathComponent {
         let full = String(original)
         guard let dashIndex = original.lastIndex(of: "-") else {
@@ -110,9 +132,29 @@ extension PathHierarchy.PathParser {
         return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: nil, hash: hash))
     }
     
+    /// Splits the link string into its component substrings and identifies the the link string is an absolute link.
+    ///
+    /// For example, a link string like `"/ModuleName/SymbolName-class//=(_:_:)-abc123#HeaderName"` will be split into:
+    /// ```
+    /// (
+    ///   componentSubstrings: [
+    ///     "ModuleName",
+    ///     "SymbolName-class",
+    ///     "/=(_:_:)-abc123",
+    ///     "HeaderName"
+    ///   ],
+    ///   isAbsolute: true
+    /// )
+    /// ```
     static func split(_ path: String) -> (componentSubstrings: [Substring], isAbsolute: Bool) {
         var components: [Substring] = self.split(path)
         
+        // As an implementation detail, the way that the path parser identifies that "/ModuleName/SymbolName" is an absolute link, but that "/=(_:_:)" _isn't_
+        // an absolute link is by inspecting the first component substring. In both these cases, that substring starts with a "/".
+        // However, because the first component of an absolute link needs to be a module name (or "documentation" or "tutorials" for backwards compatibility),
+        // the path parser can identify that "ModuleName" (without the leading slash) is a valid module name, but "=(_:_:)" (without the leading slash) isn't.
+        // This tells the parser to remove the leading slash from "/ModuleName" and return that this link string represented an absolute link, whereas it leaves
+        // "/=(_:_:)" as-is and returns that that link string represented a relative link.
         let isAbsolute: Bool
         if path.first == PathComponentScanner.separator {
             guard let maybeModuleName = components.first?.dropFirst(), !maybeModuleName.isEmpty else {
@@ -189,6 +231,9 @@ private struct PathComponentScanner {
                  + scanUntilSeparatorAndThenSkipIt()
         }
         
+        // To enable the path parser to identify absolute links, include any leading "/" in the scanned component substring.
+        // As an implementation detail, the `PathParser`  is responsible for identifying absolute links so that the scanner doesn't need to
+        // track the current location in the original link string and so that `scanPathComponent()` can return only the scanned substring.
         if remaining.first == Self.separator {
             return scanUntil(index: remaining.firstIndex(where: { $0 != Self.separator }))
                  + scanPathComponent()
