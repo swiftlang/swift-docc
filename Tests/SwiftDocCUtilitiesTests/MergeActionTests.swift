@@ -15,6 +15,8 @@ import SwiftDocCTestUtilities
 
 class MergeActionTests: XCTestCase {
     
+    private let testLandingPageInfo = MergeAction.LandingPageInfo.synthesize(name: "Test Landing Page Name", kind: "Test Landing Page Kind")
+    
     func testCopiesArchivesIntoOutputLocation() throws {
         let fileSystem = try TestFileSystem(
             folders: [
@@ -60,6 +62,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -73,6 +76,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ├─ first/
@@ -143,6 +147,26 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
     func testCreatesDataDirectoryWhenMergingSingleEmptyArchive() throws {
@@ -166,6 +190,7 @@ class MergeActionTests: XCTestCase {
             archives: [
                 URL(fileURLWithPath: "/Empty.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -256,6 +281,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -269,6 +295,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ╰─ first/
@@ -318,6 +345,22 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
     func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchiveWithoutStaticHosting() throws {
@@ -359,6 +402,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -372,6 +416,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ╰─ first/
@@ -407,6 +452,22 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
     }
     
     func testSupportsArchivesWithoutStaticHosting() throws {
@@ -456,6 +517,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -469,6 +531,7 @@ class MergeActionTests: XCTestCase {
         ├─ css/
         │  ╰─ something.css
         ├─ data/
+        │  ├─ documentation.json
         │  ├─ documentation/
         │  │  ├─ first.json
         │  │  ├─ first/
@@ -513,6 +576,82 @@ class MergeActionTests: XCTestCase {
            ╰─ com.example.second/
               ╰─ something.mov
         """)
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title ?? ""] + $0.identifiers }, [
+            "Modules",
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+
+            "Tutorials",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+            "doc://org.swift.test/tutorials/first.json",
+            "doc://org.swift.test/tutorials/second.json",
+        ])
+    }
+    
+    func testReferenceOnlyArchivesDoNotSynthesizeTutorialsTopicSection() throws {
+        let fileSystem = try TestFileSystem(
+            folders: [
+                Folder(name: "Output.doccarchive", content: []),
+                Self.makeArchive(
+                    name: "First",
+                    documentationPages: [
+                        "First",
+                        "First/SomeClass",
+                        "First/SomeClass/someProperty",
+                        "First/SomeClass/someFunction(:_)",
+                    ],
+                    tutorialPages: []
+                ),
+                Self.makeArchive(
+                    name: "Second",
+                    documentationPages: [
+                        "Second",
+                        "Second/SomeStruct",
+                        "Second/SomeStruct/someProperty",
+                        "Second/SomeStruct/someFunction(:_)",
+                    ],
+                    tutorialPages: []
+                ),
+            ]
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        var action = MergeAction(
+            archives: [
+                URL(fileURLWithPath: "/First.doccarchive"),
+                URL(fileURLWithPath: "/Second.doccarchive"),
+            ],
+            landingPageInfo: testLandingPageInfo,
+            outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
+            fileManager: fileSystem
+        )
+        
+        _ = try action.perform(logHandle: .memory(logStorage))
+        XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
+        
+        let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
+        XCTAssertEqual(synthesizedRootNode.metadata.title, "Test Landing Page Name")
+        XCTAssertEqual(synthesizedRootNode.metadata.roleHeading, "Test Landing Page Kind")
+        XCTAssertEqual(synthesizedRootNode.topicSectionsStyle, .detailedGrid)
+        XCTAssertEqual(synthesizedRootNode.topicSections.flatMap { [$0.title].compactMap({ $0 }) + $0.identifiers }, [
+            // No title
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+        ])
+        XCTAssertEqual(synthesizedRootNode.references.keys.sorted(), [
+            "doc://org.swift.test/documentation/first.json",
+            "doc://org.swift.test/documentation/second.json",
+        ])
     }
     
     func testErrorWhenArchivesContainOverlappingData() throws {
@@ -574,6 +713,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/Second.doccarchive"),
                 URL(fileURLWithPath: "/Third.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -611,6 +751,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -672,6 +813,7 @@ class MergeActionTests: XCTestCase {
                 URL(fileURLWithPath: "/First.doccarchive"),
                 URL(fileURLWithPath: "/Second.doccarchive"),
             ],
+            landingPageInfo: testLandingPageInfo,
             outputURL: URL(fileURLWithPath: "/Output.doccarchive"),
             fileManager: fileSystem
         )
@@ -861,7 +1003,7 @@ class MergeActionTests: XCTestCase {
                 ]
             }
             dataContent += [
-                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" })),
+                Folder(name: "documentation", content: Folder.makeStructure(filePaths: documentationPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/documentation")),
             ]
         }
         if !tutorialPages.isEmpty {
@@ -871,7 +1013,7 @@ class MergeActionTests: XCTestCase {
                 ]
             }
             dataContent += [
-                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" })),
+                Folder(name: "tutorials", content: Folder.makeStructure(filePaths: tutorialPages.map { "\($0.lowercased()).json" }, renderNodeReferencePrefix: "/tutorials")),
             ]
         }
         if !dataContent.isEmpty {
@@ -906,5 +1048,13 @@ class MergeActionTests: XCTestCase {
         ]
         
         return Folder(name: "\(name).doccarchive", content: content)
+    }
+}
+
+private extension TestFileSystem {
+    func renderNode(atPath path: String) throws -> RenderNode {
+        let data = try contents(of: URL(fileURLWithPath: path))
+        
+        return try JSONDecoder().decode(RenderNode.self, from: data)
     }
 }

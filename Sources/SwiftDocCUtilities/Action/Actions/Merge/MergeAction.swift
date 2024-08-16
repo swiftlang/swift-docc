@@ -10,13 +10,22 @@
 
 import Foundation
 import SwiftDocC
+import Markdown
 
 /// An action that merges a list of documentation archives into a combined archive.
 struct MergeAction: Action {
     var archives: [URL]
-    var landingPageCatalog: URL?
+    var landingPageInfo: LandingPageInfo
     var outputURL: URL
     var fileManager: FileManagerProtocol
+    
+    /// Information about how the merge action should create landing page content for the combined archive
+    enum LandingPageInfo {
+        /// The merge action should build landing page content from a provided documentation catalog.
+        case buildFromCatalog(documentationCatalog: URL)
+        /// The merge action should synthesize a minimal landing page with a given name and kind.
+        case synthesize(name: String, kind: String)
+    }
     
     mutating func perform(logHandle: LogHandle) throws -> ActionResult {
         guard let firstArchive = archives.first else {
@@ -66,15 +75,56 @@ struct MergeAction: Action {
             try combinedJSONIndex.merge(renderIndex)
         }
         
+        switch landingPageInfo {
+        case .buildFromCatalog:
+            fatalError("Custom landing page catalogs are not supported. `Merge.run()` currently always passed `.synthesize()`.")
+        case .synthesize(let name, let kind):
+            try synthesizeLandingPage(landingPageName: name, landingPageKind: kind, combinedIndex: &combinedJSONIndex, targetURL: targetURL)
+        }
+        
         try fileManager.createFile(at: jsonIndexURL, contents: RenderJSONEncoder.makeEncoder(emitVariantOverrides: false).encode(combinedJSONIndex))
-        
-        // TODO: Build landing page from input or synthesize default landing page
-        
-        // TODO: Inactivate external links outside the merged archives
         
         try Self.moveOutput(from: targetURL, to: outputURL, fileManager: fileManager)
         
         return ActionResult(didEncounterError: false, outputs: [outputURL])
+    }
+    
+    private func synthesizeLandingPage(
+        landingPageName: String,
+        landingPageKind: String,
+        combinedIndex: inout RenderIndex,
+        targetURL: URL
+    ) throws {
+        let languages = combinedIndex.interfaceLanguages.keys.map { SourceLanguage(id: $0) }
+        let language = languages.sorted().first ?? .swift
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: landingPageName.replacingWhitespaceAndPunctuation(with: "-"), path: "/documentation", sourceLanguage: language)
+        
+        let rootRenderReferences = try readRootNodeRenderReferencesIn(dataDirectory: targetURL.appendingPathComponent("data", isDirectory: true))
+        
+        guard !rootRenderReferences.isEmpty else {
+            // No need to synthesize a landing page if the combined archive is empty.
+            return
+        }
+        
+        let renderNode = makeSynthesizedLandingPage(
+            name: landingPageName,
+            reference: reference,
+            roleHeading: landingPageKind,
+            rootRenderReferences: rootRenderReferences
+        )
+        
+        try fileManager.createFile(
+            at: targetURL.appendingPathComponent("data/documentation.json"),
+            contents: RenderJSONEncoder.makeEncoder().encode(renderNode)
+        )
+        // It's expected that this will fail if combined archive doesn't support static hosting.
+        try? fileManager.copyItem(
+            at: targetURL.appendingPathComponent("index.html"),
+            to: targetURL.appendingPathComponent("/documentation/index.html")
+        )
+        
+        combinedIndex.insertRoot(named: landingPageName)
     }
     
     /// Validate that the different archives don't have overlapping data.

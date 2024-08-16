@@ -66,6 +66,9 @@ class MergeSubcommandTests: XCTestCase {
             
             XCTAssertNil(command.landingPageCatalog)
             XCTAssertEqual(command.outputURL, URL(fileURLWithPath: fileSystem.currentDirectoryPath).appendingPathComponent("Combined.doccarchive", isDirectory: true))
+            
+            XCTAssertEqual(command.synthesizedLandingPageName, "Documentation")
+            XCTAssertEqual(command.synthesizedLandingPageKind, "Package")
         }
         
         // Incomplete catalog argument
@@ -114,6 +117,20 @@ class MergeSubcommandTests: XCTestCase {
             
             XCTAssertEqual(command.landingPageCatalog, URL(fileURLWithPath: "/path/to/LandingPage.docc"))
             XCTAssertEqual(command.outputURL, URL(fileURLWithPath: fileSystem.currentDirectoryPath).appendingPathComponent("Combined.doccarchive", isDirectory: true))
+        }
+        
+        // Synthesized landing page info
+        XCTAssertNoThrow(try Docc.Merge.parse(["/path/to/First.doccarchive", "--synthesized-landing-page-name", "Test Landing Page Name"]))
+        XCTAssertNoThrow(try Docc.Merge.parse(["/path/to/First.doccarchive", "--synthesized-landing-page-kind", "Test Landing Page Kind"]))
+        
+        do {
+            let command = try Docc.Merge.parse([
+                "/path/to/First.doccarchive",
+                "--synthesized-landing-page-name", "Test Landing Page Name",
+                "--synthesized-landing-page-kind", "Test Landing Page Kind"
+            ])
+            XCTAssertEqual(command.synthesizedLandingPageName, "Test Landing Page Name")
+            XCTAssertEqual(command.synthesizedLandingPageKind, "Test Landing Page Kind")
         }
         
         // Incomplete output argument

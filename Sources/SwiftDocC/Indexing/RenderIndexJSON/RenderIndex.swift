@@ -82,6 +82,15 @@ public struct RenderIndex: Codable, Equatable {
         includedArchiveIdentifiers.append(contentsOf: other.includedArchiveIdentifiers)
     }
     
+    /// Insert a root node with a given name for each interface language and move the previous root node(s) under the new root node.
+    /// - Parameter named: The name of the new root node
+    public mutating func insertRoot(named: String) {
+        for (languageID, nodes) in interfaceLanguages {
+            let root = Node(title: named, path: "/documentation", pageType: .framework, isDeprecated: false, children: nodes, icon: nil)
+            interfaceLanguages[languageID] = [root]
+        }
+    }
+    
     enum MergeError: DescribedError {
         case referenceCollision(String)
         
