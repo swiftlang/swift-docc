@@ -53,11 +53,17 @@ extension MergeAction {
         name: String,
         reference: ResolvedTopicReference,
         roleHeading: String,
+        topicsStyle: TopicsVisualStyle.Style,
         rootRenderReferences: RootRenderReferences
     ) -> RenderNode {
         var renderNode = RenderNode(identifier: reference, kind: .article)
         
-        renderNode.topicSectionsStyle = .detailedGrid
+        renderNode.topicSectionsStyle = switch topicsStyle {
+            case .list:         .list
+            case .compactGrid:  .compactGrid
+            case .detailedGrid: .detailedGrid
+            case .hidden:       .hidden
+        }
         renderNode.metadata.title = name
         renderNode.metadata.roleHeading = roleHeading
         renderNode.metadata.role = "collection"

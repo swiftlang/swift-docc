@@ -15,7 +15,13 @@ import SwiftDocCTestUtilities
 
 class MergeActionTests: XCTestCase {
     
-    private let testLandingPageInfo = MergeAction.LandingPageInfo.synthesize(name: "Test Landing Page Name", kind: "Test Landing Page Kind")
+    private let testLandingPageInfo = MergeAction.LandingPageInfo.synthesize(
+        .init(
+            name: "Test Landing Page Name",
+            kind: "Test Landing Page Kind",
+            style: .detailedGrid
+        )
+    )
     
     func testCopiesArchivesIntoOutputLocation() throws {
         let fileSystem = try TestFileSystem(

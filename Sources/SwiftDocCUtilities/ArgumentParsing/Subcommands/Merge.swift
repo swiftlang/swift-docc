@@ -141,6 +141,17 @@ extension Docc {
             )
             var kind: String = "Package"
             
+            @Option(
+                name: .customLong("synthesized-landing-page-topics-style"),
+                help: ArgumentHelp(
+                    "The visual style of the topic section for the combined archive's synthesized landing page.",
+                    discussion: """
+                    If you pass both this value and a `--landing-page-catalog` value, the documentation compiler will only use the `--landing-page-catalog` value. 
+                    """,
+                    valueName: "style"
+                )
+            )
+            var topicStyle: TopicsVisualStyle.Style = .detailedGrid
         }
         
         public var archives: [URL] {
@@ -160,14 +171,23 @@ extension Docc {
         public var synthesizedLandingPageKind: String {
             synthesizedLandingPageOptions.kind
         }
+        public var synthesizedLandingPageTopicsStyle: TopicsVisualStyle.Style {
+            synthesizedLandingPageOptions.topicStyle
+        }
         
         public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
-            var convertAction = MergeAction(archives: archives, landingPageInfo: .synthesize(name: synthesizedLandingPageName, kind: synthesizedLandingPageKind), outputURL: outputURL, fileManager: Self._fileManager)
+            var convertAction = MergeAction(
+                archives: archives,
+                landingPageInfo: .synthesize(.init(name: synthesizedLandingPageName, kind: synthesizedLandingPageKind, style: synthesizedLandingPageTopicsStyle)),
+                outputURL: outputURL,
+                fileManager: Self._fileManager
+            )
             
             // Perform the conversion and print any warnings or errors found
             try convertAction.performAndHandleResult()
         }
-        
     }
 }
+
+extension TopicsVisualStyle.Style: ExpressibleByArgument {}

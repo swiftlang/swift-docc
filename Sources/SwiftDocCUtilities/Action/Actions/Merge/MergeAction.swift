@@ -23,8 +23,14 @@ struct MergeAction: Action {
     enum LandingPageInfo {
         // This enum will have a case for a landing page catalog when we add support for that.
         
-        /// The merge action should synthesize a minimal landing page with a given name and kind.
-        case synthesize(name: String, kind: String)
+        /// The merge action should synthesize a minimal landing page with a given configuration.
+        case synthesize(SynthesizeConfiguration)
+        
+        struct SynthesizeConfiguration {
+            var name: String
+            var kind: String
+            var style: TopicsVisualStyle.Style
+        }
     }
     
     mutating func perform(logHandle: LogHandle) throws -> ActionResult {
@@ -76,8 +82,8 @@ struct MergeAction: Action {
         }
         
         switch landingPageInfo {
-        case .synthesize(let name, let kind):
-            try synthesizeLandingPage(landingPageName: name, landingPageKind: kind, combinedIndex: &combinedJSONIndex, targetURL: targetURL)
+        case .synthesize(let configuration):
+            try synthesizeLandingPage(configuration, combinedIndex: &combinedJSONIndex, targetURL: targetURL)
         }
         
         try fileManager.createFile(at: jsonIndexURL, contents: RenderJSONEncoder.makeEncoder(emitVariantOverrides: false).encode(combinedJSONIndex))
@@ -88,11 +94,12 @@ struct MergeAction: Action {
     }
     
     private func synthesizeLandingPage(
-        landingPageName: String,
-        landingPageKind: String,
+        _ configuration: LandingPageInfo.SynthesizeConfiguration,
         combinedIndex: inout RenderIndex,
         targetURL: URL
     ) throws {
+        let landingPageName = configuration.name
+        
         let languages = combinedIndex.interfaceLanguages.keys.map { SourceLanguage(id: $0) }
         let language = languages.sorted().first ?? .swift
         
@@ -108,7 +115,8 @@ struct MergeAction: Action {
         let renderNode = makeSynthesizedLandingPage(
             name: landingPageName,
             reference: reference,
-            roleHeading: landingPageKind,
+            roleHeading: configuration.kind,
+            topicsStyle: configuration.style,
             rootRenderReferences: rootRenderReferences
         )
         
