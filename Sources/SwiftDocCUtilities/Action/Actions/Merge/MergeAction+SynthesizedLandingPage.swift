@@ -117,16 +117,18 @@ private struct RootNodeRenderReference: Decodable {
         
         let identifier = try container.decode(ResolvedTopicReference.self, forKey: .identifier)
         let rawIdentifier = identifier.url.absoluteString
-        let referencesContainer = try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references)
         
         // Every node should include a reference to the root page.
         // For reference documentation, this is because the root appears as a link in the breadcrumbs on every page.
         // For tutorials, this is because the tutorial table of content appears as a link in the top navigator.
         //
         // If the root page has a reference to itself, then that the fastest and easiest way to access the correct topic render reference.
-        if let selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)!) {
-            renderReference = selfReference
-            return
+        if container.contains(.references) {
+            let referencesContainer = try container.nestedContainer(keyedBy: StringCodingKey.self, forKey: .references)
+            if let selfReference = try referencesContainer.decodeIfPresent(TopicRenderReference.self, forKey: .init(stringValue: rawIdentifier)!) {
+                renderReference = selfReference
+                return
+            }
         }
         
         // If for some unexpected reason this wasn't true, for example because of an unknown page kind,
