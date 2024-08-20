@@ -658,7 +658,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
-    private let symbolURL =  URL(fileURLWithPath: "/path/to/SomeFile.swift")
+    private let symbolURL = URL(fileURLWithPath: "/path/to/SomeFile.swift")
     
     private func makeSymbolGraph(docComment: String) -> SymbolGraph {
         makeSymbolGraph(
@@ -681,34 +681,23 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
     ) -> SymbolGraph {
-        let uri = symbolURL.absoluteString // we want to include the file:// scheme here
-        func makeLineList(text: String) -> SymbolGraph.LineList {
-            return .init(text.splitByNewlines.enumerated().map { lineOffset, line in
-                    .init(text: line, range: .init(start: .init(line: start.line + lineOffset, character: start.character),
-                                                   end: .init(line: start.line + lineOffset, character: start.character + line.count)))
-            }, uri: uri)
-        }
-        
         return makeSymbolGraph(
             moduleName: "ModuleName",
             platform: platform,
             symbols: [
-                .init(
-                    identifier: .init(precise: "symbol-id", interfaceLanguage: sourceLanguage.id),
-                    names: .init(title: "functionName(...)", navigator: nil, subHeading: nil, prose: nil),
+                makeSymbol(
+                    id: "symbol-id",
+                    language: sourceLanguage,
+                    kind: .func,
                     pathComponents: ["functionName(...)"],
-                    docComment: docComment.map { makeLineList(text: $0) },
-                    accessLevel: .public, kind: .init(parsedIdentifier: .func, displayName: "Function"),
-                    mixins: [
-                        SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: uri, position: start),
-                        
-                        SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
-                            parameters: parameters.map {
-                                .init(name: $0.name, externalName: $0.externalName, declarationFragments: [], children: [])
-                            },
-                            returns: [returnValue]
-                        )
-                    ]
+                    docComment: docComment,
+                    location: (start, symbolURL),
+                    signature: .init(
+                        parameters: parameters.map {
+                            .init(name: $0.name, externalName: $0.externalName, declarationFragments: [], children: [])
+                        },
+                        returns: [returnValue]
+                    )
                 )
             ]
         )

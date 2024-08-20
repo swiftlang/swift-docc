@@ -14,7 +14,7 @@ import SymbolKit
 /// Translates a symbol's details into a render nodes's details section.
 struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
     
-    func generatePlistDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PlistDetailsRenderSection {
+    private func generatePlistDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PlistDetailsRenderSection {
         PlistDetailsRenderSection(
             details: PlistDetailsRenderSection.Details(
                 rawKey: plistDetails.rawKey,
@@ -28,9 +28,6 @@ struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
     }
     
     func translateSection(for symbol: Symbol, renderNode: inout RenderNode, renderNodeTranslator: inout RenderNodeTranslator) -> VariantCollection<CodableContentSection?>? {
-        guard let mixinVariant = symbol.mixinsVariants.allValues.first(where: { mixin in
-            mixin.variant.keys.contains(SymbolGraph.Symbol.PlistDetails.mixinKey)
-        }) else { return nil }
         guard let plistDetails = symbol.mixinsVariants.allValues.mapFirst(where: { mixin in
             mixin.variant[SymbolGraph.Symbol.PlistDetails.mixinKey] as? SymbolGraph.Symbol.PlistDetails
         }) else {
