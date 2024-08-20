@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReferenceStore.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -145,6 +145,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContext"
       ],
@@ -153,12 +154,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/TopicContent"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/init(topics:assets:)"
@@ -166,6 +171,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/assets",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/topics"
@@ -173,6 +180,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/content(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/content(forAssetNamed:bundleIdentifier:)"

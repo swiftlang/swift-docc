@@ -146,7 +146,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Comment.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Comment.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Comment.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

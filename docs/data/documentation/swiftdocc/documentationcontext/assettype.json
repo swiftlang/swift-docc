@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L1645"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L1686"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/image",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/video"
@@ -113,12 +115,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/description"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/AssetType\/Equatable-Implementations"

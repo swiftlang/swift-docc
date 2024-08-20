@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -207,6 +207,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
@@ -226,6 +227,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Variants",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
@@ -242,12 +244,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Variant"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/init(defaultValue:variants:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/init(from:)",
@@ -264,6 +270,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/defaultValue",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/variants"
@@ -271,6 +279,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/encode(to:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/mapValues(_:)"
@@ -278,6 +288,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection\/Equatable-Implementations"
@@ -2424,6 +2435,11 @@
   "title" : "VariantPatchOperation",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantpatchoperation"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

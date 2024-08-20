@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Diagnostic.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -83,19 +83,6 @@
       "kind" : "declarations"
     }
   ],
-  "relationshipsSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError",
-        "doc:\/\/SwiftDocC\/10Foundation14LocalizedErrorP",
-        "doc:\/\/SwiftDocC\/s5ErrorP",
-        "doc:\/\/SwiftDocC\/s8SendableP"
-      ],
-      "kind" : "relationships",
-      "title" : "Conforms To",
-      "type" : "conformsTo"
-    }
-  ],
   "schemaVersion" : {
     "major" : 0,
     "minor" : 3,
@@ -106,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Diagnostics",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
@@ -119,17 +107,19 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/init(source:severity:range:identifier:summary:explanation:notes:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/explanation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/identifier",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedSummary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/notes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/range",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/severity",
@@ -139,18 +129,12 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/offsetWithRange(_:)"
       ],
       "title" : "Instance Methods"
-    },
-    {
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/DescribedError-Implementations",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/LocalizedError-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -167,11 +151,6 @@
   ]
 , 
 "references": {
-"doc://SwiftDocC/10Foundation14LocalizedErrorP": {
-  "identifier" : "doc:\/\/SwiftDocC\/10Foundation14LocalizedErrorP",
-  "title" : "Foundation.LocalizedError",
-  "type" : "unresolvable"
-},
 "doc://SwiftDocC/documentation/SwiftDocC": {
   "abstract" : [
     {
@@ -185,40 +164,6 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DescribedError": {
-  "abstract" : [
-    {
-      "text" : "An error that offers a plain-text error message.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "protocol"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DescribedError"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DescribedError"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DescribedError",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/describederror"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic": {
   "abstract" : [
@@ -253,28 +198,6 @@
   "title" : "Diagnostic",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/DescribedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/DescribedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "DescribedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/describederror-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/LocalizedError-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/LocalizedError-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "LocalizedError Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/localizederror-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/explanation": {
   "abstract" : [
@@ -493,80 +416,6 @@
   "title" : "init(source:severity:range:identifier:summary:explanation:notes:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnostic\/init(source:severity:range:identifier:summary:explanation:notes:)"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedExplanation": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "localizedExplanation"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedExplanation",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "localizedExplanation",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/localizedexplanation"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/localizedSummary": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "localizedSummary"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic\/localizedSummary",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "localizedSummary",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic\/localizedsummary"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Diagnostic/notes": {
   "abstract" : [
@@ -1023,16 +872,6 @@
   "title" : "Problem",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/problem"
-},
-"doc://SwiftDocC/s5ErrorP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s5ErrorP",
-  "title" : "Swift.Error",
-  "type" : "unresolvable"
-},
-"doc://SwiftDocC/s8SendableP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
-  "title" : "Swift.Sendable",
-  "type" : "unresolvable"
 }
 }
 }

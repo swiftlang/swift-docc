@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DescribedError.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Errors\/DescribedError.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Errors\/DescribedError.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -107,7 +107,6 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertServiceError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error",
@@ -137,6 +136,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription-3e16y"
       ],
@@ -313,40 +314,6 @@
   "title" : "errorDescription",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/describederror\/errordescription-3e16y"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/Diagnostic": {
-  "abstract" : [
-    {
-      "text" : "A diagnostic explains a problem or issue that needs the end-user’s attention.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "Diagnostic"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Diagnostic",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "Diagnostic"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "Diagnostic",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnostic"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/PropertyListError": {
   "abstract" : [
@@ -623,7 +590,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error": {
   "abstract" : [
     {
-      "text" : "An error that occured during the application of a JSON patch.",
+      "text" : "An error that occurred during the application of a JSON patch.",
       "type" : "text"
     }
   ],

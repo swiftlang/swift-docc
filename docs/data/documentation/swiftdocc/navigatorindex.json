@@ -79,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -303,6 +303,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
@@ -314,24 +315,31 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Creating-an-index",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/readNavigatorIndex(url:bundleIdentifier:readNavigatorTree:presentationIdentifier:onNodeRead:)"
       ],
       "title" : "Creating an index"
     },
     {
+      "anchor" : "Classes",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder"
       ],
       "title" : "Classes"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Identifier"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/availabilityIndex",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/bundleIdentifier",
@@ -345,6 +353,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/availabilities(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/id(for:with:)",
@@ -355,6 +365,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/UnknownBundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/bundleKey",
@@ -364,6 +376,8 @@
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType"

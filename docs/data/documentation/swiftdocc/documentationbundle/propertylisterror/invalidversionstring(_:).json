@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

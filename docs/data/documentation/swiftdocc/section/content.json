@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Section.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Section.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Section.swift#L19"
     },
     "required" : true,
     "role" : "symbol",

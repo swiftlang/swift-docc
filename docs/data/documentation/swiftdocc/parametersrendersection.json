@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ParameterRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/ParameterRenderSection.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/ParameterRenderSection.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -108,6 +108,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Object-Description-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection",
@@ -124,6 +125,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection\/init(parameters:)"
@@ -131,6 +134,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection\/kind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection\/parameters"
@@ -138,6 +143,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection\/Equatable-Implementations",
@@ -710,11 +716,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

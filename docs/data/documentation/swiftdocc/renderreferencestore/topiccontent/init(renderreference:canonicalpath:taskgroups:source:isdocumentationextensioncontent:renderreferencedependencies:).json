@@ -149,7 +149,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReferenceStore.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L73"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L74"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -368,6 +368,20 @@
             }
           ],
           "name" : "isDocumentationExtensionContent"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Render reference dependencies.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "renderReferenceDependencies"
         }
       ]
     }

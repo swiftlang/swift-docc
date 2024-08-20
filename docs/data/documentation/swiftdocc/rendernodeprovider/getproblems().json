@@ -71,7 +71,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L21"
     },
     "required" : true,
     "role" : "symbol",

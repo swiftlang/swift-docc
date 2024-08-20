@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L225"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L225"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -176,6 +176,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Variants",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverrides",

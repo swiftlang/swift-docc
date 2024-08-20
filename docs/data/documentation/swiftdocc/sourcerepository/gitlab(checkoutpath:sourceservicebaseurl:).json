@@ -93,7 +93,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourceRepository.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/SourceRepository\/SourceRepository.swift#L73"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/SourceRepository\/SourceRepository.swift#L73"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

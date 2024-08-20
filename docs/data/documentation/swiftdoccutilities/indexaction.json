@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "IndexAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/IndexAction.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/IndexAction.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -102,6 +102,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Compiler-Workflow",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
@@ -114,18 +115,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction\/init(documentationBundleURL:outputURL:bundleIdentifier:diagnosticEngine:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction\/perform(logHandle:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/IndexAction\/Action-Implementations"

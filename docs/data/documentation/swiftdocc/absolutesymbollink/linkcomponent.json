@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AbsoluteSymbolLink.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L135"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L135"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,12 +104,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/init(string:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/asLinkComponentString",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/description",
@@ -119,12 +123,16 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/disambiguateBetweenOverloadedSymbols(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum"
       ],

@@ -45,15 +45,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "Children"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "("
       },
       {
         "kind" : "typeIdentifier",
@@ -70,15 +62,25 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "Children"
+        "preciseIdentifier" : "s:ST",
+        "text" : "Sequence"
       },
       {
         "kind" : "text",
-        "text" : ", "
+        "text" : "<any "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8Markdown6MarkupP",
+        "text" : "Markup"
+      },
+      {
+        "kind" : "text",
+        "text" : ">, "
       },
       {
         "kind" : "externalParam",
@@ -186,7 +188,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasExactlyOne.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L154"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L154"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -218,15 +220,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Children"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -259,15 +253,25 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
-              "text" : "Children"
+              "preciseIdentifier" : "s:ST",
+              "text" : "Sequence"
             },
             {
               "kind" : "text",
-              "text" : ", "
+              "text" : "<any "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8Markdown6MarkupP",
+              "text" : "Markup"
+            },
+            {
+              "kind" : "text",
+              "text" : ">, "
             },
             {
               "kind" : "externalParam",
@@ -386,54 +390,7 @@
             },
             {
               "kind" : "text",
-              "text" : ") "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Children"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST",
-              "text" : "Sequence"
-            },
-            {
-              "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Children"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " == any "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:8Markdown6MarkupP",
-              "text" : "Markup"
+              "text" : ")"
             }
           ]
         }
@@ -773,15 +730,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Children"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -798,15 +747,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Children"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
     },
     {
       "kind" : "externalParam",

@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorTree.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -198,6 +198,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex",
@@ -209,12 +210,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Classes",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node"
       ],
       "title" : "Classes"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/init(root:numericIdentifierToNode:)"
@@ -222,6 +227,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/numericIdentifierToNode",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/root"
@@ -229,25 +236,34 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/read(from:bundleIdentifier:interfaceLanguages:timeout:delay:queue:presentationIdentifier:broadcast:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/write(to:writePaths:callback:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/BroadcastCallback"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/rootNode(bundleIdentifier:)"
       ],
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Error"
       ],
@@ -731,19 +747,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/read(from:bundleIdentifier:interfaceLanguages:timeout:delay:queue:presentationIdentifier:broadcast:)": {
   "abstract" : [
-    {
-      "text" : "Read a tree from disk from a given path.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -926,6 +932,178 @@
   "title" : "read(from:bundleIdentifier:interfaceLanguages:timeout:delay:queue:presentationIdentifier:broadcast:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatortree\/read(from:bundleidentifier:interfacelanguages:timeout:delay:queue:presentationidentifier:broadcast:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)": {
+  "abstract" : [
+    {
+      "text" : "Read a tree from disk from a given path.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "read"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "timeout"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "text" : "TimeInterval"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "delay"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:@T@NSTimeInterval",
+      "text" : "TimeInterval"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "queue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "c:objc(cs)OS_dispatch_queue",
+      "text" : "DispatchQueue"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "presentationIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "broadcast"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC17BroadcastCallbacka",
+      "text" : "BroadcastCallback"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/read(from:bundleidentifier:timeout:delay:queue:presentationidentifier:broadcast:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/root": {
   "abstract" : [

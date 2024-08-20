@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "BenchmarkResults.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,18 +103,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/init(platformName:timestamp:doccArguments:unorderedMetrics:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/doccArguments",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/metrics",
@@ -124,12 +130,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Decodable-Implementations"

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ActionResult.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/ActionResult.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/ActionResult.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,6 +92,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Actions-Design",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
@@ -102,12 +103,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult\/init(didEncounterError:outputs:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult\/didEncounterError",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult\/outputs",

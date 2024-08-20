@@ -32,6 +32,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/count",
@@ -44,6 +45,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/drop(while:)",
@@ -52,14 +54,16 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/formIndex(_:offsetBy:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/formIndex(_:offsetBy:limitedBy:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/formIndex(after:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/indices(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/makeIterator()",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/map(_:)-j4dw",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/map(_:)-27dsp",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/prefix(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/prefix(through:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/prefix(upTo:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/prefix(while:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/randomElement()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/randomElement(using:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/removingSubranges(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/split(maxSplits:omittingEmptySubsequences:whereSeparator:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/suffix(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/trimmingPrefix(while:)"
@@ -67,6 +71,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Subscripts",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/subscript(_:)"
@@ -749,6 +754,111 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/formindex(after:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/indices(where:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "indices"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "where"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:ST7ElementQa",
+      "text" : "Element"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "rethrows"
+    },
+    {
+      "kind" : "text",
+      "text" : " -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s8RangeSetV",
+      "text" : "RangeSet"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sl5IndexQa",
+      "text" : "Index"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/indices(where:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "indices(where:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/indices(where:)"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/isEmpty": {
   "abstract" : [
 
@@ -861,7 +971,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/makeiterator()"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/map(_:)-j4dw": {
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/map(_:)-27dsp": {
   "abstract" : [
 
   ],
@@ -885,6 +995,14 @@
     {
       "kind" : "genericParameter",
       "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "E"
     },
     {
       "kind" : "text",
@@ -913,7 +1031,15 @@
     },
     {
       "kind" : "text",
-      "text" : " -> "
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
     },
     {
       "kind" : "typeIdentifier",
@@ -925,11 +1051,19 @@
     },
     {
       "kind" : "keyword",
-      "text" : "rethrows"
+      "text" : "throws"
     },
     {
       "kind" : "text",
-      "text" : " -> ["
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
     },
     {
       "kind" : "typeIdentifier",
@@ -940,12 +1074,12 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/map(_:)-j4dw",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/map(_:)-27dsp",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "map(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/map(_:)-j4dw"
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/map(_:)-27dsp"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/prefix(_:)": {
   "abstract" : [
@@ -1347,6 +1481,78 @@
   "title" : "randomElement(using:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/randomelement(using:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/removingSubranges(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "removingSubranges"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s8RangeSetV",
+      "text" : "RangeSet"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sl5IndexQa",
+      "text" : "Index"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s18DiscontiguousSliceV",
+      "text" : "DiscontiguousSlice"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/removingSubranges(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "removingSubranges(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/removingsubranges(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/split(maxSplits:omittingEmptySubsequences:whereSeparator:)": {
   "abstract" : [

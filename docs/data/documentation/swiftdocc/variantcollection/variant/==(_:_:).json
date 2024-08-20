@@ -174,7 +174,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection+Variant.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Variant.swift#L45"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Variant.swift#L45"
     },
     "role" : "symbol",
     "roleHeading" : "Operator",

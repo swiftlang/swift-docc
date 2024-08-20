@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L119"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L119"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

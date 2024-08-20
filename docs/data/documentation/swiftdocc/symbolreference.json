@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SymbolReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L22"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -93,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode",
@@ -106,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/init(_:interfaceLanguage:symbol:shouldAddHash:shouldAddKind:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/init(_:interfaceLanguages:defaultSymbol:shouldAddHash:shouldAddKind:)",
@@ -116,6 +119,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/interfaceLanguages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/path"
@@ -695,15 +700,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "SourceLanguages"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "externalParam",
@@ -728,15 +725,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "SourceLanguages"
+      "preciseIdentifier" : "s:Sl",
+      "text" : "Collection"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14SourceLanguageV",
+      "text" : "SourceLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReference\/init(pathComponents:interfaceLanguages:)",

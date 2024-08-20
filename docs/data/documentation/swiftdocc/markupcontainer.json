@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupContainer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/MarkupContainer.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/MarkupContainer.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -111,6 +111,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/SK",
         "doc:\/\/SwiftDocC\/Sl",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/SQ",
         "doc:\/\/SwiftDocC\/Sk",
         "doc:\/\/SwiftDocC\/ST"
@@ -130,27 +131,34 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-1n767",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-3cs8f",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-3bfhm",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-877fz"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/elements"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/accept(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/BidirectionalCollection-Implementations",
@@ -488,7 +496,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/markupcontainer\/init(_:)-1n767"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/init(_:)-3cs8f": {
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/init(_:)-3bfhm": {
   "abstract" : [
     {
       "text" : "Creates a new general-purpose markup container with the elements of a sequence.",
@@ -502,31 +510,24 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "S"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "(some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "S"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
       "text" : ")"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-3cs8f",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-3bfhm",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "init(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/markupcontainer\/init(_:)-3cs8f"
+  "url" : "\/documentation\/swiftdocc\/markupcontainer\/init(_:)-3bfhm"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer/init(_:)-877fz": {
   "abstract" : [
@@ -542,23 +543,25 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "S"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "(some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "S"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-877fz",
@@ -601,6 +604,11 @@
   "title" : "Semantic",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semantic"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

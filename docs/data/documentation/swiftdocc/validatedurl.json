@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ValidatedURL.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/ValidatedURL.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/ValidatedURL.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -228,6 +228,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "http:\/\/www.ietf.org\/rfc\/rfc3986.txt"
       ],
@@ -236,12 +237,15 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ValidatedURL\/components"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ValidatedURL\/Equatable-Implementations"

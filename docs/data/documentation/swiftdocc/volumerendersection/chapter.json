@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VolumeRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/VolumeRenderSection.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/VolumeRenderSection.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -89,6 +89,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
@@ -109,6 +110,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter\/init(name:)"
@@ -116,6 +119,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter\/content",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter\/headings",
@@ -126,12 +131,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter\/rawIndexableTextContent(references:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VolumeRenderSection\/Chapter\/Equatable-Implementations"
@@ -698,6 +706,11 @@
   "title" : "tutorials",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/volumerendersection\/chapter\/tutorials"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

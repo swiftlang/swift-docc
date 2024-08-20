@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L547"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L547"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,18 +106,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/Variant"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/init(kind:url:title:abstract:language:availableLanguages:platforms:declarationFragments:topicImages:references:variants:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/availableLanguages",
@@ -135,6 +141,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/DeclarationFragments-swift.typealias",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/PlatformAvailability"
@@ -142,6 +150,7 @@
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation\/Decodable-Implementations",

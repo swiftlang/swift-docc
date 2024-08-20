@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L112"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L112"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/TaskGroup\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/TaskGroup\/init(title:identifiers:)"
@@ -113,6 +115,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/TaskGroup\/identifiers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/TaskGroup\/title"
@@ -120,6 +124,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/TaskGroup\/Equatable-Implementations"

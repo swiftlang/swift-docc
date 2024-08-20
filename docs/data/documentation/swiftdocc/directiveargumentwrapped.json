@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveArgumentWrapper.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/DirectiveArgumentWrapper.swift#L63"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/DirectiveArgumentWrapper.swift#L64"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -233,6 +233,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveArgumentWrapped\/wrappedValue"
       ],

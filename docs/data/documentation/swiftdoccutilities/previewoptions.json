@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PreviewOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/PreviewOptions.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/PreviewOptions.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -132,6 +132,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/init()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/init(from:)"
@@ -139,6 +141,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/convertCommand",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/port"
@@ -146,12 +150,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/validate()-2prs9"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewOptions\/ParsableArguments-Implementations"

@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicsSectionStyle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/TopicsSectionStyle.swift#L13"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/TopicsSectionStyle.swift#L13"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -109,6 +109,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/TopicsSectionStyle\/compactGrid",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/TopicsSectionStyle\/detailedGrid",
@@ -118,12 +120,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/TopicsSectionStyle\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/TopicsSectionStyle\/Equatable-Implementations",

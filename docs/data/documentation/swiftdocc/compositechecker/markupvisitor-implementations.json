@@ -33,6 +33,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/defaultVisit(_:)",
@@ -43,6 +44,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomBlock(_:)-9pe5x",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitCustomInline(_:)-2ckkb",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDocument(_:)-8f6mw",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDoxygenDiscussion(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDoxygenNote(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDoxygenParameter(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDoxygenReturns(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitEmphasis(_:)-9bha8",
@@ -537,6 +540,108 @@
   "title" : "visitDocument(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/compositechecker\/visitdocument(_:)-8f6mw"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitDoxygenDiscussion(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenDiscussion"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown17DoxygenDiscussionV",
+      "text" : "DoxygenDiscussion"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDoxygenDiscussion(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenDiscussion(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitdoxygendiscussion(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitDoxygenNote(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenNote"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11DoxygenNoteV",
+      "text" : "DoxygenNote"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitDoxygenNote(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenNote(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/visitdoxygennote(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/visitDoxygenParameter(_:)": {
   "abstract" : [

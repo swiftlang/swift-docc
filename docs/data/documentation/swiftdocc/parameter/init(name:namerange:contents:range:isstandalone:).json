@@ -124,7 +124,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Parameter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Parameter.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Parameter.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -262,6 +262,20 @@
             {
               "inlineContent" : [
                 {
+                  "text" : "The text range where the parameter name was parsed.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "nameRange"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
                   "text" : "The content that describe this parameter.",
                   "type" : "text"
                 }
@@ -270,6 +284,34 @@
             }
           ],
           "name" : "contents"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The text range where this parameter was parsed.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "range"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Whether the parameter is documented standalone or as a member of a parameters outline.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "isStandalone"
         }
       ]
     }

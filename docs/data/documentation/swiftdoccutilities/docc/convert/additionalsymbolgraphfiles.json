@@ -17,7 +17,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 5.12 is released",
+          "text" : "Use 'additionalSymbolGraphDirectory' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -77,7 +77,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Convert.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L112"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L112"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

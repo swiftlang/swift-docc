@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticFileWriter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticFileWriter.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticFileWriter.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -138,12 +138,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/init(outputPath:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/finalize()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFileWriter\/flush()",

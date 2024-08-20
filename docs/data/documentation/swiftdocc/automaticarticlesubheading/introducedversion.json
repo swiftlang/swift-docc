@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AutomaticArticleSubheading.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticArticleSubheading.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticArticleSubheading.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

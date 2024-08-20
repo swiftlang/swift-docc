@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Code.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Code.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Code.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

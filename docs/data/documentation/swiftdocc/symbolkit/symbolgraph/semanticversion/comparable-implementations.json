@@ -1,0 +1,768 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/Comparable-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "roleHeading" : "API Collection",
+    "title" : "Comparable Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Operators",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:)-4y8mc",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:)-6zmt9",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/.._(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/.._(_:_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-59xmv",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-9kxlt",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_=(_:_:)-65nt",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_=(_:_:)-zwys"
+      ],
+      "title" : "Operators"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/comparable-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV15SemanticVersionV",
+      "text" : "SemanticVersion"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVersion"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.SemanticVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/...(_:)-4y8mc": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "..."
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s16PartialRangeFromV",
+      "text" : "PartialRangeFrom"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:)-4y8mc",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "...(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/'...(_:)-4y8mc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/...(_:)-6zmt9": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "..."
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s19PartialRangeThroughV",
+      "text" : "PartialRangeThrough"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:)-6zmt9",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "...(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/'...(_:)-6zmt9"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/...(_:_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "..."
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SN",
+      "text" : "ClosedRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/...(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "...(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/'...(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/.._(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "..<"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s16PartialRangeUpToV",
+      "text" : "PartialRangeUpTo"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/.._(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "..<(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/'.._(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/.._(_:_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "..<"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sn",
+      "text" : "Range"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/.._(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "..<(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/'.._(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_(_:_:)-59xmv": {
+  "abstract" : [
+    {
+      "text" : "Compares two semantic versions.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "<"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV15SemanticVersionV",
+      "text" : "SemanticVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV15SemanticVersionV",
+      "text" : "SemanticVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-59xmv",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "<(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/_(_:_:)-59xmv"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_(_:_:)-9kxlt": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : ">"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_(_:_:)-9kxlt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : ">(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/_(_:_:)-9kxlt"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_=(_:_:)-65nt": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : ">="
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_=(_:_:)-65nt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : ">=(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/_=(_:_:)-65nt"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/SemanticVersion/_=(_:_:)-zwys": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "<="
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/SemanticVersion\/_=(_:_:)-zwys",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "<=(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/semanticversion\/_=(_:_:)-zwys"
+}
+}
+}

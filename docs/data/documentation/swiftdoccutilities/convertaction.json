@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Convert\/ConvertAction.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Convert\/ConvertAction.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,6 +103,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Compiler-Workflow",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
@@ -115,26 +116,32 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:emitFixits:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:sourceRepository:temporaryDirectory:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:formatConsoleOutputForTools:inheritDocs:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:transformForStaticHosting:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:temporaryDirectory:dependencies:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/init(fromConvertCommand:withFallbackTemplate:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/setupContext"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/perform(logHandle:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/Action-Implementations"
@@ -248,415 +255,6 @@
   "title" : "Action Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/convertaction\/action-implementations"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:emitFixits:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:sourceRepository:temporaryDirectory:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "identifier",
-      "text" : "init"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "documentationBundleURL"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "outOfProcessResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC29OutOfProcessReferenceResolverC",
-      "text" : "OutOfProcessReferenceResolver"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "analyze"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "targetDirectory"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "htmlTemplateDirectory"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "emitDigest"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "currentPlatforms"
-    },
-    {
-      "kind" : "text",
-      "text" : ": ["
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : " : "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC15PlatformVersionV",
-      "text" : "PlatformVersion"
-    },
-    {
-      "kind" : "text",
-      "text" : "]?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "buildIndex"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "workspace"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22DocumentationWorkspaceC",
-      "text" : "DocumentationWorkspace"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "context"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
-      "text" : "DocumentationContext"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "dataProvider"
-    },
-    {
-      "kind" : "text",
-      "text" : ": (any "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC34DocumentationWorkspaceDataProviderP",
-      "text" : "DocumentationWorkspaceDataProvider"
-    },
-    {
-      "kind" : "text",
-      "text" : ")?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "documentationCoverageOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
-      "text" : "DocumentationCoverageOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "bundleDiscoveryOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC22BundleDiscoveryOptionsV",
-      "text" : "BundleDiscoveryOptions"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "diagnosticLevel"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "diagnosticEngine"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16DiagnosticEngineC",
-      "text" : "DiagnosticEngine"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "emitFixits"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "inheritDocs"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "experimentalEnableCustomTemplates"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "transformForStaticHosting"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:Sb",
-      "text" : "Bool"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "hostingBasePath"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "sourceRepository"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:9SwiftDocC16SourceRepositoryV",
-      "text" : "SourceRepository"
-    },
-    {
-      "kind" : "text",
-      "text" : "?, "
-    },
-    {
-      "kind" : "externalParam",
-      "text" : "temporaryDirectory"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:10Foundation3URLV",
-      "text" : "URL"
-    },
-    {
-      "kind" : "text",
-      "text" : ") "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "throws"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction\/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:emitFixits:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:sourceRepository:temporaryDirectory:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:emitFixits:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:sourceRepository:temporaryDirectory:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/convertaction\/init(documentationbundleurl:outofprocessresolver:analyze:targetdirectory:htmltemplatedirectory:emitdigest:currentplatforms:buildindex:workspace:context:dataprovider:documentationcoverageoptions:bundlediscoveryoptions:diagnosticlevel:diagnos-5drdh"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/ConvertAction/init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:formatConsoleOutputForTools:inheritDocs:experimentalEnableCustomTemplates:experimentalModifyCatalogWithGeneratedCuration:transformForStaticHosting:allowArbitraryCatalogDirectories:hostingBasePath:sourceRepository:temporaryDirectory:dependencies:)": {
   "abstract" : [

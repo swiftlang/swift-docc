@@ -89,7 +89,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/FileReference.swift#L118"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/FileReference.swift#L118"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

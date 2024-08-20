@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTTPParametersSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPParametersSection.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPParametersSection.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,12 +92,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPParametersSection\/parameters"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPParametersSection\/mergeParameters(_:)"
       ],

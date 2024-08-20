@@ -60,8 +60,9 @@
               "type" : "text"
             },
             {
-              "code" : "Converter",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " type converts documentation nodes to rendering nodes:",
@@ -128,6 +129,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Rendering",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
@@ -137,12 +139,15 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Node-Persistence",
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary"
       ],
       "title" : "Node Persistence"
     },
     {
+      "anchor" : "Render-Node-Rewriter",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
@@ -181,6 +186,40 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter": {
+  "abstract" : [
+    {
+      "text" : "A converter from documentation nodes to render nodes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationNodeConverter"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationNodeConverter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationNodeConverter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnodeconverter"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [

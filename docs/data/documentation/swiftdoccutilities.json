@@ -174,6 +174,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Compiler-Workflow",
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
@@ -184,6 +185,7 @@
       "title" : "Compiler Workflow"
     },
     {
+      "anchor" : "Actions-Design",
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult",
@@ -192,6 +194,7 @@
       "title" : "Actions Design"
     },
     {
+      "anchor" : "Execution-Workflow",
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Throttle",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Signal"
@@ -199,12 +202,16 @@
       "title" : "Execution Workflow"
     },
     {
+      "anchor" : "Protocols",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption"
       ],
       "title" : "Protocols"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CoverageAction",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCatalogOption",
@@ -216,10 +223,20 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind"
       ],
       "title" : "Enumerations"
+    },
+    {
+      "anchor" : "Extended-Modules",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC"
+      ],
+      "title" : "Extended Modules"
     }
   ],
   "variants" : [
@@ -832,6 +849,17 @@
   "title" : "SourceRepositoryArguments",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/sourcerepositoryarguments"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Throttle": {
   "abstract" : [

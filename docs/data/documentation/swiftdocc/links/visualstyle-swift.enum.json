@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Links.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Links.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Links.swift#L55"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links\/VisualStyle-swift.enum\/compactGrid",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links\/VisualStyle-swift.enum\/detailedGrid",
@@ -114,12 +116,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links\/VisualStyle-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Links\/VisualStyle-swift.enum\/Equatable-Implementations",

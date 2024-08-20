@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertOutputConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L58"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

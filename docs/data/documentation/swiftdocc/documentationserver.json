@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServer.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServer.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -178,6 +178,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/Message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/MessageType"
@@ -185,12 +187,16 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/init(qualityOfService:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/services",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/synchronizationQueue"
@@ -198,6 +204,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/process(_:completion:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/register(service:)"
@@ -205,6 +213,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServer\/createDefaultServer(qualityOfService:peer:)"
       ],

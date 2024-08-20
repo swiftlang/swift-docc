@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Initialize from a ",
-      "type" : "text"
-    },
-    {
-      "code" : "BlockDirective",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", performing semantic analyses to determine whether a valid object can form.",
+      "text" : "Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.",
       "type" : "text"
     }
   ],
@@ -138,7 +130,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L41"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L40"
     },
     "required" : true,
     "role" : "symbol",
@@ -298,15 +290,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "BlockDirective",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " from which you want to form the object.",
+                  "text" : "The parsed block directive to create a semantic object from.",
                   "type" : "text"
                 }
               ],
@@ -314,6 +298,20 @@
             }
           ],
           "name" : "directive"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The location of the source file that contains the markup for the parsed block directive.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "source"
         },
         {
           "content" : [
@@ -442,15 +440,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible/init(from:source:for:in:problems:)": {
   "abstract" : [
     {
-      "text" : "Initialize from a ",
-      "type" : "text"
-    },
-    {
-      "code" : "BlockDirective",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ", performing semantic analyses to determine whether a valid object can form.",
+      "text" : "Creates a semantic object from the parsed block directive markup and performs semantic analysis to verify that the semantic object is valid.",
       "type" : "text"
     }
   ],

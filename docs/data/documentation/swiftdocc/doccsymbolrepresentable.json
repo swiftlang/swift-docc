@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocCSymbolRepresentable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/DocCSymbolRepresentable.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/DocCSymbolRepresentable.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -99,6 +99,15 @@
       "kind" : "relationships",
       "title" : "Inherits From",
       "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/UnifiedSymbolGraph\/Symbol"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
     }
   ],
   "schemaVersion" : {
@@ -111,6 +120,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocCSymbolRepresentable\/asLinkComponent",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocCSymbolRepresentable\/kindIdentifier",
@@ -354,6 +365,88 @@
   "title" : "title",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/doccsymbolrepresentable\/title"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/SymbolGraph/Symbol": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/SymbolGraph\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/symbolgraph\/symbol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit/UnifiedSymbolGraph/Symbol": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit07UnifiedA5GraphC",
+      "text" : "UnifiedSymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SymbolKit07UnifiedA5GraphC0A0C",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit\/UnifiedSymbolGraph\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnifiedSymbolGraph.Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit\/unifiedsymbolgraph\/symbol"
 }
 }
 }

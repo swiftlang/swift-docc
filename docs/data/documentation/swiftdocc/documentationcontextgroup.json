@@ -238,6 +238,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Content-Discovery",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
@@ -247,6 +248,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Documentation-Context",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
@@ -256,6 +258,7 @@
       "title" : "Documentation Context"
     },
     {
+      "anchor" : "Documentation-Nodes",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Section",
@@ -267,12 +270,14 @@
       "title" : "Documentation Nodes"
     },
     {
+      "anchor" : "Rendering-URLs",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator"
       ],
       "title" : "Rendering URLs"
     },
     {
+      "anchor" : "External-Documentation-Sources",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
@@ -281,6 +286,7 @@
       "title" : "External Documentation Sources"
     },
     {
+      "anchor" : "Code-Listings",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributedCodeListing",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedCodeListingReference",
@@ -325,6 +331,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

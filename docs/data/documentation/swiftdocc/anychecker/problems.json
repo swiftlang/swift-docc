@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Checker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L188"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L188"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticFileWriter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticFileWriter.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticFileWriter.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

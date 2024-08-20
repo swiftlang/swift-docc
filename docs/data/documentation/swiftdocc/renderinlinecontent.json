@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderInlineContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderInlineContent.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderInlineContent.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -179,6 +179,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
@@ -199,6 +200,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Elements",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent",
@@ -209,6 +211,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Inline-content-types",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/codeVoice(code:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/emphasis(inlineContent:)",
@@ -225,12 +228,14 @@
       "title" : "Inline content types"
     },
     {
+      "anchor" : "Getting-a-plain-text-representation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/plainText"
       ],
       "title" : "Getting a plain text representation"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/Decodable-Implementations",
@@ -1144,6 +1149,11 @@
   "title" : "TextIndexing",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/textindexing"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

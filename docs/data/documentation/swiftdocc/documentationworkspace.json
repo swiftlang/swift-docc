@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationWorkspace.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L60"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L60"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -258,6 +258,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProvider",
@@ -266,6 +267,7 @@
       "title" : "Related Documentation"
     },
     {
+      "anchor" : "Workspaces",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider"
@@ -275,6 +277,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Data-Providers",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider",
@@ -283,12 +286,16 @@
       "title" : "Data Providers"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/init()"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/bundles",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/delegate"
@@ -296,6 +303,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/contentsOfURL(_:in:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/registerProvider(_:options:)",
@@ -304,6 +313,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace\/WorkspaceError"
       ],

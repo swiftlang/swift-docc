@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderHierarchyTutorial.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchyTutorial.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchyTutorial.swift#L26"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

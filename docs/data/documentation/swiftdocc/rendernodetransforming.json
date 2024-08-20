@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTransforming.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransforming.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransforming.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -106,6 +106,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Node-Rewriter",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation",
@@ -119,6 +120,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming\/then(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming\/transform(renderNode:context:)"
@@ -126,6 +129,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming\/RenderNodeTransformationResult"
       ],

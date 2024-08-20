@@ -33,6 +33,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/run()-97dpc"
@@ -40,6 +41,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/configuration-4gml3"
@@ -47,12 +49,14 @@
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Type-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/helpMessage(for:includeHidden:columns:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/main(_:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/parseAsRoot(_:)"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/parseAsRoot(_:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/usageString(for:includeHidden:)"
       ],
       "title" : "Type Methods"
     }
@@ -459,6 +463,82 @@
   "title" : "run()",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/run()-97dpc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Init/usageString(for:includeHidden:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "usageString"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:14ArgumentParser15ParsableCommandP",
+      "text" : "ParsableCommand"
+    },
+    {
+      "kind" : "text",
+      "text" : ".Type, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includeHidden"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init\/usageString(for:includeHidden:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "usageString(for:includeHidden:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/init\/usagestring(for:includehidden:)"
 }
 }
 }

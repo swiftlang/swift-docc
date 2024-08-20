@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AbstractContainsFormattedTextOnly.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/AbstractContainsFormattedTextOnly.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/AbstractContainsFormattedTextOnly.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L142"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L142"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -275,6 +275,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Topic-References",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference",
@@ -286,12 +287,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/==(_:_:)"
       ],
       "title" : "Operators"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/init(bundleIdentifier:path:fragment:sourceLanguage:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/init(bundleIdentifier:path:fragment:sourceLanguages:)",
@@ -300,6 +305,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/description",
@@ -313,6 +320,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/addingSourceLanguages(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/appendingPath(_:)",
@@ -326,18 +335,23 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/urlScheme"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/urlHasResolvedTopicScheme(_:)"
       ],
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference\/Equatable-Implementations"

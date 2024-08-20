@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Docc.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Docc.swift#L37"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Docc.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,6 +104,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Compiler-Workflow",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ConvertAction",
@@ -116,12 +117,14 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Commands",
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Convert"
       ],
       "title" : "Commands"
     },
     {
+      "anchor" : "Command-Line-Options",
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
@@ -131,6 +134,8 @@
       "title" : "Command Line Options"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Init",
@@ -140,6 +145,8 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/init()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/init(from:)"
@@ -147,12 +154,15 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/configuration-2317z"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/ParsableArguments-Implementations",

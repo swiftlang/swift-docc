@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -120,6 +120,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeDataExtractor",
@@ -137,12 +138,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/init(from:)"
@@ -150,6 +155,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/interfaceLanguages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/platforms"
@@ -157,6 +164,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/add(language:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/add(platform:for:)",

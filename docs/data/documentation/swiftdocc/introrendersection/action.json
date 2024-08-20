@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "IntroRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/IntroRenderSection.swift#L33"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/IntroRenderSection.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

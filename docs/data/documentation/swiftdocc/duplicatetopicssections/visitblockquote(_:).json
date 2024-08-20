@@ -81,7 +81,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupVisitor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L302"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Visitor\/MarkupVisitor.swift#L318"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

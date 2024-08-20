@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityIndex+Ext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -108,6 +108,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/init(platformName:introduced:deprecated:)"
@@ -115,6 +117,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/deprecated",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/introduced",
@@ -123,6 +127,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/belongs(to:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/isAvailable(on:)",
@@ -132,6 +138,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex\/Info\/Equatable-Implementations"

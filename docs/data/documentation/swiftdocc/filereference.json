@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/FileReference.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/FileReference.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -126,6 +126,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Reference-Types",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference",
@@ -142,6 +143,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/init(identifier:fileName:fileType:syntax:content:highlights:)"
@@ -149,6 +152,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/content",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/fileName",
@@ -161,6 +166,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference\/Equatable-Implementations"

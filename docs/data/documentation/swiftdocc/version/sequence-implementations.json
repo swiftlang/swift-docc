@@ -34,6 +34,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/lazy",
@@ -42,6 +43,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/allSatisfy(_:)",
@@ -49,6 +51,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/compare(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/contains(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/contains(where:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/count(where:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/elementsEqual(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/elementsEqual(_:by:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/enumerated()",
@@ -61,7 +64,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/formatted(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/lexicographicallyPrecedes(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/lexicographicallyPrecedes(_:by:)",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/map(_:)-2z54r",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/map(_:)-64rdw",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/max()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/max(by:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/min()",
@@ -595,6 +598,114 @@
   "title" : "contains(where:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/contains(where:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Version/count(where:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "count"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "where"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:ST7ElementQa",
+      "text" : "Element"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/count(where:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "count(where:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/version\/count(where:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Version/elementsEqual(_:)": {
   "abstract" : [
@@ -1657,7 +1768,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/version\/lexicographicallyprecedes(_:by:)"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/Version/map(_:)-2z54r": {
+"doc://SwiftDocC/documentation/SwiftDocC/Version/map(_:)-64rdw": {
   "abstract" : [
 
   ],
@@ -1681,6 +1792,14 @@
     {
       "kind" : "genericParameter",
       "text" : "T"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "E"
     },
     {
       "kind" : "text",
@@ -1709,7 +1828,15 @@
     },
     {
       "kind" : "text",
-      "text" : " -> "
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
     },
     {
       "kind" : "typeIdentifier",
@@ -1721,11 +1848,19 @@
     },
     {
       "kind" : "keyword",
-      "text" : "rethrows"
+      "text" : "throws"
     },
     {
       "kind" : "text",
-      "text" : " -> ["
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "E"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
     },
     {
       "kind" : "typeIdentifier",
@@ -1736,12 +1871,12 @@
       "text" : "]"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/map(_:)-2z54r",
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/map(_:)-64rdw",
   "kind" : "symbol",
   "role" : "symbol",
   "title" : "map(_:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/version\/map(_:)-2z54r"
+  "url" : "\/documentation\/swiftdocc\/version\/map(_:)-64rdw"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Version/max()": {
   "abstract" : [

@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -107,6 +107,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Context",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
@@ -118,6 +119,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate\/dataProvider(_:didAddBundle:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextDataProviderDelegate\/dataProvider(_:didRemoveBundle:)"

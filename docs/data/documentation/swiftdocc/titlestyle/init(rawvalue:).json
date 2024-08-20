@@ -13,6 +13,17 @@
       "type" : "text"
     }
   ],
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'PropertyListTitleStyle' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -61,6 +72,9 @@
       {
         "name" : "SwiftDocC"
       }
+    ],
+    "platforms" : [
+
     ],
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -175,11 +189,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -211,6 +223,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

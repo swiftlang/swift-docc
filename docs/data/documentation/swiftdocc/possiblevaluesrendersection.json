@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PossibleValuesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -128,6 +128,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Object-Description-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection",
@@ -144,12 +145,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/NamedValue"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/init(title:values:)"
@@ -157,6 +162,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/kind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/title",
@@ -165,18 +172,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/CodingKeys"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/Equatable-Implementations",
@@ -951,11 +963,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

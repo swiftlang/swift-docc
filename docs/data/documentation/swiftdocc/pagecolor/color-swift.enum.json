@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PageColor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageColor.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageColor.swift#L39"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/blue",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/gray",
@@ -119,12 +121,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PageColor\/Color-swift.enum\/Equatable-Implementations",

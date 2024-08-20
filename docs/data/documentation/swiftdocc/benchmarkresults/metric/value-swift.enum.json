@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "BenchmarkResults.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L83"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L83"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum\/bytesInMemory(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum\/bytesOnDisk(_:)",
@@ -115,18 +117,23 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum\/Equatable-Implementations"

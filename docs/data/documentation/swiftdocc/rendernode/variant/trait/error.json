@@ -44,7 +44,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeVariant.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeVariant.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeVariant.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -105,18 +105,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/invalidTrait"
       ],
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant\/Trait\/Error\/Equatable-Implementations",

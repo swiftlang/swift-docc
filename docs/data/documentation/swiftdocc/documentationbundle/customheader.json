@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Custom HTML file to use as the header for rendered output.",
+      "text" : "A custom HTML file to use as the header for rendered output.",
       "type" : "text"
     }
   ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L85"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L84"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -177,7 +177,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/customHeader": {
   "abstract" : [
     {
-      "text" : "Custom HTML file to use as the header for rendered output.",
+      "text" : "A custom HTML file to use as the header for rendered output.",
       "type" : "text"
     }
   ],

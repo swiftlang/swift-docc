@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L92"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L95"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,18 +104,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Paragraph\/init(inlineContent:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Paragraph\/inlineContent"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Paragraph\/Equatable-Implementations"

@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NonOverviewHeadingChecker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonOverviewHeadingChecker.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonOverviewHeadingChecker.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -99,6 +99,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Predefined-Checks",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
@@ -113,12 +114,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/init(sourceFile:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/nonOverviewHeadings",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/overviewHeading",
@@ -127,12 +132,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/visitHeading(_:)-9ugjf"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonOverviewHeadingChecker\/Checker-Implementations",

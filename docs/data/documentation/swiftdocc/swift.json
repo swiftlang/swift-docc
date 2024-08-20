@@ -1,0 +1,695 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:m:s:e:s:SS9SwiftDocCE4dataSSSgSW_tcfc",
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collection",
+    "roleHeading" : "Extended Module",
+    "symbolKind" : "extension",
+    "title" : "Swift"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Extended-Protocols",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Collection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence"
+      ],
+      "title" : "Extended Protocols"
+    },
+    {
+      "anchor" : "Extended-Structures",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Bool",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/CodingUserInfoKey",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Double",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int16",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int32",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int64",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int8",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8"
+      ],
+      "title" : "Extended Structures"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/swift"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "Swift",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Array": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Sa",
+      "text" : "Array"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Array",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Array"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Array",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/array"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Bool": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Bool",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Bool"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Bool",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/bool"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/CodingUserInfoKey": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s17CodingUserInfoKeyV",
+      "text" : "CodingUserInfoKey"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/CodingUserInfoKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodingUserInfoKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CodingUserInfoKey",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/codinguserinfokey"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Collection": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Sl",
+      "text" : "Collection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Collection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Collection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Collection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/collection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Double": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Sd",
+      "text" : "Double"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Double",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Double"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Double",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/double"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Float": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Sf",
+      "text" : "Float"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Float",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Float"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Float",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/float"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Int": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Int"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Int",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/int"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Int16": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s5Int16V",
+      "text" : "Int16"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int16",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Int16"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Int16",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/int16"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Int32": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s5Int32V",
+      "text" : "Int32"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int32",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Int32"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Int32",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/int32"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Int64": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s5Int64V",
+      "text" : "Int64"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int64",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Int64"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Int64",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/int64"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Int8": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s4Int8V",
+      "text" : "Int8"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Int8",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Int8"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Int8",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/int8"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/Sequence": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/Sequence",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Sequence"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Sequence",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/sequence"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/String": {
+  "abstract" : [
+    {
+      "text" : "This shim exists to allow rdar:\/\/70891131 to be implemented before rdar:\/\/72911560 without",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "breaking tools that depend on SwiftDocC.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/String",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "String"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "String",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/string"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:Su",
+      "text" : "UInt"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UInt"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UInt",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/uint"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt16": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s6UInt16V",
+      "text" : "UInt16"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt16",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UInt16"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UInt16",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/uint16"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt32": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s6UInt32V",
+      "text" : "UInt32"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt32",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UInt32"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UInt32",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/uint32"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt64": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s6UInt64V",
+      "text" : "UInt64"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt64",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UInt64"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UInt64",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/uint64"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Swift/UInt8": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:s5UInt8V",
+      "text" : "UInt8"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift\/UInt8",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UInt8"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UInt8",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift\/uint8"
+}
+}
+}

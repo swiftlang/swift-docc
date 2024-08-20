@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "InvalidAdditionalTitle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

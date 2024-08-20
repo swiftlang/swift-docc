@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsoleWriter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsoleWriter.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsoleWriter.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -139,18 +139,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/init(_:formattingOptions:baseURL:highlight:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattingOptions"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/finalize()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/flush()",
@@ -159,6 +165,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8ceqw",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsoleWriter\/formattedDescription(for:options:)-8wldy",
@@ -475,15 +483,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Problems"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "externalParam",
@@ -491,15 +491,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Problems"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+      "text" : "Problem"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
     },
     {
       "kind" : "externalParam",

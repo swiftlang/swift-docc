@@ -68,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupWalker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Walker\/MarkupWalker.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-markdown\/Sources\/Markdown\/Walker\/MarkupWalker.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

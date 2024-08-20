@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Retrieve the data linked to a given path based on the ",
-      "type" : "text"
-    },
-    {
-      "code" : "baseURL",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Retrieve the data that the server serves for the given path.",
       "type" : "text"
     }
   ],
@@ -80,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L230"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L227"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -161,7 +153,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The path.",
+                  "text" : "The path to a file served by the server.",
                   "type" : "text"
                 }
               ],
@@ -183,7 +175,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "The data matching the url, if possible.",
+              "text" : "The data for that file, if server by the server. Otherwise, ",
+              "type" : "text"
+            },
+            {
+              "code" : "nil",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
               "type" : "text"
             }
           ],
@@ -277,15 +277,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/data(for:)": {
   "abstract" : [
     {
-      "text" : "Retrieve the data linked to a given path based on the ",
-      "type" : "text"
-    },
-    {
-      "code" : "baseURL",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Retrieve the data that the server serves for the given path.",
       "type" : "text"
     }
   ],

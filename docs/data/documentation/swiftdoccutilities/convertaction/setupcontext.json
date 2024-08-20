@@ -79,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Convert\/ConvertAction.swift#L74"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Convert\/ConvertAction.swift#L73"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

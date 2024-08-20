@@ -78,7 +78,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L53"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L52"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -248,7 +248,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
     {
-      "text" : "A directive to set this page as a documentation root-level node.",
+      "text" : "Configures an article to become a top-level page.",
       "type" : "text"
     }
   ],

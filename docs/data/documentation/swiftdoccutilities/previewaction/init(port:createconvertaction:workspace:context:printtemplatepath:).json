@@ -134,7 +134,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PreviewAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/PreviewAction.swift#L76"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/PreviewAction.swift#L76"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -293,7 +293,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The action used to convert the documentation bundle before preview.",
+                  "text" : "A closure that returns the action used to convert the documentation before preview.",
                   "type" : "text"
                 },
                 {
@@ -308,7 +308,7 @@
               "type" : "paragraph"
             }
           ],
-          "name" : "convertAction"
+          "name" : "createConvertAction"
         },
         {
           "content" : [

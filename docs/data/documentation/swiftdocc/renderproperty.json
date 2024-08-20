@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PropertiesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PropertiesRenderSection.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PropertiesRenderSection.swift#L55"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -115,6 +115,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Object-Description-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection",
@@ -131,12 +132,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/attributes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/content",
@@ -152,6 +157,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty\/Equatable-Implementations",
@@ -992,11 +998,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

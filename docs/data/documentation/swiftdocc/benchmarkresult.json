@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Metrics.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics.swift#L39"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -102,6 +102,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResult\/displayName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResult\/identifier",

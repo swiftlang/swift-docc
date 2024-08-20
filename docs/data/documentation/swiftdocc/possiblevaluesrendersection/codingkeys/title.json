@@ -38,7 +38,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PossibleValuesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CommunicationBridge.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -104,6 +104,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-Bridge",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
@@ -119,12 +120,15 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/unableToEncodeMessage(_:underlyingError:)"
       ],
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError\/Error-Implementations"

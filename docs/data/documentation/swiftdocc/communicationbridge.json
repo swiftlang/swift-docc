@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CommunicationBridge.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -123,6 +123,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-Bridge",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
@@ -138,18 +139,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Associated-Types",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge\/SendHandler"
       ],
       "title" : "Associated Types"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge\/onReceiveMessage"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge\/send(_:using:)"
       ],

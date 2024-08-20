@@ -258,7 +258,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L666"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L677"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

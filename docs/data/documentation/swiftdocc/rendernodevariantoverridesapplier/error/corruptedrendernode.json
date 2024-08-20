@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "This error is never raised. This deprecated API will be removed after 5.11 is released",
+          "text" : "This error is never raised. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeVariantOverridesApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

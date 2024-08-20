@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "BenchmarkResults.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L61"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L61"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/init(id:displayName:value:)"
@@ -112,6 +114,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/displayName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/id",
@@ -120,12 +124,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Value-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/Metric\/Equatable-Implementations"

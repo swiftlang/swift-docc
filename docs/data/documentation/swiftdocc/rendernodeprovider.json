@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -103,6 +103,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex",
@@ -120,6 +121,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider\/getProblems()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider\/getRenderNode()"

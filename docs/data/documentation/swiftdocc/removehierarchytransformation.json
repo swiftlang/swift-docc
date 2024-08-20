@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RemoveHierarchyTransformation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveHierarchyTransformation.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -118,18 +118,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/init()"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/transform(renderNode:context:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveHierarchyTransformation\/RenderNodeTransforming-Implementations"

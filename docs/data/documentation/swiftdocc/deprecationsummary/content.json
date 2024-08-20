@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeprecationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L38"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -203,7 +203,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],

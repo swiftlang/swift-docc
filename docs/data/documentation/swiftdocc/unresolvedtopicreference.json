@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L514"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L514"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -178,6 +178,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Topic-References",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResolvedTopicReference",
@@ -189,6 +190,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference\/init(parent:unresolvedChild:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference\/init(topicURL:)",
@@ -197,6 +200,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference\/description",
@@ -208,6 +213,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference\/Equatable-Implementations"

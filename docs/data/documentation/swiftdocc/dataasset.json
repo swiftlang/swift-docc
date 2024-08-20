@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L151"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L151"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -176,6 +176,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Bundle-Assets",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataTraitCollection",
@@ -186,6 +187,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Asset-Traits",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle"
@@ -193,12 +195,16 @@
       "title" : "Asset Traits"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Metadata-swift.struct"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/init(from:)"
@@ -206,6 +212,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/context-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/metadata-swift.property",
@@ -214,6 +222,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/data(bestMatching:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/register(_:with:metadata:)"
@@ -221,12 +231,15 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Equatable-Implementations"

@@ -105,7 +105,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsoleWriter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsoleWriter.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsoleWriter.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -258,7 +258,7 @@
               "type" : "paragraph"
             }
           ],
-          "name" : "formattingOptions"
+          "name" : "options"
         },
         {
           "content" : [
@@ -272,7 +272,7 @@
               "type" : "paragraph"
             }
           ],
-          "name" : "baseUrl"
+          "name" : "baseURL"
         },
         {
           "content" : [

@@ -33,7 +33,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Extract.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/Extract.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/Extract.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

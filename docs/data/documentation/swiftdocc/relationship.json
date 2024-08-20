@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Relationship.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Relationship.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Relationship.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -94,6 +94,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Relationship-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
@@ -108,6 +109,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/conformingType(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship\/conformsTo(_:_:)",

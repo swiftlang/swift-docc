@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticWalker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Walker\/SemanticWalker.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Walker\/SemanticWalker.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -151,6 +151,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker\/descendIntoChildren(of:)-1mme3"
       ],

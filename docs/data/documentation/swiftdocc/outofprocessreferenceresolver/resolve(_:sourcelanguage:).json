@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver+DeprecatedResolvers.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/OutOfProcessReferenceResolver+DeprecatedResolvers.swift#L70"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/OutOfProcessReferenceResolver+DeprecatedResolvers.swift#L70"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

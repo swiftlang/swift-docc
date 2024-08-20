@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "References",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference",
@@ -118,6 +119,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/download",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/externalLocation",
@@ -134,12 +137,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType\/Equatable-Implementations",

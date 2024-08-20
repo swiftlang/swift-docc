@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderInlineContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderInlineContent.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderInlineContent.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Case",
@@ -130,6 +130,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Inline-content-types",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent\/emphasis(inlineContent:)",

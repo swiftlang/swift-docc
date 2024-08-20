@@ -174,6 +174,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Content-Discovery",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup"
@@ -183,6 +184,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Workspaces",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider"
@@ -190,6 +192,7 @@
       "title" : "Workspaces"
     },
     {
+      "anchor" : "File-Data-Providers",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider",
@@ -199,6 +202,7 @@
       "title" : "File Data Providers"
     },
     {
+      "anchor" : "Documentation-Bundles",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier",
@@ -207,6 +211,7 @@
       "title" : "Documentation Bundles"
     },
     {
+      "anchor" : "Bundle-Assets",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataTraitCollection",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset",
@@ -215,6 +220,7 @@
       "title" : "Bundle Assets"
     },
     {
+      "anchor" : "Bundle-Metadata",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability",

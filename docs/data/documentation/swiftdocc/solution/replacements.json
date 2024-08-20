@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Solution.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Solution.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Solution.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CallToAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/CallToAction.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/CallToAction.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum\/download",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum\/link"
@@ -114,18 +116,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum\/defaultLabel"
-      ],
-      "title" : "Instance Properties"
-    },
-    {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum\/Equatable-Implementations",
@@ -266,52 +265,6 @@
   "title" : "RawRepresentable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/calltoaction\/purpose-swift.enum\/rawrepresentable-implementations"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/CallToAction/Purpose-swift.enum/defaultLabel": {
-  "abstract" : [
-    {
-      "text" : "The label that will be applied to a Call to Action with this purpose if it doesn’t provide",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "a separate label.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "var"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "defaultLabel"
-    },
-    {
-      "kind" : "text",
-      "text" : ": "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CallToAction\/Purpose-swift.enum\/defaultLabel",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "defaultLabel",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/calltoaction\/purpose-swift.enum\/defaultlabel"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/CallToAction/Purpose-swift.enum/download": {
   "abstract" : [

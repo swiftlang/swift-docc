@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasExactlyOne.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L220"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasExactlyOne.swift#L220"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -159,6 +159,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneUnorderedList\/analyze(_:children:source:for:in:problems:)"
       ],
@@ -345,15 +347,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Children"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -370,15 +364,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Children"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
     },
     {
       "kind" : "externalParam",

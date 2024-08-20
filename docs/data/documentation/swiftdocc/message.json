@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Message.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Message.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Message.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -86,6 +86,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE"
       ],
@@ -104,6 +105,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-Bridge",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
@@ -119,12 +121,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message\/init(type:data:identifier:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message\/data",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message\/identifier",
@@ -133,6 +139,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message\/codeColors(_:identifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message\/generateUUID()",
@@ -142,6 +150,7 @@
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message\/Decodable-Implementations",
@@ -926,6 +935,11 @@
   "title" : "WebKitCommunicationBridge",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/webkitcommunicationbridge"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

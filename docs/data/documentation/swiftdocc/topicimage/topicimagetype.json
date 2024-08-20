@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicImage.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicImage.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicImage.swift#L35"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -108,6 +108,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/TopicImageType\/card",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/TopicImageType\/icon"
@@ -115,12 +117,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/TopicImageType\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/TopicImageType\/Equatable-Implementations",

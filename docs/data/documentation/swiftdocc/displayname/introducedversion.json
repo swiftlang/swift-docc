@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DisplayName.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DisplayName.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DisplayName.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

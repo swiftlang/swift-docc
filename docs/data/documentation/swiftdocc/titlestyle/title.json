@@ -1,4 +1,15 @@
 {
+  "deprecationSummary" : [
+    {
+      "inlineContent" : [
+        {
+          "text" : "Use 'PropertyListTitleStyle.useDisplayName' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -35,9 +46,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "PlistDetailsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PlistDetailsRenderSection.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PlistDetailsRenderSection.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Case",
@@ -139,11 +153,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -175,6 +187,7 @@
   "abstract" : [
 
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

@@ -1,0 +1,249 @@
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "LMDBData.init(data:)",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data\/LMDBData-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data\/init(data:)-29ugh"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "Foundation",
+    "externalID" : "s:10Foundation4DataV9SwiftDocCE4dataACSgSW_tcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "?("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "data"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SW",
+        "text" : "UnsafeRawBufferPointer"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC",
+        "relatedModules" : [
+          "Foundation"
+        ]
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "LMDB.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LMDB\/LMDB.swift#L80"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(data:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "?("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "data"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SW",
+              "text" : "UnsafeRawBufferPointer"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/foundation\/data\/init(data:)-29ugh"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Foundation": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "Foundation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Data": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Data"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Data",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundation\/data"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Data/LMDBData-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data\/LMDBData-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "LMDBData Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundation\/data\/lmdbdata-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Foundation/Data/init(data:)-29ugh": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "data"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SW",
+      "text" : "UnsafeRawBufferPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation\/Data\/init(data:)-29ugh",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(data:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundation\/data\/init(data:)-29ugh"
+}
+}
+}

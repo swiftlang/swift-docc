@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L52"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,6 +103,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Bundle-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata",
@@ -113,6 +114,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Semantic-Versions",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version"
@@ -120,12 +122,16 @@
       "title" : "Semantic Versions"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/init(_:beta:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/beta",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/version"
@@ -133,6 +139,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion\/Equatable-Implementations"

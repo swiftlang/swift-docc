@@ -1,16 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Read a tree from disk from a given path.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'read(from:bundleIdentifier:timeout:delay:queue:presentationIdentifier:broadcast:)' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -210,9 +207,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "NavigatorTree.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L120"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L181"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -419,131 +419,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The file URL from which the tree should be read.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "url"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The bundle identifier used to generate the mapping topicID to node on tree.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "bundleIdentifier"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "A set containing the indication about the interface languages a tree contains.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "interfaceLanguages"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The amount of time we can load a batch of items from data, once the timeout time pass,",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "text" : "the reading process will reschedule asynchronously using the given queue.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "timeout"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The delay to wait before schedule the next read. Default: 0.01 seconds.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "delay"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The queue to use.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "queue"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Defines if nodes should have a presentation identifier useful in presentation contexts.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "presentationIdentifier"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The callback to update get updates of the current process.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "broadcast"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -708,19 +583,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/read(from:bundleIdentifier:interfaceLanguages:timeout:delay:queue:presentationIdentifier:broadcast:)": {
   "abstract" : [
-    {
-      "text" : "Read a tree from disk from a given path.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "The read is atomically performed, which means it reads all the content of the file from the disk and process the tree from loaded data.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

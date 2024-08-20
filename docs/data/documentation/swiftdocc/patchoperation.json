@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PatchOperation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/PatchOperation.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -161,6 +161,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/add",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/remove",
@@ -169,12 +171,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation\/Equatable-Implementations",

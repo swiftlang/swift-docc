@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Technology.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Technology.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Technology.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

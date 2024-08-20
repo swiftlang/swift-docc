@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SeeAlsoInTopicsHeadingChecker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/SeeAlsoInTopicsHeadingChecker.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/SeeAlsoInTopicsHeadingChecker.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

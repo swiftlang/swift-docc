@@ -89,7 +89,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L2725"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L2884"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

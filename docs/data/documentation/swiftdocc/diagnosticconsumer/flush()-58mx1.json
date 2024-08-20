@@ -17,7 +17,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "This deprecated API will be removed after 5.11 is released",
+          "text" : "This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -74,7 +74,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

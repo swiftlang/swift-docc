@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L537"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L540"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -114,6 +114,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/init(style:items:)"
@@ -121,6 +123,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/items",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/style-swift.property"
@@ -128,12 +132,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Style-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Links\/Equatable-Implementations"

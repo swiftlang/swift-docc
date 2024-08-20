@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],
@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationExtension.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -101,58 +101,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "When the ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/behavior-swift.property",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " property is ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/append",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : ", the content from the documentation-extension file is added after the content from",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "the in-source documentation for that symbol.",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "If a documentation-extension file doesn’t have a ",
-              "type" : "text"
-            },
-            {
-              "code" : "DocumentationExtension",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " directive, then it has the ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/append",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " behavior.",
+              "text" : "By default, content from the documentation-extension file is added after the content from the in-source documentation for that symbol.",
               "type" : "text"
             }
           ],
@@ -161,16 +110,72 @@
         {
           "inlineContent" : [
             {
-              "text" : "When the ",
+              "text" : "You get this default behavior in two cases:",
               "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "when the documentation-extension file doesn’t have a ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "DocumentationExtension",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " directive",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/behavior-swift.property",
-              "isActive" : true,
-              "type" : "reference"
-            },
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "when the ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "DocumentationExtension",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " directive explicitly specifies the ",
+                      "type" : "text"
+                    },
+                    {
+                      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/append",
+                      "isActive" : true,
+                      "type" : "reference"
+                    },
+                    {
+                      "text" : " behavior",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "inlineContent" : [
             {
-              "text" : " property is ",
+              "text" : "The other merge behavior completely replaces the content from the in-source documentation for that symbol with the content from the documentation-extension file. To get this behavior, specify ",
               "type" : "text"
             },
             {
@@ -179,33 +184,7 @@
               "type" : "reference"
             },
             {
-              "text" : ", the content from the documentation-extension file completely replaces the content",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "from the in-source documentation for that symbol",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "This directive is only valid within a ",
-              "type" : "text"
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
-              "isActive" : true,
-              "type" : "reference"
-            },
-            {
-              "text" : " directive:",
+              "text" : " as the merge behavior.",
               "type" : "text"
             }
           ],
@@ -219,6 +198,32 @@
           ],
           "syntax" : null,
           "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "code" : "DocumentationExtension",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " is only valid within a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " directive.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
         }
       ],
       "kind" : "content"
@@ -253,6 +258,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Child-Directives",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TechnologyRoot",
@@ -270,6 +276,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/behavior-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/originalMarkup"
@@ -277,18 +285,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/DirectiveConvertible-Implementations"
@@ -434,7 +447,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],
@@ -569,7 +582,23 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension/behavior-swift.property": {
   "abstract" : [
     {
-      "text" : "The merge behavior for this documentation extension.",
+      "text" : "A value of ",
+      "type" : "text"
+    },
+    {
+      "code" : "append",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " or ",
+      "type" : "text"
+    },
+    {
+      "code" : "override",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", denoting whether an extension file’s content amends or replaces the in-source documentation.",
       "type" : "text"
     }
   ],
@@ -725,7 +754,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],
@@ -929,7 +958,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
     {
-      "text" : "A directive to set this page as a documentation root-level node.",
+      "text" : "Configures an article to become a top-level page.",
       "type" : "text"
     }
   ],

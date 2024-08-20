@@ -9,7 +9,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'flush()' instead. This deprecated API will be removed after 5.11 is released",
+          "text" : "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -64,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L21"
     },
     "required" : true,
     "role" : "symbol",

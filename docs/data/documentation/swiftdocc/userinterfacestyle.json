@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L292"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L293"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -109,6 +109,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Asset-Traits",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale"
@@ -118,6 +119,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/dark",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/light"
@@ -125,12 +128,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle\/Equatable-Implementations",

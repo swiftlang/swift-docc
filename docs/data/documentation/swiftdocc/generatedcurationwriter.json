@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "GeneratedCurationWriter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Catalog%20Processing\/GeneratedCurationWriter.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Catalog%20Processing\/GeneratedCurationWriter.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,12 +92,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedCurationWriter\/init(context:catalogURL:outputURL:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedCurationWriter\/generateDefaultCurationContents(fromSymbol:depthLimit:)"
       ],

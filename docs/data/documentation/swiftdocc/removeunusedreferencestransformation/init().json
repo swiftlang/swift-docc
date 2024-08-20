@@ -38,7 +38,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RemoveUnusedReferencesTransformation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveUnusedReferencesTransformation.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveUnusedReferencesTransformation.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

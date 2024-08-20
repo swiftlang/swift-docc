@@ -118,6 +118,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Rendering",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation"
@@ -127,6 +128,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Render-Nodes",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
@@ -139,12 +141,14 @@
       "title" : "Render Nodes"
     },
     {
+      "anchor" : "Render-Node-URLs",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator"
       ],
       "title" : "Render Node URLs"
     },
     {
+      "anchor" : "Render-Elements",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent",
@@ -153,6 +157,7 @@
       "title" : "Render Elements"
     },
     {
+      "anchor" : "Semantic-Structures",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialsRendering"
@@ -160,6 +165,7 @@
       "title" : "Semantic Structures"
     },
     {
+      "anchor" : "References",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceCache",
@@ -169,6 +175,7 @@
       "title" : "References"
     },
     {
+      "anchor" : "Reference-Types",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference",
@@ -183,6 +190,7 @@
       "title" : "Reference Types"
     },
     {
+      "anchor" : "Variants",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverrides",
@@ -197,6 +205,7 @@
       "title" : "Variants"
     },
     {
+      "anchor" : "Others",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion"
       ],

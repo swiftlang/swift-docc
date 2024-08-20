@@ -70,7 +70,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L653"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L659"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

@@ -151,7 +151,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Diagnostic.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Diagnostic.swift#L45"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

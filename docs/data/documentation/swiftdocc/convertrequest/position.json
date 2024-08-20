@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertRequest.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L198"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L200"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/Position\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/Position\/init(line:character:)"
@@ -112,6 +114,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/Position\/character",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/Position\/line"

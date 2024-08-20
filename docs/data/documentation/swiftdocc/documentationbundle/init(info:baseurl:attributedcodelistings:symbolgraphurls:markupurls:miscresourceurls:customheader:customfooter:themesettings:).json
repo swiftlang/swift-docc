@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Creates a documentation bundle.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -207,9 +212,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L111"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L136"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -413,123 +421,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Information about the bundle.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "info"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "A URL prefix to be appended to the relative presentation URL.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "baseURL"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Code listings extracted from the documented modules’ source, indexed by their identifier.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "attributedCodeListings"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Symbol Graph JSON files for the modules documented by the bundle.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "symbolGraphURLs"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "DocC Markup files of the bundle.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "markupURLs"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Miscellaneous resources of the bundle.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "miscResourceURLs"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Custom HTML file to use as the header for rendered output.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "customHeader"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Custom HTML file to use as the footer for rendered output.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "customFooter"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -575,6 +466,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -672,11 +564,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)": {
   "abstract" : [
-    {
-      "text" : "Creates a documentation bundle.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

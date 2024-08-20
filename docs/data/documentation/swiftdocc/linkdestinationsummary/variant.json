@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L160"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L160"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -150,12 +150,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/init(traits:kind:language:relativePresentationURL:title:abstract:taskGroups:usr:declarationFragments:topicImages:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/declarationFragments",
@@ -171,12 +175,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/VariantValue"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/Decodable-Implementations",

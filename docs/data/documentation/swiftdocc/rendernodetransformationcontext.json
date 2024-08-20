@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTransformationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransformationContext.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransformationContext.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -93,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Node-Rewriter",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
@@ -106,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationContext\/referencesCount"
       ],

@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "InitOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/InitOptions.swift#L66"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/InitOptions.swift#L66"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

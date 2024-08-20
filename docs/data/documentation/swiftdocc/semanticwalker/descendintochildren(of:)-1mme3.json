@@ -1,6 +1,7 @@
 {
   "defaultImplementationsSections" : [
     {
+      "anchor" : "SemanticWalker-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker\/descendIntoChildren(of:)-6nzm0"
       ],
@@ -64,7 +65,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticWalker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Walker\/SemanticWalker.swift#L13"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Walker\/SemanticWalker.swift#L13"
     },
     "required" : true,
     "role" : "symbol",

@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L260"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L258"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -96,15 +96,15 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "This information is stored as UInt8 to decrease the required size to store it and make",
+                  "text" : "This information is stored as ",
                   "type" : "text"
                 },
                 {
-                  "text" : " ",
-                  "type" : "text"
+                  "code" : "UInt8",
+                  "type" : "codeVoice"
                 },
                 {
-                  "text" : "the comparision faster between types.",
+                  "text" : " to decrease the required size to store it and make the comparison faster between types.",
                   "type" : "text"
                 }
               ],
@@ -141,6 +141,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/article",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/associatedType",
@@ -164,6 +166,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/learn",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/localVariable",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/macro",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/namespace",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/operator",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/overview",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/propertyListKey",
@@ -185,12 +188,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/Equatable-Implementations",
@@ -965,6 +971,31 @@
   "title" : "NavigatorIndex.PageType.macro",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/navigatorindex\/pagetype\/macro"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/PageType/namespace": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "namespace"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/PageType\/namespace",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "NavigatorIndex.PageType.namespace",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatorindex\/pagetype\/namespace"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/PageType/operator": {
   "abstract" : [

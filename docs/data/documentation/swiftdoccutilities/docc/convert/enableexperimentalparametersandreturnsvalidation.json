@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'enableParametersAndReturnsValidation' instead. This deprecated API will be removed after 6.0 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -49,9 +54,12 @@
         "name" : "SwiftDocCUtilities"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "Convert.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L655"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Convert.swift#L651"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -222,11 +230,9 @@
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Convert/enableExperimentalParametersAndReturnsValidation": {
   "abstract" : [
-    {
-      "text" : "A user-provided value that is true if the user enables experimental validation for parameters and return value documentation.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

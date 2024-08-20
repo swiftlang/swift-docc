@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Semantic.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Semantic.swift#L47"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Semantic.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -93,6 +93,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/ExtractAll",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/ExtractAllMarkup",

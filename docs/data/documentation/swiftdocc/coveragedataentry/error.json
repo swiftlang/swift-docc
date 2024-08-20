@@ -42,7 +42,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CoverageDataEntry.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/CoverageDataEntry.swift#L989"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/CoverageDataEntry.swift#L988"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -101,6 +101,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/failedConversion(description:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/inconsistentCoverageStatistic(description:)",
@@ -110,12 +112,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CoverageDataEntry\/Error\/Error-Implementations",

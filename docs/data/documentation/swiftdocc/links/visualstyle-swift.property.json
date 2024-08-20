@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Links.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Links.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Links.swift#L52"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

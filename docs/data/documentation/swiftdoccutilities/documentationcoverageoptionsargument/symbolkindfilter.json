@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationCoverageOptionsArgument.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationCoverageOptionsArgument.swift#L70"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationCoverageOptionsArgument.swift#L70"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

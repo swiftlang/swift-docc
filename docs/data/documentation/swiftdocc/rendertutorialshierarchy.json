@@ -53,7 +53,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderTutorialsHierarchy.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderTutorialsHierarchy.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderTutorialsHierarchy.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,6 +92,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
@@ -111,6 +112,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Hierarchy-Types",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy"
@@ -120,12 +122,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTutorialsHierarchy\/init(reference:paths:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTutorialsHierarchy\/modules",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTutorialsHierarchy\/paths",
@@ -134,6 +140,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTutorialsHierarchy\/Decodable-Implementations",
@@ -525,6 +532,11 @@
   "title" : "Tutorials Rendering",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialsrendering"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

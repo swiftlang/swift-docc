@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicImage.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicImage.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicImage.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -125,6 +125,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/init(type:identifier:)"
@@ -132,6 +134,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/type"
@@ -139,12 +143,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/TopicImageType"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicImage\/Equatable-Implementations"

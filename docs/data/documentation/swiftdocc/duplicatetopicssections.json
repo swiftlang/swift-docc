@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DuplicateTopicsSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/DuplicateTopicsSection.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/DuplicateTopicsSection.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -113,6 +113,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Predefined-Checks",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
@@ -127,12 +128,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/init(sourceFile:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/foundTopicsHeadings",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/problems"
@@ -140,12 +145,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/visitHeading(_:)-1idm1"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections\/Checker-Implementations",

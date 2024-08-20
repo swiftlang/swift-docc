@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderHierarchyLandmark.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchyLandmark.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchyLandmark.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,6 +106,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Tutorials-Hierarchy",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyChapter",
@@ -117,6 +118,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/init(reference:kind:)"
@@ -124,6 +127,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/kind-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/reference"
@@ -131,12 +136,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/Kind-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark\/Equatable-Implementations"

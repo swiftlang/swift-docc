@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DisplayName.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DisplayName.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DisplayName.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName\/Style-swift.enum\/conceptual",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName\/Style-swift.enum\/symbol"
@@ -114,12 +116,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName\/Style-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayName\/Style-swift.enum\/Equatable-Implementations",

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PathHierarchy+Serialization.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Link%20Resolution\/PathHierarchy+Serialization.swift#L152"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Link%20Resolution\/PathHierarchy+Serialization.swift#L139"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -130,6 +130,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SerializableLinkResolutionInformation\/init(from:)"
       ],

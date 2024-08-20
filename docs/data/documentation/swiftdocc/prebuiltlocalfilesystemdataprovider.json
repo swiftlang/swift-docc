@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PrebuiltLocalFileSystemDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/PrebuiltLocalFileSystemDataProvider.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/PrebuiltLocalFileSystemDataProvider.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -108,6 +108,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "File-Data-Providers",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemProvider",
@@ -119,18 +120,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider\/init(bundles:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider\/identifier"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider\/bundles(options:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider\/contentsOfURL(_:)"
@@ -138,6 +145,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrebuiltLocalFileSystemDataProvider\/DocumentationWorkspaceDataProvider-Implementations"

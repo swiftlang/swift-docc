@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourceRepositoryArguments.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/Source%20Repository\/SourceRepositoryArguments.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/Source%20Repository\/SourceRepositoryArguments.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,6 +103,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/init()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/init(from:)"
@@ -110,6 +112,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/checkoutPath",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/sourceService",
@@ -118,6 +122,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SourceRepositoryArguments\/ParsableArguments-Implementations"

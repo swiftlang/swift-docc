@@ -36,6 +36,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/init(from:)"
@@ -43,6 +44,7 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/hashValue"
@@ -50,6 +52,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/encode(to:)",

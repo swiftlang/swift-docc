@@ -157,7 +157,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle+Info.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L267"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L275"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -366,6 +366,20 @@
             }
           ],
           "name" : "fallbackDefaultCodeListingLanguage"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A fallback default module kind for the bundle.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "fallbackDefaultModuleKind"
         },
         {
           "content" : [

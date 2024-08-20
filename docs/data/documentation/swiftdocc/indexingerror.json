@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "IndexingError.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingError.swift#L13"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingError.swift#L13"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -100,6 +100,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Search-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Indexable",
@@ -113,18 +114,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/missingTitle(_:)"
       ],
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingError\/Error-Implementations",

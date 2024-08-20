@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Parameter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Parameter.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Parameter.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -94,6 +94,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Callouts",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SimpleTag",
@@ -105,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/init(name:nameRange:contents:range:isStandalone:)"
@@ -112,6 +115,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/contents",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter\/name"

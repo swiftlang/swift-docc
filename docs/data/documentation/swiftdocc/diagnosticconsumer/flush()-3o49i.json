@@ -7,6 +7,7 @@
   ],
   "defaultImplementationsSections" : [
     {
+      "anchor" : "DiagnosticConsumer-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()-58mx1"
       ],
@@ -58,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L24"
     },
     "required" : true,
     "role" : "symbol",

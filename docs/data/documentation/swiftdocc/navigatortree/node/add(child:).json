@@ -73,7 +73,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorTree.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L441"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L432"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

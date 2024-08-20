@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicsVisualStyle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/TopicsVisualStyle.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/TopicsVisualStyle.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/compactGrid",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/detailedGrid",
@@ -116,12 +118,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/Style-swift.enum\/Equatable-Implementations",

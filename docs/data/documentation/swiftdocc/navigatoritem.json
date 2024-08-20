@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorItem.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -126,6 +126,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex",
@@ -137,12 +138,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/==(_:_:)"
       ],
       "title" : "Operators"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/init(pageType:languageID:title:platformMask:availabilityID:icon:)",
@@ -151,6 +156,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/availabilityID",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/description",
@@ -163,12 +170,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/hash(into:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorItem\/Equatable-Implementations",

@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Creates a new topic reference with all its initial values.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:propertyListKeyNames:tags:images:)' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20TopicRenderReferenceV10identifier5title8abstract3url4kind8required4role9fragments14navigatorTitle13estimatedTime11conformance6isBeta0S10Deprecated26defaultImplementationCount0G5Style4name03ideO04tags6imagesAcA0dE10IdentifierV_SSSayAA0D13InlineContentOGSSAA0D4NodeV4KindOSbSSSgSayAA011DeclarationD7SectionV5TokenVGSgA10_A4_AA18ConformanceSectionVSgS2bSiSgAA0oY0OSgA4_A4_SayA1_3TagVGSgSayAA0C5ImageVGtcfc",
     "fragments" : [
       {
@@ -395,9 +401,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "TopicRenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L131"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L393"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -799,327 +808,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The identifier of this reference.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "identifier"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The title of the destination page.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "title"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The abstract of the destination page.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "abstract"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The topic url of the destination page.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "url"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The kind of page that’s referenced.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "kind"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Whether the reference is required in its parent context.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "required"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The additional “role” assigned to the symbol, if any.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "role"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The abbreviated declaration of the symbol to display in links, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "fragments"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The abbreviated declaration of the symbol to display in navigation, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "navigatorTitle"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The estimated time to complete the topic.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "estimatedTime"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Information about conditional conformance for the symbol, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "conformance"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Whether this symbol is built for a beta platform, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "false",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "isBeta"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Whether this symbol is deprecated, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "false",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "isDeprecated"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Number of default implementations for this symbol, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "defaultImplementationCount"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Information about which title to use in links to this page.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "titleStyle"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Raw name of a symbol, e.g. “com.apple.enableDataAccess”, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "name"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The human friendly symbol name, or ",
-                  "type" : "text"
-                },
-                {
-                  "code" : "nil",
-                  "type" : "codeVoice"
-                },
-                {
-                  "text" : " if the referenced page is not a symbol.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "ideTitle"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An optional list of string tags.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "tags"
-        }
-      ]
     }
   ],
   "schemaVersion" : {
@@ -1446,11 +1134,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1548,11 +1234,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/init(identifier:title:abstract:url:kind:required:role:fragments:navigatorTitle:estimatedTime:conformance:isBeta:isDeprecated:defaultImplementationCount:titleStyle:name:ideTitle:tags:images:)": {
   "abstract" : [
-    {
-      "text" : "Creates a new topic reference with all its initial values.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",

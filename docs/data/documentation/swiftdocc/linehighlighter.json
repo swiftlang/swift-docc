@@ -79,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LineHighlighter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/LineHighlighter.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/LineHighlighter.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -162,6 +162,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Tutorials",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IntroRenderSection",
@@ -181,6 +182,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LineHighlighter\/Highlight"
       ],

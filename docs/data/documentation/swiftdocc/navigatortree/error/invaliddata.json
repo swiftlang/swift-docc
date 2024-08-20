@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorTree.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L47"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

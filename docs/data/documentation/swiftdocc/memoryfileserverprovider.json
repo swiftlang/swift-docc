@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L198"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L198"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -97,6 +97,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-File-Server",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider",
@@ -109,12 +110,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/init()"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/addFile(path:data:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MemoryFileServerProvider\/addFiles(inFolder:inSubPath:recursive:)",
@@ -410,15 +415,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/addFile(path:data:)": {
   "abstract" : [
     {
-      "text" : "Add a file to match a specific path.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "Paths can be either a file, like “\/js\/file.js” or a path “\/user\/1”.",
+      "text" : "Add a file to the file server.",
       "type" : "text"
     }
   ],
@@ -489,15 +486,23 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/addFiles(inFolder:inSubPath:recursive:)": {
   "abstract" : [
     {
-      "text" : "Retrieve the data linked to a given path based on the ",
+      "text" : "Adds files from the ",
       "type" : "text"
     },
     {
-      "code" : "baseURL",
+      "code" : "source",
       "type" : "codeVoice"
     },
     {
-      "text" : ".",
+      "text" : " directory to the ",
+      "type" : "text"
+    },
+    {
+      "code" : "destination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " directory in the file server.",
       "type" : "text"
     }
   ],
@@ -580,15 +585,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/data(for:)": {
   "abstract" : [
     {
-      "text" : "Retrieve the data linked to a given path based on the ",
-      "type" : "text"
-    },
-    {
-      "code" : "baseURL",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : ".",
+      "text" : "Retrieve the data that the server serves for the given path.",
       "type" : "text"
     }
   ],
@@ -699,7 +696,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/removeAllFiles(in:)": {
   "abstract" : [
     {
-      "text" : "Removes all files served matching a give subpath.",
+      "text" : "Removes all files served by the server matching a given subpath.",
       "type" : "text"
     }
   ],

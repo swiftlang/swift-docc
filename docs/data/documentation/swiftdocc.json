@@ -156,12 +156,14 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Essentials",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompilerPipeline"
       ],
       "title" : "Essentials"
     },
     {
+      "anchor" : "Content-Discovery",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup"
@@ -169,6 +171,7 @@
       "title" : "Content Discovery"
     },
     {
+      "anchor" : "Resolving-documentation-links",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkResolution"
       ],
@@ -181,6 +184,7 @@
           "type" : "text"
         }
       ],
+      "anchor" : "Rendering",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation"
@@ -188,12 +192,14 @@
       "title" : "Rendering"
     },
     {
+      "anchor" : "Indexing",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing"
       ],
       "title" : "Indexing"
     },
     {
+      "anchor" : "Diagnostics-and-Analysis",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
@@ -202,6 +208,7 @@
       "title" : "Diagnostics and Analysis"
     },
     {
+      "anchor" : "Utilities-and-Communication",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Concurrency",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Utilities",
@@ -210,12 +217,15 @@
       "title" : "Utilities and Communication"
     },
     {
+      "anchor" : "Development",
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Features"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Features",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags"
       ],
       "title" : "Development"
     },
     {
+      "anchor" : "Articles",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Directives"
@@ -223,6 +233,8 @@
       "title" : "Articles"
     },
     {
+      "anchor" : "Classes",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments",
@@ -273,6 +285,8 @@
       "title" : "Classes"
     },
     {
+      "anchor" : "Protocols",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyLink",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkBlockMetric",
@@ -300,6 +314,8 @@
       "title" : "Protocols"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnchorSection",
@@ -324,10 +340,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveArgumentWrapped",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationConverter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ErrorsEncountered",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedCurationWriter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPBody",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPBodySection",
@@ -354,12 +368,16 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Variables",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/shouldPrettyPrintOutputJSON"
       ],
       "title" : "Variables"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchDifferences",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MetricValue"
@@ -367,16 +385,30 @@
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageLevel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Layout",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderJSONDecoder",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderJSONEncoder"
       ],
       "title" : "Enumerations"
+    },
+    {
+      "anchor" : "Extended-Modules",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit"
+      ],
+      "title" : "Extended Modules"
     }
   ],
   "variants" : [
@@ -440,6 +472,20 @@
   "title" : "AbsoluteSymbolLink",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/absolutesymbollink"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AddingFeatureFlags": {
+  "abstract" : [
+    {
+      "text" : "Develop experimental features by adding feature flags.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding Feature Flags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/addingfeatureflags"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/AnchorSection": {
   "abstract" : [
@@ -1499,7 +1545,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],
@@ -2090,40 +2136,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationindexing"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter": {
-  "abstract" : [
-    {
-      "text" : "A converter from documentation nodes to render nodes.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationNodeConverter"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DocumentationNodeConverter"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DocumentationNodeConverter",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/documentationnodeconverter"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationServer": {
   "abstract" : [
     {
@@ -2274,40 +2286,6 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
 },
-"doc://SwiftDocC/documentation/SwiftDocC/DownloadReference": {
-  "abstract" : [
-    {
-      "text" : "A reference to a resource that can be downloaded.",
-      "type" : "text"
-    }
-  ],
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "DownloadReference"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "DownloadReference"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "DownloadReference",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/downloadreference"
-},
 "doc://SwiftDocC/documentation/SwiftDocC/DynamicallyIdentifiableMetric": {
   "abstract" : [
     {
@@ -2423,50 +2401,6 @@
   "title" : "ExternalIdentifier",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/externalidentifier"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalLocationReference": {
-  "abstract" : [
-    {
-      "text" : "A specialized ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " used for references to external links.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ExternalLocationReference"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ExternalLocationReference"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ExternalLocationReference",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externallocationreference"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ExternalReferenceResolver": {
   "abstract" : [
@@ -2609,6 +2543,17 @@
   "title" : "Indicating Feature Availability to Tools",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/features"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Foundation": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Foundation",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "Foundation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/foundation"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/GeneratedCurationWriter": {
   "abstract" : [
@@ -3303,6 +3248,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/loghandle"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Markdown": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "Markdown",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markdown"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer": {
   "abstract" : [
     {
@@ -3695,6 +3651,40 @@
   "title" : "PrintCursor",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/printcursor"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle": {
+  "abstract" : [
+    {
+      "text" : "A style for how to render links to a property list key or an entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListTitleStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListTitleStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PropertyListTitleStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Redirect": {
   "abstract" : [
@@ -4479,6 +4469,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/steps"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Swift": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Swift",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "Swift",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/swift"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol": {
   "abstract" : [
     {
@@ -4512,6 +4513,17 @@
   "title" : "Symbol",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolKit": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolkit"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Synchronized": {
   "abstract" : [

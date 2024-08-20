@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectoryPathOption.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DirectoryPathOption.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DirectoryPathOption.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -141,6 +141,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption\/url",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption\/urlOrFallback"
@@ -148,6 +150,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DirectoryPathOption\/ParsableArguments-Implementations"

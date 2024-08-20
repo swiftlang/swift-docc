@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AbsoluteSymbolLink.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L197"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L197"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

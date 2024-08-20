@@ -61,7 +61,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTransforming.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransforming.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransforming.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

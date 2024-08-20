@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchOperation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L87"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L87"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

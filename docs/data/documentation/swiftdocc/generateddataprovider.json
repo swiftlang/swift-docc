@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "GeneratedDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/GeneratedDataProvider.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/GeneratedDataProvider.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -102,18 +102,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedDataProvider\/init(symbolGraphDataLoader:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedDataProvider\/identifier"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedDataProvider\/bundles(options:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedDataProvider\/contentsOfURL(_:)"
@@ -121,12 +127,15 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedDataProvider\/SymbolGraphDataLoader"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GeneratedDataProvider\/DocumentationWorkspaceDataProvider-Implementations"

@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'DocumentationCatalogOption' instead. This deprecated API will be removed after 5.12 is released",
+          "text" : "Use 'DocumentationCatalogOption' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundleOption.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationBundleOption.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationBundleOption.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Type Alias",
@@ -111,6 +111,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Command-Line-Options",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",

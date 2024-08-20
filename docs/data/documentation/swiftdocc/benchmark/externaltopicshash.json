@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalTopicsHash.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/ExternalTopicsHash.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/ExternalTopicsHash.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -124,6 +124,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Default-Metrics",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/Duration",
@@ -137,18 +138,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ExternalTopicsHash\/init(context:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ExternalTopicsHash\/result"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ExternalTopicsHash\/displayName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ExternalTopicsHash\/identifier"

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTTPEndpointSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPEndpointSection.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPEndpointSection.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,6 +92,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/HTTPEndpointSection\/endpoint"
       ],

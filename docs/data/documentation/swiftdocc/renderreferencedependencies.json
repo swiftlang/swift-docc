@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContentRenderer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -79,6 +79,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE"
       ],
@@ -97,12 +98,15 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/init(topicReferences:linkReferences:imageReferences:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceDependencies\/Decodable-Implementations",
@@ -273,6 +277,11 @@
   "title" : "init(topicReferences:linkReferences:imageReferences:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderreferencedependencies\/init(topicreferences:linkreferences:imagereferences:)"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

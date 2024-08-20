@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeDataExtractor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/RenderNodeDataExtractor.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/RenderNodeDataExtractor.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -137,6 +137,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex",
@@ -154,12 +155,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeDataExtractor\/init(with:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeDataExtractor\/projectFiles"
       ],

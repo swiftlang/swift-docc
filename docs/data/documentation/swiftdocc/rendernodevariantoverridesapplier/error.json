@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "This error is never raised. This deprecated API will be removed after 5.11 is released",
+          "text" : "This error is never raised. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -57,7 +57,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeVariantOverridesApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L47"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -118,18 +118,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/corruptedRenderNode"
       ],
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error\/Equatable-Implementations",

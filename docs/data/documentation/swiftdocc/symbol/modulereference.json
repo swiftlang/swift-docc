@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L117"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L117"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -110,6 +110,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Properties",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/titleVariants",
@@ -124,6 +125,7 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevelVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/deprecatedSummaryVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/declarationVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/attributesVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/locationVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/constraintsVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/originVariants",
@@ -394,6 +396,73 @@
   "title" : "accessLevelVariants",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/symbol\/accesslevelvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/attributesVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s possible values in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attributesVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15RenderAttributeO",
+      "text" : "RenderAttribute"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15RenderAttributeO4KindO",
+      "text" : "Kind"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "Any"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/attributesVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "attributesVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/attributesvariants"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/availabilityVariants": {
   "abstract" : [

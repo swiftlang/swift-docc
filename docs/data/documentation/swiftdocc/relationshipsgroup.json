@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Relationships.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Relationships.swift#L44"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Relationships.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -250,6 +250,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Relationship-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
@@ -264,12 +265,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsGroup\/init(kind:destinations:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsGroup\/Kind"
       ],

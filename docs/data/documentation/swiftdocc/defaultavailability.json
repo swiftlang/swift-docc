@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DefaultAvailability.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -102,7 +102,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "This information can be authored in the bundle’s Info.plist file, as a dictionary of module names to arrays of platform “name” and “version” pairs:",
+              "text" : "This information can be authored in the bundle’s Info.plist file, as a dictionary of module names to arrays of platform “name” and “version” pairs,",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "or in the case where the platform in unconditionally unavailable, “name” and “unavailable” pairs:",
               "type" : "text"
             }
           ],
@@ -119,6 +127,12 @@
             "            <string>Platform Name<\/string>",
             "            <key>version<\/key>",
             "            <string>Version Number<\/string>",
+            "        <\/dict>",
+            "        <dict>",
+            "            <key>name<\/key>",
+            "            <string>Other Platform Name<\/string>",
+            "            <key>unavailable<\/key>",
+            "            <true\/>",
             "        <\/dict>",
             "    <\/array>",
             "<\/dict>"
@@ -152,6 +166,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Bundle-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata",
@@ -162,12 +177,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/ModuleAvailability"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/init(with:)"
@@ -175,12 +194,15 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability\/Equatable-Implementations"

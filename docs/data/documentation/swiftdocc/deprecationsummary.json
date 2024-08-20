@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],
@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeprecationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/DeprecationSummary.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -88,6 +88,125 @@
         }
       ],
       "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Many in-source deprecation annotations—such as the ",
+              "type" : "text"
+            },
+            {
+              "code" : "@available",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " attribute in Swift—allow you to specify a plain text deprecation message.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "You can use the ",
+              "type" : "text"
+            },
+            {
+              "code" : "@DeprecationSummary",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directive to override that deprecation message with one or more paragraphs of formatted documentation markup.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "For example,",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "@DeprecationSummary {",
+            "    This method is unsafe because it could potentially cause buffer overruns.",
+            "    Use ``getBytes(_:length:)`` or ``getBytes(_:range:)`` instead.",
+            "}"
+          ],
+          "syntax" : "md",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "You can use the ",
+              "type" : "text"
+            },
+            {
+              "code" : "@DeprecationSummary",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directive top-level in both articles and documentation extension files.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "If you are writing a custom deprecation summary message for an API or documentation page that isn’t already deprecated,",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "you should also deprecate it—using in-source annotations when possible or ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "Available",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " directives when in-source annotations aren’t available—so that the reader knows the version when you deprecated that API or documentation page.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Tip",
+          "style" : "tip",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
     }
   ],
   "relationshipsSections" : [
@@ -119,6 +238,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary\/content",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary\/originalMarkup"
@@ -126,18 +247,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary\/accept(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary\/DirectiveConvertible-Implementations"
@@ -181,7 +307,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],

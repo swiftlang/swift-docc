@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AttributesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L51"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -106,6 +106,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Object-Description-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection",
@@ -122,6 +123,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/allowedTypes(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/allowedValues(_:)",
@@ -136,18 +139,24 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/headings"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/encode(to:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/rawIndexableTextContent(references:)"
@@ -155,6 +164,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/CodingKeys",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind"
@@ -162,6 +173,7 @@
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Equatable-Implementations"
@@ -1231,11 +1243,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

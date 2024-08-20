@@ -42,7 +42,7 @@
     ],
     "remoteSource" : {
       "fileName" : "BenchmarkResults.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L148"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L148"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -103,6 +103,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/doccArguments",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/metrics",
@@ -112,6 +114,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/init(intValue:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/init(stringValue:)"
@@ -119,6 +123,7 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BenchmarkResults\/CodingKeys\/CodingKey-Implementations",

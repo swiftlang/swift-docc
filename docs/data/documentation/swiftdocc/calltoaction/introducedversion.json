@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CallToAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/CallToAction.swift#L45"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/CallToAction.swift#L45"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

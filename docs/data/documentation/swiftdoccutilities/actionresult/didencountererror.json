@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ActionResult.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/ActionResult.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/ActionResult.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

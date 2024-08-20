@@ -64,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Relationships.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L68"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

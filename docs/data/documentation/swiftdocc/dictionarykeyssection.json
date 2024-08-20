@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DictionaryKeysSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DictionaryKeysSection.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DictionaryKeysSection.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,18 +92,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DictionaryKeysSection\/dictionaryKeys"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DictionaryKeysSection\/mergeDictionaryKeys(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DictionaryKeysSection\/title"
       ],

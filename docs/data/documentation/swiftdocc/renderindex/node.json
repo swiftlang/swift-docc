@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L99"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L108"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -108,6 +108,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Node\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Node\/init(title:path:type:children:isDeprecated:isExternal:isBeta:icon:)"
@@ -115,6 +117,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Node\/children",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Node\/icon",
@@ -128,12 +132,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Node\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderIndex\/Node\/Equatable-Implementations"
@@ -385,7 +392,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/RenderIndex/Node/icon": {
   "abstract" : [
     {
-      "text" : "Reference to the image that should be used to represent this node.",
+      "text" : "A reference to a custom image for this node.",
       "type" : "text"
     }
   ],

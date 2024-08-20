@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Small.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Small.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/Small.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

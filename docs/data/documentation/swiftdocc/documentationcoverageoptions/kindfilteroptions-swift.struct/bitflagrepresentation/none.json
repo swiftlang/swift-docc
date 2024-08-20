@@ -37,7 +37,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationCoverageOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L156"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L154"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

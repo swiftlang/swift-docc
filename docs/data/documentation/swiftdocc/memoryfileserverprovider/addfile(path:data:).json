@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Add a file to match a specific path.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "Paths can be either a file, like “\/js\/file.js” or a path “\/user\/1”.",
+      "text" : "Add a file to the file server.",
       "type" : "text"
     }
   ],
@@ -93,7 +85,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L214"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L213"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -187,7 +179,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The path to link the data.",
+                  "text" : "The path to the file.",
                   "type" : "text"
                 }
               ],
@@ -201,7 +193,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The actual data.",
+                  "text" : "The data for that file.",
                   "type" : "text"
                 }
               ],
@@ -223,7 +215,15 @@
         {
           "inlineContent" : [
             {
-              "text" : "A Boolean value indicating if the insertion has succeeded.",
+              "text" : "",
+              "type" : "text"
+            },
+            {
+              "code" : "true",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " if the file was added successfully.",
               "type" : "text"
             }
           ],
@@ -317,15 +317,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/addFile(path:data:)": {
   "abstract" : [
     {
-      "text" : "Add a file to match a specific path.",
-      "type" : "text"
-    },
-    {
-      "text" : " ",
-      "type" : "text"
-    },
-    {
-      "text" : "Paths can be either a file, like “\/js\/file.js” or a path “\/user\/1”.",
+      "text" : "Add a file to the file server.",
       "type" : "text"
     }
   ],

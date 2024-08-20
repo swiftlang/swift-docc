@@ -69,7 +69,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Codable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/RenderNode+Codable.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/RenderNode+Codable.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

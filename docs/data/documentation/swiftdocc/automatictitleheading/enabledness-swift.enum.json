@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AutomaticTitleHeading.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticTitleHeading.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticTitleHeading.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticTitleHeading\/Enabledness-swift.enum\/disabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticTitleHeading\/Enabledness-swift.enum\/enabled"
@@ -114,12 +116,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticTitleHeading\/Enabledness-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticTitleHeading\/Enabledness-swift.enum\/Equatable-Implementations",

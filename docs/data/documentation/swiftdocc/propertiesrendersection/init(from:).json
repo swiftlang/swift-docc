@@ -68,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PropertiesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PropertiesRenderSection.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PropertiesRenderSection.swift#L39"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

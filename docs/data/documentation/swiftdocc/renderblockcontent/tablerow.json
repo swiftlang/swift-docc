@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L409"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L412"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow\/init(cells:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow\/init(from:)"
@@ -113,24 +115,31 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow\/cells"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow\/Cell"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/TableRow\/Equatable-Implementations"

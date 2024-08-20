@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderTile.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -132,6 +132,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
@@ -152,6 +153,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Tutorials",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LineHighlighter",
@@ -171,6 +173,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/init(identifier:title:content:action:media:)"
@@ -178,6 +182,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/action",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/content",
@@ -188,18 +194,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/defaultCallToActionTitle(for:)"
       ],
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/Identifier-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/Equatable-Implementations",
@@ -1417,6 +1428,11 @@
   "title" : "VolumeRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/volumerendersection"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

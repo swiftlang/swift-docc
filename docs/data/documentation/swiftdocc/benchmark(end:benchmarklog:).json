@@ -51,7 +51,15 @@
       },
       {
         "kind" : "text",
-        "text" : ": () -> "
+        "text" : ": "
+      },
+      {
+        "kind" : "attribute",
+        "text" : "@autoclosure "
+      },
+      {
+        "kind" : "text",
+        "text" : "() -> "
       },
       {
         "kind" : "typeIdentifier",
@@ -86,7 +94,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Benchmark.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L116"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L122"
     },
     "role" : "symbol",
     "roleHeading" : "Function",
@@ -138,7 +146,7 @@
             },
             {
               "kind" : "internalParam",
-              "text" : "event"
+              "text" : "metric"
             },
             {
               "kind" : "text",
@@ -228,7 +236,21 @@
               "type" : "paragraph"
             }
           ],
-          "name" : "event"
+          "name" : "metric"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The log to add the metric to.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "log"
         }
       ]
     }
@@ -243,6 +265,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Logging-Metrics",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/benchmark(add:benchmarkLog:)",
@@ -400,7 +423,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": () -> "
+      "text" : ": "
+    },
+    {
+      "kind" : "attribute",
+      "text" : "@autoclosure "
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
     },
     {
       "kind" : "typeIdentifier",
@@ -438,7 +469,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/benchmark(begin:benchmarkLog:)": {
   "abstract" : [
     {
-      "text" : "Starts the given metric.",
+      "text" : "Begins the given metric.",
       "type" : "text"
     }
   ],
@@ -473,7 +504,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": () -> "
+      "text" : ": "
+    },
+    {
+      "kind" : "attribute",
+      "text" : "@autoclosure "
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
     },
     {
       "kind" : "typeIdentifier",
@@ -554,7 +593,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": () -> "
+      "text" : ": "
+    },
+    {
+      "kind" : "attribute",
+      "text" : "@autoclosure "
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
     },
     {
       "kind" : "typeIdentifier",
@@ -591,10 +638,7 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/benchmark(wrap:benchmarkLog:body:)": {
   "abstract" : [
-    {
-      "text" : "Ends the given metric and adds it to the log.",
-      "type" : "text"
-    }
+
   ],
   "fragments" : [
     {
@@ -635,7 +679,15 @@
     },
     {
       "kind" : "text",
-      "text" : ": () -> "
+      "text" : ": "
+    },
+    {
+      "kind" : "attribute",
+      "text" : "@autoclosure "
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
     },
     {
       "kind" : "typeIdentifier",

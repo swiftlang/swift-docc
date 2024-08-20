@@ -27,23 +27,25 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "S"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "(some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "S"
+        "preciseIdentifier" : "s:ST",
+        "text" : "Sequence"
       },
       {
         "kind" : "text",
-        "text" : ")"
+        "text" : "<any "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8Markdown6MarkupP",
+        "text" : "Markup"
+      },
+      {
+        "kind" : "text",
+        "text" : ">)"
       }
     ],
     "modules" : [
@@ -53,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MarkupContainer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/MarkupContainer.swift#L40"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/MarkupContainer.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -77,15 +79,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "S"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -101,31 +95,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "S"
-            },
-            {
-              "kind" : "text",
-              "text" : ") "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "S"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
@@ -134,29 +104,16 @@
             },
             {
               "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "S"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " == any "
+              "text" : "<any "
             },
             {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:8Markdown6MarkupP",
               "text" : "Markup"
+            },
+            {
+              "kind" : "text",
+              "text" : ">)"
             }
           ]
         }
@@ -275,23 +232,25 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "S"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "(some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "S"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer\/init(_:)-877fz",

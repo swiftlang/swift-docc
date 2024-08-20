@@ -131,7 +131,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTTPParameter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/HTTPParameter.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/HTTPParameter.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

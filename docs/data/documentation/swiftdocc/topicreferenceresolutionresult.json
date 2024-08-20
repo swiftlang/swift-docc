@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L54"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L54"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -106,6 +106,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Topic-References",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedTopicReference",
@@ -117,6 +118,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionResult\/failure(_:_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionResult\/success(_:)"
@@ -124,12 +127,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionResult\/description"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionResult\/Equatable-Implementations"

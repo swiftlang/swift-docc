@@ -85,7 +85,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertAction+CommandInitialization.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/ActionExtensions\/ConvertAction+CommandInitialization.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/ActionExtensions\/ConvertAction+CommandInitialization.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

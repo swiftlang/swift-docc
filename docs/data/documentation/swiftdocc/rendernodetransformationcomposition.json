@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTransformationComposition.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransformationComposition.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RenderNodeTransformationComposition.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,6 +103,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Node-Rewriter",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
@@ -116,12 +117,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/init(first:second:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/first",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/second"
@@ -129,12 +134,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/transform(renderNode:context:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/RenderNodeTransforming-Implementations"

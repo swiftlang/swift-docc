@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SeeAlsoInTopicsHeadingChecker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/SeeAlsoInTopicsHeadingChecker.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/SeeAlsoInTopicsHeadingChecker.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -99,6 +99,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Predefined-Checks",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
@@ -113,12 +114,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker\/init(sourceFile:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker\/problems",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker\/seeAlsoInTopicsHeadings"
@@ -126,12 +131,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker\/visitHeading(_:)-60kap"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoInTopicsHeadingChecker\/Checker-Implementations",

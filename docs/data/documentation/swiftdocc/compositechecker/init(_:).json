@@ -20,7 +20,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC16CompositeCheckerVyACxcSTRzAA0D07ElementRpzlufc",
+    "externalID" : "s:9SwiftDocC16CompositeCheckerVyACxcSTRzAA0D0_p7ElementRtzlufc",
     "fragments" : [
       {
         "kind" : "identifier",
@@ -28,23 +28,25 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "Checkers"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "(some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "Checkers"
+        "preciseIdentifier" : "s:ST",
+        "text" : "Sequence"
       },
       {
         "kind" : "text",
-        "text" : ")"
+        "text" : "<any "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC7CheckerP",
+        "text" : "Checker"
+      },
+      {
+        "kind" : "text",
+        "text" : ">)"
       }
     ],
     "modules" : [
@@ -54,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Checker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L273"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L273"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -78,15 +80,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Checkers"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -102,31 +96,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Checkers"
-            },
-            {
-              "kind" : "text",
-              "text" : ") "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Checkers"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
@@ -135,30 +105,17 @@
             },
             {
               "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Checkers"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
+              "text" : "<any "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC7CheckerP",
               "text" : "Checker"
+            },
+            {
+              "kind" : "text",
+              "text" : ">)"
             }
           ]
         }
@@ -292,23 +249,25 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Checkers"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "(some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Checkers"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7CheckerP",
+      "text" : "Checker"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/init(_:)",

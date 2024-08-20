@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderHierarchy.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchy.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchy.swift#L22"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -141,6 +141,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
@@ -155,6 +156,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Hierarchy-Types",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTutorialsHierarchy"
@@ -162,6 +164,8 @@
       "title" : "Hierarchy Types"
     },
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy\/reference(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy\/tutorials(_:)"
@@ -169,18 +173,23 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchy\/Equatable-Implementations"

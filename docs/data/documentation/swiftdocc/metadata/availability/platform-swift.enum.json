@@ -42,7 +42,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Availability.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L50"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -100,6 +100,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/iOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/macOS",
@@ -110,18 +112,23 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/rawValue"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum\/Equatable-Implementations",
@@ -210,7 +217,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],

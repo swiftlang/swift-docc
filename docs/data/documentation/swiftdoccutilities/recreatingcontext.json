@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Action.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -121,6 +121,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Actions-Design",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action",
@@ -131,6 +132,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/RecreatingContext\/setupContext"
       ],

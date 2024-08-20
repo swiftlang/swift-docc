@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicImage.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicImage.swift#L38"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicImage.swift#L38"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

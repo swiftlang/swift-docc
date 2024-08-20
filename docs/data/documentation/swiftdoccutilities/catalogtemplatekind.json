@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CatalogTemplateKind.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/CatalogTemplateKind.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/CatalogTemplateKind.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -94,6 +94,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/14ArgumentParser013ExpressibleByA0P",
+        "doc:\/\/SwiftDocCUtilities\/s8CopyableP",
         "doc:\/\/SwiftDocCUtilities\/SQ",
         "doc:\/\/SwiftDocCUtilities\/SH",
         "doc:\/\/SwiftDocCUtilities\/SY"
@@ -113,6 +114,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/articleOnly",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/tutorial"
@@ -120,12 +123,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/CatalogTemplateKind\/Equatable-Implementations",
@@ -351,6 +357,11 @@
   "title" : "CatalogTemplateKind.tutorial",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/catalogtemplatekind\/tutorial"
+},
+"doc://SwiftDocCUtilities/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

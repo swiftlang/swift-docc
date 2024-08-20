@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L59"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L59"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -87,6 +87,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
@@ -107,6 +108,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Main-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection",
@@ -124,6 +126,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token"
@@ -131,6 +135,8 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/init(languages:platforms:tokens:otherDeclarations:)"
@@ -138,6 +144,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/languages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/otherDeclarations-swift.property",
@@ -147,18 +155,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Equatable-Implementations",
@@ -1113,6 +1126,11 @@
   "title" : "TopicsSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/topicssection"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

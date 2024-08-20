@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Relationships.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L98"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderNode+Relationships.swift#L60"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -101,6 +101,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Search-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Indexable",
@@ -114,12 +115,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderRelationshipsGroup\/init(name:abstract:references:referencesAreNested:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderRelationshipsGroup\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderRelationshipsGroup\/name",

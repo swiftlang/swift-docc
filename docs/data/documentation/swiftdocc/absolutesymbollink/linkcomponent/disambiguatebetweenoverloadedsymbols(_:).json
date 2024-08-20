@@ -79,7 +79,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocCSymbolRepresentable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/DocCSymbolRepresentable.swift#L58"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/DocCSymbolRepresentable.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

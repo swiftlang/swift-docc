@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Index.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Index.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Index.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/init()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/init(from:)"
@@ -113,6 +115,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/bundleIdentifier",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/documentationBundle",
@@ -122,18 +126,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/run()-6f8ki"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/configuration-53oo7"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/ParsableArguments-Implementations",

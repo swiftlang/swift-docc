@@ -108,7 +108,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TutorialSectionsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/TutorialSectionsRenderSection.swift#L44"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/TutorialSectionsRenderSection.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

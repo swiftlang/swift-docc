@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Code.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Code.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Code.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

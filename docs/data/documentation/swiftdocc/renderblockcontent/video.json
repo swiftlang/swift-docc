@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L566"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L569"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,6 +106,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video\/init(identifier:metadata:)"
@@ -113,6 +115,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video\/metadata"
@@ -120,6 +124,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Video\/Equatable-Implementations"

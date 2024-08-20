@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PageKind.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageKind.swift#L33"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageKind.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -115,6 +115,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/Kind-swift.enum\/article",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/Kind-swift.enum\/sampleCode"
@@ -122,12 +124,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/Kind-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/Kind-swift.enum\/Equatable-Implementations",

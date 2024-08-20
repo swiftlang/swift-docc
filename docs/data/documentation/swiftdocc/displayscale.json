@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L305"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L306"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -109,6 +109,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "https:\/\/developer.apple.com\/design\/human-interface-guidelines\/macos\/icons-and-images\/image-size-and-resolution\/",
         "https:\/\/developer.apple.com\/documentation\/uikit\/uiscreen\/1617836-scale"
@@ -116,6 +117,7 @@
       "title" : "Related Documentation"
     },
     {
+      "anchor" : "Asset-Traits",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle"
@@ -125,6 +127,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale\/double",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale\/standard",
@@ -133,12 +137,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale\/Equatable-Implementations",

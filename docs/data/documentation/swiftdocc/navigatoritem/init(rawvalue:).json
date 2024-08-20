@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorItem.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L99"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L101"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -142,7 +142,7 @@
               "type" : "paragraph"
             }
           ],
-          "name" : "s rawValue"
+          "name" : "rawValue"
         }
       ]
     }

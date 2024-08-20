@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "BenchmarkResults.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L67"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/BenchmarkResults.swift#L67"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

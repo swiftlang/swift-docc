@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "GroupedSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/GroupedSection.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/GroupedSection.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

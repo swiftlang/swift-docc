@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourcePosition.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/SourcePosition.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/SourcePosition.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,12 +105,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/_(_:_:)-1q572"
       ],
       "title" : "Operators"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/init(line:column:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/init(offset:in:)"
@@ -118,6 +122,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/column",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/debugDescription",
@@ -126,6 +132,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PrintCursor\/Comparable-Implementations",

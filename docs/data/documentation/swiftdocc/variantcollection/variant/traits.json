@@ -74,7 +74,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection+Variant.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Variant.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Variant.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

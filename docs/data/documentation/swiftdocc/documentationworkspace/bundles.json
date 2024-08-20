@@ -64,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationWorkspace.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L100"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L100"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

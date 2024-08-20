@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ContentAndMedia.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/ContentAndMedia.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/ContentAndMedia.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -119,12 +119,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/init(from:source:for:in:problems:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/content",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/eyebrow",
@@ -137,12 +141,16 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/accept(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/directiveName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/introducedVersion"
@@ -150,12 +158,15 @@
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/MediaPosition-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia\/DirectiveConvertible-Implementations"

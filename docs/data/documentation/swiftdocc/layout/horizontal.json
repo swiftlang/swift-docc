@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Layout.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Layout.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Layout.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

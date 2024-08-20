@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Abstract.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Abstract.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Abstract.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,6 +104,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Main-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecatedSection",
@@ -121,12 +122,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection\/init(paragraph:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection\/content",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection\/paragraph"
@@ -134,6 +139,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection\/title"
       ],

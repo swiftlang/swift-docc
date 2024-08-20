@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L208"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L211"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

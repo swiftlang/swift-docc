@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ParametersSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/ParametersSection.swift#L13"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/ParametersSection.swift#L13"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

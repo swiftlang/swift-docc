@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Synchronization.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Synchronization.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Synchronization.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -144,6 +144,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/init()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/init(_:)"
@@ -151,6 +153,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)-17wqu",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Synchronized\/sync(_:)-2cxyk"

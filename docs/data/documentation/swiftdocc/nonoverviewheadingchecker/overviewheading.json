@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NonOverviewHeadingChecker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonOverviewHeadingChecker.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonOverviewHeadingChecker.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

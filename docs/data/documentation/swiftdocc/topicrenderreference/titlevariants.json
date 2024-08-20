@@ -64,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicRenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

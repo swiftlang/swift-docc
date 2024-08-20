@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Benchmark.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -103,6 +103,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Benchmark-Log",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/main"
@@ -112,18 +113,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Classes",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/TopicAnchorHash"
       ],
       "title" : "Classes"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/ArchiveOutputSize"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/date",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/isEnabled",
@@ -134,6 +141,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/encode(to:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark\/results()"

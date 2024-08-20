@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiffAvailability.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DiffAvailability.swift#L41"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DiffAvailability.swift#L41"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/init(change:platform:versions:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/init(from:)"
@@ -114,6 +116,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/change",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/platform",
@@ -122,6 +126,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability\/Info\/Equatable-Implementations"

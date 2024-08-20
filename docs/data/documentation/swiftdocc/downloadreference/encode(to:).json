@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DownloadReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L81"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L81"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -138,6 +138,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Bundles",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/BundleIdentifier",
@@ -148,6 +149,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Bundle-Metadata",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/displayName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/identifier",
@@ -156,18 +158,25 @@
       "title" : "Bundle Metadata"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/articlesDocumentationRootReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/attributedCodeListings",
@@ -187,6 +196,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/PropertyListError"
       ],
@@ -398,6 +409,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -481,7 +493,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/customFooter": {
   "abstract" : [
     {
-      "text" : "Custom HTML file to use as the footer for rendered output.",
+      "text" : "A custom HTML file to use as the footer for rendered output.",
       "type" : "text"
     }
   ],
@@ -522,7 +534,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/customHeader": {
   "abstract" : [
     {
-      "text" : "Custom HTML file to use as the header for rendered output.",
+      "text" : "A custom HTML file to use as the header for rendered output.",
       "type" : "text"
     }
   ],
@@ -719,11 +731,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)": {
   "abstract" : [
-    {
-      "text" : "Creates a documentation bundle.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "identifier",
@@ -911,6 +921,175 @@
   "title" : "init(info:baseURL:attributedCodeListings:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/documentationbundle\/init(info:baseurl:attributedcodelistings:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:themesettings:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "info"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
+      "text" : "Info"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "baseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "symbolGraphURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "markupURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "miscResourceURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "customHeader"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "customFooter"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "themeSettings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(info:baseURL:symbolGraphURLs:markupURLs:miscResourceURLs:customHeader:customFooter:themeSettings:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationbundle\/init(info:baseurl:symbolgraphurls:markupurls:miscresourceurls:customheader:customfooter:themesettings:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/markupURLs": {
   "abstract" : [
@@ -1109,7 +1288,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/themeSettings": {
   "abstract" : [
     {
-      "text" : "JSON settings file used to theme renderer output.",
+      "text" : "A custom JSON settings file used to theme renderer output.",
       "type" : "text"
     }
   ],

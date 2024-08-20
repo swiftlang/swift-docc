@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L180"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L180"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -97,6 +97,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-File-Server",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider",
@@ -109,12 +110,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/init(directoryPath:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemServerProvider\/data(for:)"
       ],

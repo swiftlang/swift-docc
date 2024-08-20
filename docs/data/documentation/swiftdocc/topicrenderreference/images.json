@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Author provided images that should be used to represent this page.",
+      "text" : "Author provided images that represent this page.",
       "type" : "text"
     }
   ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TopicRenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L108"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L108"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -226,7 +226,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/images": {
   "abstract" : [
     {
-      "text" : "Author provided images that should be used to represent this page.",
+      "text" : "Author provided images that represent this page.",
       "type" : "text"
     }
   ],

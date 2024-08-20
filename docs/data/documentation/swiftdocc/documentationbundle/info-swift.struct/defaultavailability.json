@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle+Info.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

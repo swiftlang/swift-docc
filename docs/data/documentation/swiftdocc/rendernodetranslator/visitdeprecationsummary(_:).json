@@ -72,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTranslator.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L981"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L970"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -195,7 +195,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],

@@ -141,7 +141,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle+Info.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L90"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationBundle+Info.swift#L94"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

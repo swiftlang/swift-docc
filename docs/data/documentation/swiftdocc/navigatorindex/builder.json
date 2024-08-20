@@ -57,7 +57,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L466"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L482"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -147,12 +147,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/init(renderNodeProvider:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/counter",
@@ -167,6 +171,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/build()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex\/Builder\/finalize(estimatedCount:emitJSONRepresentation:emitLMDBRepresentation:)",
@@ -633,15 +639,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/init(renderNodeProvider:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)": {
   "abstract" : [
     {
-      "text" : "Initialize a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Builder",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " with the given data provider and output URL.",
+      "text" : "Create a new a builder with the given data provider and output URL.",
       "type" : "text"
     }
   ],

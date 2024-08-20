@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VideoReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/VideoReference.swift#L93"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/VideoReference.swift#L93"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -106,12 +106,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/traits",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/url"
@@ -119,12 +123,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference\/VariantProxy\/Equatable-Implementations"

@@ -70,7 +70,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L388"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L388"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

@@ -1,4 +1,10 @@
 {
+  "abstract" : [
+    {
+      "text" : "Whether to consider the root location as a documentation bundle if the data provider doesn’t discover another bundle in the hierarchy from the root location.",
+      "type" : "text"
+    }
+  ],
   "hierarchy" : {
     "paths" : [
       [
@@ -51,7 +57,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LocalFileSystemDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/LocalFileSystemDataProvider.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/LocalFileSystemDataProvider.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -216,7 +222,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/allowArbitraryCatalogDirectories": {
   "abstract" : [
-
+    {
+      "text" : "Whether to consider the root location as a documentation bundle if the data provider doesn’t discover another bundle in the hierarchy from the root location.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {

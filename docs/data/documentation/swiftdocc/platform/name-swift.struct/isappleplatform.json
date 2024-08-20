@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityIndex+Ext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L250"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L250"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

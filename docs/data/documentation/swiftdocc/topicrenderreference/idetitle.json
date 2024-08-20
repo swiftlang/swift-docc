@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "The human friendly symbol name",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'propertyListDisplayName' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20TopicRenderReferenceV8ideTitleSSSgvp",
     "fragments" : [
       {
@@ -53,9 +59,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "TopicRenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L102"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L379"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -96,40 +105,28 @@
             },
             {
               "kind" : "text",
-              "text" : "?"
+              "text" : "? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "This value is ",
-              "type" : "text"
-            },
-            {
-              "code" : "nil",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " if the referenced page is not a symbol.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -218,11 +215,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/ideTitle": {
   "abstract" : [
-    {
-      "text" : "The human friendly symbol name",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

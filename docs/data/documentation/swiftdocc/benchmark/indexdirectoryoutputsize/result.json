@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutputSize.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/OutputSize.swift#L40"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics\/OutputSize.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

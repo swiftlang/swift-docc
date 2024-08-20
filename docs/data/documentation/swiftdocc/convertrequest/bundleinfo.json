@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertRequest.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -125,6 +125,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle\/Info-swift.struct"
       ],

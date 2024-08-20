@@ -28,15 +28,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "Components"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "("
       },
       {
         "kind" : "externalParam",
@@ -44,15 +36,25 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "Components"
+        "preciseIdentifier" : "s:ST",
+        "text" : "Sequence"
       },
       {
         "kind" : "text",
-        "text" : ")"
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : ">)"
       }
     ],
     "modules" : [
@@ -62,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPointer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPointer.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPointer.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -86,15 +88,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Components"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -102,31 +96,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Components"
-            },
-            {
-              "kind" : "text",
-              "text" : ") "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Components"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
@@ -135,29 +105,16 @@
             },
             {
               "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Components"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " == "
+              "text" : "<"
             },
             {
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:SS",
               "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : ">)"
             }
           ]
         }
@@ -278,15 +235,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Components"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "externalParam",
@@ -294,15 +243,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Components"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/init(pathComponents:)",

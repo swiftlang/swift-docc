@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "IndexingRecord.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingRecord.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingRecord.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

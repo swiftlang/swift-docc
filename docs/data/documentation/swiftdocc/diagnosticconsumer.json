@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -116,6 +116,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Diagnostics",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
@@ -129,6 +130,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/finalize()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticConsumer\/flush()-3o49i",

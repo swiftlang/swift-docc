@@ -69,7 +69,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L146"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L163"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PlatformName.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/PlatformName.swift#L65"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/PlatformName.swift#L65"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

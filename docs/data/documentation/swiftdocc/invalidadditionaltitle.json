@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "InvalidAdditionalTitle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/InvalidAdditionalTitle.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Predefined-Checks",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
@@ -119,24 +120,31 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/init(sourceFile:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/problems"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitHeading(_:)-4nrol"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/Checker-Implementations",

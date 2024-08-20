@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeVariantOverridesApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -94,18 +94,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/init()"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/applyVariantOverrides(in:for:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeVariantOverridesApplier\/Error"
       ],

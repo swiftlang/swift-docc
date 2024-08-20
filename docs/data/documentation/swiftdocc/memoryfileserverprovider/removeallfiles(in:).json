@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Removes all files served matching a give subpath.",
+      "text" : "Removes all files served by the server matching a given subpath.",
       "type" : "text"
     }
   ],
@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L270"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L265"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -107,7 +107,7 @@
             },
             {
               "kind" : "internalParam",
-              "text" : "subPath"
+              "text" : "directory"
             },
             {
               "kind" : "text",
@@ -135,14 +135,14 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The path used to match the files.",
+                  "text" : "The path to a directory to remove",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "path"
+          "name" : "directory"
         }
       ]
     }
@@ -231,7 +231,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/removeAllFiles(in:)": {
   "abstract" : [
     {
-      "text" : "Removes all files served matching a give subpath.",
+      "text" : "Removes all files served by the server matching a given subpath.",
       "type" : "text"
     }
   ],

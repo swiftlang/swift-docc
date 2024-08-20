@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L73"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L73"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

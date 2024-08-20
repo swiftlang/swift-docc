@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderContentMetadata.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderContentMetadata.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderContentMetadata.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Elements",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent",
@@ -115,12 +116,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/anchor",
@@ -130,12 +135,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/rawIndexableTextContent(references:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderContentMetadata\/Equatable-Implementations"

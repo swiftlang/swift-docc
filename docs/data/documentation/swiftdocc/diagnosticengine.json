@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticEngine.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticEngine.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticEngine.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -101,6 +101,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Diagnostics",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
@@ -114,12 +115,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/init(filterLevel:treatWarningsAsErrors:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/filterLevel",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/problems"
@@ -127,6 +132,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/add(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticEngine\/clearDiagnostics()",

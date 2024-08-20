@@ -1,7 +1,23 @@
 {
   "abstract" : [
     {
-      "text" : "The merge behavior for this documentation extension.",
+      "text" : "A value of ",
+      "type" : "text"
+    },
+    {
+      "code" : "append",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " or ",
+      "type" : "text"
+    },
+    {
+      "code" : "override",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", denoting whether an extension file’s content amends or replaces the in-source documentation.",
       "type" : "text"
     }
   ],
@@ -60,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationExtension.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -223,7 +239,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],
@@ -291,7 +307,23 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension/behavior-swift.property": {
   "abstract" : [
     {
-      "text" : "The merge behavior for this documentation extension.",
+      "text" : "A value of ",
+      "type" : "text"
+    },
+    {
+      "code" : "append",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " or ",
+      "type" : "text"
+    },
+    {
+      "code" : "override",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", denoting whether an extension file’s content amends or replaces the in-source documentation.",
       "type" : "text"
     }
   ],

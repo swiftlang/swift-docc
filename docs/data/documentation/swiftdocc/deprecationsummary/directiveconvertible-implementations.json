@@ -32,6 +32,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Type-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary\/canConvertDirective(_:)"
@@ -70,7 +71,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],

@@ -53,7 +53,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReferenceHierarchy.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderReferenceHierarchy.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderReferenceHierarchy.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -111,6 +111,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Hierarchy-Types",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTutorialsHierarchy"
@@ -120,18 +121,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy\/paths"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy\/Equatable-Implementations"

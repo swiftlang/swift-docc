@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Volume.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Volume\/Volume.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Volume\/Volume.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

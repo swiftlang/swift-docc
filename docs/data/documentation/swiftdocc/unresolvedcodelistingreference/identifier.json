@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AttributedCodeListing.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Content\/AttributedCodeListing.swift#L139"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Content\/AttributedCodeListing.swift#L142"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

@@ -75,7 +75,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertServiceError.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertServiceError.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertServiceError.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

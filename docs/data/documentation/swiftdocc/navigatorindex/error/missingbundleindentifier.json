@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 5.11 is released",
+          "text" : "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L69"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L69"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

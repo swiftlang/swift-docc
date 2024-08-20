@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalIdentifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/ExternalIdentifier.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/ExternalIdentifier.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

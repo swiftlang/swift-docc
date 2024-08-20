@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Action.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -150,6 +150,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Actions-Design",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/ActionResult",
@@ -160,6 +161,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/perform(logHandle:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Action\/performAndHandleResult(logHandle:)"

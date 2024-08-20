@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Replacement.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Replacement.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/Replacement.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,6 +104,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Suggested-Recovery-Solutions",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Solution"
@@ -113,12 +114,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement\/init(range:replacement:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement\/range",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement\/replacement"
@@ -126,6 +131,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Replacement\/Equatable-Implementations"

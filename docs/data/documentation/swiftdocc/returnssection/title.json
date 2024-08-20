@@ -72,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ReturnsSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/ReturnsSection.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/ReturnsSection.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

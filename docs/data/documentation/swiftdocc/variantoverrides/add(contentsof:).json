@@ -36,15 +36,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "Overrides"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "("
       },
       {
         "kind" : "externalParam",
@@ -52,15 +44,25 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "Overrides"
+        "preciseIdentifier" : "s:Sl",
+        "text" : "Collection"
       },
       {
         "kind" : "text",
-        "text" : ")"
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC15VariantOverrideV",
+        "text" : "VariantOverride"
+      },
+      {
+        "kind" : "text",
+        "text" : ">)"
       }
     ],
     "modules" : [
@@ -70,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantOverrides.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantOverrides.swift#L44"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantOverrides.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -102,15 +104,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Overrides"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -126,31 +120,7 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Overrides"
-            },
-            {
-              "kind" : "text",
-              "text" : ") "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Overrides"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
@@ -159,30 +129,17 @@
             },
             {
               "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Overrides"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " == "
+              "text" : "<"
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverride",
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC15VariantOverrideV",
               "text" : "VariantOverride"
+            },
+            {
+              "kind" : "text",
+              "text" : ">)"
             }
           ]
         }
@@ -330,15 +287,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Overrides"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "externalParam",
@@ -346,15 +295,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Overrides"
+      "preciseIdentifier" : "s:Sl",
+      "text" : "Collection"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15VariantOverrideV",
+      "text" : "VariantOverride"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverrides\/add(contentsOf:)",

@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServerError.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerError.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerError.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

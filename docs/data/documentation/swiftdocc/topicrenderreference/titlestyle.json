@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Information about which title to use in links to this page.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'propertyListTitleStyle' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -20,6 +25,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
+    "extendedModule" : "SwiftDocC",
     "externalID" : "s:9SwiftDocC20TopicRenderReferenceV10titleStyleAA05TitleG0OSgvp",
     "fragments" : [
       {
@@ -53,9 +59,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "TopicRenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L94"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L353"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -97,32 +106,28 @@
             },
             {
               "kind" : "text",
-              "text" : "?"
+              "text" : "? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "discussion",
-          "level" : 2,
-          "text" : "Discussion",
-          "type" : "heading"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "For symbols that have multiple possible titles (for example property list keys and entitlements) the title style decides which title to use in links.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        }
-      ],
-      "kind" : "content"
     }
   ],
   "schemaVersion" : {
@@ -177,11 +182,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
   "abstract" : [
-    {
-      "text" : "A title style for a property list key or an entitlement key.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -245,11 +248,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/titleStyle": {
   "abstract" : [
-    {
-      "text" : "Information about which title to use in links to this page.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

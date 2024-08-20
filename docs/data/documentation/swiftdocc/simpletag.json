@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LegacyTag.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/LegacyTag.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/LegacyTag.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -114,6 +114,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Callouts",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter",
@@ -125,12 +126,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SimpleTag\/init(tag:contents:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SimpleTag\/contents",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SimpleTag\/tag"

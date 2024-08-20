@@ -105,6 +105,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Semantic-Elements",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor",
@@ -117,6 +118,7 @@
       "title" : "Semantic Elements"
     },
     {
+      "anchor" : "Technology-Directives",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume",
@@ -129,6 +131,7 @@
       "title" : "Technology Directives"
     },
     {
+      "anchor" : "Tutorials-Directives",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirement",
@@ -149,6 +152,7 @@
       "title" : "Tutorials Directives"
     },
     {
+      "anchor" : "Symbol-Reference-Directives",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName",
@@ -157,6 +161,7 @@
       "title" : "Symbol Reference Directives"
     },
     {
+      "anchor" : "Metadata-Directives",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
@@ -165,6 +170,7 @@
       "title" : "Metadata Directives"
     },
     {
+      "anchor" : "Common-Directives",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Media",
@@ -473,7 +479,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
   "abstract" : [
     {
-      "text" : "A directive to add custom deprecation summary to an already deprecated symbol.",
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
       "type" : "text"
     }
   ],
@@ -541,7 +547,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],
@@ -1415,7 +1421,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
     {
-      "text" : "A directive to set this page as a documentation root-level node.",
+      "text" : "Configures an article to become a top-level page.",
       "type" : "text"
     }
   ],

@@ -78,7 +78,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L147"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L147"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

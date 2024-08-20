@@ -57,7 +57,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AbsoluteSymbolLink.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L213"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L213"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -114,6 +114,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/kindAndPreciseIdentifier(kindIdentifier:preciseIdentifierHash:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/kindIdentifier(_:)",
@@ -123,6 +125,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/asLinkSuffixString",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/description"
@@ -130,6 +134,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/Equatable-Implementations"

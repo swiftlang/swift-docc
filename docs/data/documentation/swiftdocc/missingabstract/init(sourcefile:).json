@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MissingAbstract.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/MissingAbstract.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/MissingAbstract.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -106,20 +106,6 @@
     {
       "kind" : "parameters",
       "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The documentation node that the checker checks.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "document"
-        },
         {
           "content" : [
             {

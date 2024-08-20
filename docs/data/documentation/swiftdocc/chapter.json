@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Chapter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Volume\/Chapter\/Chapter.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Volume\/Chapter\/Chapter.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -128,6 +128,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter\/content",
@@ -140,18 +142,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter\/accept(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter\/DirectiveConvertible-Implementations"

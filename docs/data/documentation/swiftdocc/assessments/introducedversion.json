@@ -66,7 +66,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Assessments.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Assessments\/Assessments.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Assessments\/Assessments.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

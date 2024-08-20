@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TemplateOption.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/TemplateOption.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/TemplateOption.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -133,6 +133,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Command-Line-Options",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
@@ -144,6 +145,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/init()",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/init(from:)"
@@ -151,18 +154,23 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/templateURL"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/validate()-2gibg"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/ParsableArguments-Implementations"

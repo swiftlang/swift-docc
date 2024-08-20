@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "XcodeRequirementReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/XcodeRequirementReference.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/XcodeRequirementReference.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/init(identifier:title:url:)"
@@ -112,6 +114,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/title",
@@ -121,6 +125,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference\/Equatable-Implementations"

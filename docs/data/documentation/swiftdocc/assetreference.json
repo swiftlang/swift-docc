@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L345"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L346"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/init(assetName:bundleIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/init(from:)"
@@ -112,6 +114,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/assetName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/bundleIdentifier"
@@ -119,12 +123,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/hash(into:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AssetReference\/Equatable-Implementations"

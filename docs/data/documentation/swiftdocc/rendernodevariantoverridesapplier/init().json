@@ -39,7 +39,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeVariantOverridesApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/RenderNodeVariantOverridesApplier.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

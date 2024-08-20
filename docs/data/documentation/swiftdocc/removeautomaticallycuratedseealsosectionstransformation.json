@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/Rewriter\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,6 +103,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Node-Rewriter",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
@@ -116,18 +117,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation\/init()"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation\/transform(renderNode:context:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation\/RenderNodeTransforming-Implementations"

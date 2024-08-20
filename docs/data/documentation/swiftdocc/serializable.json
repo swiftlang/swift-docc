@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorTree.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorTree.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -165,6 +165,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex",

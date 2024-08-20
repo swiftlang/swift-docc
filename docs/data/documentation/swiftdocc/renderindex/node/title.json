@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L101"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/RenderIndexJSON\/RenderIndex.swift#L110"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

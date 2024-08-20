@@ -37,6 +37,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Utilities-and-Communication",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Concurrency",
@@ -47,6 +48,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Communication-Bridge",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge",
@@ -60,6 +62,7 @@
       "title" : "Communication Bridge"
     },
     {
+      "anchor" : "Communication-File-Server",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer",

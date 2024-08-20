@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PageKind.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageKind.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/PageKind.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -216,6 +216,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Child-Directives",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
@@ -233,6 +234,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/kind-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/originalMarkup"
@@ -240,18 +243,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/Kind-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/DirectiveConvertible-Implementations"
@@ -397,7 +405,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],
@@ -465,7 +473,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],
@@ -853,7 +861,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
     {
-      "text" : "A directive to set this page as a documentation root-level node.",
+      "text" : "Configures an article to become a top-level page.",
       "type" : "text"
     }
   ],

@@ -33,6 +33,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/defaultVisit(_:)",
@@ -43,6 +44,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCustomBlock(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCustomInline(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDoxygenDiscussion(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDoxygenNote(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDoxygenParameter(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDoxygenReturns(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitEmphasis(_:)",
@@ -529,6 +532,108 @@
   "title" : "visitDocument(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitdocument(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitDoxygenDiscussion(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenDiscussion"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown17DoxygenDiscussionV",
+      "text" : "DoxygenDiscussion"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDoxygenDiscussion(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenDiscussion(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitdoxygendiscussion(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitDoxygenNote(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDoxygenNote"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11DoxygenNoteV",
+      "text" : "DoxygenNote"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13MarkupVisitorP6ResultQa",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDoxygenNote(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDoxygenNote(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitdoxygennote(_:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitDoxygenParameter(_:)": {
   "abstract" : [

@@ -71,7 +71,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex+Ext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex+Ext.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex+Ext.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -127,6 +127,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-File-Server",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServerProvider",
@@ -139,12 +140,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemRenderNodeProvider\/init(fileSystemProvider:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemRenderNodeProvider\/getProblems()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemRenderNodeProvider\/getRenderNode()"

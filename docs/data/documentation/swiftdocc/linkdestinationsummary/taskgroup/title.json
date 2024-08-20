@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L114"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L114"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

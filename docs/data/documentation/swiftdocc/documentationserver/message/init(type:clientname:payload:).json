@@ -98,7 +98,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServer+Message.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServer+Message.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServer+Message.swift#L55"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

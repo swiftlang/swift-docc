@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderHierarchyTutorial.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchyTutorial.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchyTutorial.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

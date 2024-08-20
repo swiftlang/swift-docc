@@ -33,6 +33,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Type-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsVisualStyle\/canConvertDirective(_:)"

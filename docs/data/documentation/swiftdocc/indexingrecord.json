@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "IndexingRecord.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingRecord.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingRecord.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -95,6 +95,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
@@ -114,6 +115,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Search-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Indexable",
@@ -127,12 +129,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Kind-swift.struct"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/headings",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/kind-swift.property",
@@ -145,18 +151,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/PlatformAvailability"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Location-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Decodable-Implementations",
@@ -888,6 +899,11 @@
   "title" : "TextIndexing",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/textindexing"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

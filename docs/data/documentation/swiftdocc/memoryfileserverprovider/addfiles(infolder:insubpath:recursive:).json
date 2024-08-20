@@ -1,15 +1,23 @@
 {
   "abstract" : [
     {
-      "text" : "Retrieve the data linked to a given path based on the ",
+      "text" : "Adds files from the ",
       "type" : "text"
     },
     {
-      "code" : "baseURL",
+      "code" : "source",
       "type" : "codeVoice"
     },
     {
-      "text" : ".",
+      "text" : " directory to the ",
+      "type" : "text"
+    },
+    {
+      "code" : "destination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " directory in the file server.",
       "type" : "text"
     }
   ],
@@ -105,7 +113,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L244"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/FileServer.swift#L241"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -149,7 +157,7 @@
             },
             {
               "kind" : "internalParam",
-              "text" : "path"
+              "text" : "source"
             },
             {
               "kind" : "text",
@@ -174,7 +182,7 @@
             },
             {
               "kind" : "internalParam",
-              "text" : "subPath"
+              "text" : "destination"
             },
             {
               "kind" : "text",
@@ -219,36 +227,44 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The path.",
+                  "text" : "The source directory to add files from.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "path"
-        }
-      ]
-    },
-    {
-      "content" : [
-        {
-          "anchor" : "return-value",
-          "level" : 2,
-          "text" : "Return Value",
-          "type" : "heading"
+          "name" : "source"
         },
         {
-          "inlineContent" : [
+          "content" : [
             {
-              "text" : "The data matching the url, if possible.",
-              "type" : "text"
+              "inlineContent" : [
+                {
+                  "text" : "The destination directory in the file server to add the files to.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
             }
           ],
-          "type" : "paragraph"
+          "name" : "destination"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Whether or not to recursively add files from the source directory.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "recursive"
         }
-      ],
-      "kind" : "content"
+      ]
     }
   ],
   "schemaVersion" : {
@@ -335,15 +351,23 @@
 "doc://SwiftDocC/documentation/SwiftDocC/MemoryFileServerProvider/addFiles(inFolder:inSubPath:recursive:)": {
   "abstract" : [
     {
-      "text" : "Retrieve the data linked to a given path based on the ",
+      "text" : "Adds files from the ",
       "type" : "text"
     },
     {
-      "code" : "baseURL",
+      "code" : "source",
       "type" : "codeVoice"
     },
     {
-      "text" : ".",
+      "text" : " directory to the ",
+      "type" : "text"
+    },
+    {
+      "code" : "destination",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " directory in the file server.",
       "type" : "text"
     }
   ],

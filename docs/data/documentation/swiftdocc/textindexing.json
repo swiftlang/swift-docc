@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Indexable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Indexable.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Indexable.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -138,6 +138,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Search-Index",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Indexable",
@@ -151,12 +152,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing\/headings"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing\/rawIndexableTextContent(references:)"
       ],

@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasOnlyKnownDirectives.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlyKnownDirectives.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlyKnownDirectives.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -157,12 +157,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives\/init(severityIfFound:allowedDirectives:allowsMarkup:allowsStructuredMarkup:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives\/analyze(_:children:source:for:in:problems:)"
       ],
@@ -352,15 +356,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Children"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -377,15 +373,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Children"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
     },
     {
       "kind" : "externalParam",

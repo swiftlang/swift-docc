@@ -68,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourceLanguage.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L142"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L144"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

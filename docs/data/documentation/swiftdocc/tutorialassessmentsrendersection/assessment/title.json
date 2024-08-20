@@ -57,7 +57,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TutorialAssessmentsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/TutorialAssessmentsRenderSection.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/Sections\/TutorialAssessmentsRenderSection.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

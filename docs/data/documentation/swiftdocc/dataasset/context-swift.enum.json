@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DataAssetManager.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L153"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Bundle%20Assets\/DataAssetManager.swift#L153"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -109,6 +109,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum\/display",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum\/download"
@@ -116,12 +118,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataAsset\/Context-swift.enum\/Equatable-Implementations",

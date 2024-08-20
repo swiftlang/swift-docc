@@ -75,7 +75,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L51"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

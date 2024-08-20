@@ -34,6 +34,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/PageKind\/Kind-swift.enum\/!=(_:_:)"

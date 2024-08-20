@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationExtension.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L42"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/DocumentationExtension.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/append",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/override"
@@ -114,12 +116,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension\/Behavior-swift.enum\/Equatable-Implementations",
@@ -174,7 +179,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],

@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DefaultImplementations.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DefaultImplementations.swift#L45"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/DefaultImplementations.swift#L45"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -224,6 +224,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Relationship-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
@@ -238,6 +239,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultImplementationsSection\/groups",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultImplementationsSection\/implementations"

@@ -65,7 +65,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PrebuiltLocalFileSystemDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/PrebuiltLocalFileSystemDataProvider.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/PrebuiltLocalFileSystemDataProvider.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

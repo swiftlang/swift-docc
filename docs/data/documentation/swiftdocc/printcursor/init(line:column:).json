@@ -65,7 +65,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourcePosition.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/SourcePosition.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/SourcePosition.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

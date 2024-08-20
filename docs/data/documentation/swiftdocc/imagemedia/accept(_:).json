@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ImageMedia.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Media\/ImageMedia.swift#L72"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Media\/ImageMedia.swift#L72"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

@@ -148,7 +148,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorItem.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L83"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorItem.swift#L85"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -354,6 +354,20 @@
             }
           ],
           "name" : "availabilityID"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A reference to a custom image for this navigator item.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "icon"
         }
       ]
     }

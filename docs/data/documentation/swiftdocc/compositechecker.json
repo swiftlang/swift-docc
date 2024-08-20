@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Checker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L267"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checker.swift#L267"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -113,6 +113,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Generic-Checks",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker",
@@ -123,12 +124,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/init(_:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/checkers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/problems"
@@ -136,6 +141,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visit(_:)-7sh2d",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/visitBlockQuote(_:)-1qmop",
@@ -163,6 +170,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/Checker-Implementations",
@@ -416,23 +424,25 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Checkers"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "(some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Checkers"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ")"
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7CheckerP",
+      "text" : "Checker"
+    },
+    {
+      "kind" : "text",
+      "text" : ">)"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/init(_:)",

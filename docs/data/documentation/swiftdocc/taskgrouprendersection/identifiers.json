@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TaskGroupRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/TaskGroupRenderSection.swift#L36"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/TaskGroupRenderSection.swift#L36"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

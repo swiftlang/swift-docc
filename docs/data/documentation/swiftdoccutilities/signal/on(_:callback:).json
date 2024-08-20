@@ -96,7 +96,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Signal.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Utility\/Signal.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Utility\/Signal.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

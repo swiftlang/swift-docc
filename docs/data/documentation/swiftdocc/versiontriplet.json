@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Semantic-Versions",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version"
@@ -114,18 +115,23 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/_(_:_:)-2ckh6"
       ],
       "title" : "Operators"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/init(_:_:_:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet\/Comparable-Implementations",

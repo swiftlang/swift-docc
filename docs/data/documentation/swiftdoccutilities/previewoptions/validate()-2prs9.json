@@ -57,7 +57,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PreviewOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/PreviewOptions.swift#L37"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/PreviewOptions.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderContentMetadata.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderContentMetadata.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderContentMetadata.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

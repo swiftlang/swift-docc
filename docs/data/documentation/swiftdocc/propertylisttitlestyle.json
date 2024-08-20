@@ -1,0 +1,339 @@
+{
+  "abstract" : [
+    {
+      "text" : "A style for how to render links to a property list key or an entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC22PropertyListTitleStyleO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "PropertyListTitleStyle"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "PropertyListTitleStyle"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "PlistDetailsRenderSection.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PlistDetailsRenderSection.swift#L14"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "PropertyListTitleStyle"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "PropertyListTitleStyle"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/useDisplayName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/useRawKey"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Default-Implementations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/propertylisttitlestyle"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle": {
+  "abstract" : [
+    {
+      "text" : "A style for how to render links to a property list key or an entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListTitleStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListTitleStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PropertyListTitleStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/useDisplayName": {
+  "abstract" : [
+    {
+      "text" : "Render links to the property list key using the display name, for example “Enables Data Access”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "useDisplayName"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/useDisplayName",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PropertyListTitleStyle.useDisplayName",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/usedisplayname"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertyListTitleStyle/useRawKey": {
+  "abstract" : [
+    {
+      "text" : "Render links to the property list key using the raw key, for example “com.apple.enableDataAccess”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "useRawKey"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertyListTitleStyle\/useRawKey",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "PropertyListTitleStyle.useRawKey",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertylisttitlestyle\/userawkey"
+}
+}
+}

@@ -105,7 +105,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantContainer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantContainer.swift#L40"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantContainer.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

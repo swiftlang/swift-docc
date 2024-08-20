@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MediaReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/MediaReference.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/MediaReference.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -124,6 +124,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Reference-Types",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference",
@@ -140,6 +141,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MediaReference\/altText",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MediaReference\/asset"

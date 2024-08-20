@@ -96,6 +96,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Semantic-Structures",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering"
@@ -105,6 +106,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Tutorials",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LineHighlighter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IntroRenderSection",
@@ -122,12 +124,14 @@
       "title" : "Tutorials"
     },
     {
+      "anchor" : "Tutorial-Specific-Sections",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference"
       ],
       "title" : "Tutorial Specific Sections"
     },
     {
+      "anchor" : "Tutorials-Hierarchy",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyChapter",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderHierarchyLandmark",

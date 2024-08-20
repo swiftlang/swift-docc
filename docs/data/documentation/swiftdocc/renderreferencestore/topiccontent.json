@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReferenceStore.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L48"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderReferenceStore.swift#L48"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,6 +105,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/TopicContent\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/TopicContent\/init(renderReference:canonicalPath:taskGroups:source:isDocumentationExtensionContent:renderReferenceDependencies:)"
@@ -112,6 +114,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/TopicContent\/canonicalPath",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/TopicContent\/isDocumentationExtensionContent",
@@ -123,6 +127,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceStore\/TopicContent\/encode(to:)"
       ],

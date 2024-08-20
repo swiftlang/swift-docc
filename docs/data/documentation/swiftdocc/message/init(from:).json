@@ -69,7 +69,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Message+Codable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Message+Codable.swift#L21"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Message+Codable.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

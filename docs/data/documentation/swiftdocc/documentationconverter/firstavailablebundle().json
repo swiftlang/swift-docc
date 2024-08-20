@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationConverter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L172"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L180"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

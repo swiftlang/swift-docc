@@ -85,7 +85,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderTutorialsHierarchy.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderTutorialsHierarchy.swift#L49"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderTutorialsHierarchy.swift#L49"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

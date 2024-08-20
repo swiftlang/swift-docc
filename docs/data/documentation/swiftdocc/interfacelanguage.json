@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityIndex+Ext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L71"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/AvailabilityIndex+Ext.swift#L71"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -142,6 +142,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Navigation-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex",
@@ -159,12 +160,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/==(_:_:)"
       ],
       "title" : "Operators"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/init(_:id:mask:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/init(from:)"
@@ -172,6 +177,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/description",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/id-swift.property",
@@ -181,12 +188,16 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/ID-swift.typealias"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/all",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/any",
@@ -199,12 +210,15 @@
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/from(string:)"
       ],
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InterfaceLanguage\/Equatable-Implementations"

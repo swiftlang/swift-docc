@@ -239,7 +239,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],

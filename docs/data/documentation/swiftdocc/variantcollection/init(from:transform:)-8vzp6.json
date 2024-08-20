@@ -137,7 +137,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection+Symbol.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Symbol.swift#L37"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection+Symbol.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

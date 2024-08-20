@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FeatureFlags.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L21"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

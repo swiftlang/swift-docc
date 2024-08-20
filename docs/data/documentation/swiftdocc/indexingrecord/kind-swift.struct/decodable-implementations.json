@@ -34,6 +34,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Kind-swift.struct\/init(from:)-l4xy"

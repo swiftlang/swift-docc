@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DictionaryKey.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/DictionaryKey.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/DictionaryKey.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,12 +92,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DictionaryKey\/init(name:contents:symbol:required:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DictionaryKey\/contents",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DictionaryKey\/name",

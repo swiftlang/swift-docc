@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AutomaticSeeAlso.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticSeeAlso.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticSeeAlso.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/Enabledness-swift.enum\/disabled",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/Enabledness-swift.enum\/enabled"
@@ -114,12 +116,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/Enabledness-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AutomaticSeeAlso\/Enabledness-swift.enum\/Equatable-Implementations",

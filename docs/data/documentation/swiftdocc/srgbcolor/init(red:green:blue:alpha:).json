@@ -106,7 +106,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SRGBColor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/SRGBColor.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/SRGBColor.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

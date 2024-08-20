@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Index.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Index.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Subcommands\/Index.swift#L22"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

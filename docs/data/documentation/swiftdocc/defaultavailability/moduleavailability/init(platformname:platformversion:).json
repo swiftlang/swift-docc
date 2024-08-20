@@ -73,7 +73,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DefaultAvailability.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L52"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DefaultAvailability.swift#L85"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -184,6 +184,10 @@
                 {
                   "code" : "\"13.1.2\"",
                   "type" : "codeVoice"
+                },
+                {
+                  "text" : ".",
+                  "type" : "text"
                 }
               ],
               "type" : "paragraph"

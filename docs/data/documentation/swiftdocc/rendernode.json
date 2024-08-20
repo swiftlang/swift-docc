@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L91"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L91"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -271,8 +271,9 @@
               "type" : "text"
             },
             {
-              "code" : "RenderJSONEncoder\/makeEncoder(prettyPrint:emitVariantOverrides:)",
-              "type" : "codeVoice"
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderJSONEncoder\/makeEncoder(prettyPrint:emitVariantOverrides:assetPrefixComponent:)",
+              "isActive" : true,
+              "type" : "reference"
             },
             {
               "text" : " API to instantiate a JSON encoder that’s configured",
@@ -351,6 +352,7 @@
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Indexable",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer"
@@ -370,6 +372,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
@@ -384,6 +387,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "General",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/schemaVersion",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/kind-swift.property",
@@ -401,6 +405,7 @@
           "type" : "text"
         }
       ],
+      "anchor" : "Reference-Documentation-Data",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/primaryContentSections",
@@ -421,6 +426,7 @@
           "type" : "text"
         }
       ],
+      "anchor" : "Multi-Language-Reference-Documentation-Data",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/abstractVariants",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/primaryContentSectionsVariants",
@@ -439,30 +445,38 @@
           "type" : "text"
         }
       ],
+      "anchor" : "Sample-Code-Data",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/sampleDownload"
       ],
       "title" : "Sample Code Data"
     },
     {
+      "anchor" : "Models",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Variant"
       ],
       "title" : "Models"
     },
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Tag"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/init(identifier:kind:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/assetReferences",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/downloadNotAvailableSummary",
@@ -473,6 +487,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/childrenRelationship(for:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/downloadReferences()",
@@ -483,12 +499,16 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/decode(fromJSON:with:)"
       ],
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/CodingError",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Kind-swift.enum",
@@ -497,6 +517,7 @@
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/Decodable-Implementations",
@@ -612,6 +633,102 @@
   "title" : "RenderHierarchy",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderhierarchy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderJSONEncoder/makeEncoder(prettyPrint:emitVariantOverrides:assetPrefixComponent:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a new JSON encoder for render node values.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "makeEncoder"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "prettyPrint"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "emitVariantOverrides"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "assetPrefixComponent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation11JSONEncoderC",
+      "text" : "JSONEncoder"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderJSONEncoder\/makeEncoder(prettyPrint:emitVariantOverrides:assetPrefixComponent:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "makeEncoder(prettyPrint:emitVariantOverrides:assetPrefixComponent:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderjsonencoder\/makeencoder(prettyprint:emitvariantoverrides:assetprefixcomponent:)"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/RenderMetadata": {
   "abstract" : [
@@ -1043,6 +1160,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -1846,6 +1964,7 @@
       "type" : "text"
     }
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",
@@ -2812,6 +2931,11 @@
   "title" : "VariantContainer",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantcontainer"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 },
 "https://datatracker.ietf.org/doc/html/rfc6902": {
   "identifier" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6902",

@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTTPBodySection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPBodySection.swift#L13"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/HTTPBodySection.swift#L13"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

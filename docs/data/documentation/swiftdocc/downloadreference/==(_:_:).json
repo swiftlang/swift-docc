@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DownloadReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L95"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial\/References\/DownloadReference.swift#L95"
     },
     "role" : "symbol",
     "roleHeading" : "Operator",

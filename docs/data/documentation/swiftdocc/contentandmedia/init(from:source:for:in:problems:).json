@@ -146,7 +146,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ContentAndMedia.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/ContentAndMedia.swift#L78"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/ContentAndMedia.swift#L78"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

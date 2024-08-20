@@ -84,7 +84,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CommunicationBridge.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/CommunicationBridge.swift#L27"
     },
     "required" : true,
     "role" : "symbol",

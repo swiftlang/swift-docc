@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantContainer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantContainer.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantContainer.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -134,6 +134,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Variants",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
@@ -150,6 +151,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer\/getVariantDefaultValue(keyPath:)-9zhkp",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer\/getVariantDefaultValue(keyPath:)-ht8w",

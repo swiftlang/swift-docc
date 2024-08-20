@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The primary action to perform.",
+      "text" : "The content that describe the primary action.",
       "type" : "text"
     }
   ],
@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CallToActionSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/CallToActionSection.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/CallToActionSection.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -171,7 +171,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/CallToActionSection/action": {
   "abstract" : [
     {
-      "text" : "The primary action to perform.",
+      "text" : "The content that describe the primary action.",
       "type" : "text"
     }
   ],

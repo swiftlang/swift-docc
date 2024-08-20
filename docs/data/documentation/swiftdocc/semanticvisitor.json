@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -146,12 +146,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Associated-Types",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/Result"
       ],
       "title" : "Associated Types"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitArticle(_:)",

@@ -33,6 +33,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/validate()"
@@ -40,17 +41,18 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/completionScript(for:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/exit(withError:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/exitCode(for:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/fullMessage(for:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/helpMessage(columns:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/fullMessage(for:columns:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/helpMessage(includeHidden:columns:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/message(for:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/parse(_:)",
-        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/parseOrExit(_:)"
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/parseOrExit(_:)",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/usageString(includeHidden:)"
       ],
       "title" : "Type Methods"
     }
@@ -328,7 +330,7 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/exitcode(for:)"
 },
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/fullMessage(for:)": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/fullMessage(for:columns:)": {
   "abstract" : [
 
   ],
@@ -372,50 +374,7 @@
     },
     {
       "kind" : "text",
-      "text" : ") -> "
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/fullMessage(for:)",
-  "kind" : "symbol",
-  "role" : "symbol",
-  "title" : "fullMessage(for:)",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/fullmessage(for:)"
-},
-"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/helpMessage(columns:)": {
-  "abstract" : [
-
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "static"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "keyword",
-      "text" : "func"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "helpMessage"
-    },
-    {
-      "kind" : "text",
-      "text" : "("
+      "text" : ", "
     },
     {
       "kind" : "externalParam",
@@ -440,12 +399,12 @@
       "text" : "String"
     }
   ],
-  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/helpMessage(columns:)",
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/fullMessage(for:columns:)",
   "kind" : "symbol",
   "role" : "symbol",
-  "title" : "helpMessage(columns:)",
+  "title" : "fullMessage(for:columns:)",
   "type" : "topic",
-  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/helpmessage(columns:)"
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/fullmessage(for:columns:)"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/helpMessage(includeHidden:columns:)": {
   "abstract" : [
@@ -689,6 +648,65 @@
   "title" : "parseOrExit(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/parseorexit(_:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/usageString(includeHidden:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "usageString"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includeHidden"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc\/Index\/usageString(includeHidden:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "usageString(includeHidden:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc\/index\/usagestring(includehidden:)"
 },
 "doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc/Index/validate()": {
   "abstract" : [

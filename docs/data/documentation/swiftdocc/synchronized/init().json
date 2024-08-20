@@ -78,7 +78,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Synchronization.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Synchronization.swift#L104"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Synchronization.swift#L104"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

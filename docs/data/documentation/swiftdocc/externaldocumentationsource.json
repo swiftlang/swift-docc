@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalDocumentationSource.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalDocumentationSource.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalDocumentationSource.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -202,6 +202,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/externalDocumentationSources",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
@@ -210,6 +211,7 @@
       "title" : "Related Documentation"
     },
     {
+      "anchor" : "External-Documentation-Sources",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
@@ -220,6 +222,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource\/resolve(_:)"
       ],

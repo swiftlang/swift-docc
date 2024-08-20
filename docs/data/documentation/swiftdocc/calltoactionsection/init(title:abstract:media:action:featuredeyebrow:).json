@@ -124,7 +124,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CallToActionSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/CallToActionSection.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/CallToActionSection.swift#L40"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -287,6 +287,20 @@
             }
           ],
           "name" : "media"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The content that describe the primary action.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "action"
         },
         {
           "content" : [

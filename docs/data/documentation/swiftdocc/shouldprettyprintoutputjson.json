@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Coding.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Global Variable",

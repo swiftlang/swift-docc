@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L71"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L71"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -112,12 +112,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionErrorInfo\/init(_:note:solutions:rangeAdjustment:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionErrorInfo\/message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionErrorInfo\/note",
@@ -127,6 +131,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceResolutionErrorInfo\/Equatable-Implementations"

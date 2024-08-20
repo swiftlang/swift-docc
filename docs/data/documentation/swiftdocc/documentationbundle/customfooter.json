@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Custom HTML file to use as the footer for rendered output.",
+      "text" : "A custom HTML file to use as the footer for rendered output.",
       "type" : "text"
     }
   ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L88"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L87"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -177,7 +177,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/customFooter": {
   "abstract" : [
     {
-      "text" : "Custom HTML file to use as the footer for rendered output.",
+      "text" : "A custom HTML file to use as the footer for rendered output.",
       "type" : "text"
     }
   ],

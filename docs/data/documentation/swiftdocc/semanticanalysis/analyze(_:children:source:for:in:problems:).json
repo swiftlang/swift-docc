@@ -44,15 +44,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "Children"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "("
       },
       {
         "kind" : "typeIdentifier",
@@ -69,15 +61,25 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "Children"
+        "preciseIdentifier" : "s:ST",
+        "text" : "Sequence"
       },
       {
         "kind" : "text",
-        "text" : ", "
+        "text" : "<any "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:8Markdown6MarkupP",
+        "text" : "Markup"
+      },
+      {
+        "kind" : "text",
+        "text" : ">, "
       },
       {
         "kind" : "externalParam",
@@ -176,7 +178,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticAnalysis.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/SemanticAnalysis.swift#L47"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/SemanticAnalysis.swift#L47"
     },
     "required" : true,
     "role" : "symbol",
@@ -209,15 +211,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Children"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -250,15 +244,25 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
-              "text" : "Children"
+              "preciseIdentifier" : "s:ST",
+              "text" : "Sequence"
             },
             {
               "kind" : "text",
-              "text" : ", "
+              "text" : "<any "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:8Markdown6MarkupP",
+              "text" : "Markup"
+            },
+            {
+              "kind" : "text",
+              "text" : ">, "
             },
             {
               "kind" : "externalParam",
@@ -368,57 +372,6 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC16SemanticAnalysisP6ResultQa",
               "text" : "Result"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Children"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST",
-              "text" : "Sequence"
-            },
-            {
-              "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Children"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " == any "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:8Markdown6MarkupP",
-              "text" : "Markup"
             }
           ]
         }
@@ -881,15 +834,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Children"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -906,15 +851,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Children"
+      "preciseIdentifier" : "s:ST",
+      "text" : "Sequence"
     },
     {
       "kind" : "text",
-      "text" : ", "
+      "text" : "<any "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
     },
     {
       "kind" : "externalParam",

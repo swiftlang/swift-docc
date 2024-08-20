@@ -362,7 +362,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationConverter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L128"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L132"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -730,111 +730,6 @@
       "kind" : "declarations"
     },
     {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "A file persistence manager",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "fileManager"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The external IDs of the documentation nodes to convert.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "externalIDsToConvert"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "The paths of the documentation nodes to convert.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "documentPathsToConvert"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Options to configure how the converter discovers documentation bundles.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "bundleDiscoveryOptions"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Whether the documentation converter should include",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "text" : "source file location metadata in any render nodes representing symbols it creates.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "emitSymbolSourceFileURIs"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "Identifiers and access level requirements for symbols",
-                  "type" : "text"
-                },
-                {
-                  "text" : " ",
-                  "type" : "text"
-                },
-                {
-                  "text" : "that have an expanded version of their documentation page if the access level requirement is met.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "symbolIdentifiersWithExpandedDocumentation"
-        }
-      ]
-    },
-    {
       "content" : [
         {
           "anchor" : "discussion",
@@ -890,14 +785,6 @@
                     {
                       "text" : "currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.",
                       "type" : "text"
-                    },
-                    {
-                      "text" : " ",
-                      "type" : "text"
-                    },
-                    {
-                      "text" : "that may be encountered while processing symbol graph files.",
-                      "type" : "text"
                     }
                   ],
                   "type" : "paragraph"
@@ -944,6 +831,185 @@
                   "inlineContent" : [
                     {
                       "text" : "dataProvider: A data provider to use when registering bundles.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "externalIDsToConvert: The external IDs of the documentation nodes to convert.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "documentPathsToConvert: The paths of the documentation nodes to convert.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "emitSymbolSourceFileURIs: Whether the documentation converter should include",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "source file location metadata in any render nodes representing symbols it creates.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                },
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "Before passing ",
+                      "type" : "text"
+                    },
+                    {
+                      "code" : "true",
+                      "type" : "codeVoice"
+                    },
+                    {
+                      "text" : " please confirm that your use case doesn’t include public",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "distribution of any created render nodes as there are filesystem privacy and security",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "concerns with distributing this data.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "emitSymbolAccessLevels: Whether the documentation converter should include access level information for symbols.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "sourceRepository: The source repository where the documentation’s sources are hosted.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "isCancelled: A wrapped boolean value used for the caller to cancel converting the documentation.",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : " ",
+                      "type" : "text"
+                    },
+                    {
+                      "text" : "that have an expanded version of their documentation page if the access level requirement is met.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "diagnosticEngine: The diagnostic engine that collects any problems encountered from converting the documentation.",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "symbolIdentifiersWithExpandedDocumentation: Identifiers and access level requirements for symbols",
+                      "type" : "text"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "text" : "experimentalModifyCatalogWithGeneratedCuration: Whether the documentation converter should write documentation extension files containing markdown representations of DocC’s automatic curation into the source documentation catalog.",
                       "type" : "text"
                     }
                   ],

@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Steps.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Steps.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/Steps\/Steps.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

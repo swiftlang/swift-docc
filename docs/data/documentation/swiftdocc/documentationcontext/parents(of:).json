@@ -80,7 +80,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L2586"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L2750"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -205,6 +205,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Getting-documentation-relationships",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/children(of:kind:)"

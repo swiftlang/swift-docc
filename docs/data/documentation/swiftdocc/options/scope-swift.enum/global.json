@@ -42,7 +42,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Options.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/Options.swift#L74"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/Options.swift#L74"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

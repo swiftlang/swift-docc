@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VolumeRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/VolumeRenderSection.swift#L71"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Sections\/VolumeRenderSection.swift#L71"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

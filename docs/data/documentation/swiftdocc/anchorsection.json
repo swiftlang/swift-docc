@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AnchorSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/AnchorSection.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/AnchorSection.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,6 +92,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnchorSection\/reference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnchorSection\/title"

@@ -1,7 +1,23 @@
 {
   "abstract" : [
     {
-      "text" : "The platform version that this page applies to.",
+      "text" : "The semantic version (major",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "minor",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "patch) when you introduced this API or documentation page.",
       "type" : "text"
     }
   ],
@@ -20,7 +36,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC8MetadataC12AvailabilityC10introducedSSvp",
+    "externalID" : "s:9SwiftDocC8MetadataC12AvailabilityC10introducedAA15SemanticVersionVvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -40,8 +56,8 @@
       },
       {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:SS",
-        "text" : "String"
+        "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+        "text" : "SemanticVersion"
       }
     ],
     "modules" : [
@@ -51,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Availability.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L95"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L94"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -100,9 +116,10 @@
               "text" : ": "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion",
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SS",
-              "text" : "String"
+              "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+              "text" : "SemanticVersion"
             },
             {
               "kind" : "text",
@@ -237,7 +254,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],
@@ -271,7 +288,23 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/introduced": {
   "abstract" : [
     {
-      "text" : "The platform version that this page applies to.",
+      "text" : "The semantic version (major",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "minor",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "patch) when you introduced this API or documentation page.",
       "type" : "text"
     }
   ],
@@ -294,8 +327,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
+      "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+      "text" : "SemanticVersion"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/introduced",
@@ -304,6 +337,40 @@
   "title" : "introduced",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata\/availability\/introduced"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion": {
+  "abstract" : [
+    {
+      "text" : "A semantic version.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVersion"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVersion"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SemanticVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticversion"
 }
 }
 }

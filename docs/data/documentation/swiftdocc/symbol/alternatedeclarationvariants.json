@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "The symbols alternate declarations in each language variant the symbol is available in.",
+      "text" : "The symbol’s alternate declarations in each language variant the symbol is available in.",
       "type" : "text"
     }
   ],
@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L149"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L149"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -318,7 +318,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Symbol/alternateDeclarationVariants": {
   "abstract" : [
     {
-      "text" : "The symbols alternate declarations in each language variant the symbol is available in.",
+      "text" : "The symbol’s alternate declarations in each language variant the symbol is available in.",
       "type" : "text"
     }
   ],

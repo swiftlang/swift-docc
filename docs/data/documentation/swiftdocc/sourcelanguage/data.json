@@ -60,7 +60,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourceLanguage.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L128"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L130"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

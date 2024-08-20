@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LocalFileSystemDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/LocalFileSystemDataProvider.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/LocalFileSystemDataProvider.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -109,6 +109,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "File-Data-Providers",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemProvider",
@@ -120,12 +121,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/init(rootURL:allowArbitraryCatalogDirectories:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/allowArbitraryCatalogDirectories",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/fileSystem",
@@ -135,12 +140,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/contentsOfURL(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LocalFileSystemDataProvider\/DocumentationWorkspaceDataProvider-Implementations"
@@ -373,7 +381,10 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LocalFileSystemDataProvider/allowArbitraryCatalogDirectories": {
   "abstract" : [
-
+    {
+      "text" : "Whether to consider the root location as a documentation bundle if the data provider doesn’t discover another bundle in the hierarchy from the root location.",
+      "type" : "text"
+    }
   ],
   "fragments" : [
     {

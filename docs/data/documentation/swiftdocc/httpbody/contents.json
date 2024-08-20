@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HTTPBody.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/HTTPBody.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/HTTPBody.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

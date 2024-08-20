@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PossibleValuesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -166,12 +166,15 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/NamedValue\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/NamedValue\/Equatable-Implementations"

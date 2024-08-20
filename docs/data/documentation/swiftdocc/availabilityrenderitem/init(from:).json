@@ -68,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AvailabilityRenderMetadataItem.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AvailabilityRenderMetadataItem.swift#L95"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AvailabilityRenderMetadataItem.swift#L94"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

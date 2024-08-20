@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Chapter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Volume\/Chapter\/Chapter.swift#L72"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Volume\/Chapter\/Chapter.swift#L72"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

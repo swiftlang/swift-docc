@@ -37,6 +37,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Diagnostics-and-Analysis",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
@@ -47,6 +48,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Generic-Checks",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker",
@@ -55,6 +57,7 @@
       "title" : "Generic Checks"
     },
     {
+      "anchor" : "Predefined-Checks",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractContainsFormattedTextOnly",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DuplicateTopicsSections",

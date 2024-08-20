@@ -73,7 +73,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Return.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Return.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Return.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -154,6 +154,20 @@
             }
           ],
           "name" : "contents"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The text range where this return value was parsed.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "range"
         }
       ]
     }

@@ -1,0 +1,414 @@
+{
+  "abstract" : [
+    {
+      "text" : "Inherited from ",
+      "type" : "text"
+    },
+    {
+      "code" : "ExpressibleByArgument.allValueStrings",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation\/ExpressibleByArgument-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation\/allValueStrings-6d3df"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "conformance" : {
+      "availabilityPrefix" : [
+        {
+          "text" : "Available when",
+          "type" : "text"
+        }
+      ],
+      "conformancePrefix" : [
+        {
+          "text" : "Conforms when",
+          "type" : "text"
+        }
+      ],
+      "constraints" : [
+        {
+          "code" : "Self",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : " conforms to ",
+          "type" : "text"
+        },
+        {
+          "code" : "CaseIterable",
+          "type" : "codeVoice"
+        },
+        {
+          "text" : ".",
+          "type" : "text"
+        }
+      ]
+    },
+    "extendedModule" : "ArgumentParser",
+    "externalID" : "s:14ArgumentParser013ExpressibleByA0PAAs12CaseIterableRzrlE15allValueStringsSaySSGvpZ::SYNTHESIZED::s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V21BitFlagRepresentationO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "allValueStrings"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "ArgumentParser"
+        ]
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "ExpressibleByArgument.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-argument-parser\/Sources\/ArgumentParser\/Parsable%20Types\/ExpressibleByArgument.swift#L50"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Type Property",
+    "symbolKind" : "property",
+    "title" : "allValueStrings"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "allValueStrings"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation\/allvaluestrings-6d3df"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "KindFilterOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions/BitFlagRepresentation": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V",
+      "text" : "KindFilterOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V21BitFlagRepresentationO",
+      "text" : "BitFlagRepresentation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BitFlagRepresentation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions/BitFlagRepresentation/ExpressibleByArgument-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation\/ExpressibleByArgument-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ExpressibleByArgument Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation\/expressiblebyargument-implementations"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions/BitFlagRepresentation/allValueStrings-6d3df": {
+  "abstract" : [
+
+  ],
+  "conformance" : {
+    "availabilityPrefix" : [
+      {
+        "text" : "Available when",
+        "type" : "text"
+      }
+    ],
+    "conformancePrefix" : [
+      {
+        "text" : "Conforms when",
+        "type" : "text"
+      }
+    ],
+    "constraints" : [
+      {
+        "code" : "Self",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : " conforms to ",
+        "type" : "text"
+      },
+      {
+        "code" : "CaseIterable",
+        "type" : "codeVoice"
+      },
+      {
+        "text" : ".",
+        "type" : "text"
+      }
+    ]
+  },
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "allValueStrings"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation\/allValueStrings-6d3df",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "allValueStrings",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation\/allvaluestrings-6d3df"
+}
+}
+}

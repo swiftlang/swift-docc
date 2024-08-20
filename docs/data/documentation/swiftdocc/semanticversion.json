@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVersion.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/SemanticVersion.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/SemanticVersion.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -115,6 +115,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/SL",
         "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
@@ -135,6 +136,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/_(_:_:)-2zi67"
+      ],
+      "title" : "Operators"
+    },
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/init(major:minor:patch:prerelease:buildMetadata:)"
@@ -142,6 +153,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/buildMetadata",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/description",
@@ -153,8 +166,10 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/Comparable-Implementations",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/Equatable-Implementations"
       ],
       "title" : "Default Implementations"
@@ -177,6 +192,11 @@
 "doc://SwiftDocC/SE": {
   "identifier" : "doc:\/\/SwiftDocC\/SE",
   "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SL": {
+  "identifier" : "doc:\/\/SwiftDocC\/SL",
+  "title" : "Swift.Comparable",
   "type" : "unresolvable"
 },
 "doc://SwiftDocC/SQ": {
@@ -251,6 +271,17 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticversion"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/Comparable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/Comparable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Comparable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticversion\/comparable-implementations"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/Equatable-Implementations": {
   "abstract" : [
 
@@ -261,6 +292,73 @@
   "title" : "Equatable Implementations",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/semanticversion\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/_(_:_:)-2zi67": {
+  "abstract" : [
+    {
+      "text" : "Compare one semantic version with another.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "<"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+      "text" : "SemanticVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+      "text" : "SemanticVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVersion\/_(_:_:)-2zi67",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "<(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticversion\/_(_:_:)-2zi67"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/SemanticVersion/buildMetadata": {
   "abstract" : [

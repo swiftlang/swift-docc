@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertRequestContextWrapper.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequestContextWrapper.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequestContextWrapper.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -153,6 +153,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequestContextWrapper\/init(convertRequestIdentifier:payload:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequestContextWrapper\/init(from:)"
@@ -160,6 +162,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequestContextWrapper\/convertRequestIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequestContextWrapper\/payload"

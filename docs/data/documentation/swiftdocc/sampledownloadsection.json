@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SampleDownloadSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/SampleDownloadSection.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/SampleDownloadSection.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -144,6 +144,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Main-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection",
@@ -161,6 +162,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/init(action:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/init(from:)"
@@ -168,6 +171,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/action",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/kind"
@@ -175,18 +180,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/CodingKeys"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection\/Equatable-Implementations",

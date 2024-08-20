@@ -44,7 +44,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Relationships.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Relationships.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/Relationships.swift#L55"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

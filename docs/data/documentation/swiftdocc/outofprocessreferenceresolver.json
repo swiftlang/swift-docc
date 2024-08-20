@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L51"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L51"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -219,7 +219,8 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalSymbolResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackAssetResolver",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FallbackReferenceResolver",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver"
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
+        "doc:\/\/SwiftDocC\/s8CopyableP"
       ],
       "kind" : "relationships",
       "title" : "Conforms To",
@@ -236,6 +237,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GlobalExternalSymbolResolver",
@@ -247,6 +249,7 @@
       "title" : "Related Documentation"
     },
     {
+      "anchor" : "External-Documentation-Sources",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",
@@ -257,12 +260,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ResolvedInformation"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/init(bundleIdentifier:server:convertRequestIdentifier:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/init(processLocation:errorOutputHandler:)"
@@ -270,18 +277,24 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/bundleIdentifier"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/resolve(_:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/Request",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/Response"
@@ -289,6 +302,7 @@
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/OutOfProcessReferenceResolver\/ExternalReferenceResolver-Implementations",
@@ -1037,6 +1051,11 @@
   "title" : "resolve(_:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/outofprocessreferenceresolver\/resolve(_:)"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

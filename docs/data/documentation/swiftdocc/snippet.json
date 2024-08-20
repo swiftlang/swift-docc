@@ -40,7 +40,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Snippet.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Snippets\/Snippet.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -113,6 +113,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Snippet\/originalMarkup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Snippet\/path",
@@ -121,12 +123,15 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Snippet\/introducedVersion"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Snippet\/DirectiveConvertible-Implementations"

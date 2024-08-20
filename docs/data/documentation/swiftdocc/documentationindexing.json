@@ -68,6 +68,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Search-Index",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Indexable",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TextIndexing",
@@ -79,6 +80,7 @@
       "title" : "Search Index"
     },
     {
+      "anchor" : "Navigation-Index",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorIndex",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
@@ -88,6 +90,7 @@
       "title" : "Navigation Index"
     },
     {
+      "anchor" : "Navigation-Metadata",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityIndex",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeDataExtractor",

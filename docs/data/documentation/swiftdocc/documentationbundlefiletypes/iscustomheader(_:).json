@@ -68,7 +68,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundleFileTypes.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundleFileTypes.swift#L68"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundleFileTypes.swift#L68"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

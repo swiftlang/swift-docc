@@ -91,7 +91,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L217"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L217"
     },
     "role" : "symbol",
     "roleHeading" : "Case",
@@ -281,7 +281,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error": {
   "abstract" : [
     {
-      "text" : "An error that occured during the application of a JSON patch.",
+      "text" : "An error that occurred during the application of a JSON patch.",
       "type" : "text"
     }
   ],

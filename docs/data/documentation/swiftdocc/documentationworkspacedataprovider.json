@@ -52,7 +52,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationWorkspaceDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspaceDataProvider.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspaceDataProvider.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -110,6 +110,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Workspaces",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspace"
@@ -119,12 +120,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider\/identifier"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider\/bundles()",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceDataProvider\/bundles(options:)",

@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode+Coding.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L150"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/RenderNode+Coding.swift#L150"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

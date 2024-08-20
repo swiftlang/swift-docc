@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ChildMarkdownWrapper.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/ChildMarkdownWrapper.swift#L59"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/ChildMarkdownWrapper.swift#L59"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -192,6 +192,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ChildMarkup\/wrappedValue"
       ],

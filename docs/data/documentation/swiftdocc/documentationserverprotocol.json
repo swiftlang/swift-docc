@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServerProtocol.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerProtocol.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerProtocol.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -102,6 +102,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerProtocol\/process(_:completion:)"
       ],

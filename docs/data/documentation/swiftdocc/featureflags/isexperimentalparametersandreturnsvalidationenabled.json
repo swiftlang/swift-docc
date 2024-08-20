@@ -1,8 +1,13 @@
 {
-  "abstract" : [
+  "deprecationSummary" : [
     {
-      "text" : "Whether or not experimental support validating parameters and return value documentation is enabled.",
-      "type" : "text"
+      "inlineContent" : [
+        {
+          "text" : "Use 'isParametersAndReturnsValidationEnabled' instead. This deprecated API will be removed after 6.1 is released",
+          "type" : "text"
+        }
+      ],
+      "type" : "paragraph"
     }
   ],
   "hierarchy" : {
@@ -49,9 +54,12 @@
         "name" : "SwiftDocC"
       }
     ],
+    "platforms" : [
+
+    ],
     "remoteSource" : {
       "fileName" : "FeatureFlags.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/FeatureFlags.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -89,6 +97,26 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:Sb",
               "text" : "Bool"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
             }
           ]
         }
@@ -168,11 +196,9 @@
 },
 "doc://SwiftDocC/documentation/SwiftDocC/FeatureFlags/isExperimentalParametersAndReturnsValidationEnabled": {
   "abstract" : [
-    {
-      "text" : "Whether or not experimental support validating parameters and return value documentation is enabled.",
-      "type" : "text"
-    }
+
   ],
+  "deprecated" : true,
   "fragments" : [
     {
       "kind" : "keyword",

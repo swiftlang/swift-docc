@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExternalMetadata.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L69"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/ExternalMetadata.swift#L69"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -93,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Bundle-Metadata",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability",
@@ -103,6 +104,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/currentPlatforms",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/diagnosticLevel",

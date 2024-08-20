@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AutomaticSeeAlso.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticSeeAlso.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Options\/AutomaticSeeAlso.swift#L30"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

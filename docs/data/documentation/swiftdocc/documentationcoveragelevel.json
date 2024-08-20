@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationCoverageOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L59"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L59"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -107,6 +107,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageLevel\/brief",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageLevel\/detailed",
@@ -115,12 +117,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageLevel\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageLevel\/Equatable-Implementations",

@@ -298,7 +298,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L603"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L614"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -717,6 +717,34 @@
             }
           ],
           "name" : "declarationFragments"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Images that are used to represent the summarized element.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "topicImages"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "References used in the content of the summarized element.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "references"
         },
         {
           "content" : [

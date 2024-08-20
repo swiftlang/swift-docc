@@ -43,15 +43,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "OutputConsumer"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "("
       },
       {
         "kind" : "externalParam",
@@ -59,11 +51,12 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "OutputConsumer"
+        "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
+        "text" : "ConvertOutputConsumer"
       },
       {
         "kind" : "text",
@@ -111,7 +104,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationConverter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L181"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L189"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -151,15 +144,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "OutputConsumer"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -167,11 +152,13 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": some "
             },
             {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
               "kind" : "typeIdentifier",
-              "text" : "OutputConsumer"
+              "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
+              "text" : "ConvertOutputConsumer"
             },
             {
               "kind" : "text",
@@ -211,29 +198,7 @@
             },
             {
               "kind" : "text",
-              "text" : "]) "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "OutputConsumer"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
-            },
-            {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertOutputConsumer",
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
-              "text" : "ConvertOutputConsumer"
+              "text" : "])"
             }
           ]
         }
@@ -364,15 +329,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "OutputConsumer"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "externalParam",
@@ -380,11 +337,12 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "OutputConsumer"
+      "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
+      "text" : "ConvertOutputConsumer"
     },
     {
       "kind" : "text",

@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticConsumer.swift#L30"
     },
     "required" : true,
     "role" : "symbol",

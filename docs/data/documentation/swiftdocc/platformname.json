@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PlatformName.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/PlatformName.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/PlatformName.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,12 +105,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/==(_:_:)"
       ],
       "title" : "Operators"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/init(rawValue:aliases:displayName:)"
@@ -118,6 +122,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/aliases",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/displayName",
@@ -126,17 +132,22 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/catalyst",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/catalystOSAppExtension",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/iOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/iOSAppExtension",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/iPadOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/linux",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/macOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/macOSAppExtension",
@@ -144,12 +155,14 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/swift",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/tvOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/tvOSAppExtension",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/visionOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/watchOS",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/watchOSAppExtension"
       ],
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/Equatable-Implementations"
@@ -635,6 +648,51 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname\/iosappextension"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/iPadOS": {
+  "abstract" : [
+    {
+      "text" : "The iPad platform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "iPadOS"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/iPadOS",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "iPadOS",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformname\/ipados"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/init(from:)": {
   "abstract" : [
 
@@ -1098,6 +1156,51 @@
   "title" : "tvOSAppExtension",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/platformname\/tvosappextension"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformName/visionOS": {
+  "abstract" : [
+    {
+      "text" : "Apple’s visionOS operating system.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visionOS"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformName\/visionOS",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visionOS",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformname\/visionos"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/PlatformName/watchOS": {
   "abstract" : [

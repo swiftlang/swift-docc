@@ -329,7 +329,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertRequest.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L116"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L118"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -681,6 +681,34 @@
             {
               "inlineContent" : [
                 {
+                  "text" : "Feature flags to enable when performing this convert request.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "featureFlags"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The external IDs of the symbols to convert.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "externalIDsToConvert"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
                   "text" : "The paths of the documentation nodes to convert.",
                   "type" : "text"
                 }
@@ -767,20 +795,6 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Whether the conversion’s rendered documentation should include source file location metadata.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "emitSymbolSourceFileURIs"
-        },
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
                   "text" : "The mapping of external symbol identifiers to",
                   "type" : "text"
                 },
@@ -797,6 +811,20 @@
             }
           ],
           "name" : "knownDisambiguatedSymbolPathComponents"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Whether the conversion’s rendered documentation should include source file location metadata.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "emitSymbolSourceFileURIs"
         },
         {
           "content" : [

@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticEngine.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticEngine.swift#L73"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticEngine.swift#L73"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

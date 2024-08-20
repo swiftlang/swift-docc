@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderSection.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderSection.swift#L12"
     },
     "required" : true,
     "role" : "symbol",

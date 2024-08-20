@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "GlobalExternalSymbolResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/GlobalExternalSymbolResolver.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/GlobalExternalSymbolResolver.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -183,12 +183,14 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/globalExternalSymbolResolver"
       ],
       "title" : "Related Documentation"
     },
     {
+      "anchor" : "External-Documentation-Sources",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalDocumentationSource",

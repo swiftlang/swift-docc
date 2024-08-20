@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationCoverageOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L112"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L112"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

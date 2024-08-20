@@ -60,7 +60,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationCoverageOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L45"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Coverage\/DocumentationCoverageOptions.swift#L45"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -125,7 +125,7 @@
         {
           "inlineContent" : [
             {
-              "text" : "which will return ",
+              "text" : "Which will return ",
               "type" : "text"
             },
             {

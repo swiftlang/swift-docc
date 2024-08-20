@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LogHandle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LogHandle.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LogHandle.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -122,12 +122,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Classes",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/LogStorage"
       ],
       "title" : "Classes"
     },
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/file(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/memory(_:)",
@@ -138,6 +142,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LogHandle\/write(_:)"
       ],

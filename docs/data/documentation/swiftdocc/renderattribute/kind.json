@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AttributesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L58"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L58"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -109,6 +109,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/allowedTypes",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/allowedValues",
@@ -123,12 +125,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute\/Kind\/Equatable-Implementations",

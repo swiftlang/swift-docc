@@ -72,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PresentationURLGenerator.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

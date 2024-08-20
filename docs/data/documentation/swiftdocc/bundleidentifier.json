@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L60"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L60"
     },
     "role" : "symbol",
     "roleHeading" : "Type Alias",
@@ -139,6 +139,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Bundles",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",

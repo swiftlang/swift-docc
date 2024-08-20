@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L64"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L64"
     },
     "required" : true,
     "role" : "symbol",

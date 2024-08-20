@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Version.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Version.swift#L12"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Version.swift#L12"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -112,6 +112,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Semantic-Versions",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VersionTriplet"
@@ -121,6 +122,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/init(arrayLiteral:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/init(from:)",
@@ -129,6 +132,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/description",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/endIndex",
@@ -137,18 +142,23 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Subscripts",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/subscript(_:)"
       ],
       "title" : "Subscripts"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Version\/BidirectionalCollection-Implementations",

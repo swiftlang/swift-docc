@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'summaryLevel' instead. This deprecated API will be removed after 5.12 is released",
+          "text" : "Use 'summaryLevel' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationCoverageOptionsArgument.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationCoverageOptionsArgument.swift#L46"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationCoverageOptionsArgument.swift#L46"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

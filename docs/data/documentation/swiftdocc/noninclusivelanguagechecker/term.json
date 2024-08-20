@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NonInclusiveLanguageChecker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonInclusiveLanguageChecker.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Checker\/Checkers\/NonInclusiveLanguageChecker.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -105,12 +105,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/Term\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/Term\/expression",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NonInclusiveLanguageChecker\/Term\/message",

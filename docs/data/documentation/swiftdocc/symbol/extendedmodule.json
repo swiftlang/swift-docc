@@ -9,7 +9,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 5.12 is released",
+          "text" : "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -69,7 +69,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Symbol.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L514"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Symbol\/Symbol.swift#L597"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

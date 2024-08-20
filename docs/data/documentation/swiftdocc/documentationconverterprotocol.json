@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationConverter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationConverter.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -122,6 +122,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Related-Documentation",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationConverter"
       ],
@@ -130,6 +131,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationConverterProtocol\/convert(outputConsumer:)"
       ],
@@ -254,15 +257,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "OutputConsumer"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "externalParam",
@@ -270,11 +265,12 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "OutputConsumer"
+      "preciseIdentifier" : "s:9SwiftDocC21ConvertOutputConsumerP",
+      "text" : "ConvertOutputConsumer"
     },
     {
       "kind" : "text",

@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationNode.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/DocumentationNode.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -139,6 +139,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Section",
@@ -152,12 +153,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Kind-swift.struct"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:kind:sourceLanguage:availableSourceLanguages:name:markup:semantic:platformNames:isVirtual:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/init(reference:symbol:platformName:moduleReference:article:engine:)"
@@ -165,6 +170,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/availableSourceLanguages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/availableVariantTraits",
@@ -185,18 +192,24 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/externallyLinkableElementSummaries(context:renderNode:includeTaskGroups:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Tags-swift.typealias"
       ],
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Error",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode\/Name-swift.enum"

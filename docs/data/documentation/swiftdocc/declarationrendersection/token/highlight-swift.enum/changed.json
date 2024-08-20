@@ -1,0 +1,279 @@
+{
+  "abstract" : [
+    {
+      "text" : "A highlight representing generalized change, not specifically added or removed.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Highlight-swift.enum"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Highlight-swift.enum\/changed"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV9HighlightO7changedyA2GmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "changed"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "DeclarationsRenderSection.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L124"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "DeclarationRenderSection.Token.Highlight.changed"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "changed"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum\/changed"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a symbol declaration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token": {
+  "abstract" : [
+    {
+      "text" : "A lexical token to use in declarations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Token"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Token"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Highlight-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "The kinds of highlights that can be applied to a token.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Highlight"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Highlight-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Highlight"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Highlight",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Highlight-swift.enum/changed": {
+  "abstract" : [
+    {
+      "text" : "A highlight representing generalized change, not specifically added or removed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "changed"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Highlight-swift.enum\/changed",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Highlight.changed",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/highlight-swift.enum\/changed"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolReferenceRendering": {
+  "abstract" : [
+    {
+      "text" : "Render rich reference documentation for programming symbols.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Symbol Reference Rendering",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolreferencerendering"
+}
+}
+}

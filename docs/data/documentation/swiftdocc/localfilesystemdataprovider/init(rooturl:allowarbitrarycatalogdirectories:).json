@@ -82,7 +82,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LocalFileSystemDataProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/LocalFileSystemDataProvider.swift#L26"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/LocalFileSystemDataProvider.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -167,6 +167,20 @@
             }
           ],
           "name" : "rootURL"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Configures the data provider to consider the root location as a documentation bundle if it doesn’t discover another bundle.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "allowArbitraryCatalogDirectories"
         }
       ]
     }

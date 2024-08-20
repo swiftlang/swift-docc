@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AttributesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L72"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/AttributesRenderSection.swift#L72"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

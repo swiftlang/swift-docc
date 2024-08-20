@@ -45,7 +45,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PreviewOptions.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/PreviewOptions.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/PreviewOptions.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

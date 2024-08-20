@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderTile.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -109,6 +109,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/Identifier-swift.enum\/documentation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/Identifier-swift.enum\/downloads",
@@ -120,12 +122,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/Identifier-swift.enum\/init(rawValue:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTile\/Identifier-swift.enum\/Equatable-Implementations",

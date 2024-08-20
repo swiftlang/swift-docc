@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L191"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L209"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -104,6 +104,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys\/languages",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys\/otherDeclarations",
@@ -113,6 +115,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys\/init(intValue:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys\/init(stringValue:)"
@@ -120,6 +124,7 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/CodingKeys\/CodingKey-Implementations",

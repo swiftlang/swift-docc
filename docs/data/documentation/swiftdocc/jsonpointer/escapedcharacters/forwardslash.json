@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPointer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPointer.swift#L55"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPointer.swift#L55"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Identifier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L580"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Identifier.swift#L580"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,6 +104,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode",
@@ -117,6 +118,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourceReference\/bundleIdentifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourceReference\/path"
@@ -124,6 +127,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ResourceReference\/Equatable-Implementations"

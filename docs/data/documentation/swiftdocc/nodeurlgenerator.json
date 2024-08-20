@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NodeURLGenerator.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/NodeURLGenerator.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -87,18 +87,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/init(baseURL:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/baseURL"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:fileSafePath:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/urlForReference(_:lowercased:)"
@@ -106,6 +112,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeReferencePath(_:lowercased:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/fileSafeURL(_:)",
@@ -114,6 +122,8 @@
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NodeURLGenerator\/Path"
       ],

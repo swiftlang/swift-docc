@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticAnalysis.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/SemanticAnalysis.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/SemanticAnalysis.swift#L34"
     },
     "required" : true,
     "role" : "symbol",

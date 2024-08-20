@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "MediaReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/MediaReference.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/MediaReference.swift#L20"
     },
     "required" : true,
     "role" : "symbol",

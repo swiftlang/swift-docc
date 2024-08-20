@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TutorialSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/TutorialSection.swift#L107"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tasks\/TutorialSection.swift#L107"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

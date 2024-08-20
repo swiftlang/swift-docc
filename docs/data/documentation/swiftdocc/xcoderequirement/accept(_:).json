@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "XcodeRequirement.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/XcodeRequirement.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/XcodeRequirement.swift#L39"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

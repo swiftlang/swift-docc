@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "IndexingRecord.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingRecord.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/IndexingRecord.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -150,6 +150,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
@@ -169,6 +170,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Location-swift.enum\/contained(_:inPage:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Location-swift.enum\/topLevelPage(_:)"
@@ -176,6 +179,7 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/IndexingRecord\/Location-swift.enum\/Decodable-Implementations",
@@ -604,6 +608,11 @@
   "title" : "TutorialSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/tutorialsection"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

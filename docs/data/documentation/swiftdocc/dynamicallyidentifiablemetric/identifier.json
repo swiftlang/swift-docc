@@ -44,7 +44,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Metrics.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Metrics.swift#L28"
     },
     "required" : true,
     "role" : "symbol",

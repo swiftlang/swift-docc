@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodeColors.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -86,6 +86,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
@@ -105,6 +106,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-Bridge",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
@@ -120,6 +122,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/init(background:text:keyword:identifier:parameterName:numberLiteral:stringLiteral:typeAnnotation:docComment:docCommentField:comment:commentURL:buildConfigKeyword:buildConfigId:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/init(colors:)"
@@ -127,6 +131,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/background",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/buildConfigId",
@@ -148,6 +154,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Decodable-Implementations",
@@ -1492,6 +1499,11 @@
   "title" : "WebKitCommunicationBridge",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/webkitcommunicationbridge"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

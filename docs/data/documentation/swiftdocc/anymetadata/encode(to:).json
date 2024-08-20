@@ -77,7 +77,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AnyMetadata.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/AnyMetadata.swift#L45"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/AnyMetadata.swift#L45"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

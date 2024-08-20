@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNode.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L130"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode.swift#L130"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -115,6 +115,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "General",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/schemaVersion",

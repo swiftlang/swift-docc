@@ -72,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "WebKitCommunicationBridge.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/WebKitCommunicationBridge.swift#L25"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/WebKitCommunicationBridge.swift#L25"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

@@ -56,7 +56,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderTile.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L66"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorials%20Overview\/Resources\/RenderTile.swift#L66"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

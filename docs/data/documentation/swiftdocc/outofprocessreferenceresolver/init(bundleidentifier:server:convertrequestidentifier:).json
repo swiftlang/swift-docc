@@ -93,7 +93,7 @@
     ],
     "remoteSource" : {
       "fileName" : "OutOfProcessReferenceResolver.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L91"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/OutOfProcessReferenceResolver.swift#L92"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -210,6 +210,20 @@
             }
           ],
           "name" : "server"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The identifier that the resolver will use for convert requests that it sends to the server.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "convertRequestIdentifier"
         }
       ]
     },

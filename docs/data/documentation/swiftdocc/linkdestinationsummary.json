@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LinkDestinationSummary.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L76"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/LinkTargets\/LinkDestinationSummary.swift#L76"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -242,8 +242,20 @@
   "sections" : [
 
   ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Node-Persistence",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter"
+      ],
+      "title" : "Node Persistence"
+    }
+  ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/TaskGroup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant"
@@ -251,12 +263,16 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/init(kind:language:relativePresentationURL:referenceURL:title:abstract:availableLanguages:platforms:taskGroups:usr:declarationFragments:redirects:topicImages:references:variants:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/abstract-swift.property",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/availableLanguages",
@@ -277,6 +293,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Aliases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Abstract-swift.typealias",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
@@ -285,6 +303,7 @@
       "title" : "Type Aliases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Decodable-Implementations",
@@ -336,6 +355,40 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationNodeConverter": {
+  "abstract" : [
+    {
+      "text" : "A converter from documentation nodes to render nodes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationNodeConverter"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNodeConverter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationNodeConverter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationNodeConverter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationnodeconverter"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
   "abstract" : [

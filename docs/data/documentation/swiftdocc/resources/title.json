@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Resources.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Resources\/Resources.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Technology\/Resources\/Resources.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

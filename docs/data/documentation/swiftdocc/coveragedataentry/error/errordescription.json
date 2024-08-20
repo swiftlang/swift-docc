@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CoverageDataEntry.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/CoverageDataEntry.swift#L995"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/CoverageDataEntry.swift#L994"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

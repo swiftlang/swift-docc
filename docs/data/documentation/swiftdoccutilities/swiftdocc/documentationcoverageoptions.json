@@ -1,0 +1,235 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "SwiftDocC",
+    "externalID" : "s:e:s:9SwiftDocC28DocumentationCoverageOptionsV0aB10CUtilitiesE4fromAcD0cdE8ArgumentV_tcfc",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "extension"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+        "text" : "DocumentationCoverageOptions"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "SwiftDocC"
+        ]
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "DocumentationCoverageOptions"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Extended Structure",
+    "symbolKind" : "extension",
+    "title" : "DocumentationCoverageOptions"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "extension"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+              "text" : "DocumentationCoverageOptions"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Initializers",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "anchor" : "Extended-Types",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions"
+      ],
+      "title" : "Extended Types"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "KindFilterOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:18SwiftDocCUtilities36DocumentationCoverageOptionsArgumentV",
+      "text" : "DocumentationCoverageOptionsArgument"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/init(from:)"
+}
+}
+}

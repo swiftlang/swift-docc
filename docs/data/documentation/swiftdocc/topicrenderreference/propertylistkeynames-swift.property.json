@@ -1,0 +1,296 @@
+{
+  "abstract" : [
+    {
+      "text" : "The names and style for a reference to a property list key or entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/propertyListKeyNames-swift.property"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC20TopicRenderReferenceV20propertyListKeyNamesAC08PropertyghI0VSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "propertyListKeyNames"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
+        "text" : "TopicRenderReference"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV20PropertyListKeyNamesV",
+        "text" : "PropertyListKeyNames"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "remoteSource" : {
+      "fileName" : "TopicRenderReference.swift",
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/TopicRenderReference.swift#L92"
+    },
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "propertyListKeyNames"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "propertyListKeyNames"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
+              "text" : "TopicRenderReference"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/PropertyListKeyNames-swift.struct",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV20PropertyListKeyNamesV",
+              "text" : "PropertyListKeyNames"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/topicrenderreference\/propertylistkeynames-swift.property"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to another page of documentation in the current context.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicRenderReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicRenderReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicRenderReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/PropertyListKeyNames-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "The display name and raw key name for a property list key or entitlement key and configuration about which “name” to use for links to this page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListKeyNames"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/PropertyListKeyNames-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertyListKeyNames"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicRenderReference.PropertyListKeyNames",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/propertylistkeynames-swift.struct"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference/propertyListKeyNames-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The names and style for a reference to a property list key or entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "propertyListKeyNames"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV",
+      "text" : "TopicRenderReference"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20TopicRenderReferenceV20PropertyListKeyNamesV",
+      "text" : "PropertyListKeyNames"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference\/propertyListKeyNames-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "propertyListKeyNames",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference\/propertylistkeynames-swift.property"
+}
+}
+}

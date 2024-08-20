@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "FileSystemProvider.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/FileSystemProvider.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/FileSystemProvider.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -93,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "File-Data-Providers",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileSystemProvider",
@@ -104,6 +105,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/Directory",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/File"
@@ -111,6 +114,8 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/directory(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/file(_:)"
@@ -118,6 +123,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/url"
       ],

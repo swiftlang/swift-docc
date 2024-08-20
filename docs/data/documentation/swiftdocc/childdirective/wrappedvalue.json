@@ -43,7 +43,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ChildDirectiveWrapper.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/ChildDirectiveWrapper.swift#L67"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveInfrastructure\/ChildDirectiveWrapper.swift#L67"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

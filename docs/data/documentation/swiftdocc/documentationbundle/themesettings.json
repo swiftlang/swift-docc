@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "JSON settings file used to theme renderer output.",
+      "text" : "A custom JSON settings file used to theme renderer output.",
       "type" : "text"
     }
   ],
@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationBundle.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L91"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationBundle.swift#L90"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -177,7 +177,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationBundle/themeSettings": {
   "abstract" : [
     {
-      "text" : "JSON settings file used to theme renderer output.",
+      "text" : "A custom JSON settings file used to theme renderer output.",
       "type" : "text"
     }
   ],

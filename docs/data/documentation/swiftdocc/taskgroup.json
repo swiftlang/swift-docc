@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TaskGroup.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/TaskGroup.swift#L157"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/TaskGroup.swift#L157"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -93,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationNode",
@@ -106,12 +107,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroup\/init(heading:content:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroup\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroup\/content",

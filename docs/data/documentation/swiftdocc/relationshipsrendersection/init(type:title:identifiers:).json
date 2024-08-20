@@ -90,7 +90,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RelationshipsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RelationshipsRenderSection.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RelationshipsRenderSection.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

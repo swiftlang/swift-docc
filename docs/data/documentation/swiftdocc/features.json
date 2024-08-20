@@ -200,6 +200,16 @@
   "sections" : [
 
   ],
+  "seeAlsoSections" : [
+    {
+      "anchor" : "Development",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags"
+      ],
+      "title" : "Development"
+    }
+  ],
   "variants" : [
     {
       "paths" : [
@@ -227,6 +237,20 @@
   "title" : "SwiftDocC",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AddingFeatureFlags": {
+  "abstract" : [
+    {
+      "text" : "Develop experimental features by adding feature flags.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AddingFeatureFlags",
+  "kind" : "article",
+  "role" : "article",
+  "title" : "Adding Feature Flags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/addingfeatureflags"
 }
 }
 }

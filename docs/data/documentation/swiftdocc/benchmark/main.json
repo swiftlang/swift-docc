@@ -58,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Benchmark.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Benchmark\/Benchmark.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",
@@ -122,6 +122,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Benchmark-Log",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Benchmark"

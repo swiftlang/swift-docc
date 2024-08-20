@@ -50,7 +50,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DeclarationsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L163"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/DeclarationsRenderSection.swift#L181"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -108,6 +108,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/init(tokens:identifier:)"
@@ -115,6 +117,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/identifier",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/tokens"
@@ -122,6 +126,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/OtherDeclarations-swift.struct\/Declaration\/Equatable-Implementations"

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Article.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L19"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Article\/Article.swift#L19"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -155,12 +155,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article\/init(from:source:for:in:problems:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article\/abstract",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article\/abstractSection",
@@ -174,6 +178,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Article\/accept(_:)"
       ],

@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RelationshipsRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RelationshipsRenderSection.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RelationshipsRenderSection.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -108,6 +108,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Relationship-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship",
@@ -122,6 +123,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/init(type:title:identifiers:)"
@@ -129,6 +132,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/identifiers",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/kind",
@@ -138,6 +143,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection\/Equatable-Implementations",

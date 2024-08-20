@@ -3,7 +3,7 @@
     {
       "inlineContent" : [
         {
-          "text" : "Use 'externalDocumentationSources' instead. This deprecated API will be removed after 5.11 is released",
+          "text" : "Use 'externalDocumentationSources' instead. This deprecated API will be removed after 6.0 is released",
           "type" : "text"
         }
       ],
@@ -73,7 +73,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext+DeprecatedResolvers.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/DocumentationContext+DeprecatedResolvers.swift#L27"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/External%20Data\/Deprecated\/DocumentationContext+DeprecatedResolvers.swift#L27"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

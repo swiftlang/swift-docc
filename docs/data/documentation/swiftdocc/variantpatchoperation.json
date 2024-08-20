@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantPatchOperation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantPatchOperation.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantPatchOperation.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -136,6 +136,7 @@
   "relationshipsSections" : [
     {
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/SQ"
       ],
       "kind" : "relationships",
@@ -153,6 +154,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Variants",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
@@ -169,6 +171,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/add(value:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/remove",
@@ -177,12 +181,15 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/operation"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation\/Equatable-Implementations"
@@ -721,6 +728,11 @@
   "title" : "VariantPatchOperation.replace(value:)",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/variantpatchoperation\/replace(value:)"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

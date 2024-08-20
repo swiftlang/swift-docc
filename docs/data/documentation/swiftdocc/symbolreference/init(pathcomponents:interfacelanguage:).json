@@ -72,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SymbolReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L148"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Symbol%20Graph\/SymbolReference.swift#L148"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

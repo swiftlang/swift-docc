@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContentRenderer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L455"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/DocumentationContentRenderer.swift#L455"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -104,12 +104,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/ReferenceGroup\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/ReferenceGroup\/references",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContentRenderer\/ReferenceGroup\/title"

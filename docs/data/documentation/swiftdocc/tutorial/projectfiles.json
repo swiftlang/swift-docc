@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Tutorial.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tutorial.swift#L31"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Tutorial.swift#L31"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

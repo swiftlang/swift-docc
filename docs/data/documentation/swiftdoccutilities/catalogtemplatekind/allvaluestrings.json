@@ -75,7 +75,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ExpressibleByArgument.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/.build\/checkouts\/swift-argument-parser\/Sources\/ArgumentParser\/Parsable%20Types\/ExpressibleByArgument.swift#L40"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/.build\/checkouts\/swift-argument-parser\/Sources\/ArgumentParser\/Parsable%20Types\/ExpressibleByArgument.swift#L42"
     },
     "role" : "symbol",
     "roleHeading" : "Type Property",

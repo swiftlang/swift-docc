@@ -15,6 +15,7 @@
   ],
   "defaultImplementationsSections" : [
     {
+      "anchor" : "DirectiveConvertible-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible\/canConvertDirective(_:)-3fj6w"
       ],
@@ -83,7 +84,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DirectiveConvertable.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L46"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/DirectiveConvertable.swift#L45"
     },
     "required" : true,
     "role" : "symbol",

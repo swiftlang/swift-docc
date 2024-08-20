@@ -46,15 +46,7 @@
       },
       {
         "kind" : "text",
-        "text" : "<"
-      },
-      {
-        "kind" : "genericParameter",
-        "text" : "Keys"
-      },
-      {
-        "kind" : "text",
-        "text" : ">("
+        "text" : "("
       },
       {
         "kind" : "typeIdentifier",
@@ -88,15 +80,25 @@
       },
       {
         "kind" : "text",
-        "text" : ": "
+        "text" : ": some "
       },
       {
         "kind" : "typeIdentifier",
-        "text" : "Keys"
+        "preciseIdentifier" : "s:Sl",
+        "text" : "Collection"
       },
       {
         "kind" : "text",
-        "text" : ") -> "
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : ">) -> "
       },
       {
         "kind" : "typeIdentifier",
@@ -120,7 +122,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L225"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L226"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -160,15 +162,7 @@
             },
             {
               "kind" : "text",
-              "text" : "<"
-            },
-            {
-              "kind" : "genericParameter",
-              "text" : "Keys"
-            },
-            {
-              "kind" : "text",
-              "text" : ">("
+              "text" : "("
             },
             {
               "kind" : "externalParam",
@@ -219,15 +213,25 @@
             },
             {
               "kind" : "text",
-              "text" : ": "
+              "text" : ": some "
             },
             {
               "kind" : "typeIdentifier",
-              "text" : "Keys"
+              "preciseIdentifier" : "s:Sl",
+              "text" : "Collection"
             },
             {
               "kind" : "text",
-              "text" : ") -> "
+              "text" : "<"
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : ">) -> "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier",
@@ -244,57 +248,6 @@
               "kind" : "typeIdentifier",
               "preciseIdentifier" : "s:9SwiftDocC16JSONPatchApplierV5ErrorO",
               "text" : "Error"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "keyword",
-              "text" : "where"
-            },
-            {
-              "kind" : "text",
-              "text" : " "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Keys"
-            },
-            {
-              "kind" : "text",
-              "text" : " : "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:Sl",
-              "text" : "Collection"
-            },
-            {
-              "kind" : "text",
-              "text" : ", "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "text" : "Keys"
-            },
-            {
-              "kind" : "text",
-              "text" : "."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:ST7ElementQa",
-              "text" : "Element"
-            },
-            {
-              "kind" : "text",
-              "text" : " == "
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SS",
-              "text" : "String"
             }
           ]
         }
@@ -304,6 +257,20 @@
     {
       "kind" : "parameters",
       "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A pointer to the invalid object the JSON document.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "pointer"
+        },
         {
           "content" : [
             {
@@ -408,7 +375,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error": {
   "abstract" : [
     {
-      "text" : "An error that occured during the application of a JSON patch.",
+      "text" : "An error that occurred during the application of a JSON patch.",
       "type" : "text"
     }
   ],
@@ -469,15 +436,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Keys"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -511,15 +470,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Keys"
+      "preciseIdentifier" : "s:Sl",
+      "text" : "Collection"
     },
     {
       "kind" : "text",
-      "text" : ") -> "
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
     },
     {
       "kind" : "typeIdentifier",

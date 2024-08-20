@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderHierarchy.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchy.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Navigation%20Tree\/RenderHierarchy.swift#L24"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

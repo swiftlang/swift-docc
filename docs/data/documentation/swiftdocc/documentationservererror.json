@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServerError.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerError.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/DocumentationServerError.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -107,12 +107,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/init(from:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/description",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/errorDescription",
@@ -121,6 +125,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/invalidMessage(underlyingError:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/invalidResponseMessage(underlyingError:)",
@@ -129,6 +135,7 @@
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationServerError\/Error-Implementations",

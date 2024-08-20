@@ -109,7 +109,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CoverageDataEntry.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/CoverageDataEntry.swift#L108"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/CoverageDataEntry.swift#L107"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",
@@ -220,25 +220,6 @@
         }
       ],
       "kind" : "declarations"
-    },
-    {
-      "kind" : "parameters",
-      "parameters" : [
-        {
-          "content" : [
-            {
-              "inlineContent" : [
-                {
-                  "text" : "An array of entries to summarize.",
-                  "type" : "text"
-                }
-              ],
-              "type" : "paragraph"
-            }
-          ],
-          "name" : "coverageInfo"
-        }
-      ]
     }
   ],
   "schemaVersion" : {

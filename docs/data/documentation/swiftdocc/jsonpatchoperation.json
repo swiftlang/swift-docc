@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchOperation.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchOperation.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -133,6 +133,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Variants",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
@@ -149,18 +150,22 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Applying-Patches",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier"
       ],
       "title" : "Applying Patches"
     },
     {
+      "anchor" : "Operations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation"
       ],
       "title" : "Operations"
     },
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/add(pointer:value:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/remove(pointer:)",
@@ -169,6 +174,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/init(variantPatchOperation:pointer:)"
@@ -176,6 +183,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/operation",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/pointer"
@@ -183,6 +192,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/encode(to:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/removingPointerFirstPathComponent()"
@@ -190,6 +201,8 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/add(pointer:encodableValue:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/replace(pointer:encodableValue:)"
@@ -197,6 +210,8 @@
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys"
       ],

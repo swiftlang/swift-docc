@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "HasOnlySequentialHeadings.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlySequentialHeadings.swift#L33"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/General%20Purpose%20Analyses\/HasOnlySequentialHeadings.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

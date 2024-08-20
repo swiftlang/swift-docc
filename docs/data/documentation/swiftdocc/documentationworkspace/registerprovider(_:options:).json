@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationWorkspace.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L115"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Workspace\/DocumentationWorkspace.swift#L117"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -179,6 +179,20 @@
             }
           ],
           "name" : "provider"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The options that the data provider uses to discover documentation bundles that it provides to the delegate.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "options"
         }
       ]
     },

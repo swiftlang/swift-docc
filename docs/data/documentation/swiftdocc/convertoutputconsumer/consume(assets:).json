@@ -75,7 +75,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertOutputConsumer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L35"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/ConvertOutputConsumer.swift#L35"
     },
     "required" : true,
     "role" : "symbol",

@@ -54,7 +54,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Choice.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Assessments\/Multiple%20Choice\/Choice\/Choice.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Tutorial\/Assessments\/Multiple%20Choice\/Choice\/Choice.swift#L23"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

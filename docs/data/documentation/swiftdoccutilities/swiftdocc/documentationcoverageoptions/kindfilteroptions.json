@@ -1,0 +1,195 @@
+{
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "SwiftDocC",
+    "externalID" : "s:e:s:e:s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V21BitFlagRepresentationOs:14ArgumentParser013ExpressibleByA0P",
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities",
+        "relatedModules" : [
+          "SwiftDocC"
+        ]
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "KindFilterOptions"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Extended Type",
+    "symbolKind" : "extension",
+    "title" : "DocumentationCoverageOptions.KindFilterOptions"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 3,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "anchor" : "Extended-Enumerations",
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation"
+      ],
+      "title" : "Extended Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "KindFilterOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions/BitFlagRepresentation": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "extension"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV",
+      "text" : "DocumentationCoverageOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V",
+      "text" : "KindFilterOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "identifier",
+      "preciseIdentifier" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V21BitFlagRepresentationO",
+      "text" : "BitFlagRepresentation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions\/BitFlagRepresentation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BitFlagRepresentation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions\/bitflagrepresentation"
+}
+}
+}

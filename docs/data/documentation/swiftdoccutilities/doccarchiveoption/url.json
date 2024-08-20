@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationArchiveOption.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationArchiveOption.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/ArgumentParsing\/Options\/DocumentationArchiveOption.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

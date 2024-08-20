@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PossibleValuesRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L47"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/PossibleValuesRenderSection.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -111,6 +111,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/CodingKeys\/kind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/CodingKeys\/title",
@@ -119,6 +121,8 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/CodingKeys\/init(intValue:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/CodingKeys\/init(rawValue:)",
@@ -127,6 +131,7 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection\/CodingKeys\/CodingKey-Implementations",

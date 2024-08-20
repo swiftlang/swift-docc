@@ -156,7 +156,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContextConverter.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationContextConverter.swift#L60"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Converter\/DocumentationContextConverter.swift#L63"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -415,6 +415,20 @@
             {
               "inlineContent" : [
                 {
+                  "text" : "Whether the documentation converter should include access level information for symbols.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "emitSymbolAccessLevels"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
                   "text" : "The source repository where the documentation’s sources are hosted.",
                   "type" : "text"
                 }
@@ -423,6 +437,20 @@
             }
           ],
           "name" : "sourceRepository"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A list of symbol IDs that have version of their documentation page with more content that a renderer can link to.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "symbolIdentifiersWithExpandedDocumentation"
         }
       ]
     },

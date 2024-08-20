@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "GroupedSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/GroupedSection.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/GroupedSection.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -123,6 +123,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Generic-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroupRenderSection",
@@ -133,6 +134,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection\/taskGroups-8xf1r"
       ],

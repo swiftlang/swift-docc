@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AbsoluteSymbolLink.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Convert\/Symbol%20Link%20Resolution\/AbsoluteSymbolLink.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -122,18 +122,24 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/init(string:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/basePathComponents",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/bundleID",

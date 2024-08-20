@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TutorialArticleSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial%20Article\/TutorialArticleSection.swift#L34"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial%20Article\/TutorialArticleSection.swift#L34"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -88,6 +88,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ"
@@ -107,6 +108,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Tutorials",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LineHighlighter",
@@ -126,6 +128,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/columns(content:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/contentAndMedia(content:)",
@@ -134,6 +138,7 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentLayout\/Decodable-Implementations",
@@ -1005,6 +1010,11 @@
   "title" : "VolumeRenderSection",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/volumerendersection"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

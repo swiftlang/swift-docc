@@ -63,7 +63,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TabNavigator.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/TabNavigator.swift#L44"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Reference\/TabNavigator.swift#L44"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

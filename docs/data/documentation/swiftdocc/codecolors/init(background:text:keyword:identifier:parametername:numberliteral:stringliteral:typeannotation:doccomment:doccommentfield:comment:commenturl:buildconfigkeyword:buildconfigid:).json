@@ -276,7 +276,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodeColors.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L130"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L130"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

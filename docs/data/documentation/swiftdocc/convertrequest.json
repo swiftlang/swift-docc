@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "ConvertRequest.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/Models\/Services\/Convert\/ConvertRequest.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -103,6 +103,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/ExpandedDocumentationRequirements",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/Line",
@@ -112,6 +114,8 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(bundleInfo:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:symbolGraphs:overridingDocumentationComments:knownDisambiguatedSymbolPathComponents:emitSymbolSourceFileURIs:markupFiles:tutorialFiles:miscResourceURLs:symbolIdentifiersWithExpandedDocumentation:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(from:)"
@@ -119,6 +123,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/bundleInfo",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/bundleLocation",

@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],
@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Availability.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L46"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/Availability.swift#L47"
     },
     "role" : "symbol",
     "roleHeading" : "Class",
@@ -102,11 +102,7 @@
         {
           "inlineContent" : [
             {
-              "code" : "@Available",
-              "type" : "codeVoice"
-            },
-            {
-              "text" : " is analogous to the ",
+              "text" : "Whenever possible, prefer to specify availability information using in-source annotations such as the ",
               "type" : "text"
             },
             {
@@ -114,47 +110,48 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " attribute in Swift: It allows you to specify a",
+              "text" : " attribute in Swift or the ",
               "type" : "text"
             },
             {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "platform version that the page relates to. To specify a platform and version, list the platform",
-              "type" : "text"
-            },
-            {
-              "text" : " ",
-              "type" : "text"
-            },
-            {
-              "text" : "name and use the ",
-              "type" : "text"
-            },
-            {
-              "code" : "introduced",
+              "code" : "API_AVAILABLE",
               "type" : "codeVoice"
             },
             {
-              "text" : " argument:",
+              "text" : " macro in Objective-C.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Using in-source annotations ensures that your documentation matches the availability of your API.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If you duplicate availability information in the documentation markup, the information from the ",
+              "type" : "text"
+            },
+            {
+              "code" : "@Available",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directive overrides the information for the in-source annotations from that platform and risks being inaccurate.",
               "type" : "text"
             }
           ],
           "type" : "paragraph"
         },
         {
-          "code" : [
-            "@Available(macOS, introduced: \"12.0\")"
-          ],
-          "syntax" : "markdown",
-          "type" : "codeListing"
-        },
-        {
           "inlineContent" : [
             {
-              "text" : "Any text can be given to the first argument, and will be displayed in the page’s",
+              "text" : "If your source language doesn’t have a mechanism for specifying API availability or if you’re writing articles about a newly introduced or deprecated API,",
               "type" : "text"
             },
             {
@@ -162,7 +159,40 @@
               "type" : "text"
             },
             {
-              "text" : "availability data. The platforms ",
+              "text" : "you can use the ",
+              "type" : "text"
+            },
+            {
+              "code" : "@Available",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directive to specify when you introduced, and optionally deprecated, an API or documentation page for a given platform.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Each ",
+              "type" : "text"
+            },
+            {
+              "code" : "@Available",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " directive specifies the availability information for a single platform.",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "The directive matches the ",
               "type" : "text"
             },
             {
@@ -194,7 +224,7 @@
               "type" : "codeVoice"
             },
             {
-              "text" : " will be matched",
+              "text" : " platform names case-insensitively.",
               "type" : "text"
             },
             {
@@ -202,32 +232,7 @@
               "type" : "text"
             },
             {
-              "text" : "case-insensitively, but anything else will be printed verbatim.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "To provide a platform name with spaces in it, provide it as a quoted string:",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "code" : [
-            "@Available(\"My Package\", introduced: \"1.0\")"
-          ],
-          "syntax" : "markdown",
-          "type" : "codeListing"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "This directive is available on both articles and documentation extension files. In extension",
+              "text" : "Any other platform names are displayed verbatim.",
               "type" : "text"
             },
             {
@@ -235,25 +240,15 @@
               "type" : "text"
             },
             {
-              "text" : "files, the information overrides any information from the symbol itself.",
-              "type" : "text"
-            }
-          ],
-          "type" : "paragraph"
-        },
-        {
-          "inlineContent" : [
-            {
-              "text" : "This directive is only valid within a ",
+              "text" : "If a platform name contains whitespace, commas, or other special characters you need to surround it with quotation marks (",
               "type" : "text"
             },
             {
-              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata",
-              "isActive" : true,
-              "type" : "reference"
+              "code" : "\"",
+              "type" : "codeVoice"
             },
             {
-              "text" : " directive:",
+              "text" : ").",
               "type" : "text"
             }
           ],
@@ -262,12 +257,159 @@
         {
           "code" : [
             "@Metadata {",
-            "    @Available(macOS, introduced: \"12.0\")",
             "    @Available(iOS, introduced: \"15.0\")",
+            "    @Available(macOS, introduced: \"12.0\", deprecated: \"14.0\")",
+            "    @Available(\"My Package\", introduced: \"1.2.3\")",
             "}"
           ],
           "syntax" : "markdown",
           "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Both the “introduced” and “deprecated” parameters take string representations of semantic version numbers (major",
+              "type" : "text"
+            },
+            {
+              "code" : ".",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "minor",
+              "type" : "text"
+            },
+            {
+              "code" : ".",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "patch).",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "If you omit the “patch” or “minor” components, they are assumed to be ",
+              "type" : "text"
+            },
+            {
+              "code" : "0",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This means that ",
+              "type" : "text"
+            },
+            {
+              "code" : "\"1.0.0\"",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", ",
+              "type" : "text"
+            },
+            {
+              "code" : "\"1.0\"",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", and ",
+              "type" : "text"
+            },
+            {
+              "code" : "\"1\"",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " all specify the same semantic version.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "Before Swift-DocC 6.0, the ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "@Available",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " directive didn’t support the “deprecated” parameter.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Earlier Versions",
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "In addition to specifying the version when you deprecated an API or documentation page,",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "you can use the ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " directive to provide the reader with additional information about the deprecation or refer them to a replacement API.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "Tip",
+          "style" : "tip",
+          "type" : "aside"
         }
       ],
       "kind" : "content"
@@ -302,6 +444,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Child-Directives",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationExtension",
@@ -319,7 +462,10 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/deprecated",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/introduced",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/originalMarkup",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/platform-swift.property"
@@ -327,6 +473,8 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/directiveName",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/introducedVersion"
@@ -334,12 +482,15 @@
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/Platform-swift.enum"
       ],
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/DirectiveConvertible-Implementations"
@@ -414,6 +565,40 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/calltoaction"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/DeprecationSummary": {
+  "abstract" : [
+    {
+      "text" : "A directive that specifies a custom deprecation summary message to an already deprecated symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeprecationSummary"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecationSummary",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeprecationSummary"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeprecationSummary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/deprecationsummary"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/DirectiveConvertible": {
   "abstract" : [
     {
@@ -485,7 +670,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/DocumentationExtension": {
   "abstract" : [
     {
-      "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.",
+      "text" : "Defines whether the content in a documentation extension file amends or replaces in-source documentation.",
       "type" : "text"
     }
   ],
@@ -553,7 +738,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability": {
   "abstract" : [
     {
-      "text" : "A directive that sets the platform availability information for a documentation page.",
+      "text" : "A directive that specifies when a documentation page is available for a given platform.",
       "type" : "text"
     }
   ],
@@ -626,6 +811,63 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/metadata\/availability\/platform-swift.enum"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/deprecated": {
+  "abstract" : [
+    {
+      "text" : "The semantic version (major",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "minor",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "patch) when you deprecated this API or documentation page.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+      "text" : "SemanticVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/deprecated",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deprecated",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/metadata\/availability\/deprecated"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/directiveName": {
   "abstract" : [
 
@@ -671,7 +913,23 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/introduced": {
   "abstract" : [
     {
-      "text" : "The platform version that this page applies to.",
+      "text" : "The semantic version (major",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "minor",
+      "type" : "text"
+    },
+    {
+      "code" : ".",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "patch) when you introduced this API or documentation page.",
       "type" : "text"
     }
   ],
@@ -694,8 +952,8 @@
     },
     {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
+      "preciseIdentifier" : "s:9SwiftDocC15SemanticVersionV",
+      "text" : "SemanticVersion"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Metadata\/Availability\/introduced",
@@ -784,7 +1042,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/Metadata/Availability/platform-swift.property": {
   "abstract" : [
     {
-      "text" : "The platform that this argument’s information applies to.",
+      "text" : "The platform name that this version information applies to.",
       "type" : "text"
     }
   ],
@@ -1009,7 +1267,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
     {
-      "text" : "A directive to set this page as a documentation root-level node.",
+      "text" : "Configures an article to become a top-level page.",
       "type" : "text"
     }
   ],

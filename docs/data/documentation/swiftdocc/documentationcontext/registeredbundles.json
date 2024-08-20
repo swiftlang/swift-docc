@@ -20,7 +20,7 @@
   },
   "kind" : "symbol",
   "metadata" : {
-    "externalID" : "s:9SwiftDocC20DocumentationContextC17registeredBundlesSD6ValuesVySSAA0C6BundleV_Gvp",
+    "externalID" : "s:9SwiftDocC20DocumentationContextC17registeredBundlesQrvp",
     "fragments" : [
       {
         "kind" : "keyword",
@@ -39,22 +39,21 @@
         "text" : ": "
       },
       {
+        "kind" : "keyword",
+        "text" : "some"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
         "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:SD",
-        "text" : "Dictionary"
+        "preciseIdentifier" : "s:Sl",
+        "text" : "Collection"
       },
       {
         "kind" : "text",
         "text" : "<"
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:SS",
-        "text" : "String"
-      },
-      {
-        "kind" : "text",
-        "text" : ", "
       },
       {
         "kind" : "typeIdentifier",
@@ -63,12 +62,7 @@
       },
       {
         "kind" : "text",
-        "text" : ">."
-      },
-      {
-        "kind" : "typeIdentifier",
-        "preciseIdentifier" : "s:SD6ValuesV",
-        "text" : "Values"
+        "text" : ">"
       }
     ],
     "modules" : [
@@ -78,7 +72,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationContext.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L333"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/DocumentationContext.swift#L335"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -113,22 +107,21 @@
               "text" : ": "
             },
             {
+              "kind" : "keyword",
+              "text" : "some"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
               "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SD",
-              "text" : "Dictionary"
+              "preciseIdentifier" : "s:Sl",
+              "text" : "Collection"
             },
             {
               "kind" : "text",
               "text" : "<"
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SS",
-              "text" : "String"
-            },
-            {
-              "kind" : "text",
-              "text" : ", "
             },
             {
               "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationBundle",
@@ -138,16 +131,7 @@
             },
             {
               "kind" : "text",
-              "text" : ">."
-            },
-            {
-              "kind" : "typeIdentifier",
-              "preciseIdentifier" : "s:SD6ValuesV",
-              "text" : "Values"
-            },
-            {
-              "kind" : "text",
-              "text" : " { "
+              "text" : "> { "
             },
             {
               "kind" : "keyword",
@@ -292,22 +276,21 @@
       "text" : ": "
     },
     {
+      "kind" : "keyword",
+      "text" : "some"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
       "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SD",
-      "text" : "Dictionary"
+      "preciseIdentifier" : "s:Sl",
+      "text" : "Collection"
     },
     {
       "kind" : "text",
       "text" : "<"
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SS",
-      "text" : "String"
-    },
-    {
-      "kind" : "text",
-      "text" : ", "
     },
     {
       "kind" : "typeIdentifier",
@@ -316,12 +299,7 @@
     },
     {
       "kind" : "text",
-      "text" : ">."
-    },
-    {
-      "kind" : "typeIdentifier",
-      "preciseIdentifier" : "s:SD6ValuesV",
-      "text" : "Values"
+      "text" : ">"
     }
   ],
   "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/registeredBundles",

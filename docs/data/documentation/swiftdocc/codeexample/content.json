@@ -65,7 +65,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RESTExampleRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RESTExampleRenderSection.swift#L28"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RESTExampleRenderSection.swift#L28"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodableContentSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/CodableContentSection.swift#L29"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNode\/CodableContentSection.swift#L29"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

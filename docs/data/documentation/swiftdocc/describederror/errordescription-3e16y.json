@@ -7,6 +7,7 @@
   ],
   "defaultImplementationsSections" : [
     {
+      "anchor" : "DescribedError-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError\/errorDescription-2kve7"
       ],
@@ -59,7 +60,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DescribedError.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Errors\/DescribedError.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/Errors\/DescribedError.swift#L16"
     },
     "required" : true,
     "role" : "symbol",

@@ -84,7 +84,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Action.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Action.swift#L20"
     },
     "required" : true,
     "role" : "symbol",

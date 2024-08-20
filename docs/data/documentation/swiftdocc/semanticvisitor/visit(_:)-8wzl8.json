@@ -16,6 +16,7 @@
   ],
   "defaultImplementationsSections" : [
     {
+      "anchor" : "SemanticVisitor-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-4b8iy"
       ],
@@ -84,7 +85,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticVisitor.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L23"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Visitor\/SemanticVisitor.swift#L23"
     },
     "required" : true,
     "role" : "symbol",

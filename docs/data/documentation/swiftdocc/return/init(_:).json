@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Return.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Return.swift#L30"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Semantics\/Return.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

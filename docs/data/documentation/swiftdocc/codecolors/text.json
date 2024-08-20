@@ -55,7 +55,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodeColors.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L32"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColors.swift#L32"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",

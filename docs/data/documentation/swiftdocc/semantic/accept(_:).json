@@ -91,7 +91,7 @@
     ],
     "remoteSource" : {
       "fileName" : "Semantic.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Semantic.swift#L33"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Semantic.swift#L33"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

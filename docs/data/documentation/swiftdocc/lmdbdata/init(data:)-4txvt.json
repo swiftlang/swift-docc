@@ -1,6 +1,7 @@
 {
   "defaultImplementationsSections" : [
     {
+      "anchor" : "LMDBData-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LMDBData\/init(data:)-6c3xk"
       ],
@@ -57,7 +58,7 @@
     ],
     "remoteSource" : {
       "fileName" : "LMDB.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LMDB\/LMDB.swift#L63"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/LMDB\/LMDB.swift#L63"
     },
     "required" : true,
     "role" : "symbol",

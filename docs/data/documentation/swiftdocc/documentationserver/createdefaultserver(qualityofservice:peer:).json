@@ -93,7 +93,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationServer+createDefaultServer.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/DocumentationServer+createDefaultServer.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/DocumentationService\/DocumentationServer+createDefaultServer.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Type Method",

@@ -204,6 +204,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Utilities-and-Communication",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Utilities",

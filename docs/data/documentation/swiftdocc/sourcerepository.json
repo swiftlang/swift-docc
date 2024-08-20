@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourceRepository.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/SourceRepository\/SourceRepository.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/SourceRepository\/SourceRepository.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -92,12 +92,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/init(checkoutPath:sourceServiceBaseURL:formatLineNumber:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/checkoutPath",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/formatLineNumber",
@@ -106,12 +110,16 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/format(sourceFileURL:lineNumber:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/bitbucket(checkoutPath:sourceServiceBaseURL:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SourceRepository\/github(checkoutPath:sourceServiceBaseURL:)",

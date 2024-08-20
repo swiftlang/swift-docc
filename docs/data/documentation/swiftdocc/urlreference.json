@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderReference.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L62"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/References\/RenderReference.swift#L62"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -87,7 +87,6 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference"
       ],
@@ -106,6 +105,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "References",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference",
@@ -117,6 +117,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/URLReference\/baseURL"
       ],
@@ -184,50 +186,6 @@
   "title" : "DownloadReference",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/downloadreference"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/ExternalLocationReference": {
-  "abstract" : [
-    {
-      "text" : "A specialized ",
-      "type" : "text"
-    },
-    {
-      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
-      "isActive" : true,
-      "type" : "reference"
-    },
-    {
-      "text" : " used for references to external links.",
-      "type" : "text"
-    }
-  ],
-  "deprecated" : true,
-  "fragments" : [
-    {
-      "kind" : "keyword",
-      "text" : "struct"
-    },
-    {
-      "kind" : "text",
-      "text" : " "
-    },
-    {
-      "kind" : "identifier",
-      "text" : "ExternalLocationReference"
-    }
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalLocationReference",
-  "kind" : "symbol",
-  "navigatorTitle" : [
-    {
-      "kind" : "identifier",
-      "text" : "ExternalLocationReference"
-    }
-  ],
-  "role" : "symbol",
-  "title" : "ExternalLocationReference",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/externallocationreference"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/ImageReference": {
   "abstract" : [

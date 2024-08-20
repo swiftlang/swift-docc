@@ -46,7 +46,7 @@
     ],
     "remoteSource" : {
       "fileName" : "InitAction.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/InitAction.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/InitAction.swift#L15"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -330,6 +330,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Compiler-Workflow",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
@@ -342,6 +343,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/init(catalogOutputDirectory:documentationTitle:catalogTemplate:)",
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/init(fromInitOptions:)"
@@ -349,12 +352,15 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/perform(logHandle:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/InitAction\/Action-Implementations"

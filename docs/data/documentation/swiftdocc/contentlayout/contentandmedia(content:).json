@@ -64,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TutorialArticleSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial%20Article\/TutorialArticleSection.swift#L39"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Tutorial%20Article\/TutorialArticleSection.swift#L39"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

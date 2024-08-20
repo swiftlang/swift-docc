@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "PresentationURLGenerator.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/PresentationURLGenerator.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -122,12 +122,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator\/init(context:baseURL:)"
       ],
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator\/presentationURLForReference(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PresentationURLGenerator\/presentationURLForReference(_:requireRelativeURL:)"

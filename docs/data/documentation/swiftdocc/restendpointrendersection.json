@@ -48,7 +48,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RESTEndpointRenderSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RESTEndpointRenderSection.swift#L37"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Symbol\/RESTEndpointRenderSection.swift#L37"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -263,6 +263,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Other-Sections",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeExample"
@@ -272,12 +273,16 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Token"
       ],
       "title" : "Structures"
     },
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/init(title:tokens:)"
@@ -285,6 +290,8 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/kind",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/title",
@@ -293,6 +300,7 @@
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Equatable-Implementations",

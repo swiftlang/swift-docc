@@ -1,7 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "An error that occured during the application of a JSON patch.",
+      "text" : "An error that occurred during the application of a JSON patch.",
       "type" : "text"
     }
   ],
@@ -49,7 +49,7 @@
     ],
     "remoteSource" : {
       "fileName" : "JSONPatchApplier.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L211"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/JSONPatchApplier.swift#L211"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -108,6 +108,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidArrayPointer(_:index:arrayCount:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableKeys:)",
@@ -117,18 +119,23 @@
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription"
       ],
       "title" : "Instance Properties"
     },
     {
+      "anchor" : "Type-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableObjectKeys:)"
       ],
       "title" : "Type Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/Error-Implementations",
@@ -241,7 +248,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error": {
   "abstract" : [
     {
-      "text" : "An error that occured during the application of a JSON patch.",
+      "text" : "An error that occurred during the application of a JSON patch.",
       "type" : "text"
     }
   ],
@@ -508,15 +515,7 @@
     },
     {
       "kind" : "text",
-      "text" : "<"
-    },
-    {
-      "kind" : "genericParameter",
-      "text" : "Keys"
-    },
-    {
-      "kind" : "text",
-      "text" : ">("
+      "text" : "("
     },
     {
       "kind" : "typeIdentifier",
@@ -550,15 +549,25 @@
     },
     {
       "kind" : "text",
-      "text" : ": "
+      "text" : ": some "
     },
     {
       "kind" : "typeIdentifier",
-      "text" : "Keys"
+      "preciseIdentifier" : "s:Sl",
+      "text" : "Collection"
     },
     {
       "kind" : "text",
-      "text" : ") -> "
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">) -> "
     },
     {
       "kind" : "typeIdentifier",

@@ -1,15 +1,7 @@
 {
   "abstract" : [
     {
-      "text" : "Initialize a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Builder",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " with the given data provider and output URL.",
+      "text" : "Create a new a builder with the given data provider and output URL.",
       "type" : "text"
     }
   ],
@@ -166,7 +158,7 @@
     ],
     "remoteSource" : {
       "fileName" : "NavigatorIndex.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L562"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Indexing\/Navigator\/NavigatorIndex.swift#L578"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",
@@ -347,7 +339,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The URL to which the data should be written.",
+                  "text" : "The location where the builder will write the the built navigator index.",
                   "type" : "text"
                 }
               ],
@@ -361,7 +353,7 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "The identifier of the bundle the index is built for.",
+                  "text" : "The bundle identifier of the documentation that the builder builds a navigator index for.",
                   "type" : "text"
                 }
               ],
@@ -375,21 +367,21 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Indicates if the root’s children must be sorted by name.",
+                  "text" : "Configure the builder to sort root’s children by name.",
                   "type" : "text"
                 }
               ],
               "type" : "paragraph"
             }
           ],
-          "name" : "sortRootChildren"
+          "name" : "sortRootChildrenByName"
         },
         {
           "content" : [
             {
               "inlineContent" : [
                 {
-                  "text" : "Indicates if the tree needs to group the entries by language.",
+                  "text" : "Configure the builder to group the entries by language.",
                   "type" : "text"
                 }
               ],
@@ -403,7 +395,21 @@
             {
               "inlineContent" : [
                 {
-                  "text" : "Use the page title instead of the navigator title as the entry title.",
+                  "text" : "Configure the builder to write each navigator item’s path components to the location.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "writePathsOnDisk"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Configure the builder to use the “page title” instead of the “navigator title” as the title for each entry.",
                   "type" : "text"
                 }
               ],
@@ -576,15 +582,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/NavigatorIndex/Builder/init(renderNodeProvider:outputURL:bundleIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)": {
   "abstract" : [
     {
-      "text" : "Initialize a ",
-      "type" : "text"
-    },
-    {
-      "code" : "Builder",
-      "type" : "codeVoice"
-    },
-    {
-      "text" : " with the given data provider and output URL.",
+      "text" : "Create a new a builder with the given data provider and output URL.",
       "type" : "text"
     }
   ],

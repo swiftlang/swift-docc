@@ -64,7 +64,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SemanticWalker.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Walker\/SemanticWalker.swift#L18"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Walker\/SemanticWalker.swift#L18"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

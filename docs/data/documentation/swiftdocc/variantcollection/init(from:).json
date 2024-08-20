@@ -67,7 +67,7 @@
     ],
     "remoteSource" : {
       "fileName" : "VariantCollection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L42"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Variants\/VariantCollection.swift#L42"
     },
     "role" : "symbol",
     "roleHeading" : "Initializer",

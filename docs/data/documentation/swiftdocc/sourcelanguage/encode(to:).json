@@ -76,7 +76,7 @@
     ],
     "remoteSource" : {
       "fileName" : "SourceLanguage.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L153"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/SourceLanguage.swift#L155"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",

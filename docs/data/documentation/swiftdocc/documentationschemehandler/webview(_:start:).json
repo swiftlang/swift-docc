@@ -82,7 +82,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DocumentationSchemeHandler.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/DocumentationSchemeHandler.swift#L86"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Servers\/DocumentationSchemeHandler.swift#L86"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Method",
@@ -100,6 +100,19 @@
             "macOS"
           ],
           "tokens" : [
+            {
+              "kind" : "attribute",
+              "text" : "@"
+            },
+            {
+              "kind" : "attribute",
+              "preciseIdentifier" : "s:ScM",
+              "text" : "MainActor"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
             {
               "kind" : "keyword",
               "text" : "func"

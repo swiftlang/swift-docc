@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderBlockContent.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L38"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/Content\/RenderBlockContent.swift#L38"
     },
     "role" : "symbol",
     "roleHeading" : "Enumeration",
@@ -227,6 +227,7 @@
     {
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderTree",
+        "doc:\/\/SwiftDocC\/s8CopyableP",
         "doc:\/\/SwiftDocC\/Se",
         "doc:\/\/SwiftDocC\/SE",
         "doc:\/\/SwiftDocC\/SQ",
@@ -247,6 +248,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Elements",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent",
@@ -257,6 +259,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Structures",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Aside",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle",
@@ -283,6 +287,8 @@
       "title" : "Structures"
     },
     {
+      "anchor" : "Enumeration-Cases",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/aside(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/codeListing(_:)",
@@ -298,12 +304,15 @@
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/tabNavigator(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/table(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/termList(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/thematicBreak",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/unorderedList(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/video(_:)"
       ],
       "title" : "Enumeration Cases"
     },
     {
+      "anchor" : "Enumerations",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/ColumnAlignment",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/HeaderType"
@@ -311,6 +320,7 @@
       "title" : "Enumerations"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/Decodable-Implementations",
@@ -1940,6 +1950,34 @@
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/renderblockcontent\/termlist(_:)"
 },
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/thematicBreak": {
+  "abstract" : [
+    {
+      "text" : "An authored thematic break between block elements.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "thematicBreak"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/thematicBreak",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.thematicBreak",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/thematicbreak"
+},
 "doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/unorderedList(_:)": {
   "abstract" : [
     {
@@ -2186,6 +2224,11 @@
   "title" : "TextIndexing",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/textindexing"
+},
+"doc://SwiftDocC/s8CopyableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8CopyableP",
+  "title" : "Swift.Copyable",
+  "type" : "unresolvable"
 }
 }
 }

@@ -1,6 +1,7 @@
 {
   "defaultImplementationsSections" : [
     {
+      "anchor" : "GroupedSection-Implementations",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection\/taskGroups-4v84"
       ],
@@ -58,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "GroupedSection.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/GroupedSection.swift#L15"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Section\/Sections\/GroupedSection.swift#L15"
     },
     "required" : true,
     "role" : "symbol",

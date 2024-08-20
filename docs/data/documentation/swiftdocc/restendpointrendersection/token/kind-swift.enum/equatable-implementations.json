@@ -36,6 +36,7 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Operators",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection\/Token\/Kind-swift.enum\/!=(_:_:)"

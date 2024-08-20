@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CodeColorsPreferenceKey.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColorsPreferenceKey.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Communication\/Code%20colors\/CodeColorsPreferenceKey.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -146,6 +146,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Communication-Bridge",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
@@ -161,6 +162,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Initializers",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey\/init(from:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey\/init(rawValue:)"
@@ -168,12 +171,16 @@
       "title" : "Initializers"
     },
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey\/encode(to:)"
       ],
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Type-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey\/background",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey\/buildConfigId",
@@ -195,6 +202,7 @@
       "title" : "Type Properties"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey\/Equatable-Implementations"

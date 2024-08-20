@@ -62,7 +62,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AnyLink.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/MarkupExtensions\/AnyLink.swift#L14"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Utility\/MarkupExtensions\/AnyLink.swift#L14"
     },
     "role" : "symbol",
     "roleHeading" : "Protocol",
@@ -115,6 +115,15 @@
       "kind" : "relationships",
       "title" : "Inherits From",
       "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/Link",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/SymbolLink"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
     }
   ],
   "schemaVersion" : {
@@ -127,6 +136,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyLink\/destination"
       ],
@@ -254,6 +265,16 @@
   "title" : "destination",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/anylink\/destination"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Markdown/Link": {
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/Link",
+  "title" : "Link",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Markdown/SymbolLink": {
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Markdown\/SymbolLink",
+  "title" : "SymbolLink",
+  "type" : "unresolvable"
 }
 }
 }

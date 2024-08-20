@@ -31,6 +31,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Utilities-and-Communication",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Concurrency",
@@ -41,12 +42,14 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Errors",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError"
       ],
       "title" : "Errors"
     },
     {
+      "anchor" : "Language",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EnglishLanguage",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NativeLanguage"
@@ -54,12 +57,14 @@
       "title" : "Language"
     },
     {
+      "anchor" : "URLs",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ValidatedURL"
       ],
       "title" : "URLs"
     },
     {
+      "anchor" : "Auxiliary",
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checksum",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FeatureFlags"

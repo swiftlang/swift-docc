@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "RenderNodeTranslator.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L20"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Model\/Rendering\/RenderNodeTranslator.swift#L20"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -184,6 +184,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Render-Nodes",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
@@ -198,6 +199,8 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Methods",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitArticle(_:)",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/visitAssessments(_:)",
@@ -234,6 +237,7 @@
       "title" : "Instance Methods"
     },
     {
+      "anchor" : "Default-Implementations",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator\/SemanticVisitor-Implementations"

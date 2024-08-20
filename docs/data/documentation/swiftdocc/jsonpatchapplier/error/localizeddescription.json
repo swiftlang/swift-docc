@@ -222,7 +222,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error": {
   "abstract" : [
     {
-      "text" : "An error that occured during the application of a JSON patch.",
+      "text" : "An error that occurred during the application of a JSON patch.",
       "type" : "text"
     }
   ],

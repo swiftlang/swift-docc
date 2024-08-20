@@ -51,7 +51,7 @@
     ],
     "remoteSource" : {
       "fileName" : "AutomaticCuration.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Topic%20Graph\/AutomaticCuration.swift#L16"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Topic%20Graph\/AutomaticCuration.swift#L16"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -97,6 +97,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Documentation-Context",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",

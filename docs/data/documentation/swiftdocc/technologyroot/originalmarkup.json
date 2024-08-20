@@ -59,7 +59,7 @@
     ],
     "remoteSource" : {
       "fileName" : "TechnologyRoot.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/TechnologyRoot.swift#L24"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Semantics\/Metadata\/TechnologyRoot.swift#L43"
     },
     "role" : "symbol",
     "roleHeading" : "Instance Property",
@@ -177,7 +177,7 @@
 "doc://SwiftDocC/documentation/SwiftDocC/TechnologyRoot": {
   "abstract" : [
     {
-      "text" : "A directive to set this page as a documentation root-level node.",
+      "text" : "Configures an article to become a top-level page.",
       "type" : "text"
     }
   ],

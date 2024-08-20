@@ -41,7 +41,7 @@
     ],
     "remoteSource" : {
       "fileName" : "CatalogTemplateKind.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/CatalogTemplateKind.swift#L22"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocCUtilities\/Action\/Actions\/Init\/CatalogTemplateKind.swift#L22"
     },
     "role" : "symbol",
     "roleHeading" : "Case",

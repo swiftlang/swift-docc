@@ -47,7 +47,7 @@
     ],
     "remoteSource" : {
       "fileName" : "DiagnosticNote.swift",
-      "url" : "https:\/\/github.com\/apple\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticNote.swift#L17"
+      "url" : "https:\/\/github.com\/swiftlang\/swift-docc\/blob\/main\/Sources\/SwiftDocC\/Infrastructure\/Diagnostics\/DiagnosticNote.swift#L17"
     },
     "role" : "symbol",
     "roleHeading" : "Structure",
@@ -83,16 +83,6 @@
       "kind" : "declarations"
     }
   ],
-  "relationshipsSections" : [
-    {
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP"
-      ],
-      "kind" : "relationships",
-      "title" : "Conforms To",
-      "type" : "conformsTo"
-    }
-  ],
   "schemaVersion" : {
     "major" : 0,
     "minor" : 3,
@@ -103,6 +93,7 @@
   ],
   "seeAlsoSections" : [
     {
+      "anchor" : "Diagnostics",
       "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
@@ -116,19 +107,14 @@
   ],
   "topicSections" : [
     {
+      "anchor" : "Instance-Properties",
+      "generated" : true,
       "identifiers" : [
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/message",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/range",
         "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/source"
       ],
       "title" : "Instance Properties"
-    },
-    {
-      "generated" : true,
-      "identifiers" : [
-        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/CustomStringConvertible-Implementations"
-      ],
-      "title" : "Default Implementations"
     }
   ],
   "variants" : [
@@ -294,17 +280,6 @@
   "title" : "DiagnosticNote",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/diagnosticnote"
-},
-"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/CustomStringConvertible-Implementations": {
-  "abstract" : [
-
-  ],
-  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticNote\/CustomStringConvertible-Implementations",
-  "kind" : "article",
-  "role" : "collectionGroup",
-  "title" : "CustomStringConvertible Implementations",
-  "type" : "topic",
-  "url" : "\/documentation\/swiftdocc\/diagnosticnote\/customstringconvertible-implementations"
 },
 "doc://SwiftDocC/documentation/SwiftDocC/DiagnosticNote/message": {
   "abstract" : [
@@ -514,11 +489,6 @@
   "title" : "Problem",
   "type" : "topic",
   "url" : "\/documentation\/swiftdocc\/problem"
-},
-"doc://SwiftDocC/s23CustomStringConvertibleP": {
-  "identifier" : "doc:\/\/SwiftDocC\/s23CustomStringConvertibleP",
-  "title" : "Swift.CustomStringConvertible",
-  "type" : "unresolvable"
 }
 }
 }
