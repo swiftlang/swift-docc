@@ -19,7 +19,7 @@ extension Docc {
         
         public static var configuration = CommandConfiguration(
             abstract: "Merge a list of documentation archives into a combined archive.",
-            usage: "docc merge <archive-path> ... [[--landing-page-catalog <catalog-path>] | [<synthesized-landing-page-options>]] [--output-path <output-path>]"
+            usage: "docc merge <archive-path> ... [<synthesized-landing-page-options>] [--output-path <output-path>]"
         )
         
         private static let archivePathExtension = "doccarchive"
@@ -52,7 +52,8 @@ extension Docc {
                     The documentation compiler uses this catalog content to create a landing page, and optionally additional top-level articles, for the combined archive.
                     Because the documentation compiler won't synthesize any landing page content, also passing a `--synthesized-landing-page-name` value has no effect. 
                     """,
-                    valueName: "catalog-path"),
+                    valueName: "catalog-path",
+                    visibility: .hidden),
                 transform: URL.init(fileURLWithPath:))
             var landingPageCatalog: URL?
             
@@ -121,9 +122,6 @@ extension Docc {
                 name: .customLong("synthesized-landing-page-name"),
                 help: ArgumentHelp(
                     "A display name for the combined archive's synthesized landing page.",
-                    discussion: """
-                    If you pass both this value and a `--landing-page-catalog` value, the documentation compiler will only use the `--landing-page-catalog` value. 
-                    """,
                     valueName: "name"
                 )
             )
@@ -133,9 +131,6 @@ extension Docc {
                 name: .customLong("synthesized-landing-page-kind"),
                 help: ArgumentHelp(
                     "A page kind that displays as a title heading for the combined archive's synthesized landing page.",
-                    discussion: """
-                    If you pass both this value and a `--landing-page-catalog` value, the documentation compiler will only use the `--landing-page-catalog` value. 
-                    """,
                     valueName: "kind"
                 )
             )
@@ -145,9 +140,6 @@ extension Docc {
                 name: .customLong("synthesized-landing-page-topics-style"),
                 help: ArgumentHelp(
                     "The visual style of the topic section for the combined archive's synthesized landing page.",
-                    discussion: """
-                    If you pass both this value and a `--landing-page-catalog` value, the documentation compiler will only use the `--landing-page-catalog` value. 
-                    """,
                     valueName: "style"
                 )
             )

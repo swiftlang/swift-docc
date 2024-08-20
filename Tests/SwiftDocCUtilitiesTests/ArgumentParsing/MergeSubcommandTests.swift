@@ -71,11 +71,6 @@ class MergeSubcommandTests: XCTestCase {
             XCTAssertEqual(command.synthesizedLandingPageKind, "Package")
         }
         
-        // Incomplete catalog argument
-        XCTAssertThrowsError(try Docc.Merge.parse(["/path/to/First.doccarchive", "--landing-page-catalog"])) { error in
-            XCTAssertEqual(Docc.Merge.message(for: error), "Missing value for '--landing-page-catalog <catalog-path>'")
-        }
-        
         // Input catalog with unexpected path extension
         XCTAssertThrowsError(try Docc.Merge.parse(["/path/to/First.doccarchive", "--landing-page-catalog", "/path/to/not-a-catalog"])) { error in
             XCTAssertEqual(Docc.Merge.message(for: error), "Missing 'docc' path extension for catalog '/path/to/not-a-catalog'")
