@@ -21,8 +21,8 @@ struct MergeAction: Action {
     
     /// Information about how the merge action should create landing page content for the combined archive
     enum LandingPageInfo {
-        /// The merge action should build landing page content from a provided documentation catalog.
-        case buildFromCatalog(documentationCatalog: URL)
+        // This enum will have a case for a landing page catalog when we add support for that.
+        
         /// The merge action should synthesize a minimal landing page with a given name and kind.
         case synthesize(name: String, kind: String)
     }
@@ -76,8 +76,6 @@ struct MergeAction: Action {
         }
         
         switch landingPageInfo {
-        case .buildFromCatalog:
-            fatalError("Custom landing page catalogs are not supported. `Merge.run()` currently always passed `.synthesize()`.")
         case .synthesize(let name, let kind):
             try synthesizeLandingPage(landingPageName: name, landingPageKind: kind, combinedIndex: &combinedJSONIndex, targetURL: targetURL)
         }
