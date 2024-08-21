@@ -612,8 +612,40 @@ extension NavigatorIndex {
             for platformName in Platform.Name.apple {
                 nameToPlatform[platformName.name.lowercased()] = platformName
             }
+
+            validateBundleIdentifier()
         }
-        
+
+        /// Validates the bundle identifier to ensure it contains only valid characters.
+        ///
+        /// This method checks whether the `bundleIdentifier` contains any characters that are not valid
+        /// according to RFC 3986 for URL hosts. The valid characters include alphanumeric characters,
+        /// hyphens, periods, underscores, and tildes. If the `bundleIdentifier` contains invalid characters,
+        /// a diagnostic warning is created and added to the `problems` array.
+        ///
+        /// - Note: Bundle identifiers must not contain spaces, and they must conform to the character set
+        ///         allowed for URL hosts as defined by RFC 3986.
+        ///
+        /// - SeeAlso: [RFC 3986](https://tools.ietf.org/html/rfc3986)
+        ///
+        /// - Important: This method assumes that `bundleIdentifier` is a non-optional string.
+        private func validateBundleIdentifier() {
+            // URL host valid characters (RFC 3986)
+            let validCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~"))
+
+            if bundleIdentifier.contains(" ") || !bundleIdentifier.unicodeScalars.allSatisfy({ validCharacters.contains($0) }) {
+                let diagnostic = Diagnostic(
+                    source: outputURL,
+                    severity: .warning,
+                    range: nil,
+                    identifier: "org.swift.docc.InvalidBundleIdentifier",
+                    summary: "Invalid characters in bundle identifier",
+                    explanation: "Bundle identifier '\(bundleIdentifier)' contains characters that are not valid in URL hosts (e.g., spaces). Only alphanumeric characters, hyphens, periods, underscores, and tildes are allowed."
+                )
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+            }
+        }
+
         /// Index a single render `RenderNode`.
         /// - Parameter renderNode: The render node to be indexed.
         public func index(renderNode: RenderNode) throws {
@@ -945,7 +977,7 @@ extension NavigatorIndex {
                                                                               title: language.name,
                                                                               platformMask: Platform.Name.any.mask,
                                                                               availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities)),
-                                                          bundleIdentifier: bundleIdentifier)
+                                                                              bundleIdentifier: bundleIdentifier)
                     languageMaskToNode[language.mask] = languageNode
                     root.add(child: languageNode)
                 }
