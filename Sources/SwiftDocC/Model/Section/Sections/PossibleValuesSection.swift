@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,14 +12,15 @@ import Foundation
 import SymbolKit
 
 public struct PossibleValuesSection {
-    public static var title: String {
+    
+    static var title: String {
         return "Possible Values"
     }
     
     /// The list of possible values.
-    public let possibleValues: [PossibleValueTag]
+    let possibleValues: [PossibleValueTag]
     
-    public struct Validator {
+    struct Validator {
         /// The engine that collects problems encountered while validating the possible values documentation.
         var diagnosticEngine: DiagnosticEngine
         
@@ -32,25 +33,23 @@ public struct PossibleValuesSection {
         /// ///   - someValue: Some description of this value.
         /// ///   - anotherValue: Some description of a non-defined value.
         /// ///     ^~~~~~~~~~~~
-        /// ///     Possible value 'anotherValue' not found in the possible values defined for this symbol.
-        /// /// Known values:
-        /// /// - someValue
+        /// ///     'anotherValue' is not a known possible value for 'SymbolName'.
         /// ```
         ///
         /// - Parameters:
         ///   - unknownPossibleValue: The authored documentation for the unknown possible value name.
         ///   - knownPossibleValues: All known possible value names for that symbol.
         /// - Returns: A new problem that suggests that the developer removes the documentation for the unknown possible value.
-        func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValueTag, knownPossibleValues: Set<String>) -> Problem {
-            let source = unknownPossibleValue.range?.source
+        func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValueTag, knownPossibleValues: Set<String>, symbolName: String) -> Problem {
             
+            let source = unknownPossibleValue.range?.source
             let summary = """
-            Possible value \(unknownPossibleValue.value) not found in the possible values defined for this symbol.
-            \(!knownPossibleValues.isEmpty ? "Known Values:\n" : "")
-            \(knownPossibleValues.sorted().map { "- \($0)" }.joined(separator: "\n"))\n
+            \(unknownPossibleValue.value.singleQuoted) is not a known possible value for \(symbolName.singleQuoted).
             """
             let identifier = "org.swift.docc.DocumentedPossibleValueNotFound"
-            
+            let solutionSummary = """
+            Remove \(unknownPossibleValue.value.singleQuoted) possible value documentation or replace it with a known value.
+            """
             let nearMisses = NearMiss.bestMatches(for: knownPossibleValues, against: unknownPossibleValue.value)
             
             if nearMisses.isEmpty {
@@ -59,7 +58,7 @@ public struct PossibleValuesSection {
                     diagnostic: Diagnostic(source: source, severity: .warning, range: unknownPossibleValue.range, identifier: identifier, summary: summary),
                     possibleSolutions: [
                         Solution(
-                            summary: "Remove \(unknownPossibleValue.value.singleQuoted) possible value documentation",
+                            summary: solutionSummary,
                             replacements: unknownPossibleValue.range.map { [Replacement(range: $0, replacement: "")] } ?? []
                         )
                     ]

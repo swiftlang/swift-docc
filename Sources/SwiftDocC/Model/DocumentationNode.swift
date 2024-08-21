@@ -426,31 +426,31 @@ public struct DocumentationNode {
             let validator = PossibleValuesSection.Validator(diagnosticEngine: engine)
             guard let symbolAllowedValues = symbol?.mixins[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues else {
                 possibleValues.forEach { 
-                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: []))
+                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
                 return semantic.possibleValuesSectionVariants[.fallback] = PossibleValuesSection(possibleValues: [])
             }
             
-            // Drop possible values defined in the markdown that are not defined
-            // in the SymbolGraph and emit a warning.
-            var knownPossibleValues = possibleValues.filter { possibleValue in
-                if symbolAllowedValues.value.contains(where: { String($0) == possibleValue.value }) {
-                    return true
-                }
-                // Record problem about extra possible value.
-                engine.emit(
-                    validator.makeExtraPossibleValueProblem(possibleValue, knownPossibleValues: Set(symbolAllowedValues.value.map { String($0) }))
-                )
-                return false
-            }
+            // Ignore documented possible values that don't exist in the symbol's allowed values in the symbol graph.
+            let allowedPossibleValueNames = Set(symbolAllowedValues.value.map { String($0) })
+            var (knownPossibleValues, unknownPossibleValues) = possibleValues.categorize(where: {
+                allowedPossibleValueNames.contains($0.value)
+            })
             
             // Add the symbol possible values that are not documented.
-            symbolAllowedValues.value.forEach { possibleValue in
-                if !knownPossibleValues.contains(where: { $0.value == String(possibleValue) }) {
-                    knownPossibleValues.append(
-                        PossibleValueTag(value: String(possibleValue), contents: [])
-                    )
+            let knownPossibleValueNames = Set(knownPossibleValues.map(\.value))
+            knownPossibleValues.append(contentsOf: symbolAllowedValues.value.compactMap { possibleValue in
+                let possibleValueString = String(possibleValue)
+                guard !knownPossibleValueNames.contains(possibleValueString) else {
+                    return nil
                 }
+                return PossibleValueTag(value: possibleValueString, contents: [])
+            })
+            
+            for unknownValue in unknownPossibleValues {
+                engine.emit(
+                    validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
+                )
             }
             
             // Record the possible values extracted from the markdown.

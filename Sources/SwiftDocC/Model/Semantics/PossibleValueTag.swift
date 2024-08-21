@@ -25,4 +25,11 @@ public struct PossibleValueTag {
     /// The text range where this parameter was parsed.
     var range: SourceRange?
     
+    init(value: String, contents: [Markup], nameRange: SourceRange? = nil, range: SourceRange? = nil) {
+        self.value = value
+        self.contents = contents
+        self.nameRange = nameRange
+        self.range = range
+    }
+    
 }

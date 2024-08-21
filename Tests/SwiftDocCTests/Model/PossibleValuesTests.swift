@@ -34,12 +34,15 @@ class PossibleValuesTests: XCTestCase {
         }
         do {
             XCTAssertEqual(context.problems.count, 1)
-            let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Possible value April not found in the possible values defined for this symbol.\nKnown Values:\n\n- February\n- January\n- March\n" }))
+            let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "\'April\' is not a known possible value for \'Month\'." }))
             XCTAssertEqual(possibleValueProblem.diagnostic.source, url.appendingPathComponent("Month.md"))
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.lowerBound.line, 9)
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.lowerBound.column, 3)
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.upperBound.line, 9)
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.upperBound.column, 18)
+            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == """
+            Remove \'April\' possible value documentation or replace it with a known value.\nKnown Values:\n\n- February\n- January\n- March\n
+            """ }))
         }
         
         // Check that no problems are emitted if no extra possible values are documented.
@@ -75,7 +78,7 @@ class PossibleValuesTests: XCTestCase {
         do {
             XCTAssertEqual(context.problems.count, 1)
             XCTAssertEqual(context.problems.count, 1)
-            let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "Possible value Marc not found in the possible values defined for this symbol.\nKnown Values:\n\n- February\n- January\n- March\n" }))
+            let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "\'Marc\' is not a known possible value for \'Month\'." }))
             XCTAssertEqual(possibleValueProblem.possibleSolutions.count, 1)
             XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Replace \'Marc\' with \'March\'" }))
         }
@@ -145,7 +148,7 @@ class PossibleValuesTests: XCTestCase {
         // Check that if no possible values were documented they still show under the Attributes section.
         XCTAssertEqual(allowedValues, ["January", "February", "March"])
         
-        var symbol = node.semantic as! Symbol
+        let symbol = node.semantic as! Symbol
         
         // Check that if no possible values were documented there's no 'Possible Values' render section.
         XCTAssertNil(symbol.possibleValuesSectionVariants.firstValue?.possibleValues)
@@ -163,6 +166,44 @@ class PossibleValuesTests: XCTestCase {
         converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         // Check that if a possible value was documented the list of possible values is not displayed under the 'Attributes' render section.
-        XCTAssertNil(try converter.convert(node).primaryContentSections.first(where: { $0.kind == .attributes}))
+        XCTAssertFalse(try converter.convert(node).primaryContentSections.contains(where: { $0.kind == .attributes }))
+    }
+    
+    func testUnresolvedLinkWarnings() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+            try """
+            #  ``Month``
+            
+            A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon; the words month and Moon are cognates.
+            
+            - PossibleValues:
+                - January: First
+                - February: Second links to <doc:NotFoundArticle>
+                - March: Third links to ``NotFoundSymbol``
+            """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let problems = context.diagnosticEngine.problems
+        let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("Month.md") == true }
+        XCTAssertEqual(linkResolutionProblems.count, 2)
+        let problemDiagnosticsSummary = linkResolutionProblems.map { $0.diagnostic.summary }
+        XCTAssertTrue(problemDiagnosticsSummary.contains("\'NotFoundArticle\' doesn\'t exist at \'/DictionaryData/Month\'"))
+        XCTAssertTrue(problemDiagnosticsSummary.contains("\'NotFoundSymbol\' doesn\'t exist at \'/DictionaryData/Month\'"))
+    }
+    
+    func testResolvedLins() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+            try """
+            #  ``Month``
+            
+            A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon; the words month and Moon are cognates.
+            
+            - PossibleValues:
+                - January: First links to ``Artist``
+            """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
+        }
+        let problems = context.diagnosticEngine.problems
+        let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("Month.md") == true }
+        XCTAssertEqual(linkResolutionProblems.count, 0)
     }
 }

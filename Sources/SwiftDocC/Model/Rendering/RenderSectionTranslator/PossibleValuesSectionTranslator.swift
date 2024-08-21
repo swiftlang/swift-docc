@@ -16,12 +16,12 @@ import Markdown
 struct PossibleValuesSectionTranslator: RenderSectionTranslator {
     
     func translateSection(for symbol: Symbol, renderNode: inout RenderNode, renderNodeTranslator: inout RenderNodeTranslator) -> VariantCollection<CodableContentSection?>? {
+        // Don't render the possible value section if the symbol doesn't define any allowed value.
         guard (symbol.mixinsVariants.allValues.mapFirst(where: { mixin in
             mixin.variant[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues
         }) != nil) else {
             return nil
         }
-        
         
         return translateSectionToVariantCollection(
                documentationDataVariants: symbol.possibleValuesSectionVariants

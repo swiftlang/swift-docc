@@ -155,7 +155,6 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
     func testDictionaryRenderNodeHasExpectedContent() throws {
         let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
         let artistRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Artist")
-        let monthRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Month")
         
         assertExpectedContent(
             artistRenderNode,
