@@ -14,7 +14,7 @@ import XCTest
 final class DiagnosticBundleIdentifierTests: XCTestCase {
 
     func testValidBundleIdentifier() throws {
-        // GIVEN: A valid bundle identifier
+        // GIVEN
         let outputURL = try createTemporaryDirectory().appendingPathComponent("valid-bundle")
         let builder = NavigatorIndex.Builder(
             outputURL: outputURL,
