@@ -90,7 +90,7 @@ extension PathHierarchy {
                         // Ignore this error and raise an error about not finding the module instead.
                         break
                     case .unknownName(let partialResult, remaining: _, availableChildren: _):
-                        if partialResult.node.symbol?.kind.identifier == .module {
+                        if modules.contains(where: { $0.identifier == partialResult.node.identifier }) {
                             // Failed to find the first path component. Ignore this error and raise an error about not finding the module instead.
                             break
                         } else {
