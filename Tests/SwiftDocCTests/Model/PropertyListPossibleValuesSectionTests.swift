@@ -15,7 +15,7 @@ import Foundation
 import SwiftDocCTestUtilities
 
 
-class PossibleValuesTests: XCTestCase {
+class PropertyListPossibleValuesSectionTests: XCTestCase {
     
     func testPossibleValuesDiagnostics() throws {
         // Check that a problem is emitted when extra possible values are documented.
@@ -40,9 +40,7 @@ class PossibleValuesTests: XCTestCase {
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.lowerBound.column, 3)
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.upperBound.line, 9)
             XCTAssertEqual(possibleValueProblem.diagnostic.range?.upperBound.column, 18)
-            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == """
-            Remove \'April\' possible value documentation or replace it with a known value.\nKnown Values:\n\n- February\n- January\n- March\n
-            """ }))
+            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Remove \'April\' possible value documentation or replace it with a known value." }))
         }
         
         // Check that no problems are emitted if no extra possible values are documented.
@@ -80,7 +78,7 @@ class PossibleValuesTests: XCTestCase {
             XCTAssertEqual(context.problems.count, 1)
             let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "\'Marc\' is not a known possible value for \'Month\'." }))
             XCTAssertEqual(possibleValueProblem.possibleSolutions.count, 1)
-            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Replace \'Marc\' with \'March\'" }))
+            XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Remove \'Marc\' possible value documentation or replace it with a known value." }))
         }
     }
     
@@ -192,7 +190,7 @@ class PossibleValuesTests: XCTestCase {
     }
     
     func testResolvedLins() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
+        let (_, _, context) = try testBundleAndContext(copying: "DictionaryData") { url in
             try """
             #  ``Month``
             

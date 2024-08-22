@@ -9,16 +9,39 @@
 */
 
 import Foundation
+import Markdown
 import SymbolKit
 
-public struct PossibleValuesSection {
+public struct PropertyListPossibleValuesSection {
+    
+    /// A possible value.
+    ///
+    /// Documentation about a  possible value of a symbol.
+    /// Write a possible value by prepending a line of prose with "- PossibleValue:"  or  "- PossibleValues:".
+    struct PossibleValue {
+        /// The string representation of the value.
+        var value: String
+        /// The content that describes the value.
+        var contents: [Markup]
+        /// The text range where the parameter name was parsed.
+        var nameRange: SourceRange?
+        /// The text range where this parameter was parsed.
+        var range: SourceRange?
+        
+        init(value: String, contents: [Markup], nameRange: SourceRange? = nil, range: SourceRange? = nil) {
+            self.value = value
+            self.contents = contents
+            self.nameRange = nameRange
+            self.range = range
+        }
+    }
     
     static var title: String {
         return "Possible Values"
     }
     
     /// The list of possible values.
-    let possibleValues: [PossibleValueTag]
+    let possibleValues: [PossibleValue]
     
     struct Validator {
         /// The engine that collects problems encountered while validating the possible values documentation.
@@ -40,7 +63,7 @@ public struct PossibleValuesSection {
         ///   - unknownPossibleValue: The authored documentation for the unknown possible value name.
         ///   - knownPossibleValues: All known possible value names for that symbol.
         /// - Returns: A new problem that suggests that the developer removes the documentation for the unknown possible value.
-        func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValueTag, knownPossibleValues: Set<String>, symbolName: String) -> Problem {
+        func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Problem {
             
             let source = unknownPossibleValue.range?.source
             let summary = """

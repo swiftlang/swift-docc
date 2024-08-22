@@ -472,11 +472,11 @@ struct ReferenceResolver: SemanticVisitor {
             return HTTPResponsesSection(responses: responses)
         }
         
-        let possibleValuesVariants = symbol.possibleValuesSectionVariants.map { possibleValuesSection -> PossibleValuesSection in
+        let possibleValuesVariants = symbol.possibleValuesSectionVariants.map { possibleValuesSection -> PropertyListPossibleValuesSection in
             let possibleValues = possibleValuesSection.possibleValues.map {
-                PossibleValueTag(value: $0.value, contents: $0.contents.map { visitMarkup($0) }, nameRange: $0.nameRange, range: $0.range)
+                PropertyListPossibleValuesSection.PossibleValue(value: $0.value, contents: $0.contents.map { visitMarkup($0) }, nameRange: $0.nameRange, range: $0.range)
             }
-            return PossibleValuesSection(possibleValues: possibleValues)
+            return PropertyListPossibleValuesSection(possibleValues: possibleValues)
         }
         
         // It's important to carry over aggregate data like the merged declarations

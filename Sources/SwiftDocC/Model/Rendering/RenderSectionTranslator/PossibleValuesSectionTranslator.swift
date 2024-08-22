@@ -29,7 +29,7 @@ struct PossibleValuesSectionTranslator: RenderSectionTranslator {
             // Render the possible values with the matching description from the
             // possible values listed in the markdown.
             return PossibleValuesRenderSection(
-                title: PossibleValuesSection.title,
+                title: PropertyListPossibleValuesSection.title,
                 values: possibleValuesSection.possibleValues.map { possibleValueTag in
                     let valueContent = renderNodeTranslator.visitMarkupContainer(
                         MarkupContainer(possibleValueTag.contents)

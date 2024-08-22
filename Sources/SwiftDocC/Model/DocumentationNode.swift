@@ -423,12 +423,12 @@ public struct DocumentationNode {
         }
         
         if let possibleValues = markupModel.discussionTags?.possibleValues, !possibleValues.isEmpty {
-            let validator = PossibleValuesSection.Validator(diagnosticEngine: engine)
+            let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
             guard let symbolAllowedValues = symbol?.mixins[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues else {
                 possibleValues.forEach { 
                     engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
-                return semantic.possibleValuesSectionVariants[.fallback] = PossibleValuesSection(possibleValues: [])
+                return semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: [])
             }
             
             // Ignore documented possible values that don't exist in the symbol's allowed values in the symbol graph.
@@ -444,7 +444,7 @@ public struct DocumentationNode {
                 guard !knownPossibleValueNames.contains(possibleValueString) else {
                     return nil
                 }
-                return PossibleValueTag(value: possibleValueString, contents: [])
+                return PropertyListPossibleValuesSection.PossibleValue(value: possibleValueString, contents: [])
             })
             
             for unknownValue in unknownPossibleValues {
@@ -454,7 +454,7 @@ public struct DocumentationNode {
             }
             
             // Record the possible values extracted from the markdown.
-            semantic.possibleValuesSectionVariants[.fallback] = PossibleValuesSection(possibleValues: knownPossibleValues)
+            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: knownPossibleValues)
         }
         
         options = documentationExtension?.options[.local]
@@ -706,7 +706,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
-            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possibleValues.isEmpty ? nil : PossibleValuesSection(possibleValues: $0.possibleValues) })),
+            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possibleValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possibleValues) })),
             httpEndpointSectionVariants: .empty,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,

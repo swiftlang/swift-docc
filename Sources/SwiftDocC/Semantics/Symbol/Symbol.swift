@@ -206,7 +206,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>
     
     /// The symbol's possible values in each language variant the symbol is available in.
-    public var possibleValuesSectionVariants: DocumentationDataVariants<PossibleValuesSection>
+    public var possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection>
 
     /// The HTTP endpoint of an HTTP request, in each language variant the symbol is available in.
     public var httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>
@@ -278,7 +278,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
         dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>,
-        possibleValuesSectionVariants: DocumentationDataVariants<PossibleValuesSection>,
+        possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection>,
         httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>,
         httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection>,
         httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection>,

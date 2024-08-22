@@ -128,9 +128,9 @@ extension Sequence<InlineMarkup> {
         return nil
     }
     
-    func extractPossibleValueTag() -> PossibleValueTag? {
+    func extractPossibleValueTag() -> PropertyListPossibleValuesSection.PossibleValue? {
         if let (value, nameRange, content, itemRange) = splitNameAndContent() {
-            return PossibleValueTag(value: value, contents: content, nameRange: nameRange, range: itemRange)
+            return PropertyListPossibleValuesSection.PossibleValue(value: value, contents: content, nameRange: nameRange, range: itemRange)
         }
         return nil
     }
@@ -253,7 +253,7 @@ extension ListItem {
     - PossibleValue x: The meaning of x
     ```
     */
-    func extractStandalonePossibleValueTag() -> PossibleValueTag? {
+    func extractStandalonePossibleValueTag() -> PropertyListPossibleValuesSection.PossibleValue? {
         guard let remainder = extractTag(TaggedListItemExtractor.possibleValueTag) else {
             return nil
         }
@@ -271,11 +271,11 @@ extension ListItem {
        - y: Meaning of y
      ```
      */
-    func extractPossibleValueOutline() -> [PossibleValueTag]? {
+    func extractPossibleValueOutline() -> [PropertyListPossibleValuesSection.PossibleValue]? {
         guard extractTag(TaggedListItemExtractor.possibleValuesTag + ":") != nil else {
            return nil
         }
-        var possibleValues = [PossibleValueTag]()
+        var possibleValues = [PropertyListPossibleValuesSection.PossibleValue]()
         
         for child in children {
             // The list `- PossibleValues:` should have one child, a list of values.
@@ -293,7 +293,7 @@ extension ListItem {
                 }
                 // Don't forget the rest of the content under this possible value list item.
                 let contents = possibleValue.contents + Array(listItem.children.dropFirst(1))
-                possibleValues.append(PossibleValueTag(value: possibleValue.value, contents: contents, nameRange: possibleValue.nameRange, range: possibleValue.range))
+                possibleValues.append(PropertyListPossibleValuesSection.PossibleValue(value: possibleValue.value, contents: contents, nameRange: possibleValue.nameRange, range: possibleValue.range))
             }
         }
         return possibleValues
@@ -612,7 +612,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
     var returns = [Return]()
     var `throws` = [Throw]()
     var otherTags = [SimpleTag]()
-    var possibleValues = [PossibleValueTag]()
+    var possibleValues = [PropertyListPossibleValuesSection.PossibleValue]()
 
     init() {}
     
