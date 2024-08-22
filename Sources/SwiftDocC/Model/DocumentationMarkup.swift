@@ -73,14 +73,6 @@ struct DocumentationMarkup {
         case end
     }
     
-    /// Directives which are removed from the markdown content after being parsed.
-    static let directivesRemovedFromContent = [
-        Comment.directiveName,
-        Metadata.directiveName,
-        Options.directiveName,
-        Redirect.directiveName,
-    ]
-    
     private static let allowedSectionsForDeprecationSummary = [
         ParserSection.abstract,
         ParserSection.discussion,
@@ -163,7 +155,7 @@ struct DocumentationMarkup {
                     abstractSection = AbstractSection(paragraph: firstParagraph)
                     return
                 } else if let directive = child as? BlockDirective {
-                    if Self.directivesRemovedFromContent.contains(directive.name) {
+                    if BlockDirective.directivesRemovedFromContent.contains(directive.name) {
                         // These directives don't affect content so they shouldn't break us out of
                         // the automatic abstract section.
                         return
