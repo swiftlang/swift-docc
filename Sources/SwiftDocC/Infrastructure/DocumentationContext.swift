@@ -1621,9 +1621,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for symbolID in symbolsToResolve {
             if let (reference, entity) = resolveSymbol(symbolID: symbolID) {
                 externalCache.add(entity, reference: reference, symbolID: symbolID)
-            } else {
-                diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.ReferenceSymbolNotFound", summary: "Symbol with identifier \(symbolID.singleQuoted) was referenced in the combined symbol graph but couldn't be found in the symbol graph or externally."), possibleSolutions: []))
             }
+            // It's expected that some symbols won't resolve.
+            // The build doesn't necessarily include all documentation dependencies that appear in declarations, conformances, etc.
         }
     }
     

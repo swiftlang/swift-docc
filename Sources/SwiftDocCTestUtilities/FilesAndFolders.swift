@@ -10,6 +10,7 @@
 
 import Foundation
 import XCTest
+import SwiftDocC
 
 /*
     This file contains API for working with folder hierarchies, and is extensible to allow for testing
@@ -269,6 +270,7 @@ extension Folder {
     /// - Note: If there are more than one first path component in the provided paths, the return value will contain more than one element.
     public static func makeStructure(
         filePaths: [String],
+        renderNodeReferencePrefix: String? = nil,
         isEmptyDirectoryCheck: (String) -> Bool = { _ in false }
     ) -> [File] {
         guard !filePaths.isEmpty else {
@@ -286,7 +288,7 @@ extension Folder {
             return grouped.map { pathComponent, remaining in
                 let absolutePath = "\(accumulatedBasePath)/\(pathComponent)"
                 if remaining == [[]] && !isEmptyDirectoryCheck(absolutePath) {
-                    return TextFile(name: pathComponent, utf8Content: "")
+                    return JSONFile(name: pathComponent, content: makeMinimalTestRenderNode(path: (renderNodeReferencePrefix ?? "") + absolutePath))
                 } else {
                     return Folder(name: pathComponent, content: _makeStructure(paths: remaining.filter { !$0.isEmpty }, accumulatedBasePath: absolutePath))
                 }
@@ -300,6 +302,25 @@ extension Folder {
         
         return _makeStructure(paths: filePaths.map { $0.components(separatedBy: CharacterSet(charactersIn: "/")) }, accumulatedBasePath: "")
     }
+}
+
+private func makeMinimalTestRenderNode(path: String) -> RenderNode {
+    let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.test", path: path, sourceLanguage: .swift)
+    let rawReference = reference.url.absoluteString
+    let title = path.components(separatedBy: "/").last ?? path
+    
+    var renderNode = RenderNode(identifier: reference, kind: .article)
+    renderNode.metadata.title = title
+    renderNode.references = [
+        rawReference: TopicRenderReference(
+            identifier: RenderReferenceIdentifier(rawReference),
+            title: title,
+            abstract: [],
+            url: reference.path,
+            kind: .article
+        )
+    ]
+    return renderNode
 }
 
 /// A node in a tree structure that can be printed into a visual representation for debugging.

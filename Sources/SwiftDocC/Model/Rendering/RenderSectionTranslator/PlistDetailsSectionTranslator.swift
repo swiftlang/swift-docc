@@ -14,7 +14,7 @@ import SymbolKit
 /// Translates a symbol's details into a render nodes's details section.
 struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
     
-    func generatePlistDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PlistDetailsRenderSection {
+    private func generatePlistDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PlistDetailsRenderSection {
         PlistDetailsRenderSection(
             details: PlistDetailsRenderSection.Details(
                 rawKey: plistDetails.rawKey,

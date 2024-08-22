@@ -11,8 +11,57 @@
 import Foundation
 import SymbolKit
 
+typealias OverloadDeclaration = (
+    declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],
+    reference: ResolvedTopicReference
+)
+
 /// Translates a symbol's declaration into a render node's Declarations section.
 struct DeclarationsSectionTranslator: RenderSectionTranslator {
+    /// A mapping from a symbol reference to the "common fragments" in its overload group.
+    static let commonFragmentsMap: Synchronized<[ResolvedTopicReference: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]> = .init([:])
+
+    /// Set the common fragments for the given symbol references.
+    func setCommonFragments(
+        references: [ResolvedTopicReference],
+        fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment])
+    {
+        Self.commonFragmentsMap.sync({ map in
+            for reference in references {
+                map[reference] = fragments
+            }
+        })
+    }
+
+    /// Fetch the common fragments for the given reference, if present.
+    func commonFragments(
+        for reference: ResolvedTopicReference
+    ) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment]? {
+        Self.commonFragmentsMap.sync({ $0[reference] })
+    }
+
+    /// Fetch the common fragments for the given references, or compute it if necessary.
+    func commonFragments(
+        for mainDeclaration: OverloadDeclaration,
+        overloadDeclarations: [OverloadDeclaration]
+    ) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+        if let fragments = commonFragments(for: mainDeclaration.reference) {
+            return fragments
+        }
+
+        let preProcessedDeclarations = [mainDeclaration.declaration] + overloadDeclarations.map(\.declaration)
+
+        // Collect the "common fragments" so we can highlight the ones that are different
+        // in each declaration
+        let commonFragments = longestCommonSubsequence(preProcessedDeclarations)
+
+        setCommonFragments(
+            references: [mainDeclaration.reference] + overloadDeclarations.map(\.reference),
+            fragments: commonFragments)
+
+        return commonFragments
+    }
+
     func translateSection(
         for symbol: Symbol,
         renderNode: inout RenderNode,
@@ -78,11 +127,6 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
 
                 return postProcessTokens(translatedDeclaration)
             }
-
-            typealias OverloadDeclaration = (
-                declaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment],
-                reference: ResolvedTopicReference
-            )
 
             func renderOtherDeclarationsTokens(
                 from overloadDeclarations: [OverloadDeclaration],
@@ -162,11 +206,12 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     let processedOverloadDeclarations = overloadDeclarations.map({
                         OverloadDeclaration($0.declaration.flatMap(preProcessFragment(_:)), $0.reference)
                     })
-                    let preProcessedDeclarations = [mainDeclaration] + processedOverloadDeclarations.map(\.declaration)
 
                     // Collect the "common fragments" so we can highlight the ones that are different
                     // in each declaration
-                    let commonFragments = longestCommonSubsequence(preProcessedDeclarations)
+                    let commonFragments = commonFragments(
+                        for: (mainDeclaration, renderNode.identifier),
+                        overloadDeclarations: processedOverloadDeclarations)
 
                     renderedTokens = translateDeclaration(
                         mainDeclaration,

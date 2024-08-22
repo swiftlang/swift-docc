@@ -91,7 +91,7 @@ class DocumentationMarkupTests: XCTestCase {
         }
         
         // Directives which shouldn't break us out of the automatic abstract section.
-        for allowedDirective in DocumentationMarkup.directivesRemovedFromContent {
+        for allowedDirective in BlockDirective.directivesRemovedFromContent {
             do {
                 let source = """
                 # Title
