@@ -49,6 +49,7 @@ import SymbolKit
 /// - ``returnsSectionVariants``
 /// - ``parametersSectionVariants``
 /// - ``dictionaryKeysSectionVariants``
+/// - ``possibleValuesSectionVariants``
 /// - ``httpEndpointSectionVariants``
 /// - ``httpParametersSectionVariants``
 /// - ``httpResponsesSectionVariants``

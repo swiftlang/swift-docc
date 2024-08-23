@@ -18,11 +18,11 @@ public struct PropertyListPossibleValuesSection {
     ///
     /// Documentation about a  possible value of a symbol.
     /// Write a possible value by prepending a line of prose with "- PossibleValue:"  or  "- PossibleValues:".
-    struct PossibleValue {
+    public struct PossibleValue {
         /// The string representation of the value.
-        var value: String
+        public var value: String
         /// The content that describes the value.
-        var contents: [Markup]
+        public var contents: [Markup]
         /// The text range where the parameter name was parsed.
         var nameRange: SourceRange?
         /// The text range where this parameter was parsed.
@@ -36,12 +36,12 @@ public struct PropertyListPossibleValuesSection {
         }
     }
     
-    static var title: String {
+    public static var title: String {
         return "Possible Values"
     }
     
     /// The list of possible values.
-    let possibleValues: [PossibleValue]
+    public let possibleValues: [PossibleValue]
     
     struct Validator {
         /// The engine that collects problems encountered while validating the possible values documentation.

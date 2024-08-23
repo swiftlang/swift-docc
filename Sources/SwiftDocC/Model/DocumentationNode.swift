@@ -422,8 +422,8 @@ public struct DocumentationNode {
             semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
         }
         
-        // The symbol ppossible values.
-        let symbolAllowedValues = symbol?.mixins[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues
+        // The property list symbol's allowed values.
+        let symbolAllowedValues = symbol![mixin: SymbolGraph.Symbol.AllowedValues.self]
         
         if let possibleValues = markupModel.discussionTags?.possibleValues, !possibleValues.isEmpty {
             let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
@@ -431,7 +431,7 @@ public struct DocumentationNode {
                 possibleValues.forEach { 
                     engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
-                return semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: [])
+                return
             }
             
             // Ignore documented possible values that don't exist in the symbol's allowed values in the symbol graph.

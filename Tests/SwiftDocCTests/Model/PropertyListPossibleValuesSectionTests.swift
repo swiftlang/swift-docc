@@ -75,7 +75,6 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
         do {
             XCTAssertEqual(context.problems.count, 1)
-            XCTAssertEqual(context.problems.count, 1)
             let possibleValueProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.summary == "\'Marc\' is not a known possible value for \'Month\'." }))
             XCTAssertEqual(possibleValueProblem.possibleSolutions.count, 1)
             XCTAssertNotNil(possibleValueProblem.possibleSolutions.first(where: { $0.summary == "Remove \'Marc\' possible value documentation or replace it with a known value." }))
