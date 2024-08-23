@@ -61,9 +61,6 @@ struct AttributesSectionTranslator: RenderSectionTranslator {
                     case (.allowedTypes, let types as [SymbolGraph.Symbol.TypeDetail]):
                         let tokens = types.compactMap { $0.fragments.map(translateFragments) }
                         return RenderAttribute.allowedTypes(tokens)
-                    case (.allowedValues, let values as [SymbolGraph.AnyScalar]) where symbol.possibleValuesSectionVariants.allValues.isEmpty:
-                        let stringValues = values.map { String($0) }
-                        return RenderAttribute.allowedValues(stringValues)
                     default:
                         return nil
                     }

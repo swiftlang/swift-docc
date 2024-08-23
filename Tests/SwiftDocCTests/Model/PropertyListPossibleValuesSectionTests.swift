@@ -82,6 +82,25 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         }
     }
     
+    func testAbsenceOfPossibleValues() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Artist", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        
+        // Check that the `Possible Values` section is not rendered if the symbol don't define any possible value.
+        XCTAssertNil(try converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
+    }
+    
+    func testUndocumentedPossibleValues() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let possibleValuesSection = try XCTUnwrap(try converter.convert(node).primaryContentSections.first(where: { $0.kind == .possibleValues}) as? PossibleValuesRenderSection)
+        let possibleValues: [PossibleValuesRenderSection.NamedValue] = possibleValuesSection.values
+        
+        // Check that if no possible values were documented they still show under the Possible Values section.
+        XCTAssertEqual(possibleValues.map { $0.name }, ["January", "February", "March"])
+    }
     
     func testDocumentedPossibleValuesMatchSymbolGraphPossibleValues() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
@@ -129,42 +148,6 @@ class PropertyListPossibleValuesSectionTests: XCTestCase {
         )
         // Check that the possible value is documented with the markdown content.
         XCTAssertEqual(documentedPossibleValue.contents.count , 1)
-    }
-    
-    func testPossibleValuesInAttributesSection() throws {
-        var (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData")
-        var node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
-        var converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let attributes = try XCTUnwrap(try converter.convert(node).primaryContentSections.first(where: { $0.kind == .attributes}) as? AttributesRenderSection)
-        var allowedValues: [String] {
-            switch attributes.attributes?.first {
-            case .allowedValues(let allowedValues): return allowedValues
-            default: return []
-            }
-        }
-        
-        // Check that if no possible values were documented they still show under the Attributes section.
-        XCTAssertEqual(allowedValues, ["January", "February", "March"])
-        
-        let symbol = node.semantic as! Symbol
-        
-        // Check that if no possible values were documented there's no 'Possible Values' render section.
-        XCTAssertNil(symbol.possibleValuesSectionVariants.firstValue?.possibleValues)
- 
-        (_, bundle, context) = try testBundleAndContext(copying: "DictionaryData") { url in
-            try """
-            #  ``Month``
-            
-            Month object.
-            
-            - PossibleValue January: First
-            """.write(to: url.appendingPathComponent("Month.md"), atomically: true, encoding: .utf8)
-        }
-        node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DictionaryData/Month", sourceLanguage: .swift))
-        converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        
-        // Check that if a possible value was documented the list of possible values is not displayed under the 'Attributes' render section.
-        XCTAssertFalse(try converter.convert(node).primaryContentSections.contains(where: { $0.kind == .attributes }))
     }
     
     func testUnresolvedLinkWarnings() throws {

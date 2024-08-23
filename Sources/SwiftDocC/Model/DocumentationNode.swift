@@ -422,9 +422,12 @@ public struct DocumentationNode {
             semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
         }
         
+        // The symbol ppossible values.
+        let symbolAllowedValues = symbol?.mixins[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues
+        
         if let possibleValues = markupModel.discussionTags?.possibleValues, !possibleValues.isEmpty {
             let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
-            guard let symbolAllowedValues = symbol?.mixins[SymbolGraph.Symbol.AllowedValues.mixinKey] as? SymbolGraph.Symbol.AllowedValues else {
+            guard let symbolAllowedValues else {
                 possibleValues.forEach { 
                     engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
@@ -455,6 +458,11 @@ public struct DocumentationNode {
             
             // Record the possible values extracted from the markdown.
             semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: knownPossibleValues)
+        } else if let symbolAllowedValues {
+            // Record the symbol possible values even if none are documented.
+            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: symbolAllowedValues.value.map {
+                PropertyListPossibleValuesSection.PossibleValue(value: String($0), contents: [])
+            })
         }
         
         options = documentationExtension?.options[.local]

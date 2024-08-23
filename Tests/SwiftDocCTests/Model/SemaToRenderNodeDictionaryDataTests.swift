@@ -203,7 +203,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         XCTAssertEqual(genreProperty.name, "genre")
         XCTAssertTrue(genreProperty.readOnly ?? false)
         attributeTitles = genreProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
-        XCTAssertEqual(attributeTitles, ["default value", "possible values"])
+        XCTAssertEqual(attributeTitles, ["default value"])
         
         let monthProperty = propertiesSection.items[2]
         XCTAssertEqual(monthProperty.name, "monthOfBirth")
@@ -243,7 +243,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
             title: "Genre",
             navigatorTitle: nil,
             abstract: nil,
-            attributes: [.maximumLength("40"), .allowedTypes([[type1], [type2]]), .allowedValues(["Classic Rock", "Folk", "null"])],
+            attributes: [.maximumLength("40"), .allowedTypes([[type1], [type2]])],
             declarationTokens: [
                 "string ",
                 "Genre"

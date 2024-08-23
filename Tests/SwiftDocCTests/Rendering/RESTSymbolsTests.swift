@@ -290,12 +290,6 @@ class RESTSymbolsTests: XCTestCase {
         } else {
             XCTFail("Unexpected attribute")
         }
-                
-        if case RenderAttribute.allowedValues(let values) = attributes[5] {
-            XCTAssertEqual(values, ["one", "two", "three"])
-        } else {
-            XCTFail("Unexpected attribute")
-        }
 
         XCTAssertEqual(properties.items[0].name, "code")
         XCTAssertEqual(properties.items[0].type.first?.text, "*")

@@ -1887,9 +1887,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
             if let constraint = symbol.maximumExclusive {
                 attributes.append(RenderAttribute.maximumExclusive(String(constraint)))
             }
-            if let constraint = symbol.allowedValues {
-                attributes.append(RenderAttribute.allowedValues(constraint.map{String($0)}))
-            }
             if let constraint = symbol.isReadOnly {
                 isReadOnly = constraint
             }

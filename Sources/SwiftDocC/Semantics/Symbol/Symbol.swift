@@ -348,8 +348,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                 
                 case let attribute as SymbolGraph.Symbol.TypeDetails:
                     attributes[.allowedTypes] = attribute.value
-                case let attribute as SymbolGraph.Symbol.AllowedValues:
-                    attributes[.allowedValues] = attribute.value
                 default: break;
                 }
             }
