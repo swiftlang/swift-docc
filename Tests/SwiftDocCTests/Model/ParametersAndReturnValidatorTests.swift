@@ -229,6 +229,37 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         XCTAssertEqual(objcReturnsContent, "`YES` if the specified circle is empty; otherwise, `NO`.")
     }
     
+    func testCanDocumentInitializerReturnValue() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "GeometricalShapes") { url in
+            try """
+            # ``Circle/init(center:radius:)``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Override the documentation with a return section that raise warnings.
+            
+            - Returns: Return value documentation for an initializer.
+            """.write(to: url.appendingPathComponent("init-extension.md"), atomically: true, encoding: .utf8)
+        }
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
+        
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("Circle/init(center:radius:)")
+        let node = try context.entity(with: reference)
+        
+        // Verify that this symbol doesn't have a return value in its signature
+        XCTAssertEqual(node.symbol?.functionSignature?.returns, [])
+        
+        let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
+        let swiftReturnsSection = try XCTUnwrap(
+            symbolSemantic.returnsSectionVariants.allValues.first(where: { trait, _ in trait.interfaceLanguage == "swift" })
+        ).variant
+        XCTAssertEqual(swiftReturnsSection.content.map { $0.format() }, [
+            "Return value documentation for an initializer."
+        ])
+    }
+    
     func testNoParameterDiagnosticWithoutFunctionSignature() throws {
         var symbolGraph = makeSymbolGraph(docComment: """
             Some function description

@@ -84,7 +84,16 @@ struct ParametersAndReturnValidator {
             // If all source languages have empty parameter sections, return `nil` instead of individually empty sections.
             parameterVariants = DocumentationDataVariants(defaultVariantValue: nil)
         }
-        var returnVariants = makeReturnsSectionVariants(returns?.first, signatures, symbol.documentedSymbol?.kind, hasDocumentedParameters: parameters != nil)
+        
+        var returnVariants = makeReturnsSectionVariants(
+            returns?.first,
+            signatures,
+            documentedSymbolKind: symbol.documentedSymbol?.kind,
+            swiftSymbolKind: symbol.kind.mapFirst { selector, kind in
+                SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage) == .swift ? kind.identifier : nil
+            },
+            hasDocumentedParameters: parameters != nil
+        )
         if returnVariants.allValues.allSatisfy({ _, section in section.content.isEmpty }) {
             // If all source languages have empty return value sections, return `nil` instead of individually empty sections.
             returnVariants = DocumentationDataVariants(defaultVariantValue: nil)
@@ -209,13 +218,15 @@ struct ParametersAndReturnValidator {
     /// - Parameters:
     ///   - returns: The symbol's documented return values.
     ///   - signatures: The symbol's containing only the values that exist in that language representation's function signature.
-    ///   - symbolKind: The documented symbol's kind, for use in diagnostics.
+    ///   - documentedSymbolKind: The documented symbol's kind, for use in diagnostics.
+    ///   - swiftSymbolKind: The symbol's Swift representation's kind, or `nil` if the symbol doesn't have a Swift representation.
     ///   - hasDocumentedParameters: `true` if the symbol has documented any of its parameters; otherwise `false`.
     /// - Returns: A returns section variant containing only the return values that exist in each language representation's function signature.
     private func makeReturnsSectionVariants(
         _ returns: Return?,
         _ signatures: Signatures,
-        _ symbolKind: SymbolGraph.Symbol.Kind?,
+        documentedSymbolKind: SymbolGraph.Symbol.Kind?,
+        swiftSymbolKind: SymbolGraph.Symbol.KindIdentifier?,
         hasDocumentedParameters: Bool
     ) -> DocumentationDataVariants<ReturnsSection> {
         let returnsSection = returns.map { ReturnsSection(content: $0.contents) }
@@ -223,11 +234,18 @@ struct ParametersAndReturnValidator {
         
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
         for (trait, signature) in signatures {
+            let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:))
+            
+            // The function signature for Swift initializers indicate a Void return type.
+            // However, initializers have a _conceptual_ return value that's sometimes worth documenting (rdar://131913065).
+            if language == .swift, swiftSymbolKind == .`init` {
+                variants[trait] = returnsSection
+                continue
+            }
+            
             /// A Boolean value that indicates whether the current signature returns a known "void" value.
             var returnsKnownVoidValue: Bool {
-                guard let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
-                      let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language]
-                else {
+                guard let language, let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language] else {
                     return false
                 }
                 return signature.returns.allSatisfy { voidReturnValues.contains($0) }
@@ -251,7 +269,7 @@ struct ParametersAndReturnValidator {
         
         // Diagnose if the symbol had documented its return values but all language representations only return void.
         if let returns, traitsWithNonVoidReturnValues.isEmpty {
-            diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: symbolKind))
+            diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: documentedSymbolKind))
         }
         return variants
     }
