@@ -5340,6 +5340,78 @@ let expected = """
             }
         }
     }
+    
+    func testResolveExternalLinkFromTechnologyRoot() throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        
+        let externalModuleName = "ExternalModuleName"
+        
+        func makeExternalResolver() throws -> ExternalPathHierarchyResolver {
+            let (bundle, context) = try loadBundle(
+                catalog: Folder(name: "Dependency.docc", content: [
+                    JSONFile(name: "\(externalModuleName).symbols.json", content: makeSymbolGraph(moduleName: externalModuleName)),
+                    TextFile(name: "Extension.md", utf8Content: """
+                    # ``\(externalModuleName)``
+                    
+                    Some description of this module.
+                    """)
+                ])
+            )
+            
+            // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let linkSummaries: [LinkDestinationSummary] = try context.knownPages.flatMap { reference in
+                let entity = try context.entity(with: reference)
+                let renderNode = try XCTUnwrap(converter.convert(entity))
+                
+                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+            }
+            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
+            
+            return ExternalPathHierarchyResolver(linkInformation: linkResolutionInformation, entityInformation: linkSummaries)
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Some root page
+            
+            A single-file article-only catalog.
+            
+            This root links to an external module ``/\(externalModuleName)``
+            """),
+        ])
+        
+        let (_, bundle, context) = try loadBundle(from: createTempFolder(content: [catalog])) { context in
+            context.linkResolver.externalResolvers = [externalModuleName: try makeExternalResolver()]
+        }
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try XCTUnwrap(context.soleRootModuleReference)
+        let node = try context.entity(with: reference)
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(node)
+        
+        let externalReference = "doc://Dependency/documentation/ExternalModuleName"
+        
+        // Verify that the rendered page contains the resolved reference
+        let discussionSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        XCTAssertEqual(discussionSection.content, [
+            .heading(.init(level: 2, text: "Overview", anchor: "overview")),
+            
+            .paragraph(.init(inlineContent: [
+                .text("This root links to an external module "),
+                .reference(identifier: RenderReferenceIdentifier(externalReference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+            ]))
+        ])
+        
+        // Verify that the rendered page has the render details about the resolved reference
+        XCTAssertEqual(renderNode.references.keys.sorted(), [externalReference])
+        
+        let externalRenderReference = try XCTUnwrap(renderNode.references[externalReference] as? TopicRenderReference)
+        XCTAssertEqual(externalRenderReference.title, externalModuleName)
+        XCTAssertEqual(externalRenderReference.abstract, [.text("Some description of this module.")])
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
