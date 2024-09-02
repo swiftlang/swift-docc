@@ -15,6 +15,65 @@ import Markdown
 
 class ListItemExtractorTests: XCTestCase {
     
+    func testSupportsSpacesInTaggedElementNames() throws {
+        let testSource = URL(fileURLWithPath: "/path/to/test-source-\(ProcessInfo.processInfo.globallyUniqueString)")
+        func extractedTags(_ markup: String) -> TaggedListItemExtractor {
+            let document = Document(parsing: markup, source: testSource, options: .parseSymbolLinks)
+            
+            var extractor = TaggedListItemExtractor()
+            _ = extractor.visit(document)
+            return extractor
+        }
+    
+        for whitespace in [" ", "   ", "\t"] {
+            let parameters = extractedTags("""
+            - Parameter\(whitespace)some parameter with spaces: Some description of this parameter.
+            """).parameters
+            XCTAssertEqual(parameters.count, 1)
+            let parameter = try XCTUnwrap(parameters.first)
+            XCTAssertEqual(parameter.name, "some parameter with spaces")
+            XCTAssertEqual(parameter.contents.map { $0.format() }, ["Some description of this parameter."])
+            XCTAssertEqual(parameter.nameRange?.source?.path, testSource.path)
+            XCTAssertEqual(parameter.range?.source?.path, testSource.path)
+        }
+
+        let parameters = extractedTags("""
+        - Parameters:
+          - some parameter with spaces: Some description of this parameter.
+        """).parameters
+        XCTAssertEqual(parameters.count, 1)
+        let parameter = try XCTUnwrap(parameters.first)
+        XCTAssertEqual(parameter.name, "some parameter with spaces")
+        XCTAssertEqual(parameter.contents.map { $0.format() }, ["Some description of this parameter."])
+        XCTAssertEqual(parameter.nameRange?.source?.path, testSource.path)
+        XCTAssertEqual(parameter.range?.source?.path, testSource.path)
+        
+        let dictionaryKeys = extractedTags("""
+        - DictionaryKeys:
+          - some key with spaces: Some description of this key.
+        """).dictionaryKeys
+        XCTAssertEqual(dictionaryKeys.count, 1)
+        let dictionaryKey = try XCTUnwrap(dictionaryKeys.first)
+        XCTAssertEqual(dictionaryKey.name, "some key with spaces")
+        XCTAssertEqual(dictionaryKey.contents.map { $0.format() }, ["Some description of this key."])
+        
+        let possibleValues = extractedTags("""
+        - PossibleValue some value with spaces: Some description of this value.
+        """).possiblePropertyListValues
+        XCTAssertEqual(possibleValues.count, 1)
+        let possibleValue = try XCTUnwrap(possibleValues.first)
+        XCTAssertEqual(possibleValue.value, "some value with spaces")
+        XCTAssertEqual(possibleValue.contents.map { $0.format() }, ["Some description of this value."])
+        XCTAssertEqual(possibleValue.nameRange?.source?.path, testSource.path)
+        XCTAssertEqual(possibleValue.range?.source?.path, testSource.path)
+        
+        XCTAssert(extractedTags("- Parameter: Missing parameter name.").parameters.isEmpty)
+        XCTAssert(extractedTags("- Parameter  : Missing parameter name.").parameters.isEmpty)
+        
+        XCTAssert(extractedTags("- DictionaryKey: Missing key name.").dictionaryKeys.isEmpty)
+        XCTAssert(extractedTags("- PossibleValue: Missing value name.").possiblePropertyListValues.isEmpty)
+    }
+    
     func testExtractingTags() throws {
         try assertExtractsRichContentFor(
             tagName: "Returns",
