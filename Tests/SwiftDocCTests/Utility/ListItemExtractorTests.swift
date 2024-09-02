@@ -70,8 +70,8 @@ class ListItemExtractorTests: XCTestCase {
         XCTAssert(extractedTags("- Parameter: Missing parameter name.").parameters.isEmpty)
         XCTAssert(extractedTags("- Parameter  : Missing parameter name.").parameters.isEmpty)
         
-        XCTAssert(extractedTags("- DictionaryKey: Missing key name.").parameters.isEmpty)
-        XCTAssert(extractedTags("- PossibleValue: Missing value name.").parameters.isEmpty)
+        XCTAssert(extractedTags("- DictionaryKey: Missing key name.").dictionaryKeys.isEmpty)
+        XCTAssert(extractedTags("- PossibleValue: Missing value name.").possiblePropertyListValues.isEmpty)
     }
     
     func testExtractingTags() throws {
