@@ -2476,6 +2476,32 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    func testResolveExternalLinkFromTechnologyRoot() throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Some root page
+            
+            A single-file article-only catalog
+            """),
+        ])
+        
+        let (_, _, context) = try loadBundle(from: createTempFolder(content: [catalog]))
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)
+        do {
+            _ = try tree.find(path: "/SomeModule", parent: rootIdentifier, onlyFindSymbols: true)
+            XCTFail("Unexpectedly found external symbol")
+        } catch PathHierarchy.Error.moduleNotFound(_, let remaining, _) {
+            // `LinkResolver` uses this error to know when to resolve a link from an external source.
+            XCTAssertEqual(remaining.map(\.full), ["SomeModule"])
+        } catch {
+            XCTFail("Unexpected error \(error)")
+        }
+    }
+    
     // MARK: Test helpers
 
     private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {

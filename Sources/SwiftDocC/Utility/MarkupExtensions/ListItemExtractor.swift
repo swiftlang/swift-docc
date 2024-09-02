@@ -57,6 +57,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
     var returns = [Return]()
     var `throws` = [Throw]()
     var otherTags = [SimpleTag]()
+    var possiblePropertyListValues = [PropertyListPossibleValuesSection.PossibleValue]()
 
     init() {}
     
@@ -159,6 +160,16 @@ struct TaggedListItemExtractor: MarkupRewriter {
             //   - y: ...
             dictionaryKeys.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag) })
         
+        case .possibleValue(let name):
+            // - DictionaryKey x: ...
+            possiblePropertyListValues.append(.init(extractedTag, name: name))
+            
+        case .possibleValues:
+            // - DictionaryKeys:
+            //   - x: ...
+            //   - y: ...
+            possiblePropertyListValues.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag) })
+            
         case .httpResponse(let name):
             // - HTTPResponse x: ...
             httpResponses.append(.init(extractedTag, name: name))
@@ -261,6 +272,8 @@ private struct ExtractedTag {
         
         case dictionaryKey(String)
         case dictionaryKeys
+        case possibleValue(String)
+        case possibleValues
         
         case httpBody
         case httpResponse(String)
@@ -286,6 +299,10 @@ private struct ExtractedTag {
                 self = .dictionaryKey(String(components.last!))
             case "dictionarykeys":
                 self = .dictionaryKeys
+            case "possiblevalue" where components.count == 2:
+                self = .possibleValue(String(components.last!))
+            case "possiblevalues":
+                self = .possibleValues
             case "httpbody":
                 self = .httpBody
             case "httpresponse" where components.count == 2:
@@ -379,6 +396,23 @@ private extension Sequence<InlineMarkup> {
 
 // MARK: Creating tag types
 
+private extension ExtractedTag {
+    func nameRange(name: String) -> SourceRange? {
+        if name == rawTag {
+            return tagRange
+        } else {
+            return tagRange.map { tagRange in
+                // For tags like `- TagName someName:`, the extracted tag name is "TagName someName" which means that the name ("someName") is at the end
+                let end = tagRange.upperBound
+                var start = end
+                start.column -= name.utf8.count
+                
+                return start ..< end
+            }
+        }
+    }
+}
+
 private extension Return {
     init(_ tag: ExtractedTag) {
         self.init(contents: tag.contents, range: tag.range)
@@ -387,26 +421,19 @@ private extension Return {
 
 private extension Parameter {
     init(_ tag: ExtractedTag, name: String, isStandalone: Bool) {
-        let nameRange: SourceRange?
-        if name == tag.rawTag {
-            nameRange = tag.tagRange
-        } else {
-            nameRange = tag.tagRange.map { tagRange in
-                // For tags like `- Parameter someName:`, the extracted tag name is "Parameter someName" which means that the parameter name is at the end
-                let end = tagRange.upperBound
-                var start = end
-                start.column -= name.utf8.count
-                
-                return start ..< end
-            }
-        }
-        self.init(name: name, nameRange: nameRange, contents: tag.contents, range: tag.range, isStandalone: isStandalone)
+        self.init(name: name, nameRange: tag.nameRange(name: name), contents: tag.contents, range: tag.range, isStandalone: isStandalone)
     }
 }
   
 private extension DictionaryKey {
     init(_ tag: ExtractedTag, name: String) {
         self.init(name: name, contents: tag.contents)
+    }
+}
+
+private extension PropertyListPossibleValuesSection.PossibleValue {
+    init(_ tag: ExtractedTag, name: String) {
+        self.init(value: name, contents: tag.contents, nameRange: tag.nameRange(name: name), range: tag.range)
     }
 }
 

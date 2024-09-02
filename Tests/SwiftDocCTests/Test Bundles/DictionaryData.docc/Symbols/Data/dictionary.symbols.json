@@ -240,6 +240,48 @@
     {
       "accessLevel": "public",
       "allowedValues": [
+        "January",
+        "February",
+        "March"
+      ],
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "string "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Month"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Month"
+      },
+      "kind": {
+        "displayName": "Type",
+        "identifier": "typealias"
+      },
+      "names": {
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "string "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Month"
+          }
+        ],
+        "title": "Month"
+      },
+      "pathComponents": [
+        "Month"
+      ],
+    },
+    {
+      "accessLevel": "public",
+      "allowedValues": [
         "Classic Rock",
         "Folk",
         null

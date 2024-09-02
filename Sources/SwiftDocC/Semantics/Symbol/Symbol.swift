@@ -49,6 +49,7 @@ import SymbolKit
 /// - ``returnsSectionVariants``
 /// - ``parametersSectionVariants``
 /// - ``dictionaryKeysSectionVariants``
+/// - ``possibleValuesSectionVariants``
 /// - ``httpEndpointSectionVariants``
 /// - ``httpParametersSectionVariants``
 /// - ``httpResponsesSectionVariants``
@@ -148,7 +149,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
-    /// The symbol's possible values in each language variant the symbol is available in.
+    /// The symbol's set of attributes in each language variant the symbol is available in.
     public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
     
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
@@ -204,6 +205,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any dictionary keys of the symbol, if the symbol accepts keys, in each language variant the symbol is available in.
     public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>
+    
+    /// The symbol's possible values in each language variant the symbol is available in.
+    public var possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection>
 
     /// The HTTP endpoint of an HTTP request, in each language variant the symbol is available in.
     public var httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>
@@ -275,6 +279,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
         dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>,
+        possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection>,
         httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>,
         httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection>,
         httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection>,
@@ -304,6 +309,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         
         self.deprecatedSummaryVariants = deprecatedSummaryVariants
         self.declarationVariants = declarationVariants
+        self.possibleValuesSectionVariants = possibleValuesSectionVariants
         self.alternateDeclarationVariants = alternateDeclarationVariants
         
         self.mixinsVariants = mixinsVariants
@@ -343,8 +349,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                 
                 case let attribute as SymbolGraph.Symbol.TypeDetails:
                     attributes[.allowedTypes] = attribute.value
-                case let attribute as SymbolGraph.Symbol.AllowedValues:
-                    attributes[.allowedValues] = attribute.value
                 default: break;
                 }
             }
