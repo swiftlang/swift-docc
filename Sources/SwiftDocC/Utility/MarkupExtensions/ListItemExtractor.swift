@@ -325,6 +325,18 @@ private struct ExtractedTag {
 }
 
 private extension ListItem {
+    
+    /// Creates a single "tag" from the list item's content.
+    ///
+    /// For example, the list item markup:
+    /// ```md
+    /// - TagName someValue: Some content.
+    ///
+    ///   More content.
+    /// ```
+    /// results in a tag with ``ExtractedTag/rawTag`` "TagName someValue" and ``ExtractedTag/contents`` containing both "Some content." and "More content."
+    ///
+    /// If the list item doesn't start with a paragraph of text containing a colon (`:`) on the first line, this function returns `nil`.
     func extractTag() -> ExtractedTag? {
         guard childCount > 0,
               let paragraph = child(at: 0) as? Paragraph,
@@ -336,6 +348,18 @@ private extension ListItem {
         return ExtractedTag(rawTag: name, tagRange: nameRange, contents: remainderOfFirstParagraph + children.dropFirst(), range: range)
     }
     
+    /// Creates a list of "tag" elements from a tag outline (a list item of list items).
+    ///
+    /// For example, the list item outline markup:
+    /// ```md
+    /// - TagName:
+    ///   - someValue: Some content.
+    ///
+    ///     More content.
+    /// ```
+    /// results in one tag with ``ExtractedTag/rawTag`` "someValue" and ``ExtractedTag/contents`` containing both "Some content." and "More content."
+    ///
+    /// If the list item outline doesn't contain any tags—list items with leading a paragraph that text containing a colon (`:`) on the first line—this function returns an empty list.
     func extractInnerTagOutline() -> [ExtractedTag] {
         var tags: [ExtractedTag] = []
         for child in children {
