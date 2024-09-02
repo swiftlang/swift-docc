@@ -18,7 +18,8 @@ extension Docc {
         public init() {}
         
         public static var configuration = CommandConfiguration(
-            abstract: "Merge a list of documentation archives into a combined archive."
+            abstract: "Merge a list of documentation archives into a combined archive.",
+            usage: "docc merge <archive-path> ... [<synthesized-landing-page-options>] [--output-path <output-path>]"
         )
         
         private static let archivePathExtension = "doccarchive"
@@ -47,7 +48,12 @@ extension Docc {
             @Option(
                 help: ArgumentHelp(
                     "Path to a '.\(Merge.catalogPathExtension)' documentation catalog directory with content for the landing page.",
-                    valueName: "catalog-path"),
+                    discussion: """
+                    The documentation compiler uses this catalog content to create a landing page, and optionally additional top-level articles, for the combined archive.
+                    Because the documentation compiler won't synthesize any landing page content, also passing a `--synthesized-landing-page-name` value has no effect. 
+                    """,
+                    valueName: "catalog-path",
+                    visibility: .hidden),
                 transform: URL.init(fileURLWithPath:))
             var landingPageCatalog: URL?
             
@@ -94,6 +100,8 @@ extension Docc {
                     guard fileManager.directoryExists(atPath: catalog.path) else {
                         throw ValidationError("No directory exists at '\(catalog.path)'")
                     }
+                    
+                    print("note: Using a custom landing page catalog isn't supported yet. Will synthesize a default landing page instead.")
                 }
                 
                 // Validate that the directory above the output location exist so that the merge command doesn't need to create intermediate directories.
@@ -107,6 +115,37 @@ extension Docc {
             }
         }
         
+        @OptionGroup(title: "Synthesized landing page options")
+        var synthesizedLandingPageOptions: SynthesizedLandingPageOptions
+        struct SynthesizedLandingPageOptions: ParsableArguments {
+            @Option(
+                name: .customLong("synthesized-landing-page-name"),
+                help: ArgumentHelp(
+                    "A display name for the combined archive's synthesized landing page.",
+                    valueName: "name"
+                )
+            )
+            var name: String = "Documentation"
+            
+            @Option(
+                name: .customLong("synthesized-landing-page-kind"),
+                help: ArgumentHelp(
+                    "A page kind that displays as a title heading for the combined archive's synthesized landing page.",
+                    valueName: "kind"
+                )
+            )
+            var kind: String = "Package"
+            
+            @Option(
+                name: .customLong("synthesized-landing-page-topics-style"),
+                help: ArgumentHelp(
+                    "The visual style of the topic section for the combined archive's synthesized landing page.",
+                    valueName: "style"
+                )
+            )
+            var topicStyle: TopicsVisualStyle.Style = .detailedGrid
+        }
+        
         public var archives: [URL] {
             get { inputsAndOutputs.archives }
             set { inputsAndOutputs.archives = newValue}
@@ -118,14 +157,29 @@ extension Docc {
         public var outputURL: URL {
             inputsAndOutputs.outputURL
         }
+        public var synthesizedLandingPageName: String {
+            synthesizedLandingPageOptions.name
+        }
+        public var synthesizedLandingPageKind: String {
+            synthesizedLandingPageOptions.kind
+        }
+        public var synthesizedLandingPageTopicsStyle: TopicsVisualStyle.Style {
+            synthesizedLandingPageOptions.topicStyle
+        }
         
         public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
-            var convertAction = MergeAction(archives: archives, landingPageCatalog: landingPageCatalog, outputURL: outputURL, fileManager: Self._fileManager)
+            var convertAction = MergeAction(
+                archives: archives,
+                landingPageInfo: .synthesize(.init(name: synthesizedLandingPageName, kind: synthesizedLandingPageKind, style: synthesizedLandingPageTopicsStyle)),
+                outputURL: outputURL,
+                fileManager: Self._fileManager
+            )
             
             // Perform the conversion and print any warnings or errors found
             try convertAction.performAndHandleResult()
         }
-        
     }
 }
+
+extension TopicsVisualStyle.Style: ExpressibleByArgument {}

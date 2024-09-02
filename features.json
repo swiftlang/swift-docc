@@ -8,6 +8,9 @@
     },
     {
       "name": "overloads"
+    },
+    {
+      "name": "synthesized-landing-page-name"
     }
   ]
 }

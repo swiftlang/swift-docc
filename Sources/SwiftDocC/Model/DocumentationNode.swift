@@ -311,6 +311,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             dictionaryKeysSectionVariants: .empty,
+            possibleValuesSectionVariants: .empty,
             httpEndpointSectionVariants: endpointVariants,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,
@@ -419,6 +420,49 @@ public struct DocumentationNode {
         if let responses = markupModel.discussionTags?.httpResponses, !responses.isEmpty {
             // Record the responses extracted from the markdown
             semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
+        }
+        
+        // The property list symbol's allowed values.
+        let symbolAllowedValues = symbol![mixin: SymbolGraph.Symbol.AllowedValues.self]
+        
+        if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
+            let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
+            guard let symbolAllowedValues else {
+                possibleValues.forEach { 
+                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
+                }
+                return
+            }
+            
+            // Ignore documented possible values that don't exist in the symbol's allowed values in the symbol graph.
+            let allowedPossibleValueNames = Set(symbolAllowedValues.value.map { String($0) })
+            var (knownPossibleValues, unknownPossibleValues) = possibleValues.categorize(where: {
+                allowedPossibleValueNames.contains($0.value)
+            })
+            
+            // Add the symbol possible values that are not documented.
+            let knownPossibleValueNames = Set(knownPossibleValues.map(\.value))
+            knownPossibleValues.append(contentsOf: symbolAllowedValues.value.compactMap { possibleValue in
+                let possibleValueString = String(possibleValue)
+                guard !knownPossibleValueNames.contains(possibleValueString) else {
+                    return nil
+                }
+                return PropertyListPossibleValuesSection.PossibleValue(value: possibleValueString, contents: [])
+            })
+            
+            for unknownValue in unknownPossibleValues {
+                engine.emit(
+                    validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
+                )
+            }
+            
+            // Record the possible values extracted from the markdown.
+            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: knownPossibleValues)
+        } else if let symbolAllowedValues {
+            // Record the symbol possible values even if none are documented.
+            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: symbolAllowedValues.value.map {
+                PropertyListPossibleValuesSection.PossibleValue(value: String($0), contents: [])
+            })
         }
         
         options = documentationExtension?.options[.local]
@@ -670,6 +714,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
+            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possiblePropertyListValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possiblePropertyListValues) })),
             httpEndpointSectionVariants: .empty,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,
