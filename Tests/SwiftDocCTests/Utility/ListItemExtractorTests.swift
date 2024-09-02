@@ -66,6 +66,12 @@ class ListItemExtractorTests: XCTestCase {
         XCTAssertEqual(possibleValue.contents.map { $0.format() }, ["Some description of this value."])
         XCTAssertEqual(possibleValue.nameRange?.source?.path, testSource.path)
         XCTAssertEqual(possibleValue.range?.source?.path, testSource.path)
+        
+        XCTAssert(extractedTags("- Parameter: Missing parameter name.").parameters.isEmpty)
+        XCTAssert(extractedTags("- Parameter  : Missing parameter name.").parameters.isEmpty)
+        
+        XCTAssert(extractedTags("- DictionaryKey: Missing key name.").parameters.isEmpty)
+        XCTAssert(extractedTags("- PossibleValue: Missing value name.").parameters.isEmpty)
     }
     
     func testExtractingTags() throws {
