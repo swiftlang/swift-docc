@@ -425,7 +425,7 @@ public struct DocumentationNode {
         // The property list symbol's allowed values.
         let symbolAllowedValues = symbol![mixin: SymbolGraph.Symbol.AllowedValues.self]
         
-        if let possibleValues = markupModel.discussionTags?.possibleValues, !possibleValues.isEmpty {
+        if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
             let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
             guard let symbolAllowedValues else {
                 possibleValues.forEach { 
@@ -714,7 +714,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
-            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possibleValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possibleValues) })),
+            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possiblePropertyListValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possiblePropertyListValues) })),
             httpEndpointSectionVariants: .empty,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,
