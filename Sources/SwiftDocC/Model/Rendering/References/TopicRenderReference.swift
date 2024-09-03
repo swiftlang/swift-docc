@@ -270,7 +270,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         let propertyListTitleStyle = try values.decodeIfPresent(PropertyListTitleStyle.self, forKey: .propertyListTitleStyle)
         let propertyListRawKey = try values.decodeIfPresent(String.self, forKey: .propertyListRawKey)
         let propertyListDisplayName = try values.decodeIfPresent(String.self, forKey: .propertyListDisplayName)
-        if propertyListRawKey != nil || propertyListRawKey != nil || propertyListDisplayName != nil {
+        if propertyListRawKey != nil || propertyListTitleStyle != nil || propertyListDisplayName != nil {
             propertyListKeyNames = PropertyListKeyNames(
                 titleStyle: propertyListTitleStyle,
                 rawKey: propertyListRawKey,

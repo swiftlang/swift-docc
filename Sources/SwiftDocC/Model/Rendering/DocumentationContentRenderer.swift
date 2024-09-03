@@ -363,7 +363,17 @@ public class DocumentationContentRenderer {
         let isRequired = (node?.semantic as? Symbol)?.isRequired ?? false
 
         let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
-
+        
+        // Add key information for property lists.
+        var propertyListKeyNames: TopicRenderReference.PropertyListKeyNames? = nil
+        if let nodePropertyListDetails = node?.symbol?.plistDetails  {
+            propertyListKeyNames = TopicRenderReference.PropertyListKeyNames(
+                titleStyle: (nodePropertyListDetails.customTitle != nil) ? .useDisplayName : .useRawKey,
+                rawKey: nodePropertyListDetails.rawKey,
+                displayName: nodePropertyListDetails.customTitle
+            )
+        }
+        
         var renderReference = TopicRenderReference(
             identifier: .init(referenceURL),
             titleVariants: VariantCollection<String>(from: titleVariants) ?? .init(defaultValue: ""),
@@ -372,7 +382,8 @@ public class DocumentationContentRenderer {
             kind: kind,
             required: isRequired,
             role: referenceRole,
-            estimatedTime: estimatedTime
+            estimatedTime: estimatedTime,
+            propertyListKeyNames: propertyListKeyNames
         )
         
         renderReference.images = node?.metadata?.pageImages.compactMap { pageImage -> TopicImage? in
