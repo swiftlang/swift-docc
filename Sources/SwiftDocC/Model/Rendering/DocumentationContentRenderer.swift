@@ -365,12 +365,11 @@ public class DocumentationContentRenderer {
         let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
         
         // Add key information for property lists.
-        var propertyListKeyNames: TopicRenderReference.PropertyListKeyNames? = nil
-        if let nodePropertyListDetails = node?.symbol?.plistDetails  {
-            propertyListKeyNames = TopicRenderReference.PropertyListKeyNames(
-                titleStyle: (nodePropertyListDetails.customTitle != nil) ? .useDisplayName : .useRawKey,
-                rawKey: nodePropertyListDetails.rawKey,
-                displayName: nodePropertyListDetails.customTitle
+        let propertyListKeyNames = node?.symbol?.plistDetails.map {
+            TopicRenderReference.PropertyListKeyNames(
+                titleStyle: ($0.customTitle != nil) ? .useDisplayName : .useRawKey,
+                rawKey: $0.rawKey,
+                displayName: $0.customTitle
             )
         }
         

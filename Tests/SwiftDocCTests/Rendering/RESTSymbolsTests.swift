@@ -314,77 +314,40 @@ class RESTSymbolsTests: XCTestCase {
     
     func testReferenceOfEntitlementWithKeyName() throws {
         
+        func createDocumentationTopicRenderReferenceForSymbol(keyCustomName: String?) throws -> TopicRenderReference.PropertyListKeyNames {
+            let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    symbols: [
+                        SymbolGraph.Symbol(
+                            identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                            names: .init(title: "Symbol Name", navigator: nil, subHeading: nil, prose: nil),
+                            pathComponents: ["Symbol Name"],
+                            docComment: nil,
+                            accessLevel: .public,
+                            kind: .init(parsedIdentifier: .typeProperty, displayName: "Type Property"),
+                            mixins: [SymbolGraph.Symbol.PlistDetails.mixinKey:SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname", customTitle: keyCustomName)]
+                        )
+                    ]
+                ))
+            ])
+            let (_, bundle, context) = try loadBundle(from: (try createTempFolder(content: [exampleDocumentation])))
+            let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+            let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
+            let renderNode = translator.visit(moduleSymbol) as! RenderNode
+            return try XCTUnwrap((renderNode.references["doc://unit-test/documentation/ModuleName/Symbol_Name"] as? TopicRenderReference)?.propertyListKeyNames)
+        }
+        
         // The symbol has a custom title.
-        
-        var exampleDocumentation = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName",
-                symbols: [
-                    SymbolGraph.Symbol(
-                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
-                        names: .init(title: "Symbol Name", navigator: nil, subHeading: nil, prose: nil),
-                        pathComponents: ["Symbol Name"],
-                        docComment: nil,
-                        accessLevel: .public,
-                        kind: .init(parsedIdentifier: .typeProperty, displayName: "Type Property"),
-                        mixins: [SymbolGraph.Symbol.PlistDetails.mixinKey:SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname", customTitle: "Symbol Custom Title")]
-                    )
-                ]
-            )),
-            TextFile(name: "symbol-id.md", utf8Content: """
-            # ``ModuleName/symbol-id``
-            
-            This is an entitlement key.
-            """)
-        ])
-        
-        var tempURL = try createTempFolder(content: [exampleDocumentation])
-        var (_, bundle, context) = try loadBundle(from: tempURL)
-        var moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
-        var entity = try context.entity(with: moduleReference)
-        var moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
-        var renderNode = translator.visit(moduleSymbol) as! RenderNode
-        var propertyListKeyNames = try XCTUnwrap((renderNode.references["doc://unit-test/documentation/ModuleName/Symbol_Name"] as? TopicRenderReference)?.propertyListKeyNames)
-        
+        var propertyListKeyNames = try createDocumentationTopicRenderReferenceForSymbol(keyCustomName: "Symbol Custom Title")
         // Check that the reference contains the key symbol name.
         XCTAssertEqual(propertyListKeyNames.titleStyle, .useDisplayName)
         XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
         XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
         
         // The symbol does not have a custom title.
-        
-        exampleDocumentation = Folder(name: "unit-test.docc", content: [
-            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                moduleName: "ModuleName",
-                symbols: [
-                    SymbolGraph.Symbol(
-                        identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
-                        names: .init(title: "Symbol Name", navigator: nil, subHeading: nil, prose: nil),
-                        pathComponents: ["Symbol Name"],
-                        docComment: nil,
-                        accessLevel: .public,
-                        kind: .init(parsedIdentifier: .typeProperty, displayName: "Type Property"),
-                        mixins: [SymbolGraph.Symbol.PlistDetails.mixinKey:SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname")]
-                    )
-                ]
-            )),
-            TextFile(name: "symbol-id.md", utf8Content: """
-            # ``ModuleName/symbol-id``
-            
-            This is an entitlement key.
-            """)
-        ])
-        
-        tempURL = try createTempFolder(content: [exampleDocumentation])
-        (_, bundle, context) = try loadBundle(from: tempURL)
-        moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
-        entity = try context.entity(with: moduleReference)
-        moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
-        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
-        renderNode = translator.visit(moduleSymbol) as! RenderNode
-        propertyListKeyNames = try XCTUnwrap((renderNode.references["doc://unit-test/documentation/ModuleName/Symbol_Name"] as? TopicRenderReference)?.propertyListKeyNames)
-        
+        propertyListKeyNames = try createDocumentationTopicRenderReferenceForSymbol(keyCustomName: nil)
         // Check that the reference does not contain the key symbol name.
         XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
         XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
