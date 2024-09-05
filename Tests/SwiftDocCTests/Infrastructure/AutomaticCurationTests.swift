@@ -448,7 +448,40 @@ class AutomaticCurationTests: XCTestCase {
             )
         }
     }
-    
+
+    func testNoAutoCuratedMixedLanguageDuplicates() throws {
+        // The symbol graphs for MixedLanguageFramework.docc declare a protocol called MixedLanguageProtocol.
+        // This test checks that there is only one child node under "MixedLanguageProtocol-Implementations" -> "Instance Methods",
+        // even though there are two languages and two symbol graph files.
+        //   doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework
+        //   ├ doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol
+        //   │ ├ doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations
+        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+
+        let protocolImplementationsNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                sourceLanguages: [.swift, .objectiveC]
+            )
+        )
+
+        // This page should contain an auto-curated "Instance Methods" task group.
+        let protocolImplementationsArticle = protocolImplementationsNode.semantic as! Article
+        XCTAssertEqual(1, protocolImplementationsArticle.automaticTaskGroups.count)
+        let instanceMethodsTaskGroup = protocolImplementationsArticle.automaticTaskGroups.first!
+        XCTAssertEqual("Instance Methods", instanceMethodsTaskGroup.title)
+
+        // And this task group should contain only one reference, to a combined Swift/Obj-C child node.
+        XCTAssertEqual(1, instanceMethodsTaskGroup.references.count)
+        let ref = instanceMethodsTaskGroup.references.first!
+        XCTAssertEqual(
+            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
+            ref.absoluteString
+        )
+
+    }
+
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
@@ -465,7 +498,7 @@ class AutomaticCurationTests: XCTestCase {
             withTraits: [.swift],
             context: context
         )
-        
+
         XCTAssertEqual(
             swiftTopics.flatMap { taskGroup in
                 [taskGroup.title] + taskGroup.references.map(\.path)

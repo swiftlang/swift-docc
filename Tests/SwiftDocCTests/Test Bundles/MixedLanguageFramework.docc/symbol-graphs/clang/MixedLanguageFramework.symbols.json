@@ -81,7 +81,16 @@
       "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
       "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
       "targetFallback": null
-    }
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+      "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+      "sourceOrigin": {
+          "identifier": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+          "displayName": "MixedLanguageProtocol.mixedLanguageMethod()"
+      }
+  },
   ],
   "symbols" : [
     {
