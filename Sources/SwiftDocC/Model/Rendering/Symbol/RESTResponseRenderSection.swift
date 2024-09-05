@@ -11,7 +11,7 @@
 import Foundation
 
 /// A section that displays a list of REST responses.
-struct RESTResponseRenderSection: RenderSection, Equatable {
+public struct RESTResponseRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restResponses
     /// The title for the section.
     public let title: String
@@ -54,7 +54,7 @@ extension RESTResponseRenderSection: RenderJSONDiffable {
 /// If the response is a decodable object, a declaration-style `type` property
 /// describes the expected type and can provide an optional link to the expected
 /// documentation symbol.
-struct RESTResponse: Codable, TextIndexing, Equatable {
+public struct RESTResponse: Codable, TextIndexing, Equatable {
     /// The HTTP status code for the response.
     public let status: UInt
     /// An optional plain-text reason for the response.

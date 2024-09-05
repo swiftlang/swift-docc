@@ -14,7 +14,7 @@ import Foundation
 ///
 /// Parameter sections might describe parameters used in
 /// the URL query, the URL path, HTTP headers, or a multi-part HTTP body.
-enum RESTParameterSource: String, Codable {
+public enum RESTParameterSource: String, Codable {
     /// A named URL query parameter, for example, `?category=90s`.
     case query
     /// A named URL path parameter, for example, `/artists/MyArtist`.
@@ -26,7 +26,7 @@ enum RESTParameterSource: String, Codable {
 }
 
 /// A section that contains a list of REST parameters.
-struct RESTParametersRenderSection: RenderSection, Equatable {
+public struct RESTParametersRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restParameters
     /// The title for the section.
     public let title: String

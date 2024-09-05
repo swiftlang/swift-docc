@@ -33,10 +33,10 @@ public enum TitleStyle: String, Codable, Equatable {
 }
 
 /// A section that contains details about a property list key.
-struct PlistDetailsRenderSection: RenderSection, Equatable {
-    var kind: RenderSectionKind = .plistDetails
+public struct PlistDetailsRenderSection: RenderSection, Equatable {
+    public var kind: RenderSectionKind = .plistDetails
     /// A title for the section.
-    var title = "Details"
+    public var title = "Details"
     
     /// Details for a property list key.
     struct Details: Codable, Equatable {
