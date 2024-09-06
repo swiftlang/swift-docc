@@ -72,27 +72,27 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(parameters.items.count, 1)
+        XCTAssertEqual(parameters.parameters.count, 1)
         
-        guard parameters.items.count == 1 else { return }
+        guard parameters.parameters.count == 1 else { return }
         
-        XCTAssertEqual(parameters.items[0].required, true)
-        XCTAssertEqual(parameters.items[0].name, "id")
-        XCTAssertEqual(parameters.items[0].type.first?.text, "string")
+        XCTAssertEqual(parameters.parameters[0].required, true)
+        XCTAssertEqual(parameters.parameters[0].name, "id")
+        XCTAssertEqual(parameters.parameters[0].type.first?.text, "string")
         
-        XCTAssertEqual(parameters.items[0].typeDetails?.count, 2)
-        guard parameters.items[0].typeDetails?.count == 2 else { return }
+        XCTAssertEqual(parameters.parameters[0].typeDetails?.count, 2)
+        guard parameters.parameters[0].typeDetails?.count == 2 else { return }
         
-        XCTAssertNil(parameters.items[0].typeDetails?[0].arrayMode)
-        XCTAssertNil(parameters.items[0].typeDetails?[0].baseType)
-        XCTAssertEqual(parameters.items[0].typeDetails?[1].arrayMode, true)
-        XCTAssertEqual(parameters.items[0].typeDetails?[1].baseType, "string")
+        XCTAssertNil(parameters.parameters[0].typeDetails?[0].arrayMode)
+        XCTAssertNil(parameters.parameters[0].typeDetails?[0].baseType)
+        XCTAssertEqual(parameters.parameters[0].typeDetails?[1].arrayMode, true)
+        XCTAssertEqual(parameters.parameters[0].typeDetails?[1].baseType, "string")
 
-        XCTAssertEqual(parameters.items[0].type.first?.text, "string")
-        XCTAssertEqual(parameters.items[0].content?.firstParagraphText, "The unique identifier for the artist.")
+        XCTAssertEqual(parameters.parameters[0].type.first?.text, "string")
+        XCTAssertEqual(parameters.parameters[0].content?.firstParagraphText, "The unique identifier for the artist.")
         
-        XCTAssertEqual(parameters.headings.joined(), parameters.items[0].name)
-        XCTAssertEqual(parameters.rawIndexableTextContent(references: [:]), parameters.items[0].content?.firstParagraphText)
+        XCTAssertEqual(parameters.headings.joined(), parameters.parameters[0].name)
+        XCTAssertEqual(parameters.rawIndexableTextContent(references: [:]), parameters.parameters[0].content?.firstParagraphText)
         
         //
         // REST Query Parameters
@@ -105,15 +105,15 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(query.items.count, 2)
+        XCTAssertEqual(query.parameters.count, 2)
         
-        guard query.items.count == 2 else { return }
+        guard query.parameters.count == 2 else { return }
         
-        XCTAssertNil(query.items[0].required)
-        XCTAssertEqual(query.items[0].name, "l")
-        XCTAssertEqual(query.items[0].type.first?.text, "string")
+        XCTAssertNil(query.parameters[0].required)
+        XCTAssertEqual(query.parameters[0].name, "l")
+        XCTAssertEqual(query.parameters[0].type.first?.text, "string")
         
-        XCTAssertEqual(query.headings.first, query.items[0].name)
+        XCTAssertEqual(query.headings.first, query.parameters[0].name)
 
         //
         // REST Headers
@@ -125,15 +125,15 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(headers.items.count, 1)
+        XCTAssertEqual(headers.parameters.count, 1)
         
-        guard headers.items.count == 1 else { return }
+        guard headers.parameters.count == 1 else { return }
         
-        XCTAssertEqual(headers.items[0].name, "X-TotalCount")
-        XCTAssertEqual(headers.items[0].content?.firstParagraphText, "Total amount of results")
+        XCTAssertEqual(headers.parameters[0].name, "X-TotalCount")
+        XCTAssertEqual(headers.parameters[0].content?.firstParagraphText, "Total amount of results")
         
-        XCTAssertEqual(headers.headings.joined(), headers.items[0].name)
-        XCTAssertEqual(headers.rawIndexableTextContent(references: [:]), headers.items[0].content?.firstParagraphText)
+        XCTAssertEqual(headers.headings.joined(), headers.parameters[0].name)
+        XCTAssertEqual(headers.rawIndexableTextContent(references: [:]), headers.parameters[0].content?.firstParagraphText)
 
         //
         // REST Responses

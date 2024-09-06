@@ -188,7 +188,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         )
         
         // Confirm docs for parameters
-        let paramItemSets = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTParametersRenderSection)?.items }
+        let paramItemSets = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTParametersRenderSection)?.parameters }
         XCTAssertEqual(2, paramItemSets.count)
         if paramItemSets.count > 0 {
             let items = paramItemSets[0]

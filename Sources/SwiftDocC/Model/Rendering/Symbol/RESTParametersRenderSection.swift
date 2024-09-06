@@ -31,18 +31,25 @@ public struct RESTParametersRenderSection: RenderSection, Equatable {
     /// The title for the section.
     public let title: String
     /// The list of REST parameters.
-    public let items: [RenderProperty]
+    public let parameters: [RenderProperty]
     /// The kind of listed parameters.
     public let source: RESTParameterSource
-    
+
+    enum CodingKeys: String, CodingKey {
+        case kind
+        case title
+        case parameters = "items"
+        case source
+    }
+
     /// Creates a new REST parameters section.
     /// - Parameters:
     ///   - title: The title for the section.
-    ///   - items: The list of REST parameters.
+    ///   - parameters: The list of REST parameters.
     ///   - source: The kind of listed parameters.
-    public init(title: String, items: [RenderProperty], source: RESTParameterSource) {
+    public init(title: String, parameters: [RenderProperty], source: RESTParameterSource) {
         self.title = title
-        self.items = items
+        self.parameters = parameters
         self.source = source
     }
 }
@@ -55,7 +62,7 @@ extension RESTParametersRenderSection: RenderJSONDiffable {
 
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
         diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
-        diffBuilder.addDifferences(atKeyPath: \.items, forKey: CodingKeys.items)
+        diffBuilder.addDifferences(atKeyPath: \.parameters, forKey: CodingKeys.parameters)
         diffBuilder.addDifferences(atKeyPath: \.source, forKey: CodingKeys.source)
 
         return diffBuilder.differences
