@@ -37,7 +37,7 @@ struct AnyRenderSection: Equatable, Encodable, RenderJSONDiffable {
         case (.parameters, .parameters):
             return (value as! ParametersRenderSection).difference(from: (other.value as! ParametersRenderSection), at: path)
         case (.plistDetails, .plistDetails):
-            return (value as! PlistDetailsRenderSection).difference(from: (other.value as! PlistDetailsRenderSection), at: path)
+            return (value as! PropertyListDetailsRenderSection).difference(from: (other.value as! PropertyListDetailsRenderSection), at: path)
         case (.possibleValues, .possibleValues):
             return (value as! PossibleValuesRenderSection).difference(from: (other.value as! PossibleValuesRenderSection), at: path)
         case (.relationships, .relationships):
@@ -104,7 +104,7 @@ struct AnyRenderSection: Equatable, Encodable, RenderJSONDiffable {
         case (.parameters, .parameters):
             return (lhs.value as! ParametersRenderSection) == (rhs.value as! ParametersRenderSection)
         case (.plistDetails, .plistDetails):
-            return (lhs.value as! PlistDetailsRenderSection) == (rhs.value as! PlistDetailsRenderSection)
+            return (lhs.value as! PropertyListDetailsRenderSection) == (rhs.value as! PropertyListDetailsRenderSection)
         case (.possibleValues, .possibleValues):
             return (lhs.value as! PossibleValuesRenderSection) == (rhs.value as! PossibleValuesRenderSection)
         case (.relationships, .relationships):
