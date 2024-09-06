@@ -326,7 +326,7 @@ extension AttributesRenderSection {
     }
 }
 
-extension PlistDetailsRenderSection {
+extension PropertyListDetailsRenderSection {
     public var headings: [String] {
         if let displayName = details.displayName {
             return [details.rawKey, displayName]

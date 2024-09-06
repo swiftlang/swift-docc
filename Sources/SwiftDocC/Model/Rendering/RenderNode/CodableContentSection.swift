@@ -62,7 +62,7 @@ public struct CodableContentSection: Codable, Equatable {
             case .restResponses:
                 section = try RESTResponseRenderSection(from: decoder)
             case .plistDetails:
-                section = try PlistDetailsRenderSection(from: decoder)
+                section = try PropertyListDetailsRenderSection(from: decoder)
             case .possibleValues:
                 section = try PossibleValuesRenderSection(from: decoder)
             case .mentions:

@@ -14,9 +14,9 @@ import SymbolKit
 /// Translates a symbol's details into a render nodes's details section.
 struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
     
-    private func generatePlistDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PlistDetailsRenderSection {
-        PlistDetailsRenderSection(
-            details: PlistDetailsRenderSection.Details(
+    private func generatePropertyListDetailsRenderSection(_ symbol: Symbol, plistDetails: SymbolGraph.Symbol.PlistDetails) -> PropertyListDetailsRenderSection {
+        PropertyListDetailsRenderSection(
+            details: PropertyListDetailsRenderSection.Details(
                 rawKey: plistDetails.rawKey,
                 value: [TypeDetails(baseType: plistDetails.baseType, arrayMode: plistDetails.arrayMode)],
                 platforms: [],
@@ -33,7 +33,7 @@ struct PlistDetailsSectionTranslator: RenderSectionTranslator, Decodable {
         }) else {
             return nil
         }
-        let section = generatePlistDetailsRenderSection(symbol, plistDetails: plistDetails)
+        let section = generatePropertyListDetailsRenderSection(symbol, plistDetails: plistDetails)
         return VariantCollection(defaultValue: CodableContentSection(section))
     }
     

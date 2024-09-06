@@ -14,11 +14,11 @@ import XCTest
 import SymbolKit
 import SwiftDocCTestUtilities
 
-class PlistDetailsRenderSectionTests: XCTestCase {
+class PropertyListDetailsRenderSectionTests: XCTestCase {
 
     func testDecoding() throws {
         
-        func getPlistDetailsSection(arrayMode: CustomStringConvertible, baseType: CustomStringConvertible, rawKey: CustomStringConvertible) throws -> PlistDetailsRenderSection {
+        func getPlistDetailsSection(arrayMode: CustomStringConvertible, baseType: CustomStringConvertible, rawKey: CustomStringConvertible) throws -> PropertyListDetailsRenderSection {
             let symbolJSON = """
             {
               "accessLevel" : "public",
@@ -61,15 +61,15 @@ class PlistDetailsRenderSectionTests: XCTestCase {
             let node = try XCTUnwrap(context.documentationCache["plist:propertylistkey"])
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let renderNode = try converter.convert(node)
-            return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PlistDetailsRenderSection }))
+            return try XCTUnwrap(renderNode.primaryContentSections.mapFirst(where: { $0 as? PropertyListDetailsRenderSection }))
         }
         
         // Assert that the Details section is correctly generated when passing valid values into the plistDetails JSON object.
         XCTAssertEqual(
             try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: "\"property-list-key\""),
-            PlistDetailsRenderSection(
+            PropertyListDetailsRenderSection(
                kind: .plistDetails,
-               details: PlistDetailsRenderSection.Details(
+               details: PropertyListDetailsRenderSection.Details(
                    rawKey: "property-list-key",
                    value: [TypeDetails(baseType: "string", arrayMode: true)],
                    platforms: [],
@@ -81,9 +81,9 @@ class PlistDetailsRenderSectionTests: XCTestCase {
         
         XCTAssertEqual(
             try getPlistDetailsSection(arrayMode: false, baseType: "\"string\"", rawKey: "\"property-list-key\""),
-            PlistDetailsRenderSection(
+            PropertyListDetailsRenderSection(
                kind: .plistDetails,
-               details: PlistDetailsRenderSection.Details(
+               details: PropertyListDetailsRenderSection.Details(
                    rawKey: "property-list-key",
                    value: [TypeDetails(baseType: "string", arrayMode: false)],
                    platforms: [],
