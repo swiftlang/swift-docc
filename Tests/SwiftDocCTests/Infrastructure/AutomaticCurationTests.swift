@@ -450,14 +450,31 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testNoAutoCuratedMixedLanguageDuplicates() throws {
-        // The symbol graphs for MixedLanguageFramework.docc declare a protocol called MixedLanguageProtocol.
-        // This test checks that there is only one child node under "MixedLanguageProtocol-Implementations" -> "Instance Methods",
-        // even though there are two languages and two symbol graph files.
-        //   doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework
-        //   ├ doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol
-        //   │ ├ doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations
-        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
 
+            // Load the existing Obj-C symbol graph from this fixture.
+            let path = "symbol-graphs/clang/MixedLanguageFramework.symbols.json"
+            var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent(path)))
+
+            // Add an Objective-C relationship between MixedLanguageClassConformingToProtocol.mixedLanguageMethod
+            // and the protocol requirement: MixedLanguageProtocol.mixedLanguageMethod. This matches an existing
+            // Swift relationship, causing duplicate memberOf relationships.
+            var relationship = SymbolGraph.Relationship(
+                source: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+                target: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+                kind: .memberOf,
+                targetFallback: nil
+            )
+            relationship.mixins["sourceOrigin"] = SymbolKit.SymbolGraph.Relationship.SourceOrigin(
+                identifier: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+                displayName: "MixedLanguageProtocol.mixedLanguageMethod()"
+            )
+            graph.relationships.append(relationship)
+            let newGraphData = try JSONEncoder().encode(graph)
+            try newGraphData.write(to: url.appendingPathComponent("symbol-graphs/clang/MixedLanguageFramework.symbols.json"))
+        }
+
+        // Load the "MixedLanguageProtocol Implementations" API COllection
         let protocolImplementationsNode = try context.entity(
             with: ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
@@ -467,7 +484,7 @@ class AutomaticCurationTests: XCTestCase {
         )
 
         // This page should contain an auto-curated "Instance Methods" task group.
-        let protocolImplementationsArticle = protocolImplementationsNode.semantic as! Article
+        let protocolImplementationsArticle = try XCTUnwrap(protocolImplementationsNode.semantic as? Article)
         XCTAssertEqual(1, protocolImplementationsArticle.automaticTaskGroups.count)
         let instanceMethodsTaskGroup = protocolImplementationsArticle.automaticTaskGroups.first!
         XCTAssertEqual("Instance Methods", instanceMethodsTaskGroup.title)
@@ -479,7 +496,6 @@ class AutomaticCurationTests: XCTestCase {
             "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
             ref.absoluteString
         )
-
     }
 
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() throws {

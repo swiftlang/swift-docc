@@ -81,16 +81,7 @@
       "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
       "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
       "targetFallback": null
-    },
-    {
-      "kind": "memberOf",
-      "source": "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
-      "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
-      "sourceOrigin": {
-          "identifier": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
-          "displayName": "MixedLanguageProtocol.mixedLanguageMethod()"
-      }
-  },
+    }
   ],
   "symbols" : [
     {
@@ -494,7 +485,7 @@
             "text" : "This is the foo's description."
           }
         ]
-      }
+      },
     },
     {
       "accessLevel" : "public",
@@ -579,7 +570,7 @@
           {
             "kind" : "typeIdentifier",
             "spelling" : "NSString",
-            "preciseIdentifier": "c:@T@NSInteger"
+            "preciseIdentifier": "c:@T@NSInteger",
           },
           {
             "kind": "text",
@@ -639,7 +630,7 @@
             "kind" : "identifier",
             "spelling" : "first"
           }
-        ]
+        ],
       },
       "pathComponents" : [
         "Foo",
@@ -686,7 +677,7 @@
             "kind" : "identifier",
             "spelling" : "fourth"
           }
-        ]
+        ],
       },
       "pathComponents" : [
         "Foo",
@@ -733,7 +724,7 @@
             "kind" : "identifier",
             "spelling" : "second"
           }
-        ]
+        ],
       },
       "pathComponents" : [
         "Foo",
@@ -780,7 +771,7 @@
             "kind" : "identifier",
             "spelling" : "third"
           }
-        ]
+        ],
       },
       "pathComponents" : [
         "Foo",
