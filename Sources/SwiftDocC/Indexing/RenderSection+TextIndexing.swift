@@ -236,13 +236,13 @@ extension RESTResponse {
 
 extension RESTResponseRenderSection {
     public var headings: [String] {
-        return items.flatMap {
+        return responses.flatMap {
             return $0.headings
         }
     }
     
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
-        return items.map {
+        return responses.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
     }

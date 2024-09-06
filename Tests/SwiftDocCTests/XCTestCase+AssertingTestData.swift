@@ -125,7 +125,7 @@ extension XCTestCase {
         
         XCTAssertEqual(
             (renderNode.primaryContentSections.compactMap { $0 as? RESTResponseRenderSection })
-                .flatMap(\.items)
+                .flatMap(\.responses)
                 .map(\.status),
             expectedHTTPResponses ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
             failureMessageForField("rest responses"),

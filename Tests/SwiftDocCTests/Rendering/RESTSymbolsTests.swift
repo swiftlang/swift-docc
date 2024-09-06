@@ -146,18 +146,18 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(responses.items.count, 1)
-        
-        guard responses.items.count == 1 else { return }
-        
-        XCTAssertEqual(responses.items[0].status, 200)
-        XCTAssertEqual(responses.items[0].reason, "OK")
-        XCTAssertEqual(responses.items[0].mimeType, "application/json")
-        XCTAssertEqual(responses.items[0].type.first?.identifier, "doc://org.swift.docc/applemusicapi/libraryartistresponse")
-        XCTAssertEqual(responses.items[0].content?.firstParagraphText, "The request was successful.")
-        
-        XCTAssertEqual(responses.headings.joined(), responses.items[0].reason)
-        XCTAssertEqual(responses.rawIndexableTextContent(references: [:]), responses.items[0].content?.firstParagraphText)
+        XCTAssertEqual(responses.responses.count, 1)
+
+        guard responses.responses.count == 1 else { return }
+
+        XCTAssertEqual(responses.responses[0].status, 200)
+        XCTAssertEqual(responses.responses[0].reason, "OK")
+        XCTAssertEqual(responses.responses[0].mimeType, "application/json")
+        XCTAssertEqual(responses.responses[0].type.first?.identifier, "doc://org.swift.docc/applemusicapi/libraryartistresponse")
+        XCTAssertEqual(responses.responses[0].content?.firstParagraphText, "The request was successful.")
+
+        XCTAssertEqual(responses.headings.joined(), responses.responses[0].reason)
+        XCTAssertEqual(responses.rawIndexableTextContent(references: [:]), responses.responses[0].content?.firstParagraphText)
         
         // REST mulitpart Body
         

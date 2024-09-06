@@ -217,7 +217,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         }
         
         // Confirm docs for responses
-        let responses = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTResponseRenderSection)?.items }.flatMap { $0 }
+        let responses = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTResponseRenderSection)?.responses }.flatMap { $0 }
         XCTAssertEqual(2, responses.count)
         if responses.count > 0 {
             let response = responses[0]
