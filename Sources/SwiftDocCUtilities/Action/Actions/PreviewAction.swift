@@ -59,8 +59,6 @@ public final class PreviewAction: Action, RecreatingContext {
     
     /// A unique ID to access the action's preview server.
     let serverIdentifier = ProcessInfo.processInfo.globallyUniqueString
-
-    private let diagnosticEngine: DiagnosticEngine
     
     /// Creates a new preview action from the given parameters.
     ///
@@ -89,9 +87,7 @@ public final class PreviewAction: Action, RecreatingContext {
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
         self.workspace = workspace
-        let engine = self.convertAction.diagnosticEngine
-        self.diagnosticEngine = engine
-        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
+        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: self.convertAction.diagnosticEngine)
         self.printHTMLTemplatePath = printTemplatePath
     }
     
@@ -155,7 +151,10 @@ public final class PreviewAction: Action, RecreatingContext {
             try servers[serverIdentifier]!.start()
             previewResult = ActionResult(didEncounterError: false)
         } catch {
+            let diagnosticEngine = convertAction.diagnosticEngine
             diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
+            diagnosticEngine.flush()
+            
             // Stale server entry, remove it from the list
             servers.removeValue(forKey: serverIdentifier)
             previewResult = ActionResult(didEncounterError: true)
