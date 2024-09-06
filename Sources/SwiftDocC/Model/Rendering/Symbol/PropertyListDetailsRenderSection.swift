@@ -33,24 +33,24 @@ public enum TitleStyle: String, Codable, Equatable {
 }
 
 /// A section that contains details about a property list key.
-struct PlistDetailsRenderSection: RenderSection, Equatable {
-    var kind: RenderSectionKind = .plistDetails
+public struct PropertyListDetailsRenderSection: RenderSection, Equatable {
+    public var kind: RenderSectionKind = .plistDetails
     /// A title for the section.
-    var title = "Details"
+    public var title = "Details"
     
     /// Details for a property list key.
-    struct Details: Codable, Equatable {
+    public struct Details: Codable, Equatable {
         /// The name of the key.
-        let rawKey: String
+        public let rawKey: String
         /// A list of types acceptable for this key's value.
-        let value: [TypeDetails]
+        public let value: [TypeDetails]
         /// A list of platforms to which this key applies.
-        let platforms: [String]
+        public let platforms: [String]
         /// An optional, human-friendly name of the key.
-        let displayName: String?
+        public let displayName: String?
         /// A title rendering style.
-        let titleStyle: PropertyListTitleStyle
-        
+        public let titleStyle: PropertyListTitleStyle
+
         enum CodingKeys: String, CodingKey {
             case rawKey = "name"
             case value
@@ -58,16 +58,29 @@ struct PlistDetailsRenderSection: RenderSection, Equatable {
             case displayName = "ideTitle"
             case titleStyle
         }
+
+        public init(rawKey: String, value: [TypeDetails], platforms: [String], displayName: String?, titleStyle: PropertyListTitleStyle) {
+            self.rawKey = rawKey
+            self.value = value
+            self.platforms = platforms
+            self.displayName = displayName
+            self.titleStyle = titleStyle
+        }
     }
     
     /// The details of the property key.
-    let details: Details
+    public let details: Details
+
+    public init(title: String = "Details", details: Details) {
+        self.title = title
+        self.details = details
+    }
 }
 
 // Diffable conformance
-extension PlistDetailsRenderSection: RenderJSONDiffable {
-    /// Returns the differences between this PlistDetailsRenderSection and the given one.
-    func difference(from other: PlistDetailsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
+extension PropertyListDetailsRenderSection: RenderJSONDiffable {
+    /// Returns the differences between this PropertyListDetailsRenderSection and the given one.
+    func difference(from other: PropertyListDetailsRenderSection, at path: CodablePath) -> JSONPatchDifferences {
         var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
 
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
@@ -76,8 +89,8 @@ extension PlistDetailsRenderSection: RenderJSONDiffable {
         return diffBuilder.differences
     }
     
-    /// Returns if this PlistDetailsRenderSection is similar enough to the given one.
-    func isSimilar(to other: PlistDetailsRenderSection) -> Bool {
+    /// Returns if this PropertyListDetailsRenderSection is similar enough to the given one.
+    func isSimilar(to other: PropertyListDetailsRenderSection) -> Bool {
         return self.title == other.title
     }
 }

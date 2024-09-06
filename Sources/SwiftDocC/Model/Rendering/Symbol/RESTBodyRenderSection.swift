@@ -11,7 +11,7 @@
 import Foundation
 
 /// A section that contains a REST request-body details.
-struct RESTBodyRenderSection: RenderSection, Equatable {
+public struct RESTBodyRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restBody
     /// A title for the section.
     public let title: String

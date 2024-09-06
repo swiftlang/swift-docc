@@ -36,7 +36,7 @@ class RESTResponseRenderSectionTests: XCTestCase {
             try value(),
             RESTResponseRenderSection(
                 title: "",
-                items: [
+                responses: [
                     RESTResponse(
                         status: 200,
                         reason: "reason",
@@ -71,7 +71,7 @@ class RESTResponseRenderSectionTests: XCTestCase {
             try valueWithoutReason(),
             RESTResponseRenderSection(
                 title: "",
-                items: [
+                responses: [
                     RESTResponse(
                         status: 200,
                         reason: nil,
