@@ -68,7 +68,6 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
         XCTAssertEqual(
             try getPlistDetailsSection(arrayMode: true, baseType: "\"string\"", rawKey: "\"property-list-key\""),
             PropertyListDetailsRenderSection(
-               kind: .plistDetails,
                details: PropertyListDetailsRenderSection.Details(
                    rawKey: "property-list-key",
                    value: [TypeDetails(baseType: "string", arrayMode: true)],
@@ -82,7 +81,6 @@ class PropertyListDetailsRenderSectionTests: XCTestCase {
         XCTAssertEqual(
             try getPlistDetailsSection(arrayMode: false, baseType: "\"string\"", rawKey: "\"property-list-key\""),
             PropertyListDetailsRenderSection(
-               kind: .plistDetails,
                details: PropertyListDetailsRenderSection.Details(
                    rawKey: "property-list-key",
                    value: [TypeDetails(baseType: "string", arrayMode: false)],

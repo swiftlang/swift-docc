@@ -71,8 +71,7 @@ public struct PropertyListDetailsRenderSection: RenderSection, Equatable {
     /// The details of the property key.
     public let details: Details
 
-    public init(kind: RenderSectionKind = .plistDetails, title: String = "Details", details: Details) {
-        self.kind = kind
+    public init(title: String = "Details", details: Details) {
         self.title = title
         self.details = details
     }
