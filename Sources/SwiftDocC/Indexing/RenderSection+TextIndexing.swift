@@ -198,13 +198,13 @@ extension TaskGroupRenderSection {
 
 extension RESTParametersRenderSection {
     public var headings: [String] {
-        return items.flatMap {
+        return parameters.flatMap {
             return $0.headings
         }
     }
     
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
-        return items.map {
+        return parameters.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
     }
@@ -236,13 +236,13 @@ extension RESTResponse {
 
 extension RESTResponseRenderSection {
     public var headings: [String] {
-        return items.flatMap {
+        return responses.flatMap {
             return $0.headings
         }
     }
     
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
-        return items.map {
+        return responses.map {
             return $0.rawIndexableTextContent(references: references)
         }.joined(separator: " ")
     }
@@ -326,7 +326,7 @@ extension AttributesRenderSection {
     }
 }
 
-extension PlistDetailsRenderSection {
+extension PropertyListDetailsRenderSection {
     public var headings: [String] {
         if let displayName = details.displayName {
             return [details.rawKey, displayName]

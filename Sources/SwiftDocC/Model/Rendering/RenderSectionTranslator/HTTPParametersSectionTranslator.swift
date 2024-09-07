@@ -29,7 +29,7 @@ struct HTTPParametersSectionTranslator: RenderSectionTranslator {
             
             return RESTParametersRenderSection(
                 title: "\(parameterSource.rawValue.capitalized) Parameters",
-                items: filteredParameters.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol) },
+                parameters: filteredParameters.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol) },
                 source: parameterSource
             )
         }
