@@ -1707,8 +1707,6 @@ class PathHierarchyTests: XCTestCase {
                 returns: [])
             )
             XCTAssertEqual(complicatedClosureArgument?.parameterTypeNames, ["(Int?,Double,(String,Value))->((Int)->Value)"])
-            
-            
         }
     }
     
@@ -2021,6 +2019,17 @@ class PathHierarchyTests: XCTestCase {
         
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)->MyNumber", humanReadablePaths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"])
         XCTAssertEqual("/Operators/MyNumber/_=(_:_:)->MyNumber", humanReadablePaths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"])
+        
+        // Verify that all paths are unique
+        let repeatedPaths: [String: Int] = paths.values.reduce(into: [:], { acc, path in acc[path, default: 0] += 1 })
+            .filter { _, frequency in frequency > 1 }
+        
+        XCTAssertEqual(repeatedPaths.keys.sorted(), [], "Every path should be unique")
+        
+        let repeatedHumanReadablePaths: [String: Int] = humanReadablePaths.values.reduce(into: [:], { acc, path in acc[path, default: 0] += 1 })
+            .filter { _, frequency in frequency > 1 }
+        
+        XCTAssertEqual(repeatedHumanReadablePaths.keys.sorted(), [], "Every path should be unique")
     }
     
     func testSameNameForSymbolAndContainer() throws {
@@ -2642,30 +2651,45 @@ class PathHierarchyTests: XCTestCase {
         // MyClass operator+() const;                     // unary plus
         // MyClass operator+(const MyClass& other) const; // addition
         try assertPathCollision("/CxxOperators/MyClass/operator+", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator+#1", disambiguation: "15qb6"),
-            (symbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1", disambiguation: "8k1ef"),
+            (symbolID: "c:@S@MyClass@F@operator+#1", disambiguation: "()"),
+            (symbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1", disambiguation: "(_)"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator+-15qb6", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#1")
         try assertFindsPath("/CxxOperators/MyClass/operator+-8k1ef", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
 
+        try assertFindsPath("/CxxOperators/MyClass/operator+-()", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator+-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator+-(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
+        
         // MyClass operator-() const;                     // unary minus
         // MyClass operator-(const MyClass& other) const; // subtraction
         try assertPathCollision("/CxxOperators/MyClass/operator-", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator-#1", disambiguation: "1c6gw"),
-            (symbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1", disambiguation: "6knvo"),
+            (symbolID: "c:@S@MyClass@F@operator-#1", disambiguation: "()"),
+            (symbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1", disambiguation: "(_)"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator--1c6gw", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#1")
         try assertFindsPath("/CxxOperators/MyClass/operator--6knvo", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
 
+        try assertFindsPath("/CxxOperators/MyClass/operator--()", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator--(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator--(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
+
         // MyClass& operator*();                          // indirect access
         // MyClass operator*(const MyClass& other) const; // multiplication
         try assertPathCollision("/CxxOperators/MyClass/operator*", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1", disambiguation: "6oso3"),
-            (symbolID: "c:@S@MyClass@F@operator*#", disambiguation: "8vjwm"),
+            (symbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1", disambiguation: ">MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator*#", disambiguation: ">MyClass&"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator*-6oso3", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
         try assertFindsPath("/CxxOperators/MyClass/operator*-8vjwm", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
-
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator*->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator*-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*-(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*-()", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
+        
         // MyClass operator/(const MyClass& other) const;
         try assertFindsPath("/CxxOperators/MyClass/operator/", in: tree, asSymbolID: "c:@S@MyClass@F@operator/#&1$@S@MyClass#1")
 
@@ -2678,12 +2702,15 @@ class PathHierarchyTests: XCTestCase {
         // MyClass* operator&();                          // address-of
         // MyClass operator&(const MyClass& other) const; // bitwise and
         try assertPathCollision("/CxxOperators/MyClass/operator&", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1", disambiguation: "3ob2f"),
-            (symbolID: "c:@S@MyClass@F@operator&#", disambiguation: "8vnp2"),
+            (symbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1", disambiguation: ">MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator&#", disambiguation: ">MyClass*"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator&-3ob2f", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1")
         try assertFindsPath("/CxxOperators/MyClass/operator&-8vnp2", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#")
-
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator&->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator&->MyClass*", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#")
+        
         // MyClass operator|(const MyClass& other) const;
         try assertFindsPath("/CxxOperators/MyClass/operator|", in: tree, asSymbolID: "c:@S@MyClass@F@operator|#&1$@S@MyClass#1")
 
@@ -2699,20 +2726,34 @@ class PathHierarchyTests: XCTestCase {
         // MyClass operator++(int); // post-increment
         // MyClass& operator++();   // pre-increment
         try assertPathCollision("/CxxOperators/MyClass/operator++", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator++#", disambiguation: "15swg"),
-            (symbolID: "c:@S@MyClass@F@operator++#I#", disambiguation: "68oe0"),
+            (symbolID: "c:@S@MyClass@F@operator++#I#", disambiguation: ">MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator++#", disambiguation: ">MyClass&"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator++-68oe0", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
         try assertFindsPath("/CxxOperators/MyClass/operator++-15swg", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator++->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
 
+        try assertFindsPath("/CxxOperators/MyClass/operator++-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++-(int)", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++-()", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
+        
         // MyClass operator--(int); // post-decrement
         // MyClass& operator--();   // pre-decrement
         try assertPathCollision("/CxxOperators/MyClass/operator--", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator-#", disambiguation: "8vk0i"),
-            (symbolID: "c:@S@MyClass@F@operator-#I#", disambiguation: "9wv7m"),
+            (symbolID: "c:@S@MyClass@F@operator-#I#", disambiguation: ">MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator-#", disambiguation: ">MyClass&"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator---9wv7m", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
         try assertFindsPath("/CxxOperators/MyClass/operator---8vk0i", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator--->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator--->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
+
+        try assertFindsPath("/CxxOperators/MyClass/operator---(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator---(int)", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator---()", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
 
         // bool operator!() const;
         try assertFindsPath("/CxxOperators/MyClass/operator!", in: tree, asSymbolID: "c:@S@MyClass@F@operator!#1")
@@ -2748,13 +2789,19 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator=(const MyClass& other);  // copy assignment
         // MyClass& operator=(const MyClass&& other); // move assignment
         try assertPathCollision("/CxxOperators/MyClass/operator=", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#", disambiguation: "36ink"),
-            (symbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#", disambiguation: "5360m"),
-            (symbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#", disambiguation: "6e1gm"),
+            (symbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#", disambiguation: "(MyClass&&)"),
+            (symbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#", disambiguation: "(MyClass&)"),
+            (symbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#", disambiguation: ">MyClass"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator=-5360m", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
         try assertFindsPath("/CxxOperators/MyClass/operator=-36ink", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#")
         try assertFindsPath("/CxxOperators/MyClass/operator=-6e1gm", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator=->MyClass", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator=-(MyClass)", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-(MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-(MyClass&&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#")
 
         // MyClass& operator+=(const MyClass& other);
         try assertFindsPath("/CxxOperators/MyClass/operator+=", in: tree, asSymbolID: "c:@S@MyClass@F@operator+=#&1$@S@MyClass#")
@@ -2789,12 +2836,24 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator[](std::string& key);              // subscript
         // static void operator[](MyClass& lhs, MyClass& rhs); // subscript
         try assertPathCollision("/CxxOperators/MyClass/operator[]", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S", disambiguation: "8qcye"),
-            (symbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#", disambiguation: "9758f"),
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S", disambiguation: ">()"),
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#", disambiguation: ">_"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator[]-9758f", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
         try assertFindsPath("/CxxOperators/MyClass/operator[]-8qcye", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator[]->_", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]->MyClass&", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]->()", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
 
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(_,_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(std::string&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(MyClass&,_)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(_,MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-(MyClass&,MyClass&)", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+        
         // MyClass& operator->();
         try assertFindsPath("/CxxOperators/MyClass/operator->", in: tree, asSymbolID: "c:@S@MyClass@F@operator->#")
 
@@ -2804,12 +2863,16 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator()(MyClass& arg1, MyClass& arg2, MyClass& arg3); // function-call
         // static void operator()(MyClass& lhs, MyClass& rhs);               // function-call
         try assertPathCollision("/CxxOperators/MyClass/operator()", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S", disambiguation: "212ks"),
-            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#", disambiguation: "65g9a"),
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S", disambiguation: ">()"),
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#", disambiguation: ">_"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator()-65g9a", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#")
         try assertFindsPath("/CxxOperators/MyClass/operator()-212ks", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S")
 
+        try assertFindsPath("/CxxOperators/MyClass/operator()->_", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#")
+        try assertFindsPath("/CxxOperators/MyClass/operator()->()", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S")
+        
+        
         // MyClass& operator,(MyClass& other);
         try assertFindsPath("/CxxOperators/MyClass/operator,", in: tree, asSymbolID: "c:@S@MyClass@F@operator,#&$@S@MyClass#")
     }
@@ -2937,11 +3000,23 @@ class PathHierarchyTests: XCTestCase {
             assertParsedPathComponents("\(operatorName)-c++.func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
             assertParsedPathComponents("\(operatorName)-func.op-hash", [(operatorName, .kindAndHash(kind: "func.op", hash: "hash"))])
             
+            // With type disambiguation
+            assertParsedPathComponents("\(operatorName)->()", [(operatorName, .typeSignature(parameterTypes: nil, returnTypes: []))])
+            assertParsedPathComponents("\(operatorName)->_", [(operatorName, .typeSignature(parameterTypes: nil, returnTypes: ["_"]))])
+            assertParsedPathComponents("\(operatorName)->ReturnType", [(operatorName, .typeSignature(parameterTypes: nil, returnTypes: ["ReturnType"]))])
+            
+            assertParsedPathComponents("\(operatorName)-()", [(operatorName, .typeSignature(parameterTypes: [], returnTypes: nil))])
+            assertParsedPathComponents("\(operatorName)-(_,_)", [(operatorName, .typeSignature(parameterTypes: ["_","_"], returnTypes: nil))])
+            assertParsedPathComponents("\(operatorName)-(ParameterType,_)", [(operatorName, .typeSignature(parameterTypes: ["ParameterType","_"], returnTypes: nil))])
+            assertParsedPathComponents("\(operatorName)-(_,ParameterType)", [(operatorName, .typeSignature(parameterTypes: ["_","ParameterType"], returnTypes: nil))])
+            
             // With a trailing anchor component
             assertParsedPathComponents("\(operatorName)#SomeAnchor", [(operatorName, nil), ("SomeAnchor", nil)])
             assertParsedPathComponents("\(operatorName)-hash#SomeAnchor", [(operatorName, .kindAndHash(kind: nil, hash: "hash")), ("SomeAnchor", nil)])
             assertParsedPathComponents("\(operatorName)-func.op#SomeAnchor", [(operatorName, .kindAndHash(kind: "func.op", hash: nil)), ("SomeAnchor", nil)])
         }
+        
+        assertParsedPathComponents("operator[]-(std::string&)->std::string&", [("operator[]", .typeSignature(parameterTypes: ["std::string&"], returnTypes: ["std::string&"]))])
     }
     
     func testResolveExternalLinkFromTechnologyRoot() throws {

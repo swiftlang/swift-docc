@@ -205,21 +205,8 @@ extension PathHierarchy.PathParser {
     }
     
     static func parseOperatorName(_ component: Substring) -> Substring? {
-        guard
-            // Operators start with at least one operator head character
-            let first = component.unicodeScalars.first,
-            first.isValidSwiftOperatorHead,
-            // Followed by either a list of parameters or additional operator head characters
-            let second = component.unicodeScalars.dropFirst().first,
-            second == "(" || second.isValidSwiftOperatorHead
-        else {
-            return nil
-        }
-        
-        guard let operatorEndIndex = component.firstIndex(of: PathComponentScanner.swiftOperatorEnd) else {
-            return component
-        }
-        return component[...operatorEndIndex]
+        var scanner = PathComponentScanner(component)
+        return scanner._scanOperatorName()
     }
 }
 
@@ -243,19 +230,8 @@ private struct PathComponentScanner {
     }
     
     mutating func scanPathComponent() -> Substring {
-        // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
-            return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd))
-                 + scanUntilSeparatorAndThenSkipIt()
-        }
-        
-        // If the next component is a C++ operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.starts(with: Self.cxxOperatorPrefix),
-           remaining.unicodeScalars.dropFirst(Self.cxxOperatorPrefixLength).first?.isValidCxxOperatorSymbol == true
-        {
-            return scan(length: Self.cxxOperatorPrefixLength)
-                 + scanUntil(index: remaining.unicodeScalars.firstIndex(where: { !$0.isValidCxxOperatorSymbol }))
-                 + scanUntilSeparatorAndThenSkipIt()
+        if let operatorName = _scanOperatorName() {
+            return operatorName + scanUntilSeparatorAndThenSkipIt()
         }
         
         // To enable the path parser to identify absolute links, include any leading "/" in the scanned component substring.
@@ -268,6 +244,65 @@ private struct PathComponentScanner {
         
         // If the string doesn't contain a slash then the rest of the string is the component
         return scanUntilSeparatorAndThenSkipIt()
+    }
+    
+    mutating func _scanOperatorName() -> Substring? {
+        // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
+        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
+            return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd)) + scan(length: 1)
+        }
+        
+        // If the next component is a C++ operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
+        if remaining.starts(with: Self.cxxOperatorPrefix),
+           remaining.unicodeScalars.dropFirst(Self.cxxOperatorPrefixLength).first?.isValidCxxOperatorSymbol == true
+        {
+            let base = scan(length: Self.cxxOperatorPrefixLength + 1)
+            // Because C++ operators don't include the parameters in the name,
+            // a trailing "-" could either be part of the name of be the disambiguation separator.
+            //
+            // The only valid C++ operators that include a "-" do so at the start.
+            // However, "-=", "->", and "->*" don't have a trailing "", so they're unambiguous.
+            // Only "-" and "--" need special parsing to address the ambiguity.
+            
+            if base.last == "-", remaining.first == "-" {
+                // In this scope we start with the following state:
+                //
+                //     operator--???..
+                //     ╰───┬───╯╰─┬╌╌╌
+                //       base  remaining
+                //
+                // There are 3 possible cases that we can be in:
+                switch remaining.dropFirst().first {
+                // The decrement operator with disambiguation.
+                //   operator---h1a2s3h
+                //   ╰────┬───╯│╰──┬──╯
+                //      name   │ disambiguation
+                //         separator
+                case "-":
+                    return base + scan(length: 1)
+                    
+                // The decrement operator without disambiguation.
+                // Either "operator--", "operator--/", or "operator--#"
+                case nil, "/", "#":
+                    return base + scan(length: 1)
+                     
+                // The minus operator with disambiguation.
+                //   operator--h1a2s3h
+                //   ╰───┬───╯│╰──┬──╯
+                //      name  │ disambiguation
+                //        separator
+                default:
+                    return base
+                }
+            } else {
+                // In all other cases, scan as long as there are valid C++ operator characters
+                return base
+                    + scanUntil(index: remaining.unicodeScalars.firstIndex(where: { $0 == "-" || !$0.isValidCxxOperatorSymbol }))
+            }
+        }
+        
+        // Not an operator name
+        return nil
     }
     
     mutating func scanAnchorComponentAtEnd() -> Substring? {

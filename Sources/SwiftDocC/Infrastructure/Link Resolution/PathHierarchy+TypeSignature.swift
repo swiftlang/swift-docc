@@ -45,11 +45,11 @@ extension PathHierarchy {
         
         for fragment in fragments {
             switch fragment.kind {
-            case .identifier,   // Skip the argument label
-                    .keyword,   // Skip keywords ("inout", "consuming", "each", etc.)
-                    .attribute, // Skip attributes ("@escaping", custom result builders, etc.)
-                    .numberLiteral, .stringLiteral, // Skip literals
-                    .externalParameter, .genericParameter, .internalParameter:
+            case .identifier where fragment.preciseIdentifier == nil, // Skip the argument label
+                 .keyword,   // Skip keywords ("inout", "consuming", "each", etc.)
+                 .attribute, // Skip attributes ("@escaping", custom result builders, etc.)
+                 .numberLiteral, .stringLiteral, // Skip literals
+                 .externalParameter, .genericParameter, .internalParameter:
                 continue
 
             default:
@@ -186,6 +186,7 @@ extension PathHierarchy.PathParser {
         
         let possibleDisambiguationText: Substring
         if let name = parseOperatorName(original) {
+            print("\(name)\n\(original)\n\n")
             possibleDisambiguationText = original[name.endIndex...]
         } else {
             possibleDisambiguationText = original
@@ -269,6 +270,11 @@ private struct StringScanner {
     // MARK: Parsing argument types by scanning
     
     mutating func scanArguments() -> [Substring] {
+        guard peek() != ")" else {
+            _ = take() // drop the ")"
+            return []
+        }
+        
         var arguments = [Substring]()
         repeat {
             guard let argument = scanArgument() else {
