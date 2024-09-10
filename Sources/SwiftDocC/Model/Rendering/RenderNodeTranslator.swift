@@ -45,9 +45,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
-    /// Whether tutorials that are not curated in a tutorials overview should be translated.
-    var shouldRenderUncuratedTutorials: Bool = false
-    
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
@@ -356,7 +353,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
     /// Returns a description of the total estimated duration to complete the tutorials of the given technology.
     /// - Returns: The estimated duration, or `nil` if there are no tutorials with time estimates.
-    private func totalEstimatedDuration(for technology: Technology) -> String? {
+    private func totalEstimatedDuration() -> String? {
         var totalDurationMinutes: Int? = nil
 
         for node in context.breadthFirstSearch(from: identifier) {
@@ -381,7 +378,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = technology.intro.title
         node.metadata.category = technology.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
-        node.metadata.estimatedTime = totalEstimatedDuration(for: technology)
+        node.metadata.estimatedTime = totalEstimatedDuration()
         node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
@@ -613,12 +610,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let moduleNames = modules.compactMap { reference -> String? in
             guard let node = try? context.entity(with: reference) else { return nil }
-            switch node.name {
-            case .conceptual(let title):
-                return title
-            case .symbol(let declaration):
-                return declaration.tokens.map { $0.description }.joined(separator: " ")
-            }
+            return node.name.plainText
         }
         if !moduleNames.isEmpty {
             node.metadata.modules = moduleNames.map({
@@ -635,7 +627,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
         // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
-        // (github.com/apple/swift-docc/issues/240).
+        // (github.com/swiftlang/swift-docc/issues/240).
         if let topLevelModule = context.soleRootModuleReference,
            try! context.entity(with: topLevelModule).kind.isSymbol
         {
@@ -979,11 +971,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return nil
     }
 
-    /// The current module context for symbols.
-    private var currentSymbolModuleName: String? = nil
-    /// The current symbol context.
-    private var currentSymbol: ResolvedTopicReference? = nil
-
     /// Renders automatically generated task groups
     private mutating func renderAutomaticTaskGroupsSection(_ taskGroups: [AutomaticTaskGroupSection], contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
         return taskGroups.map { group in
@@ -1212,8 +1199,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
-
-        currentSymbol = identifier
         
         /*
          FIXME: We shouldn't be doing this kind of crawling here.
@@ -1235,7 +1220,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: symbol.extendedModuleVariants,
             transform: { (_, value) in
                 let relatedModules: [String]?
-                if value != moduleName.displayName {
+                // Don't add the module name of extensions made in the compiled module.
+                if (value != moduleName.displayName) && (value != moduleName.symbolName) {
                     relatedModules = [value]
                 } else {
                     relatedModules = nil
@@ -1377,6 +1363,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     HTTPParametersSectionTranslator(parameterSource: .header),
                     HTTPBodySectionTranslator(),
                     HTTPResponsesSectionTranslator(),
+                    PlistDetailsSectionTranslator(),
+                    PossibleValuesSectionTranslator(),
                     DictionaryKeysSectionTranslator(),
                     AttributesSectionTranslator(),
                     ReturnsSectionTranslator(),
@@ -1545,16 +1533,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             // Children of the current symbol that have not been curated manually in a task group will all
             // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
-            let alreadyCurated = Set(sections.flatMap { $0.identifiers })
             let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
             
-            sections.append(contentsOf: groups.compactMap { group in
-                let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                guard !newReferences.isEmpty else { return nil }
-                
+            for group in groups {
+                let newReferences = group.references
                 contentCompiler.collectedTopicReferences.append(contentsOf: newReferences)
-                return TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences))
-            })
+
+                // If the section has been manually curated, merge the references of both the automatic curation and the manual curation into one section (rdar://61899214).
+                if let duplicateSectionIndex = sections.firstIndex(where: { $0.title == group.title }) {
+                    let originalSection = sections[duplicateSectionIndex]
+                    // Combining all references here without checking for duplicates should be safe,
+                    // because the automatic curation of topics only returns symbols that haven't already been manually curated.
+                    let combinedReferences = originalSection.identifiers + newReferences.map { $0.absoluteString }
+                    sections[duplicateSectionIndex] = TaskGroupRenderSection(title: originalSection.title, abstract: originalSection.abstract, discussion: originalSection.discussion, identifiers: combinedReferences)
+                } else {
+                    sections.append(TaskGroupRenderSection(taskGroup: (title: group.title, references: newReferences)))
+                }
+            }
             
             // Place "bottom" rendering preference automatic task groups
             // after any user-defined task groups but before automatic curation.
@@ -1670,7 +1665,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(contentCompiler.linkReferences, to: &node)
         addReferences(linkReferences, to: &node)
         
-        currentSymbol = nil
         return node
     }
 
@@ -1742,7 +1736,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var context: DocumentationContext
     var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
-    var source: URL?
     var imageReferences: [String: ImageReference] = [:]
     var videoReferences: [String: VideoReference] = [:]
     var fileReferences: [String: FileReference] = [:]
@@ -1770,7 +1763,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Build a module availability version, defaulting the patch number to 0 if not provided (e.g. 10.15)
         let moduleVersionTriplet = VersionTriplet(moduleVersion[0], moduleVersion[1], moduleVersion.count > 2 ? moduleVersion[2] : 0)
         
-        return moduleVersionTriplet == targetPlatformVersion.version
+        // Consider the module beta if its version is greater than or equal to the target platform
+        return moduleVersionTriplet >= targetPlatformVersion.version
     }
     
     /// The default availability for modules in a given bundle and module.
@@ -1893,9 +1887,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
             if let constraint = symbol.maximumExclusive {
                 attributes.append(RenderAttribute.maximumExclusive(String(constraint)))
             }
-            if let constraint = symbol.allowedValues {
-                attributes.append(RenderAttribute.allowedValues(constraint.map{String($0)}))
-            }
             if let constraint = symbol.isReadOnly {
                 isReadOnly = constraint
             }
@@ -1949,7 +1940,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         context: DocumentationContext,
         bundle: DocumentationBundle,
         identifier: ResolvedTopicReference,
-        source: URL?,
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
@@ -1959,7 +1949,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.context = context
         self.bundle = bundle
         self.identifier = identifier
-        self.source = source
         self.renderContext = renderContext
         self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs

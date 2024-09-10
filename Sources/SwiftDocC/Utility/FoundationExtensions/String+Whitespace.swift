@@ -17,7 +17,7 @@ extension String {
     ///
     /// - Parameter separator: The string to replace contiguous sequences of whitespace and punctuation with.
     /// - Returns: A new string with all whitespace and punctuation replaced with a given separator.
-    func replacingWhitespaceAndPunctuation(with separator: String) -> String {
+    package func replacingWhitespaceAndPunctuation(with separator: String) -> String {
         let charactersToStrip = CharacterSet.whitespaces.union(.punctuationCharacters)
         return components(separatedBy: charactersToStrip).filter({ !$0.isEmpty }).joined(separator: separator)
     }

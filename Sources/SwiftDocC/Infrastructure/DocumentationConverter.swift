@@ -166,7 +166,11 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
         
         // Inject current platform versions if provided
-        if let currentPlatforms {
+        if var currentPlatforms {
+            // Add missing platforms if their fallback platform is present.
+            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
+                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            }
             self.context.externalMetadata.currentPlatforms = currentPlatforms
         }
     }
@@ -314,8 +318,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         var conversionProblems: [Problem] = references.concurrentPerform { identifier, results in
             // If cancelled skip all concurrent conversion work in this block.
             guard !isConversionCancelled() else { return }
-
-            let source = context.documentURL(for: identifier)
             
             // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
             autoreleasepool {
@@ -326,7 +328,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         return
                     }
 
-                    guard let renderNode = try converter.renderNode(for: entity, at: source) else {
+                    guard let renderNode = try converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }

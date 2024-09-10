@@ -84,7 +84,16 @@ struct ParametersAndReturnValidator {
             // If all source languages have empty parameter sections, return `nil` instead of individually empty sections.
             parameterVariants = DocumentationDataVariants(defaultVariantValue: nil)
         }
-        var returnVariants = makeReturnsSectionVariants(returns?.first, signatures, symbol.documentedSymbol?.kind, hasDocumentedParameters: parameters != nil)
+        
+        var returnVariants = makeReturnsSectionVariants(
+            returns?.first,
+            signatures,
+            documentedSymbolKind: symbol.documentedSymbol?.kind,
+            swiftSymbolKind: symbol.kind.mapFirst { selector, kind in
+                SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage) == .swift ? kind.identifier : nil
+            },
+            hasDocumentedParameters: parameters != nil
+        )
         if returnVariants.allValues.allSatisfy({ _, section in section.content.isEmpty }) {
             // If all source languages have empty return value sections, return `nil` instead of individually empty sections.
             returnVariants = DocumentationDataVariants(defaultVariantValue: nil)
@@ -209,25 +218,41 @@ struct ParametersAndReturnValidator {
     /// - Parameters:
     ///   - returns: The symbol's documented return values.
     ///   - signatures: The symbol's containing only the values that exist in that language representation's function signature.
-    ///   - symbolKind: The documented symbol's kind, for use in diagnostics.
+    ///   - documentedSymbolKind: The documented symbol's kind, for use in diagnostics.
+    ///   - swiftSymbolKind: The symbol's Swift representation's kind, or `nil` if the symbol doesn't have a Swift representation.
     ///   - hasDocumentedParameters: `true` if the symbol has documented any of its parameters; otherwise `false`.
     /// - Returns: A returns section variant containing only the return values that exist in each language representation's function signature.
     private func makeReturnsSectionVariants(
         _ returns: Return?,
         _ signatures: Signatures,
-        _ symbolKind: SymbolGraph.Symbol.Kind?,
+        documentedSymbolKind: SymbolGraph.Symbol.Kind?,
+        swiftSymbolKind: SymbolGraph.Symbol.KindIdentifier?,
         hasDocumentedParameters: Bool
     ) -> DocumentationDataVariants<ReturnsSection> {
         let returnsSection = returns.map { ReturnsSection(content: $0.contents) }
         var variants = DocumentationDataVariants<ReturnsSection>()
         
         var traitsWithNonVoidReturnValues = Set(signatures.keys)
-        for (trait, signature) in signatures where !signature.returns.isEmpty {
-            // Don't display any return value documentation for language representations that only return void.
-            if let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:)),
-               let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language],
-               signature.returns.allSatisfy({ voidReturnValues.contains($0) })
-            {
+        for (trait, signature) in signatures {
+            let language = trait.interfaceLanguage.flatMap(SourceLanguage.init(knownLanguageIdentifier:))
+            
+            // The function signature for Swift initializers indicate a Void return type.
+            // However, initializers have a _conceptual_ return value that's sometimes worth documenting (rdar://131913065).
+            if language == .swift, swiftSymbolKind == .`init` {
+                variants[trait] = returnsSection
+                continue
+            }
+            
+            /// A Boolean value that indicates whether the current signature returns a known "void" value.
+            var returnsKnownVoidValue: Bool {
+                guard let language, let voidReturnValues = Self.knownVoidReturnValuesByLanguage[language] else {
+                    return false
+                }
+                return signature.returns.allSatisfy { voidReturnValues.contains($0) }
+            }
+            
+            // Don't display any return value documentation for language representations that return nothing or that only return void.
+            if signature.returns.isEmpty || returnsKnownVoidValue {
                 traitsWithNonVoidReturnValues.remove(trait)
                 // Add an empty section so that this language doesn't fallback to another language's content.
                 variants[trait] = ReturnsSection(content: [])
@@ -244,7 +269,7 @@ struct ParametersAndReturnValidator {
         
         // Diagnose if the symbol had documented its return values but all language representations only return void.
         if let returns, traitsWithNonVoidReturnValues.isEmpty {
-            diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: symbolKind))
+            diagnosticEngine.emit(makeReturnsDocumentedForVoidProblem(returns, symbolKind: documentedSymbolKind))
         }
         return variants
     }
@@ -271,9 +296,49 @@ struct ParametersAndReturnValidator {
             guard let signature = mixin.getValueIfPresent(for: SymbolGraph.Symbol.FunctionSignature.self) else {
                 continue
             }
-            signatures[DocumentationDataVariantsTrait(for: selector)] = signature
+            
+            let trait = DocumentationDataVariantsTrait(for: selector)
+            // Check if we've already encountered a different signature for another platform
+            guard var existing = signatures.removeValue(forKey: trait) else {
+                signatures[trait] = signature
+                continue
+            }
+            
+            // An internal helper function that compares parameter names
+            func hasSameNames(_ lhs: SymbolGraph.Symbol.FunctionSignature.FunctionParameter, _ rhs: SymbolGraph.Symbol.FunctionSignature.FunctionParameter) -> Bool {
+                lhs.name == rhs.name && lhs.externalName == rhs.externalName
+            }
+            // If the two signatures have different parameters, add any missing parameters.
+            // This allows for documenting parameters that are only available on some platforms.
+            //
+            // Note: Doing this redundant `elementsEqual(_:by:)` check is significantly faster in the common case when all platforms have the same signature.
+            // In the rare case where platforms have different signatures, the overhead of checking `elementsEqual(_:by:)` first is too small to measure.
+            if !existing.parameters.elementsEqual(signature.parameters, by: hasSameNames) {
+                for case .insert(offset: let offset, element: let element, _) in signature.parameters.difference(from: existing.parameters, by: hasSameNames) {
+                    existing.parameters.insert(element, at: offset)
+                }
+            }
+            
+            // If the already encountered signature has a void return type, replace it with the non-void return type.
+            // This allows for documenting the return values that are only available on some platforms.
+            if existing.returns != signature.returns, existing.returns == knownVoidReturnValuesByLanguage[.init(id: selector.interfaceLanguage)] {
+                existing.returns = signature.returns
+            }
+            signatures[trait] = existing
         }
-        return signatures.isEmpty ? nil : signatures
+        
+        guard !signatures.isEmpty else { return nil }
+        
+        // If the unified symbol has at least one function signature, fill in empty signatures for the other language representations.
+        //
+        // This, for example, makes it so that a functions in C which corresponds to property in Swift, displays its parameters and return value documentation
+        // for the C function representation, but not the Swift property representation of the documented symbol.
+        let traitsWithoutSignatures = Set(symbol.mainGraphSelectors.map { DocumentationDataVariantsTrait(for: $0) }).subtracting(signatures.keys)
+        for trait in traitsWithoutSignatures {
+            signatures[trait] = .init(parameters: [], returns: [])
+        }
+        
+        return signatures
     }
     
     /// Checks if the language specific function signatures describe a throwing function in Swift that bridges to an Objective-C method with a trailing error parameter.
@@ -285,7 +350,7 @@ struct ParametersAndReturnValidator {
             return false
         }
         guard let swiftSignature = signatures[.swift],
-                swiftSignature.parameters.last?.name != "error"
+              swiftSignature.parameters.last?.name != "error"
         else {
             return false
         }

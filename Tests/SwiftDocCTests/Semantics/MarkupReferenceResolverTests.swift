@@ -23,7 +23,7 @@ class MarkupReferenceResolverTests: XCTestCase {
         }
         """
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, source: nil, rootReference: context.rootModules[0])
+        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, rootReference: context.rootModules[0])
         _ = resolver.visit(document)
         XCTAssertEqual(0, resolver.problems.count)
     }

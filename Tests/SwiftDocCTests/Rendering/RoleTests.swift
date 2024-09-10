@@ -30,10 +30,9 @@ class RoleTests: XCTestCase {
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
-            let source = context.documentURL(for: identifier)
             do {
                 let node = try context.entity(with: identifier)
-                var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+                var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
                 let renderNode = translator.visit(node.semantic) as! RenderNode
                 XCTAssertEqual(expectedRole, renderNode.metadata.role, "Unexpected role \(renderNode.metadata.role!.singleQuoted) for identifier \(identifier.path)")
             } catch {
@@ -47,9 +46,8 @@ class RoleTests: XCTestCase {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-        let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit"] as? TopicRenderReference)?.role, "collection")
@@ -61,9 +59,8 @@ class RoleTests: XCTestCase {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
-        let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/TestOverview"] as? TopicRenderReference)?.role, "overview")

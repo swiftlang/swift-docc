@@ -17,38 +17,22 @@ import Markdown
 class MetadataAvailabilityTests: XCTestCase {
     func testInvalidWithNoArguments() throws {
         let source = "@Available"
-        let document = Document(parsing: source, options: .parseBlockDirectives)
-        let directive = document.child(at: 0) as? BlockDirective
-        XCTAssertNotNil(directive)
-
-        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
-
-        directive.map { directive in
-            var problems = [Problem]()
-            XCTAssertEqual(Metadata.Availability.directiveName, directive.name)
-            let availability = Metadata.Availability(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-            XCTAssertNil(availability)
+        
+        try assertDirective(Metadata.Availability.self, source: source) { directive, problems in
+            XCTAssertNil(directive)
+            
+            XCTAssertEqual(2, problems.count)
+            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
+            XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.unlabeled", "org.swift.docc.HasArgument.introduced"])
+            XCTAssertEqual(diagnosticExplanations, [
+                "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
+                "Available expects an argument for an unnamed parameter that\'s convertible to \'Platform\'"
+            ])
         }
     }
 
     func testInvalidDuplicateIntroduced() throws {
-        func assertInvalidDirective(source: String) throws {
-            let document = Document(parsing: source, options: .parseBlockDirectives)
-            let directive = document.child(at: 0) as? BlockDirective
-            XCTAssertNotNil(directive)
-
-            let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
-
-            directive.map { directive in
-                var problems = [Problem]()
-                XCTAssertEqual(Metadata.directiveName, directive.name)
-                let _ = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-                XCTAssertEqual(2, problems.count)
-                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-                XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced"])
-            }
-        }
-
         for platform in Metadata.Availability.Platform.defaultCases {
             let source = """
             @Metadata {
@@ -56,68 +40,137 @@ class MetadataAvailabilityTests: XCTestCase {
                 @Available(\(platform.rawValue), introduced: \"2.0\")
             }
             """
-            try assertInvalidDirective(source: source)
+            try assertDirective(Metadata.self, source: source) { directive, problems in
+                XCTAssertEqual(2, problems.count)
+                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+                XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced"])
+            }
+        }
+    }
+    
+    func testInvalidIntroducedFormat() throws {
+        let source = """
+        @Metadata {
+            @TechnologyRoot
+            @Available(Package, introduced: \"\")
+            @Available(Package, introduced: \".\")
+            @Available(Package, introduced: \"1.\")
+            @Available(Package, introduced: \".1\")
+            @Available(Package, introduced: \"test\")
+            @Available(Package, introduced: \"test.1.2\")
+            @Available(Package, introduced: \"2.1.test\")
+            @Available(Package, introduced: \"test.test.test\")
+        }
+        """
+
+        try assertDirective(Metadata.self, source: source) { directive, problems in
+            XCTAssertEqual(8, problems.count)
+            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
+            let diagnosticExplanations = Set(problems.map { $0.diagnostic.explanation })
+            XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.HasArgument.introduced.ConversionFailed"])
+            XCTAssertEqual(diagnosticExplanations, [
+                "Available expects an argument for the \'introduced\' parameter that\'s convertible to a semantic version number (\'[0-9]+(.[0-9]+)?(.[0-9]+)?\')",
+            ])
+        }
+    }
+    
+    func testValidSemanticVersionFormat() throws {
+        let source = """
+        @Metadata {
+            @Available(iOS, introduced: \"3.5.2\", deprecated: \"5.6.7\")
+            @Available(macOS, introduced: \"3.5\", deprecated: \"5.6\")
+            @Available(Package, introduced: \"3\", deprecated: \"5\")
+        }
+        """
+
+        try assertDirective(Metadata.self, source: source) { directive, problems in
+            XCTAssertEqual(0, problems.count)
+
+            let directive = try XCTUnwrap(directive)
+            XCTAssertEqual(3, directive.availability.count)
+
+            let platforms = directive.availability.map { $0.platform }
+            XCTAssertEqual(platforms, [
+                .iOS,
+                .macOS,
+                .other("Package")
+            ])
+            
+            let introducedVersions = directive.availability.map { $0.introduced }
+            XCTAssertEqual(introducedVersions, [
+                SemanticVersion(major: 3, minor: 5, patch: 2),
+                SemanticVersion(major: 3, minor: 5, patch: 0),
+                SemanticVersion(major: 3, minor: 0, patch: 0)
+            ])
+                        
+            let deprecatedVersions = directive.availability.map { $0.deprecated }
+            XCTAssertEqual(deprecatedVersions, [
+                SemanticVersion(major: 5, minor: 6, patch: 7),
+                SemanticVersion(major: 5, minor: 6, patch: 0),
+                SemanticVersion(major: 5, minor: 0, patch: 0)
+            ])
+
         }
     }
 
-    func testValidDirective() throws {
-        // assemble all the combinations of arguments you could give
+    func testValidIntroducedDirective() throws {
+        // Assemble all the combinations of arguments you could give
         let validArguments: [String] = [
-            // FIXME: isBeta and isDeprecated are unused (https://github.com/apple/swift-docc/issues/441)
-//            "isBeta: true",
-//            "isDeprecated: true",
-//            "isBeta: true, isDeprecated: true",
+          "deprecated: \"1.0\"",
         ]
         // separate those that give a version so we can test the `*` platform separately
         var validArgumentsWithVersion = ["introduced: \"1.0\""]
         for arg in validArguments {
             validArgumentsWithVersion.append("introduced: \"1.0\", \(arg)")
+            validArgumentsWithVersion.append("\(arg), introduced: \"1.0\"")
         }
 
         var checkPlatforms = Metadata.Availability.Platform.defaultCases.map({ $0.rawValue })
-        checkPlatforms.append("Package")
-
+        checkPlatforms += [
+            "Package",
+            "\"My Package\"", // Also check a platform with spaces in the name
+            // FIXME: Test validArguments with the `*` platform once that's introduced (https://github.com/swiftlang/swift-docc/issues/969)
+//            "*",
+        ]
+        
         for platform in checkPlatforms {
-            // FIXME: Test validArguments with the `*` platform once that's introduced
-            // cf. https://github.com/apple/swift-docc/issues/441
             for args in validArgumentsWithVersion {
                 try assertValidAvailability(source: "@Available(\(platform), \(args))")
             }
         }
-
-        // also check a platform with spaces in the name
-        for args in validArgumentsWithVersion {
-            try assertValidAvailability(source: "@Available(\"My Package\", \(args))")
-        }
-
-        // also test for giving no platform
-        for args in validArguments {
-            try assertValidAvailability(source: "@Available(\(args))")
-        }
-
-        // basic validity test for giving several directives
-        // FIXME: re-add isBeta after that is implemented (https://github.com/apple/swift-docc/issues/441)
+    }
+        
+    /// Basic validity test for giving several directives.
+    func testMultipleAvailabilityDirectives() throws {
         let source = """
         @Metadata {
             @Available(macOS, introduced: "11.0")
             @Available(iOS, introduced: "15.0")
+            @Available(watchOS, introduced: "7.0", deprecated: "9.0")
+            @Available("My Package", introduced: "0.1", deprecated: "1.0")
         }
         """
         try assertValidMetadata(source: source)
     }
-
-    func assertValidDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String) throws {
+    
+    func assertDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String, assertion assert: (Directive?, [Problem]) throws -> Void) throws {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
 
         let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
 
-        directive.map { directive in
+        try directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Directive.directiveName, directive.name)
             let converted = Directive(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-            XCTAssertNotNil(converted)
+            try assert(converted, problems)
+        }
+    }
+
+    func assertValidDirective<Directive: AutomaticDirectiveConvertible>(_ type: Directive.Type, source: String) throws {
+        try assertDirective(type, source: source) { directive, problems in
+            XCTAssertNotNil(directive)
             XCTAssert(problems.isEmpty)
         }
     }

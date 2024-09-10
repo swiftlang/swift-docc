@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,6 +12,9 @@ import XCTest
 @testable import SwiftDocC
 
 class RenderNodeTransformerTests: XCTestCase {
+    // This test uses ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testRemovesAutomaticallyCuratedSeeAlsoSections() throws {
         let symbolJSON = try String(contentsOf: Bundle.module.url(
             forResource: "symbol-with-automatic-see-also-section", withExtension: "json",
@@ -28,6 +31,9 @@ class RenderNodeTransformerTests: XCTestCase {
         XCTAssertEqual(renderNode.references.count, 11)
     }
     
+    // This test uses ``RemoveAutomaticallyCuratedSeeAlsoSectionsTransformation`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testRemovesAutomaticallyCuratedSeeAlsoSectionsPreservingReferences() throws {
         let symbolJSON = try String(contentsOf: Bundle.module.url(
             forResource: "symbol-auto-see-also-fragments-and-relationships", withExtension: "json",

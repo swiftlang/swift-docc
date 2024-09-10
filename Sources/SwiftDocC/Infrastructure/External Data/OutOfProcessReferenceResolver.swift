@@ -149,15 +149,14 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         var renderReference = TopicRenderReference(
             identifier: .init(reference),
             title: resolvedInformation.title,
-            // The resolved information only stores the plain text abstract https://github.com/apple/swift-docc/issues/802
+            // The resolved information only stores the plain text abstract https://github.com/swiftlang/swift-docc/issues/802
             abstract: [.text(resolvedInformation.abstract)],
             url: resolvedInformation.url.path,
             kind: kind,
             role: role,
             fragments: resolvedInformation.declarationFragments?.declarationFragments.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) },
-            isBeta: (resolvedInformation.platforms ?? []).contains(where: { $0.isBeta == true }),
+            isBeta: resolvedInformation.isBeta,
             isDeprecated: (resolvedInformation.platforms ?? []).contains(where: { $0.deprecated != nil }),
-            titleStyle: resolvedInformation.kind.isSymbol ? .symbol : .title,
             images: resolvedInformation.topicImages ?? []
         )
         for variant in resolvedInformation.variants ?? [] {
@@ -548,7 +547,7 @@ extension OutOfProcessReferenceResolver {
     public struct ResolvedInformation: Codable {
         // This type is duplicating the information from LinkDestinationSummary with some minor differences.
         // Changes generally need to be made in both places. It would be good to replace this with LinkDestinationSummary.
-        // FIXME: https://github.com/apple/swift-docc/issues/802
+        // FIXME: https://github.com/swiftlang/swift-docc/issues/802
         
         /// Information about the resolved kind.
         public let kind: DocumentationNode.Kind
@@ -588,6 +587,15 @@ extension OutOfProcessReferenceResolver {
         
         /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
         public var variants: [Variant]?
+       
+        /// A value that indicates whether this symbol is under development and likely to change.
+        var isBeta: Bool {
+            guard let platforms, !platforms.isEmpty else {
+                return false
+            }
+            
+            return platforms.allSatisfy { $0.isBeta == true }
+        }
         
         /// Creates a new resolved information value with all its values.
         ///

@@ -12,15 +12,37 @@ import SymbolKit
 
 /// A set of functions that add relationship information to a topic graph.
 struct SymbolGraphRelationshipsBuilder {
-    /// A namespace for creation of topic-graph related problems.
-    enum NodeProblem {
-        /// Returns a problem about a node with the given precise identifier not being found.
-        static func notFound(_ identifier: String) -> Problem {
-            return Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolNodeNotFound", summary: "Symbol with identifier \(identifier.singleQuoted) couldn't be found"), possibleSolutions: [])
+    /// A namespace for debug assert messages for data-correctness issues in the symbol graph data.
+    private enum AssertionMessages {
+        static func sourceNotFound(_ relationship: SymbolGraph.Relationship) -> String {
+            """
+            Source symbol \(relationship.source.singleQuoted) not found locally, from \(relationship.kind.rawValue.singleQuoted) relationship to \(relationship.target.singleQuoted).
+            
+            The "source" of a symbol graph relationship should always refer to a symbol in the same symbol graph file.
+            If it doesn't, then the tool that created the symbol graph file should move the relationship to the symbol graph file that defines the "source" symbol \
+            or remove the relationship if none of the created symbol graph file defines the "source" symbol.
+            
+            The "target" may refer to a symbol in another module.
+            For example, if local symbol conforms to a protocol from another module, \
+            there will be a "{ source: local-symbol-ID, kind: conformsTo, target: protocol-in-other-module-ID }" relationship.
+            
+            A symbol graph relationship with a non-local "source" symbol is a bug in the tool that created the symbol graph file.
+            """
         }
-        /// Returns a problem about a node with the given reference not being found.
-        static func invalidReference(_ reference: String) -> Problem {
-            return Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.InvalidSymbolIdentifier", summary: "Relationship symbol path \(reference.singleQuoted) isn't valid"), possibleSolutions: [])
+        
+        static func overloadGroupNotFound(_ relationship: SymbolGraph.Relationship) -> String {
+            """
+            Overload group \(relationship.source.singleQuoted) not found locally, from \(relationship.kind.rawValue.singleQuoted) relationship of \(relationship.source.singleQuoted).
+            
+            Both the "source" and "target" of an \(relationship.kind.rawValue.singleQuoted) symbol graph relationships with should always refer to symbols in the same symbol graph file.
+            A \(relationship.kind.rawValue.singleQuoted) symbol graph relationship with a non-local "target" symbol is a bug in the tool that created the symbol graph file.
+            """
+        }
+        
+        static func invalidSymbolReference(_ reference: SymbolReference) -> String {
+            return """
+            Failed to create an unresolved reference for \(reference.path.singleQuoted). It contains characters that are not allowed in the "path" of a RFC 3986 URL.
+            """
         }
     }
     
@@ -47,7 +69,7 @@ struct SymbolGraphRelationshipsBuilder {
               let implementorSymbol = implementorNode.semantic as? Symbol
         else {
             // The source node for implementation relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
         
@@ -63,7 +85,7 @@ struct SymbolGraphRelationshipsBuilder {
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
                 // The symbol reference format is invalid.
-                engine.emit(NodeProblem.invalidReference(symbolReference.path))
+                assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
             }
             
@@ -97,7 +119,7 @@ struct SymbolGraphRelationshipsBuilder {
             // Make the implementation a child of the requirement
             guard let childReference = localCache.reference(symbolID: edge.source) else {
                 // The child wasn't found, invalid reference in relationship.
-                engine.emit(SymbolGraphRelationshipsBuilder.NodeProblem.notFound(edge.source))
+                assertionFailure(SymbolGraphRelationshipsBuilder.AssertionMessages.sourceNotFound(edge))
                 return
             }
             
@@ -132,7 +154,7 @@ struct SymbolGraphRelationshipsBuilder {
               let conformingSymbol = conformingNode.semantic as? Symbol
         else {
             // The source node for conformance relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
         
@@ -153,7 +175,7 @@ struct SymbolGraphRelationshipsBuilder {
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: localCache[edge.target]?.symbol)
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
                 // The symbol reference format is invalid.
-                engine.emit(NodeProblem.invalidReference(symbolReference.path))
+                assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
             }
             conformanceNodeReference = .unresolved(unresolved)
@@ -221,7 +243,7 @@ struct SymbolGraphRelationshipsBuilder {
               let childSymbol = childNode.semantic as? Symbol
         else {
             // The source node for inheritance relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
         
@@ -240,7 +262,7 @@ struct SymbolGraphRelationshipsBuilder {
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: nil)
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
                 // The symbol reference format is invalid.
-                engine.emit(NodeProblem.invalidReference(symbolReference.path))
+                assertionFailure(AssertionMessages.invalidSymbolReference(symbolReference))
                 return
             }
             parentNodeReference = .unresolved(unresolved)
@@ -321,7 +343,7 @@ struct SymbolGraphRelationshipsBuilder {
               let requiredSymbol = requiredNode.semantic as? Symbol
         else {
             // The source node for requirement relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
+            assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
         requiredSymbol.isRequired = required
@@ -438,11 +460,11 @@ struct SymbolGraphRelationshipsBuilder {
         engine: DiagnosticEngine
     ) {
         guard let overloadNode = localCache[edge.source] else {
-            engine.emit(NodeProblem.notFound(edge.source))
+            assertionFailure(AssertionMessages.sourceNotFound(edge))
             return
         }
         guard let overloadGroupNode = localCache[edge.target] else {
-            engine.emit(NodeProblem.notFound(edge.target))
+            assertionFailure(AssertionMessages.overloadGroupNotFound(edge))
             return
         }
 

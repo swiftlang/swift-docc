@@ -14,7 +14,7 @@ import Foundation
 ///
 /// Parameter sections might describe parameters used in
 /// the URL query, the URL path, HTTP headers, or a multi-part HTTP body.
-enum RESTParameterSource: String, Codable {
+public enum RESTParameterSource: String, Codable {
     /// A named URL query parameter, for example, `?category=90s`.
     case query
     /// A named URL path parameter, for example, `/artists/MyArtist`.
@@ -26,23 +26,30 @@ enum RESTParameterSource: String, Codable {
 }
 
 /// A section that contains a list of REST parameters.
-struct RESTParametersRenderSection: RenderSection, Equatable {
+public struct RESTParametersRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .restParameters
     /// The title for the section.
     public let title: String
     /// The list of REST parameters.
-    public let items: [RenderProperty]
+    public let parameters: [RenderProperty]
     /// The kind of listed parameters.
     public let source: RESTParameterSource
-    
+
+    enum CodingKeys: String, CodingKey {
+        case kind
+        case title
+        case parameters = "items"
+        case source
+    }
+
     /// Creates a new REST parameters section.
     /// - Parameters:
     ///   - title: The title for the section.
-    ///   - items: The list of REST parameters.
+    ///   - parameters: The list of REST parameters.
     ///   - source: The kind of listed parameters.
-    public init(title: String, items: [RenderProperty], source: RESTParameterSource) {
+    public init(title: String, parameters: [RenderProperty], source: RESTParameterSource) {
         self.title = title
-        self.items = items
+        self.parameters = parameters
         self.source = source
     }
 }
@@ -55,7 +62,7 @@ extension RESTParametersRenderSection: RenderJSONDiffable {
 
         diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
         diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
-        diffBuilder.addDifferences(atKeyPath: \.items, forKey: CodingKeys.items)
+        diffBuilder.addDifferences(atKeyPath: \.parameters, forKey: CodingKeys.parameters)
         diffBuilder.addDifferences(atKeyPath: \.source, forKey: CodingKeys.source)
 
         return diffBuilder.differences

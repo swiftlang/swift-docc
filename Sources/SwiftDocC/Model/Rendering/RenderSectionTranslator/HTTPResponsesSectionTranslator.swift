@@ -27,7 +27,7 @@ struct HTTPResponsesSectionTranslator: RenderSectionTranslator {
             
             return RESTResponseRenderSection(
                 title: HTTPResponsesSection.title,
-                items: filteredResponses.map { translateResponse($0, &renderNodeTranslator) }
+                responses: filteredResponses.map { translateResponse($0, &renderNodeTranslator) }
             )
         }
     }

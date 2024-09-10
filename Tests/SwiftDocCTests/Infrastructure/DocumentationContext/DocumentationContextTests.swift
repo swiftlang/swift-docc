@@ -671,8 +671,8 @@ class DocumentationContextTests: XCTestCase {
     func testUsesMultipleDocExtensionFilesWithSameName() throws {
         
         // Generate 2 different symbols with the same name.
-        let someSymbol = makeSymbol(name: "MyEnum", identifier: "someEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["SomeDirectory", "MyEnum"])
-        let anotherSymbol = makeSymbol(name: "MyEnum", identifier: "anotherEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["AnotherDirectory", "MyEnum"])
+        let someSymbol = makeSymbol(id: "someEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["SomeDirectory", "MyEnum"])
+        let anotherSymbol = makeSymbol(id: "anotherEnumSymbol-id", kind: .init(rawValue: "enum"), pathComponents: ["AnotherDirectory", "MyEnum"])
         let symbols: [SymbolGraph.Symbol] = [someSymbol, anotherSymbol]
         
         // Create a catalog with doc extension files with the same filename for each symbol.
@@ -1301,9 +1301,7 @@ class DocumentationContextTests: XCTestCase {
             let node = try context.entity(with: identifier)
             
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
-            
-            let source = context.documentURL(for: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: node))
             
             XCTAssertEqual(
                 !testData.expectsToResolveArticleReference,
@@ -1925,7 +1923,7 @@ let expected = """
             )
         }
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference)
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
@@ -2465,15 +2463,14 @@ let expected = """
         
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
-        let source = context.documentURL(for: moduleReference)
         
-        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode, at: source))
+        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode))
         let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
         
         let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
         XCTAssertEqual(topicReference.title, "An article")
         
-        // This test also reproduce https://github.com/apple/swift-docc/issues/593
+        // This test also reproduce https://github.com/swiftlang/swift-docc/issues/593
         // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
         // the symbol link resolves to the symbol.
     }
@@ -2529,7 +2526,7 @@ let expected = """
         
         // Render declaration and compare token kinds with symbol graph
         let symbol = myFunc.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         let declarationTokens = renderNode.primaryContentSections.mapFirst { section -> [String]? in
@@ -2642,7 +2639,7 @@ let expected = """
             try text.write(to: referencesURL, atomically: true, encoding: .utf8)
             
             // Load the bundle & reference resolve symbol graph docs
-            let (_, _, context) = try loadBundle(from: targetURL, codeListings: [:])
+            let (_, _, context) = try loadBundle(from: targetURL)
             
             guard context.problems.count == 5 else {
                 XCTFail("Expected 5 problems during reference resolving; got \(context.problems.count)")
@@ -2673,7 +2670,7 @@ let expected = """
         let node = try context.entity(with: reference)
 
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
         return (node, renderNode)
@@ -2779,7 +2776,7 @@ let expected = """
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
-        let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
+        let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
                 .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
@@ -2970,6 +2967,143 @@ let expected = """
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("sidekit.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
         XCTAssertEqual(linkResolutionProblems.first?.diagnostic.identifier, "org.swift.docc.unresolvedTopicReference")
+    }
+    
+    func testLinkDiagnosticsInSynthesizedTechnologyRoots() throws {
+        // Verify that when synthesizing a technology root, links are resolved in the roots content.
+        // Also, if an article is promoted to a root, verify that any existing metadata is preserved.
+        
+        func makeMetadata(root: Bool, color: Bool) -> String {
+            guard root || color else {
+                return ""
+            }
+            return """
+            @Metadata {
+              \(root  ? "@TechnologyRoot"    : "")
+              \(color ? "@PageColor(orange)" : "")
+            }
+            """
+        }
+        
+        // Only a single article
+        for withExplicitTechnologyRoot in [true, false] {
+            for withPageColor in [true, false] {
+                let catalogURL = try createTempFolder(content: [
+                    Folder(name: "unit-test.docc", content: [
+                        TextFile(name: "Root.md", utf8Content: """
+                    # My root page
+                    
+                    \(makeMetadata(root: withExplicitTechnologyRoot, color: withPageColor))
+                    
+                    This implicit technology root links to pages and on-page elements that don't exist.
+                    
+                    - ``NotFoundSymbol``
+                    - <doc:NotFoundArticle>
+                    - <doc:#NotFoundHeading>
+                    """),
+                    ])
+                ])
+                let (_, _, context) = try loadBundle(from: catalogURL)
+                
+                XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
+                    "'NotFoundSymbol' doesn't exist at '/Root'",
+                    "'NotFoundArticle' doesn't exist at '/Root'",
+                    "'NotFoundHeading' doesn't exist at '/Root'",
+                ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
+                
+                let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+                let rootPage = try context.entity(with: rootReference)
+                XCTAssertNotNil(rootPage.metadata?.technologyRoot)
+                if withPageColor {
+                    XCTAssertEqual(rootPage.metadata?.pageColor?.rawValue, "orange")
+                } else {
+                    XCTAssertNil(rootPage.metadata?.pageColor)
+                }
+            }
+        }
+        
+        // Article that match the bundle's name
+        for withExplicitTechnologyRoot in [true, false] {
+            for withPageColor in [true, false] {
+                let catalogURL = try createTempFolder(content: [
+                    Folder(name: "CatalogName.docc", content: [
+                        TextFile(name: "CatalogName.md", utf8Content: """
+                        # My root page
+                        
+                        \(makeMetadata(root: withExplicitTechnologyRoot, color: withPageColor))
+                        
+                        This implicit technology root links to pages and on-page elements that don't exist.
+                        
+                        - ``NotFoundSymbol``
+                        - <doc:NotFoundArticle>
+                        - <doc:#NotFoundHeading>
+                        """),
+                            
+                        TextFile(name: "OtherArticle.md", utf8Content: """
+                        # Another article
+                        
+                        This article links to the technology root.
+                        
+                        - <doc:CatalogName>
+                        """),
+                    ])
+                ])
+                let (_, _, context) = try loadBundle(from: catalogURL)
+                
+                XCTAssertEqual(context.problems.map(\.diagnostic.summary), [
+                    "'NotFoundSymbol' doesn't exist at '/CatalogName'",
+                    "'NotFoundArticle' doesn't exist at '/CatalogName'",
+                    "'NotFoundHeading' doesn't exist at '/CatalogName'",
+                ], withExplicitTechnologyRoot ? "with @TechnologyRoot" : "with synthesized root")
+                
+                let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+                let rootPage = try context.entity(with: rootReference)
+                XCTAssertNotNil(rootPage.metadata?.technologyRoot)
+                if withPageColor {
+                    XCTAssertEqual(rootPage.metadata?.pageColor?.rawValue, "orange")
+                } else {
+                    XCTAssertNil(rootPage.metadata?.pageColor)
+                }
+            }
+        }
+        
+        // Completely synthesized root
+        let catalogURL = try createTempFolder(content: [
+            Folder(name: "CatalogName.docc", content: [
+                TextFile(name: "First.md", utf8Content: """
+                    # One article
+                    
+                    This article links to pages and on-page elements that don't exist.
+                    
+                    - ``NotFoundSymbol``
+                    - <doc:#NotFoundHeading>
+                    
+                    It also links to the technology root.
+                    
+                    - <doc:CatalogName>
+                    """),
+                
+                TextFile(name: "Second.md", utf8Content: """
+                    # Another article
+                    
+                    This article links to a page that doesn't exist to the synthesized technology root.
+                    
+                    - <doc:NotFoundArticle>
+                    - <doc:CatalogName>
+                    """),
+            ])
+        ])
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
+            "'NotFoundArticle' doesn't exist at '/CatalogName/Second'",
+            "'NotFoundHeading' doesn't exist at '/CatalogName/First'",
+            "'NotFoundSymbol' doesn't exist at '/CatalogName/First'",
+        ])
+        
+        let rootReference = try XCTUnwrap(context.soleRootModuleReference)
+        let rootPage = try context.entity(with: rootReference)
+        XCTAssertNotNil(rootPage.metadata?.technologyRoot)
     }
     
     func testResolvingLinksToHeaders() throws {
@@ -3174,20 +3308,20 @@ let expected = """
         // Verify that the links are resolved in the render model.
         let bundle = try XCTUnwrap(context.registeredBundles.first)
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
         
         XCTAssertEqual(renderNode.topicSections.map(\.anchor), [
             "Another-topic-section"
         ])
         
         let firstReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "First" }))
-        let firstRenderNode = try converter.convert(context.entity(with: firstReference), at: nil)
+        let firstRenderNode = try converter.convert(context.entity(with: firstReference))
         XCTAssertEqual(firstRenderNode.topicSections.map(\.anchor), [
             "Topics"
         ])
         
         let secondReference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "Second" }))
-        let secondRenderNode = try converter.convert(context.entity(with: secondReference), at: nil)
+        let secondRenderNode = try converter.convert(context.entity(with: secondReference))
         XCTAssertEqual(secondRenderNode.topicSections.map(\.anchor), [
             "Some-topic-section"
         ])
@@ -3949,7 +4083,7 @@ let expected = """
     // Verifies if the context fails to resolve non-resolvable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -4495,32 +4629,31 @@ let expected = """
                         symbols: [
                             // Any class declaration.
                             makeSymbol(
-                                name: "SomeClass",
-                                identifier: "some-class-id",
+                                id: "some-class-id",
                                 language: .objectiveC,
-                                kind: .class
+                                kind: .class,
+                                pathComponents: ["SomeClass"]
                             ),
                             
                             // extern NSErrorDomain const SomeErrorDomain;
                             makeSymbol(
-                                name: "SomeErrorDomain",
-                                identifier: "some-error-domain-id",
+                                id: "some-error-domain-id",
                                 language: .objectiveC,
-                                kind: .var
+                                kind: .var,
+                                pathComponents: ["SomeErrorDomain"]
                             ),
                             
                             // typedef NS_ERROR_ENUM(SomeErrorDomain, SomeErrorCode) {
                             //     SomeErrorCodeSomeCase = 1
                             // };
                             makeSymbol(
-                                name: "SomeErrorCode",
-                                identifier: "some-error-code-id",
+                                id: "some-error-code-id",
                                 language: .objectiveC,
-                                kind: .enum
+                                kind: .enum,
+                                pathComponents: ["SomeErrorCode"]
                             ),
                             makeSymbol(
-                                name: "SomeErrorCodeSomeCase",
-                                identifier: "some-error-code-case-id",
+                                id: "some-error-code-case-id",
                                 language: .objectiveC,
                                 kind: .case,
                                 pathComponents: ["SomeErrorCode", "SomeErrorCodeSomeCase"]
@@ -4538,9 +4671,9 @@ let expected = """
                         symbols: [
                             // The Swift representation of the Objective-C class above.
                             makeSymbol(
-                                name: "SomeClass",
-                                identifier: "some-class-id",
-                                kind: .class
+                                id: "some-class-id",
+                                kind: .class,
+                                pathComponents: ["SomeClass"]
                             ),
                             
                             // The domain defined using NS_ERROR_ENUM translates to a struct with an 'errorDomain' and 'code'. Something like:
@@ -4554,37 +4687,33 @@ let expected = """
                             //     }
                             // }
                             makeSymbol(
-                                name: "SomeErrorDomain",
-                                identifier: "some-error-domain-id",
-                                kind: .var
+                                id: "some-error-domain-id",
+                                kind: .var,
+                                pathComponents: ["SomeErrorDomain"]
                             ),
                             
                             makeSymbol(
-                                name: "SomeError",
-                                identifier: "some-error-id",
-                                kind: .struct
+                                id: "some-error-id",
+                                kind: .struct,
+                                pathComponents: ["SomeError"]
                             ),
                             makeSymbol(
-                                name: "errorDomain",
-                                identifier: "some-error-domain-property-id",
+                                id: "some-error-domain-property-id",
                                 kind: .typeProperty,
                                 pathComponents: ["SomeError", "errorDomain"]
                             ),
                             makeSymbol(
-                                name: "code",
-                                identifier: "some-error-code-property-id",
+                                id: "some-error-code-property-id",
                                 kind: .typeProperty,
                                 pathComponents: ["SomeError", "code"]
                             ),
                             makeSymbol(
-                                name: "Code",
-                                identifier: "some-error-code-id",
+                                id: "some-error-code-id",
                                 kind: .enum,
                                 pathComponents: ["SomeError", "Code"]
                             ),
                             makeSymbol(
-                                name: "someCase",
-                                identifier: "some-error-code-case-id",
+                                id: "some-error-code-case-id",
                                 kind: .case,
                                 pathComponents: ["SomeError", "Code", "someCase"]
                             ),
@@ -4708,10 +4837,10 @@ let expected = """
         let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+            makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
         ] }
         
         let tempURL = try createTempFolder(content: [
@@ -4785,10 +4914,10 @@ let expected = """
         let overloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { $0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = overloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+            makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
         ] }
 
         let tempURL = try createTempFolder(content: [
@@ -4835,10 +4964,10 @@ let expected = """
         let nonOverloadableKindIDs = SymbolGraph.Symbol.KindIdentifier.allCases.filter { !$0.isOverloadableKind }
         // Generate a 4 symbols with the same name for every non overloadable symbol kind
         let symbols: [SymbolGraph.Symbol] = nonOverloadableKindIDs.flatMap { [
-            makeSymbol(identifier: "first-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "second-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "third-\($0.identifier)-id", kind: $0),
-            makeSymbol(identifier: "fourth-\($0.identifier)-id", kind: $0),
+            makeSymbol(id: "first-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "second-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "third-\($0.identifier)-id",  kind: $0, pathComponents: ["SymbolName"]),
+            makeSymbol(id: "fourth-\($0.identifier)-id", kind: $0, pathComponents: ["SymbolName"]),
         ] }
         
         let tempURL = try createTempFolder(content: [
@@ -4919,23 +5048,369 @@ let expected = """
             "Unknown feature flag in Info.plist: 'ExperimenalOverloadedSymbolPresentation'. Possible suggestions: 'ExperimentalOverloadedSymbolPresentation'")
     }
 
-    // A test helper that creates a symbol with a given identifier and kind.
-    private func makeSymbol(
-        name: String = "SymbolName",
-        identifier: String,
-        language: SourceLanguage = .swift,
-        kind: SymbolGraph.Symbol.KindIdentifier,
-        pathComponents: [String]? = nil
-    ) -> SymbolGraph.Symbol {
-        return SymbolGraph.Symbol(
-            identifier: .init(precise: identifier, interfaceLanguage: language.id),
-            names: .init(title: name, navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: pathComponents ?? [name],
-            docComment: nil,
-            accessLevel: .public,
-            kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
-            mixins: [:]
-        )
+    func testContextGeneratesUnifiedOverloadGroupsAcrossPlatforms() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-3", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        // There should only be one overload group for `SymbolName` - the one from the iOS symbol
+        // graph should have been removed during graph collection.
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2", "symbol-3"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    func testContextGeneratesOverloadGroupsWhenOnePlatformHasNoOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        // This situation used to crash. The macOS symbol graph only has one symbol in the overload
+        // group, whereas the iOS graph has two. Due to the way that Symbol loaded the overload
+        // mixins, `symbol-1` wouldn't save its overload data, which would trip an assertion in
+        // DocumentationContext. We need to ensure that an overload group is properly created, and
+        // that both symbols are correctly grouped underneath it.
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        // Even though the macOS symbol graph doesn't contain an overload group, one should still
+        // have been created from the iOS symbol graph, and that overload group should reference
+        // both symbols.
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    /// Ensure that overload groups are correctly loaded into the path hierarchy and create nodes,
+    /// even when they came from an extension symbol graph.
+    func testContextGeneratesOverloadGroupsForExtensionGraphOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(id: "RegularSymbol", kind: .class, pathComponents: ["RegularSymbol"]),
+                    ])),
+                JSONFile(name: "OtherModule@ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "OtherModule",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+
+    func testContextGeneratesOverloadGroupsForDisjointOverloads() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let symbolKind = try XCTUnwrap(SymbolGraph.Symbol.KindIdentifier.allCases.filter({ $0.isOverloadableKind }).first)
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                JSONFile(name: "ModuleName-macos.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "macosx")),
+                    symbols: [
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+                JSONFile(name: "ModuleName-ios.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: .init(operatingSystem: .init(name: "ios")),
+                    symbols: [
+                        makeSymbol(id: "symbol-1", kind: symbolKind, pathComponents: ["SymbolName"]),
+                        makeSymbol(id: "symbol-2", kind: symbolKind, pathComponents: ["SymbolName"]),
+                    ])),
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
+
+        let overloadGroupNode: DocumentationNode
+        let overloadGroupSymbol: Symbol
+        let overloadGroupReferences: Symbol.Overloads
+
+        switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName"))), in: moduleReference, fromSymbolLink: true) {
+        case let .failure(_, errorMessage):
+            XCTFail("Could not resolve overload group page. Error message: \(errorMessage)")
+            return
+        case let .success(overloadGroupReference):
+            overloadGroupNode = try context.entity(with: overloadGroupReference)
+            overloadGroupSymbol = try XCTUnwrap(overloadGroupNode.semantic as? Symbol)
+            overloadGroupReferences = try XCTUnwrap(overloadGroupSymbol.overloadsVariants.firstValue)
+
+            XCTAssertEqual(overloadGroupReferences.displayIndex, 0)
+
+            let unifiedSymbol = try XCTUnwrap(overloadGroupNode.unifiedSymbol)
+            XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "symbol-1" + SymbolGraph.Symbol.overloadGroupIdentifierSuffix)
+        }
+
+        let overloadedReferences = try ["symbol-1", "symbol-2"]
+            .map { try XCTUnwrap(context.documentationCache.reference(symbolID: $0)) }
+
+        for (index, reference) in overloadedReferences.indexed() {
+            let overloadedDocumentationNode = try XCTUnwrap(context.documentationCache[reference])
+            let overloadedSymbol = try XCTUnwrap(overloadedDocumentationNode.semantic as? Symbol)
+
+            let overloads = try XCTUnwrap(overloadedSymbol.overloadsVariants.firstValue)
+
+            // Make sure that each symbol contains all of its sibling overloads.
+            XCTAssertEqual(overloads.references.count, overloadedReferences.count - 1)
+            for (otherIndex, otherReference) in overloadedReferences.indexed() where otherIndex != index {
+                XCTAssert(overloads.references.contains(otherReference))
+            }
+
+            if overloads.displayIndex == 0 {
+                // The first declaration in the display list should be the same declaration as
+                // the overload group page
+                XCTAssertEqual(overloadedSymbol.declaration.first?.value.declarationFragments, overloadGroupSymbol.declaration.first?.value.declarationFragments)
+            } else {
+                // Otherwise, this reference should also be referenced by the overload group
+                XCTAssert(overloadGroupReferences.references.contains(reference))
+            }
+        }
+    }
+    
+    func testResolveExternalLinkFromTechnologyRoot() throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        
+        let externalModuleName = "ExternalModuleName"
+        
+        func makeExternalResolver() throws -> ExternalPathHierarchyResolver {
+            let (bundle, context) = try loadBundle(
+                catalog: Folder(name: "Dependency.docc", content: [
+                    JSONFile(name: "\(externalModuleName).symbols.json", content: makeSymbolGraph(moduleName: externalModuleName)),
+                    TextFile(name: "Extension.md", utf8Content: """
+                    # ``\(externalModuleName)``
+                    
+                    Some description of this module.
+                    """)
+                ])
+            )
+            
+            // Retrieve the link information from the dependency, as if '--enable-experimental-external-link-support' was passed to DocC
+            let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+            let linkSummaries: [LinkDestinationSummary] = try context.knownPages.flatMap { reference in
+                let entity = try context.entity(with: reference)
+                let renderNode = try XCTUnwrap(converter.convert(entity))
+                
+                return entity.externallyLinkableElementSummaries(context: context, renderNode: renderNode, includeTaskGroups: false)
+            }
+            let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
+            
+            return ExternalPathHierarchyResolver(linkInformation: linkResolutionInformation, entityInformation: linkSummaries)
+        }
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Some root page
+            
+            A single-file article-only catalog.
+            
+            This root links to an external module ``/\(externalModuleName)``
+            """),
+        ])
+        
+        let (_, bundle, context) = try loadBundle(from: createTempFolder(content: [catalog])) { context in
+            context.linkResolver.externalResolvers = [externalModuleName: try makeExternalResolver()]
+        }
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        let reference = try XCTUnwrap(context.soleRootModuleReference)
+        let node = try context.entity(with: reference)
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(node)
+        
+        let externalReference = "doc://Dependency/documentation/ExternalModuleName"
+        
+        // Verify that the rendered page contains the resolved reference
+        let discussionSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        XCTAssertEqual(discussionSection.content, [
+            .heading(.init(level: 2, text: "Overview", anchor: "overview")),
+            
+            .paragraph(.init(inlineContent: [
+                .text("This root links to an external module "),
+                .reference(identifier: RenderReferenceIdentifier(externalReference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
+            ]))
+        ])
+        
+        // Verify that the rendered page has the render details about the resolved reference
+        XCTAssertEqual(renderNode.references.keys.sorted(), [externalReference])
+        
+        let externalRenderReference = try XCTUnwrap(renderNode.references[externalReference] as? TopicRenderReference)
+        XCTAssertEqual(externalRenderReference.title, externalModuleName)
+        XCTAssertEqual(externalRenderReference.abstract, [.text("Some description of this module.")])
     }
 }
 

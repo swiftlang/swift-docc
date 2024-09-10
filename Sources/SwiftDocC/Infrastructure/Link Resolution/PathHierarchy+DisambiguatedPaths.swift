@@ -201,8 +201,8 @@ extension PathHierarchy.DisambiguationContainer {
         let groupedByKind = [String?: [Element]](grouping: elements, by: \.kind)
         for (kind, elements) in groupedByKind where elements.count == 1 && kind != nil {
             let element = elements.first!
-            if includeLanguage, let symbol = element.node.symbol {
-                collisions.append((value: element.node, disambiguation: .kind("\(SourceLanguage(id: symbol.identifier.interfaceLanguage).linkDisambiguationID).\(kind!)")))
+            if includeLanguage, let language = element.node.languages.min() {
+                collisions.append((value: element.node, disambiguation: .kind("\(language.linkDisambiguationID).\(kind!)")))
             } else {
                 collisions.append((value: element.node, disambiguation: .kind(kind!)))
             }

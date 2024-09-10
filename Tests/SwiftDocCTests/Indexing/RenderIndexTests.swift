@@ -704,7 +704,7 @@ final class RenderIndexTests: XCTestCase {
                       "identifier" : "plus.svg",
                       "variants" : [
                         {
-                          "url" : "\/images\/plus.svg",
+                          "url" : "\/images\/org.swift.docc.Book\/plus.svg",
                           "traits" : [
                             "1x",
                             "light"
@@ -746,9 +746,8 @@ final class RenderIndexTests: XCTestCase {
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity))
             try builder.index(renderNode: renderNode)
         }
         

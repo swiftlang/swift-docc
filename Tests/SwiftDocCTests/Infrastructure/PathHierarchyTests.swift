@@ -1349,6 +1349,8 @@ class PathHierarchyTests: XCTestCase {
         // Because there are two collisions with the same signature, this method can only be uniquely disambiguated with its hash.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
+        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
     }
     
     func testApplyingSyntaxSugarToTypeName() {
@@ -1865,7 +1867,7 @@ class PathHierarchyTests: XCTestCase {
     func testContinuesSearchingIfNonSymbolMatchesSymbolLink() throws {
         let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
-                ("some-class-id", .swift, ["SomeClass"], .class),
+                makeSymbol(id: "some-class-id", kind: .class, pathComponents: ["SomeClass"])
             ])),
             
             TextFile(name: "Some-Article.md", utf8Content: """
@@ -2225,7 +2227,9 @@ class PathHierarchyTests: XCTestCase {
         let exampleDocumentation = Folder(name: "unit-test.docc", content: [
             JSONFile(name: "Module.symbols.json", content: makeSymbolGraph(
                 moduleName: "Module",
-                symbols: symbolPaths.map { ($0.joined(separator: "."), .swift, $0, .class) }
+                symbols: symbolPaths.map { 
+                    makeSymbol(id: $0.joined(separator: "."), kind: .class, pathComponents: $0)
+                }
             )),
         ])
         let tempURL = try createTemporaryDirectory()
@@ -2262,7 +2266,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
                     symbols: [
-                        (containerID, .objectiveC, ["ContainerName"], .class)
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
                     ]
                 )),
             ]),
@@ -2271,14 +2275,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["ContainerName"], .class)
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        (memberID, .swift, ["ContainerName", "MemberName"], .property)
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2305,7 +2309,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .objectiveC, ["ContainerName"], .typealias)
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .typealias, pathComponents: ["ContainerName"]),
                     ]
                 )),
             ]),
@@ -2314,14 +2318,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["ContainerName"], .struct)
+                        makeSymbol(id: containerID, kind: .struct, pathComponents: ["ContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        (memberID, .swift, ["ContainerName", "MemberName"], .property)
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName"]),
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2348,8 +2352,8 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName", 
                     symbols: [
-                        (containerID, .objectiveC, ["ContainerName"], .class),
-                        (memberID, .objectiveC, ["ContainerName", "MemberName"], .property), // member starts with uppercase "M"
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, language: .objectiveC, kind: .property, pathComponents: ["ContainerName", "MemberName"]), // member starts with uppercase "M"
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2361,8 +2365,8 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["ContainerName"], .class),
-                        (memberID, .swift, ["ContainerName", "memberName"], .property), // member starts with lowercase "m"
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "memberName"]), // member starts with lowercase "m"
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2389,7 +2393,7 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .objectiveC, ["ObjectiveCContainerName"], .class)
+                        makeSymbol(id: containerID, language: .objectiveC, kind: .class, pathComponents: ["ObjectiveCContainerName"]),
                     ]
                 )),
             ]),
@@ -2398,14 +2402,14 @@ class PathHierarchyTests: XCTestCase {
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ModuleName",
                     symbols: [
-                        (containerID, .swift, ["SwiftContainerName"], .class)
+                        makeSymbol(id: containerID, kind: .class, pathComponents: ["SwiftContainerName"]),
                     ]
                 )),
                 
                 JSONFile(name: "ExtendingModule@ModuleName.symbols.json", content: makeSymbolGraph(
                     moduleName: "ExtendingModule",
                     symbols: [
-                        (memberID, .swift, ["SwiftContainerName", "MemberName"], .property)
+                        makeSymbol(id: memberID, kind: .property, pathComponents: ["SwiftContainerName", "MemberName"])
                     ],
                     relationships: [
                         .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil)
@@ -2432,9 +2436,9 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    (containerID, .swift, ["ContainerName"], .class),
-                    (otherID, .swift, ["ContainerName"], .class),
-                    (memberID, .swift, ["ContainerName", "MemberName1"], .property),
+                    makeSymbol(id: containerID, kind: .class, pathComponents: ["ContainerName"]),
+                    makeSymbol(id: otherID, kind: .class, pathComponents: ["ContainerName"]),
+                    makeSymbol(id: memberID, kind: .property, pathComponents: ["ContainerName", "MemberName1"]),
                 ],
                 relationships: [
                     .init(source: memberID, target: containerID, kind: .optionalMemberOf, targetFallback: nil),
@@ -2457,7 +2461,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    ("some-symbol-id", .swift, ["SymbolName"], .class),
+                    makeSymbol(id: "some-symbol-id", kind: .class, pathComponents: ["SymbolName"]),
                 ],
                 relationships: []
             )),
@@ -2556,7 +2560,7 @@ class PathHierarchyTests: XCTestCase {
             JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
                 symbols: [
-                    (symbolID, .swift, ["SymbolName"], .class),
+                    makeSymbol(id: symbolID, kind: .class, pathComponents: ["SymbolName"]),
                 ],
                 relationships: []
             )),
@@ -2588,11 +2592,11 @@ class PathHierarchyTests: XCTestCase {
         func makeSymbolGraphFile(platformName: String) -> JSONFile<SymbolGraph> {
             JSONFile(name: "\(platformName)-ModuleName.symbols.json", content: makeSymbolGraph(
                 moduleName: "ModuleName",
-                platformName: platformName,
+                platform: .init(operatingSystem: .init(name: platformName)),
                 symbols: [
-                    (protocolID, .swift, ["SomeProtocolName"], .class),
-                    (protocolRequirementID, .swift, ["SomeProtocolName", "someProtocolRequirement()"], .class),
-                    (defaultImplementationID, .swift, ["SomeConformingType", "someProtocolRequirement()"], .class),
+                    makeSymbol(id: protocolID, kind: .class, pathComponents: ["SomeProtocolName"]),
+                    makeSymbol(id: protocolRequirementID, kind: .class, pathComponents: ["SomeProtocolName", "someProtocolRequirement()"]),
+                    makeSymbol(id: defaultImplementationID, kind: .class, pathComponents: ["SomeConformingType", "someProtocolRequirement()"]),
                 ],
                 relationships: [
                     .init(source: protocolRequirementID, target: protocolID, kind: .requirementOf, targetFallback: nil),
@@ -2629,6 +2633,185 @@ class PathHierarchyTests: XCTestCase {
         
         try assertFindsPath("/MainModule/TopLevelProtocol/extensionMember(_:)", in: tree, asSymbolID: "extensionMember1")
         try assertFindsPath("/MainModule/TopLevelProtocol/InnerStruct/extensionMember(_:)", in: tree, asSymbolID: "extensionMember2")
+    }
+    
+    func testLinksToCxxOperators() throws {
+        let (_, context) = try testBundleAndContext(named: "CxxOperators")
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        // MyClass operator+() const;                     // unary plus
+        // MyClass operator+(const MyClass& other) const; // addition
+        try assertPathCollision("/CxxOperators/MyClass/operator+", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator+#1", disambiguation: "15qb6"),
+            (symbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1", disambiguation: "8k1ef"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator+-15qb6", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator+-8k1ef", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
+
+        // MyClass operator-() const;                     // unary minus
+        // MyClass operator-(const MyClass& other) const; // subtraction
+        try assertPathCollision("/CxxOperators/MyClass/operator-", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator-#1", disambiguation: "1c6gw"),
+            (symbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1", disambiguation: "6knvo"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator--1c6gw", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator--6knvo", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
+
+        // MyClass& operator*();                          // indirect access
+        // MyClass operator*(const MyClass& other) const; // multiplication
+        try assertPathCollision("/CxxOperators/MyClass/operator*", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1", disambiguation: "6oso3"),
+            (symbolID: "c:@S@MyClass@F@operator*#", disambiguation: "8vjwm"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator*-6oso3", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator*-8vjwm", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
+
+        // MyClass operator/(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator/", in: tree, asSymbolID: "c:@S@MyClass@F@operator/#&1$@S@MyClass#1")
+
+        // MyClass operator%(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator%", in: tree, asSymbolID: "c:@S@MyClass@F@operator%#&1$@S@MyClass#1")
+
+        // MyClass operator~() const;
+        try assertFindsPath("/CxxOperators/MyClass/operator~", in: tree, asSymbolID: "c:@S@MyClass@F@operator~#1")
+
+        // MyClass* operator&();                          // address-of
+        // MyClass operator&(const MyClass& other) const; // bitwise and
+        try assertPathCollision("/CxxOperators/MyClass/operator&", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1", disambiguation: "3ob2f"),
+            (symbolID: "c:@S@MyClass@F@operator&#", disambiguation: "8vnp2"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator&-3ob2f", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1")
+        try assertFindsPath("/CxxOperators/MyClass/operator&-8vnp2", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#")
+
+        // MyClass operator|(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator|", in: tree, asSymbolID: "c:@S@MyClass@F@operator|#&1$@S@MyClass#1")
+
+        // MyClass operator^(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator^", in: tree, asSymbolID: "c:@S@MyClass@F@operator^#&1$@S@MyClass#1")
+
+        // MyClass operator<<(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<<", in: tree, asSymbolID: "c:@S@MyClass@F@operator<<#&1$@S@MyClass#1")
+
+        // MyClass operator>>(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator>>", in: tree, asSymbolID: "c:@S@MyClass@F@operator>>#&1$@S@MyClass#1")
+
+        // MyClass operator++(int); // post-increment
+        // MyClass& operator++();   // pre-increment
+        try assertPathCollision("/CxxOperators/MyClass/operator++", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator++#", disambiguation: "15swg"),
+            (symbolID: "c:@S@MyClass@F@operator++#I#", disambiguation: "68oe0"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator++-68oe0", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator++-15swg", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
+
+        // MyClass operator--(int); // post-decrement
+        // MyClass& operator--();   // pre-decrement
+        try assertPathCollision("/CxxOperators/MyClass/operator--", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator-#", disambiguation: "8vk0i"),
+            (symbolID: "c:@S@MyClass@F@operator-#I#", disambiguation: "9wv7m"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator---9wv7m", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
+        try assertFindsPath("/CxxOperators/MyClass/operator---8vk0i", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
+
+        // bool operator!() const;
+        try assertFindsPath("/CxxOperators/MyClass/operator!", in: tree, asSymbolID: "c:@S@MyClass@F@operator!#1")
+
+        // bool operator&&(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator&&", in: tree, asSymbolID: "c:@S@MyClass@F@operator&&#&1$@S@MyClass#1")
+
+        // bool operator||(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator||", in: tree, asSymbolID: "c:@S@MyClass@F@operator||#&1$@S@MyClass#1")
+
+        // bool operator==(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator==", in: tree, asSymbolID: "c:@S@MyClass@F@operator==#&1$@S@MyClass#1")
+
+        // bool operator!=(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator!=", in: tree, asSymbolID: "c:@S@MyClass@F@operator!=#&1$@S@MyClass#1")
+
+        // bool operator<(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<", in: tree, asSymbolID: "c:@S@MyClass@F@operator<#&1$@S@MyClass#1")
+
+        // bool operator>(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator>", in: tree, asSymbolID: "c:@S@MyClass@F@operator>#&1$@S@MyClass#1")
+
+        // bool operator<=(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<=", in: tree, asSymbolID: "c:@S@MyClass@F@operator<=#&1$@S@MyClass#1")
+
+        // bool operator>=(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator>=", in: tree, asSymbolID: "c:@S@MyClass@F@operator>=#&1$@S@MyClass#1")
+
+        // std::weak_ordering operator<=>(const MyClass& other) const;
+        try assertFindsPath("/CxxOperators/MyClass/operator<=>", in: tree, asSymbolID: "c:@S@MyClass@F@operator<=>#&1$@S@MyClass#1")
+
+        // MyClass operator=(const MyClass other);    // pass-by-value copy assignment
+        // MyClass& operator=(const MyClass& other);  // copy assignment
+        // MyClass& operator=(const MyClass&& other); // move assignment
+        try assertPathCollision("/CxxOperators/MyClass/operator=", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#", disambiguation: "36ink"),
+            (symbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#", disambiguation: "5360m"),
+            (symbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#", disambiguation: "6e1gm"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator=-5360m", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-36ink", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#")
+        try assertFindsPath("/CxxOperators/MyClass/operator=-6e1gm", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#")
+
+        // MyClass& operator+=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator+=", in: tree, asSymbolID: "c:@S@MyClass@F@operator+=#&1$@S@MyClass#")
+
+        // MyClass& operator-=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator-=", in: tree, asSymbolID: "c:@S@MyClass@F@operator-=#&1$@S@MyClass#")
+
+        // MyClass& operator*=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator*=", in: tree, asSymbolID: "c:@S@MyClass@F@operator*=#&1$@S@MyClass#")
+
+        // MyClass& operator/=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator/=", in: tree, asSymbolID: "c:@S@MyClass@F@operator/=#&1$@S@MyClass#")
+
+        // MyClass& operator%=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator%=", in: tree, asSymbolID: "c:@S@MyClass@F@operator%=#&1$@S@MyClass#")
+
+        // MyClass operator&=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator&=", in: tree, asSymbolID: "c:@S@MyClass@F@operator&=#&1$@S@MyClass#")
+
+        // MyClass operator|=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator|=", in: tree, asSymbolID: "c:@S@MyClass@F@operator|=#&1$@S@MyClass#")
+
+        // MyClass operator^=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator^=", in: tree, asSymbolID: "c:@S@MyClass@F@operator^=#&1$@S@MyClass#")
+
+        // MyClass operator<<=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator<<=", in: tree, asSymbolID: "c:@S@MyClass@F@operator<<=#&1$@S@MyClass#")
+
+        // MyClass operator>>=(const MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator>>=", in: tree, asSymbolID: "c:@S@MyClass@F@operator>>=#&1$@S@MyClass#")
+
+        // MyClass& operator[](std::string& key);              // subscript
+        // static void operator[](MyClass& lhs, MyClass& rhs); // subscript
+        try assertPathCollision("/CxxOperators/MyClass/operator[]", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S", disambiguation: "8qcye"),
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#", disambiguation: "9758f"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-9758f", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+        try assertFindsPath("/CxxOperators/MyClass/operator[]-8qcye", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
+
+        // MyClass& operator->();
+        try assertFindsPath("/CxxOperators/MyClass/operator->", in: tree, asSymbolID: "c:@S@MyClass@F@operator->#")
+
+        // MyClass& operator->*(const std::string& key);
+        try assertFindsPath("/CxxOperators/MyClass/operator->*", in: tree, asSymbolID: "c:@S@MyClass@F@operator->*#&1$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
+
+        // MyClass& operator()(MyClass& arg1, MyClass& arg2, MyClass& arg3); // function-call
+        // static void operator()(MyClass& lhs, MyClass& rhs);               // function-call
+        try assertPathCollision("/CxxOperators/MyClass/operator()", in: tree, collisions: [
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S", disambiguation: "212ks"),
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#", disambiguation: "65g9a"),
+        ])
+        try assertFindsPath("/CxxOperators/MyClass/operator()-65g9a", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#")
+        try assertFindsPath("/CxxOperators/MyClass/operator()-212ks", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S")
+
+        // MyClass& operator,(MyClass& other);
+        try assertFindsPath("/CxxOperators/MyClass/operator,", in: tree, asSymbolID: "c:@S@MyClass@F@operator,#&$@S@MyClass#")
     }
     
     func testParsingPaths() {
@@ -2680,7 +2863,6 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
         assertParsedPathComponents("..<(_:_:)-(_,Int)", [("..<(_:_:)", .typeSignature(parameterTypes: ["_", "Int"], returnTypes: nil))])
         
-        
         assertParsedPathComponents("something(first:second:third:)->(_,_,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "_", "_"]))])
         
         assertParsedPathComponents("something(first:second:third:)->(String,_,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "_", "_"]))])
@@ -2720,34 +2902,76 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("functionName->((Å,(𝔹,©),Δ),(∃,⨍),𝄞)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(Å,(𝔹,©),Δ)", "(∃,⨍)", "𝄞"]))])
         assertParsedPathComponents("functionName-((Å,(𝔹,©),Δ),(∃,⨍),𝄞)", [("functionName", .typeSignature(parameterTypes: ["(Å,(𝔹,©),Δ)", "(∃,⨍)", "𝄞"], returnTypes: nil))])
         assertParsedPathComponents("functionName->((Å)->𝔹,(©,(Δ)->∃),(⨍,(𝄞)->ℌ)->𝓲)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(Å)->𝔹", "(©,(Δ)->∃)", "(⨍,(𝄞)->ℌ)->𝓲"]))])
+        
+        let knownCxxOperators = [
+            // Arithmetic
+            "+", "-", "*", "/", "%",
+            // Bitwise arithmetic
+            "~", "&", "|", "^", "<<", ">>",
+            // Increment/Decrement
+            "++", "--",
+            // Logic
+            "!", "&&", "||",
+            // Comparison
+            "==", "!=", "<", ">", "<=", ">=", "<=>",
+            // Assignment
+            "=",
+            "+=", "-=", "*=", "/=", "%=",
+            "&=", "|=", "^=", "<<=", ">>=",
+            // Member access
+            "[]", "->", "->*", // "*" (indirection) and "&" (address of) are already covered as arithmetic operators above.
+            // Function call
+            "()",
+            // Other
+            ","
+        ]
+        
+        for operatorSymbol in knownCxxOperators {
+            let operatorName = "operator\(operatorSymbol)"
+            assertParsedPathComponents(operatorName, [(operatorName, nil)])
+            assertParsedPathComponents("MyClass/\(operatorName)", [("MyClass", nil), (operatorName, nil)])
+            
+            // With disambiguation
+            assertParsedPathComponents("\(operatorName)-hash", [(operatorName, .kindAndHash(kind: nil, hash: "hash"))])
+            assertParsedPathComponents("\(operatorName)-func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
+            assertParsedPathComponents("\(operatorName)-c++.func.op", [(operatorName, .kindAndHash(kind: "func.op", hash: nil))])
+            assertParsedPathComponents("\(operatorName)-func.op-hash", [(operatorName, .kindAndHash(kind: "func.op", hash: "hash"))])
+            
+            // With a trailing anchor component
+            assertParsedPathComponents("\(operatorName)#SomeAnchor", [(operatorName, nil), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)-hash#SomeAnchor", [(operatorName, .kindAndHash(kind: nil, hash: "hash")), ("SomeAnchor", nil)])
+            assertParsedPathComponents("\(operatorName)-func.op#SomeAnchor", [(operatorName, .kindAndHash(kind: "func.op", hash: nil)), ("SomeAnchor", nil)])
+        }
+    }
+    
+    func testResolveExternalLinkFromTechnologyRoot() throws {
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            TextFile(name: "Root.md", utf8Content: """
+            # Some root page
+            
+            A single-file article-only catalog
+            """),
+        ])
+        
+        let (_, _, context) = try loadBundle(from: createTempFolder(content: [catalog]))
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        let rootIdentifier = try XCTUnwrap(tree.modules.first?.identifier)
+        do {
+            _ = try tree.find(path: "/SomeModule", parent: rootIdentifier, onlyFindSymbols: true)
+            XCTFail("Unexpectedly found external symbol")
+        } catch PathHierarchy.Error.moduleNotFound(_, let remaining, _) {
+            // `LinkResolver` uses this error to know when to resolve a link from an external source.
+            XCTAssertEqual(remaining.map(\.full), ["SomeModule"])
+        } catch {
+            XCTFail("Unexpected error \(error)")
+        }
     }
     
     // MARK: Test helpers
-    
-    private func makeSymbolGraph(
-        moduleName: String,
-        platformName: String? = nil,
-        symbols: [(identifier: String, language: SourceLanguage, pathComponents: [String], kindID: SymbolGraph.Symbol.KindIdentifier)],
-        relationships: [SymbolGraph.Relationship] = []
-    ) -> SymbolGraph {
-        return SymbolGraph(
-            metadata: SymbolGraph.Metadata(formatVersion: .init(major: 0, minor: 5, patch: 3), generator: "unit-test"),
-            module: SymbolGraph.Module(name: moduleName, platform: .init(operatingSystem: platformName.map { .init(name: $0) })),
-            symbols: symbols.map { identifier, language, pathComponents, kindID in
-                SymbolGraph.Symbol(
-                    identifier: .init(precise: identifier, interfaceLanguage: language.id),
-                    names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
-                    pathComponents: pathComponents,
-                    docComment: nil,
-                    accessLevel: .public,
-                    kind: .init(parsedIdentifier: kindID, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
-                    mixins: [:]
-                )
-            },
-            relationships: relationships
-        )
-    }
-    
+
     private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
@@ -2811,20 +3035,20 @@ class PathHierarchyTests: XCTestCase {
     
     private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #file, line: UInt = #line) {
         let (actual, _) = PathHierarchy.PathParser.parse(path: path)
-        XCTAssertEqual(actual.count, expected.count, file: file, line: line)
+        XCTAssertEqual(actual.count, expected.count, "Incorrect number of path components for \(path.singleQuoted)", file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
-            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component", file: file, line: line)
+            XCTAssertEqual(String(actualComponents.name), expectedComponents.0, "Incorrect path component for \(path.singleQuoted)", file: file, line: line)
             switch (actualComponents.disambiguation, expectedComponents.1) {
             case (.kindAndHash(let actualKind, let actualHash), .kindAndHash(let expectedKind, let expectedHash)):
-                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation", file: file, line: line)
-                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation", file: file, line: line)
+                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation for \(path.singleQuoted)", file: file, line: line)
+                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation for \(path.singleQuoted)", file: file, line: line)
             case (.typeSignature(let actualParameters, let actualReturns), .typeSignature(let expectedParameters, let expectedReturns)):
                 XCTAssertEqual(actualParameters, expectedParameters, "Incorrect parameter type disambiguation", file: file, line: line)
                 XCTAssertEqual(actualReturns, expectedReturns, "Incorrect return type disambiguation", file: file, line: line)
             case (nil, nil):
                 continue
             default:
-                XCTFail("Incorrect type of disambiguation", file: file, line: line)
+                XCTFail("Incorrect type of disambiguation for \(path.singleQuoted)", file: file, line: line)
             }
         }
     }

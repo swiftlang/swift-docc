@@ -38,7 +38,7 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
         switch id {
         case "swift": self = .swift
         case "occ", "objc", "objective-c", "c": self = .objectiveC
-        // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/apple/swift-docc/issues/767)
+        // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/swiftlang/swift-docc/issues/767)
         case "occ++", "objc++", "objective-c++", "c++": self = .objectiveC
         case "javascript": self = .javaScript
         case "data": self = .data
@@ -113,8 +113,8 @@ public struct SourceLanguage: Hashable, Codable, Comparable {
         idAliases: [
             "objective-c",
             "objc",
-            "c", // FIXME: DocC should display C as its own language (github.com/apple/swift-docc/issues/169).
-            "c++", // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/apple/swift-docc/issues/767)
+            "c", // FIXME: DocC should display C as its own language (github.com/swiftlang/swift-docc/issues/169).
+            "c++", // FIXME: DocC should display C++ and Objective-C++ as their own languages (https://github.com/swiftlang/swift-docc/issues/767)
             "objective-c++",
             "objc++",
             "occ++",

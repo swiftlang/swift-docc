@@ -89,8 +89,28 @@ class DocumentationMarkupTests: XCTestCase {
             XCTAssertNil(model.abstractSection)
             XCTAssertEqual(expected, model.discussionSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
         }
+        
+        // Directives which shouldn't break us out of the automatic abstract section.
+        for allowedDirective in BlockDirective.directivesRemovedFromContent {
+            do {
+                let source = """
+                # Title
+                @\(allowedDirective)
+                My abstract __content__.
+                """
+                let expected = """
+                Text "My abstract "
+                Strong
+                └─ Text "content"
+                Text "."
+                """
+                let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
+                XCTAssertEqual(expected, model.abstractSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
+                XCTAssertNil(model.discussionSection)
+            }
+        }
 
-        // Directives in between sections
+        // Directives in between sections should go into the discussion section.
         do {
             let source = """
             # Title
@@ -327,6 +347,48 @@ class DocumentationMarkupTests: XCTestCase {
             @DeprecationSummary {
               Deprecated!
             }
+            """
+            let expected = """
+            Deprecated!
+            """
+            let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
+            XCTAssertEqual(expected, model.deprecation?.elements.map({ $0.format() }).joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        
+        // Deprecation in the topics
+        do {
+            let source = """
+            # Title
+            My abstract __content__.
+            
+            Discussion __content__.
+            ## Topics
+            
+            @DeprecationSummary {
+              Deprecated!
+            }
+            
+            ### Basics
+             - <doc:link>
+            """
+            let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
+            XCTAssertNil(model.deprecation)
+        }
+        
+        // Deprecation in the SeeAlso
+        do {
+            let source = """
+            # Title
+            My abstract __content__.
+            
+            Discussion __content__.
+            ## See Also
+            
+            @DeprecationSummary {
+              Deprecated!
+            }
+            
+             - <doc:link>
             """
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
             XCTAssertNil(model.deprecation)

@@ -94,6 +94,16 @@ public struct DocumentationNode {
     /// property.
     var docChunks: [DocumentationChunk]
     
+    /// Returns information about the node's in-source documentation comment chunk, or `nil` if the node doesn't have an in-source documentation chunk.
+    var inSourceDocumentationChunk: (url: URL?, offset: SymbolGraph.LineList.SourceRange?)? {
+        for docChunk in docChunks {
+            guard case .sourceCode(let location, let offset) = docChunk.source else { continue }
+            
+            return (url: location?.url, offset: offset)
+        }
+        return nil
+    }
+    
     /// Linkable in-content sections.
     var anchorSections = [AnchorSection]()
     
@@ -197,7 +207,7 @@ public struct DocumentationNode {
         
         self.kind = Self.kind(for: defaultSymbol)
         self.sourceLanguage = reference.sourceLanguage
-        self.name = .symbol(declaration: .init([.plain(defaultSymbol.names.title)]))
+        self.name = .symbol(name: defaultSymbol.names.title)
         self.symbol = defaultSymbol
         self.unifiedSymbol = unifiedSymbol
         self.isVirtual = moduleData.isVirtual
@@ -226,14 +236,9 @@ public struct DocumentationNode {
         }
 
         let overloadVariants = DocumentationDataVariants(
-            symbolData: unifiedSymbol.mixins,
-            platformName: platformName
-        ) { mixins -> Symbol.Overloads? in
-            guard let overloadData = mixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData else {
-                return nil
-            }
-            return .init(references: [], displayIndex: overloadData.overloadGroupIndex)
-        }
+            swiftVariant: unifiedSymbol.unifiedOverloadData.map { overloadData in
+                Symbol.Overloads(references: [], displayIndex: overloadData.overloadGroupIndex)
+            })
 
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
@@ -306,6 +311,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             dictionaryKeysSectionVariants: .empty,
+            possibleValuesSectionVariants: .empty,
             httpEndpointSectionVariants: endpointVariants,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,
@@ -359,7 +365,7 @@ public struct DocumentationNode {
             case .conceptual:
                 self.name = .conceptual(title: displayName.name)
             case .symbol:
-                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+                self.name = .symbol(name: displayName.name)
             }
             semantic.titleVariants = semantic.titleVariants.map { _ in
                 displayName.name
@@ -416,6 +422,49 @@ public struct DocumentationNode {
             semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
         }
         
+        // The property list symbol's allowed values.
+        let symbolAllowedValues = symbol![mixin: SymbolGraph.Symbol.AllowedValues.self]
+        
+        if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
+            let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
+            guard let symbolAllowedValues else {
+                possibleValues.forEach { 
+                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
+                }
+                return
+            }
+            
+            // Ignore documented possible values that don't exist in the symbol's allowed values in the symbol graph.
+            let allowedPossibleValueNames = Set(symbolAllowedValues.value.map { String($0) })
+            var (knownPossibleValues, unknownPossibleValues) = possibleValues.categorize(where: {
+                allowedPossibleValueNames.contains($0.value)
+            })
+            
+            // Add the symbol possible values that are not documented.
+            let knownPossibleValueNames = Set(knownPossibleValues.map(\.value))
+            knownPossibleValues.append(contentsOf: symbolAllowedValues.value.compactMap { possibleValue in
+                let possibleValueString = String(possibleValue)
+                guard !knownPossibleValueNames.contains(possibleValueString) else {
+                    return nil
+                }
+                return PropertyListPossibleValuesSection.PossibleValue(value: possibleValueString, contents: [])
+            })
+            
+            for unknownValue in unknownPossibleValues {
+                engine.emit(
+                    validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
+                )
+            }
+            
+            // Record the possible values extracted from the markdown.
+            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: knownPossibleValues)
+        } else if let symbolAllowedValues {
+            // Record the symbol possible values even if none are documented.
+            semantic.possibleValuesSectionVariants[.fallback] = PropertyListPossibleValuesSection(possibleValues: symbolAllowedValues.value.map {
+                PropertyListPossibleValuesSection.PossibleValue(value: String($0), contents: [])
+            })
+        }
+        
         options = documentationExtension?.options[.local]
         self.metadata = documentationExtension?.metadata
         
@@ -458,7 +507,7 @@ public struct DocumentationNode {
             
             let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
             let docCommentMarkup = Document(parsing: docCommentString, source: docCommentLocation?.url, options: documentOptions)
-            let offset = symbol.offsetAdjustedForInterfaceLanguage()
+            let offset = symbol.docComment?.lines.first?.range
 
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
@@ -605,10 +654,10 @@ public struct DocumentationNode {
             case .conceptual:
                 self.name = .conceptual(title: displayName.name)
             case .symbol:
-                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+                self.name = .symbol(name: displayName.name)
             }
         } else {
-            self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
+            self.name = .symbol(name: symbol.names.title)
         }
         self.symbol = symbol
         
@@ -665,6 +714,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
+            possibleValuesSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.possiblePropertyListValues.isEmpty ? nil : PropertyListPossibleValuesSection(possibleValues: $0.possiblePropertyListValues) })),
             httpEndpointSectionVariants: .empty,
             httpBodySectionVariants: .empty,
             httpParametersSectionVariants: .empty,

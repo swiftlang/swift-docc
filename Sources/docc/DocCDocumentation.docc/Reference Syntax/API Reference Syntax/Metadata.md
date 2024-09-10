@@ -1,4 +1,4 @@
-# ``docc/Metadata``
+# ``Metadata``
 
 Use metadata directives to instruct DocC how to build certain documentation files.
 
@@ -42,7 +42,7 @@ Use the `Metadata` directive with the ``TitleHeading`` directive to configure th
 }
 ```
 
-Starting with version 5.11, use the `Metadata` directive with one or more ``Redirected`` directives
+Starting with version 6.0, use the `Metadata` directive with one or more ``Redirected`` directives
 to add additional URLs for a page.
 ```
 # ``SlothCreator``
@@ -53,7 +53,7 @@ to add additional URLs for a page.
 }
 ```
 
-> Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In
+> Note: Starting with version 6.0, @Redirected is supported as a child directive of @Metadata. In
 previous versions, @Redirected must be used as a top level directive.
 
 ## Topics
@@ -82,12 +82,13 @@ previous versions, @Redirected must be used as a top level directive.
 ### Customizing the Availability Information of a Page
 
 - ``Available``
+- ``DeprecationSummary``
 
 ### Specifying an Additional URL of a Page
 
 - ``Redirected``
 
-> Note: Starting with version 5.11, @Redirected is supported as a child directive of @Metadata. In
+> Note: Starting with version 6.0, @Redirected is supported as a child directive of @Metadata. In
 previous versions, @Redirected must be used as a top level directive.
 
 <!-- Copyright (c) 2021-2024 Apple Inc and the Swift Project authors. All Rights Reserved. -->

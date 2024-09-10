@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import Foundation
 /// some meaning in the markup, taken from Swift documentation comments. These
 /// are maintained for backward compatibility but their use should be
 /// discouraged.
-let simpleListItemTags = [
+private let simpleListItemTags = [
     "attention",
     "author",
     "authors",
@@ -48,497 +48,7 @@ let simpleListItemTags = [
     "recommendedover",
 ]
 
-extension Sequence<InlineMarkup> {
-    private func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [Markup], range: SourceRange?)? {
-        var iterator = makeIterator()
-        guard let initialTextNode = iterator.next() as? Text else {
-            return nil
-        }
-
-        let initialText = initialTextNode.string
-        guard let colonIndex = initialText.firstIndex(of: ":") else {
-            return nil
-        }
-
-        let nameStartIndex = initialText[...colonIndex].lastIndex(of: " ").map { initialText.index(after: $0) } ?? initialText.startIndex
-        let parameterName = initialText[nameStartIndex..<colonIndex]
-        guard !parameterName.isEmpty else {
-            return nil
-        }
-        let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
-
-        var newInlineContent: [InlineMarkup] = [Text(String(remainingInitialText))]
-        while let more = iterator.next() {
-            newInlineContent.append(more)
-        }
-        let newContent: [Markup] = [Paragraph(newInlineContent)]
-        
-        let nameRange: SourceRange? = initialTextNode.range.map { fullRange in
-            var start = fullRange.lowerBound
-            start.column += initialText.utf8.distance(from: initialText.startIndex, to: nameStartIndex)
-            var end = start
-            end.column += parameterName.utf8.count
-            return start ..< end
-        }
-        
-        let itemRange: SourceRange? = sequence(first: initialTextNode as Markup, next: { $0.parent })
-            .mapFirst(where: { $0 as? ListItem })?.range
-        
-        return (
-            String(parameterName),
-            nameRange,
-            newContent,
-            itemRange
-        )
-    }
-    
-    func extractParameter(standalone: Bool) -> Parameter? {
-        if let (name, nameRange, content, itemRange) = splitNameAndContent() {
-            return Parameter(name: name, nameRange: nameRange, contents: content, range: itemRange, isStandalone: standalone)
-        }
-        return nil
-    }
-    
-    func extractDictionaryKey() -> DictionaryKey? {
-        if let (name, _, content, _) = splitNameAndContent() {
-            return DictionaryKey(name: name, contents: content)
-        }
-        return nil
-    }
-    
-    func extractHTTPParameter() -> HTTPParameter? {
-        if let (name, _, content, _) = splitNameAndContent() {
-            return HTTPParameter(name: name, source: nil, contents: content)
-        }
-        return nil
-    }
-    
-    func extractHTTPBodyParameter() -> HTTPParameter? {
-        if let (name, _, content, _) = splitNameAndContent() {
-            return HTTPParameter(name: name, source: "body", contents: content)
-        }
-        return nil
-    }
-    
-    func extractHTTPResponse() -> HTTPResponse? {
-        if let (name, _, content, _) = splitNameAndContent() {
-            let statusCode = UInt(name) ?? 0
-            return HTTPResponse(statusCode: statusCode, reason: nil, mediaType: nil, contents: content)
-        }
-        return nil
-    }
-}
-
-extension ListItem {
-
-    /**
-     Try to extract a tag start from this list item.
-
-     - returns: If the tag was matched, return the remaining content after the match. Otherwise, return `nil`.
-     */
-    func extractTag(_ tag: String, dropTag: Bool = true) -> [InlineMarkup]? {
-        guard let firstParagraph = child(at: 0) as? Paragraph,
-              let text = firstParagraph.child(at: 0) as? Text else {
-            return nil
-        }
-
-        let trimmedText = text.string.drop { char -> Bool in
-            guard let scalar = char.unicodeScalars.first else { return false }
-            return CharacterSet.whitespaces.contains(scalar)
-        }.lowercased()
-
-        if trimmedText.starts(with: tag.lowercased()) {
-            var newText = text.string
-            if dropTag {
-                newText = String(text.string.dropFirst(text.string.count - trimmedText.count + tag.count).drop(while: { $0 == " " }))
-            }
-            return [Text(newText)] + Array(firstParagraph.inlineChildren.dropFirst(1))
-        }
-
-        return nil
-    }
-
-    /**
-     Extract a "simple tag" from the list of known list item tags.
-
-     Expected form:
-
-     ```markdown
-     - todo: ...
-     - seeAlso: ...
-     ```
-     ...etc.
-     */
-    func extractSimpleTag() -> SimpleTag? {
-        for tag in simpleListItemTags {
-            if let contents = extractTag(tag + ":") {
-                return SimpleTag(tag: tag, contents: contents)
-            }
-        }
-        return nil
-    }
-
-    /**
-     Extract a standalone dictionary key description from this list item.
-
-     Expected form:
-
-     ```markdown
-     - dictionaryKey x: A number.
-     ```
-     */
-    func extractStandaloneDictionaryKey() -> DictionaryKey? {
-        guard let remainder = extractTag(TaggedListItemExtractor.dictionaryKeyTag) else {
-            return nil
-        }
-        return remainder.extractDictionaryKey()
-    }
-
-    /**
-     Extracts an outline of dictionary keys from a sublist underneath this list item.
-
-     Expected form:
-
-     ```markdown
-     - DictionaryKeys:
-       - x: a number
-       - y: a number
-     ```
-
-     > Warning: Content underneath `- DictionaryKeys` that doesn't match this form will be dropped.
-     */
-    func extractDictionaryKeyOutline() -> [DictionaryKey]? {
-        guard extractTag(TaggedListItemExtractor.dictionaryKeysTag + ":") != nil else {
-            return nil
-        }
-
-        var dictionaryKeys = [DictionaryKey]()
-
-        for child in children {
-            // The list `- DictionaryKeys:` should have one child, a list of dictionary keys.
-            guard let dictionaryKeysList = child as? UnorderedList else {
-                // If it's not, that content is dropped.
-                continue
-            }
-
-            // Those sublist items are assumed to be a valid `- ___: ...` dictionary key form or else they are dropped.
-            for child in dictionaryKeysList.children {
-                guard let listItem = child as? ListItem,
-                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
-                      let dictionaryKey = Array(firstParagraph.inlineChildren).extractDictionaryKey() else {
-                    continue
-                }
-                // Don't forget the rest of the content under this dictionary key list item.
-                let contents = dictionaryKey.contents + Array(listItem.children.dropFirst(1))
-
-                dictionaryKeys.append(DictionaryKey(name: dictionaryKey.name, contents: contents))
-            }
-        }
-        return dictionaryKeys
-    }
-
-    /**
-     Extract a standalone HTTP parameter description from this list item.
-
-     Expected form:
-
-     ```markdown
-     - httpParameter x: A number.
-     ```
-     */
-    func extractStandaloneHTTPParameter() -> HTTPParameter? {
-        guard let remainder = extractTag(TaggedListItemExtractor.httpParameterTag) else {
-            return nil
-        }
-        return remainder.extractHTTPParameter()
-    }
-
-    /**
-     Extracts an outline of HTTP parameters from a sublist underneath this list item.
-
-     Expected form:
-
-     ```markdown
-     - HTTPParameters:
-       - x: a number
-       - y: another
-     ```
-
-     > Warning: Content underneath `- HTTPParameters` that doesn't match this form will be dropped.
-     */
-    func extractHTTPParameterOutline() -> [HTTPParameter]? {
-        guard extractTag(TaggedListItemExtractor.httpParametersTag + ":") != nil else {
-            return nil
-        }
-
-        var parameters = [HTTPParameter]()
-
-        for child in children {
-            // The list `- HTTPParameters:` should have one child, a list of parameters.
-            guard let parametersList = child as? UnorderedList else {
-                // If it's not, that content is dropped.
-                continue
-            }
-
-            // Those sublist items are assumed to be a valid `- ___: ...` parameter form or else they are dropped.
-            for child in parametersList.children {
-                guard let listItem = child as? ListItem,
-                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
-                      let parameter = Array(firstParagraph.inlineChildren).extractHTTPParameter() else {
-                    continue
-                }
-                // Don't forget the rest of the content under this list item.
-                let contents = parameter.contents + Array(listItem.children.dropFirst(1))
-
-                parameters.append(HTTPParameter(name: parameter.name, source:parameter.source, contents: contents))
-            }
-        }
-        return parameters
-    }
-
-    /**
-     Extract a standalone HTTP body parameter description from this list item.
-
-     Expected form:
-
-     ```markdown
-     - HTTPBodyParameter x: A number.
-     ```
-     */
-    func extractStandaloneHTTPBodyParameter() -> HTTPParameter? {
-        guard let remainder = extractTag(TaggedListItemExtractor.httpBodyParameterTag) else {
-            return nil
-        }
-        return remainder.extractHTTPBodyParameter()
-    }
-    
-    /**
-     Extracts an outline of HTTP parameters from a sublist underneath this list item.
-
-     Expected form:
-
-     ```markdown
-     - HTTPBodyParameters:
-       - x: a number
-       - y: another
-     ```
-
-     > Warning: Content underneath `- HTTPBodyParameters` that doesn't match this form will be dropped.
-     */
-    func extractHTTPBodyParameterOutline() -> [HTTPParameter]? {
-        guard extractTag(TaggedListItemExtractor.httpBodyParametersTag + ":") != nil else {
-            return nil
-        }
-
-        var parameters = [HTTPParameter]()
-
-        for child in children {
-            // The list `- HTTPBodyParameters:` should have one child, a list of parameters.
-            guard let parametersList = child as? UnorderedList else {
-                // If it's not, that content is dropped.
-                continue
-            }
-
-            // Those sublist items are assumed to be a valid `- ___: ...` parameter form or else they are dropped.
-            for child in parametersList.children {
-                guard let listItem = child as? ListItem,
-                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
-                      let parameter = Array(firstParagraph.inlineChildren).extractHTTPParameter() else {
-                    continue
-                }
-                // Don't forget the rest of the content under this list item.
-                let contents = parameter.contents + Array(listItem.children.dropFirst(1))
-
-                parameters.append(HTTPParameter(name: parameter.name, source:"body", contents: contents))
-            }
-        }
-        return parameters
-    }
-    
-    /**
-     Extract a standalone HTTP response description from this list item.
-
-     Expected form:
-
-     ```markdown
-     - httpResponse 200: A number.
-     ```
-     */
-    func extractStandaloneHTTPResponse() -> HTTPResponse? {
-        guard let remainder = extractTag(TaggedListItemExtractor.httpResponseTag) else {
-            return nil
-        }
-        return remainder.extractHTTPResponse()
-    }
-
-    /**
-     Extracts an outline of dictionary keys from a sublist underneath this list item.
-
-     Expected form:
-
-     ```markdown
-     - HTTPResponses:
-       - 200: a status code
-       - 204: another status code
-     ```
-
-     > Warning: Content underneath `- HTTPResponses` that doesn't match this form will be dropped.
-     */
-    func extractHTTPResponseOutline() -> [HTTPResponse]? {
-        guard extractTag(TaggedListItemExtractor.httpResponsesTag + ":") != nil else {
-            return nil
-        }
-
-        var responses = [HTTPResponse]()
-
-        for child in children {
-            // The list `- HTTPResponses:` should have one child, a list of responses.
-            guard let responseList = child as? UnorderedList else {
-                // If it's not, that content is dropped.
-                continue
-            }
-
-            // Those sublist items are assumed to be a valid `- ___: ...` response form or else they are dropped.
-            for child in responseList.children {
-                guard let listItem = child as? ListItem,
-                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
-                      let response = Array(firstParagraph.inlineChildren).extractHTTPResponse() else {
-                    continue
-                }
-                // Don't forget the rest of the content under this dictionary key list item.
-                let contents = response.contents + Array(listItem.children.dropFirst(1))
-
-                responses.append(HTTPResponse(statusCode: response.statusCode, reason: response.reason, mediaType: response.mediaType, contents: contents))
-            }
-        }
-        return responses
-    }
-
-    /**
-     Extract a standalone parameter description from this list item.
-
-     Expected form:
-
-     ```markdown
-     - parameter x: A number.
-     ```
-     */
-    func extractStandaloneParameter() -> Parameter? {
-        guard extractTag(TaggedListItemExtractor.parameterTag) != nil else {
-            return nil
-        }
-        // Don't use the return value from `extractTag` here. It drops the range and source information from the markup which means that we can't present diagnostics about the parameter.
-        return (child(at: 0) as? Paragraph)?.inlineChildren.extractParameter(standalone: true)
-    }
-
-    /**
-     Extracts an outline of parameters from a sublist underneath this list item.
-
-     Expected form:
-
-     ```markdown
-     - Parameters:
-       - x: a number
-       - y: a number
-     ```
-
-     > Warning: Content underneath `- Parameters` that doesn't match this form will be dropped.
-     */
-    func extractParameterOutline() -> [Parameter]? {
-        guard extractTag(TaggedListItemExtractor.parametersTag + ":") != nil else {
-            return nil
-        }
-
-        var parameters = [Parameter]()
-
-        for child in children {
-            // The list `- Parameters:` should have one child, a list of parameters.
-            guard let parameterList = child as? UnorderedList else {
-                // If it's not, that content is dropped.
-                continue
-            }
-
-            // Those sublist items are assumed to be a valid `- ___: ...` parameter form or else they are dropped.
-            for child in parameterList.children {
-                guard let listItem = child as? ListItem,
-                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
-                      var parameter = Array(firstParagraph.inlineChildren).extractParameter(standalone: false) else {
-                    continue
-                }
-                // Don't forget the rest of the content under this parameter list item.
-                parameter.contents += Array(listItem.children.dropFirst(1))
-
-                parameters.append(parameter)
-            }
-        }
-        return parameters
-    }
-
-    /**
-     Extract an HTTP body description from a list item.
-
-     Expected form:
-
-     ```markdown
-     - httpBody: ...
-     ```
-     */
-    func extractHTTPBody() -> HTTPBody? {
-        guard let remainder = extractTag(TaggedListItemExtractor.httpBodyTag + ":") else {
-            return nil
-        }
-        return HTTPBody(mediaType: nil, contents: [Paragraph(remainder)])
-    }
-
-    /**
-     Extract a return description from a list item.
-
-     Expected form:
-
-     ```markdown
-     - returns: ...
-     ```
-     */
-    func extractReturnDescription() -> Return? {
-        guard let remainder = extractTag(TaggedListItemExtractor.returnsTag + ":") else {
-            return nil
-        }
-        return Return(contents: [Paragraph(remainder)], range: range)
-    }
-
-    /**
-     Extract a throw description from a list item.
-
-     Expected form:
-
-     ```markdown
-     - throws: ...
-     ```
-     */
-    func extractThrowsDescription() -> Throw? {
-        guard let remainder = extractTag(TaggedListItemExtractor.throwsTag + ":") else {
-            return nil
-        }
-        return Throw(contents: remainder)
-    }
-}
-
 struct TaggedListItemExtractor: MarkupRewriter {
-    static let returnsTag = "returns"
-    static let throwsTag = "throws"
-    static let parameterTag = "parameter"
-    static let parametersTag = "parameters"
-    static let dictionaryKeyTag = "dictionarykey"
-    static let dictionaryKeysTag = "dictionarykeys"
-    
-    static let httpBodyTag = "httpbody"
-    static let httpResponseTag = "httpresponse"
-    static let httpResponsesTag = "httpresponses"
-    static let httpParameterTag = "httpparameter"
-    static let httpParametersTag = "httpparameters"
-    static let httpBodyParameterTag = "httpbodyparameter"
-    static let httpBodyParametersTag = "httpbodyparameters"
-
     var parameters = [Parameter]()
     var dictionaryKeys = [DictionaryKey]()
     var httpResponses = [HTTPResponse]()
@@ -547,6 +57,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
     var returns = [Return]()
     var `throws` = [Throw]()
     var otherTags = [SimpleTag]()
+    var possiblePropertyListValues = [PropertyListPossibleValuesSection.PossibleValue]()
 
     init() {}
     
@@ -563,10 +74,13 @@ struct TaggedListItemExtractor: MarkupRewriter {
             }
 
             // Separate all the "- Note:" elements from the other list items.
-            let (noteItems, otherListItems) = unorderedList.listItems.categorize(where: { item in
-                return Aside.Kind.allCases.mapFirst {
-                    item.extractTag($0.rawValue + ": ", dropTag: false)
+            let (noteItems, otherListItems) = unorderedList.listItems.categorize(where: { item -> [BlockMarkup]? in
+                guard let tagName = item.extractTag()?.rawTag.lowercased(),
+                      Aside.Kind.allCases.contains(where: { $0.rawValue.lowercased() == tagName })
+                else {
+                    return nil
                 }
+                return Array(item.blockChildren)
             })
 
             // Add the unordered list with the filtered children first.
@@ -574,7 +88,7 @@ struct TaggedListItemExtractor: MarkupRewriter {
 
             // Then, add the Note asides as siblings after the list they belonged to
             for noteDescription in noteItems {
-                result.append(BlockQuote(Paragraph(noteDescription)))
+                result.append(BlockQuote(noteDescription))
             }
         }
 
@@ -613,91 +127,107 @@ struct TaggedListItemExtractor: MarkupRewriter {
             }
         }
 
-        //Try to extract one of the several specially interpreted list items.
-
-        if let returnDescription = listItem.extractReturnDescription() {
-            // - returns: ...
-            returns.append(returnDescription)
-            return nil
-        // "Throws" asides are currently parsed as blockquote-style asides
-        // } else if let throwsDescription = listItem.extractThrowsDescription() {
-        //     `throws`.append(throwsDescription)
-        //     return nil
-        } else if let parameterDescriptions = listItem.extractParameterOutline() {
+        guard let extractedTag = listItem.extractTag() else {
+            return listItem
+        }
+        
+        switch extractedTag.knownTag {
+        case .returns:
+            // - Returns: ...
+            returns.append(.init(extractedTag))
+            
+        case .throws:
+            // "Throws" asides are currently (still) parsed as blockquote-style asides
+            return listItem
+            
+        case .parameter(let name):
+            // - Parameter x: ...
+            parameters.append(.init(extractedTag, name: name, isStandalone: true))
+            
+        case .parameters:
             // - Parameters:
             //   - x: ...
             //   - y: ...
-            parameters.append(contentsOf: parameterDescriptions)
-            return nil
-        } else if let parameterDescription = listItem.extractStandaloneParameter() {
-            // - parameter x: ...
-            parameters.append(parameterDescription)
-            return nil
-        } else if let dictionaryKeyDescription = listItem.extractDictionaryKeyOutline() {
+            parameters.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag, isStandalone: false) })
+            
+        case .dictionaryKey(let name):
+            // - DictionaryKey x: ...
+            dictionaryKeys.append(.init(extractedTag, name: name))
+            
+        case .dictionaryKeys:
             // - DictionaryKeys:
             //   - x: ...
             //   - y: ...
-            dictionaryKeys.append(contentsOf: dictionaryKeyDescription)
-            return nil
-        } else if let dictionaryKeyDescription = listItem.extractStandaloneDictionaryKey() {
-            // - dictionaryKey x: ...
-            dictionaryKeys.append(dictionaryKeyDescription)
-            return nil
-        } else if let httpParameterDescription = listItem.extractHTTPParameterOutline() {
-            // - HTTPParameters:
+            dictionaryKeys.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag) })
+        
+        case .possibleValue(let name):
+            // - DictionaryKey x: ...
+            possiblePropertyListValues.append(.init(extractedTag, name: name))
+            
+        case .possibleValues:
+            // - DictionaryKeys:
             //   - x: ...
             //   - y: ...
-            httpParameters.append(contentsOf: httpParameterDescription)
-            return nil
-        } else if let httpParameterDescription = listItem.extractStandaloneHTTPParameter() {
-            // - HTTPParameter x: ...
-            httpParameters.append(httpParameterDescription)
-            return nil
-        } else if let httpBodyDescription = listItem.extractHTTPBody() {
-            // - httpBody: ...
-            if httpBody == nil {
-                httpBody = httpBodyDescription
-            } else {
-                httpBody?.contents = httpBodyDescription.contents
-            }
-            return nil
-        } else if let httpBodyParameterDescription = listItem.extractHTTPBodyParameterOutline() {
-            // - HTTPBodyParameters:
-            //   - x: ...
-            //   - y: ...
-            if httpBody == nil {
-                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: httpBodyParameterDescription, symbol: nil)
-            } else {
-                httpBody?.parameters.append(contentsOf: httpBodyParameterDescription)
-            }
-            return nil
-        } else if let httpBodyParameterDescription = listItem.extractStandaloneHTTPBodyParameter() {
-            // - HTTPBodyParameter x: ...
-            if httpBody == nil {
-                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: [httpBodyParameterDescription], symbol: nil)
-            } else {
-                httpBody?.parameters.append(httpBodyParameterDescription)
-            }
-            return nil
-        } else if let httpResponseDescription = listItem.extractHTTPResponseOutline() {
+            possiblePropertyListValues.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag) })
+            
+        case .httpResponse(let name):
+            // - HTTPResponse x: ...
+            httpResponses.append(.init(extractedTag, name: name))
+            
+        case .httpResponses:
             // - HTTPResponses:
             //   - x: ...
             //   - y: ...
-            httpResponses.append(contentsOf: httpResponseDescription)
-            return nil
-        } else if let httpResponseDescription = listItem.extractStandaloneHTTPResponse() {
-            // - HTTPResponse x: ...
-            httpResponses.append(httpResponseDescription)
-            return nil
-        } else if let simpleTag = listItem.extractSimpleTag() {
-            // - todo: ...
-            // etc.
-            otherTags.append(simpleTag)
-            return nil
+            httpResponses.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag) })
+            
+        case .httpBody:
+            // - HTTPBody: ...
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: extractedTag.contents)
+            } else {
+                httpBody?.contents = extractedTag.contents
+            }
+            
+        case .httpParameter(let name):
+            // - HTTPParameter x: ...
+            httpParameters.append(.init(extractedTag, name: name))
+            
+        case .httpParameters:
+            // - HTTPParameters:
+            //   - x: ...
+            //   - y: ...
+            httpParameters.append(contentsOf: listItem.extractInnerTagOutline().map { .init($0, name: $0.rawTag)})
+            
+        case .httpBodyParameter(let name):
+            // - HTTPBodyParameter x: ...
+            let parameter = HTTPParameter(extractedTag, name: name)
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: [parameter], symbol: nil)
+            } else {
+                httpBody?.parameters.append(parameter)
+            }
+            
+        case .httpBodyParameters:
+            // - HTTPBodyParameters:
+            //   - x: ...
+            //   - y: ...
+            let parameters = listItem.extractInnerTagOutline().map { HTTPParameter($0, name: $0.rawTag) }
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: parameters, symbol: nil)
+            } else {
+                httpBody?.parameters.append(contentsOf: parameters)
+            }
+            
+        case nil where simpleListItemTags.contains(extractedTag.rawTag.lowercased()):
+            otherTags.append(.init(extractedTag, name: extractedTag.rawTag))
+            
+        case nil:
+            // No match, leave this list item alone
+            return listItem
         }
-
-        // No match; leave this list item alone.
-        return listItem
+        
+        // Return `nil` to indicate that this list item was extracted as a tag.
+        return nil
     }
 
     mutating func visitDoxygenParameter(_ doxygenParam: DoxygenParameter) -> Markup? {
@@ -708,5 +238,244 @@ struct TaggedListItemExtractor: MarkupRewriter {
     mutating func visitDoxygenReturns(_ doxygenReturns: DoxygenReturns) -> Markup? {
         returns.append(Return(doxygenReturns))
         return nil
+    }
+}
+
+// MARK: Extracting tags information
+
+/// Information about an extracted tag
+private struct ExtractedTag {
+    /// The raw name of the extracted tag
+    var rawTag: String
+    /// A known type of tag
+    var knownTag: KnownTag?
+    /// The range of the raw tag text
+    var tagRange: SourceRange?
+    /// The complete content related to this tag
+    var contents: [Markup]
+    /// The range of the tag and its content
+    var range: SourceRange?
+    
+    init(rawTag: String, tagRange: SourceRange?, contents: [Markup], range: SourceRange?) {
+        self.rawTag = rawTag
+        self.knownTag = .init(rawTag)
+        self.tagRange = tagRange
+        self.contents = contents
+        self.range = range
+    }
+    
+    enum KnownTag {
+        case returns
+        case `throws`
+        case parameter(String)
+        case parameters
+        
+        case dictionaryKey(String)
+        case dictionaryKeys
+        case possibleValue(String)
+        case possibleValues
+        
+        case httpBody
+        case httpResponse(String)
+        case httpResponses
+        case httpParameter(String)
+        case httpParameters
+        case httpBodyParameter(String)
+        case httpBodyParameters
+        
+        init?(_ string: String) {
+            let separatorIndex = string.firstIndex(where: \.isWhitespace) ?? string.endIndex
+            let secondComponent = String(string[separatorIndex...].drop(while: \.isWhitespace))
+            
+            switch string[..<separatorIndex].lowercased() {
+            case "returns":
+                self = .returns
+            case "throws":
+                self = .throws
+            case "parameter" where !secondComponent.isEmpty:
+                self = .parameter(secondComponent)
+            case "parameters":
+                self = .parameters
+            case "dictionarykey" where !secondComponent.isEmpty:
+                self = .dictionaryKey(secondComponent)
+            case "dictionarykeys":
+                self = .dictionaryKeys
+            case "possiblevalue" where !secondComponent.isEmpty:
+                self = .possibleValue(secondComponent)
+            case "possiblevalues":
+                self = .possibleValues
+            case "httpbody":
+                self = .httpBody
+            case "httpresponse" where !secondComponent.isEmpty:
+                self = .httpResponse(secondComponent)
+            case "httpresponses":
+                self = .httpResponses
+            case "httpparameter" where !secondComponent.isEmpty:
+                self = .httpParameter(secondComponent)
+            case "httpparameters":
+                self = .httpParameters
+            case "httpbodyparameter" where !secondComponent.isEmpty:
+                self = .httpBodyParameter(secondComponent)
+            case "httpbodyparameters":
+                self = .httpBodyParameters
+            default:
+                return nil
+            }
+        }
+    }
+}
+
+private extension ListItem {
+    
+    /// Creates a single "tag" from the list item's content.
+    ///
+    /// For example, the list item markup:
+    /// ```md
+    /// - TagName someValue: Some content.
+    ///
+    ///   More content.
+    /// ```
+    /// results in a tag with ``ExtractedTag/rawTag`` "TagName someValue" and ``ExtractedTag/contents`` containing both "Some content." and "More content."
+    ///
+    /// If the list item doesn't start with a paragraph of text containing a colon (`:`) on the first line, this function returns `nil`.
+    func extractTag() -> ExtractedTag? {
+        guard childCount > 0,
+              let paragraph = child(at: 0) as? Paragraph,
+              let (name, nameRange, remainderOfFirstParagraph) = paragraph.inlineChildren.splitNameAndContent()
+        else {
+            return nil
+        }
+        
+        return ExtractedTag(rawTag: name, tagRange: nameRange, contents: remainderOfFirstParagraph + children.dropFirst(), range: range)
+    }
+    
+    /// Creates a list of "tag" elements from a tag outline (a list item of list items).
+    ///
+    /// For example, the list item outline markup:
+    /// ```md
+    /// - TagName:
+    ///   - someValue: Some content.
+    ///
+    ///     More content.
+    /// ```
+    /// results in one tag with ``ExtractedTag/rawTag`` "someValue" and ``ExtractedTag/contents`` containing both "Some content." and "More content."
+    ///
+    /// If the list item outline doesn't contain any tags—list items with leading a paragraph that text containing a colon (`:`) on the first line—this function returns an empty list.
+    func extractInnerTagOutline() -> [ExtractedTag] {
+        var tags: [ExtractedTag] = []
+        for child in children {
+            // The list `- TagName:` should have one child, a list of tags.
+            guard let list = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+            
+            // Those sublist items are assumed to be a valid `- ___: ...` tag form or else they are dropped.
+            for child in list.children {
+                guard let listItem = child as? ListItem, let extractedTag = listItem.extractTag() else {
+                    continue
+                }
+                tags.append(extractedTag)
+            }
+        }
+        return tags
+    }
+}
+
+private extension Sequence<InlineMarkup> {
+    func splitNameAndContent() -> (name: String, nameRange: SourceRange?, content: [Markup])? {
+        var iterator = makeIterator()
+        guard let initialTextNode = iterator.next() as? Text else {
+            return nil
+        }
+
+        let initialText = initialTextNode.string
+        guard let colonIndex = initialText.firstIndex(of: ":") else {
+            return nil
+        }
+
+        let nameStartIndex = initialText[...colonIndex].firstIndex(where: { $0 != " " }) ?? initialText.startIndex
+        let tagName = initialText[nameStartIndex..<colonIndex]
+        guard !tagName.isEmpty else {
+            return nil
+        }
+        let remainingInitialText = initialText.suffix(from: initialText.index(after: colonIndex)).drop { $0 == " " }
+
+        var newInlineContent: [InlineMarkup] = [Text(String(remainingInitialText))]
+        while let more = iterator.next() {
+            newInlineContent.append(more)
+        }
+        let newContent: [Markup] = [Paragraph(newInlineContent)]
+        
+        let nameRange: SourceRange? = initialTextNode.range.map { fullRange in
+            var start = fullRange.lowerBound
+            start.column += initialText.utf8.distance(from: initialText.startIndex, to: nameStartIndex)
+            var end = start
+            end.column += tagName.utf8.count
+            return start ..< end
+        }
+        
+        return (String(tagName), nameRange, newContent)
+    }
+}
+
+// MARK: Creating tag types
+
+private extension ExtractedTag {
+    func nameRange(name: String) -> SourceRange? {
+        if name == rawTag {
+            return tagRange
+        } else {
+            return tagRange.map { tagRange in
+                // For tags like `- TagName someName:`, the extracted tag name is "TagName someName" which means that the name ("someName") is at the end
+                let end = tagRange.upperBound
+                var start = end
+                start.column -= name.utf8.count
+                
+                return start ..< end
+            }
+        }
+    }
+}
+
+private extension Return {
+    init(_ tag: ExtractedTag) {
+        self.init(contents: tag.contents, range: tag.range)
+    }
+}
+
+private extension Parameter {
+    init(_ tag: ExtractedTag, name: String, isStandalone: Bool) {
+        self.init(name: name, nameRange: tag.nameRange(name: name), contents: tag.contents, range: tag.range, isStandalone: isStandalone)
+    }
+}
+  
+private extension DictionaryKey {
+    init(_ tag: ExtractedTag, name: String) {
+        self.init(name: name, contents: tag.contents)
+    }
+}
+
+private extension PropertyListPossibleValuesSection.PossibleValue {
+    init(_ tag: ExtractedTag, name: String) {
+        self.init(value: name, contents: tag.contents, nameRange: tag.nameRange(name: name), range: tag.range)
+    }
+}
+
+private extension HTTPResponse {
+    init(_ tag: ExtractedTag, name: String) {
+        self.init(statusCode: UInt(name) ?? 0, reason: nil, mediaType: nil, contents: tag.contents)
+    }
+}
+
+private extension HTTPParameter {
+    init(_ tag: ExtractedTag, name: String) {
+        self.init(name: name, source: nil, contents: tag.contents)
+    }
+}
+
+private extension SimpleTag {
+    init(_ tag: ExtractedTag, name: String) {
+        self.init(tag: name, contents: tag.contents)
     }
 }

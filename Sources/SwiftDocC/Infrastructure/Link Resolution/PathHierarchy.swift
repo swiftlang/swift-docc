@@ -104,7 +104,7 @@ struct PathHierarchy {
             if let language {
                 moduleNode.languages.insert(language)
             }
-            
+
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
@@ -118,9 +118,10 @@ struct PathHierarchy {
                     existingNode.languages.insert(language!) // If we have symbols in this graph we have a language as well
                 } else {
                     assert(!symbol.pathComponents.isEmpty, "A symbol should have at least its own name in its path components.")
+
                     let node = Node(symbol: symbol, name: symbol.pathComponents.last!)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
-                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
+                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
                     if symbol.identifier.precise.contains("::SYNTHESIZED::") {
                         node.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
                     }
@@ -134,13 +135,6 @@ struct PathHierarchy {
                     }
                     allNodes[id, default: []].append(node)
                 }
-            }
-
-            for relationship in graph.relationships where relationship.kind == .overloadOf {
-                // An 'overloadOf' relationship points from symbol -> group. We want to disfavor the
-                // individual overload symbols in favor of resolving links to their overload group
-                // symbol.
-                nodes[relationship.source]?.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
             }
 
             // If there are multiple symbol graphs (for example for different source languages or platforms) then the nodes may have already been added to the hierarchy.
@@ -273,7 +267,43 @@ struct PathHierarchy {
                 parent.add(symbolChild: node)
             }
         }
-        
+
+        // Overload group don't exist in the individual symbol graphs.
+        // Since overload groups don't change the _structure_ of the path hierarchy, we can add them after after all symbols for all platforms have already been added.
+        for unifiedGraph in loader.unifiedGraphs.values {
+            // Create nodes for all the overload groups
+            let overloadGroupNodes: [String: Node] = unifiedGraph.overloadGroupSymbols.reduce(into: [:]) { acc, uniqueID in
+                assert(allNodes[uniqueID] == nil,
+                       "Overload group ID \(uniqueID) already has a symbol node in the hierarchy: \(allNodes[uniqueID]!.map(\.name).sorted().joined(separator: ","))")
+                guard let unifiedSymbol = unifiedGraph.symbols[uniqueID] else { return }
+                guard let symbol = unifiedSymbol.defaultSymbol else {
+                    fatalError("Overload group \(uniqueID) doesn't have a default symbol.")
+                }
+                acc[uniqueID] = Node(symbol: symbol, name: symbol.pathComponents.last!)
+            }
+
+            for relationship in unifiedGraph.relationshipsByLanguage.flatMap(\.value) where relationship.kind == .overloadOf {
+                guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
+                    continue
+                }
+
+                for overloadedSymbolNode in overloadedSymbolNodes {
+                    // We want to disfavor the individual overload symbols in favor of resolving links to their overload group symbol.
+                    overloadedSymbolNode.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
+
+                    guard let parent = overloadedSymbolNode.parent else { continue }
+
+                    assert(groupNode.parent == nil || groupNode.parent === parent, """
+                    Unexpectedly grouped symbols with different locations in the symbol hierarchy:
+                    Group ID: \(groupNode.symbol!.identifier.precise)
+                    Locations: \(Set(overloadedSymbolNodes.map { $0.symbol!.pathComponents.joined(separator: "/") }.sorted()))
+                    """)
+                    parent.add(symbolChild: groupNode)
+                }
+                assert(groupNode.parent != nil, "Unexpectedly found no location in the hierarchy for overload group \(relationship.source)")
+            }
+        }
+
         assert(
             allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }), """
             Every node should either have a parent node or be a root node. \

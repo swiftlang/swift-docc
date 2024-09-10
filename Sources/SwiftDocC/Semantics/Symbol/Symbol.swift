@@ -49,6 +49,7 @@ import SymbolKit
 /// - ``returnsSectionVariants``
 /// - ``parametersSectionVariants``
 /// - ``dictionaryKeysSectionVariants``
+/// - ``possibleValuesSectionVariants``
 /// - ``httpEndpointSectionVariants``
 /// - ``httpParametersSectionVariants``
 /// - ``httpResponsesSectionVariants``
@@ -148,7 +149,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
-    /// The symbol's possible values in each language variant the symbol is available in.
+    /// The symbol's set of attributes in each language variant the symbol is available in.
     public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
     
     public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
@@ -204,6 +205,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any dictionary keys of the symbol, if the symbol accepts keys, in each language variant the symbol is available in.
     public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>
+    
+    /// The symbol's possible values in each language variant the symbol is available in.
+    public var possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection>
 
     /// The HTTP endpoint of an HTTP request, in each language variant the symbol is available in.
     public var httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>
@@ -265,6 +269,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>,
         mixinsVariants: DocumentationDataVariants<[String: Mixin]>,
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
+        alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
         defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
         relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .init(),
         abstractSectionVariants: DocumentationDataVariants<AbstractSection>,
@@ -274,6 +279,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
         dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>,
+        possibleValuesSectionVariants: DocumentationDataVariants<PropertyListPossibleValuesSection>,
         httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>,
         httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection>,
         httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection>,
@@ -303,6 +309,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         
         self.deprecatedSummaryVariants = deprecatedSummaryVariants
         self.declarationVariants = declarationVariants
+        self.possibleValuesSectionVariants = possibleValuesSectionVariants
+        self.alternateDeclarationVariants = alternateDeclarationVariants
         
         self.mixinsVariants = mixinsVariants
         
@@ -320,8 +328,10 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                 case let spi as SymbolGraph.Symbol.SPI:
                     self.isSPIVariants[trait] = spi.isSPI
                 case let alternateDeclarations as SymbolGraph.Symbol.AlternateDeclarations:
-                    self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
-                
+                    // If alternate declarations weren't set explicitly use the ones from the mixins.
+                    if !self.alternateDeclarationVariants.hasVariant(for: trait) {
+                        self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
+                    }
                 case let attribute as SymbolGraph.Symbol.Minimum:
                     attributes[.minimum] = attribute.value
                 case let attribute as SymbolGraph.Symbol.Maximum:
@@ -339,8 +349,6 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                 
                 case let attribute as SymbolGraph.Symbol.TypeDetails:
                     attributes[.allowedTypes] = attribute.value
-                case let attribute as SymbolGraph.Symbol.AllowedValues:
-                    attributes[.allowedValues] = attribute.value
                 default: break;
                 }
             }
@@ -443,7 +451,7 @@ extension Symbol {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, selector: UnifiedSymbolGraph.Selector) throws {
+    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateDeclarations: SymbolGraph.Symbol.AlternateDeclarations?, selector: UnifiedSymbolGraph.Selector) throws {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
@@ -470,6 +478,35 @@ extension Symbol {
                 declarationVariants[trait]?[[PlatformName.init(operatingSystemName: name)]] = mergingDeclaration
             } else {
                 declarationVariants[trait]?[[nil]] = mergingDeclaration
+            }
+        }
+        
+        if let alternateDeclarations {
+            let mergingAlternateDeclarations = alternateDeclarations.declarations
+            if let platformName,
+               let existingKey = alternateDeclarationVariants[trait]?.first(
+                    where: { pair in
+                        return pair.value.map { $0.declarationFragments } == mergingAlternateDeclarations.map { $0.declarationFragments }
+                    }
+                )?.key
+            {
+                guard !existingKey.contains(nil) else {
+                    throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(identifier)
+                }
+
+                let platform = PlatformName(operatingSystemName: platformName)
+                if !existingKey.contains(platform) {
+                    // Matches one of the existing declarations, append to the existing key.
+                    let currentDeclaration = alternateDeclarationVariants[trait]?.removeValue(forKey: existingKey)!
+                    alternateDeclarationVariants[trait]?[existingKey + [platform]] = currentDeclaration
+                }
+            } else {
+                // Add new declaration
+                if let name = platformName {
+                    alternateDeclarationVariants[trait]?[[PlatformName.init(operatingSystemName: name)]] = mergingAlternateDeclarations
+                } else {
+                    alternateDeclarationVariants[trait]?[[nil]] = mergingAlternateDeclarations
+                }
             }
         }
 
@@ -503,8 +540,9 @@ extension Symbol {
         for (selector, mixins) in unifiedSymbol.mixins {
             if let mergingDeclaration = mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments {
                 let availability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+                let alternateDeclarations = mixins[SymbolGraph.Symbol.AlternateDeclarations.mixinKey] as? SymbolGraph.Symbol.AlternateDeclarations
 
-                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, selector: selector)
+                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, alternateDeclarations: alternateDeclarations, selector: selector)
             }
         }
     }

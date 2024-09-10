@@ -196,6 +196,70 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
+    func testFunctionsThatCorrespondToPropertiesInAnotherLanguage() throws {
+        let (_, _, context) = try testBundleAndContext(named: "GeometricalShapes")
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
+        
+        // A small test helper to format markup for test assertions in this test.
+        func _format(_ markup: [any Markup]) -> String {
+            markup.map { $0.format() }.joined()
+        }
+        
+        let reference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "isEmpty" }))
+        let node = try context.entity(with: reference)
+        
+        let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
+        let swiftParameterNames = symbolSemantic.parametersSectionVariants.firstValue?.parameters
+        let objcParameterNames  = symbolSemantic.parametersSectionVariants.allValues.mapFirst(where: { (trait, variant) -> [Parameter]? in
+            guard trait.interfaceLanguage == SourceLanguage.objectiveC.id else { return nil }
+            return variant.parameters
+        })
+        
+        XCTAssertEqual(swiftParameterNames?.map(\.name), [])
+        XCTAssertEqual(objcParameterNames?.map(\.name), ["circle"])
+        XCTAssertEqual(objcParameterNames?.map { _format($0.contents) }, ["The circle to examine."])
+        
+        let swiftReturnsContent = symbolSemantic.returnsSection.map { _format($0.content) }
+        let objcReturnsContent  = symbolSemantic.returnsSectionVariants.allValues.mapFirst(where: { (trait, variant) -> String? in
+            guard trait.interfaceLanguage == SourceLanguage.objectiveC.id else { return nil }
+            return variant.content.map { $0.format() }.joined()
+        })
+        
+        XCTAssertEqual(swiftReturnsContent, "")
+        XCTAssertEqual(objcReturnsContent, "`YES` if the specified circle is empty; otherwise, `NO`.")
+    }
+    
+    func testCanDocumentInitializerReturnValue() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "GeometricalShapes") { url in
+            try """
+            # ``Circle/init(center:radius:)``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Override the documentation with a return section that raise warnings.
+            
+            - Returns: Return value documentation for an initializer.
+            """.write(to: url.appendingPathComponent("init-extension.md"), atomically: true, encoding: .utf8)
+        }
+        XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
+        
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("Circle/init(center:radius:)")
+        let node = try context.entity(with: reference)
+        
+        // Verify that this symbol doesn't have a return value in its signature
+        XCTAssertEqual(node.symbol?.functionSignature?.returns, [])
+        
+        let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
+        let swiftReturnsSection = try XCTUnwrap(
+            symbolSemantic.returnsSectionVariants.allValues.first(where: { trait, _ in trait.interfaceLanguage == "swift" })
+        ).variant
+        XCTAssertEqual(swiftReturnsSection.content.map { $0.format() }, [
+            "Return value documentation for an initializer."
+        ])
+    }
+    
     func testNoParameterDiagnosticWithoutFunctionSignature() throws {
         var symbolGraph = makeSymbolGraph(docComment: """
             Some function description
@@ -358,6 +422,62 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         let returnsSections = symbol.returnsSectionVariants
         XCTAssertEqual(returnsSections[.swift]?.content.map({ $0.format() }).joined(), "", "The Swift variant has no return value")
         XCTAssertEqual(returnsSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some return value description.")
+    }
+    
+    func testFunctionWithDifferentSignaturesOnDifferentPlatforms() throws {
+        let url = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                // One parameter, void return
+                JSONFile(name: "Platform1-ModuleName.symbols.json", content: makeSymbolGraph(
+                    platform: .init(operatingSystem: .init(name: "Platform1")),
+                    docComment: nil,
+                    sourceLanguage: .objectiveC,
+                    parameters: [(name: "first", externalName: nil)],
+                    returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+                )),
+                // Two parameters, void return
+                JSONFile(name: "Platform2-ModuleName.symbols.json", content: makeSymbolGraph(
+                    platform: .init(operatingSystem: .init(name: "Platform2")),
+                    docComment: nil,
+                    sourceLanguage: .objectiveC,
+                    parameters: [(name: "first", externalName: nil), (name: "second", externalName: nil)],
+                    returnValue: .init(kind: .typeIdentifier, spelling: "void", preciseIdentifier: "c:v")
+                )),
+                // One parameter, BOOL return
+                JSONFile(name: "Platform3-ModuleName.symbols.json", content: makeSymbolGraph(
+                    platform: .init(operatingSystem: .init(name: "Platform3")),
+                    docComment: nil,
+                    sourceLanguage: .objectiveC,
+                    parameters: [(name: "first", externalName: nil),],
+                    returnValue: .init(kind: .typeIdentifier, spelling: "BOOL", preciseIdentifier: "c:@T@BOOL")
+                )),
+                TextFile(name: "Extension.md", utf8Content: """
+                # ``functionName(...)``
+                
+                A documentation extension that documents both parameters
+                
+                - Parameters:
+                  - first: Some description of the parameter that is available on all three platforms.
+                  - second: Some description of the parameter that is only available on platform 2.
+                - Returns: Some description of the return value that is only available on platform 3.
+                """)
+            ])
+        ])
+        let (_, bundle, context) = try loadBundle(from: url)
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
+        
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let parameterSections = symbol.parametersSectionVariants
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.map(\.name), ["first", "second"])
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.first?.contents.map({ $0.format() }).joined(), "Some description of the parameter that is available on all three platforms.")
+        XCTAssertEqual(parameterSections[.objectiveC]?.parameters.last?.contents.map({ $0.format() }).joined(), "Some description of the parameter that is only available on platform 2.")
+        
+        let returnSections = symbol.returnsSectionVariants
+        XCTAssertEqual(returnSections[.objectiveC]?.content.map({ $0.format() }).joined(), "Some description of the return value that is only available on platform 3.")
     }
     
     func testFunctionWithErrorParameterButVoidType() throws {
@@ -569,7 +689,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
-    private let symbolURL =  URL(fileURLWithPath: "/path/to/SomeFile.swift")
+    private let symbolURL = URL(fileURLWithPath: "/path/to/SomeFile.swift")
     
     private func makeSymbolGraph(docComment: String) -> SymbolGraph {
         makeSymbolGraph(
@@ -586,38 +706,29 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     }
     
     private func makeSymbolGraph(
+        platform: SymbolGraph.Platform = .init(),
         docComment: String?,
         sourceLanguage: SourceLanguage,
         parameters: [(name: String, externalName: String?)],
         returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
     ) -> SymbolGraph {
-        let uri = symbolURL.absoluteString // we want to include the file:// scheme here
-        func makeLineList(text: String) -> SymbolGraph.LineList {
-            return .init(text.splitByNewlines.enumerated().map { lineOffset, line in
-                    .init(text: line, range: .init(start: .init(line: start.line + lineOffset, character: start.character),
-                                                   end: .init(line: start.line + lineOffset, character: start.character + line.count)))
-            }, uri: uri)
-        }
-        
         return makeSymbolGraph(
             moduleName: "ModuleName",
+            platform: platform,
             symbols: [
-                .init(
-                    identifier: .init(precise: "symbol-id", interfaceLanguage: sourceLanguage.id),
-                    names: .init(title: "functionName(...)", navigator: nil, subHeading: nil, prose: nil),
+                makeSymbol(
+                    id: "symbol-id",
+                    language: sourceLanguage,
+                    kind: .func,
                     pathComponents: ["functionName(...)"],
-                    docComment: docComment.map { makeLineList(text: $0) },
-                    accessLevel: .public, kind: .init(parsedIdentifier: .func, displayName: "Function"),
-                    mixins: [
-                        SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: uri, position: start),
-                        
-                        SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
-                            parameters: parameters.map {
-                                .init(name: $0.name, externalName: $0.externalName, declarationFragments: [], children: [])
-                            },
-                            returns: [returnValue]
-                        )
-                    ]
+                    docComment: docComment,
+                    location: (start, symbolURL),
+                    signature: .init(
+                        parameters: parameters.map {
+                            .init(name: $0.name, externalName: $0.externalName, declarationFragments: [], children: [])
+                        },
+                        returns: [returnValue]
+                    )
                 )
             ]
         )

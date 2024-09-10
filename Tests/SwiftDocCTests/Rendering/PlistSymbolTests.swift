@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,14 +28,14 @@ class PlistSymbolTests: XCTestCase {
         
         guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
             return section.kind == .plistDetails
-        }) as? PlistDetailsRenderSection else {
+        }) as? PropertyListDetailsRenderSection else {
             XCTFail("Plist details section not decoded")
             return
         }
         
-        XCTAssertEqual(section.details.name, "com.apple.developer.networking.wifi")
-        XCTAssertEqual(section.details.ideTitle, "WiFi access")
-        XCTAssertEqual(section.details.titleStyle, .title)
+        XCTAssertEqual(section.details.rawKey, "com.apple.developer.networking.wifi")
+        XCTAssertEqual(section.details.displayName, "WiFi access")
+        XCTAssertEqual(section.details.titleStyle, .useDisplayName)
         guard section.details.value.count == 2 else {
             XCTFail("Invalid number of value types found")
             return
@@ -113,9 +113,9 @@ class PlistSymbolTests: XCTestCase {
             XCTFail("Did not find doc://org.swift.docc.example/plist/dataaccess reference")
             return
         }
-        XCTAssertEqual(reference.titleStyle, .title)
-        XCTAssertEqual(reference.name, "com.apple.enabledataaccess")
-        XCTAssertEqual(reference.ideTitle, "Enable Data Access")
+        XCTAssertEqual(reference.propertyListKeyNames?.titleStyle, .useDisplayName)
+        XCTAssertEqual(reference.propertyListKeyNames?.rawKey, "com.apple.enabledataaccess")
+        XCTAssertEqual(reference.propertyListKeyNames?.displayName, "Enable Data Access")
     
         // Test navigator information
         XCTAssertEqual(symbol.navigatorPageType(), .propertyListKey)
@@ -138,13 +138,13 @@ class PlistSymbolTests: XCTestCase {
         
         guard let section = symbol.primaryContentSections.first(where: { section -> Bool in
             return section.kind == .plistDetails
-        }) as? PlistDetailsRenderSection else {
+        }) as? PropertyListDetailsRenderSection else {
             XCTFail("Plist details section not decoded")
             return
         }
         
-        XCTAssertEqual(section.details.name, "com.apple.developer.networking.wifi")
-        XCTAssertNil(section.details.ideTitle)
+        XCTAssertEqual(section.details.rawKey, "com.apple.developer.networking.wifi")
+        XCTAssertNil(section.details.displayName)
         
         AssertRoundtrip(for: symbol)
     }

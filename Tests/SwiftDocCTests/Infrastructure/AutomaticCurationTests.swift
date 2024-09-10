@@ -29,8 +29,8 @@ class AutomaticCurationTests: XCTestCase {
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                         moduleName: "ModuleName",
                         symbols: [
-                            makeSymbol(identifier: containerID, kind: .class, pathComponents: ["SomeClass"]),
-                            makeSymbol(identifier: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                            makeSymbol(id: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                            makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
                         ],
                         relationships: [
                             .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
@@ -64,15 +64,17 @@ class AutomaticCurationTests: XCTestCase {
                             //     func someFunction() { }
                             // }
                             makeSymbol(
-                                identifier: extensionID,
+                                id: extensionID,
                                 kind: .extension,
                                 // The extension has the path component of the extended type
                                 pathComponents: ["Something"],
                                 // Specify the extended symbol's symbol kind
-                                swiftExtension: .init(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                                otherMixins: [
+                                    SymbolGraph.Symbol.Swift.Extension(extendedModule: "ExtendedModule", typeKind: nonExtensionKind, constraints: [])
+                                ]
                             ),
                             // No matter what type `ExtendedModule.Something` is, always add a function in the extension
-                            makeSymbol(identifier: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
+                            makeSymbol(id: memberID, kind: .func, pathComponents: ["Something", "someFunction()"]),
                         ],
                         relationships: [
                             .init(source: extensionID, target: containerID, kind: .extensionTo, targetFallback: "ExtendedModule.Something"),
@@ -97,7 +99,7 @@ class AutomaticCurationTests: XCTestCase {
         line: UInt = #line
     ) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode, file: file, line: line)
         
         for section in renderNode.topicSections {
@@ -115,7 +117,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { url in
             // Curate some of `SideClass`'s children under SideKit.
             let sideKit = """
             # ``SideKit``
@@ -132,7 +134,7 @@ class AutomaticCurationTests: XCTestCase {
         
         // Compile the render node to flex the automatic curator
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(symbol) as! RenderNode
         
         // Verify that uncurated element `SideKit/SideClass/Element` is
@@ -181,7 +183,7 @@ class AutomaticCurationTests: XCTestCase {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section
             let symbol = node.semantic as! Symbol
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
             
             // Verify that all the symbols are curated, either manually or automatically
@@ -341,7 +343,7 @@ class AutomaticCurationTests: XCTestCase {
         // The first topic section
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // SideKit includes the "Manually curated" task group and additional automatically created groups.
@@ -357,7 +359,7 @@ class AutomaticCurationTests: XCTestCase {
         // The second topic section
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassFour", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // The other symbols in the same topic section appear in this See Also section
@@ -370,7 +372,7 @@ class AutomaticCurationTests: XCTestCase {
         // The second topic section
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassSix", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // The other symbols in the same topic section appear in this See Also section
@@ -382,21 +384,21 @@ class AutomaticCurationTests: XCTestCase {
         // The automatically curated symbols shouldn't have a See Also section
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassEight", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
         }
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassNine", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
         }
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClassTen", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             XCTAssertNil(renderNode.seeAlsoSections.first, "This symbol was automatically curated and shouldn't have a See Also section")
@@ -413,7 +415,7 @@ class AutomaticCurationTests: XCTestCase {
             forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!
         
         // Create a test bundle copy with the symbol graph from above
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { url in
             try? FileManager.default.copyItem(at: topLevelCurationSGFURL, to: url.appendingPathComponent("TopLevelCuration.symbols.json"))
         }
         defer {
@@ -423,7 +425,7 @@ class AutomaticCurationTests: XCTestCase {
         do {
             // Get the framework render node
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // Verify that `B` isn't automatically curated under the framework node
@@ -436,7 +438,7 @@ class AutomaticCurationTests: XCTestCase {
         do {
             // Get the `A` render node
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/A", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
             // Verify that `B` was in fact curated under `A`
@@ -446,7 +448,56 @@ class AutomaticCurationTests: XCTestCase {
             )
         }
     }
-    
+
+    func testNoAutoCuratedMixedLanguageDuplicates() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+
+            // Load the existing Obj-C symbol graph from this fixture.
+            let path = "symbol-graphs/clang/MixedLanguageFramework.symbols.json"
+            var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent(path)))
+
+            // Add an Objective-C relationship between MixedLanguageClassConformingToProtocol.mixedLanguageMethod
+            // and the protocol requirement: MixedLanguageProtocol.mixedLanguageMethod. This matches an existing
+            // Swift relationship, causing duplicate memberOf relationships.
+            var relationship = SymbolGraph.Relationship(
+                source: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+                target: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+                kind: .memberOf,
+                targetFallback: nil
+            )
+            relationship.mixins["sourceOrigin"] = SymbolKit.SymbolGraph.Relationship.SourceOrigin(
+                identifier: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+                displayName: "MixedLanguageProtocol.mixedLanguageMethod()"
+            )
+            graph.relationships.append(relationship)
+            let newGraphData = try JSONEncoder().encode(graph)
+            try newGraphData.write(to: url.appendingPathComponent("symbol-graphs/clang/MixedLanguageFramework.symbols.json"))
+        }
+
+        // Load the "MixedLanguageProtocol Implementations" API COllection
+        let protocolImplementationsNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+                sourceLanguages: [.swift, .objectiveC]
+            )
+        )
+
+        // This page should contain an auto-curated "Instance Methods" task group.
+        let protocolImplementationsArticle = try XCTUnwrap(protocolImplementationsNode.semantic as? Article)
+        XCTAssertEqual(1, protocolImplementationsArticle.automaticTaskGroups.count)
+        let instanceMethodsTaskGroup = protocolImplementationsArticle.automaticTaskGroups.first!
+        XCTAssertEqual("Instance Methods", instanceMethodsTaskGroup.title)
+
+        // And this task group should contain only one reference, to a combined Swift/Obj-C child node.
+        XCTAssertEqual(1, instanceMethodsTaskGroup.references.count)
+        let ref = instanceMethodsTaskGroup.references.first!
+        XCTAssertEqual(
+            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
+            ref.absoluteString
+        )
+    }
+
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
@@ -463,7 +514,7 @@ class AutomaticCurationTests: XCTestCase {
             withTraits: [.swift],
             context: context
         )
-        
+
         XCTAssertEqual(
             swiftTopics.flatMap { taskGroup in
                 [taskGroup.title] + taskGroup.references.map(\.path)
@@ -737,25 +788,103 @@ class AutomaticCurationTests: XCTestCase {
         try assertAutomaticCuration(variants: [])
         try assertAutomaticCuration(variants: [.swift])
     }
-}
 
-private func makeSymbol(
-    identifier: String,
-    kind: SymbolGraph.Symbol.KindIdentifier,
-    pathComponents: [String],
-    swiftExtension: SymbolGraph.Symbol.Swift.Extension? = nil
-) -> SymbolGraph.Symbol {
-    var mixins = [String: Mixin]()
-    if let swiftExtension {
-        mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
+    func testAutomaticCurationDropsOverloadGroupWhenOverloadsAreCurated() throws {
+        enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)
+
+        let (_, bundle, context) = try testBundleAndContext(copying: "OverloadedSymbols") { url in
+            try """
+            # ``OverloadedProtocol``
+
+            This is a protocol's docs.
+
+            ## Topics
+
+            - ``fourthTestMemberName(test:)-1h173``
+            - ``fourthTestMemberName(test:)-8iuz7``
+            - ``fourthTestMemberName(test:)-91hxs``
+            - ``fourthTestMemberName(test:)-961zx``
+            """.write(to: url.appendingPathComponent("OverloadedProtocol.md"), atomically: true, encoding: .utf8)
+        }
+
+        let protocolDocumentationNode = try context.entity(
+            with: .init(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/ShapeKit/OverloadedProtocol",
+                sourceLanguage: .swift))
+
+        // Compile the render node to flex the automatic curator
+        let symbol = protocolDocumentationNode.semantic as! Symbol
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: protocolDocumentationNode.reference)
+        let renderNode = translator.visit(symbol) as! RenderNode
+
+        XCTAssertEqual(renderNode.topicSections.count, 1)
+
+        // The page should not contain a reference to the overload group node, which would otherwise
+        // be automatically curated into an "Instance Methods" topic group with a hash suffix of 9b6be
+        let curatedTopic = try XCTUnwrap(renderNode.topicSections.first)
+        XCTAssertEqual(curatedTopic.title, nil)
+        XCTAssertEqual(curatedTopic.identifiers, [
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-1h173",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs",
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx",
+        ])
     }
-    return SymbolGraph.Symbol(
-        identifier: .init(precise: identifier, interfaceLanguage: SourceLanguage.swift.id),
-        names: .init(title: pathComponents.last!, navigator: nil, subHeading: nil, prose: nil),
-        pathComponents: pathComponents,
-        docComment: nil,
-        accessLevel: .public,
-        kind: .init(parsedIdentifier: kind, displayName: "Kind Display Name"),
-        mixins: mixins
-    )
+    
+    func testAutomaticallyCuratedSymbolTopicsAreMergedWithManuallyCuratedTopics() throws {
+         for kind in availableNonExtensionSymbolKinds {
+             let containerID = "some-container-id"
+             let memberID = "some-member-id"
+             let topicSectionTitle = AutomaticCuration.groupTitle(for: kind)
+
+             let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+                 JSONFile(name: "ModuleName.symbols.json",
+                          content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                             makeSymbol(id: containerID, kind: .class, pathComponents: ["SomeClass"]),
+                             makeSymbol(id: memberID, kind: kind, pathComponents: ["SomeClass", "someMember"]),
+                          ], relationships: [
+                             .init(source: memberID, target: containerID, kind: .memberOf, targetFallback: nil),
+                          ])),
+                 TextFile(name: "SomeArticle.md", utf8Content: """
+              # Some article
+              
+              An article with some content.
+              """),
+                 TextFile(name: "SomeExtension.md", utf8Content: """
+             # ``ModuleName/SomeClass``
+             
+             Curate an article under a manually curated section and leave the symbol documentation to automatic curation.
+             
+             ## Topics
+             
+             ### \(topicSectionTitle)
+             
+             - <doc:SomeArticle>
+             """),
+             ])
+             let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+             let (_, bundle, context) = try loadBundle(from: catalogURL)
+
+             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift))
+
+             // Compile docs and verify the generated Topics section
+             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
+             let renderNode = try XCTUnwrap(translator.visit(node.semantic) as? RenderNode)
+
+             // Verify that there are no duplicate sections in `SomeClass`'s "Topics" section
+             XCTAssertEqual(renderNode.topicSections.map { $0.title }, [topicSectionTitle])
+
+             // Verify that uncurated element `ModuleName/SomeClass/someMember` is
+             // automatically curated in `SomeClass`'s "Topics" under the existing manually curated topics section
+             // along with manually curated article "SomeArticle"
+             XCTAssertEqual([
+                 "doc://CatalogName/documentation/CatalogName/SomeArticle",
+                 "doc://CatalogName/documentation/ModuleName/SomeClass/someMember",
+             ], renderNode.topicSections.first?.identifiers)
+
+             // Verify that the merged section under `SideClass`'s "Topics" is correctly marked as containing manual content
+             XCTAssertFalse(renderNode.topicSections.first?.generated ?? false)
+         }
+     }
 }

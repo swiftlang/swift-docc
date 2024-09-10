@@ -18,56 +18,27 @@ class AutoCapitalizationTests: XCTestCase {
     
     // MARK: Test helpers
     
-    private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
-    private let symbolURL =  URL(fileURLWithPath: "/path/to/SomeFile.swift")
-    
     private func makeSymbolGraph(docComment: String, parameters: [String]) -> SymbolGraph {
         makeSymbolGraph(
-            docComment: docComment,
-            sourceLanguage: .swift,
-            parameters: parameters.map { ($0, nil) },
-            returnValue: .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
-        )
-    }
-    
-    private func makeSymbolGraph(
-        docComment: String?,
-        sourceLanguage: SourceLanguage,
-        parameters: [(name: String, externalName: String?)],
-        returnValue: SymbolGraph.Symbol.DeclarationFragments.Fragment
-    ) -> SymbolGraph {
-        let uri = symbolURL.absoluteString // we want to include the file:// scheme here
-        func makeLineList(text: String) -> SymbolGraph.LineList {
-            return .init(text.splitByNewlines.enumerated().map { lineOffset, line in
-                    .init(text: line, range: .init(start: .init(line: start.line + lineOffset, character: start.character),
-                                                   end: .init(line: start.line + lineOffset, character: start.character + line.count)))
-            }, uri: uri)
-        }
-        
-        return makeSymbolGraph(
             moduleName: "ModuleName",
             symbols: [
-                .init(
-                    identifier: .init(precise: "symbol-id", interfaceLanguage: sourceLanguage.id),
-                    names: .init(title: "functionName(...)", navigator: nil, subHeading: nil, prose: nil),
+                makeSymbol(
+                    id: "symbol-id",
+                    kind: .func,
                     pathComponents: ["functionName(...)"],
-                    docComment: docComment.map { makeLineList(text: $0) },
-                    accessLevel: .public, kind: .init(parsedIdentifier: .func, displayName: "Function"),
-                    mixins: [
-                        SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: uri, position: start),
-                        
-                        SymbolGraph.Symbol.FunctionSignature.mixinKey: SymbolGraph.Symbol.FunctionSignature(
-                            parameters: parameters.map {
-                                .init(name: $0.name, externalName: $0.externalName, declarationFragments: [], children: [])
-                            },
-                            returns: [returnValue]
-                        )
-                    ]
+                    docComment: docComment,
+                    signature: .init(
+                        parameters: parameters.map {
+                            .init(name: $0, externalName: nil, declarationFragments: [], children: [])
+                        },
+                        returns: [
+                            .init(kind: .typeIdentifier, spelling: "ReturnValue", preciseIdentifier: "return-value-id")
+                        ]
+                    )
                 )
             ]
         )
     }
-    
     
     // MARK: End-to-end integration tests
     
@@ -102,7 +73,7 @@ class AutoCapitalizationTests: XCTestCase {
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -149,7 +120,7 @@ class AutoCapitalizationTests: XCTestCase {
         XCTAssertEqual(parameterSections[.swift]?.parameters.map(\.name), ["one", "two", "three", "four", "five"])
         
         let parameterSectionTranslator = ParametersSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedParameters = parameterSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let paramsRenderSection = translatedParameters?.defaultValue?.section as! ParametersRenderSection
@@ -190,7 +161,7 @@ class AutoCapitalizationTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         let returnsSectionTranslator = ReturnsSectionTranslator()
-        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: url)
+        var renderNodeTranslator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
         var renderNode = renderNodeTranslator.visit(symbol) as! RenderNode
         let translatedReturns = returnsSectionTranslator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &renderNodeTranslator)
         let returnsRenderSection = translatedReturns?.defaultValue?.section as! ContentRenderSection

@@ -170,7 +170,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
-            let renderNode = try converter.convert(node, at: nil)
+            let renderNode = try converter.convert(node)
             
             // Get the encoded JSON as string
             let encodedData = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: cache)
@@ -228,7 +228,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {
             let node = try context.entity(with: reference)
-            let renderNode = try converter.convert(node, at: nil)
+            let renderNode = try converter.convert(node)
             
             // Get the encoded JSON as string
             let encodedData = try renderNode.encodeToJSON(with: encoder)

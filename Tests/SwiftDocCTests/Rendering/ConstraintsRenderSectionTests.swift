@@ -19,7 +19,7 @@ fileprivate let jsonEncoder = JSONEncoder()
 class ConstraintsRenderSectionTests: XCTestCase {
     
     func testSingleConstraint() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -42,14 +42,14 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Label is Text.")
     }
 
     func testSingleRedundantConstraint() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -72,13 +72,13 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertNil(renderNode.metadata.conformance)
     }
 
     func testSingleRedundantConstraintForLeaves() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -101,13 +101,13 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertNil(renderNode.metadata.conformance)
     }
 
     func testPreservesNonRedundantConstraints() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -131,13 +131,13 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element is MyClass.")
     }
 
     func testGroups2Constraints() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -161,13 +161,13 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol and Equatable.")
     }
 
     func testGroups3Constraints() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -192,13 +192,13 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.conformance?.constraints.map(flattenInlineElements).joined(), "Element conforms to MyProtocol, Equatable, and Hashable.")
     }
 
     func testRenderReferences() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -222,7 +222,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in
@@ -236,7 +236,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testRenderReferencesWithNestedTypeInSelf() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -260,7 +260,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         guard let renderReference = renderNode.references.first(where: { (key, value) -> Bool in

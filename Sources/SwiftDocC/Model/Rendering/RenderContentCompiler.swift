@@ -51,7 +51,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {
-        return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText)))]
+        return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)))]
     }
     
     mutating func visitListItem(_ listItem: ListItem) -> [RenderContent] {
@@ -220,7 +220,7 @@ struct RenderContentCompiler: MarkupVisitor {
         }
         
         // FIXME: Links from this build already exist in the reference index and don't need to be resolved again.
-        // https://github.com/apple/swift-docc/issues/581
+        // https://github.com/swiftlang/swift-docc/issues/581
 
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil

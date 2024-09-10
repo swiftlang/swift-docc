@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,44 +12,43 @@ import Foundation
 import Markdown
 
 extension Metadata {
-    /// A directive that sets the platform availability information for a documentation page.
+    /// A directive that specifies when a documentation page is available for a given platform.
     ///
-    /// `@Available` is analogous to the `@available` attribute in Swift: It allows you to specify a
-    /// platform version that the page relates to. To specify a platform and version, list the platform
-    /// name and use the `introduced` argument:
+    /// Whenever possible, prefer to specify availability information using in-source annotations such as the `@available` attribute in Swift or the `API_AVAILABLE` macro in Objective-C.
+    /// Using in-source annotations ensures that your documentation matches the availability of your API.
+    /// If you duplicate availability information in the documentation markup, the information from the `@Available` directive overrides the information for the in-source annotations from that platform and risks being inaccurate.
     ///
-    /// ```markdown
-    /// @Available(macOS, introduced: "12.0")
-    /// ```
+    /// If your source language doesn't have a mechanism for specifying API availability or if you're writing articles about a newly introduced or deprecated API,
+    /// you can use the `@Available` directive to specify when you introduced, and optionally deprecated, an API or documentation page for a given platform.
     ///
-    /// Any text can be given to the first argument, and will be displayed in the page's
-    /// availability data. The platforms `iOS`, `macOS`, `watchOS`, and `tvOS` will be matched
-    /// case-insensitively, but anything else will be printed verbatim.
-    ///
-    /// To provide a platform name with spaces in it, provide it as a quoted string:
-    ///
-    /// ```markdown
-    /// @Available("My Package", introduced: "1.0")
-    /// ```
-    ///
-    /// This directive is available on both articles and documentation extension files. In extension
-    /// files, the information overrides any information from the symbol itself.
-    ///
-    /// This directive is only valid within a ``Metadata`` directive:
+    /// Each `@Available` directive specifies the availability information for a single platform.
+    /// The directive matches the `iOS`, `macOS`, `watchOS`, and `tvOS` platform names case-insensitively.
+    /// Any other platform names are displayed verbatim.
+    /// If a platform name contains whitespace, commas, or other special characters you need to surround it with quotation marks (`"`).
     ///
     /// ```markdown
     /// @Metadata {
-    ///     @Available(macOS, introduced: "12.0")
     ///     @Available(iOS, introduced: "15.0")
+    ///     @Available(macOS, introduced: "12.0", deprecated: "14.0")
+    ///     @Available("My Package", introduced: "1.2.3")
     /// }
     /// ```
+    ///
+    /// Both the "introduced" and "deprecated" parameters take string representations of semantic version numbers (major`.`minor`.`patch).
+    /// If you omit the "patch" or "minor" components, they are assumed to be `0`.
+    /// This means that `"1.0.0"`, `"1.0"`, and `"1"` all specify the same semantic version.
+    ///
+    /// > Earlier Versions:
+    /// > Before Swift-DocC 6.0, the `@Available` directive didn't support the "deprecated" parameter.
+    ///
+    /// > Tip:
+    /// > In addition to specifying the version when you deprecated an API or documentation page,
+    /// > you can use the ``DeprecationSummary`` directive to provide the reader with additional information about the deprecation or refer them to a replacement API.
     public final class Availability: Semantic, AutomaticDirectiveConvertible {
         public static let directiveName: String = "Available"
         public static let introducedVersion = "5.8"
 
         public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible {
-            // FIXME: re-add `case any = "*"` when `isBeta` and `isDeprecated` are implemented
-            // cf. https://github.com/apple/swift-docc/issues/441
             case macOS, iOS, watchOS, tvOS
 
             case other(String)
@@ -64,7 +63,7 @@ extension Metadata {
                     }
                 }
                 if rawValue == "*" {
-                    // Reserve the `*` platform for when `isBeta` and `isDeprecated` can be implemented
+                    // Reserve the `*` platform for when we have decided on how `*` availability should be displayed (https://github.com/swiftlang/swift-docc/issues/969)
                     return nil
                 } else {
                     self = .other(rawValue)
@@ -86,20 +85,22 @@ extension Metadata {
             }
         }
 
-        /// The platform that this argument's information applies to.
+        /// The platform name that this version information applies to.
         @DirectiveArgumentWrapped(name: .unnamed)
         public var platform: Platform
 
-        /// The platform version that this page applies to.
+        /// The semantic version (major`.`minor`.`patch) when you introduced this API or documentation page.
         @DirectiveArgumentWrapped
-        public var introduced: String
+        public var introduced: SemanticVersion
 
-        // FIXME: `isBeta` and `isDeprecated` properties/arguments
-        // cf. https://github.com/apple/swift-docc/issues/441
+        /// The semantic version (major`.`minor`.`patch) when you deprecated this API or documentation page.
+        @DirectiveArgumentWrapped
+        public var deprecated: SemanticVersion? = nil
 
         static var keyPaths: [String : AnyKeyPath] = [
             "platform"     : \Availability._platform,
             "introduced"   : \Availability._introduced,
+            "deprecated"   : \Availability._deprecated,
         ]
 
         public let originalMarkup: Markdown.BlockDirective
@@ -108,5 +109,45 @@ extension Metadata {
         init(originalMarkup: Markdown.BlockDirective) {
             self.originalMarkup = originalMarkup
         }
+    }
+}
+
+extension SemanticVersion: DirectiveArgumentValueConvertible {
+    static let separator = "."
+    
+    init?(rawDirectiveArgumentValue: String) {
+        guard !rawDirectiveArgumentValue.hasSuffix(Self.separator),
+              !rawDirectiveArgumentValue.hasPrefix(Self.separator) else {
+            return nil
+        }
+        
+        // Split the string into major, minor and patch components
+        let availabilityComponents = rawDirectiveArgumentValue.split(separator: .init(Self.separator), maxSplits: 2)
+        guard !availabilityComponents.isEmpty else {
+            return nil
+        }
+        
+        // If any of the components are missing, default to 0
+        var intAvailabilityComponents = [0, 0, 0]
+        for (index, component) in availabilityComponents.enumerated() {
+            // If any of the components isn't a number, the input is not valid
+            guard let intComponent = Int(component) else {
+                return nil
+            }
+            
+            intAvailabilityComponents[index] = intComponent
+        }
+        
+        self.major = intAvailabilityComponents[0]
+        self.minor = intAvailabilityComponents[1]
+        self.patch = intAvailabilityComponents[2]
+    }
+
+    static func allowedValues() -> [String]? {
+        nil
+    }
+    
+    static func expectedFormat() -> String? {
+        return "a semantic version number ('[0-9]+(.[0-9]+)?(.[0-9]+)?')"
     }
 }

@@ -107,7 +107,7 @@ public class DocumentationContentRenderer {
     /// Returns the given amount of minutes as a string, for example: "1hr 10min".
     func formatEstimatedDuration(minutes: Int) -> String? {
         // TODO: Use DateComponentsFormatter once it's available on Linux (rdar://59787899) and 
-        // when Swift-DocC supports generating localized documentation (github.com/apple/swift-docc/issues/218), since
+        // when Swift-DocC supports generating localized documentation (github.com/swiftlang/swift-docc/issues/218), since
         // DateComponentsFormatter formats content based on the user's locale.
 //        let dateFormatter = DateComponentsFormatter()
 //        if #available(OSX 10.12, *) {
@@ -230,7 +230,7 @@ public class DocumentationContentRenderer {
             }
 
             // Verify that the current platform is in beta and the version number matches the introduced platform version.
-            guard current.beta && introduced.isEqualToVersionTriplet(current.version) else {
+            guard current.beta && SemanticVersion(introduced) >= SemanticVersion(versionTriplet: current.version) else {
                 return false
             }
         }
@@ -363,7 +363,16 @@ public class DocumentationContentRenderer {
         let isRequired = (node?.semantic as? Symbol)?.isRequired ?? false
 
         let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
-
+        
+        // Add key information for property lists.
+        let propertyListKeyNames = node?.symbol?.plistDetails.map {
+            TopicRenderReference.PropertyListKeyNames(
+                titleStyle: ($0.customTitle != nil) ? .useDisplayName : .useRawKey,
+                rawKey: $0.rawKey,
+                displayName: $0.customTitle
+            )
+        }
+        
         var renderReference = TopicRenderReference(
             identifier: .init(referenceURL),
             titleVariants: VariantCollection<String>(from: titleVariants) ?? .init(defaultValue: ""),
@@ -372,7 +381,8 @@ public class DocumentationContentRenderer {
             kind: kind,
             required: isRequired,
             role: referenceRole,
-            estimatedTime: estimatedTime
+            estimatedTime: estimatedTime,
+            propertyListKeyNames: propertyListKeyNames
         )
         
         renderReference.images = node?.metadata?.pageImages.compactMap { pageImage -> TopicImage? in

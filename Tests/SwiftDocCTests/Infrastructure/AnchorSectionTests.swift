@@ -67,7 +67,7 @@ class AnchorSectionTests: XCTestCase {
 
         // Verify collecting section render references
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
 
         let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Section"] as? TopicRenderReference)
         XCTAssertEqual(sectionReference.title, "Article Sub-Section")
@@ -125,7 +125,7 @@ class AnchorSectionTests: XCTestCase {
 
         // Verify collecting section render references
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
 
         let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Section"] as? TopicRenderReference)
         XCTAssertEqual(sectionReference.title, "Symbol Sub-Section")
@@ -183,7 +183,7 @@ class AnchorSectionTests: XCTestCase {
 
         // Verify collecting section render references
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let renderNode = try converter.convert(entity, at: nil)
+        let renderNode = try converter.convert(entity)
 
         let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Section"] as? TopicRenderReference)
         XCTAssertEqual(sectionReference.title, "Module Sub-Section")

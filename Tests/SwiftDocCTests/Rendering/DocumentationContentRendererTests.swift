@@ -169,7 +169,7 @@ private extension DocumentationContentRendererTests {
                 .swift,
                 .init(id: DocumentationDataVariantsTrait.otherLanguage.interfaceLanguage!)
             ],
-            name: DocumentationNode.Name.symbol(declaration: AttributedCodeListing.Line()),
+            name: .symbol(name: ""),
             markup: Document(parsing: ""),
             semantic: nil,
             platformNames: nil
@@ -223,6 +223,7 @@ private extension DocumentationContentRendererTests {
             returnsSectionVariants: .init(swiftVariant: nil),
             parametersSectionVariants: .init(swiftVariant: nil),
             dictionaryKeysSectionVariants: .init(swiftVariant: nil),
+            possibleValuesSectionVariants: .init(swiftVariant: nil),
             httpEndpointSectionVariants: .init(swiftVariant: nil),
             httpBodySectionVariants: .init(swiftVariant: nil),
             httpParametersSectionVariants: .init(swiftVariant: nil),

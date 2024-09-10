@@ -59,6 +59,7 @@ struct DirectiveMirror {
                 name: argumentName,
                 unnamed: unnamed,
                 allowedValues: argument.allowedValues,
+                expectedFormat: argument.expectedFormat,
                 propertyLabel: label,
                 argument: argument,
                 parseArgument: argument.parseArgument
@@ -166,6 +167,7 @@ extension DirectiveMirror {
         let unnamed: Bool
         
         let allowedValues: [String]?
+        let expectedFormat: String?
         
         let propertyLabel: String
         let argument: _DirectiveArgumentProtocol
