@@ -11,6 +11,16 @@
 import Foundation
 
 extension DocumentationBundle {
+    
+    /// Options to define the inherit default availability behaviour.
+    public enum InheritDefaultAvailabilityOptions: String, Encodable {
+        /// The platforms with the designated versions defined in the default availability will be used by the symbols as availability information.
+        /// This is the default behaviour.
+        case platformAndVersion
+        /// Only the platforms defined in the default availability will be passed to the symbols.
+        case platformOnly
+    }
+    
     /// Information about a documentation bundle that's unrelated to its documentation content.
     ///
     /// This information is meant to be decoded from the bundle's Info.plist file.
@@ -39,6 +49,10 @@ extension DocumentationBundle {
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
+        /// The flag to enable or disable symbol availability inference from the module default availability.
+        ///  If not specified the default befaviout will be ``InheritDefaultAvailabilityOptions.platformAndVersion``
+        public var inheritDefaultAvailability: InheritDefaultAvailabilityOptions?
+        
         enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
@@ -47,6 +61,7 @@ extension DocumentationBundle {
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
             case featureFlags = "CDExperimentalFeatureFlags"
+            case inheritDefaultAvailability = "CDInheritDefaultAvailability"
 
             var argumentName: String? {
                 switch self {
@@ -60,6 +75,8 @@ extension DocumentationBundle {
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
                     return "--fallback-default-module-kind"
+                case .inheritDefaultAvailability:
+                    return nil
                 case .defaultAvailability, .featureFlags:
                     return nil
                 }
@@ -91,13 +108,15 @@ extension DocumentationBundle {
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        ///   -  inheritDefaultAvailability: The option to enable or disable symbol availability inheritance from the module default availability.
         public init(
             displayName: String,
             identifier: String,
             version: String?,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
-            defaultModuleKind: String?
+            defaultModuleKind: String?,
+            inheritDefaultAvailability: InheritDefaultAvailabilityOptions?
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -105,6 +124,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultAvailability = defaultAvailability
             self.defaultModuleKind = defaultModuleKind
+            self.inheritDefaultAvailability = inheritDefaultAvailability
         }
         
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
@@ -236,6 +256,10 @@ extension DocumentationBundle {
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
             self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
+            let inheritDefaultAvailabilityRawValue = try decodeOrFallbackIfPresent(String.self, with: .inheritDefaultAvailability)
+            if let inheritDefaultAvailabilityRawValue {
+                self.inheritDefaultAvailability = InheritDefaultAvailabilityOptions(rawValue: inheritDefaultAvailabilityRawValue)
+            }
         }
         
         init(
@@ -245,7 +269,8 @@ extension DocumentationBundle {
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
-            featureFlags: BundleFeatureFlags? = nil
+            featureFlags: BundleFeatureFlags? = nil,
+            inheritDefaultAvailability: InheritDefaultAvailabilityOptions? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -254,6 +279,7 @@ extension DocumentationBundle {
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
             self.featureFlags = featureFlags
+            self.inheritDefaultAvailability = inheritDefaultAvailability
         }
     }
 }
@@ -272,6 +298,7 @@ extension BundleDiscoveryOptions {
     ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    ///   - inheritDefaultAvailability: Option to configure default availability inheritance behaviour.
     public init(
         fallbackDisplayName: String? = nil,
         fallbackIdentifier: String? = nil,
@@ -279,7 +306,8 @@ extension BundleDiscoveryOptions {
         fallbackDefaultCodeListingLanguage: String? = nil,
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
-        additionalSymbolGraphFiles: [URL] = []
+        additionalSymbolGraphFiles: [URL] = [],
+        inheritDefaultAvailability: DocumentationBundle.InheritDefaultAvailabilityOptions? = nil
     ) {
         // Iterate over all possible coding keys with a switch
         // to build up the dictionary of fallback options.
@@ -304,6 +332,8 @@ extension BundleDiscoveryOptions {
                 value = fallbackDefaultModuleKind
             case .featureFlags:
                 value = nil
+            case .inheritDefaultAvailability:
+                value = inheritDefaultAvailability
             }
             
             guard let unwrappedValue = value else {

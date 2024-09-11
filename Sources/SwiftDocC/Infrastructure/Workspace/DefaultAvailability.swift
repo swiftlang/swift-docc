@@ -51,7 +51,7 @@ public struct DefaultAvailability: Codable, Equatable {
         /// Unavailable or Available with an introduced version.
         enum VersionInformation: Hashable {
             case unavailable
-            case available(version: String)
+            case available(version: String?)
         }
 
         /// The name of the platform, e.g. "macOS".
@@ -71,7 +71,7 @@ public struct DefaultAvailability: Codable, Equatable {
         public var introducedVersion: String? {
             switch versionInformation {
             case .available(let introduced):
-                return introduced.description
+                return introduced?.description
             case .unavailable:
                 return nil
             }

@@ -1241,8 +1241,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
             availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
-                    // Filter items with insufficient availability data
-                    guard availability.introducedVersion != nil else {
+                    // Filter items with insufficient availability data unless the default availability behaviour
+                    // allows availability withound version information.
+                    let applyDefaultAvailabilityVersionToSymbols = bundle.info.inheritDefaultAvailability
+                    guard availability.introducedVersion != nil || applyDefaultAvailabilityVersionToSymbols == .platformOnly else {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),

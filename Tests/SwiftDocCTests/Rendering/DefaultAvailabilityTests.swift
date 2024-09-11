@@ -577,6 +577,208 @@ class DefaultAvailabilityTests: XCTestCase {
             module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
             .available(version: "10.0")
         )
-        
     }
+    
+    func testInheritDefaultAvailabilityOptions() throws {
+        func makeInfoPlist(
+            inheritDefaultAvailability: String,
+            defaultAvailability: String? = nil
+        ) -> String {
+            let defaultAvailability = defaultAvailability ?? """
+            <dict>
+                <key>name</key>
+                <string>iOS</string>
+                <key>version</key>
+                <string>8.0</string>
+            </dict>
+            """
+            return """
+            <plist version="1.0">
+            <dict>
+                \(inheritDefaultAvailability)
+                <key>CDAppleDefaultAvailability</key>
+                <dict>
+                    <key>MyModule</key>
+                    <array>
+                        \(defaultAvailability)
+                    </array>
+                </dict>
+            </dict>
+            </plist>
+            """
+        }
+        func setupContext(
+            inheritDefaultAvailability: String = "",
+            defaultAvailability: String? = nil
+        ) throws -> DocumentationContext {
+            // Create an empty bundle
+            let targetURL = try createTemporaryDirectory(named: "test.docc")
+            // Create symbol graph
+            let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
+            try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
+            // Create info plist
+            let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
+            let infoPlist = makeInfoPlist(inheritDefaultAvailability: inheritDefaultAvailability, defaultAvailability: defaultAvailability)
+            try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
+            // Load the bundle & reference resolve symbol graph docs
+            let (_, _, context) = try loadBundle(from: targetURL)
+            return context
+        }
+        
+        let symbols = """
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@SymbolWithAvailability",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+            },
+            "accessLevel": "public",
+            "availability" : [
+                {
+                   "domain" : "ios",
+                   "introduced" : {
+                        "major" : 10,
+                        "minor" : 0
+                   }
+                }
+            ]
+        },
+        {
+            "kind": {
+                "displayName" : "Instance Property",
+                "identifier" : "swift.property"
+            },
+            "identifier": {
+                "precise": "c:@F@SymbolWithoutAvailability",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Bar",
+            },
+            "accessLevel": "public"
+        }
+        """
+        let symbolGraphString = makeSymbolGraphString(
+            moduleName: "MyModule",
+            symbols: symbols,
+            platform: """
+            "operatingSystem" : {
+               "minimumVersion" : {
+                 "major" : 10,
+                 "minor" : 0
+               },
+               "name" : "ios"
+             }
+            """
+        )
+        
+        // Don't use default availability version for symbols.
+        
+        var context = try setupContext(inheritDefaultAvailability: """
+        <key>CDInheritDefaultAvailability</key>
+        <string>platformOnly</string>
+        """)
+        
+        // Verify we add the version number into the symbols that have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
+        // Verify we don't add the version number into the symbols that don't have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, nil)
+        
+        
+        // Add an extra default availability to test behaviour when mixin in source with default behaviour.
+        context = try setupContext(
+            inheritDefaultAvailability: """
+            <key>CDInheritDefaultAvailability</key>
+            <string>platformOnly</string>
+            """,
+            defaultAvailability: """
+            <dict>
+                <key>name</key>
+                <string>iOS</string>
+                <key>version</key>
+                <string>8.0</string>
+            </dict>
+            <dict>
+                <key>name</key>
+                <string>watchOS</string>
+                <key>version</key>
+                <string>5.0</string>
+            </dict>
+            """
+        )
+        
+        // Verify we add the version number into the symbols that have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "watchOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion, nil)
+        
+        // Use default availability version for symbols.
+        
+        context = try setupContext(inheritDefaultAvailability: """
+        <key>CDInheritDefaultAvailability</key>
+        <string>platformAndVersion</string>
+        """)
+        
+        // Verify we add the version number into the symbols that have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
+        // Verify we don't add the version number into the symbols that don't have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+        
+        // Don't specify availability inherit behaviour.
+        
+        context = try setupContext()
+        
+        // Verify we add the version number into the symbols that have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
+        // Verify we don't add the version number into the symbols that don't have availability annotation.
+        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
+            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
+            return
+        }
+        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
+        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
+    }
+    
 }
