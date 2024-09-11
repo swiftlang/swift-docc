@@ -13,7 +13,7 @@ import Foundation
 extension DocumentationBundle {
     
     /// Options to define the inherit default availability behaviour.
-    public enum InheritDefaultAvailabilityOptions: String, Encodable {
+    public enum InheritDefaultAvailabilityOptions: String, Codable {
         /// The platforms with the designated versions defined in the default availability will be used by the symbols as availability information.
         /// This is the default behaviour.
         case platformAndVersion
@@ -108,7 +108,7 @@ extension DocumentationBundle {
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
-        ///   -  inheritDefaultAvailability: The option to enable or disable symbol availability inheritance from the module default availability.
+        ///   - inheritDefaultAvailability: The option to enable or disable symbol availability inheritance from the module default availability.
         public init(
             displayName: String,
             identifier: String,

@@ -64,9 +64,7 @@ struct SymbolGraphLoader {
             guard let defautAvailabilities else { return nil }
             // Check the selected behaviour for inheritance of the default availability and remove the avaialbity
             // version if it's set to  `platformOnly`.
-            if
-                let applyDefaultAvailabilityVersionToSymbols = bundle.info.inheritDefaultAvailability,
-                applyDefaultAvailabilityVersionToSymbols == .platformOnly {
+            if bundle.info.inheritDefaultAvailability == .platformOnly {
                 return defautAvailabilities.map { defaultAvailability in
                     var defaultAvailability = defaultAvailability
                     switch defaultAvailability.versionInformation {
@@ -426,7 +424,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// platform version that can be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
         let introducedVersion = defaultAvailability.introducedVersion
-        let platformVersion = (introducedVersion != nil) ? SymbolGraph.SemanticVersion(string: introducedVersion!) : nil
+        let platformVersion = introducedVersion.map { SymbolGraph.SemanticVersion(string: $0) } ?? nil
         let domain = SymbolGraph.Symbol.Availability.Domain(rawValue: defaultAvailability.platformName.rawValue)
         self.init(domain: domain,
                   introducedVersion: platformVersion,
