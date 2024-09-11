@@ -730,7 +730,7 @@
                 "type" : "groupMarker"
               }
             ],
-            "path" : "\/documentation\/sidekit\/sideprotocol\/func()-6ijsi",
+            "path" : "\/documentation\/sidekit\/sideprotocol\/func()",
             "title" : "func1()",
             "type" : "method"
           }
@@ -740,13 +740,13 @@
         "type" : "protocol"
       },
       {
-        "title": "Classes",
-        "type": "groupMarker"
+        "title" : "Classes",
+        "type" : "groupMarker"
       },
       {
-        "path": "/documentation/sidekit/uncuratedclass",
-        "title": "UncuratedClass",
-        "type": "class",
+        "path" : "\/documentation\/sidekit\/uncuratedclass",
+        "title" : "UncuratedClass",
+        "type" : "class"
       },
       {
         "title" : "Chapter 1",

@@ -386,39 +386,16 @@ extension PathHierarchy {
             )
         }
 
-        // Use a empty disambiguation suffix for the preferred symbol, if there
-        // is one, which will trigger the warning to suggest removing the
-        // suffix entirely.
-        let candidates = disambiguationTree.disambiguatedValues()
-        let favoredSuffix = favoredSuffix(from: candidates)
-        let suffixes = candidates.map { $0.disambiguation.makeSuffix() }
-        let candidatesAndSuffixes = zip(candidates, suffixes).map { (candidate, suffix) in
-            if suffix == favoredSuffix {
-                return (node: candidate.value, disambiguation: "")
-            } else {
-                return (node: candidate.value, disambiguation: suffix)
-            }
-        }
         return Error.unknownDisambiguation(
             partialResult: (
                 node,
                 pathForError(of: rawPathForError, droppingLast: remaining.count)
             ),
             remaining: Array(remaining),
-            candidates: candidatesAndSuffixes
+            candidates: disambiguationTree.disambiguatedValues().map {
+                (node: $0.value, disambiguation: String($0.disambiguation.makeSuffix()))
+            }
         )
-    }
-
-    /// Check if exactly one of the given candidate symbols is preferred, because it is not disfavored
-    /// for link resolution and all the other symbols are.
-    /// - Parameters:
-    ///   - from: An array of candidate node and disambiguation tuples.
-    /// - Returns: An optional string set to the disambiguation suffix string, without the hyphen separator e.g. "abc123",
-    ///            or nil if there is no preferred symbol.
-    private func favoredSuffix(from candidates: [(value: PathHierarchy.Node, disambiguation: PathHierarchy.DisambiguationContainer.Disambiguation)]) -> String? {
-        return candidates.singleMatch({
-            !$0.value.specialBehaviors.contains(PathHierarchy.Node.SpecialBehaviors.disfavorInLinkCollision)
-        })?.disambiguation.makeSuffix()
     }
 
     private func pathForError(
@@ -477,8 +454,12 @@ extension PathHierarchy.DisambiguationContainer {
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
     func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
-        if storage.count <= 1, disambiguation == nil {
-            return storage.first?.node
+        if disambiguation == nil {
+            if storage.count <= 1 {
+                return storage.first?.node
+            } else if let favoredMatch = storage.singleMatch({ !$0.node.specialBehaviors.contains(.disfavorInLinkCollision) }) {
+                return favoredMatch.node
+            }
         }
         
         switch disambiguation {
@@ -503,6 +484,7 @@ extension PathHierarchy.DisambiguationContainer {
                 break
             }
         case .typeSignature(let parameterTypes, let returnTypes):
+            let storage = storage.filter { !$0.node.specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation )}
             switch (parameterTypes, returnTypes) {
             case (let parameterTypes?, let returnTypes?):
                 return storage.first(where: { typesMatch(provided: parameterTypes, actual: $0.parameterTypes) && typesMatch(provided: returnTypes, actual: $0.returnTypes) })?.node

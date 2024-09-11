@@ -705,7 +705,7 @@ class PathHierarchyTests: XCTestCase {
         
         // The protocol requirement and the default implementation both exist at the @_export imported Something protocol.
         let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths["s:5Inner9SomethingP02doB0yyF"],    "/DefaultImplementationsWithExportedImport/Something/doSomething()-8skxc")
+        XCTAssertEqual(paths["s:5Inner9SomethingP02doB0yyF"],    "/DefaultImplementationsWithExportedImport/Something/doSomething()") // This is the only favored symbol so it doesn't require any disambiguation
         XCTAssertEqual(paths["s:5Inner9SomethingPAAE02doB0yyF"], "/DefaultImplementationsWithExportedImport/Something/doSomething()-scj9")
         
         // Test disfavoring a default implementation in a symbol collision
@@ -911,7 +911,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             // static func /= (lhs: inout MyNumber, rhs: MyNumber) -> MyNumber
             paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"],
-            "/Operators/MyNumber/_=(_:_:)->MyNumber")
+            "/Operators/MyNumber/_=(_:_:)") // This is the only favored symbol so it doesn't require any disambiguation
         XCTAssertEqual(
             // static func / (lhs: MyNumber, rhs: MyNumber) -> MyNumber
             hashAndKindDisambiguatedPaths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"],
@@ -919,7 +919,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(
             // static func /= (lhs: inout MyNumber, rhs: MyNumber) -> MyNumber
             hashAndKindDisambiguatedPaths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"],
-            "/Operators/MyNumber/_=(_:_:)-3m4ko")
+            "/Operators/MyNumber/_=(_:_:)") // This is the only favored symbol so it doesn't require any disambiguation
         
     }
     
@@ -1363,11 +1363,8 @@ class PathHierarchyTests: XCTestCase {
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(String)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-([Double])")
-        
-        // The overload group is cloned from this symbol and therefore have the same function signature.
-        // Because there are two collisions with the same signature, this method can only be uniquely disambiguated with its hash.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Double)")
     }
     
     func testApplyingSyntaxSugarToTypeName() {
@@ -1756,7 +1753,9 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(error.solutions.count, 5)
             
             XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Remove '-abc123' for \n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]))
-            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Replace 'abc123' with '8iuz7' for \n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]))
+            // The overload group is cloned from this symbol and therefore have the same function signature.
+            // Because there are two collisions with the same signature, this method can only be uniquely disambiguated with its hash.
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Replace '-abc123' with '->Double' for \n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("->Double", 56, 63)]))
             XCTAssertEqual(error.solutions.dropFirst(2).first, .init(summary: "Replace '-abc123' with '->Float' for \n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("->Float", 56, 63)]))
             XCTAssertEqual(error.solutions.dropFirst(3).first, .init(summary: "Replace '-abc123' with '->Int' for \n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("->Int", 56, 63)]))
             XCTAssertEqual(error.solutions.dropFirst(4).first, .init(summary: "Replace '-abc123' with '->String' for \n'func fourthTestMemberName(test: String) -> String\'", replacements: [("->String", 56, 63)]))
@@ -2024,7 +2023,7 @@ class PathHierarchyTests: XCTestCase {
         
         // "/" is an allowed character in URL paths.
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)-7am4", paths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"])
-        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-3m4ko", paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)", paths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"]) // This is the only favored symbol so it doesn't require any disambiguation
         
         // Some of these have more human readable disambiguation alternatives
         let humanReadablePaths = tree.caseInsensitiveDisambiguatedPaths()
@@ -2035,7 +2034,7 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)-(Self,_)",  /* >(_:_:) */ humanReadablePaths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         
         XCTAssertEqual("/Operators/MyNumber/_(_:_:)->MyNumber", humanReadablePaths["s:9Operators8MyNumberV1doiyA2C_ACtFZ"])
-        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)->MyNumber", humanReadablePaths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)", humanReadablePaths["s:9Operators8MyNumberV2deoiyA2Cz_ACtFZ"]) // This is the only favored symbol so it doesn't require any disambiguation
         
         // Verify that all paths are unique
         let repeatedPaths: [String: Int] = paths.values.reduce(into: [:], { acc, path in acc[path, default: 0] += 1 })
@@ -2640,7 +2639,7 @@ class PathHierarchyTests: XCTestCase {
         let tree = context.linkResolver.localResolver.pathHierarchy
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
-        XCTAssertEqual(paths[protocolRequirementID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-8lcpm")
+        XCTAssertEqual(paths[protocolRequirementID], "/ModuleName/SomeProtocolName/someProtocolRequirement()") // This is the only favored symbol so it doesn't require any disambiguation
         XCTAssertEqual(paths[defaultImplementationID], "/ModuleName/SomeProtocolName/someProtocolRequirement()-3docm")
         
         // Verify that the multi platform paths are the same as the single platform paths

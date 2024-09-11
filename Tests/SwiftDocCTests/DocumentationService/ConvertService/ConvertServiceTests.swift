@@ -1434,7 +1434,7 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/FillIntroduced/macCatalystOnlyDeprecated()",
                 "/documentation/MyKit/MyClass/myFunction()",
                 "/documentation/SideKit",
-                "/documentation/SideKit/SideProtocol/func()-6ijsi",
+                "/documentation/SideKit/SideProtocol/func()",
                 "/documentation/SideKit/SideClass/myFunction()",
                 "/documentation/SideKit/SideProtocol",
             ],

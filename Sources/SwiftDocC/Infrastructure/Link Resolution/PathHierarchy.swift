@@ -123,7 +123,7 @@ struct PathHierarchy {
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
                     // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/swiftlang/swift-docc-symbolkit/issues/58
                     if symbol.identifier.precise.contains("::SYNTHESIZED::") {
-                        node.specialBehaviors = [.disfavorInLinkCollision, .excludeFromAutomaticCuration]
+                        node.specialBehaviors.formUnion([.disfavorInLinkCollision, .excludeFromAutomaticCuration])
                     }
                     nodes[id] = node
                     
@@ -286,6 +286,10 @@ struct PathHierarchy {
                 guard let groupNode = overloadGroupNodes[relationship.target], let overloadedSymbolNodes = allNodes[relationship.source] else {
                     continue
                 }
+                
+                // The overload group symbol is cloned from a real symbol and has the same type signature as the clone. This prevents either symbol from using
+                // parameter type or return type disambiguation. Exclude the overload group from this, so that the real symbol can use it.
+                groupNode.specialBehaviors.insert(.excludeFromAdvancedLinkDisambiguation)
 
                 for overloadedSymbolNode in overloadedSymbolNodes {
                     // We want to disfavor the individual overload symbols in favor of resolving links to their overload group symbol.
@@ -494,6 +498,9 @@ extension PathHierarchy {
             
             /// This node is excluded from automatic curation.
             static let excludeFromAutomaticCuration = SpecialBehaviors(rawValue: 1 << 1)
+            
+            /// This node is excluded from advanced link disambiguation.
+            static let excludeFromAdvancedLinkDisambiguation = SpecialBehaviors(rawValue: 1 << 2)
         }
         
         /// Initializes a symbol node.

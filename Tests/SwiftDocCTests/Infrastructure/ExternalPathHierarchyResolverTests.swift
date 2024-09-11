@@ -869,7 +869,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         // This overloaded protocol method should be able to resolve without a suffix at all, since it doesn't conflict with anything
         try linkResolvers.assertSuccessfullyResolves(
             authoredLink: "/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
-            to: "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+            to: "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
         )
     }
     

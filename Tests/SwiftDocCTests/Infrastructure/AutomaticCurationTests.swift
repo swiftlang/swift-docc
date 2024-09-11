@@ -735,11 +735,11 @@ class AutomaticCurationTests: XCTestCase {
 
         XCTAssertEqual(protocolTopicSection.title, "Instance Methods")
         XCTAssertEqual(protocolTopicSection.identifiers, [
-            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+            "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
         ])
 
         let overloadGroupRenderNode = try renderNode(
-            atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be",
+            atPath: "/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)",
             fromTestBundleNamed: "OverloadedSymbols")
 
         XCTAssertEqual(
@@ -778,7 +778,7 @@ class AutomaticCurationTests: XCTestCase {
 
             XCTAssertEqual(overloadTopic.title, "Instance Methods", file: file, line: line)
             XCTAssertEqual(overloadTopic.references.map(\.absoluteString), [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-9b6be"
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)"
             ], file: file, line: line)
         }
 

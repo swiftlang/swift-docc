@@ -193,6 +193,22 @@ extension PathHierarchy.DisambiguationContainer {
         includeLanguage: Bool = false,
         allowAdvancedDisambiguation: Bool = true
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+        var collisions = _disambiguatedValues(for: elements, includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
+        
+        // If all but one of the collisions are disfavored, remove the disambiguation for the only favored element.
+        if let onlyFavoredElementIndex = collisions.firstIndex(where: { !$0.value.specialBehaviors.contains(.disfavorInLinkCollision) }),
+           onlyFavoredElementIndex == collisions.lastIndex(where: { !$0.value.specialBehaviors.contains(.disfavorInLinkCollision) })
+        {
+            collisions[onlyFavoredElementIndex].disambiguation = .none
+        }
+        return collisions
+    }
+    
+    private static func _disambiguatedValues(
+        for elements: some Sequence<Element>,
+        includeLanguage: Bool = false,
+        allowAdvancedDisambiguation: Bool = true
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
         var remainingIDs = Set(elements.map(\.node.identifier))
@@ -213,8 +229,10 @@ extension PathHierarchy.DisambiguationContainer {
         }
         
         if allowAdvancedDisambiguation {
+            let elementsThatSupportAdvancedDisambiguation = elements.filter { !$0.node.specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation) }
+            
             // Next, if a symbol returns a tuple with a unique number of values, disambiguate by that (without specifying what those arguments are)
-            let groupedByReturnCount = [Int?: [Element]](grouping: elements, by: \.returnTypes?.count)
+            let groupedByReturnCount = [Int?: [Element]](grouping: elementsThatSupportAdvancedDisambiguation, by: \.returnTypes?.count)
             for (returnTypesCount, elements) in groupedByReturnCount  {
                 guard let returnTypesCount = returnTypesCount else { continue }
                 guard elements.count > 1 else {
@@ -245,7 +263,7 @@ extension PathHierarchy.DisambiguationContainer {
                 return collisions
             }
             
-            let groupedByParameterCount = [Int?: [Element]](grouping: elements, by: \.parameterTypes?.count)
+            let groupedByParameterCount = [Int?: [Element]](grouping: elementsThatSupportAdvancedDisambiguation, by: \.parameterTypes?.count)
             for (parameterTypesCount, elements) in groupedByParameterCount  {
                 guard let parameterTypesCount = parameterTypesCount else { continue }
                 guard elements.count > 1 else {

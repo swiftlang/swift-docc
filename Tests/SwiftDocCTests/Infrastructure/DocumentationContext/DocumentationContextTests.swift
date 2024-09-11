@@ -1365,7 +1365,7 @@ let expected = """
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/path
  │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/url
  ├ doc://org.swift.docc.example/documentation/SideKit/SideProtocol
- │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
+ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()
  │   ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
  ╰ doc://org.swift.docc.example/documentation/SideKit/UncuratedClass
  doc://org.swift.docc.example/tutorials/TestOverview
@@ -1793,7 +1793,7 @@ let expected = """
         
         // "/" is a separator in URL paths so it's replaced with with "_" (adding disambiguation if the replacement introduces conflicts)
         XCTAssertEqual("/(_:_:)",   pageIdentifiersAndNames["/documentation/Operators/MyNumber/_(_:_:)-7am4"])
-        XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)-3m4ko"])
+        XCTAssertEqual("/=(_:_:)",  pageIdentifiersAndNames["/documentation/Operators/MyNumber/_=(_:_:)"])
     }
     
     func testFileNamesWithDifferentPunctuation() throws {
@@ -2391,7 +2391,7 @@ let expected = """
         XCTAssertEqual(context.documentationCache.reference(symbolID: "s:7SideKit0A5ClassC10testEE")?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
         XCTAssertEqual(context.documentationCache.reference(symbolID: "s:7SideKit0A5ClassC10tEstPP")?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
         
-        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5MyProtocol0Afunc()")?.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
+        XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5MyProtocol0Afunc()")?.path, "/documentation/SideKit/SideProtocol/func()")
         XCTAssertEqual(context.documentationCache.reference(symbolID: "s:5MyKit0A5MyProtocol0Afunc()DefaultImp")?.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
     }
 
