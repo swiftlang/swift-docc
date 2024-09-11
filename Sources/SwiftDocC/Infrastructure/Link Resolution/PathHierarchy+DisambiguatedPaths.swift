@@ -369,7 +369,7 @@ extension PathHierarchy.DisambiguationContainer {
         case returnTypes([String])
         
         /// Returns the kind or hash value that disambiguates this node.
-        func value() -> String! {
+        func value() -> String? {
             switch self {
             case .none:
                 return nil

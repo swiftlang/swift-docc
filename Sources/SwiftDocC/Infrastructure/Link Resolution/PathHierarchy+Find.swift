@@ -490,13 +490,13 @@ extension PathHierarchy.DisambiguationContainer {
                 let matches = storage.filter({ $0.kind == kind })
                 guard matches.count <= 1 else {
                     // Suggest not only hash disambiguation, but also type signature disambiguation.
-                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.value()) })
+                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.makeSuffix()) })
                 }
                 return matches.first?.node
             case (nil, let hash?):
                 let matches = storage.filter({ $0.hash == hash })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
+                    throw Error.lookupCollision(matches.map { ($0.node, "-" + $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
                 }
                 return matches.first?.node
             case (nil, nil):
@@ -509,13 +509,13 @@ extension PathHierarchy.DisambiguationContainer {
             case (let parameterTypes?, nil):
                 let matches = storage.filter({ typesMatch(provided: parameterTypes, actual: $0.parameterTypes) })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, formattedTypes($0.parameterTypes)!) }) // An element wouldn't match if it didn't have parameter type disambiguation.
+                    throw Error.lookupCollision(matches.map { ($0.node, "->" + formattedTypes($0.parameterTypes)!) }) // An element wouldn't match if it didn't have parameter type disambiguation.
                 }
                 return matches.first?.node
             case (nil, let returnTypes?):
                 let matches = storage.filter({ typesMatch(provided: returnTypes, actual: $0.returnTypes) })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, formattedTypes($0.returnTypes)!) }) // An element wouldn't match if it didn't have return type disambiguation.
+                    throw Error.lookupCollision(matches.map { ($0.node, "-" + formattedTypes($0.returnTypes)!) }) // An element wouldn't match if it didn't have return type disambiguation.
                 }
                 return matches.first?.node
             case (nil, nil):
@@ -526,7 +526,7 @@ extension PathHierarchy.DisambiguationContainer {
         }
 
         // Disambiguate by a mix of kinds and USRs
-        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.value()) })
+        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.makeSuffix()) })
     }
 }
 

@@ -318,15 +318,15 @@ class PathHierarchyTests: XCTestCase {
         //     public typealias Something = Int
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingyA2CmF", disambiguation: "enum.case"),
-            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp", disambiguation: "property"),
+            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingyA2CmF", disambiguation: "-enum.case"),
+            (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp", disambiguation: "-property"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, context: context, expectedErrorMessage: """
         'something' is ambiguous at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'enum.case' for \n'case something'", replacements: [("-enum.case", 54, 54)]),
-                .init(summary: "Insert 'property' for \n'var something: String { get }'", replacements: [("-property", 54, 54)]),
+                .init(summary: "Insert '-enum.case' for \n'case something'", replacements: [("-enum.case", 54, 54)]),
+                .init(summary: "Insert '-property' for \n'var something: String { get }'", replacements: [("-property", 54, 54)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something-class", in: tree, context: context, expectedErrorMessage: """
@@ -348,9 +348,9 @@ class PathHierarchyTests: XCTestCase {
         //     public static func `init`() { }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCACycfc", disambiguation: "init"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF", disambiguation: "method"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "type.method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCACycfc", disambiguation: "-init"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF", disambiguation: "-method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "-type.method"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'
@@ -365,9 +365,9 @@ class PathHierarchyTests: XCTestCase {
         'init()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' for \n'func `init`()'", replacements: [("-method", 52, 52)]),
-                .init(summary: "Insert 'init' for \n'init()'", replacements: [("-init", 52, 52)]),
-                .init(summary: "Insert 'type.method' for \n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
+                .init(summary: "Insert '-method' for \n'func `init`()'", replacements: [("-method", 52, 52)]),
+                .init(summary: "Insert '-init' for \n'init()'", replacements: [("-init", 52, 52)]),
+                .init(summary: "Insert '-type.method' for \n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
@@ -394,17 +394,17 @@ class PathHierarchyTests: XCTestCase {
         }
         
         try assertPathCollision("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyF", disambiguation: "method"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip", disambiguation: "subscript"),
-            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "type.method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyF", disambiguation: "-method"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip", disambiguation: "-subscript"),
+            (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "-type.method"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: """
         'subscript()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' for \n'func `subscript`()'", replacements: [("-method", 57, 57)]),
-                .init(summary: "Insert 'type.method' for \n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
-                .init(summary: "Insert 'subscript' for \n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
+                .init(summary: "Insert '-method' for \n'func `subscript`()'", replacements: [("-method", 57, 57)]),
+                .init(summary: "Insert '-type.method' for \n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
+                .init(summary: "Insert '-subscript' for \n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
             ])
         }
         
@@ -413,15 +413,15 @@ class PathHierarchyTests: XCTestCase {
         //     public func something(argument: String) -> Int { 0 }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "(Int)"),
-            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "(String)"),
+            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "-(Int)"),
+            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "-(String)"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 77)]),
-                .init(summary: "Insert '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 77)]),
+                .init(summary: "Insert '-(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 77)]),
+                .init(summary: "Insert '-(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 77)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -429,8 +429,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 91)]),
-                .init(summary: "Insert '(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 91)]),
+                .init(summary: "Insert '-(Int)' for \n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 91)]),
+                .init(summary: "Insert '-(String)' for \n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 91)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
@@ -480,15 +480,15 @@ class PathHierarchyTests: XCTestCase {
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "(Int)"),
-            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "(String)"),
+            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "-(Int)"),
+            (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "-(String)"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
         'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '(Int)' for \n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 71)]),
-                .init(summary: "Insert '(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 71)]),
+                .init(summary: "Insert '-(Int)' for \n'subscript(something: Int) -> Int { get }'", replacements: [("-(Int)", 71, 71)]),
+                .init(summary: "Insert '-(String)' for \n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-(String)", 71, 71)]),
             ])
         }
         
@@ -1184,17 +1184,17 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction:error:", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
 
         try assertPathCollision("MixedLanguageFramework/Foo", in: tree, collisions: [
-            ("c:@E@Foo", "enum"),
-            ("c:@E@Foo", "struct"),
-            ("c:MixedLanguageFramework.h@T@Foo", "typealias"),
+            ("c:@E@Foo", "-enum"),
+            ("c:@E@Foo", "-struct"),
+            ("c:MixedLanguageFramework.h@T@Foo", "-typealias"),
         ])
         try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: """
         'Foo' is ambiguous at '/MixedLanguageFramework'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'struct' for \n'struct Foo'", replacements: [("-struct", 26, 26)]),
-                .init(summary: "Insert 'enum' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
-                .init(summary: "Insert 'typealias' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
+                .init(summary: "Insert '-struct' for \n'struct Foo'", replacements: [("-struct", 26, 26)]),
+                .init(summary: "Insert '-enum' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
+                .init(summary: "Insert '-typealias' for \n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
             ])
         } // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         
@@ -1311,6 +1311,25 @@ class PathHierarchyTests: XCTestCase {
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife")
         XCTAssertEqual(hashAndKindDisambiguatedPaths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0")
+        
+        // Verify suggested parameter type value disambiguation
+        try assertPathCollision("/ShapeKit/OverloadedEnum/firstTestMemberName(_:)", in: tree, collisions: [
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF", disambiguation: "-(Double)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF", disambiguation: "-(Float)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF", disambiguation: "-(Int)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF", disambiguation: "-(String)"),
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF", disambiguation: "-([Double])"),
+            // This enum case is in the same collision as the functions are
+            (symbolID: "s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyACSScACmF", disambiguation: "-enum.case"),
+        ])
+        
+        // Verify suggested return type disambiguation
+        try assertPathCollision("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)", in: tree, collisions: [
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSdSS_tF", disambiguation: "->Double"),
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSfSS_tF", disambiguation: "->Float"),
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testSiSS_tF", disambiguation: "->Int"),
+            (symbolID: "s:8ShapeKit18OverloadedProtocolP20fourthTestMemberName4testS2S_tF", disambiguation: "->String"),
+        ])
     }
 
     func testOverloadedSymbolsWithOverloadGroups() throws {
@@ -1349,8 +1368,6 @@ class PathHierarchyTests: XCTestCase {
         // Because there are two collisions with the same signature, this method can only be uniquely disambiguated with its hash.
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
-        XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
     }
     
     func testApplyingSyntaxSugarToTypeName() {
@@ -1736,13 +1753,13 @@ class PathHierarchyTests: XCTestCase {
         try assertPathRaisesErrorMessage("/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'fourthTestMemberName(test:)' at '/ShapeKit/OverloadedProtocol'
         """) { error in
-            XCTAssertEqual(error.solutions, [
-                .init(summary: "Remove '-abc123' for\n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-8iuz7' for\n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-1h173' for\n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("-1h173", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-91hxs' for\n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("-91hxs", 56, 63)]),
-                .init(summary: "Replace '-abc123' with '-961zx' for\n'func fourthTestMemberName(test: String) -> String\'", replacements: [("-961zx", 56, 63)]),
-            ])
+            XCTAssertEqual(error.solutions.count, 5)
+            
+            XCTAssertEqual(error.solutions.dropFirst(0).first, .init(summary: "Remove '-abc123' for \n'fourthTestMemberName(test:)'", replacements: [("", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(1).first, .init(summary: "Replace 'abc123' with '8iuz7' for \n'func fourthTestMemberName(test: String) -> Double\'", replacements: [("-8iuz7", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(2).first, .init(summary: "Replace '-abc123' with '->Float' for \n'func fourthTestMemberName(test: String) -> Float\'", replacements: [("->Float", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(3).first, .init(summary: "Replace '-abc123' with '->Int' for \n'func fourthTestMemberName(test: String) -> Int\'", replacements: [("->Int", 56, 63)]))
+            XCTAssertEqual(error.solutions.dropFirst(4).first, .init(summary: "Replace '-abc123' with '->String' for \n'func fourthTestMemberName(test: String) -> String\'", replacements: [("->String", 56, 63)]))
         }
     }
 
@@ -1838,13 +1855,13 @@ class PathHierarchyTests: XCTestCase {
         let tree = context.linkResolver.localResolver.pathHierarchy
 
         try assertPathCollision("Outer/Inner", in: tree, collisions: [
-            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "module.extension"),
-            ("s:5Outer5InnerV", "struct"),
+            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "-module.extension"),
+            ("s:5Outer5InnerV", "-struct"),
         ])
         // If the first path component is ambiguous, it should have the same error as if that was a later path component.
         try assertPathCollision("Inner", in: tree, collisions: [
-            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "module.extension"),
-            ("s:5Outer5InnerV", "struct"),
+            ("s:m:s:e:s:5Inner0A5ClassC5OuterE9somethingyyF", "-module.extension"),
+            ("s:5Outer5InnerV", "-struct"),
         ])
         
         try assertFindsPath("Inner-struct", in: tree, asSymbolID: "s:5Outer5InnerV")
@@ -2651,8 +2668,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass operator+() const;                     // unary plus
         // MyClass operator+(const MyClass& other) const; // addition
         try assertPathCollision("/CxxOperators/MyClass/operator+", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator+#1", disambiguation: "()"),
-            (symbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1", disambiguation: "(_)"),
+            (symbolID: "c:@S@MyClass@F@operator+#1", disambiguation: "-()"),
+            (symbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1", disambiguation: "-(_)"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator+-15qb6", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#1")
         try assertFindsPath("/CxxOperators/MyClass/operator+-8k1ef", in: tree, asSymbolID: "c:@S@MyClass@F@operator+#&1$@S@MyClass#1")
@@ -2664,8 +2681,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass operator-() const;                     // unary minus
         // MyClass operator-(const MyClass& other) const; // subtraction
         try assertPathCollision("/CxxOperators/MyClass/operator-", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator-#1", disambiguation: "()"),
-            (symbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1", disambiguation: "(_)"),
+            (symbolID: "c:@S@MyClass@F@operator-#1", disambiguation: "-()"),
+            (symbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1", disambiguation: "-(_)"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator--1c6gw", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#1")
         try assertFindsPath("/CxxOperators/MyClass/operator--6knvo", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#&1$@S@MyClass#1")
@@ -2677,8 +2694,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator*();                          // indirect access
         // MyClass operator*(const MyClass& other) const; // multiplication
         try assertPathCollision("/CxxOperators/MyClass/operator*", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1", disambiguation: ">MyClass"),
-            (symbolID: "c:@S@MyClass@F@operator*#", disambiguation: ">MyClass&"),
+            (symbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator*#", disambiguation: "->MyClass&"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator*-6oso3", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#&1$@S@MyClass#1")
         try assertFindsPath("/CxxOperators/MyClass/operator*-8vjwm", in: tree, asSymbolID: "c:@S@MyClass@F@operator*#")
@@ -2702,8 +2719,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass* operator&();                          // address-of
         // MyClass operator&(const MyClass& other) const; // bitwise and
         try assertPathCollision("/CxxOperators/MyClass/operator&", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1", disambiguation: ">MyClass"),
-            (symbolID: "c:@S@MyClass@F@operator&#", disambiguation: ">MyClass*"),
+            (symbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator&#", disambiguation: "->MyClass*"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator&-3ob2f", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#&1$@S@MyClass#1")
         try assertFindsPath("/CxxOperators/MyClass/operator&-8vnp2", in: tree, asSymbolID: "c:@S@MyClass@F@operator&#")
@@ -2726,8 +2743,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass operator++(int); // post-increment
         // MyClass& operator++();   // pre-increment
         try assertPathCollision("/CxxOperators/MyClass/operator++", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator++#I#", disambiguation: ">MyClass"),
-            (symbolID: "c:@S@MyClass@F@operator++#", disambiguation: ">MyClass&"),
+            (symbolID: "c:@S@MyClass@F@operator++#I#", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator++#", disambiguation: "->MyClass&"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator++-68oe0", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#I#")
         try assertFindsPath("/CxxOperators/MyClass/operator++-15swg", in: tree, asSymbolID: "c:@S@MyClass@F@operator++#")
@@ -2742,8 +2759,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass operator--(int); // post-decrement
         // MyClass& operator--();   // pre-decrement
         try assertPathCollision("/CxxOperators/MyClass/operator--", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator-#I#", disambiguation: ">MyClass"),
-            (symbolID: "c:@S@MyClass@F@operator-#", disambiguation: ">MyClass&"),
+            (symbolID: "c:@S@MyClass@F@operator-#I#", disambiguation: "->MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator-#", disambiguation: "->MyClass&"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator---9wv7m", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#I#")
         try assertFindsPath("/CxxOperators/MyClass/operator---8vk0i", in: tree, asSymbolID: "c:@S@MyClass@F@operator-#")
@@ -2789,9 +2806,9 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator=(const MyClass& other);  // copy assignment
         // MyClass& operator=(const MyClass&& other); // move assignment
         try assertPathCollision("/CxxOperators/MyClass/operator=", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#", disambiguation: "(MyClass&&)"),
-            (symbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#", disambiguation: "(MyClass&)"),
-            (symbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#", disambiguation: ">MyClass"),
+            (symbolID: "c:@S@MyClass@F@operator=#&&1$@S@MyClass#", disambiguation: "-(MyClass&&)"),
+            (symbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#", disambiguation: "-(MyClass&)"),
+            (symbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#", disambiguation: "->MyClass"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator=-5360m", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#1$@S@MyClass#")
         try assertFindsPath("/CxxOperators/MyClass/operator=-36ink", in: tree, asSymbolID: "c:@S@MyClass@F@operator=#&1$@S@MyClass#")
@@ -2836,8 +2853,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator[](std::string& key);              // subscript
         // static void operator[](MyClass& lhs, MyClass& rhs); // subscript
         try assertPathCollision("/CxxOperators/MyClass/operator[]", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S", disambiguation: ">()"),
-            (symbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#", disambiguation: ">_"),
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S", disambiguation: "->()"),
+            (symbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#", disambiguation: "->_"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator[]-9758f", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@N@std@N@__1@S@basic_string>#C#$@N@std@N@__1@S@char_traits>#C#$@N@std@N@__1@S@allocator>#C#")
         try assertFindsPath("/CxxOperators/MyClass/operator[]-8qcye", in: tree, asSymbolID: "c:@S@MyClass@F@operator[]#&$@S@MyClass#S0_#S")
@@ -2863,8 +2880,8 @@ class PathHierarchyTests: XCTestCase {
         // MyClass& operator()(MyClass& arg1, MyClass& arg2, MyClass& arg3); // function-call
         // static void operator()(MyClass& lhs, MyClass& rhs);               // function-call
         try assertPathCollision("/CxxOperators/MyClass/operator()", in: tree, collisions: [
-            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S", disambiguation: ">()"),
-            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#", disambiguation: ">_"),
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S", disambiguation: "->()"),
+            (symbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#", disambiguation: "->_"),
         ])
         try assertFindsPath("/CxxOperators/MyClass/operator()-65g9a", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S0_#")
         try assertFindsPath("/CxxOperators/MyClass/operator()-212ks", in: tree, asSymbolID: "c:@S@MyClass@F@operator()#&$@S@MyClass#S0_#S")
@@ -3154,12 +3171,23 @@ private extension TopicReferenceResolutionErrorInfo {
     }
 }
 
-private struct SimplifiedSolution: Equatable {
+private struct SimplifiedSolution: Equatable, CustomStringConvertible {
     let summary: String
     let replacements: [(String, start: Int, end: Int)]
     
     static func == (lhs: SimplifiedSolution, rhs: SimplifiedSolution) -> Bool {
         return lhs.summary == rhs.summary
             && lhs.replacements.elementsEqual(rhs.replacements, by: ==)
+    }
+    
+    var description: String {
+        """
+        {
+          summary: \(summary.components(separatedBy: .newlines).joined(separator: "\n           "))
+          replacements: [
+          \(replacements.map { "    \"\($0.0)\" at \($0.start)-\($0.end)" }.joined(separator: "\n"))
+          ]
+        }
+        """
     }
 }
