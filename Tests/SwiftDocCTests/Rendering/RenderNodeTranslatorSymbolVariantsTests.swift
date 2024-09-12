@@ -1040,6 +1040,25 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    /// Tests that APIs don't inherit platform availability from their variant in other languages.
+    ///
+    /// The `DeprecatedInOneLanguageOnly` catalog defines a symbol `MyClass` which has availability
+    /// annotations in Swift but not in Objective-C. This test verifies that the Swift render node for `MyClass` does
+    /// indeed include availability information, but that the Objective-C one doesn't.
+    func testDoesNotInheritAvailabilityFromOtherLanguage() throws {
+        try assertMultiVariantSymbol(
+            bundleName: "DeprecatedInOneLanguageOnly",
+            assertOriginalRenderNode: { renderNode in
+                XCTAssert(renderNode.metadata.platforms?.isEmpty == false)
+            }, assertAfterApplyingVariant: { renderNode in
+                XCTAssertNil(
+                    renderNode.metadata.platforms,
+                    "Unexpectedly inherited documentation from the Swift symbol graph."
+                )
+            }
+        )
+    }
+    
     func testTopicRenderReferenceVariants() throws {
         func myFunctionReference(in renderNode: RenderNode) throws -> TopicRenderReference {
             return try XCTUnwrap(
@@ -1086,6 +1105,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     }
     
     private func assertMultiVariantSymbol(
+        bundleName: String = "TestBundle",
         configureContext: (DocumentationContext, ResolvedTopicReference) throws -> () = { _, _ in },
         configureSymbol: (Symbol) throws -> () = { _ in },
         configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
@@ -1093,7 +1113,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (_, bundle, context) = try testBundleAndContext(copying: bundleName)
         
         let identifier = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,

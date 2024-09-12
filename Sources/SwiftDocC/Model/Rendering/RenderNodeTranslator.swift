@@ -1238,8 +1238,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
         
+        let defaultAvailability = defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.externalMetadata.currentPlatforms)?
+            .filter { $0.unconditionallyUnavailable != true }
+            .sorted(by: AvailabilityRenderOrder.compare)
+        
         node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
-            availability.availability
+            guard !availability.availability.isEmpty else {
+                return defaultAvailability
+            }
+            
+            return availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
                     // Filter items with insufficient availability data
                     guard availability.introducedVersion != nil else {
@@ -1255,11 +1263,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
-        } ?? .init(defaultValue:
-            defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.externalMetadata.currentPlatforms)?
-                .filter({ !($0.unconditionallyUnavailable == true) })
-                .sorted(by: AvailabilityRenderOrder.compare)
-        )
+        } ?? .init(defaultValue: defaultAvailability)
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
