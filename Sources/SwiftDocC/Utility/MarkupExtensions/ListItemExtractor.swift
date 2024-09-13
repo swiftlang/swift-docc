@@ -284,37 +284,38 @@ private struct ExtractedTag {
         case httpBodyParameters
         
         init?(_ string: String) {
-            let components = string.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
+            let separatorIndex = string.firstIndex(where: \.isWhitespace) ?? string.endIndex
+            let secondComponent = String(string[separatorIndex...].drop(while: \.isWhitespace))
             
-            switch components.first?.lowercased() {
+            switch string[..<separatorIndex].lowercased() {
             case "returns":
                 self = .returns
             case "throws":
                 self = .throws
-            case "parameter" where components.count == 2:
-                self = .parameter(String(components.last!))
+            case "parameter" where !secondComponent.isEmpty:
+                self = .parameter(secondComponent)
             case "parameters":
                 self = .parameters
-            case "dictionarykey" where components.count == 2:
-                self = .dictionaryKey(String(components.last!))
+            case "dictionarykey" where !secondComponent.isEmpty:
+                self = .dictionaryKey(secondComponent)
             case "dictionarykeys":
                 self = .dictionaryKeys
-            case "possiblevalue" where components.count == 2:
-                self = .possibleValue(String(components.last!))
+            case "possiblevalue" where !secondComponent.isEmpty:
+                self = .possibleValue(secondComponent)
             case "possiblevalues":
                 self = .possibleValues
             case "httpbody":
                 self = .httpBody
-            case "httpresponse" where components.count == 2:
-                self = .httpResponse(String(components.last!))
+            case "httpresponse" where !secondComponent.isEmpty:
+                self = .httpResponse(secondComponent)
             case "httpresponses":
                 self = .httpResponses
-            case "httpparameter" where components.count == 2:
-                self = .httpParameter(String(components.last!))
+            case "httpparameter" where !secondComponent.isEmpty:
+                self = .httpParameter(secondComponent)
             case "httpparameters":
                 self = .httpParameters
-            case "httpbodyparameter" where components.count == 2:
-                self = .httpBodyParameter(String(components.last!))
+            case "httpbodyparameter" where !secondComponent.isEmpty:
+                self = .httpBodyParameter(secondComponent)
             case "httpbodyparameters":
                 self = .httpBodyParameters
             default:
