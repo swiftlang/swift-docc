@@ -1024,6 +1024,26 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.deprecatedSummaryVariants[.objectiveC] = DeprecatedSection(
                     text: "Objective-C Deprecation Variant"
                 )
+                
+                // Explicitly mark this symbol as deprecated in both Swift and Objective-C,
+                // otherwise the deprecation summary is ignored.
+                symbol.availabilityVariants[.swift] = .init(
+                    availability: [
+                        .init(
+                            domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),
+                            introducedVersion: .init(major: 15, minor: 0, patch: 0),
+                            deprecatedVersion: .init(major: 15, minor: 1, patch: 0),
+                            obsoletedVersion: nil,
+                            message: nil,
+                            renamed: nil,
+                            isUnconditionallyDeprecated: false,
+                            isUnconditionallyUnavailable: false,
+                            willEventuallyBeDeprecated: false
+                        )
+                    ]
+                )
+                
+                symbol.availabilityVariants[.objectiveC] = symbol.availabilityVariants[.swift]
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(
@@ -1059,6 +1079,58 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    /// Tests that deprecation summaries only show up on variants of pages that are actually deprecated.
+    func testIncludesDeprecationSummaryOnlyInDeprecatedVariantOfSymbol() throws {
+        let deprecatedOnOnePlatform = SymbolGraph.Symbol.Availability.AvailabilityItem(
+            domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),
+            introducedVersion: .init(major: 15, minor: 0, patch: 0),
+            deprecatedVersion: .init(major: 15, minor: 1, patch: 0),
+            obsoletedVersion: nil,
+            message: nil,
+            renamed: nil,
+            isUnconditionallyDeprecated: false,
+            isUnconditionallyUnavailable: false,
+            willEventuallyBeDeprecated: false
+        )
+        
+        let unconditionallyDeprecated = SymbolGraph.Symbol.Availability.AvailabilityItem(
+            domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.macOS),
+            introducedVersion: .init(major: 15, minor: 0, patch: 0),
+            deprecatedVersion: nil,
+            obsoletedVersion: nil,
+            message: nil,
+            renamed: nil,
+            isUnconditionallyDeprecated: true,
+            isUnconditionallyUnavailable: false,
+            willEventuallyBeDeprecated: false
+        )
+        
+        for deprecatedAvailability in [deprecatedOnOnePlatform, unconditionallyDeprecated] {
+            try assertMultiVariantSymbol(
+                configureSymbol: { symbol in
+                    symbol.deprecatedSummaryVariants[.swift] = DeprecatedSection(
+                        text: "Deprecation summary"
+                    )
+                    
+                    symbol.availabilityVariants[.swift] = .init(
+                        availability: [deprecatedAvailability]
+                    )
+                    
+                    // Explicitly remove availability information for the Objective-C variant of this symbol.
+                    symbol.availabilityVariants[.objectiveC] = nil
+                },
+                assertOriginalRenderNode: { renderNode in
+                    XCTAssertNotNil(renderNode.deprecationSummary)
+                }, assertAfterApplyingVariant: { renderNode in
+                    XCTAssert(
+                        renderNode.deprecationSummary?.isEmpty == true,
+                        "Unexpectedly found a deprecation summary in the Objective-C variant of the page."
+                    )
+                }
+            )
+        }
+    }
+
     func testTopicRenderReferenceVariants() throws {
         func myFunctionReference(in renderNode: RenderNode) throws -> TopicRenderReference {
             return try XCTUnwrap(

@@ -1652,12 +1652,39 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return seeAlsoSections
         } ?? .init(defaultValue: [])
         
-        node.deprecationSummaryVariants = VariantCollection<[RenderBlockContent]?>(
-            from: symbol.deprecatedSummaryVariants
-        ) { _, deprecatedSummary in
-            // If there is a deprecation summary in a documentation extension file add it to the render node
-            visitMarkupContainer(MarkupContainer(deprecatedSummary.content)) as? [RenderBlockContent]
-        } ?? .init(defaultValue: nil)
+        /// The set of traits in which the symbol is deprecated in at least one platform.
+        let traitsInWhichSymbolsIsDeprecated = documentationNode.availableVariantTraits.filter { trait in
+            guard let platforms = symbol.availabilityVariants[trait]?.availability else {
+                return false
+            }
+            
+            return platforms.contains(where: { platform in
+                platform.deprecatedVersion != nil || platform.isUnconditionallyDeprecated
+            })
+        }
+        
+        node.deprecationSummaryVariants = VariantCollection(
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: nil,
+            transform: { trait in
+                if traitsInWhichSymbolsIsDeprecated.contains(trait) || traitsInWhichSymbolsIsDeprecated.isEmpty {
+                    // It's possible for a symbol to only be deprecated in _some_ of its language representations
+                    // In this case, only display the deprecation information for those language representations.
+                    //
+                    // Also, previous versions of DocC treated a page as deprecated if it had a custom `@DeprecationSummmary` description,
+                    // even if the symbol wasn't deprecated. We preserve that behavior for backwards compatibility.
+                    // TODO: Warn about using `@DeprecationSummmary` for non-deprecated pages,
+                    // suggesting to use `@Available` to add deprecation information.
+                    guard let deprecatedSummary = symbol.deprecatedSummaryVariants[trait] else {
+                        return nil
+                    }
+                    
+                    return visitMarkupContainer(MarkupContainer(deprecatedSummary.content)) as? [RenderBlockContent]
+                }
+                
+                return []
+            }
+        ) ?? .init(defaultValue: nil)
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
