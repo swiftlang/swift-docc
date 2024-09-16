@@ -687,8 +687,11 @@ class DefaultAvailabilityTests: XCTestCase {
         // Don't use default availability version for symbols.
         
         var context = try setupContext(inheritDefaultAvailability: """
-        <key>CDInheritDefaultAvailability</key>
-        <string>platformOnly</string>
+        <key>CDDefaultAvailabilityOptions</key>
+        <dict>
+            <key>InheritVersionNumber</key>
+            <false/>
+        </dict>
         """)
         
         // Verify we add the version number into the symbols that have availability annotation.
@@ -710,8 +713,11 @@ class DefaultAvailabilityTests: XCTestCase {
         // Add an extra default availability to test behaviour when mixin in source with default behaviour.
         context = try setupContext(
             inheritDefaultAvailability: """
-            <key>CDInheritDefaultAvailability</key>
-            <string>platformOnly</string>
+            <key>CDDefaultAvailabilityOptions</key>
+            <dict>
+                <key>InheritVersionNumber</key>
+                <false/>
+            </dict>
             """,
             defaultAvailability: """
             <dict>
@@ -742,8 +748,11 @@ class DefaultAvailabilityTests: XCTestCase {
         // Use default availability version for symbols.
         
         context = try setupContext(inheritDefaultAvailability: """
-        <key>CDInheritDefaultAvailability</key>
-        <string>platformAndVersion</string>
+        <key>CDDefaultAvailabilityOptions</key>
+        <dict>
+            <key>InheritVersionNumber</key>
+            <true/>
+        </dict>
         """)
         
         // Verify we add the version number into the symbols that have availability annotation.

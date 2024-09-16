@@ -64,7 +64,7 @@ struct SymbolGraphLoader {
             guard let defautAvailabilities else { return nil }
             // Check the selected behaviour for inheritance of the default availability and remove the avaialbity
             // version if it's set to  `platformOnly`.
-            if bundle.info.inheritDefaultAvailability == .platformOnly {
+            if !bundle.info.defaultAvailabilityOptions.options.contains(.inheritVersionNumber) {
                 return defautAvailabilities.map { defaultAvailability in
                     var defaultAvailability = defaultAvailability
                     switch defaultAvailability.versionInformation {
