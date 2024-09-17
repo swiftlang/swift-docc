@@ -186,7 +186,6 @@ extension PathHierarchy.PathParser {
         
         let possibleDisambiguationText: Substring
         if let name = parseOperatorName(original) {
-            print("\(name)\n\(original)\n\n")
             possibleDisambiguationText = original[name.endIndex...]
         } else {
             possibleDisambiguationText = original
