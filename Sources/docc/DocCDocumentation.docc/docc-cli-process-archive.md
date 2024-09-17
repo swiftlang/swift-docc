@@ -1,4 +1,4 @@
-# `process-archive`
+# process-archive
 
 Perform operations on documentation archives ('.doccarchive' directories).
 
@@ -8,8 +8,8 @@ Perform operations on documentation archives ('.doccarchive' directories).
 
 ### Subcommands
 
-- `transform-for-static-hosting`
+- term `transform-for-static-hosting`:
   - `docc process-archive transform-for-static-hosting [<source-archive-path>] [--output-path <output-path>] [--hosting-base-path <hosting-base-path>]`
 
-- `index`
+- term `index`:
   - `docc process-archive index [<source-archive-path>] --bundle-identifier <bundle-identifier> [--verbose]`
