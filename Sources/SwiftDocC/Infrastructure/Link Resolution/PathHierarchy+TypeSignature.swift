@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -41,7 +41,7 @@ extension PathHierarchy {
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
     
     private static func typeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
-        var accumulated = ""[...]
+        var accumulated = Substring()
         
         for fragment in fragments {
             switch fragment.kind {
