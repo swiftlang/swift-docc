@@ -196,9 +196,7 @@ extension PathHierarchy.DisambiguationContainer {
         var collisions = _disambiguatedValues(for: elements, includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
         
         // If all but one of the collisions are disfavored, remove the disambiguation for the only favored element.
-        if let onlyFavoredElementIndex = collisions.firstIndex(where: { !$0.value.isDisfavoredInLinkCollisions }),
-           onlyFavoredElementIndex == collisions.lastIndex(where: { !$0.value.isDisfavoredInLinkCollisions })
-        {
+        if let onlyFavoredElementIndex = collisions.onlyIndex(where: { !$0.value.isDisfavoredInLinkCollisions }) {
             collisions[onlyFavoredElementIndex].disambiguation = .none
         }
         return collisions
@@ -428,5 +426,23 @@ extension PathHierarchy.DisambiguationContainer {
                 return self
             }
         }
+    }
+}
+
+private extension Collection {
+    /// Returns the only index of the collection that satisfies the given predicate.
+    /// - Parameters:
+    ///   - predicate: A closure that takes an element of the collection as its argument and returns a Boolean value indicating whether the element is a match.
+    /// - Returns: The index of the only element that satisfies `predicate`, or `nil` if  multiple elements satisfy the predicate or if no element satisfy the predicate.
+    /// - Complexity: O(_n_), where _n_ is the length of the collection.
+    func onlyIndex(where predicate: (Element) throws -> Bool) rethrows -> Index? {
+        guard let matchingIndex = try firstIndex(where: predicate),
+              // Ensure that there are no other matches in the rest of the collection
+              try !self[index(after: matchingIndex)...].contains(where: predicate)
+        else {
+            return nil
+        }
+        
+        return matchingIndex
     }
 }
