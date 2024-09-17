@@ -17,19 +17,24 @@ import SwiftDocCTestUtilities
 extension XCTestCase {
     
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
-    func loadBundle(from bundleURL: URL,
-                    externalResolvers: [String: ExternalDocumentationSource] = [:],
-                    externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
-                    fallbackResolver: ConvertServiceFallbackResolver? = nil,
-                    diagnosticFilterLevel: DiagnosticSeverity = .hint,
-                    configureContext: ((DocumentationContext) throws -> Void)? = nil
+    func loadBundle(
+        from bundleURL: URL,
+        externalResolvers: [String: ExternalDocumentationSource] = [:],
+        externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
+        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        diagnosticFilterLevel: DiagnosticSeverity = .hint,
+        configuration: DocumentationContext.Configuration = .init(),
+        configureContext: ((DocumentationContext) throws -> Void)? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
-        context.configuration.externalDocumentationConfiguration.sources = externalResolvers
-        context.configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
-        context.configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
-        context.configuration.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        
+        var configuration = configuration
+        configuration.externalDocumentationConfiguration.sources = externalResolvers
+        configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
+        configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
+        configuration.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        
+        let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel), configuration: configuration)
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
@@ -45,15 +50,17 @@ extension XCTestCase {
     /// - Parameters:
     ///   - catalog: The directory structure of the documentation catalog
     ///   - otherFileSystemDirectories: Any other directories in the test file system.
+    ///   - configuration: Configuration for the created context.
     ///   - configureContext: A closure where the caller can configure the context before registering the data provider with the context.
     /// - Returns: The loaded documentation bundle and context for the given catalog input.
     func loadBundle(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
+        configuration: DocumentationContext.Configuration = .init(),
         configureContext: (DocumentationContext) throws -> Void = { _ in }
     ) throws -> (DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
+        let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
         try configureContext(context)
         
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
@@ -64,12 +71,14 @@ extension XCTestCase {
         return (bundle, context)
     }
     
-    func testBundleAndContext(copying name: String,
-                              excludingPaths excludedPaths: [String] = [],
-                              externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
-                              externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
-                              fallbackResolver: ConvertServiceFallbackResolver? = nil,
-                              configureBundle: ((URL) throws -> Void)? = nil
+    func testBundleAndContext(
+        copying name: String,
+        excludingPaths excludedPaths: [String] = [],
+        externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
+        externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
+        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        configuration: DocumentationContext.Configuration = .init(),
+        configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
@@ -94,14 +103,19 @@ extension XCTestCase {
             from: bundleURL,
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
-            fallbackResolver: fallbackResolver
+            fallbackResolver: fallbackResolver,
+            configuration: configuration
         )
     }
     
-    func testBundleAndContext(named name: String, externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(
+        named name: String,
+        externalResolvers: [String: ExternalDocumentationSource] = [:],
+        fallbackResolver: ConvertServiceFallbackResolver? = nil
+    ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        return try loadBundle(from: bundleURL, externalResolvers: externalResolvers)
+        return try loadBundle(from: bundleURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver)
     }
     
     func testBundleAndContext(named name: String, externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {

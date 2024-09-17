@@ -76,8 +76,9 @@ class ExternalReferenceResolverTests: XCTestCase {
         let bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
         
         let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        context.configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
 
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
@@ -167,6 +168,9 @@ class ExternalReferenceResolverTests: XCTestCase {
         )
     }
     
+    // This test verifies the behavior of a deprecated functionality (changing external documentation sources after registering the documentation)
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
         let workspace = DocumentationWorkspace()
         let bundle = try testBundle(named: "TestBundle")
@@ -231,17 +235,10 @@ class ExternalReferenceResolverTests: XCTestCase {
     }
     
     func testLoadEntityForExternalReference() throws {
-        let workspace = DocumentationWorkspace()
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-        let context = try DocumentationContext(dataProvider: workspace)
-        context.configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
-        
+        let (_, context) = try testBundleAndContext(named: "TestBundle", externalResolvers: ["com.external.testbundle" : TestExternalReferenceResolver()])
         let identifier = ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)
         
         XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "some.other.bundle", path: identifier.path, sourceLanguage: .swift)))
-        
         XCTAssertThrowsError(try context.entity(with: identifier))
     }
     
@@ -263,20 +260,13 @@ class ExternalReferenceResolverTests: XCTestCase {
         for fixture in fixtures {
             let (resolvedEntityKind, renderNodeKind) = fixture
             
-            let workspace = DocumentationWorkspace()
-            let context = try DocumentationContext(dataProvider: workspace)
-            
             let externalResolver = TestExternalReferenceResolver()
             externalResolver.bundleIdentifier = "com.test.external"
             externalResolver.expectedReferencePath = "/path/to/external/symbol"
             externalResolver.resolvedEntityTitle = "ClassName"
             externalResolver.resolvedEntityKind = resolvedEntityKind
-            context.configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleIdentifier: externalResolver]
             
-            let bundle = try testBundle(named: "TestBundle")
-            
-            let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-            try workspace.registerProvider(dataProvider)
+            let (bundle, context) = try testBundleAndContext(named: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver])
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
@@ -361,8 +351,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         externalResolver.resolvedEntityTitle = "ClassName"
         externalResolver.resolvedEntityKind = .class
         
-        let tempFolder = try createTempFolder(content: [
-        Folder(name: "SingleArticleWithExternalLink.docc", content: [
+        let tempFolder = Folder(name: "SingleArticleWithExternalLink.docc", content: [
             TextFile(name: "article.md", utf8Content: """
             # Article with external link
             
@@ -372,15 +361,11 @@ class ExternalReferenceResolverTests: XCTestCase {
             
             Link to an external page: <doc://com.test.external/path/to/external/symbol>
             """)
-            ])
         ])
         
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        context.configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleIdentifier: externalResolver]
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolder)
-        try workspace.registerProvider(dataProvider)
-        let bundle = try XCTUnwrap(workspace.bundles.first?.value)
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleIdentifier: externalResolver]
+        let (bundle, context) = try loadBundle(catalog: tempFolder, configuration: configuration)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/article", sourceLanguage: .swift))

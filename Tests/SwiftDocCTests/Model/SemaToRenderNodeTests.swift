@@ -1223,18 +1223,13 @@ class SemaToRenderNodeTests: XCTestCase {
             }
         }
         
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        
-        context.configuration.externalDocumentationConfiguration.sources = ["com.test.external": TestReferenceResolver()]
-        context.configuration.externalDocumentationConfiguration.globalSymbolResolver = TestSymbolResolver()
-        
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: testBundleURL)
-        try workspace.registerProvider(dataProvider)
-        
-        let bundle = workspace.bundles.values.first!
+        let (_, bundle, context) = try loadBundle(
+            from: testBundleURL,
+            externalResolvers: ["com.test.external": TestReferenceResolver()],
+            externalSymbolResolver: TestSymbolResolver()
+        )
         
         // Symbols are loaded
         XCTAssertFalse(context.documentationCache.isEmpty)
@@ -2851,9 +2846,10 @@ Document
         let bundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: { context in
-            context.configuration.externalMetadata.inheritDocs = true
-        })
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.inheritDocs = true
+        
+        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
 
         // Verify that we don't reference resolve inherited docs.
         XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in

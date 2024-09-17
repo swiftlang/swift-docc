@@ -882,9 +882,10 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
             "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
         ]
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle") { context in
-            context.configuration.externalMetadata.currentPlatforms = platformMetadata
-        }
+        var configuration = DocumentationContext.Configuration()
+
+        configuration.externalMetadata.currentPlatforms = platformMetadata
+        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
         try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
@@ -989,9 +990,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> LinkResolvers {
+   private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: configureContext)
+        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         

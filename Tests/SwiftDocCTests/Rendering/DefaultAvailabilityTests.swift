@@ -206,14 +206,15 @@ class DefaultAvailabilityTests: XCTestCase {
     
     // Test whether the default availability is not beta when not matching current target platform
     func testBundleWithDefaultAvailabilityNotInBetaDocs() throws {
-        // Copy an Info.plist with default availability of macOS 10.15.1
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
+        var configuration = DocumentationContext.Configuration()
+        // Set a beta status for the docs (which would normally be set via command line argument)
+        configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration) { (url) in
+            // Copy an Info.plist with default availability of macOS 10.15.1
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
-        
-        // Set a beta status for the docs (which would normally be set via command line argument)
-        context.configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
         
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
@@ -231,10 +232,10 @@ class DefaultAvailabilityTests: XCTestCase {
 
     // Test that a symbol is unavailable and default availability does not precede the "unavailable" attribute.
     func testUnavailableAvailability() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { _ in }
-        
+        var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
-        context.configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
+        configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
@@ -577,6 +578,5 @@ class DefaultAvailabilityTests: XCTestCase {
             module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
             .available(version: "10.0")
         )
-        
     }
 }
