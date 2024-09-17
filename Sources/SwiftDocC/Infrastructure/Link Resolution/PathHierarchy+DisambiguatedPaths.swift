@@ -359,14 +359,18 @@ extension PathHierarchy.DisambiguationContainer {
             case .none:
                 return ""
             case .kind(let value), .hash(let value):
+                // For example: "-enum.case" or "-h1a2s3h"
                 return "-"+value
+                
             case .returnTypes(let types):
-                switch types.count {
-                case 0: return "->()"
-                case 1: return "->\(types.first!)"
-                default: return "->(\(types.joined(separator: ",")))"
+                // For example: "->String" (returns String) or "->()" (returns Void).
+                return switch types.count {
+                    case 0:  "->()"
+                    case 1:  "->\(types.first!)"
+                    default: "->(\(types.joined(separator: ",")))"
                 }
             case .parameterTypes(let types):
+                // For example: "-(String,_)" or "-(_,Int)"` (a certain parameter has a certain type), or "-()" (has no parameters).
                 return "-(\(types.joined(separator: ",")))"
             }
         }
