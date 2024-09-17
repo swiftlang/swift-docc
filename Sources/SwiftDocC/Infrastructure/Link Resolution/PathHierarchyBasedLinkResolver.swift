@@ -79,7 +79,7 @@ final class PathHierarchyBasedLinkResolver {
             return node.children.flatMap { _, container in
                 container.storage.compactMap { element in
                     guard let childID = element.node.identifier, // Don't include sparse nodes
-                          !element.node.specialBehaviors.contains(.excludeFromAutomaticCuration),
+                          !element.node.isExcludedFromAutomaticCuration,
                           element.node.matches(languagesFilter: languagesFilter)
                     else {
                         return nil

@@ -196,8 +196,8 @@ extension PathHierarchy.DisambiguationContainer {
         var collisions = _disambiguatedValues(for: elements, includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
         
         // If all but one of the collisions are disfavored, remove the disambiguation for the only favored element.
-        if let onlyFavoredElementIndex = collisions.firstIndex(where: { !$0.value.specialBehaviors.contains(.disfavorInLinkCollision) }),
-           onlyFavoredElementIndex == collisions.lastIndex(where: { !$0.value.specialBehaviors.contains(.disfavorInLinkCollision) })
+        if let onlyFavoredElementIndex = collisions.firstIndex(where: { !$0.value.isDisfavoredInLinkCollisions }),
+           onlyFavoredElementIndex == collisions.lastIndex(where: { !$0.value.isDisfavoredInLinkCollisions })
         {
             collisions[onlyFavoredElementIndex].disambiguation = .none
         }
@@ -229,7 +229,7 @@ extension PathHierarchy.DisambiguationContainer {
         }
         
         if allowAdvancedDisambiguation {
-            let elementsThatSupportAdvancedDisambiguation = elements.filter { !$0.node.specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation) }
+            let elementsThatSupportAdvancedDisambiguation = elements.filter { !$0.node.isExcludedFromAdvancedLinkDisambiguation }
             
             // Next, if a symbol returns a tuple with a unique number of values, disambiguate by that (without specifying what those arguments are)
             let groupedByReturnCount = [Int?: [Element]](grouping: elementsThatSupportAdvancedDisambiguation, by: \.returnTypes?.count)

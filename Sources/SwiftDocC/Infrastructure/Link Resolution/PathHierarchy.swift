@@ -494,13 +494,26 @@ extension PathHierarchy {
             ///
             /// If a favored node collides with a disfavored node the link will resolve to the favored node without requiring any disambiguation.
             /// Referencing the disfavored node requires disambiguation unless it's the only match for that link.
-            static let disfavorInLinkCollision = SpecialBehaviors(rawValue: 1 << 0)
+            static let disfavorInLinkCollision = Self(rawValue: 1 << 0)
             
             /// This node is excluded from automatic curation.
-            static let excludeFromAutomaticCuration = SpecialBehaviors(rawValue: 1 << 1)
+            static let excludeFromAutomaticCuration = Self(rawValue: 1 << 1)
             
-            /// This node is excluded from advanced link disambiguation.
-            static let excludeFromAdvancedLinkDisambiguation = SpecialBehaviors(rawValue: 1 << 2)
+            /// This node is excluded from advanced link disambiguation, for example type-signature disambiguation.
+            static let excludeFromAdvancedLinkDisambiguation = Self(rawValue: 1 << 2)
+        }
+        
+        /// A Boolean value indicating whether this node is disfavored in link collisions.
+        var isDisfavoredInLinkCollisions: Bool {
+            specialBehaviors.contains(.disfavorInLinkCollision)
+        }
+        /// A Boolean value indicating whether this node is excluded from automatic curation.
+        var isExcludedFromAutomaticCuration: Bool {
+            specialBehaviors.contains(.excludeFromAutomaticCuration)
+        }
+        /// A Boolean value indicating whether this node is excluded from advanced link disambiguation, for example type-signature disambiguation.
+        var isExcludedFromAdvancedLinkDisambiguation: Bool {
+            specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation)
         }
         
         /// Initializes a symbol node.

@@ -337,7 +337,7 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        if let favoredMatch = collisions.singleMatch({ $0.node.specialBehaviors.contains(.disfavorInLinkCollision) == false }) {
+        if let favoredMatch = collisions.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
             return favoredMatch.node
         }
         // If a module has the same name as the article root (which is named after the bundle display name) then its possible
@@ -457,7 +457,7 @@ extension PathHierarchy.DisambiguationContainer {
         if disambiguation == nil {
             if storage.count <= 1 {
                 return storage.first?.node
-            } else if let favoredMatch = storage.singleMatch({ !$0.node.specialBehaviors.contains(.disfavorInLinkCollision) }) {
+            } else if let favoredMatch = storage.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
                 return favoredMatch.node
             }
         }
