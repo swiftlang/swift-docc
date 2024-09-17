@@ -60,12 +60,6 @@ public struct DefaultAvailability: Codable, Equatable {
         /// The availability version state information, e.g unavailable
         internal var versionInformation: VersionInformation
 
-        /// A string representation of the version for this platform.
-        @available(*, deprecated, message: "Use `introducedVersion` instead.  This deprecated API will be removed after 6.0 is released", renamed: "introducedVersion")
-        public var platformVersion: String {
-            return introducedVersion ?? "0.0"
-        }
-        
         /// A string representation of the version for this platform
         /// or nil if it's unavailable.
         public var introducedVersion: String? {

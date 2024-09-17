@@ -21,7 +21,7 @@ class DiagnosticEngineTests: XCTestCase {
         func receive(_ problems: [Problem]) {
             expectation.fulfill()
         }
-        func finalize() { }
+        func flush() { }
     }
 
     func testEmitDiagnostic() {

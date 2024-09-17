@@ -105,11 +105,6 @@ public final class DiagnosticEngine {
         }
     }
     
-    @available(*, deprecated, renamed: "flush()", message: "Use 'flush()' instead. This deprecated API will be removed after 6.0 is released")
-    public func finalize() {
-        flush()
-    }
-    
     public func flush() {
         workQueue.sync {
             for consumer in self.consumers.sync({ $0.values }) {
