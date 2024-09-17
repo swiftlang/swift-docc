@@ -120,7 +120,7 @@ extension PathHierarchy {
             
             for (_, container) in children {
                 let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
-                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation.value() != nil && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
+                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation != .none && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 
                 for (node, disambiguation) in disambiguatedChildren {
                     var path: String
@@ -330,7 +330,7 @@ extension PathHierarchy.DisambiguationContainer {
     }
     
     /// The computed disambiguation for a given path hierarchy node.
-    enum Disambiguation {
+    enum Disambiguation: Equatable {
         /// No disambiguation is needed.
         case none
         /// This node is disambiguated by its kind.
@@ -342,17 +342,6 @@ extension PathHierarchy.DisambiguationContainer {
         /// This node is disambiguated by its return types.
         case returnTypes([String])
         
-        /// Returns the kind or hash value that disambiguates this node.
-        func value() -> String? {
-            switch self {
-            case .none:
-                return nil
-            case .kind(let value), .hash(let value):
-                return value
-            default:
-                return String(makeSuffix().dropFirst())
-            }
-        }
         /// Makes a new disambiguation suffix string.
         func makeSuffix() -> String {
             switch self {
