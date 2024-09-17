@@ -258,10 +258,10 @@ private struct PathComponentScanner {
         {
             let base = scan(length: Self.cxxOperatorPrefixLength + 1)
             // Because C++ operators don't include the parameters in the name,
-            // a trailing "-" could either be part of the name of be the disambiguation separator.
+            // a trailing "-" could either be part of the name or be the disambiguation separator.
             //
             // The only valid C++ operators that include a "-" do so at the start.
-            // However, "-=", "->", and "->*" don't have a trailing "", so they're unambiguous.
+            // However, "-=", "->", and "->*" don't have a trailing "-", so they're unambiguous.
             // Only "-" and "--" need special parsing to address the ambiguity.
             
             if base.last == "-", remaining.first == "-" {
