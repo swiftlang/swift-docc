@@ -164,15 +164,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.diagnosticEngine = diagnosticEngine
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
         self.experimentalModifyCatalogWithGeneratedCuration = experimentalModifyCatalogWithGeneratedCuration
-        
-        // Inject current platform versions if provided
-        if var currentPlatforms {
-            // Add missing platforms if their fallback platform is present.
-            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
-                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
-            }
-            self.context.configuration.externalMetadata.currentPlatforms = currentPlatforms
-        }
     }
     
     /// Returns the first bundle in the source directory, if any.

@@ -1330,7 +1330,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // In case `inheritDocs` is disabled and there is actually origin data for the symbol, then include origin information as abstract.
         // Generate the placeholder abstract only in case there isn't an authored abstract coming from a doc extension.
-        if !context.configuration.externalMetadata.inheritDocs, let origin = (documentationNode.semantic as! Symbol).origin, symbol.abstractSection == nil {
+        if !context.configuration.externalMetadata.inheritDocs,
+            let origin = (documentationNode.semantic as! Symbol).origin,
+            symbol.abstractSection == nil
+        {
             // Create automatic abstract for inherited symbols.
             node.abstract = [.text("Inherited from "), .codeVoice(code: origin.displayName), .text(".")]
         } else {

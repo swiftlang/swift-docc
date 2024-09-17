@@ -150,14 +150,15 @@ public struct ConvertService: DocumentationService {
                 provider = inMemoryProvider
             }
             
-            let context = try DocumentationContext(dataProvider: workspace)
-            context.configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
+            var configuration = DocumentationContext.Configuration()
+            
+            configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
             
             // Enable support for generating documentation for standalone articles and tutorials.
-            context.configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot = true
-            context.configuration.convertServiceConfiguration.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
+            configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot = true
+            configuration.convertServiceConfiguration.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
             
-            context.configuration.convertServiceConfiguration.symbolGraphTransformer = { symbolGraph in
+            configuration.convertServiceConfiguration.symbolGraphTransformer = { symbolGraph in
                 for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
                     symbolGraph.symbols[symbolIdentifier]?.docComment = SymbolGraph.LineList(
                         overridingDocumentationComment.map(SymbolGraph.LineList.Line.init(_:))
@@ -172,10 +173,12 @@ public struct ConvertService: DocumentationService {
                     convertRequestIdentifier: messageIdentifier
                 )
                 
-                context.configuration.convertServiceConfiguration.fallbackResolver = resolver
-                context.configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
+                configuration.convertServiceConfiguration.fallbackResolver = resolver
+                configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
-
+            
+            let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
+            
             var converter = try self.converter ?? DocumentationConverter(
                 documentationBundleURL: request.bundleLocation ?? URL(fileURLWithPath: "/"),
                 emitDigest: false,
