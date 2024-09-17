@@ -580,9 +580,8 @@ private extension PathHierarchy.Node {
 }
 
 private func typesMatch(provided: [Substring], actual: [String]?) -> Bool {
-    guard let actual = actual, provided.count == actual.count else { return false }
-    for (providedType, actualType) in zip(provided, actual) where providedType != "_" && providedType != actualType {
-        return false
+    guard let actual, provided.count == actual.count else { return false }
+    return zip(provided, actual).allSatisfy { providedType, actualType in
+        providedType == "_" || providedType == actualType
     }
-    return true
 }
