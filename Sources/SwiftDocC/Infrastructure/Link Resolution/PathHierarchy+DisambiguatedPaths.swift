@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -204,8 +204,8 @@ extension PathHierarchy.DisambiguationContainer {
     
     private static func _disambiguatedValues(
         for elements: some Sequence<Element>,
-        includeLanguage: Bool = false,
-        allowAdvancedDisambiguation: Bool = true
+        includeLanguage: Bool,
+        allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
@@ -230,64 +230,22 @@ extension PathHierarchy.DisambiguationContainer {
             let elementsThatSupportAdvancedDisambiguation = elements.filter { !$0.node.isExcludedFromAdvancedLinkDisambiguation }
             
             // Next, if a symbol returns a tuple with a unique number of values, disambiguate by that (without specifying what those arguments are)
-            let groupedByReturnCount = [Int?: [Element]](grouping: elementsThatSupportAdvancedDisambiguation, by: \.returnTypes?.count)
-            for (returnTypesCount, elements) in groupedByReturnCount  {
-                guard let returnTypesCount = returnTypesCount else { continue }
-                guard elements.count > 1 else {
-                    // Only one element has this number of return values. Disambiguate with only underscores.
-                    let element = elements.first!
-                    guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                    collisions.append((value: elements.first!.node, disambiguation: .returnTypes(.init(repeating: "_", count: returnTypesCount))))
-                    remainingIDs.remove(element.node.identifier)
-                    continue
-                }
-                guard returnTypesCount > 0 else { continue } // Need at least one return value to disambiguate
-                
-                for returnTypeIndex in 0..<returnTypesCount {
-                    let grouped = [String: [Element]](grouping: elements, by: { $0.returnTypes![returnTypeIndex] })
-                    for (returnType, elements) in grouped where elements.count == 1 {
-                        // Only one element has this return type
-                        let element = elements.first!
-                        guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                        var disambiguation = [String](repeating: "_", count: returnTypesCount)
-                        disambiguation[returnTypeIndex] = returnType
-                        collisions.append((value: elements.first!.node, disambiguation: .returnTypes(disambiguation)))
-                        remainingIDs.remove(element.node.identifier)
-                        continue
-                    }
-                }
-            }
+            collisions += _disambiguateByTypeSignature(
+                elementsThatSupportAdvancedDisambiguation,
+                types: \.returnTypes,
+                makeDisambiguation: Disambiguation.returnTypes,
+                remainingIDs: &remainingIDs
+            )
             if remainingIDs.isEmpty {
                 return collisions
             }
             
-            let groupedByParameterCount = [Int?: [Element]](grouping: elementsThatSupportAdvancedDisambiguation, by: \.parameterTypes?.count)
-            for (parameterTypesCount, elements) in groupedByParameterCount  {
-                guard let parameterTypesCount = parameterTypesCount else { continue }
-                guard elements.count > 1 else {
-                    // Only one element has this number of parameters. Disambiguate with only underscores.
-                    let element = elements.first!
-                    guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                    collisions.append((value: elements.first!.node, disambiguation: .parameterTypes(.init(repeating: "_", count: parameterTypesCount))))
-                    remainingIDs.remove(element.node.identifier)
-                    continue
-                }
-                guard parameterTypesCount > 0 else { continue } // Need at least one return value to disambiguate
-                
-                for parameterTypeIndex in 0..<parameterTypesCount {
-                    let grouped = [String: [Element]](grouping: elements, by: { $0.parameterTypes![parameterTypeIndex] })
-                    for (returnType, elements) in grouped where elements.count == 1 {
-                        // Only one element has this return type
-                        let element = elements.first!
-                        guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
-                        var disambiguation = [String](repeating: "_", count: parameterTypesCount)
-                        disambiguation[parameterTypeIndex] = returnType
-                        collisions.append((value: elements.first!.node, disambiguation: .parameterTypes(disambiguation)))
-                        remainingIDs.remove(element.node.identifier)
-                        continue
-                    }
-                }
-            }
+            collisions += _disambiguateByTypeSignature(
+                elementsThatSupportAdvancedDisambiguation,
+                types: \.parameterTypes,
+                makeDisambiguation: Disambiguation.parameterTypes,
+                remainingIDs: &remainingIDs
+            )
             if remainingIDs.isEmpty {
                 return collisions
             }
@@ -320,7 +278,7 @@ extension PathHierarchy.DisambiguationContainer {
     /// - Parameters:
     ///   - includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
     ///   - allowAdvancedDisambiguation: Whether or not to support more advanced and more human readable types of disambiguation.
-    func disambiguatedValuesWithCollapsedUniqueSymbols(
+    fileprivate func disambiguatedValuesWithCollapsedUniqueSymbols(
         includeLanguage: Bool,
         allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
@@ -426,6 +384,44 @@ extension PathHierarchy.DisambiguationContainer {
                 return self
             }
         }
+    }
+    
+    private static func _disambiguateByTypeSignature(
+        _ elements: [Element],
+        types: (Element) -> [String]?,
+        makeDisambiguation: ([String]) -> Disambiguation,
+        remainingIDs: inout Set<ResolvedIdentifier?>
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+        var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        
+        let groupedByTypeCount = [Int?: [Element]](grouping: elements, by: { types($0)?.count })
+        for (typesCount, elements) in groupedByTypeCount  {
+            guard let typesCount else { continue }
+            guard elements.count > 1 else {
+                // Only one element has this number of types. Disambiguate with only underscores.
+                let element = elements.first!
+                guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                collisions.append((value: element.node, disambiguation: makeDisambiguation(.init(repeating: "_", count: typesCount))))
+                remainingIDs.remove(element.node.identifier)
+                continue
+            }
+            guard typesCount > 0 else { continue } // Need at least one return value to disambiguate
+            
+            for typeIndex in 0..<typesCount {
+                let grouped = [String: [Element]](grouping: elements, by: { types($0)![typeIndex] })
+                for (returnType, elements) in grouped where elements.count == 1 {
+                    // Only one element has this return type
+                    let element = elements.first!
+                    guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                    var disambiguation = [String](repeating: "_", count: typesCount)
+                    disambiguation[typeIndex] = returnType
+                    collisions.append((value: element.node, disambiguation: makeDisambiguation(disambiguation)))
+                    remainingIDs.remove(element.node.identifier)
+                    continue
+                }
+            }
+        }
+        return collisions
     }
 }
 
