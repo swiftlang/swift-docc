@@ -39,6 +39,15 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 
 - <doc:distributing-documentation-to-other-developers>
 
+### DocC Commands
+
+- <doc:docc-cli-init>
+- <doc:docc-cli-convert>
+- <doc:docc-cli-preview>
+- <doc:docc-cli-process-archive>
+- <doc:docc-cli-process-catalog>
+- <doc:docc-cli-merge>
+
 ### Documentation Types
 
 - <doc:api-reference-syntax>
