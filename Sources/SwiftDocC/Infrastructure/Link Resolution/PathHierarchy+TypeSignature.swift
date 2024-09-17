@@ -45,15 +45,13 @@ extension PathHierarchy {
         
         for fragment in fragments {
             switch fragment.kind {
-            case .identifier where fragment.preciseIdentifier == nil, // Skip the argument label
-                 .keyword,   // Skip keywords ("inout", "consuming", "each", etc.)
-                 .attribute, // Skip attributes ("@escaping", custom result builders, etc.)
-                 .numberLiteral, .stringLiteral, // Skip literals
-                 .externalParameter, .genericParameter, .internalParameter:
-                continue
+            case .identifier where fragment.preciseIdentifier != nil,
+                 .typeIdentifier,
+                 .text:
+                accumulated += fragment.spelling
 
             default:
-                accumulated += fragment.spelling
+                continue
             }
         }
         
@@ -68,9 +66,8 @@ extension PathHierarchy {
             accumulated = accumulated.dropFirst().dropLast()
         }
         
-        return String(accumulated.withSwiftSyntacticSugar())
+        return accumulated.withSwiftSyntacticSugar()
     }
-    
 }
 
 private extension StringProtocol {
@@ -99,7 +96,7 @@ private extension StringProtocol {
     ///
     /// The transformed string has all occurrences of `Array<Element>`, `Optional<Wrapped>`, and `Dictionary<Key,Value>` replaced with `[Element]`, `Wrapped?`, and `[Key:Value]`.
     func withSwiftSyntacticSugar() -> String {
-        // If this type uses known Objective-C types, return the original type name
+        // If this type uses known Objective-C types, return the original type name.
         if contains("NSArray<") || contains("NSDictionary<") {
             return String(self)
         }
