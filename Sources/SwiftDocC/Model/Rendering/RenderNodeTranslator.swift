@@ -1243,8 +1243,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 .compactMap { availability -> AvailabilityRenderItem? in
                     // Filter items with insufficient availability data unless the default availability behaviour
                     // allows availability withound version information.
-                    let applyDefaultAvailabilityVersionToSymbols = !bundle.info.defaultAvailabilityOptions.options.contains(.inheritVersionNumber)
-                    guard availability.introducedVersion != nil || applyDefaultAvailabilityVersionToSymbols else {
+                    let omitDefaultAvailabilityVersionFromSymbols = bundle.info.defaultAvailabilityOptions?.shouldApplyOption(.inheritVersionNumber) == false
+                    guard availability.introducedVersion != nil || omitDefaultAvailabilityVersionFromSymbols else {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),

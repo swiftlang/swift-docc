@@ -50,7 +50,7 @@ extension DocumentationBundle {
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
         /// The default availability behaviour options.
-        public var defaultAvailabilityOptions = DefaultAvailabilityOptions()
+        public var defaultAvailabilityOptions: DefaultAvailabilityOptions?
 
         
         enum CodingKeys: String, CodingKey, CaseIterable {
@@ -114,7 +114,7 @@ extension DocumentationBundle {
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
             defaultModuleKind: String?,
-            defaultAvailabilityOptions: DefaultAvailabilityOptions
+            defaultAvailabilityOptions: DefaultAvailabilityOptions?
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -252,9 +252,31 @@ extension DocumentationBundle {
             
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
-            self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
+            self.defaultAvailabilityOptions = try decodeOrFallbackIfPresent(DefaultAvailabilityOptions.self, with: .defaultAvailabilityOptions)
+            var defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
+            
+            // Apply default availability options mutations.
+            if let defaultAvailabilityOptions {
+                // Remove the availability version if `inheritVersionNumber` is not part
+                // of the default availability options.
+                if !defaultAvailabilityOptions.shouldApplyOption(.inheritVersionNumber) {
+                    for (key, var moduleAvailability) in defaultAvailability?.modules ?? [:] {
+                        moduleAvailability = moduleAvailability.map { moduleAvailability in
+                            var moduleAvailability = moduleAvailability
+                            moduleAvailability.versionInformation = {
+                                switch moduleAvailability.versionInformation {
+                                case .available(_): return .available(version: nil)
+                                default: return moduleAvailability.versionInformation
+                                }
+                            }()
+                            return moduleAvailability
+                        }
+                        defaultAvailability?.modules[key] = moduleAvailability
+                    }
+                }
+            }
+            self.defaultAvailability = defaultAvailability
             self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
-            self.defaultAvailabilityOptions = try decodeOrFallbackIfPresent(DefaultAvailabilityOptions.self, with: .defaultAvailabilityOptions) ?? DefaultAvailabilityOptions()
         }
         
         init(
@@ -266,7 +288,7 @@ extension DocumentationBundle {
             defaultAvailability: DefaultAvailability? = nil,
             featureFlags: BundleFeatureFlags? = nil,
             inheritDefaultAvailability: InheritDefaultAvailabilityOptions? = nil,
-            defaultAvailabilityOptions: DefaultAvailabilityOptions = DefaultAvailabilityOptions()
+            defaultAvailabilityOptions: DefaultAvailabilityOptions? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -289,7 +311,7 @@ extension DocumentationBundle {
             try container.encodeIfPresent(self.defaultModuleKind, forKey: DocumentationBundle.Info.CodingKeys.defaultModuleKind)
             try container.encodeIfPresent(self.featureFlags, forKey: DocumentationBundle.Info.CodingKeys.featureFlags)
             if defaultAvailabilityOptions != .init() {
-                try container.encode(self.defaultAvailabilityOptions, forKey: DocumentationBundle.Info.CodingKeys.defaultAvailabilityOptions)
+                try container.encodeIfPresent(self.defaultAvailabilityOptions, forKey: DocumentationBundle.Info.CodingKeys.defaultAvailabilityOptions)
             }
         }
     }
@@ -318,7 +340,7 @@ extension BundleDiscoveryOptions {
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
         additionalSymbolGraphFiles: [URL] = [],
-        defaultAvailabilityOptions: DocumentationBundle.Info.DefaultAvailabilityOptions? = nil
+        defaultAvailabilityOptions: DefaultAvailabilityOptions? = nil
     ) {
         // Iterate over all possible coding keys with a switch
         // to build up the dictionary of fallback options.

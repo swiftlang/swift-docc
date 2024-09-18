@@ -59,24 +59,6 @@ struct SymbolGraphLoader {
         let bundle = self.bundle
         let dataProvider = self.dataProvider
         
-        /// Computes the default availbiality based on the `inheritDefaultAvailability` option.
-        let defaultAvailabilities: ([DefaultAvailability.ModuleAvailability]?) -> [DefaultAvailability.ModuleAvailability]? = { defautAvailabilities in
-            guard let defautAvailabilities else { return nil }
-            // Check the selected behaviour for inheritance of the default availability and remove the avaialbity
-            // version if it's set to  `platformOnly`.
-            if !bundle.info.defaultAvailabilityOptions.options.contains(.inheritVersionNumber) {
-                return defautAvailabilities.map { defaultAvailability in
-                    var defaultAvailability = defaultAvailability
-                    switch defaultAvailability.versionInformation {
-                    case .available(_): defaultAvailability.versionInformation = .available(version: nil)
-                    case .unavailable: ()
-                    }
-                    return defaultAvailability
-                }
-            }
-            return defautAvailabilities
-        }
-        
         let loadGraphAtURL: (URL) -> Void = { symbolGraphURL in
             // Bail out in case a symbol graph has already errored
             guard loadError == nil else { return }
@@ -97,9 +79,8 @@ struct SymbolGraphLoader {
                 configureSymbolGraph?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
-                let defaultAvailabilities = defaultAvailabilities(bundle.info.defaultAvailability?.modules[moduleName])
                 // If the bundle provides availability defaults add symbol availability data.
-                self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName, defaultAvailabilities: defaultAvailabilities)
+                self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
                 // main symbol graphs are ambiguous
                 var usesExtensionSymbolFormat: Bool? = nil
@@ -172,7 +153,7 @@ struct SymbolGraphLoader {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
 
-            if let defaultAvailabilities = defaultAvailabilities(bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName]) {
+            if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
                 let (unavailablePlatforms, availablePlatforms) = defaultAvailabilities.categorize(where: { $0.versionInformation == .unavailable })
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
@@ -298,11 +279,11 @@ struct SymbolGraphLoader {
 
     /// If the bundle defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
-    private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String, defaultAvailabilities: [DefaultAvailability.ModuleAvailability]?) {
+    private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         let selector = UnifiedSymbolGraph.Selector(forSymbolGraph: symbolGraph)
         // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = defaultAvailabilities,
-           let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
+        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
+            let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
 
             // Prepare a default availability versions lookup for this module.
             let defaultAvailabilityVersionByPlatform = defaultAvailabilities
@@ -420,11 +401,14 @@ extension SymbolGraph.SemanticVersion {
 extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// Create an availability item with a `domain` and an `introduced` version.
     /// - parameter defaultAvailability: Default availability information for symbols that lack availability authored in code.
-    /// - Note: If the `defaultAvailability` argument doesn't have a valid
-    /// platform version that can be parsed as a `SemanticVersion`, returns `nil`.
+    /// - Note: If the `defaultAvailability` argument has a introduced version that can't
+    /// be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
         let introducedVersion = defaultAvailability.introducedVersion
         let platformVersion = introducedVersion.map { SymbolGraph.SemanticVersion(string: $0) } ?? nil
+        if platformVersion == nil && introducedVersion != nil {
+            return nil
+        }
         let domain = SymbolGraph.Symbol.Availability.Domain(rawValue: defaultAvailability.platformName.rawValue)
         self.init(domain: domain,
                   introducedVersion: platformVersion,
