@@ -17,8 +17,7 @@ import Markdown
 @testable import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
-    // TODO: Change this back to `#if !os(iOS)` once https://github.com/apple/swift-corelibs-foundation/issues/5028 is resolved
-    #if os(macOS)
+    #if !os(iOS)
     let imageFile = Bundle.module.url(
         forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         .appendingPathComponent("figure1.png")
