@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -299,10 +299,10 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ### Instance Methods
 
-        - ``fourthTestMemberName(test:)-1h173`` <!-- func fourthTestMemberName(test: String) -> Float -->
-        - ``fourthTestMemberName(test:)-8iuz7`` <!-- func fourthTestMemberName(test: String) -> Double -->
-        - ``fourthTestMemberName(test:)-91hxs`` <!-- func fourthTestMemberName(test: String) -> Int -->
-        - ``fourthTestMemberName(test:)-961zx`` <!-- func fourthTestMemberName(test: String) -> String -->
+        - ``fourthTestMemberName(test:)->Float``  <!-- func fourthTestMemberName(test: String) -> Float -->
+        - ``fourthTestMemberName(test:)->Double`` <!-- func fourthTestMemberName(test: String) -> Double -->
+        - ``fourthTestMemberName(test:)->Int``    <!-- func fourthTestMemberName(test: String) -> Int -->
+        - ``fourthTestMemberName(test:)->String`` <!-- func fourthTestMemberName(test: String) -> String -->
         
         """)
     }

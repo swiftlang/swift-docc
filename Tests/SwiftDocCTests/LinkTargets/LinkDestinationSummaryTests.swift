@@ -744,7 +744,7 @@ class ExternalLinkableTests: XCTestCase {
         let bundle = context.bundle(identifier: "com.example.mymodule")!
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyModule/MyClass/myFunc()-9sdsh", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
         let renderNode = try converter.convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
