@@ -47,6 +47,27 @@ struct SymbolGraphLoader {
     
     /// The symbol graph decoding strategy to use.
     private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
+    
+    /// The symbol default availability.
+    func symbolDefaultAvailability(_ moduleAvailability: [DefaultAvailability.ModuleAvailability]?) -> [DefaultAvailability.ModuleAvailability]? {
+        // Apply default availability options mutations.
+        guard let moduleAvailability else { return nil }
+        if let defaultAvailabilityOptions = bundle.info.defaultAvailabilityOptions {
+            // Remove the availability version if `inheritVersionNumber` is not part
+            // of the default availability options.
+            if !defaultAvailabilityOptions.shouldApplyOption(.inheritVersionNumber) {
+                return moduleAvailability.map { defaultAvailability in
+                    var defaultAvailability = defaultAvailability
+                    switch defaultAvailability.versionInformation {
+                    case .available(_): defaultAvailability.versionInformation = .available(version: nil)
+                    case .unavailable: ()
+                    }
+                    return defaultAvailability
+                }
+            }
+        }
+        return moduleAvailability
+    }
 
     /// Loads all symbol graphs in the given bundle.
     ///
@@ -153,7 +174,7 @@ struct SymbolGraphLoader {
             var defaultUnavailablePlatforms = [PlatformName]()
             var defaultAvailableInformation = [DefaultAvailability.ModuleAvailability]()
 
-            if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName] {
+            if let defaultAvailabilities = symbolDefaultAvailability(bundle.info.defaultAvailability?.modules[unifiedGraph.moduleName]) {
                 let (unavailablePlatforms, availablePlatforms) = defaultAvailabilities.categorize(where: { $0.versionInformation == .unavailable })
                 defaultUnavailablePlatforms = unavailablePlatforms.map(\.platformName)
                 defaultAvailableInformation = availablePlatforms
@@ -282,7 +303,7 @@ struct SymbolGraphLoader {
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         let selector = UnifiedSymbolGraph.Selector(forSymbolGraph: symbolGraph)
         // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
+        if let defaultAvailabilities = symbolDefaultAvailability(bundle.info.defaultAvailability?.modules[moduleName]),
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
 
             // Prepare a default availability versions lookup for this module.

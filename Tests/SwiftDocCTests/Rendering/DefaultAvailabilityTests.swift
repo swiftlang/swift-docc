@@ -610,7 +610,7 @@ class DefaultAvailabilityTests: XCTestCase {
         func setupContext(
             inheritDefaultAvailability: String = "",
             defaultAvailability: String? = nil
-        ) throws -> DocumentationContext {
+        ) throws -> (DocumentationBundle, DocumentationContext) {
             // Create an empty bundle
             let targetURL = try createTemporaryDirectory(named: "test.docc")
             // Create symbol graph
@@ -621,8 +621,8 @@ class DefaultAvailabilityTests: XCTestCase {
             let infoPlist = makeInfoPlist(inheritDefaultAvailability: inheritDefaultAvailability, defaultAvailability: defaultAvailability)
             try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
             // Load the bundle & reference resolve symbol graph docs
-            let (_, _, context) = try loadBundle(from: targetURL)
-            return context
+            let (_, bundle, context) = try loadBundle(from: targetURL)
+            return (bundle, context)
         }
         
         let symbols = """
@@ -686,13 +686,23 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Don't use default availability version for symbols.
         
-        var context = try setupContext(inheritDefaultAvailability: """
-        <key>CDDefaultAvailabilityOptions</key>
-        <dict>
-            <key>InheritVersionNumber</key>
-            <false/>
-        </dict>
-        """)
+        var (bundle, context) = try setupContext(
+            inheritDefaultAvailability: """
+            <key>CDDefaultAvailabilityOptions</key>
+            <dict>
+                <key>InheritVersionNumber</key>
+                <false/>
+            </dict>
+            """,
+            defaultAvailability: """
+            <dict>
+                <key>name</key>
+                <string>iOS</string>
+                <key>version</key>
+                <string>8.0</string>
+            </dict>
+            """
+        )
         
         // Verify we add the version number into the symbols that have availability annotation.
         guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
@@ -708,10 +718,17 @@ class DefaultAvailabilityTests: XCTestCase {
         }
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, nil)
-        
+        // Verify we keep the module availability information.
+        let identifier = ResolvedTopicReference(bundleIdentifier: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
+        let node = try context.entity(with: identifier)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
+        let renderNode = translator.visit(node.semantic) as! RenderNode
+        XCTAssertEqual(renderNode.metadata.platforms?.count, 3)
+        XCTAssertEqual(renderNode.metadata.platforms?.first?.name, "iOS")
+        XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, "8.0")
         
         // Add an extra default availability to test behaviour when mixin in source with default behaviour.
-        context = try setupContext(
+        (_, context) = try setupContext(
             inheritDefaultAvailability: """
             <key>CDDefaultAvailabilityOptions</key>
             <dict>
@@ -747,7 +764,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Use default availability version for symbols.
         
-        context = try setupContext(inheritDefaultAvailability: """
+        (_, context) = try setupContext(inheritDefaultAvailability: """
         <key>CDDefaultAvailabilityOptions</key>
         <dict>
             <key>InheritVersionNumber</key>
@@ -772,7 +789,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Don't specify availability inherit behaviour.
         
-        context = try setupContext()
+        (_, context) = try setupContext()
         
         // Verify we add the version number into the symbols that have availability annotation.
         guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {

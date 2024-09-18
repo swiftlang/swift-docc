@@ -253,29 +253,8 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
             self.defaultAvailabilityOptions = try decodeOrFallbackIfPresent(DefaultAvailabilityOptions.self, with: .defaultAvailabilityOptions)
-            var defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
-            
-            // Apply default availability options mutations.
-            if let defaultAvailabilityOptions {
-                // Remove the availability version if `inheritVersionNumber` is not part
-                // of the default availability options.
-                if !defaultAvailabilityOptions.shouldApplyOption(.inheritVersionNumber) {
-                    for (key, var moduleAvailability) in defaultAvailability?.modules ?? [:] {
-                        moduleAvailability = moduleAvailability.map { moduleAvailability in
-                            var moduleAvailability = moduleAvailability
-                            moduleAvailability.versionInformation = {
-                                switch moduleAvailability.versionInformation {
-                                case .available(_): return .available(version: nil)
-                                default: return moduleAvailability.versionInformation
-                                }
-                            }()
-                            return moduleAvailability
-                        }
-                        defaultAvailability?.modules[key] = moduleAvailability
-                    }
-                }
-            }
-            self.defaultAvailability = defaultAvailability
+            self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
+            self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
             self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
         }
         
