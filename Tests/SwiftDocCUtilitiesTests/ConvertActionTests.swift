@@ -1864,6 +1864,13 @@ class ConvertActionTests: XCTestCase {
         
         func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: DocumentationWorkspaceDataProvider & FileManagerProtocol) throws -> ActionResult {
             // Run the create ConvertAction
+            
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
+            
+            let workspace = DocumentationWorkspace()
+            let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
+            
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
@@ -1872,14 +1879,14 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: emitDigest,
                 currentPlatforms: nil,
+                workspace: workspace,
+                context: context,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
             
             action.converter.batchNodeCount = batchSize
-            
-            action.context.configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
             
             return try action.perform(logHandle: .none)
         }
