@@ -140,7 +140,11 @@ extension RenderIndex {
         /// A reference to a custom image for this node.
         public let icon: RenderReferenceIdentifier?
         
+        /// Tags associated with this node that a renderer can use to filter through the index.
         public let filterTags: [String]
+        
+        /// An abstract associated with this node that a renderer can use when filtering through the index.
+        public let abstract: [RenderInlineContent]
 
         enum CodingKeys: String, CodingKey {
             case title
@@ -152,6 +156,7 @@ extension RenderIndex {
             case beta
             case icon
             case tags
+            case abstract
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -181,6 +186,8 @@ extension RenderIndex {
             try container.encodeIfPresent(icon, forKey: .icon)
             
             try container.encodeIfNotEmpty(filterTags, forKey: .tags)
+            
+            try container.encodeIfNotEmpty(abstract, forKey: .abstract)
         }
         
         public init(from decoder: Decoder) throws {
@@ -204,6 +211,8 @@ extension RenderIndex {
             icon = try values.decodeIfPresent(RenderReferenceIdentifier.self, forKey: .icon)
             
             filterTags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
+            
+            abstract = try values.decodeIfPresent([RenderInlineContent].self, forKey: .abstract) ?? []
         }
         
         /// Creates a new node with the given title, path, type, and children.
@@ -227,7 +236,8 @@ extension RenderIndex {
             isExternal: Bool,
             isBeta: Bool,
             icon: RenderReferenceIdentifier? = nil,
-            filterTags: [String] = []
+            filterTags: [String] = [],
+            abstract: [RenderInlineContent] = []
         ) {
             self.title = title
             self.path = path
@@ -238,6 +248,7 @@ extension RenderIndex {
             self.isBeta = isBeta
             self.icon = nil
             self.filterTags = filterTags
+            self.abstract = abstract
         }
         
         init(
@@ -247,7 +258,8 @@ extension RenderIndex {
             isDeprecated: Bool,
             children: [Node],
             icon: RenderReferenceIdentifier?,
-            filterTags: [String] = []
+            filterTags: [String] = [],
+            abstract: [RenderInlineContent] = []
         ) {
             self.title = title
             self.children = children.isEmpty ? nil : children
@@ -262,6 +274,7 @@ extension RenderIndex {
             self.icon = icon
             
             self.filterTags = filterTags
+            self.abstract = abstract
             
             guard let pageType else {
                 self.type = nil

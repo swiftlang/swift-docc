@@ -116,6 +116,12 @@
                             "type": "string"
                         }
                     },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
                     "children": {
                         "type": "array",
                         "items": {
@@ -195,7 +201,291 @@
             "RenderReferenceVariantTrait": {
                 "type": "string",
                 "enum": ["1x", "2x", "3x", "light", "dark"]
-            }
+            },
+            "RenderInlineContent": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/Text"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Emphasis"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Strong"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CodeVoice"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Reference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Image"
+                    },
+                    {
+                        "$ref": "#/components/schemas/InlineHead"
+                    },
+                    {
+                        "$ref": "#/components/schemas/NewTerm"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Superscript"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Link"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Subscript"
+                    }
+                ]
+            },
+            "Text": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "text"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["text"]
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Emphasis": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "emphasis",
+                            "italic"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Strong": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "strong"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "CodeVoice": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "code"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["codeVoice"]
+                    },
+                    "code": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Reference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "isActive",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["reference"]
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "format": "reference"
+                    },
+                    "overridingTitle": {
+                        "type": "string"
+                    },
+                    "overridingTitleInlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Image": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "InlineHead": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["inlineHead"]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "NewTerm": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["newTerm"]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Superscript": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "superscript"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Subscript": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "subscript"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Link": {
+                "required": [
+                    "type",
+                    "title",
+                    "destination"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "link"
+                        ]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "destination": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RenderContentMetadata" : {
+                "type": "object",
+                "properties": {
+                    "anchor": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "deviceFrame": {
+                        "type": "string"
+                    }
+                }
+            },
         },
         "requestBodies": {},
         "securitySchemes": {},
