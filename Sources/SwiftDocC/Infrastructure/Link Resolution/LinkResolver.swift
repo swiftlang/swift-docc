@@ -150,7 +150,7 @@ private extension LinkResolver {
             // because their markup or symbol information wasn't passed as catalog or symbol graph input to DocC. 
             context.externallyResolvedLinks[linkText] = result
             if case .success(let reference) = result {
-                context.externalCache[reference] = context.convertServiceFallbackResolver?.entityIfPreviouslyResolved(with: reference)
+                context.externalCache[reference] = context.configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
             }
         }
     }
@@ -169,7 +169,7 @@ private final class FallbackResolverBasedLinkResolver {
     private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
         let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
-        guard let fallbackResolver = context.convertServiceFallbackResolver,
+        guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
               fallbackResolver.bundleIdentifier == knownBundleIdentifier
         else {

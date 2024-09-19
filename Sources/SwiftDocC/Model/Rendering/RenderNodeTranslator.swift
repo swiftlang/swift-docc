@@ -141,7 +141,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.hierarchy = hierarchy.hierarchy
             node.metadata.category = technology.name
             node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
-        } else if !context.allowsRegisteringArticlesWithoutTechnologyRoot {
+        } else if !context.configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
@@ -839,7 +839,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let availability = article.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
                 let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.externalMetadata.currentPlatforms?[name.displayName]
+                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
                 }
                 return .init($0, current: currentPlatform)
             }).sorted(by: AvailabilityRenderOrder.compare)
@@ -1246,7 +1246,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
-                          let currentPlatform = context.externalMetadata.currentPlatforms?[name.displayName] else {
+                          let currentPlatform = context.configuration.externalMetadata.currentPlatforms?[name.displayName] else {
                               // No current platform provided by the context
                               return AvailabilityRenderItem(availability, current: nil)
                           }
@@ -1256,7 +1256,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         } ?? .init(defaultValue:
-            defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.externalMetadata.currentPlatforms)?
+                    defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         )
@@ -1264,7 +1264,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
                 let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
-                    context.externalMetadata.currentPlatforms?[name.displayName]
+                    context.configuration.externalMetadata.currentPlatforms?[name.displayName]
                 }
                 return .init($0, current: currentPlatform)
             }).sorted(by: AvailabilityRenderOrder.compare)
@@ -1330,7 +1330,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // In case `inheritDocs` is disabled and there is actually origin data for the symbol, then include origin information as abstract.
         // Generate the placeholder abstract only in case there isn't an authored abstract coming from a doc extension.
-        if !context.externalMetadata.inheritDocs, let origin = (documentationNode.semantic as! Symbol).origin, symbol.abstractSection == nil {
+        if !context.configuration.externalMetadata.inheritDocs, let origin = (documentationNode.semantic as! Symbol).origin, symbol.abstractSection == nil {
             // Create automatic abstract for inherited symbols.
             node.abstract = [.text("Inherited from "), .codeVoice(code: origin.displayName), .text(".")]
         } else {

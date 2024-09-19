@@ -151,13 +151,13 @@ public struct ConvertService: DocumentationService {
             }
             
             let context = try DocumentationContext(dataProvider: workspace)
-            context.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
+            context.configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
             
             // Enable support for generating documentation for standalone articles and tutorials.
-            context.allowsRegisteringArticlesWithoutTechnologyRoot = true
-            context.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
+            context.configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot = true
+            context.configuration.convertServiceConfiguration.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
             
-            context.configureSymbolGraph = { symbolGraph in
+            context.configuration.convertServiceConfiguration.symbolGraphTransformer = { symbolGraph in
                 for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
                     symbolGraph.symbols[symbolIdentifier]?.docComment = SymbolGraph.LineList(
                         overridingDocumentationComment.map(SymbolGraph.LineList.Line.init(_:))
@@ -172,8 +172,8 @@ public struct ConvertService: DocumentationService {
                     convertRequestIdentifier: messageIdentifier
                 )
                 
-                context.convertServiceFallbackResolver = resolver
-                context.globalExternalSymbolResolver = resolver
+                context.configuration.convertServiceConfiguration.fallbackResolver = resolver
+                context.configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
 
             var converter = try self.converter ?? DocumentationConverter(

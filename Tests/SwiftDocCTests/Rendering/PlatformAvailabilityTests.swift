@@ -240,7 +240,7 @@ class PlatformAvailabilityTests: XCTestCase {
     func testBundleWithConfiguredPlatforms(named testBundleName: String, platformMetadata: [String : PlatformVersion]) throws -> (DocumentationBundle, DocumentationContext) {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         let (_, bundle, context) = try loadBundle(from: bundleURL) { context in
-            context.externalMetadata.currentPlatforms = platformMetadata
+            context.configuration.externalMetadata.currentPlatforms = platformMetadata
         }
         return (bundle, context)
     }

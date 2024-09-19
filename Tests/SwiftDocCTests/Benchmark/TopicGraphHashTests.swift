@@ -104,7 +104,7 @@ class TopicGraphHashTests: XCTestCase {
         let context = try DocumentationContext(dataProvider: workspace)
         
         // Add external resolver
-        context.externalDocumentationSources = ["com.external.testbundle" : ExternalReferenceResolverTests.TestExternalReferenceResolver()]
+        context.configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : ExternalReferenceResolverTests.TestExternalReferenceResolver()]
         
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))

@@ -2139,7 +2139,7 @@ class PathHierarchyTests: XCTestCase {
         
         do {
             let (_, _, context) = try loadBundle(from: bundleURL) { context in
-                context.knownDisambiguatedSymbolPathComponents = [
+                context.configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
                     "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
                 ]
             }
@@ -2158,7 +2158,7 @@ class PathHierarchyTests: XCTestCase {
         
         do {
             let (_, _, context) = try loadBundle(from: bundleURL) { context in
-                context.knownDisambiguatedSymbolPathComponents = [
+                context.configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
                     "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
                 ]
             }

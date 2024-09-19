@@ -26,10 +26,10 @@ extension XCTestCase {
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
-        context.externalDocumentationSources = externalResolvers
-        context.globalExternalSymbolResolver = externalSymbolResolver
-        context.convertServiceFallbackResolver = fallbackResolver
-        context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        context.configuration.externalDocumentationConfiguration.sources = externalResolvers
+        context.configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
+        context.configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
+        context.configuration.externalMetadata.diagnosticLevel = diagnosticFilterLevel
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)

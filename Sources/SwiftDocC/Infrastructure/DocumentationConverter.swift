@@ -171,7 +171,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
                 currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
             }
-            self.context.externalMetadata.currentPlatforms = currentPlatforms
+            self.context.configuration.externalMetadata.currentPlatforms = currentPlatforms
         }
     }
     

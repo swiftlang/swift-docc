@@ -21,7 +21,7 @@ struct SymbolGraphLoader {
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private var dataProvider: DocumentationContextDataProvider
     private var bundle: DocumentationBundle
-    private var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     
     /// Creates a new loader, initialized with the given bundle.
     /// - Parameters:
@@ -30,11 +30,11 @@ struct SymbolGraphLoader {
     init(
         bundle: DocumentationBundle,
         dataProvider: DocumentationContextDataProvider,
-        configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+        symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
         self.dataProvider = dataProvider
-        self.configureSymbolGraph = configureSymbolGraph
+        self.symbolGraphTransformer = symbolGraphTransformer
     }
     
     /// A strategy to decode symbol graphs.
@@ -76,7 +76,7 @@ struct SymbolGraphLoader {
                     symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
                 }
                 
-                configureSymbolGraph?(&symbolGraph)
+                symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.

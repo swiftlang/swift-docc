@@ -883,7 +883,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
         ]
         let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle") { context in
-            context.externalMetadata.currentPlatforms = platformMetadata
+            context.configuration.externalMetadata.currentPlatforms = platformMetadata
         }
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)

@@ -1226,8 +1226,8 @@ class SemaToRenderNodeTests: XCTestCase {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
         
-        context.externalDocumentationSources = ["com.test.external": TestReferenceResolver()]
-        context.globalExternalSymbolResolver = TestSymbolResolver()
+        context.configuration.externalDocumentationConfiguration.sources = ["com.test.external": TestReferenceResolver()]
+        context.configuration.externalDocumentationConfiguration.globalSymbolResolver = TestSymbolResolver()
         
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -1922,8 +1922,8 @@ Document
         }
         
         // Beta platform
-        context.externalMetadata = ExternalMetadata()
-        context.externalMetadata.currentPlatforms = ["tvOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
+        context.configuration.externalMetadata = ExternalMetadata()
+        context.configuration.externalMetadata.currentPlatforms = ["tvOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
 
         // Different platform is beta
         do {
@@ -1935,7 +1935,7 @@ Document
         }
         
         // Beta platform but *not* matching the introduced version
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
+        context.configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
         
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -1946,7 +1946,7 @@ Document
         }
 
         // Beta platform matching the introduced version
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)]
+        context.configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)]
 
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -1957,7 +1957,7 @@ Document
         }
 
         // Beta platform earlier than the introduced version
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)]
+        context.configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)]
         
         do {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
@@ -1968,7 +1968,7 @@ Document
         }
 
         // Set only some platforms to beta & the exact version MyClass is being introduced at
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
             "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
@@ -1987,7 +1987,7 @@ Document
         }
 
         // Set all platforms to beta & the exact version MyClass is being introduced at to test beta SDK documentation
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
             "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
@@ -2008,7 +2008,7 @@ Document
 
         // Set all platforms to beta where the symbol is available,
         // some platforms not beta but the symbol is not available there.
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
             "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
@@ -2852,7 +2852,7 @@ Document
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: { context in
-            context.externalMetadata.inheritDocs = true
+            context.configuration.externalMetadata.inheritDocs = true
         })
 
         // Verify that we don't reference resolve inherited docs.

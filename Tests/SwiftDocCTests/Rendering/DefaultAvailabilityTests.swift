@@ -108,7 +108,7 @@ class DefaultAvailabilityTests: XCTestCase {
         }
 
         // Set a beta status for the docs (which would normally be set via command line argument)
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ]
@@ -128,7 +128,7 @@ class DefaultAvailabilityTests: XCTestCase {
         }
 
         // Repeat the assertions, but use an earlier platform version this time
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 14, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ]
@@ -175,7 +175,7 @@ class DefaultAvailabilityTests: XCTestCase {
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
 
         // Set a beta status for both iOS and Mac Catalyst
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "iOS": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ]
@@ -186,7 +186,7 @@ class DefaultAvailabilityTests: XCTestCase {
         ], bundle: bundle, context: context)
         
         // Set a public status for Mac Catalyst
-        context.externalMetadata.currentPlatforms = [
+        context.configuration.externalMetadata.currentPlatforms = [
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
         ]
         
@@ -197,7 +197,7 @@ class DefaultAvailabilityTests: XCTestCase {
 
         // Verify that a bug rendering availability as beta when
         // no platforms are provided is fixed.
-        context.externalMetadata.currentPlatforms = [:]
+        context.configuration.externalMetadata.currentPlatforms = [:]
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5",
             "macOS 10.15.1",
@@ -213,7 +213,7 @@ class DefaultAvailabilityTests: XCTestCase {
         }
         
         // Set a beta status for the docs (which would normally be set via command line argument)
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
+        context.configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
         
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
@@ -234,7 +234,7 @@ class DefaultAvailabilityTests: XCTestCase {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { _ in }
         
         // Set a beta status for the docs (which would normally be set via command line argument)
-        context.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
+        context.configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)

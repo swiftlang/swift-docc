@@ -77,7 +77,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        context.externalDocumentationSources = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        context.configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
 
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
@@ -179,8 +179,8 @@ class ExternalReferenceResolverTests: XCTestCase {
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
         
         do {
-            context.externalDocumentationSources = [:]
-            context.convertServiceFallbackResolver = nil
+            context.configuration.externalDocumentationConfiguration.sources = [:]
+            context.configuration.convertServiceConfiguration.fallbackResolver = nil
             
             if case .success = context.resolve(.unresolved(unresolved), in: parent) {
                 XCTFail("The reference was unexpectedly resolved.")
@@ -207,8 +207,8 @@ class ExternalReferenceResolverTests: XCTestCase {
                 }
             }
             
-            context.externalDocumentationSources = [:]
-            context.convertServiceFallbackResolver = TestFallbackResolver(bundleIdentifier: "org.swift.docc.example")
+            context.configuration.externalDocumentationConfiguration.sources = [:]
+            context.configuration.convertServiceConfiguration.fallbackResolver = TestFallbackResolver(bundleIdentifier: "org.swift.docc.example")
             
             guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("The reference was unexpectedly unresolved.")
@@ -222,7 +222,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             XCTAssertEqual(expectedURL, resolved.url)
             
             try workspace.unregisterProvider(dataProvider)
-            context.externalDocumentationSources = [:]
+            context.configuration.externalDocumentationConfiguration.sources = [:]
             guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
                 return
@@ -236,7 +236,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
-        context.externalDocumentationSources = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        context.configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
         
         let identifier = ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)
         
@@ -271,7 +271,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             externalResolver.expectedReferencePath = "/path/to/external/symbol"
             externalResolver.resolvedEntityTitle = "ClassName"
             externalResolver.resolvedEntityKind = resolvedEntityKind
-            context.externalDocumentationSources = [externalResolver.bundleIdentifier: externalResolver]
+            context.configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleIdentifier: externalResolver]
             
             let bundle = try testBundle(named: "TestBundle")
             
@@ -377,7 +377,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        context.externalDocumentationSources = [externalResolver.bundleIdentifier: externalResolver]
+        context.configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleIdentifier: externalResolver]
         let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolder)
         try workspace.registerProvider(dataProvider)
         let bundle = try XCTUnwrap(workspace.bundles.first?.value)
@@ -641,7 +641,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let context = try DocumentationContext(dataProvider: workspace)
         
         // Add external resolver
-        context.externalDocumentationSources = ["com.external.testbundle" : TestExternalReferenceResolver()]
+        context.configuration.externalDocumentationConfiguration.sources = ["com.external.testbundle" : TestExternalReferenceResolver()]
         
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
