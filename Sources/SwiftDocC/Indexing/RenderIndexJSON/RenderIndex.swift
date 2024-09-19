@@ -139,6 +139,8 @@ extension RenderIndex {
         
         /// A reference to a custom image for this node.
         public let icon: RenderReferenceIdentifier?
+        
+        public let filterTags: [String]
 
         enum CodingKeys: String, CodingKey {
             case title
@@ -149,6 +151,7 @@ extension RenderIndex {
             case external
             case beta
             case icon
+            case tags
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -176,6 +179,8 @@ extension RenderIndex {
             }
             
             try container.encodeIfPresent(icon, forKey: .icon)
+            
+            try container.encodeIfNotEmpty(filterTags, forKey: .tags)
         }
         
         public init(from decoder: Decoder) throws {
@@ -197,6 +202,8 @@ extension RenderIndex {
             isBeta = try values.decodeIfPresent(Bool.self, forKey: .beta) ?? false
             
             icon = try values.decodeIfPresent(RenderReferenceIdentifier.self, forKey: .icon)
+            
+            filterTags = try values.decodeIfPresent([String].self, forKey: .tags) ?? []
         }
         
         /// Creates a new node with the given title, path, type, and children.
@@ -219,7 +226,8 @@ extension RenderIndex {
             isDeprecated: Bool,
             isExternal: Bool,
             isBeta: Bool,
-            icon: RenderReferenceIdentifier? = nil
+            icon: RenderReferenceIdentifier? = nil,
+            filterTags: [String] = []
         ) {
             self.title = title
             self.path = path
@@ -229,6 +237,7 @@ extension RenderIndex {
             self.isExternal = isExternal
             self.isBeta = isBeta
             self.icon = nil
+            self.filterTags = filterTags
         }
         
         init(
@@ -237,7 +246,8 @@ extension RenderIndex {
             pageType: NavigatorIndex.PageType?,
             isDeprecated: Bool,
             children: [Node],
-            icon: RenderReferenceIdentifier?
+            icon: RenderReferenceIdentifier?,
+            filterTags: [String] = []
         ) {
             self.title = title
             self.children = children.isEmpty ? nil : children
@@ -250,6 +260,8 @@ extension RenderIndex {
             
             self.isBeta = false
             self.icon = icon
+            
+            self.filterTags = filterTags
             
             guard let pageType else {
                 self.type = nil

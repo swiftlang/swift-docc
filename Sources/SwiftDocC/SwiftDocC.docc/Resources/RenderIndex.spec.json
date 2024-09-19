@@ -110,6 +110,12 @@
                         "type": "string",
                         "format": "reference(ImageRenderReference)"
                     },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "children": {
                         "type": "array",
                         "items": {
