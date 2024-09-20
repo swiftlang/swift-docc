@@ -29,7 +29,7 @@
 ///
 /// Inline elements can be nested, for example, an inline piece of text can be wrapped in an emphasis element.
 /// Block elements cannot be nested in inline elements.
-public enum RenderInlineContent: Equatable, Hashable {
+public enum RenderInlineContent: Equatable {
     /// A piece of code like a variable name or a single operator.
     case codeVoice(code: String)
     /// An emphasized piece of inline content.

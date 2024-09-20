@@ -11,7 +11,7 @@
 import Foundation
 
 /// Additional metadata that might belong to a content element.
-public struct RenderContentMetadata: Equatable, Codable, Hashable {
+public struct RenderContentMetadata: Equatable, Codable {
     /// An optional named anchor to the current element.
     public var anchor: String?
     /// An optional custom title.
