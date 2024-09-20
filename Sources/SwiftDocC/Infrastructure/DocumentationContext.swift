@@ -1092,7 +1092,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
         try autoreleasepool {
             /// We need only unique relationships so we'll collect them in a set.
-            var combinedRelationships = [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]()
+            var combinedRelationshipsBySelector = [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]()
+            /// Also track the unique relationships across all languages and platforms
+            var uniqueRelationships = Set<SymbolGraph.Relationship>()
             /// Collect symbols from all symbol graphs.
             var combinedSymbols = [String: UnifiedSymbolGraph.Symbol]()
             
@@ -1106,7 +1108,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             documentLocationMap.reserveCapacity(symbolReferences.count)
             topicGraph.nodes.reserveCapacity(symbolReferences.count)
             topicGraph.edges.reserveCapacity(symbolReferences.count)
-            combinedRelationships.reserveCapacity(symbolReferences.count)
+            combinedRelationshipsBySelector.reserveCapacity(symbolReferences.count)
+            uniqueRelationships.reserveCapacity(symbolReferences.count)
             combinedSymbols.reserveCapacity(symbolReferences.count)
             
             // Iterate over batches of symbol graphs, each batch describing one module.
@@ -1207,15 +1210,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 combinedSymbols.merge(unifiedSymbolGraph.symbols, uniquingKeysWith: { $1 })
                 
                 for (selector, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
-                    combinedRelationships[selector, default: []].formUnion(relationships)
+                    combinedRelationshipsBySelector[selector, default: []].formUnion(relationships)
+                    uniqueRelationships.formUnion(relationships)
                 }
                 
                 // Keep track of relationships that refer to symbols that are absent from the symbol graph, so that
                 // we can diagnose them.
-                combinedRelationships[
+                combinedRelationshipsBySelector[
                     .init(interfaceLanguage: "unknown", platform: nil),
                     default: []
                 ].formUnion(unifiedSymbolGraph.orphanRelationships)
+                uniqueRelationships.formUnion(unifiedSymbolGraph.orphanRelationships)
             }
             
             try shouldContinueRegistration()
@@ -1305,10 +1310,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
             symbolsWithMultipleDocumentationExtensionMatches.removeAll()
-            
+
             // Create inherited API collections
             try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
-                relationships: combinedRelationships.flatMap(\.value),
+                relationships: uniqueRelationships,
                 context: self,
                 bundle: bundle
             )
@@ -1350,9 +1355,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.identifier)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
-            try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationships)
+            try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
             
-            for (selector, relationships) in combinedRelationships {
+            for (selector, relationships) in combinedRelationshipsBySelector {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector, bundle: bundle)
                 // Merge into target symbols the member symbols that get rendered on the same page as target.

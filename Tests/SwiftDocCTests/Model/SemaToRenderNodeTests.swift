@@ -2165,10 +2165,7 @@ Document
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
 
-            guard let requiredFuncReference = renderNode.references["doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi"] else {
-                XCTFail("Could not find reference for ")
-                return
-            }
+            let requiredFuncReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()"])
             
             XCTAssertEqual((requiredFuncReference as? TopicRenderReference)?.required, true)
             XCTAssertEqual((requiredFuncReference as? TopicRenderReference)?.defaultImplementationCount, 1)
@@ -2176,7 +2173,7 @@ Document
 
         // Verify that a required symbol includes a required metadata and default implementations
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideProtocol/func()-6ijsi", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideProtocol/func()", sourceLanguage: .swift))
             let symbol = node.semantic as! Symbol
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode
@@ -2196,7 +2193,7 @@ Document
         
         // Verify that a required symbol does not include default implementations in Topics groups
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideProtocol/func()-6ijsi", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideProtocol/func()", sourceLanguage: .swift))
             let symbol = node.semantic as! Symbol
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(symbol) as! RenderNode

@@ -176,7 +176,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload1(param: [Int: Int]) {}
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/overload1(param:)-8nk5z",
+                path: "/documentation/FancyOverloads/overload1(param:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
@@ -227,7 +227,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload2(p1: ((Int) -> Int)?, p2: Int) {} // <- overload group
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/overload2(p1:p2:)-4p1sq",
+                path: "/documentation/FancyOverloads/overload2(p1:p2:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
@@ -282,7 +282,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             // func overload3<K: Hashable, V>(_ p: [K: V]) {}
             let reference = ResolvedTopicReference(
                 bundleIdentifier: bundle.identifier,
-                path: "/documentation/FancyOverloads/overload3(_:)-xql2",
+                path: "/documentation/FancyOverloads/overload3(_:)",
                 sourceLanguage: .swift
             )
             let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
