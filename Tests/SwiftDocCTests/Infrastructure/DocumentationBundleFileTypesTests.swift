@@ -13,46 +13,51 @@ import XCTest
 
 class DocumentationBundleFileTypesTests: XCTestCase {
     func testIsCustomHeader() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "/header.html")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "header")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "/header.html/foo")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
-            URL(fileURLWithPath: "DocC.docc/header.html")))
+        assertThat(DocumentationBundleFileTypes.isCustomHeader, matchesFilesNamed: "header", withExtension: "html")
     }
 
     func testIsCustomFooter() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "/footer.html")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "footer")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "/footer.html/foo")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
-            URL(fileURLWithPath: "DocC.docc/footer.html")))
+        assertThat(DocumentationBundleFileTypes.isCustomFooter, matchesFilesNamed: "footer", withExtension: "html")
     }
 
     func testIsThemeSettingsFile() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "theme-settings.json")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "/a/b/theme-settings.json")))
-
-        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "theme-settings.txt")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "not-theme-settings.json")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
-            URL(fileURLWithPath: "/a/theme-settings.json/bar")))
+        assertThat(DocumentationBundleFileTypes.isThemeSettingsFile, matchesFilesNamed: "theme-settings", withExtension: "json")
+    }
+    
+    func testIsCustomScriptsFile() {
+        assertThat(DocumentationBundleFileTypes.isCustomScriptsFile, matchesFilesNamed: "custom-scripts", withExtension: "json")
+    }
+    
+    private func assertThat(
+        _ predicate: (URL) -> Bool,
+        matchesFilesNamed fileName: String,
+        withExtension extension: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        let fileNameWithExtension = "\(fileName).\(`extension`)"
+        
+        let pathsThatShouldMatch = [
+            fileNameWithExtension,
+            "/\(fileNameWithExtension)",
+            "DocC/docc/\(fileNameWithExtension)",
+            "/a/b/\(fileNameWithExtension)"
+        ].map { URL(fileURLWithPath: $0) }
+        
+        let pathsThatShouldNotMatch = [
+            fileName,
+            "/\(fileNameWithExtension)/foo",
+            "/a/\(fileNameWithExtension)/bar",
+            "\(fileName).wrongextension",
+            "wrongname.\(`extension`)"
+        ].map { URL(fileURLWithPath: $0) }
+        
+        for url in pathsThatShouldMatch {
+            XCTAssertTrue(predicate(url), file: file, line: line)
+        }
+        
+        for url in pathsThatShouldNotMatch {
+            XCTAssertFalse(predicate(url), file: file, line: line)
+        }
     }
 }
