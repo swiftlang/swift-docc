@@ -2631,7 +2631,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     private func externalEntity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
         return configuration.externalDocumentationConfiguration.sources[reference.bundleIdentifier].map({ $0.entity(with: reference) })
-        ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
+            ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
     }
     
     /**

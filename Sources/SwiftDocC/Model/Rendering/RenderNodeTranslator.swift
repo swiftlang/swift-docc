@@ -1256,7 +1256,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         } ?? .init(defaultValue:
-                    defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
+            defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.configuration.externalMetadata.currentPlatforms)?
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         )
