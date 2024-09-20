@@ -246,8 +246,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
     ///
-    /// - Parameter dataProvider: The data provider to register bundles from.
-    /// - Parameter diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
+    /// - Parameters:
+    ///   - dataProvider: The data provider to register bundles from.
+    ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
+    ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
     public init(
         dataProvider: DocumentationContextDataProvider,
