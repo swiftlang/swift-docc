@@ -79,6 +79,9 @@ extension DocumentationContext {
             public var sources: [BundleIdentifier: ExternalDocumentationSource] = [:]
             /// A type that resolves all symbols that are referenced in symbol graph files but can't be found in any of the locally available symbol graph files.
             public var globalSymbolResolver: GlobalExternalSymbolResolver?
+            /// A list of URLs to documentation archives that the local documentation depends on.
+            @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
+            public var dependencyArchives: [URL] = []
         }
         
         // MARK: Experimental coverage

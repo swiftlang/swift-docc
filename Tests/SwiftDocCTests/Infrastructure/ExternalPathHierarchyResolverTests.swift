@@ -722,6 +722,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
         
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
+        
         // After building the dependency,
         let (mainBundle, mainContext) = try loadBundle(
             catalog: Folder(name: "Main.docc", content: [
@@ -788,9 +791,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
                     JSONFile(name: "link-hierarchy.json", content: linkResolutionInformation),
                 ])
             ],
-            configureContext: {
-                $0.linkResolver.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
-            }
+            configuration: configuration
         )
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)

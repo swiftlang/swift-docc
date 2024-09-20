@@ -51,17 +51,14 @@ extension XCTestCase {
     ///   - catalog: The directory structure of the documentation catalog
     ///   - otherFileSystemDirectories: Any other directories in the test file system.
     ///   - configuration: Configuration for the created context.
-    ///   - configureContext: A closure where the caller can configure the context before registering the data provider with the context.
     /// - Returns: The loaded documentation bundle and context for the given catalog input.
     func loadBundle(
         catalog: Folder,
         otherFileSystemDirectories: [Folder] = [],
-        configuration: DocumentationContext.Configuration = .init(),
-        configureContext: (DocumentationContext) throws -> Void = { _ in }
+        configuration: DocumentationContext.Configuration = .init()
     ) throws -> (DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
-        try configureContext(context)
         
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
         context.linkResolver.fileManager = fileSystem

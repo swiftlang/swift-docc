@@ -13,10 +13,6 @@ import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
-    /// A list of URLs to documentation archives that the local documentation depends on.
-    @_spi(ExternalLinks) // This needs to be public SPI so that the ConvertAction can set it.
-    public var dependencyArchives: [URL] = []
-    
     var fileManager: FileManagerProtocol = FileManager.default
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
@@ -28,7 +24,8 @@ public class LinkResolver {
     var externalResolvers: [String: ExternalPathHierarchyResolver] = [:]
     
     /// Create link resolvers for all documentation archive dependencies.
-    func loadExternalResolvers() throws {
+    /// - Parameter dependencyArchives: A list of URLs to documentation archives that the local documentation depends on.
+    func loadExternalResolvers(dependencyArchives: [URL]) throws {
         let resolvers = try dependencyArchives.compactMap {
             try ExternalPathHierarchyResolver(dependencyArchive: $0, fileManager: fileManager)
         }

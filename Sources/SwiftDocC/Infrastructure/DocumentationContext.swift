@@ -132,7 +132,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// User-provided global options for this documentation conversion.
     var options: Options?
-
     
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
@@ -2119,7 +2118,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                try linkResolver.loadExternalResolvers()
+                try linkResolver.loadExternalResolvers(dependencyArchives: configuration.externalDocumentationConfiguration.dependencyArchives)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({

@@ -224,11 +224,11 @@ public struct ConvertAction: Action, RecreatingContext {
             configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
+        configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
         
         (context as _DeprecatedConfigurationSetAccess?)?.configuration = configuration
         
         self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine, configuration: configuration)
-        self.context.linkResolver.dependencyArchives = dependencies
         
         self.converter = DocumentationConverter(
             documentationBundleURL: documentationBundleURL,
