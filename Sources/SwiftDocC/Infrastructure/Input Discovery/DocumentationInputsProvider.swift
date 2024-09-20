@@ -25,6 +25,7 @@ extension DocumentationContext {
     ///  ``DocumentationContext/Inputs/symbolGraphURLs``  | ``DocumentationCatalogFileTypes/isSymbolGraphFile(_:)``
     ///  ``DocumentationContext/Inputs/info``             | ``DocumentationCatalogFileTypes/isInfoPlistFile(_:)``
     ///  ``DocumentationContext/Inputs/themeSettings``    | ``DocumentationCatalogFileTypes/isThemeSettingsFile(_:)``
+    ///  ``DocumentationContext/Inputs/customScripts``    | ``DocumentationCatalogFileTypes/isCustomScriptsFile(_:)``
     ///  ``DocumentationContext/Inputs/customHeader``     | ``DocumentationCatalogFileTypes/isCustomHeader(_:)``
     ///  ``DocumentationContext/Inputs/customFooter``     | ``DocumentationCatalogFileTypes/isCustomFooter(_:)``
     ///  ``DocumentationContext/Inputs/customFavicon``    | ``DocumentationCatalogFileTypes/isCustomFavicon(_:)``
@@ -163,7 +164,8 @@ extension DocumentationContext.InputsProvider {
             customHeader:  shallowContent.first(where: FileTypes.isCustomHeader),
             customFooter:  shallowContent.first(where: FileTypes.isCustomFooter),
             themeSettings: shallowContent.first(where: FileTypes.isThemeSettingsFile),
-            customFavicon: shallowContent.first(where: FileTypes.isCustomFavicon)
+            customFavicon: shallowContent.first(where: FileTypes.isCustomFavicon),
+            customScripts: shallowContent.first(where: FileTypes.isCustomScriptsFile)
         )
     }
 

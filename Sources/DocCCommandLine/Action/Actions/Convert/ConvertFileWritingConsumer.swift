@@ -135,6 +135,21 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
         for downloadAsset in context.registeredDownloadsAssets(for: inputsID) {
             try copyAsset(downloadAsset, to: downloadsDirectory)
         }
+        
+        // Create custom-scripts directory in the archive if needed. Do not append
+        // the catalog identifier: when merging archives, only the first archive's
+        // custom-scripts.json and custom-scripts directory survive (mirroring the
+        // behavior of theme-settings.json and the favicon), so there is no need
+        // to namespace the custom-scripts directory with a catalog identifier.
+        let scriptsDirectory = targetFolder
+            .appendingPathComponent("custom-scripts", isDirectory: true)
+        if !outputFileManager.directoryExists(atPath: scriptsDirectory.path) {
+            try outputFileManager.createDirectory(at: scriptsDirectory, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        for customScript in context.registeredCustomScripts(for: inputsID) {
+            try copyAsset(customScript, to: scriptsDirectory)
+        }
 
         // If the bundle contains a `header.html` file, inject a <template> into
         // the `index.html` file using its contents. This will only be done if
@@ -169,6 +184,16 @@ struct ConvertFileWritingConsumer: _WillBeMadeNonPublicConvertOutputConsumer, Ex
                 try outputFileManager.removeItem(at: targetFile)
             }
             try inputFileManager.copyItem(at: customFavicon, to: targetFile, writingUsing: outputFileManager)
+        }
+        
+        // Copy the `custom-scripts.json` file into the output directory if one
+        // is provided.
+        if let customScripts = inputs.customScripts {
+            let targetFile = targetFolder.appendingPathComponent(customScripts.lastPathComponent, isDirectory: false)
+            if outputFileManager.fileExists(atPath: targetFile.path) {
+                try outputFileManager.removeItem(at: targetFile)
+            }
+            try inputFileManager.copyItem(at: customScripts, to: targetFile, writingUsing: outputFileManager)
         }
     }
     

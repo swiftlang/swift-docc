@@ -955,6 +955,7 @@ class MergeActionTests: XCTestCase {
             
             XCTAssertEqual(fileSystem.dump(subHierarchyFrom: outputPath.path), """
             \(name).doccarchive/
+            ├─ custom-scripts
             ├─ data/
             │  ╰─ documentation/
             │     ├─ \(name.lowercased()).json
@@ -995,6 +996,7 @@ class MergeActionTests: XCTestCase {
         
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: combinedArchiveDir.path), """
         Output.doccarchive/
+        ├─ custom-scripts/
         ├─ data/
         │  ├─ documentation.json
         │  ╰─ documentation/
