@@ -44,9 +44,6 @@ public struct PropertyListPossibleValuesSection {
     public let possibleValues: [PossibleValue]
     
     struct Validator {
-        /// The engine that collects problems encountered while validating the possible values documentation.
-        var diagnosticEngine: DiagnosticEngine
-        
         /// Creates a new problem about documentation for a possible value that's not known to that symbol.
         ///
         /// ## Example

@@ -426,10 +426,10 @@ public struct DocumentationNode {
         let symbolAllowedValues = symbol![mixin: SymbolGraph.Symbol.AllowedValues.self]
         
         if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
-            let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
             guard let symbolAllowedValues else {
-                possibleValues.forEach { 
-                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
+                let validator = PropertyListPossibleValuesSection.Validator()
+                for value in possibleValues {
+                    engine.emit(validator.makeExtraPossibleValueProblem(value, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
                 return
             }
