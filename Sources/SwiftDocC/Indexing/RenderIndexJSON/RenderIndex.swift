@@ -105,7 +105,7 @@ public struct RenderIndex: Codable, Equatable {
 
 extension RenderIndex {
     /// A documentation node in a documentation render index.
-    public struct Node: Codable, Hashable {
+    public struct Node: Codable, Equatable {
         /// The title of the node, suitable for presentation.
         public let title: String
         
