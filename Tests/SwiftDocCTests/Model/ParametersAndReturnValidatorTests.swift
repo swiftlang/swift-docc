@@ -685,7 +685,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         })
         
         context.diagnosticEngine.flush()
-        return logStorage.text
+        return logStorage.text.trimmingCharacters(in: .newlines)
     }
     
     private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
