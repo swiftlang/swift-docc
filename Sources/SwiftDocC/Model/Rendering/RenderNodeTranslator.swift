@@ -1249,8 +1249,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             return availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
-                    // Filter items with insufficient availability data
-                    guard availability.introducedVersion != nil else {
+                    // Filter items with insufficient availability data.
+                    // Allow availability without version information, but only if
+                    // both, introduced and deprecated, are nil.
+                    if availability.introducedVersion == nil && availability.deprecatedVersion != nil {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
@@ -1817,10 +1819,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let renderedAvailability = moduleAvailability
             .filter({ $0.versionInformation != .unavailable })
             .compactMap({ availability -> AvailabilityRenderItem? in
-                guard let availabilityIntroducedVersion = availability.introducedVersion else { return nil }
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
-                    introduced: availabilityIntroducedVersion,
+                    introduced: availability.introducedVersion,
                     isBeta: currentPlatforms.map({ isModuleBeta(moduleAvailability: availability, currentPlatforms: $0) }) ?? false
                 )
             })
