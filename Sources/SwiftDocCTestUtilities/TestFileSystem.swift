@@ -309,7 +309,6 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     }
 
     package func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
-
         if let keys {
             XCTAssertTrue(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
         }
@@ -318,13 +317,25 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
             XCTFail("The given directory enumeration option(s) \(mask.rawValue) have not been implemented in the test file system: \(mask)")
         }
 
-        let skipHiddenFiles = mask == .skipsHiddenFiles
-        let contents = try contentsOfDirectory(atPath: url.path)
-        let output: [URL] = contents.filter({ skipHiddenFiles ? !$0.hasPrefix(".") : true}).map {
-            url.appendingPathComponent($0)
+        let skipHiddenFiles = mask.contains(.skipsHiddenFiles)
+        var contents = try contentsOfDirectory(atPath: url.path)
+        if skipHiddenFiles {
+            contents.removeAll(where: { $0.hasPrefix(".") })
         }
+        
+        return contents.map { url.appendingPathComponent($0)}
+    }
 
-        return output
+    package func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
+        var allContents = try contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: mask)
+
+        let partitionIndex = allContents.partition {
+            self.files[$0.path] == Self.folderFixtureData
+        }
+        return (
+            files:       Array( allContents[..<partitionIndex] ),
+            directories: Array( allContents[partitionIndex...] )
+        )
     }
 
     package func uniqueTemporaryDirectory() -> URL {

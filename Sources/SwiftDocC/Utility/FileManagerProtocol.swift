@@ -87,6 +87,14 @@ package protocol FileManagerProtocol {
     ///   - options: Options for writing the data. Provide `nil` to use the default
     ///              writing options of the file manager.
     func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws
+
+    /// Performs a shallow search of the specified directory and returns the file and directory URLs for the contained items.
+    ///
+    /// - Parameters:
+    ///   - url: The URL for the directory whose contents to enumerate.
+    ///   - mark: Options for the enumeration. Because this method performs only shallow enumerations, the only supported option is `skipsHiddenFiles`.
+    /// - Returns: The URLs of each file and directory that's contained in `url`.
+    func contentsOfDirectory(at url: URL, options mask: FileManager.DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL])
 }
 
 extension FileManagerProtocol {
@@ -122,5 +130,18 @@ extension FileManager: FileManagerProtocol {
     // Because we shadow 'FileManager.temporaryDirectory' in our tests, we can't also use 'temporaryDirectory' in FileManagerProtocol/
     package func uniqueTemporaryDirectory() -> URL {
         temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString, isDirectory: true)
+    }
+
+    // This method doesn't exist on `FileManger`. We define it on the protocol to enable the FileManager to provide an implementation that avoids repeated reads to discover which contained items are files and which are directories.
+    package func contentsOfDirectory(at url: URL, options mask: DirectoryEnumerationOptions) throws -> (files: [URL], directories: [URL]) {
+        var allContents = try contentsOfDirectory(at: url, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles)
+
+        let partitionIndex = try allContents.partition {
+            try $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
+        }
+        return (
+            files:       Array( allContents[..<partitionIndex] ),
+            directories: Array( allContents[partitionIndex...] )
+        )
     }
 }
