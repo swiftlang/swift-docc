@@ -45,10 +45,10 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     
     package var identifier: String = UUID().uuidString
     
-    private var _bundles = [DocumentationBundle]()
     package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        // Ignore the bundle discovery options, these test bundles are already built.
-        return _bundles
+        try DocumentationContext.InputsProvider(fileManager: self)
+            .inputs(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options)
+            .map { [$0] } ?? []
     }
     
     /// Thread safe access to the file system.
@@ -71,48 +71,8 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         files["/"] = Self.folderFixtureData
         files["/tmp"] = Self.folderFixtureData
  
-        // Import given folders
-        try updateDocumentationBundles(withFolders: folders)
-    }
-    
-    func updateDocumentationBundles(withFolders folders: [Folder]) throws {
-        _bundles.removeAll()
-        
         for folder in folders {
-            let files = try addFolder(folder)
-            
-            func asCatalog(_ file: File) -> Folder? {
-                if let folder = file as? Folder, URL(fileURLWithPath: folder.name).pathExtension == "docc" {
-                    return folder
-                }
-                return nil
-            }
-            
-            if let catalog = asCatalog(folder) ?? folder.recursiveContent.mapFirst(where: asCatalog(_:)) {
-                let files = files.filter({ $0.hasPrefix(catalog.absoluteURL.path) }).compactMap({ URL(fileURLWithPath: $0) })
-
-                let markupFiles = files.filter({ DocumentationBundleFileTypes.isMarkupFile($0) })
-                let miscFiles = files.filter({ !DocumentationBundleFileTypes.isMarkupFile($0) })
-                let graphs = files.filter({ DocumentationBundleFileTypes.isSymbolGraphFile($0) })
-                let customHeader = files.first(where: { DocumentationBundleFileTypes.isCustomHeader($0) })
-                let customFooter = files.first(where: { DocumentationBundleFileTypes.isCustomFooter($0) })
-                
-                let info = try DocumentationBundle.Info(
-                    from: try catalog.recursiveContent.mapFirst(where: { $0 as? InfoPlist })?.data(),
-                    bundleDiscoveryOptions: nil,
-                    derivedDisplayName: URL(fileURLWithPath: catalog.name).deletingPathExtension().lastPathComponent
-                )
-                
-                let bundle = DocumentationBundle(
-                    info: info,
-                    symbolGraphURLs: graphs,
-                    markupURLs: markupFiles,
-                    miscResourceURLs: miscFiles,
-                    customHeader: customHeader,
-                    customFooter: customFooter
-                )
-                _bundles.append(bundle)
-            }
+            try addFolder(folder)
         }
     }
 
@@ -185,20 +145,20 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
         return files.keys.contains(path)
     }
     
-    package func copyItem(at srcURL: URL, to dstURL: URL) throws {
+    package func copyItem(at source: URL, to destination: URL) throws {
         guard !disableWriting else { return }
         
         filesLock.lock()
         defer { filesLock.unlock() }
         
-        try ensureParentDirectoryExists(for: dstURL)
+        try ensureParentDirectoryExists(for: destination)
         
-        let srcPath = srcURL.path
-        let dstPath = dstURL.path
+        let sourcePath      = source.path
+        let destinationPath = destination.path
         
-        files[dstPath] = files[srcPath]
-        for (path, data) in files where path.hasPrefix(srcPath) {
-            files[path.replacingOccurrences(of: srcPath, with: dstPath)] = data
+        files[destinationPath] = files[sourcePath]
+        for (path, data) in files where path.hasPrefix(sourcePath) {
+            files[path.replacingOccurrences(of: sourcePath, with: destinationPath)] = data
         }
     }
     
@@ -400,7 +360,3 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     }
 }
 
-private extension File {
-    /// A URL of the file node if it was located in the root of the file system.
-    var absoluteURL: URL { return URL(string: "/\(name)")! }
-}
