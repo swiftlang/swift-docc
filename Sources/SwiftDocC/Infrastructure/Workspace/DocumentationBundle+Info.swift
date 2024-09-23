@@ -11,6 +11,16 @@
 import Foundation
 
 extension DocumentationBundle {
+    
+    /// Options to define the inherit default availability behaviour.
+    public enum InheritDefaultAvailabilityOptions: String, Codable {
+        /// The platforms with the designated versions defined in the default availability will be used by the symbols as availability information.
+        /// This is the default behaviour.
+        case platformAndVersion
+        /// Only the platforms defined in the default availability will be passed to the symbols.
+        case platformOnly
+    }
+    
     /// Information about a documentation bundle that's unrelated to its documentation content.
     ///
     /// This information is meant to be decoded from the bundle's Info.plist file.
@@ -39,6 +49,10 @@ extension DocumentationBundle {
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
+        /// The default availability behaviour options.
+        public var defaultAvailabilityOptions: DefaultAvailabilityOptions?
+
+        
         enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
@@ -47,6 +61,7 @@ extension DocumentationBundle {
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
             case featureFlags = "CDExperimentalFeatureFlags"
+            case defaultAvailabilityOptions = "CDDefaultAvailabilityOptions"
 
             var argumentName: String? {
                 switch self {
@@ -60,7 +75,7 @@ extension DocumentationBundle {
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
                     return "--fallback-default-module-kind"
-                case .defaultAvailability, .featureFlags:
+                case .defaultAvailability, .defaultAvailabilityOptions, .featureFlags:
                     return nil
                 }
             }
@@ -91,13 +106,15 @@ extension DocumentationBundle {
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        ///   - defaultAvailabilityOptions: The options to enable or disable symbol availability logic from the module default availability.
         public init(
             displayName: String,
             identifier: String,
             version: String?,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
-            defaultModuleKind: String?
+            defaultModuleKind: String?,
+            defaultAvailabilityOptions: DefaultAvailabilityOptions?
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -105,6 +122,7 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultAvailability = defaultAvailability
             self.defaultModuleKind = defaultModuleKind
+            self.defaultAvailabilityOptions = defaultAvailabilityOptions
         }
         
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
@@ -234,6 +252,8 @@ extension DocumentationBundle {
             
             self.defaultCodeListingLanguage = try decodeOrFallbackIfPresent(String.self, with: .defaultCodeListingLanguage)
             self.defaultModuleKind = try decodeOrFallbackIfPresent(String.self, with: .defaultModuleKind)
+            self.defaultAvailabilityOptions = try decodeOrFallbackIfPresent(DefaultAvailabilityOptions.self, with: .defaultAvailabilityOptions)
+            self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
             self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
         }
@@ -245,7 +265,9 @@ extension DocumentationBundle {
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
-            featureFlags: BundleFeatureFlags? = nil
+            featureFlags: BundleFeatureFlags? = nil,
+            inheritDefaultAvailability: InheritDefaultAvailabilityOptions? = nil,
+            defaultAvailabilityOptions: DefaultAvailabilityOptions? = nil
         ) {
             self.displayName = displayName
             self.identifier = identifier
@@ -254,6 +276,22 @@ extension DocumentationBundle {
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
             self.featureFlags = featureFlags
+            self.defaultAvailabilityOptions = defaultAvailabilityOptions
+        }
+        
+        public func encode(to encoder: any Encoder) throws {
+            var container: KeyedEncodingContainer<DocumentationBundle.Info.CodingKeys> = encoder.container(keyedBy: DocumentationBundle.Info.CodingKeys.self)
+            
+            try container.encode(self.displayName, forKey: DocumentationBundle.Info.CodingKeys.displayName)
+            try container.encode(self.identifier, forKey: DocumentationBundle.Info.CodingKeys.identifier)
+            try container.encodeIfPresent(self.version, forKey: DocumentationBundle.Info.CodingKeys.version)
+            try container.encodeIfPresent(self.defaultCodeListingLanguage, forKey: DocumentationBundle.Info.CodingKeys.defaultCodeListingLanguage)
+            try container.encodeIfPresent(self.defaultAvailability, forKey: DocumentationBundle.Info.CodingKeys.defaultAvailability)
+            try container.encodeIfPresent(self.defaultModuleKind, forKey: DocumentationBundle.Info.CodingKeys.defaultModuleKind)
+            try container.encodeIfPresent(self.featureFlags, forKey: DocumentationBundle.Info.CodingKeys.featureFlags)
+            if defaultAvailabilityOptions != .init() {
+                try container.encodeIfPresent(self.defaultAvailabilityOptions, forKey: DocumentationBundle.Info.CodingKeys.defaultAvailabilityOptions)
+            }
         }
     }
 }
@@ -272,6 +310,7 @@ extension BundleDiscoveryOptions {
     ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
     ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    ///   - defaultAvailabilityOptions: Options to configure default availability  behaviour.
     public init(
         fallbackDisplayName: String? = nil,
         fallbackIdentifier: String? = nil,
@@ -279,7 +318,8 @@ extension BundleDiscoveryOptions {
         fallbackDefaultCodeListingLanguage: String? = nil,
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
-        additionalSymbolGraphFiles: [URL] = []
+        additionalSymbolGraphFiles: [URL] = [],
+        defaultAvailabilityOptions: DefaultAvailabilityOptions? = nil
     ) {
         // Iterate over all possible coding keys with a switch
         // to build up the dictionary of fallback options.
@@ -304,6 +344,8 @@ extension BundleDiscoveryOptions {
                 value = fallbackDefaultModuleKind
             case .featureFlags:
                 value = nil
+            case .defaultAvailabilityOptions:
+                value = defaultAvailabilityOptions
             }
             
             guard let unwrappedValue = value else {
