@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
 import struct Markdown.SourceRange
 import struct Markdown.SourceLocation
 import SymbolKit
@@ -80,10 +81,38 @@ extension PathHierarchy.Error {
     ///   - fullNameOfNode: A closure that determines the full name of a node, to be displayed in collision diagnostics to precisely identify symbols and other pages.
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the link text excluding its surrounding syntax.
     func makeTopicReferenceResolutionErrorInfo(fullNameOfNode: (PathHierarchy.Node) -> String) -> TopicReferenceResolutionErrorInfo {
+        // Both `.unknownDisambiguation(...)` and `.lookupCollisions(...)` create solutions on the same format from the same information.
         // This is defined inline because it captures `fullNameOfNode`.
-        func collisionIsBefore(_ lhs: (node: PathHierarchy.Node, disambiguation: String), _ rhs: (node: PathHierarchy.Node, disambiguation: String)) -> Bool {
-            return fullNameOfNode(lhs.node) + lhs.disambiguation
-                 < fullNameOfNode(rhs.node) + rhs.disambiguation
+        func makeCollisionSolutions(
+            from candidates: [(node: PathHierarchy.Node, disambiguation: String)],
+            nextPathComponent: PathHierarchy.PathComponent,
+            partialResultPrefix: Substring
+        ) -> (
+            pathPrefix: Substring,
+            foundDisambiguation: Substring,
+            solutions: [Solution]
+        ) {
+            let pathPrefix = partialResultPrefix + nextPathComponent.name
+            let foundDisambiguation = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: foundDisambiguation.count)
+            
+            let solutions: [Solution] = candidates
+                .map { (fullName: fullNameOfNode($0.node), disambiguation: $0.disambiguation) }
+                .sorted { lhs, rhs in
+                    // Sort by name first and disambiguation second
+                    if lhs.fullName == rhs.fullName {
+                        return lhs.disambiguation < rhs.disambiguation
+                    }
+                    return lhs.fullName < rhs.fullName
+                }
+                .map { (fullName: String, suggestedDisambiguation: String) -> Solution in
+                    // In contexts that display the solution message on a single line by removing newlines, this extra whitespace makes it look correct ─────────────╮
+                    //                                                                                                                                               ▼
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: foundDisambiguation, to: suggestedDisambiguation, forCollision: true)) for \n\(fullName.singleQuoted)", replacements: [
+                        Replacement(range: replacementRange, replacement: suggestedDisambiguation)
+                    ])
+                }
+            return (pathPrefix, foundDisambiguation, solutions)
         }
         
         switch self {
@@ -127,7 +156,7 @@ extension PathHierarchy.Error {
 
         case .unfindableMatch(let node):
             return TopicReferenceResolutionErrorInfo("""
-                \(node.name.singleQuoted) can't be linked to in a partial documentation build
+            \(node.name.singleQuoted) can't be linked to in a partial documentation build
             """)
 
         case .nonSymbolMatchForSymbolLink(path: let path):
@@ -142,24 +171,13 @@ extension PathHierarchy.Error {
             
         case .unknownDisambiguation(partialResult: let partialResult, remaining: let remaining, candidates: let candidates):
             let nextPathComponent = remaining.first!
-            let validPrefix = partialResult.pathPrefix + nextPathComponent.name
-            
-            let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
-            let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
-            
-            let solutions: [Solution] = candidates
-                .sorted(by: collisionIsBefore)
-                .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations, to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
-                        Replacement(range: replacementRange, replacement: disambiguation)
-                    ])
-                }
+            let (pathPrefix, foundDisambiguation, solutions) = makeCollisionSolutions(from: candidates, nextPathComponent: nextPathComponent, partialResultPrefix: partialResult.pathPrefix)
             
             return TopicReferenceResolutionErrorInfo("""
-                \(disambiguations.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                \(foundDisambiguation.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
-                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
+                rangeAdjustment: .makeRelativeRange(startColumn: pathPrefix.count, length: foundDisambiguation.count)
             )
             
         case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
@@ -201,17 +219,7 @@ extension PathHierarchy.Error {
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
             let nextPathComponent = remaining.first!
-            
-            let pathPrefix = partialResult.pathPrefix + nextPathComponent.name
-
-            let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
-            let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: disambiguations.count)
-            
-            let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(fullNameOfNode(node).singleQuoted)", replacements: [
-                    Replacement(range: replacementRange, replacement: "-" + disambiguation)
-                ])
-            }
+            let (pathPrefix, _, solutions) = makeCollisionSolutions(from: collisions, nextPathComponent: nextPathComponent, partialResultPrefix: partialResult.pathPrefix)
             
             return TopicReferenceResolutionErrorInfo("""
                 \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
@@ -222,14 +230,25 @@ extension PathHierarchy.Error {
         }
     }
     
-    private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol) -> String {
+    private static func replacementOperationDescription(from: some StringProtocol, to: some StringProtocol, forCollision: Bool = false) -> String {
         if from.isEmpty {
             return "Insert \(to.singleQuoted)"
         }
         if to.isEmpty {
             return "Remove \(from.singleQuoted)"
         }
-        return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
+        
+        guard forCollision else {
+            return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
+        }
+        
+        if to.hasPrefix("->") || from.hasPrefix("->") {
+            // If either the "to" or "from" descriptions are a return type disambiguation, include the full arrow for both.
+            // Only a ">" prefix doesn't read as an "arrow", and it looks incorrect when only of the descriptions have a "-" prefix.
+            return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
+        }
+        // For other replacement descriptions, drop the leading "-" to focus on the text that's different.
+        return "Replace \(from.dropFirst().singleQuoted) with \(to.dropFirst().singleQuoted)"
     }
 }
 

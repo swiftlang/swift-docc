@@ -1,0 +1,56 @@
+{
+  "metadata": {
+      "formatVersion" : {
+          "major" : 1
+      },
+      "generator" : "swift"
+  },
+  "module" : {
+    "name" : "MyKit",
+    "platform" : {
+      "architecture" : "x86_64",
+      "vendor" : "apple",
+      "operatingSystem" : {
+        "name" : "ios",
+        "minimumVersion" : {
+          "major" : 13,
+          "minor" : 0,
+          "patch" : 0
+        }
+      }
+    }
+  },
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.class",
+        "displayName" : "Class"
+      },
+      "names" : {
+        "title" : "MyClass"
+      },
+      "availability" : [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 10,
+            "minor": 15
+          },
+          "deprecated": {
+            "major": 10,
+            "minor": 16
+          }
+        }
+      ],
+      "pathComponents" : [
+        "MyClass"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassC",
+        "interfaceLanguage": "swift"
+      }
+    }
+  ],
+  "relationships" : []
+}

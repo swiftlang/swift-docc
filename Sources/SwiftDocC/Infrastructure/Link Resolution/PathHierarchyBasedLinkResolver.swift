@@ -79,7 +79,7 @@ final class PathHierarchyBasedLinkResolver {
             return node.children.flatMap { _, container in
                 container.storage.compactMap { element in
                     guard let childID = element.node.identifier, // Don't include sparse nodes
-                          !element.node.specialBehaviors.contains(.excludeFromAutomaticCuration),
+                          !element.node.isExcludedFromAutomaticCuration,
                           element.node.matches(languagesFilter: languagesFilter)
                     else {
                         return nil
@@ -279,7 +279,7 @@ final class PathHierarchyBasedLinkResolver {
     ///   - symbolGraph: The complete symbol graph to walk through.
     ///   - bundle: The bundle to use when creating symbol references.
     func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle, context: DocumentationContext) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
-        let disambiguatedPaths = pathHierarchy.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true, includeLanguage: true)
+        let disambiguatedPaths = pathHierarchy.caseInsensitiveDisambiguatedPaths(includeDisambiguationForUnambiguousChildren: true, includeLanguage: true, allowAdvancedDisambiguation: false)
         
         var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
         
