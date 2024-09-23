@@ -56,6 +56,9 @@ public struct LineHighlighter {
         
         /// The highlights to apply when displaying this file.
         let highlights: [Highlight]
+        
+        /// The delete highlights to apply when displaying this file.
+        let deleteHighlights: [Highlight]
     }
     
     /**
@@ -121,7 +124,7 @@ public struct LineHighlighter {
     private func lineHighlights(old: ResourceReference, new: ResourceReference) -> Result {
         // Retrieve the contents of the current file and the file we're comparing against.
         guard let oldLines = lines(of: old), let newLines = lines(of: new) else {
-            return Result(file: new, highlights: [])
+            return Result(file: new, highlights: [], deleteHighlights: [])
         }
 
         let diff = newLines.difference(from: oldLines)
@@ -134,14 +137,21 @@ public struct LineHighlighter {
             return Highlight(line: offset + 1)
         }
         
-        return Result(file: new, highlights: highlights)
+        let deleteHighlights = diff.removals.compactMap { removal -> Highlight? in
+            guard case .remove(let offset, _, _) = removal else { return nil }
+            // Use 1-based indexing for line numbers.
+            // TODO: Collect intra-line diffs.
+            return Highlight(line: offset + 1)
+        }
+        
+        return Result(file: new, highlights: highlights, deleteHighlights: deleteHighlights)
     }
     
     /// Returns the line highlights between two ``Code`` elements.
     private func lineHighlights(old: Code?, new: Code) -> Result {
         if let previousFileOverride = new.previousFileReference {
             guard !new.shouldResetDiff else {
-                return Result(file: new.fileReference, highlights: [])
+                return Result(file: new.fileReference, highlights: [], deleteHighlights: [])
             }
             return lineHighlights(old: previousFileOverride, new: new.fileReference)
         }
@@ -149,7 +159,7 @@ public struct LineHighlighter {
         guard let old,
             old.fileName == new.fileName,
             !new.shouldResetDiff else {
-                return Result(file: new.fileReference, highlights: [])
+                return Result(file: new.fileReference, highlights: [], deleteHighlights: [])
         }
         
         return lineHighlights(old: old.fileReference, new: new.fileReference)
