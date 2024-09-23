@@ -8,6 +8,9 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
+import SymbolKit
+
 extension PathHierarchy {
     /// Attempts to find an element in the path hierarchy for a given path relative to another element.
     ///
@@ -250,6 +253,7 @@ extension PathHierarchy {
                     
                     // When there's a collision, use the remaining path components to try and narrow down the possible collisions.
                     
+                    // See if the collision can be resolved by looking ahead one level deeper.
                     guard let nextPathComponent = remaining.dropFirst().first else {
                         // This was the last path component so there's nothing to look ahead.
                         //
@@ -333,7 +337,7 @@ extension PathHierarchy {
         onlyFindSymbols: Bool,
         rawPathForError: String
     ) throws -> Node {
-        if let favoredMatch = collisions.singleMatch({ $0.node.specialBehaviors.contains(.disfavorInLinkCollision) == false }) {
+        if let favoredMatch = collisions.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
             return favoredMatch.node
         }
         // If a module has the same name as the article root (which is named after the bundle display name) then its possible
@@ -382,39 +386,16 @@ extension PathHierarchy {
             )
         }
 
-        // Use a empty disambiguation suffix for the preferred symbol, if there
-        // is one, which will trigger the warning to suggest removing the
-        // suffix entirely.
-        let candidates = disambiguationTree.disambiguatedValues()
-        let favoredSuffix = favoredSuffix(from: candidates)
-        let suffixes = candidates.map { $0.disambiguation.makeSuffix() }
-        let candidatesAndSuffixes = zip(candidates, suffixes).map { (candidate, suffix) in
-            if suffix == favoredSuffix {
-                return (node: candidate.value, disambiguation: "")
-            } else {
-                return (node: candidate.value, disambiguation: suffix)
-            }
-        }
         return Error.unknownDisambiguation(
             partialResult: (
                 node,
                 pathForError(of: rawPathForError, droppingLast: remaining.count)
             ),
             remaining: Array(remaining),
-            candidates: candidatesAndSuffixes
+            candidates: disambiguationTree.disambiguatedValues().map {
+                (node: $0.value, disambiguation: String($0.disambiguation.makeSuffix()))
+            }
         )
-    }
-
-    /// Check if exactly one of the given candidate symbols is preferred, because it is not disfavored
-    /// for link resolution and all the other symbols are.
-    /// - Parameters:
-    ///   - from: An array of candidate node and disambiguation tuples.
-    /// - Returns: An optional string set to the disambiguation suffix string, without the hyphen separator e.g. "abc123",
-    ///            or nil if there is no preferred symbol.
-    private func favoredSuffix(from candidates: [(value: PathHierarchy.Node, disambiguation: PathHierarchy.DisambiguationContainer.Disambiguation)]) -> String? {
-        return candidates.singleMatch({
-            !$0.value.specialBehaviors.contains(PathHierarchy.Node.SpecialBehaviors.disfavorInLinkCollision)
-        })?.disambiguation.makeSuffix()
     }
 
     private func pathForError(
@@ -473,8 +454,12 @@ extension PathHierarchy.DisambiguationContainer {
     ///  - Exactly one match is found; indicated by a non-nil return value.
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
     func find(_ disambiguation: PathHierarchy.PathComponent.Disambiguation?) throws -> PathHierarchy.Node? {
-        if storage.count <= 1, disambiguation == nil {
-            return storage.first?.node
+        if disambiguation == nil {
+            if storage.count <= 1 {
+                return storage.first?.node
+            } else if let favoredMatch = storage.singleMatch({ !$0.node.isDisfavoredInLinkCollisions }) {
+                return favoredMatch.node
+            }
         }
         
         switch disambiguation {
@@ -486,13 +471,33 @@ extension PathHierarchy.DisambiguationContainer {
                 let matches = storage.filter({ $0.kind == kind })
                 guard matches.count <= 1 else {
                     // Suggest not only hash disambiguation, but also type signature disambiguation.
-                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.value()) })
+                    throw Error.lookupCollision(Self.disambiguatedValues(for: matches).map { ($0.value, $0.disambiguation.makeSuffix()) })
                 }
                 return matches.first?.node
             case (nil, let hash?):
                 let matches = storage.filter({ $0.hash == hash })
                 guard matches.count <= 1 else {
-                    throw Error.lookupCollision(matches.map { ($0.node, $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
+                    throw Error.lookupCollision(matches.map { ($0.node, "-" + $0.kind!) }) // An element wouldn't match if it didn't have kind disambiguation.
+                }
+                return matches.first?.node
+            case (nil, nil):
+                break
+            }
+        case .typeSignature(let parameterTypes, let returnTypes):
+            let storage = storage.filter { !$0.node.specialBehaviors.contains(.excludeFromAdvancedLinkDisambiguation )}
+            switch (parameterTypes, returnTypes) {
+            case (let parameterTypes?, let returnTypes?):
+                return storage.first(where: { typesMatch(provided: parameterTypes, actual: $0.parameterTypes) && typesMatch(provided: returnTypes, actual: $0.returnTypes) })?.node
+            case (let parameterTypes?, nil):
+                let matches = storage.filter({ typesMatch(provided: parameterTypes, actual: $0.parameterTypes) })
+                guard matches.count <= 1 else {
+                    throw Error.lookupCollision(matches.map { ($0.node, "->" + formattedTypes($0.parameterTypes)!) }) // An element wouldn't match if it didn't have parameter type disambiguation.
+                }
+                return matches.first?.node
+            case (nil, let returnTypes?):
+                let matches = storage.filter({ typesMatch(provided: returnTypes, actual: $0.returnTypes) })
+                guard matches.count <= 1 else {
+                    throw Error.lookupCollision(matches.map { ($0.node, "-" + formattedTypes($0.returnTypes)!) }) // An element wouldn't match if it didn't have return type disambiguation.
                 }
                 return matches.first?.node
             case (nil, nil):
@@ -501,12 +506,22 @@ extension PathHierarchy.DisambiguationContainer {
         case nil:
             break
         }
+
         // Disambiguate by a mix of kinds and USRs
-        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.value()) })
+        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.makeSuffix()) })
     }
 }
 
 // MARK: Private helper extensions
+
+private func formattedTypes(_ types: [String]?) -> String? {
+    guard let types = types else { return nil }
+    switch types.count {
+    case 0: return "()"
+    case 1: return types[0]
+    default: return "(\(types.joined(separator: ","))"
+    }
+}
 
 // Allow optional substrings to be compared to non-optional strings
 private func == (lhs: (some StringProtocol)?, rhs: some StringProtocol) -> Bool {
@@ -546,6 +561,11 @@ private extension PathHierarchy.Node {
                 return name == component.name
                     && (kind == nil || kind! == symbol.kind.identifier.identifier)
                     && (hash == nil || hash! == symbol.identifier.precise.stableHashString)
+            case .typeSignature(let parameterTypes, let returnTypes):
+                let functionSignatureTypeNames = PathHierarchy.functionSignatureTypeNames(for: symbol)
+                return name == component.name
+                    && (parameterTypes == nil || typesMatch(provided: parameterTypes!, actual: functionSignatureTypeNames?.parameterTypeNames))
+                    && (returnTypes    == nil || typesMatch(provided: returnTypes!,    actual: functionSignatureTypeNames?.returnTypeNames))
             }
         }
         
@@ -556,5 +576,12 @@ private extension PathHierarchy.Node {
         let keys = children.keys
         return keys.contains(component.full)
             || keys.contains(String(component.name))
+    }
+}
+
+private func typesMatch(provided: [Substring], actual: [String]?) -> Bool {
+    guard let actual, provided.count == actual.count else { return false }
+    return zip(provided, actual).allSatisfy { providedType, actualType in
+        providedType == "_" || providedType == actualType
     }
 }

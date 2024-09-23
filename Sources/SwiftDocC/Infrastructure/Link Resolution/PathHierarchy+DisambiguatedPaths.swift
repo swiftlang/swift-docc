@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,19 +19,25 @@ private func symbolFileName(_ symbolName: String) -> String {
 extension PathHierarchy {
     /// Determines the least disambiguated paths for all symbols in the path hierarchy.
     ///
+    /// The path hierarchy is capable of producing shorter, less disambiguated, and more readable paths than what's used for topic references and URLs. 
+    /// Each disambiguation improvement has a boolean parameter to disable it so that DocC can emit the same topic references and URLs as it used to.
+    ///
     /// - Parameters:
     ///   - includeDisambiguationForUnambiguousChildren: Whether or not descendants unique to a single collision should maintain the containers disambiguation.
     ///   - includeLanguage: Whether or not kind disambiguation information should include the source language.
+    ///   - allowAdvancedDisambiguation: Whether or not to support more advanced and more human readable types of disambiguation.
     /// - Returns: A map of unique identifier strings to disambiguated file paths.
     func caseInsensitiveDisambiguatedPaths(
         includeDisambiguationForUnambiguousChildren: Bool = false,
-        includeLanguage: Bool = false
+        includeLanguage: Bool = false,
+        allowAdvancedDisambiguation: Bool = true
     ) -> [String: String] {
         return disambiguatedPaths(
             caseSensitive: false,
             transformToFileNames: true,
             includeDisambiguationForUnambiguousChildren: includeDisambiguationForUnambiguousChildren,
-            includeLanguage: includeLanguage
+            includeLanguage: includeLanguage,
+            allowAdvancedDisambiguation: allowAdvancedDisambiguation
         )
     }
     
@@ -47,7 +53,7 @@ extension PathHierarchy {
         
         func gatherLinksFrom(_ containers: some Sequence<DisambiguationContainer>) {
             for container in containers {
-                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false)
+                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false, allowAdvancedDisambiguation: true)
                 
                 for (node, disambiguation) in disambiguatedChildren {
                     guard let id = node.identifier, let symbolID = node.symbol?.identifier.precise else { continue }
@@ -83,7 +89,8 @@ extension PathHierarchy {
             caseSensitive: true,
             transformToFileNames: false,
             includeDisambiguationForUnambiguousChildren: false,
-            includeLanguage: false
+            includeLanguage: false,
+            allowAdvancedDisambiguation: true
         )
     }
     
@@ -91,7 +98,8 @@ extension PathHierarchy {
         caseSensitive: Bool,
         transformToFileNames: Bool,
         includeDisambiguationForUnambiguousChildren: Bool,
-        includeLanguage: Bool
+        includeLanguage: Bool,
+        allowAdvancedDisambiguation: Bool
     ) -> [String: String] {
         let nameTransform: (String) -> String
         if transformToFileNames {
@@ -111,8 +119,8 @@ extension PathHierarchy {
             }, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, container) in children {
-                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage)
-                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation.value() != nil && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
+                let disambiguatedChildren = container.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
+                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation != .none && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 
                 for (node, disambiguation) in disambiguatedChildren {
                     var path: String
@@ -182,7 +190,22 @@ extension PathHierarchy.DisambiguationContainer {
     
     static func disambiguatedValues(
         for elements: some Sequence<Element>,
-        includeLanguage: Bool = false
+        includeLanguage: Bool = false,
+        allowAdvancedDisambiguation: Bool = true
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+        var collisions = _disambiguatedValues(for: elements, includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
+        
+        // If all but one of the collisions are disfavored, remove the disambiguation for the only favored element.
+        if let onlyFavoredElementIndex = collisions.onlyIndex(where: { !$0.value.isDisfavoredInLinkCollisions }) {
+            collisions[onlyFavoredElementIndex].disambiguation = .none
+        }
+        return collisions
+    }
+    
+    private static func _disambiguatedValues(
+        for elements: some Sequence<Element>,
+        includeLanguage: Bool,
+        allowAdvancedDisambiguation: Bool
     ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         
@@ -203,6 +226,31 @@ extension PathHierarchy.DisambiguationContainer {
             return collisions
         }
         
+        if allowAdvancedDisambiguation {
+            let elementsThatSupportAdvancedDisambiguation = elements.filter { !$0.node.isExcludedFromAdvancedLinkDisambiguation }
+            
+            // Next, if a symbol returns a tuple with a unique number of values, disambiguate by that (without specifying what those arguments are)
+            collisions += _disambiguateByTypeSignature(
+                elementsThatSupportAdvancedDisambiguation,
+                types: \.returnTypes,
+                makeDisambiguation: Disambiguation.returnTypes,
+                remainingIDs: &remainingIDs
+            )
+            if remainingIDs.isEmpty {
+                return collisions
+            }
+            
+            collisions += _disambiguateByTypeSignature(
+                elementsThatSupportAdvancedDisambiguation,
+                types: \.parameterTypes,
+                makeDisambiguation: Disambiguation.parameterTypes,
+                remainingIDs: &remainingIDs
+            )
+            if remainingIDs.isEmpty {
+                return collisions
+            }
+        }
+        
         for element in elements where remainingIDs.contains(element.node.identifier) {
             collisions.append((value: element.node, disambiguation: element.hash.map { .hash($0) } ?? .none))
         }
@@ -211,19 +259,29 @@ extension PathHierarchy.DisambiguationContainer {
     
     /// Returns all values paired with their disambiguation suffixes.
     ///
-    /// - Parameter includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
-    func disambiguatedValues(includeLanguage: Bool = false) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+    /// - Parameters:
+    ///   - includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
+    ///   - allowAdvancedDisambiguation: Whether or not to support more advanced and more human readable types of disambiguation.
+    func disambiguatedValues(
+        includeLanguage: Bool = false,
+        allowAdvancedDisambiguation: Bool = true
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         if storage.count == 1 {
             return [(storage.first!.node, .none)]
         }
         
-        return Self.disambiguatedValues(for: storage, includeLanguage: includeLanguage)
+        return Self.disambiguatedValues(for: storage, includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
     }
     
     /// Returns all values paired with their disambiguation suffixes without needing to disambiguate between two different versions of the same symbol.
     ///
-    /// - Parameter includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
-    func disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: Bool) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+    /// - Parameters:
+    ///   - includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
+    ///   - allowAdvancedDisambiguation: Whether or not to support more advanced and more human readable types of disambiguation.
+    fileprivate func disambiguatedValuesWithCollapsedUniqueSymbols(
+        includeLanguage: Bool,
+        allowAdvancedDisambiguation: Bool
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         typealias DisambiguationPair = (String, String)
         
         var uniqueSymbolIDs = [String: [Element]]()
@@ -244,24 +302,25 @@ extension PathHierarchy.DisambiguationContainer {
         
         var new = PathHierarchy.DisambiguationContainer()
         for element in nonSymbols {
-            new.add(element.node, kind: element.kind, hash: element.hash)
+            new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
         }
         for (id, symbolDisambiguations) in uniqueSymbolIDs {
             let element = symbolDisambiguations.first!
-            new.add(element.node, kind: element.kind, hash: element.hash)
+            new.add(element.node, kind: element.kind, hash: element.hash, parameterTypes: element.parameterTypes, returnTypes: element.returnTypes)
             
             if symbolDisambiguations.count > 1 {
                 duplicateSymbols[id] = symbolDisambiguations.dropFirst()
             }
         }
-     
-        var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage)
+        
+        var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage, allowAdvancedDisambiguation: allowAdvancedDisambiguation)
         guard !duplicateSymbols.isEmpty else {
             return disambiguated
         }
         
         for (id, disambiguations) in duplicateSymbols {
             let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == id })!.disambiguation
+            
             for element in disambiguations {
                 disambiguated.append((element.node, primaryDisambiguation.updated(kind: element.kind, hash: element.hash)))
             }
@@ -271,30 +330,37 @@ extension PathHierarchy.DisambiguationContainer {
     }
     
     /// The computed disambiguation for a given path hierarchy node.
-    enum Disambiguation {
+    enum Disambiguation: Equatable {
         /// No disambiguation is needed.
         case none
         /// This node is disambiguated by its kind.
         case kind(String)
         /// This node is disambiguated by its hash.
         case hash(String)
-       
-        /// Returns the kind or hash value that disambiguates this node.
-        func value() -> String! {
-            switch self {
-            case .none:
-                return nil
-            case .kind(let value), .hash(let value):
-                return value
-            }
-        }
+        /// This node is disambiguated by its parameter types.
+        case parameterTypes([String])
+        /// This node is disambiguated by its return types.
+        case returnTypes([String])
+        
         /// Makes a new disambiguation suffix string.
         func makeSuffix() -> String {
             switch self {
             case .none:
                 return ""
             case .kind(let value), .hash(let value):
+                // For example: "-enum.case" or "-h1a2s3h"
                 return "-"+value
+                
+            case .returnTypes(let types):
+                // For example: "->String" (returns String) or "->()" (returns Void).
+                return switch types.count {
+                    case 0:  "->()"
+                    case 1:  "->\(types.first!)"
+                    default: "->(\(types.joined(separator: ",")))"
+                }
+            case .parameterTypes(let types):
+                // For example: "-(String,_)" or "-(_,Int)"` (a certain parameter has a certain type), or "-()" (has no parameters).
+                return "-(\(types.joined(separator: ",")))"
             }
         }
         
@@ -307,7 +373,65 @@ extension PathHierarchy.DisambiguationContainer {
                 return kind.map { .kind($0) } ?? self
             case .hash:
                 return hash.map { .hash($0) } ?? self
+            case .parameterTypes, .returnTypes:
+                return self
             }
         }
+    }
+    
+    private static func _disambiguateByTypeSignature(
+        _ elements: [Element],
+        types: (Element) -> [String]?,
+        makeDisambiguation: ([String]) -> Disambiguation,
+        remainingIDs: inout Set<ResolvedIdentifier?>
+    ) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+        var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
+        
+        let groupedByTypeCount = [Int?: [Element]](grouping: elements, by: { types($0)?.count })
+        for (typesCount, elements) in groupedByTypeCount  {
+            guard let typesCount else { continue }
+            guard elements.count > 1 else {
+                // Only one element has this number of types. Disambiguate with only underscores.
+                let element = elements.first!
+                guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                collisions.append((value: element.node, disambiguation: makeDisambiguation(.init(repeating: "_", count: typesCount))))
+                remainingIDs.remove(element.node.identifier)
+                continue
+            }
+            guard typesCount > 0 else { continue } // Need at least one return value to disambiguate
+            
+            for typeIndex in 0..<typesCount {
+                let grouped = [String: [Element]](grouping: elements, by: { types($0)![typeIndex] })
+                for (returnType, elements) in grouped where elements.count == 1 {
+                    // Only one element has this return type
+                    let element = elements.first!
+                    guard remainingIDs.contains(element.node.identifier) else { continue } // Don't disambiguate the same element more than once
+                    var disambiguation = [String](repeating: "_", count: typesCount)
+                    disambiguation[typeIndex] = returnType
+                    collisions.append((value: element.node, disambiguation: makeDisambiguation(disambiguation)))
+                    remainingIDs.remove(element.node.identifier)
+                    continue
+                }
+            }
+        }
+        return collisions
+    }
+}
+
+private extension Collection {
+    /// Returns the only index of the collection that satisfies the given predicate.
+    /// - Parameters:
+    ///   - predicate: A closure that takes an element of the collection as its argument and returns a Boolean value indicating whether the element is a match.
+    /// - Returns: The index of the only element that satisfies `predicate`, or `nil` if  multiple elements satisfy the predicate or if no element satisfy the predicate.
+    /// - Complexity: O(_n_), where _n_ is the length of the collection.
+    func onlyIndex(where predicate: (Element) throws -> Bool) rethrows -> Index? {
+        guard let matchingIndex = try firstIndex(where: predicate),
+              // Ensure that there are no other matches in the rest of the collection
+              try !self[index(after: matchingIndex)...].contains(where: predicate)
+        else {
+            return nil
+        }
+        
+        return matchingIndex
     }
 }

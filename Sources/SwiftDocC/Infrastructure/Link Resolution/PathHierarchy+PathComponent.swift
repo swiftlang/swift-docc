@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import Foundation
 import SymbolKit
 
 /// All known symbol kind identifiers.
@@ -44,6 +45,8 @@ extension PathHierarchy {
         enum Disambiguation {
             /// This path component uses a combination of kind and hash disambiguation
             case kindAndHash(kind: Substring?, hash: Substring?)
+            /// This path component uses type signature information for disambiguation.
+            case typeSignature(parameterTypes: [Substring]?, returnTypes: [Substring]?)
         }
     }
     
@@ -89,11 +92,12 @@ extension PathHierarchy.PathParser {
     /// and a path component like `"/=(_:_:)-abc123"` will be split into `(name: "/=(_:_:)", hash: "abc123")`.
     static func parse(pathComponent original: Substring) -> PathComponent {
         let full = String(original)
+        // Path components may include a trailing disambiguation, separated by a dash.
         guard let dashIndex = original.lastIndex(of: "-") else {
             return PathComponent(full: full, name: full[...], disambiguation: nil)
         }
         
-        let hash = original[dashIndex...].dropFirst()
+        let disambiguation = original[dashIndex...].dropFirst()
         let name = original[..<dashIndex]
         
         func isValidHash(_ hash: Substring) -> Bool {
@@ -106,30 +110,35 @@ extension PathHierarchy.PathParser {
             return index > 0
         }
         
-        if knownSymbolKinds.contains(String(hash)) {
-            // The parsed hash value is a symbol kind
-            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: hash, hash: nil))
+        if knownSymbolKinds.contains(String(disambiguation)) {
+            // The parsed hash value is a symbol kind. If the last disambiguation is a kind, then the path component doesn't contain a hash disambiguation.
+            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: disambiguation, hash: nil))
         }
-        if let languagePrefix = knownLanguagePrefixes.first(where: { hash.starts(with: $0) }) {
+        if let languagePrefix = knownLanguagePrefixes.first(where: { disambiguation.starts(with: $0) }) {
             // The hash is actually a symbol kind with a language prefix
-            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: hash.dropFirst(languagePrefix.count), hash: nil))
+            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: disambiguation.dropFirst(languagePrefix.count), hash: nil))
         }
-        if !isValidHash(hash) {
-            // The parsed hash is neither a symbol not a valid hash. It's probably a hyphen-separated name.
-            return PathComponent(full: full, name: full[...], disambiguation: nil)
+        if isValidHash(disambiguation) {
+            if let dashIndex = name.lastIndex(of: "-") {
+                let kind = name[dashIndex...].dropFirst()
+                let name = name[..<dashIndex]
+                if knownSymbolKinds.contains(String(kind)) {
+                    return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kind, hash: disambiguation))
+                } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
+                    let kindWithoutLanguage = kind.dropFirst(languagePrefix.count)
+                    return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kindWithoutLanguage, hash: disambiguation))
+                }
+            }
+            return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: nil, hash: disambiguation))
         }
         
-        if let dashIndex = name.lastIndex(of: "-") {
-            let kind = name[dashIndex...].dropFirst()
-            let name = name[..<dashIndex]
-            if knownSymbolKinds.contains(String(kind)) {
-                return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kind, hash: hash))
-            } else if let languagePrefix = knownLanguagePrefixes.first(where: { kind.starts(with: $0) }) {
-                let kindWithoutLanguage = kind.dropFirst(languagePrefix.count)
-                return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: kindWithoutLanguage, hash: hash))
-            }
+        // If the disambiguation wasn't a symbol kind or a FNV-1 hash string, check if it looks like a function signature
+        if let parsed = parseTypeSignatureDisambiguation(pathComponent: original) {
+            return parsed
         }
-        return PathComponent(full: full, name: name, disambiguation: .kindAndHash(kind: nil, hash: hash))
+
+        // The parsed hash is neither a symbol not a valid hash. It's probably a hyphen-separated name.
+        return PathComponent(full: full, name: full[...], disambiguation: nil)
     }
     
     /// Splits the link string into its component substrings and identifies the the link string is an absolute link.
@@ -194,6 +203,11 @@ extension PathHierarchy.PathParser {
 
         return result
     }
+    
+    static func parseOperatorName(_ component: Substring) -> Substring? {
+        var scanner = PathComponentScanner(component)
+        return scanner._scanOperatorName()
+    }
 }
 
 private struct PathComponentScanner {
@@ -202,7 +216,7 @@ private struct PathComponentScanner {
     static let separator: Character = "/"
     private static let anchorSeparator: Character = "#"
     
-    private static let swiftOperatorEnd: Character = ")"
+    static let swiftOperatorEnd: Character = ")"
     
     private static let cxxOperatorPrefix = "operator"
     private static let cxxOperatorPrefixLength = cxxOperatorPrefix.count
@@ -216,19 +230,8 @@ private struct PathComponentScanner {
     }
     
     mutating func scanPathComponent() -> Substring {
-        // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
-            return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd))
-                 + scanUntilSeparatorAndThenSkipIt()
-        }
-        
-        // If the next component is a C++ operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
-        if remaining.starts(with: Self.cxxOperatorPrefix),
-           remaining.unicodeScalars.dropFirst(Self.cxxOperatorPrefixLength).first?.isValidCxxOperatorSymbol == true
-        {
-            return scan(length: Self.cxxOperatorPrefixLength)
-                 + scanUntil(index: remaining.unicodeScalars.firstIndex(where: { !$0.isValidCxxOperatorSymbol }))
-                 + scanUntilSeparatorAndThenSkipIt()
+        if let operatorName = _scanOperatorName() {
+            return operatorName + scanUntilSeparatorAndThenSkipIt()
         }
         
         // To enable the path parser to identify absolute links, include any leading "/" in the scanned component substring.
@@ -241,6 +244,65 @@ private struct PathComponentScanner {
         
         // If the string doesn't contain a slash then the rest of the string is the component
         return scanUntilSeparatorAndThenSkipIt()
+    }
+    
+    mutating func _scanOperatorName() -> Substring? {
+        // If the next component is a Swift operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
+        if remaining.unicodeScalars.prefix(3).allSatisfy(\.isValidSwiftOperatorHead) {
+            return scanUntil(index: remaining.firstIndex(of: Self.swiftOperatorEnd)) + scan(length: 1)
+        }
+        
+        // If the next component is a C++ operator, parse the full operator before splitting on "/" ("/" may appear in the operator name)
+        if remaining.starts(with: Self.cxxOperatorPrefix),
+           remaining.unicodeScalars.dropFirst(Self.cxxOperatorPrefixLength).first?.isValidCxxOperatorSymbol == true
+        {
+            let base = scan(length: Self.cxxOperatorPrefixLength + 1)
+            // Because C++ operators don't include the parameters in the name,
+            // a trailing "-" could either be part of the name or be the disambiguation separator.
+            //
+            // The only valid C++ operators that include a "-" do so at the start.
+            // However, "-=", "->", and "->*" don't have a trailing "-", so they're unambiguous.
+            // Only "-" and "--" need special parsing to address the ambiguity.
+            
+            if base.last == "-", remaining.first == "-" {
+                // In this scope we start with the following state:
+                //
+                //     operator--???..
+                //     ╰───┬───╯╰─┬╌╌╌
+                //       base  remaining
+                //
+                // There are 3 possible cases that we can be in:
+                switch remaining.dropFirst().first {
+                // The decrement operator with disambiguation.
+                //   operator---h1a2s3h
+                //   ╰────┬───╯│╰──┬──╯
+                //      name   │ disambiguation
+                //         separator
+                case "-":
+                    return base + scan(length: 1)
+                    
+                // The decrement operator without disambiguation.
+                // Either "operator--", "operator--/", or "operator--#"
+                case nil, "/", "#":
+                    return base + scan(length: 1)
+                     
+                // The minus operator with disambiguation.
+                //   operator--h1a2s3h
+                //   ╰───┬───╯│╰──┬──╯
+                //      name  │ disambiguation
+                //        separator
+                default:
+                    return base
+                }
+            } else {
+                // In all other cases, scan as long as there are valid C++ operator characters
+                return base
+                    + scanUntil(index: remaining.unicodeScalars.firstIndex(where: { $0 == "-" || !$0.isValidCxxOperatorSymbol }))
+            }
+        }
+        
+        // Not an operator name
+        return nil
     }
     
     mutating func scanAnchorComponentAtEnd() -> Substring? {
