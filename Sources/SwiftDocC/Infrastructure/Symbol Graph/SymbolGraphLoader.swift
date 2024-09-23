@@ -376,10 +376,7 @@ extension SymbolGraph.SemanticVersion {
     ///
     /// Returns `nil` if the string doesn't contain 1, 2, or 3 numeric components separated by periods.
     /// - parameter string: A version number as a string.
-    init?(string: String?) {
-        guard let string else {
-            return nil
-        }
+    init?(string: String) {
         let componentStrings = string.components(separatedBy: ".")
         let components = componentStrings.compactMap(Int.init)
 
@@ -408,7 +405,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
         let introducedVersion = defaultAvailability.introducedVersion
-        let platformVersion = introducedVersion.map { SymbolGraph.SemanticVersion(string: $0) } ?? nil
+        let platformVersion = introducedVersion.flatMap { SymbolGraph.SemanticVersion(string: $0) }
         if platformVersion == nil && introducedVersion != nil {
             return nil
         }
