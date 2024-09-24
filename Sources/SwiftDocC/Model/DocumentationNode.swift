@@ -223,6 +223,10 @@ public struct DocumentationNode {
             platformName: platformName
         ) { mixins in
             mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+                
+                // If the symbol graph doesn't provide availability data for this variant, hardcode it as `[]` so
+                // that it doesn't get inferred from another variant.
+                ?? .init(availability: [])
         }
         
         let endpointVariants = DocumentationDataVariants(

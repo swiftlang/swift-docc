@@ -95,7 +95,7 @@ extension RenderNode: Codable {
         try container.encodeIfPresent(sampleDownload, forKey: .sampleCodeDownload)
         try container.encodeIfPresent(downloadNotAvailableSummary, forKey: .downloadNotAvailableSummary)
         
-        try container.encodeVariantCollection(deprecationSummaryVariants, forKey: .deprecationSummary, encoder: encoder)
+        try container.encodeVariantCollectionIfNotEmpty(deprecationSummaryVariants, forKey: .deprecationSummary, encoder: encoder)
         
         try container.encodeIfPresent(diffAvailability, forKey: .diffAvailability)
         try container.encodeIfPresent(variants, forKey: .variants)
