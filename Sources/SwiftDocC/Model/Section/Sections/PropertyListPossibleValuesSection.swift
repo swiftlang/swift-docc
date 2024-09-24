@@ -43,7 +43,7 @@ public struct PropertyListPossibleValuesSection {
     /// The list of possible values.
     public let possibleValues: [PossibleValue]
     
-    struct Validator {
+    enum Validator {
         /// Creates a new problem about documentation for a possible value that's not known to that symbol.
         ///
         /// ## Example
@@ -60,7 +60,7 @@ public struct PropertyListPossibleValuesSection {
         ///   - unknownPossibleValue: The authored documentation for the unknown possible value name.
         ///   - knownPossibleValues: All known possible value names for that symbol.
         /// - Returns: A new problem that suggests that the developer removes the documentation for the unknown possible value.
-        func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Problem {
+        static func makeExtraPossibleValueProblem(_ unknownPossibleValue: PossibleValue, knownPossibleValues: Set<String>, symbolName: String) -> Problem {
             
             let source = unknownPossibleValue.range?.source
             let summary = """

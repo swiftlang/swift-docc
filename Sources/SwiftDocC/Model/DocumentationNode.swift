@@ -427,9 +427,8 @@ public struct DocumentationNode {
         
         if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
             guard let symbolAllowedValues else {
-                let validator = PropertyListPossibleValuesSection.Validator()
                 for value in possibleValues {
-                    engine.emit(validator.makeExtraPossibleValueProblem(value, knownPossibleValues: [], symbolName: self.name.plainText))
+                    engine.emit(PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueProblem(value, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
                 return
             }
@@ -452,7 +451,7 @@ public struct DocumentationNode {
             
             for unknownValue in unknownPossibleValues {
                 engine.emit(
-                    validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
+                    PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
                 )
             }
             
