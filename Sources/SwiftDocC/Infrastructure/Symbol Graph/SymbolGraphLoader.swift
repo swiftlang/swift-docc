@@ -401,10 +401,12 @@ extension SymbolGraph.SemanticVersion {
 extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// Create an availability item with a `domain` and an `introduced` version.
     /// - parameter defaultAvailability: Default availability information for symbols that lack availability authored in code.
-    /// - Note: If the `defaultAvailability` argument doesn't have a valid
-    /// platform version that can be parsed as a `SemanticVersion`, returns `nil`.
+    /// - Note: If the `defaultAvailability` argument has a introduced version that can't
+    /// be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
-        guard let introducedVersion = defaultAvailability.introducedVersion, let platformVersion = SymbolGraph.SemanticVersion(string: introducedVersion) else {
+        let introducedVersion = defaultAvailability.introducedVersion
+        let platformVersion = introducedVersion.flatMap { SymbolGraph.SemanticVersion(string: $0) }
+        if platformVersion == nil && introducedVersion != nil {
             return nil
         }
         let domain = SymbolGraph.Symbol.Availability.Domain(rawValue: defaultAvailability.platformName.rawValue)

@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 
-class MissingAbstractTests: XCTestCase, CheckerTest {
+class MissingAbstractTests: XCTestCase {
     
     func gatherProblems(for document: Document) -> [Problem] {
         var checker = MissingAbstract(sourceFile: nil)
