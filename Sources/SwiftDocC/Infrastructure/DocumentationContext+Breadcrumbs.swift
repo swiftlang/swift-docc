@@ -38,7 +38,7 @@ extension DocumentationContext {
             // To match the caller's expectations we remove the starting point and then flip the paths.
             .map { $0.dropFirst().reversed() }
             .sorted { (lhs, rhs) -> Bool in
-                // Order a path rooted in a technology as the canonical one.
+                // Order a path rooted in a tutorial table-of-contents as the canonical one.
                 if options.contains(.preferTechnologyRoot), let first = lhs.first {
                     return try! entity(with: first).semantic is TutorialTableOfContents
                 }

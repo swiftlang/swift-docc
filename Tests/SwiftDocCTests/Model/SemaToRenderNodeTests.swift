@@ -572,13 +572,13 @@ class SemaToRenderNodeTests: XCTestCase {
     private func assertCompileOverviewWithNoVolumes(bundle: DocumentationBundle, context: DocumentationContext, expectedProblemsCount: Int = 0) throws {
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
-        guard let technologyDirective = node.markup as? BlockDirective else {
+        guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
             return
         }
         
         var problems = [Problem]()
-        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -588,7 +588,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
-        let renderNode = translator.visit(technology) as! RenderNode
+        let renderNode = translator.visit(tutorialTableOfContents) as! RenderNode
         
         XCTAssertEqual(renderNode.variants?.flatMap(\.traits), [.interfaceLanguage("swift")])
         
@@ -809,13 +809,13 @@ class SemaToRenderNodeTests: XCTestCase {
     
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
-        guard let technologyDirective = node.markup as? BlockDirective else {
-            XCTFail("Unexpected document structure, tutorial not found as first child.")
+        guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
+            XCTFail("Unexpected document structure, tutorial table-of-contents not found as first child.")
             return
         }
         
         var problems = [Problem]()
-        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -824,7 +824,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
-        let renderNode = translator.visit(technology) as! RenderNode
+        let renderNode = translator.visit(tutorialTableOfContents) as! RenderNode
 
         XCTAssertEqual(renderNode.sections.count, 4, "Unexpected section count")
         
@@ -2442,13 +2442,13 @@ Document
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
-        guard let technologyDirective = node.markup as? BlockDirective else {
-            XCTFail("Unexpected document structure, technology not found as first child.")
+        guard let tutorialTableOfContentsDirective = node.markup as? BlockDirective else {
+            XCTFail("Unexpected document structure, tutorial table-of-contents not found as first child.")
             return
         }
         
         var problems = [Problem]()
-        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: tutorialTableOfContentsDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -2458,7 +2458,7 @@ Document
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         // Verify we don't crash.
-        _ = translator.visit(technology)
+        _ = translator.visit(tutorialTableOfContents)
         
         do {
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
@@ -3185,12 +3185,12 @@ Document
             return
         }
         var problems = [Problem]()
-        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorialTableOfContents = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create technology from markup: \(problems)")
             return
         }
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
-        let renderNode = try XCTUnwrap(translator.visit(technology) as? RenderNode)
+        let renderNode = try XCTUnwrap(translator.visit(tutorialTableOfContents) as? RenderNode)
         XCTAssertEqual(renderNode.references.count, 5)
         XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"] as? TopicRenderReference)
         XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/tutorials/TestOverview"] as? TopicRenderReference)

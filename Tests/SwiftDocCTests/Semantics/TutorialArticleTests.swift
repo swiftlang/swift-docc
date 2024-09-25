@@ -450,7 +450,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         XCTAssertNil(problem.diagnostic.source)
     }
 
-    /// Verify that a `TutorialArticle` only recognizes chapter, volume, or technology nodes as valid parents.
+    /// Verify that a `TutorialArticle` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")

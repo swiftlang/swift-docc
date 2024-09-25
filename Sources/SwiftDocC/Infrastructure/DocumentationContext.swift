@@ -606,15 +606,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// up in the context, not from the arrays that was passed as arguments.
     ///
     /// - Parameters:
-    ///   - technologies: The list of temporary 'technology' pages.
+    ///   - TutorialTableOfContents: The list of temporary 'tutorial table-of-contents' pages.
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
     ///   - bundle: The bundle to resolve links against.
-    private func resolveLinks(technologies: [SemanticResult<TutorialTableOfContents>],
-                              tutorials: [SemanticResult<Tutorial>],
-                              tutorialArticles: [SemanticResult<TutorialArticle>],
-                              bundle: DocumentationBundle) {
-        
+    private func resolveLinks(
+        tutorialTableOfContents technologies: [SemanticResult<TutorialTableOfContents>],
+        tutorials: [SemanticResult<Tutorial>],
+        tutorialArticles: [SemanticResult<TutorialArticle>],
+        bundle: DocumentationBundle
+    ) {
         let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
         // Technologies
@@ -761,7 +762,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func registerDocuments(from bundle: DocumentationBundle) throws -> (
-        technologies: [SemanticResult<TutorialTableOfContents>],
+        tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
         articles: [SemanticResult<Article>],
@@ -769,7 +770,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ) {
         // First, try to understand the basic structure of the document by
         // analyzing it and putting references in as "unresolved".
-        var technologies = [SemanticResult<TutorialTableOfContents>]()
+        var tutorialTableOfContents = [SemanticResult<TutorialTableOfContents>]()
         var tutorials = [SemanticResult<Tutorial>]()
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
@@ -861,7 +862,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: url), title: technology.intro.title)
                 topicGraph.addNode(topicGraphNode)
                 let result = SemanticResult(value: technology, source: url, topicGraphNode: topicGraphNode)
-                technologies.append(result)
+                tutorialTableOfContents.append(result)
             } else if let tutorial = analyzed as? Tutorial {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorial, source: .file(url: url), title: tutorial.title ?? "")
                 topicGraph.addNode(topicGraphNode)
@@ -920,7 +921,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
-        return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
+        return (tutorialTableOfContents, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
     private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
@@ -2098,7 +2099,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
         //       or all symbols yet.
         var result: (
-            technologies: [SemanticResult<TutorialTableOfContents>],
+            tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
             tutorials: [SemanticResult<Tutorial>],
             tutorialArticles: [SemanticResult<TutorialArticle>],
             articles: [SemanticResult<Article>],
@@ -2137,7 +2138,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // All discovery went well, process the inputs.
-        let (technologies, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
+        let (tutorialTableOfContents, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
@@ -2185,8 +2186,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for article in tutorialArticles {
             hierarchyBasedResolver.addTutorialArticle(article)
         }
-        for technology in technologies {
-            hierarchyBasedResolver.addTechnology(technology)
+        for tutorialTableOfContents in tutorialTableOfContents {
+            hierarchyBasedResolver.addTutorialTableOfContents(tutorialTableOfContents)
         }
         
         registerRootPages(from: rootPageArticles, in: bundle)
@@ -2221,13 +2222,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
-            technologies.map(referencedSemanticObject) +
+            tutorialTableOfContents.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
             localBundleID: bundle.identifier)
         
         resolveLinks(
-            technologies: technologies,
+            tutorialTableOfContents: tutorialTableOfContents,
             tutorials: tutorials,
             tutorialArticles: tutorialArticles,
             bundle: bundle

@@ -245,12 +245,17 @@ struct ReferenceResolver: SemanticVisitor {
         // Wrap in a markup container and the first child of the result.
         return (visitMarkupContainer(MarkupContainer(markup)) as! MarkupContainer).elements.first!
     }
-    
+
+    @available(*, deprecated) // This is a deprecated protocol requirement
     mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Semantic {
-        let newIntro = visit(technology.intro) as! Intro
-        let newVolumes = technology.volumes.map { visit($0) } as! [Volume]
-        let newResources = technology.resources.map { visit($0) as! Resources }
-        return TutorialTableOfContents(originalMarkup: technology.originalMarkup, name: technology.name, intro: newIntro, volumes: newVolumes, resources: newResources, redirects: technology.redirects)
+        visitTutorialTableOfContents(technology)
+    }
+
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Semantic {
+        let newIntro = visit(tutorialTableOfContents.intro) as! Intro
+        let newVolumes = tutorialTableOfContents.volumes.map { visit($0) } as! [Volume]
+        let newResources = tutorialTableOfContents.resources.map { visit($0) as! Resources }
+        return TutorialTableOfContents(originalMarkup: tutorialTableOfContents.originalMarkup, name: tutorialTableOfContents.name, intro: newIntro, volumes: newVolumes, resources: newResources, redirects: tutorialTableOfContents.redirects)
     }
     
     mutating func visitImageMedia(_ imageMedia: ImageMedia) -> Semantic {

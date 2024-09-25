@@ -419,7 +419,7 @@ struct PathHierarchy {
     /// - Parameter name: The path component name of the tutorial overview (the file name without the file extension).
     /// - Returns: The new unique identifier that represent this tutorial overview.
     mutating func addTutorialOverview(name: String) -> ResolvedIdentifier {
-        return addNonSymbolChild(parent: tutorialOverviewContainer.identifier, name: name, kind: "technology")
+        return addNonSymbolChild(parent: tutorialOverviewContainer.identifier, name: name, kind: "tutorial-toc")
     }
     
     /// Adds a non-symbol child element to an existing element in the path hierarchy.

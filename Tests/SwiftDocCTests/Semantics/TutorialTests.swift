@@ -425,7 +425,7 @@ Tutorial @1:1-150:2 projectFiles: nil
         XCTAssertNil(problem.diagnostic.source)
     }
 
-    /// Verify that a `Tutorial` only recognizes chapter, volume, or technology nodes as valid parents.
+    /// Verify that a `Tutorial` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")

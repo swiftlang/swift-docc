@@ -157,15 +157,15 @@ final class PathHierarchyBasedLinkResolver {
         }
     }
     
-    /// Adds a technology and its volumes and chapters to the path hierarchy.
-    func addTechnology(_ technology: DocumentationContext.SemanticResult<TutorialTableOfContents>) {
-        let reference = technology.topicGraphNode.reference
+    /// Adds a tutorial table-of-contents page and its volumes and chapters to the path hierarchy.
+    func addTutorialTableOfContents(_ tutorialTableOfContents: DocumentationContext.SemanticResult<TutorialTableOfContents>) {
+        let reference = tutorialTableOfContents.topicGraphNode.reference
 
-        let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: technology.source.deletingPathExtension().lastPathComponent))
+        let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: tutorialTableOfContents.source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[technologyID] = reference
-        
+
         var anonymousVolumeID: ResolvedIdentifier?
-        for volume in technology.value.volumes {
+        for volume in tutorialTableOfContents.value.volumes {
             if anonymousVolumeID == nil, volume.name == nil {
                 anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: "$volume", kind: "volume")
                 resolvedReferenceMap[anonymousVolumeID!] = reference.appendingPath("$volume")
