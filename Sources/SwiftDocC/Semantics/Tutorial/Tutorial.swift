@@ -149,10 +149,10 @@ extension Tutorial {
             }
         }
         
-        let technologyParent = context.parents(of: node.reference)
+        let tutorialTableOfContentsParent = context.parents(of: node.reference)
             .compactMap({ context.topicGraph.nodeWithReference($0) })
-            .first(where: { $0.kind == .technology || $0.kind == .chapter || $0.kind == .volume })
-        guard technologyParent != nil else {
+            .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
+        guard tutorialTableOfContentsParent != nil else {
             engine.emit(.init(
                 diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
                 possibleSolutions: [
