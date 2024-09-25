@@ -397,7 +397,7 @@ public struct ConvertAction: Action, RecreatingContext {
         // Warn the user if the catalog is a tutorial but does not contains a table of contents
         // and provide template content to fix this problem.
         if (
-            context.rootTechnologies.isEmpty &&
+            context.tutorialTableOfContentsReferences.isEmpty &&
             hasTutorial
         ) {
             let tableOfContentsFilename = CatalogTemplateKind.tutorialTopLevelFilename

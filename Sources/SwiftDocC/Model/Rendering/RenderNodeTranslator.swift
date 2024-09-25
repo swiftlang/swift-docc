@@ -384,7 +384,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.category = technology.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration()
-        node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: .tutorialTableOfContents).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)

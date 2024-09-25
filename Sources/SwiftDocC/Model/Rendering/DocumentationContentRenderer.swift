@@ -154,7 +154,7 @@ public class DocumentationContentRenderer {
         case .chapter: return .collectionGroup
         case .collection: return .collection
         case .collectionGroup: return .collectionGroup
-        case .technology, .technologyOverview: return .overview
+        case .tutorialTableOfContents: return .overview
         case .landingPage: return .article
         case .module, .extendedModule: return .collection
         case .onPageLandmark: return .pseudoSymbol
@@ -253,7 +253,7 @@ public class DocumentationContentRenderer {
             return (.tutorial, role)
         case .tutorialArticle:
             return (.article, role)
-        case .technology:
+        case .tutorialTableOfContents:
             return (.overview, role)
         case .onPageLandmark:
             return (.section, role)
