@@ -111,13 +111,13 @@ public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abst
             source: source,
             severity: .warning,
             range: range,
-            identifier: "org.swift.docc.Technology.IsolatedChapter",
+            identifier: "org.swift.docc.TutorialTableOfContents.IsolatedChapter",
             summary: "Chapter should be in a \(Volume.directiveName.singleQuoted); either organize all Chapters in Volumes, or place them directly under your \(TutorialTableOfContents.directiveName.singleQuoted)"
         )
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
-        return visitor.visitTechnology(self)
+        return visitor.visitTutorialTableOfContents(self)
     }
 }
 

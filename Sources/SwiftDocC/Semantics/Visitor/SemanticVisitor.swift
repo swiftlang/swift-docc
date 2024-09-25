@@ -83,8 +83,11 @@ public protocol SemanticVisitor {
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Result
         
     /**
-     Visit a ``Technology`` and return the result.
+     Visit a ``TutorialTableOfContents`` and return the result.
      */
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Result
+
+    @available(*, deprecated, renamed: "visitTutorialTableOfContents(_:)", message: "Use 'visitTutorialTableOfContents(_:)' instead. This deprecated API will be removed after 6.2 is released")
     mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Result
     
     /**
@@ -146,5 +149,13 @@ public protocol SemanticVisitor {
 extension SemanticVisitor {
     public mutating func visit(_ semantic: Semantic) -> Result {
         return semantic.accept(&self)
+    }
+}
+
+@available(*, deprecated)
+extension SemanticVisitor {
+    // We need to provide a default implementation to avoid the breaking change of a new protocol requirement.
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Result {
+        self.visitTechnology(tutorialTableOfContents)
     }
 }
