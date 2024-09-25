@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,22 +11,27 @@
 import Foundation
 import Markdown
 
-/// An overview of the educational materials under a specific technology or technology area.
-public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redirected {
+/// A top-level page that organizes a collection of tutorials into a hierarchy of volumes and chapters.
+///
+/// ## See Also
+///
+/// - ``Volume``
+/// - ``Chapter``
+public final class TutorialTableOfContents: Semantic, DirectiveConvertible, Abstracted, Redirected {
     public static let directiveName = "Tutorials"
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
     
-    /// The name of the technology.
+    /// The name of the technology that this collection of tutorials is about
     public let name: String
     
-    /// The ``Intro`` section for this technology.
+    /// The ``Intro`` section for this table of contents page.
     public let intro: Intro
     
-    /// The sections that outline the technology.
+    /// The sections that organize the tutorials into a recommend reading order.
     public let volumes: [Volume]
     
-    /// Additional resources to aid in learning the technology.
+    /// Additional resources to aid in learning the technology that this collection of tutorials is about.
     public let resources: Resources?
     
     override var children: [Semantic] {
@@ -55,29 +60,29 @@ public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redir
     }
     
     public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == Technology.directiveName)
+        precondition(directive.name == TutorialTableOfContents.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Technology>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialTableOfContents>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Technology>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<TutorialTableOfContents>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
     
-        let requiredName = Semantic.Analyses.HasArgument<Technology, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-        let requiredIntro = Semantic.Analyses.HasExactlyOne<Technology, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems).0
+        let requiredName = Semantic.Analyses.HasArgument<TutorialTableOfContents, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
+        let requiredIntro = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems).0
         
         var volumes: [Volume]
         var remainder: MarkupContainer
-        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<Technology, Volume>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Volume>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
 
         // Retrieve chapters outside volumes.
         let chapters: [Chapter]
-        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Technology, Chapter>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<TutorialTableOfContents, Chapter>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
 
         if !chapters.isEmpty {
             if !volumes.isEmpty {
                 // If there are Volumes, diagnose isolated chapters.
                 problems.append(contentsOf:
                     chapters.map { chapter in
-                        Problem(diagnostic: Technology.isolatedChapterDiagnostic(isolatedChapter: chapter, source: source, range: chapter.originalMarkup.range), possibleSolutions: [])
+                        Problem(diagnostic: TutorialTableOfContents.isolatedChapterDiagnostic(isolatedChapter: chapter, source: source, range: chapter.originalMarkup.range), possibleSolutions: [])
                     }
                 )
             } else {
@@ -89,7 +94,7 @@ public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redir
         }
         
         let resources: Resources?
-        (resources, remainder) = Semantic.Analyses.HasExactlyOne<Technology, Resources>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (resources, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, Resources>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
 
         let redirects: [Redirect]
             (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
@@ -107,7 +112,7 @@ public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redir
             severity: .warning,
             range: range,
             identifier: "org.swift.docc.Technology.IsolatedChapter",
-            summary: "Chapter should be in a \(Volume.directiveName.singleQuoted); either organize all Chapters in Volumes, or place them directly under your \(Technology.directiveName.singleQuoted)"
+            summary: "Chapter should be in a \(Volume.directiveName.singleQuoted); either organize all Chapters in Volumes, or place them directly under your \(TutorialTableOfContents.directiveName.singleQuoted)"
         )
     }
     
@@ -115,3 +120,6 @@ public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redir
         return visitor.visitTechnology(self)
     }
 }
+
+@available(*, deprecated, renamed: "TutorialTableOfContents", message: "Use 'TutorialTableOfContents' instead. This deprecated API will be removed after 6.2 is released")
+public typealias Technology = TutorialTableOfContents
