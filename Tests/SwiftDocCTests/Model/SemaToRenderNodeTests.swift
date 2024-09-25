@@ -578,7 +578,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let technology = Technology(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -815,7 +815,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let technology = Technology(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -2283,7 +2283,7 @@ Document
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         
-        let symbol = node.semantic as! Technology
+        let symbol = node.semantic as! TutorialTableOfContents
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         
         let renderNode = translator.visit(symbol) as! RenderNode
@@ -2448,7 +2448,7 @@ Document
         }
         
         var problems = [Problem]()
-        guard let technology = Technology(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
@@ -3185,7 +3185,7 @@ Document
             return
         }
         var problems = [Problem]()
-        guard let technology = Technology(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let technology = TutorialTableOfContents(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
             XCTFail("Couldn't create technology from markup: \(problems)")
             return
         }

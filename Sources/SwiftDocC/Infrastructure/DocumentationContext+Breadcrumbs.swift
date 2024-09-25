@@ -40,7 +40,7 @@ extension DocumentationContext {
             .sorted { (lhs, rhs) -> Bool in
                 // Order a path rooted in a technology as the canonical one.
                 if options.contains(.preferTechnologyRoot), let first = lhs.first {
-                    return try! entity(with: first).semantic is Technology
+                    return try! entity(with: first).semantic is TutorialTableOfContents
                 }
                 
                 return breadcrumbsAreInIncreasingOrder(lhs, rhs)

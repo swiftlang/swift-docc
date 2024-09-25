@@ -137,7 +137,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
         
         if let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) {
-            let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+            let technology = try! context.entity(with: hierarchy.technology).semantic as! TutorialTableOfContents
             node.hierarchy = hierarchy.hierarchy
             node.metadata.category = technology.name
             node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
@@ -372,7 +372,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
 
-    public mutating func visitTechnology(_ technology: Technology) -> RenderTree? {
+    public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> RenderTree? {
         var node = RenderNode(identifier: identifier, kind: .overview)
         
         node.metadata.title = technology.intro.title
@@ -881,7 +881,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return nil
         }
         
-        let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+        let technology = try! context.entity(with: hierarchy.technology).semantic as! TutorialTableOfContents
         
         node.metadata.title = article.title
         

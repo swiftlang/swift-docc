@@ -110,7 +110,7 @@ struct ExternalReferenceWalker: SemanticVisitor {
         visitMarkupContainer(MarkupContainer(markup))
     }
     
-    mutating func visitTechnology(_ technology: Technology) {
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) {
         visit(technology.intro)
         technology.volumes.forEach { visit($0) }
         technology.resources.unwrap { visit($0) }

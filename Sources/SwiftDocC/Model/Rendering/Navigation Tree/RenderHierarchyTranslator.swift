@@ -40,14 +40,14 @@ struct RenderHierarchyTranslator {
         let paths = context.finitePaths(to: reference, options: [.preferTechnologyRoot])
         
         // If the node is a technology return immediately without generating breadcrumbs
-        if let _ = (try? context.entity(with: reference))?.semantic as? Technology {
+        if let _ = (try? context.entity(with: reference))?.semantic as? TutorialTableOfContents {
             let hierarchy = visitTechnology(reference, omittingChapters: omittingChapters)
             return (hierarchy: .tutorials(hierarchy), technology: reference)
         }
         
         guard let technologyPath = paths.mapFirst(where: { path -> [ResolvedTopicReference]? in
             guard let rootReference = path.first,
-                let _ = try! context.entity(with: rootReference).semantic as? Technology else { return nil }
+                let _ = try! context.entity(with: rootReference).semantic as? TutorialTableOfContents else { return nil }
             return path
         }) else {
             // If there are no tutorials, return `nil`. We've already warned about uncurated tutorials.

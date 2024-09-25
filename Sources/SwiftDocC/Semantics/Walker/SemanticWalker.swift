@@ -51,7 +51,7 @@ extension SemanticWalker {
     /// Visits a comment node.
     mutating func visitComment(_ comment: Comment) { descendIntoChildren(of: comment) }
     /// Visits a tutorials technology.
-    mutating func visitTechnology(_ technology: Technology) { descendIntoChildren(of: technology) }
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) { descendIntoChildren(of: technology) }
     /// Visits an image node.
     mutating func visitImageMedia(_ imageMedia: ImageMedia) { descendIntoChildren(of: imageMedia) }
     /// Visits a video node.

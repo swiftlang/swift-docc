@@ -610,7 +610,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
     ///   - bundle: The bundle to resolve links against.
-    private func resolveLinks(technologies: [SemanticResult<Technology>],
+    private func resolveLinks(technologies: [SemanticResult<TutorialTableOfContents>],
                               tutorials: [SemanticResult<Tutorial>],
                               tutorialArticles: [SemanticResult<TutorialArticle>],
                               bundle: DocumentationBundle) {
@@ -624,7 +624,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let url = technologyResult.source
                 let unresolvedTechnology = technologyResult.value
                 var resolver = ReferenceResolver(context: self, bundle: bundle)
-                let technology = resolver.visit(unresolvedTechnology) as! Technology
+                let technology = resolver.visit(unresolvedTechnology) as! TutorialTableOfContents
                 diagnosticEngine.emit(resolver.problems)
                 
                 // Add to document map
@@ -761,7 +761,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func registerDocuments(from bundle: DocumentationBundle) throws -> (
-        technologies: [SemanticResult<Technology>],
+        technologies: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
         articles: [SemanticResult<Article>],
@@ -769,7 +769,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ) {
         // First, try to understand the basic structure of the document by
         // analyzing it and putting references in as "unresolved".
-        var technologies = [SemanticResult<Technology>]()
+        var technologies = [SemanticResult<TutorialTableOfContents>]()
         var tutorials = [SemanticResult<Tutorial>]()
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
@@ -857,7 +857,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
              Add all topic graph nodes up front before resolution starts, because
              there may be circular linking.
              */
-            if let technology = analyzed as? Technology {
+            if let technology = analyzed as? TutorialTableOfContents {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: url), title: technology.intro.title)
                 topicGraph.addNode(topicGraphNode)
                 let result = SemanticResult(value: technology, source: url, topicGraphNode: topicGraphNode)
@@ -2098,7 +2098,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
         //       or all symbols yet.
         var result: (
-            technologies: [SemanticResult<Technology>],
+            technologies: [SemanticResult<TutorialTableOfContents>],
             tutorials: [SemanticResult<Tutorial>],
             tutorialArticles: [SemanticResult<TutorialArticle>],
             articles: [SemanticResult<Article>],
