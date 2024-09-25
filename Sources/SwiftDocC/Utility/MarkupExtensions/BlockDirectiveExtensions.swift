@@ -13,7 +13,7 @@ import Markdown
 extension BlockDirective {
     /// Names of directives expected to represent special types of Markdown documents.
     static let topLevelDirectiveNames: [String] = [
-        Technology.directiveName,
+        TutorialTableOfContents.directiveName,
         Tutorial.directiveName,
         TutorialArticle.directiveName,
     ]
@@ -55,7 +55,7 @@ extension BlockDirective {
         Steps.directiveName,
         SupportedLanguage.directiveName,
         TabNavigator.directiveName,
-        Technology.directiveName,
+        TutorialTableOfContents.directiveName,
         TechnologyRoot.directiveName,
         TechnologyRoot.directiveName,
         Tile.directiveName,

@@ -148,7 +148,7 @@ struct SemanticTreeDumper: SemanticWalker {
         dump(markupContainer, customDescription: description)
     }
         
-    mutating func visitTechnology(_ technology: Technology) {
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) {
         dump(technology, customDescription: "name: '\(technology.name)'")
     }
     

@@ -85,7 +85,7 @@ public protocol SemanticVisitor {
     /**
      Visit a ``Technology`` and return the result.
      */
-    mutating func visitTechnology(_ technology: Technology) -> Result
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Result
     
     /**
      Visit an ``ImageMedia`` and return the result.

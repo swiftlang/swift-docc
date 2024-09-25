@@ -158,7 +158,7 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Adds a technology and its volumes and chapters to the path hierarchy.
-    func addTechnology(_ technology: DocumentationContext.SemanticResult<Technology>) {
+    func addTechnology(_ technology: DocumentationContext.SemanticResult<TutorialTableOfContents>) {
         let reference = technology.topicGraphNode.reference
 
         let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: technology.source.deletingPathExtension().lastPathComponent))

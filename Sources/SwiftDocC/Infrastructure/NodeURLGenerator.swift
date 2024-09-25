@@ -121,7 +121,7 @@ public struct NodeURLGenerator {
         let fileName = source.deletingPathExtension().lastPathComponent
         
         switch semantic {
-        case is Technology:
+        case is TutorialTableOfContents:
             return Path.technology(technologyName: fileName).stringValue
         case is Tutorial, is TutorialArticle:
             return Path.tutorial(bundleName: bundle.displayName, tutorialName: fileName).stringValue

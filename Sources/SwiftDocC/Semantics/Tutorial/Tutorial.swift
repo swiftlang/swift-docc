@@ -158,7 +158,7 @@ extension Tutorial {
             engine.emit(.init(
                 diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
                 possibleSolutions: [
-                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(Technology.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
+                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
                 ]
             ))
             return
