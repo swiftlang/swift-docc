@@ -69,6 +69,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         } else {
             let text = self.diagnosticFormatter.formattedDescription(for: problems)
             outputStream.write(text)
+            outputStream.write("\n")
         }
         problems = [] // `flush()` is called more than once. Don't emit the same problems again.
         self.diagnosticFormatter.finalize()

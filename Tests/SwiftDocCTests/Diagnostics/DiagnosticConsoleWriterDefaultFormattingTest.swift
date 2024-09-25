@@ -42,6 +42,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;31merror: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
+            
             """)
         }
 
@@ -56,6 +57,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
+            
             """)
         }
 
@@ -70,6 +72,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;39mnotice: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
+            
             """)
         }
 
@@ -84,6 +87,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;39mnote: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
+            
             """)
         }
     }
@@ -106,6 +110,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
         --> file.md:1:8-10:21
+        
         """)
     }
 
@@ -140,6 +145,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         \(explanation)
         /path/to/other/file.md:1:1: This is a note
         --> /path/to/file.md:1:8-10:21
+        
         """)
     }
 
@@ -214,6 +220,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;0m
         Third diagnostic explanation
         --> /path/to/other/file.md
+        
         """)
     }
 
@@ -243,6 +250,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
         45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
         46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+        
         """)
     }
 
@@ -288,6 +296,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         3 + A short abstract \u{001B}[1;32mwith emoji 💻 in\u{001B}[0;0m it.
         4 |
         5 | @Metadata {
+        
         """)
     }
 
@@ -332,6 +341,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
             45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+            
             """)
         }
 
@@ -355,6 +365,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
             45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+            
             """)
         }
 
@@ -386,6 +397,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
             45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
+            
             """)
         }
     }
@@ -431,6 +443,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             1 + # \u{001B}[1;32mTitle\u{001B}[0;0m
             2 |
             3 | A very short article with only an abstract.
+            
             """)
                        
         // Highlight the "short" word on line 3
@@ -441,6 +454,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             1 | # Title
             2 |
             3 + A very \u{001B}[1;32mshort\u{001B}[0;0m article with only an abstract.
+            
             """)
         
         // Extend the highlight beyond the end of that line
@@ -451,6 +465,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             1 | # Title
             2 |
             3 + A very \u{001B}[1;32mshort article with only an abstract.\u{001B}[0;0m
+            
             """)
         
         // Extend the highlight beyond the start of that line
@@ -461,6 +476,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             1 | # Title
             2 |
             3 + \u{001B}[1;32mA very short\u{001B}[0;0m article with only an abstract.
+            
             """)
         
         // Highlight a line before the start of the file
@@ -468,6 +484,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
             --> Something.docc/Article.md:1:1-1:5
+            
             """)
         
         // Highlight a line after the end of the file
@@ -475,6 +492,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
             --> Something.docc/Article.md:100:1-100:5
+            
             """)
         
         // Extended the highlighted lines before the start of the file
@@ -482,6 +500,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
             --> Something.docc/Article.md:1:1-1:5
+            
             """)
         
         // Extended the highlighted lines after the end of the file
@@ -489,6 +508,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
             --> Something.docc/Article.md:1:1-100:5
+            
             """)
     }
     
@@ -522,6 +542,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             suggestion:
             0 + var slothName = \"slothy\"
             1 + var slothDiet = .vegetarian
+            
             """
         )
         
@@ -554,6 +575,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             suggestion:
             0 + var slothName = SlothGenerator().generateName()
             1 + var slothDiet = SlothGenerator().generateDiet()
+            
             """
         )
         
@@ -589,6 +611,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             suggestion:
             0 + var beeName = "Bee"
             1 + var beeDiet = .vegetarian
+            
             """
         )
     }

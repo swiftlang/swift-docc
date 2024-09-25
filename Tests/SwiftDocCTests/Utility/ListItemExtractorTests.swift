@@ -325,6 +325,7 @@ class ListItemExtractorTests: XCTestCase {
         19 |   ```
         20 |
         21 +   > Warning: Inner aside, with ``\u{001B}[1;32mThirdNotFoundSymbol\u{001B}[0;0m`` link
+        
         """, file: file, line: line)
     }
     
@@ -391,6 +392,7 @@ class ListItemExtractorTests: XCTestCase {
         20 |     ```
         21 |
         22 +     > Warning: Inner aside, with ``\u{001B}[1;32mThirdNotFoundSymbol\u{001B}[0;0m`` link
+        
         """, file: file, line: line)
     }
     

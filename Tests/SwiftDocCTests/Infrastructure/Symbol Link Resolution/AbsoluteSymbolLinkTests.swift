@@ -475,6 +475,16 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: []
             }
             """,
+            // doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func():
+            """
+            {
+                bundleID: 'org.swift.docc.example',
+                module: 'SideKit',
+                topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
+                representsModule: false,
+                basePathComponents: [(name: 'func()', suffix: (none))]
+            }
+            """,
             // doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn:
             """
             {
@@ -483,16 +493,6 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
                 representsModule: false,
                 basePathComponents: [(name: 'func()', suffix: (idHash: '2dxqn'))]
-            }
-            """,
-            // doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi:
-            """
-            {
-                bundleID: 'org.swift.docc.example',
-                module: 'SideKit',
-                topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'func()', suffix: (idHash: '6ijsi'))]
             }
             """,
             // doc://org.swift.docc.example/documentation/SideKit/UncuratedClass:

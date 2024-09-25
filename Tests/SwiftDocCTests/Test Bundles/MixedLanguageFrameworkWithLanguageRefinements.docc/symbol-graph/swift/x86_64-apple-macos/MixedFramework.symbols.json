@@ -6070,6 +6070,35 @@
           }
         ]
       },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "something",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "something"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          }
+        ]
+      },
       "declarationFragments": [
         {
           "kind": "keyword",
@@ -9818,6 +9847,35 @@
               }
             },
             "text": "A subscript with a \"something else\" String argument."
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "somethingElse",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "somethingElse"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
           }
         ]
       },
