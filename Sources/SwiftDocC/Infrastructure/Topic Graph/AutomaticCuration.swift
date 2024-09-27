@@ -167,7 +167,8 @@ public struct AutomaticCuration {
         }
         
         func filterReferences(_ references: [ResolvedTopicReference]) -> [ResolvedTopicReference] {
-            references
+            Array(
+                references
                 // Don't include the current node.
                 .filter { $0 != node.reference }
             
@@ -177,6 +178,9 @@ public struct AutomaticCuration {
                         variantsTraits.contains(where: { $0.interfaceLanguage == language.id})
                     })
                 }
+                // Don't create too long See Also sections
+                .prefix(15)
+            )
         }
         
         // Look up the render context first
