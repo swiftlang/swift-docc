@@ -65,9 +65,6 @@ public class NavigatorIndex {
         /// Missing bundle identifier.
         case missingBundleIdentifier
         
-        @available(*, deprecated, renamed: "missingBundleIdentifier", message: "Use 'missingBundleIdentifier' instead. This deprecated API will be removed after 6.0 is released")
-        case missingBundleIndentifier
-        
         /// A RenderNode has no title and won't be indexed.
         case missingTitle(description: String)
         
@@ -76,7 +73,7 @@ public class NavigatorIndex {
         
         public var errorDescription: String {
             switch self {
-            case .missingBundleIdentifier, .missingBundleIndentifier:
+            case .missingBundleIdentifier:
                 return "A navigator index requires a bundle identifier, which is missing."
             case .missingTitle:
                 return "The page has no valid title available."
