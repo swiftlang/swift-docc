@@ -134,8 +134,7 @@ extension XCTestCase {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
-                identifier: "com.example.test",
-                version: "1.0"
+                identifier: "com.example.test"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: [],

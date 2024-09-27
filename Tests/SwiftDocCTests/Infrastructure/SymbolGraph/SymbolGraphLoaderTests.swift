@@ -496,8 +496,6 @@ class SymbolGraphLoaderTests: XCTestCase {
             <string>MyModule</string>
             <key>CFBundleIdentifier</key>
             <string>com.apple.MyModule</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
             <key>CDAppleDefaultAvailability</key>
             <dict>
                 <key>MyModule</key>
@@ -1664,8 +1662,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
-                identifier: "com.example.test",
-                version: "1.2.3"
+                identifier: "com.example.test"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: symbolGraphURLs,

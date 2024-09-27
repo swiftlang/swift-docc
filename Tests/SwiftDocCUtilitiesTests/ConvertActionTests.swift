@@ -260,7 +260,6 @@ class ConvertActionTests: XCTestCase {
         var infoPlistFallbacks = [String: Any]()
         infoPlistFallbacks["CFBundleDisplayName"] = "MyKit" // same as the symbol graph
         infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
-        infoPlistFallbacks["CFBundleVersion"] = "1.2.3"
         infoPlistFallbacks["CDDefaultCodeListingLanguage"] = "swift"
         
         var action = try ConvertAction(

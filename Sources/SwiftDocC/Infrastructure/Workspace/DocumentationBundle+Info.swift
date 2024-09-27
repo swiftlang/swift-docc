@@ -22,6 +22,7 @@ extension DocumentationBundle {
         public var identifier: String
         
         /// The version of the bundle.
+        @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
         public var version: String?
         
         /// The default language identifier for code listings in the bundle.
@@ -42,7 +43,6 @@ extension DocumentationBundle {
         enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
-            case version = "CFBundleVersion"
             case defaultCodeListingLanguage = "CDDefaultCodeListingLanguage"
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
@@ -54,8 +54,6 @@ extension DocumentationBundle {
                     return "--fallback-display-name"
                 case .identifier:
                     return "--fallback-bundle-identifier"
-                case .version:
-                    return "--fallback-bundle-version"
                 case .defaultCodeListingLanguage:
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
@@ -82,26 +80,22 @@ extension DocumentationBundle {
             }
         }
         
-        
         /// Creates a new documentation bundle information value.
         /// - Parameters:
         ///   - displayName: The display name of the bundle.
         ///   - identifier:  The unique identifier of the bundle.
-        ///   - version: The version of the bundle.
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
         public init(
             displayName: String,
             identifier: String,
-            version: String?,
             defaultCodeListingLanguage: String?,
             defaultAvailability: DefaultAvailability?,
             defaultModuleKind: String?
         ) {
             self.displayName = displayName
             self.identifier = identifier
-            self.version = version
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultAvailability = defaultAvailability
             self.defaultModuleKind = defaultModuleKind
@@ -228,7 +222,6 @@ extension DocumentationBundle {
             // contain a display name. If they do but that value fails to decode, that error would be raised before accessing `derivedDisplayName`.
             self.displayName = try decodeOrFallbackIfPresent(String.self, with: .displayName) ?? derivedDisplayName!
             self.identifier = try decodeOrFallbackIfPresent(String.self, with: .identifier) ?? self.displayName
-            self.version = try decodeOrFallbackIfPresent(String.self, with: .version)
             
             // Finally, decode the optional keys if they're present.
             
@@ -237,11 +230,10 @@ extension DocumentationBundle {
             self.defaultAvailability = try decodeOrFallbackIfPresent(DefaultAvailability.self, with: .defaultAvailability)
             self.featureFlags = try decodeOrFallbackIfPresent(BundleFeatureFlags.self, with: .featureFlags)
         }
-        
+
         init(
             displayName: String,
             identifier: String,
-            version: String? = nil,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
@@ -249,7 +241,6 @@ extension DocumentationBundle {
         ) {
             self.displayName = displayName
             self.identifier = identifier
-            self.version = version
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
@@ -267,7 +258,6 @@ extension BundleDiscoveryOptions {
     /// - Parameters:
     ///   - fallbackDisplayName: A fallback display name for the bundle.
     ///   - fallbackIdentifier: A fallback identifier for the bundle.
-    ///   - fallbackVersion: A fallback version for the bundle.
     ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
     ///   - fallbackDefaultModuleKind: A fallback default module kind for the bundle.
     ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
@@ -275,7 +265,6 @@ extension BundleDiscoveryOptions {
     public init(
         fallbackDisplayName: String? = nil,
         fallbackIdentifier: String? = nil,
-        fallbackVersion: String? = nil,
         fallbackDefaultCodeListingLanguage: String? = nil,
         fallbackDefaultModuleKind: String? = nil,
         fallbackDefaultAvailability: DefaultAvailability? = nil,
@@ -294,8 +283,6 @@ extension BundleDiscoveryOptions {
                 value = fallbackDisplayName
             case .identifier:
                 value = fallbackIdentifier
-            case .version:
-                value = fallbackVersion
             case .defaultCodeListingLanguage:
                 value = fallbackDefaultCodeListingLanguage
             case .defaultAvailability:
@@ -318,6 +305,26 @@ extension BundleDiscoveryOptions {
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
         )
     }
+
+    @available(*, deprecated, renamed: "init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)", message: "Use 'init(fallbackDisplayName:fallbackIdentifier:fallbackDefaultCodeListingLanguage:fallbackDefaultModuleKind:fallbackDefaultAvailability:additionalSymbolGraphFiles:)' instead. This deprecated API will be removed after 6.2 is released")
+    public init(
+        fallbackDisplayName: String? = nil,
+        fallbackIdentifier: String? = nil,
+        fallbackVersion: String?,
+        fallbackDefaultCodeListingLanguage: String? = nil,
+        fallbackDefaultModuleKind: String? = nil,
+        fallbackDefaultAvailability: DefaultAvailability? = nil,
+        additionalSymbolGraphFiles: [URL] = []
+    ) {
+        self.init(
+            fallbackDisplayName: fallbackDisplayName,
+            fallbackIdentifier: fallbackIdentifier,
+            fallbackDefaultCodeListingLanguage: fallbackDefaultCodeListingLanguage,
+            fallbackDefaultModuleKind: fallbackDefaultModuleKind,
+            fallbackDefaultAvailability: fallbackDefaultAvailability,
+            additionalSymbolGraphFiles:additionalSymbolGraphFiles
+        )
+    }
 }
 
 private extension CodingUserInfoKey {
@@ -325,4 +332,24 @@ private extension CodingUserInfoKey {
     static let bundleDiscoveryOptions = CodingUserInfoKey(rawValue: "bundleDiscoveryOptions")!
     /// A user info key to store derived display name in the decoder.
     static let derivedDisplayName = CodingUserInfoKey(rawValue: "derivedDisplayName")!
+}
+
+extension DocumentationBundle.Info {
+    @available(*, deprecated, renamed: "init(displayName:identifier:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)", message: "Use 'init(displayName:identifier:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)' instead. This deprecated API will be removed after 6.2 is released")
+    public init(
+        displayName: String,
+        identifier: String,
+        version: String?,
+        defaultCodeListingLanguage: String?,
+        defaultAvailability: DefaultAvailability?,
+        defaultModuleKind: String?
+    ) {
+        self.init(
+            displayName: displayName,
+            identifier: identifier,
+            defaultCodeListingLanguage: defaultCodeListingLanguage,
+            defaultAvailability: defaultAvailability,
+            defaultModuleKind: defaultModuleKind
+        )
+    }
 }
