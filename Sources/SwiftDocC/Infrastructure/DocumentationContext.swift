@@ -113,9 +113,38 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
     public var linkResolver = LinkResolver()
     
+    private enum _Provider {
+        case legacy(DocumentationContextDataProvider)
+        case new(DocumentationBundle.DataProvider)
+    }
+    private var dataProvider: _Provider
+
     /// The provider of documentation bundles for this context.
-    var dataProvider: DocumentationContextDataProvider
+    var _legacyDataProvider: DocumentationContextDataProvider! {
+        get {
+            switch dataProvider {
+            case .legacy(let legacyDataProvider):
+                legacyDataProvider
+            case .new:
+                nil
+            }
+        }
+        set {
+            dataProvider = .legacy(newValue)
+        }
+    }
     
+    func contentsOfURL(_ url: URL, in bundle: DocumentationBundle) throws -> Data {
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            try legacyDataProvider.contentsOfURL(url, in: bundle)
+        case .new(let dataProvider):
+            try dataProvider.contents(of: url)
+        }
+    }
+
+    var bundle: DocumentationBundle?
+
     /// A collection of configuration for this context.
     public package(set) var configuration: Configuration {
         get { _configuration }
@@ -255,17 +284,40 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) throws {
-        self.dataProvider = dataProvider
+        self.dataProvider = .legacy(dataProvider)
         self.diagnosticEngine = diagnosticEngine
         self._configuration = configuration
         
-        self.dataProvider.delegate = self
+        _legacyDataProvider.delegate = self
         
         for bundle in dataProvider.bundles.values {
             try register(bundle)
         }
     }
-    
+
+    /// Initializes a documentation context with a given `bundle`.
+    ///
+    /// - Parameters:
+    ///   - bundle: The bundle to register with the context.
+    ///   - fileManager: The file manager that the context uses to read files from the bundle.
+    ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
+    ///   - configuration: A collection of configuration for the created context.
+    /// - Throws: If an error is encountered while registering a documentation bundle.
+    package init(
+        bundle: DocumentationBundle,
+        dataProvider: DocumentationBundle.DataProvider,
+        diagnosticEngine: DiagnosticEngine = .init(),
+        configuration: Configuration = .init()
+    ) throws {
+        self.bundle = bundle
+        self.dataProvider = .new(dataProvider)
+        self.diagnosticEngine = diagnosticEngine
+        self._configuration = configuration
+
+        ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+        try register(bundle)
+    }
+
     /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
     ///
     /// - Parameters:
@@ -297,12 +349,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// The documentation bundles that are currently registered with the context.
     public var registeredBundles: some Collection<DocumentationBundle> {
-        return dataProvider.bundles.values
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            Array(legacyDataProvider.bundles.values)
+        case .new:
+            bundle.map { [$0] } ?? []
+        }
     }
     
     /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
     public func bundle(identifier: String) -> DocumentationBundle? {
-        return dataProvider.bundles[identifier]
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            legacyDataProvider.bundles[identifier]
+        case .new:
+            bundle?.identifier == identifier ? bundle : nil
+        }
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
@@ -784,7 +846,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard decodeError.sync({ $0 == nil }) else { return }
             
             do {
-                let data = try dataProvider.contentsOfURL(url, in: bundle)
+                let data = try contentsOfURL(url, in: bundle)
                 let source = String(decoding: data, as: UTF8.self)
                 let document = Document(parsing: source, source: url, options: [.parseBlockDirectives, .parseSymbolLinks])
                 
@@ -1685,8 +1747,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     private func registerMiscResources(from bundle: DocumentationBundle) throws {
         let miscResources = Set(bundle.miscResourceURLs)
-        try assetManagers[bundle.identifier, default: DataAssetManager()]
-            .register(data: miscResources, dataProvider: dataProvider, bundle: bundle)
+        try assetManagers[bundle.identifier, default: DataAssetManager()].register(data: miscResources)
     }
     
     private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
@@ -2066,7 +2127,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(
                 bundle: bundle,
-                dataProvider: self.dataProvider,
+                dataLoader: { try self.contentsOfURL($0, in: $1) },
                 symbolGraphTransformer: configuration.convertServiceConfiguration.symbolGraphTransformer
             )
             
@@ -2612,7 +2673,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         let resource = asset.data(bestMatching: trait)
         
-        return try dataProvider.contentsOfURL(resource.url, in: bundle)
+        return try contentsOfURL(resource.url, in: bundle)
     }
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
@@ -2875,7 +2936,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - parent: The topic the code listing reference appears in.
     @available(*, deprecated, message: "This deprecated API will be removed after 6.1 is released")
     public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
-        return dataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
+        switch dataProvider {
+        case .legacy(let legacyDataProvider):
+            legacyDataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
+        case .new:
+            nil
+        }
     }
     
     /// The references of all nodes in the topic graph.
