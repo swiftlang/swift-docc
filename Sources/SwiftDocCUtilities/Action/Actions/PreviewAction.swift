@@ -162,13 +162,18 @@ public final class PreviewAction: AsyncAction {
         return previewResult
     }
     
+    var convertTask: Task<ActionResult, any Error>?
+    
     func convert() async throws -> ActionResult {
         // `cancel()` will throw `cancelPending` if there is already queued conversion.
-        try convertAction.cancel()
+        convertTask?.cancel()
         
         convertAction = try createConvertAction()
-
-        let result = try await convertAction.perform(logHandle: &logHandle)
+        convertTask = Task {
+            try await convertAction.perform(logHandle: &logHandle)
+        }
+        let result = try await convertTask!.value
+        
         previewPaths = try convertAction.context.previewPaths()
         return result
     }
@@ -226,6 +231,8 @@ extension PreviewAction {
                     print("\nConversion already in progress...", to: &self.logHandle)
                 } catch DocumentationContext.ContextError.registrationDisabled {
                     // The context cancelled loading the bundles and threw to yield execution early.
+                    print("\nConversion cancelled...", to: &self.logHandle)
+                } catch is CancellationError {
                     print("\nConversion cancelled...", to: &self.logHandle)
                 } catch {
                     print("\n\(error.localizedDescription)\nCompilation failed", to: &self.logHandle)

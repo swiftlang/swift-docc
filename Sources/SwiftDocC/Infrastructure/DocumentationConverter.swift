@@ -191,45 +191,16 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             try workspace.unregisterProvider(dataProvider)
         }
 
-        /*
-           Asynchronously cancel registration if necessary.
-           We spawn a timer that periodically checks `isCancelled` and if necessary
-           disables registration in `DocumentationContext` as registration being
-           the largest part of a documentation conversion.
-        */
         let context = self.context
-        let isCancelled = self.isCancelled
-        
-        // `true` if the `isCancelled` flag is set.
-        func isConversionCancelled() -> Bool {
-            return isCancelled?.sync({ $0 }) == true
-        }
-
-        // Run a timer that synchronizes the cancelled state between the converter and the context directly.
-        // We need a timer on a separate dispatch queue because `workspace.registerProvider()` blocks
-        // the current thread until it loads all symbol graphs, markdown files, and builds the topic graph
-        // so in order to be able to update the context cancellation flag we need to run on a different thread.
-        var cancelTimerQueue: DispatchQueue? = DispatchQueue(label: "org.swift.docc.ConvertActionCancelTimer", qos: .unspecified, attributes: .concurrent)
-        let cancelTimer = DispatchSource.makeTimerSource(queue: cancelTimerQueue)
-        cancelTimer.schedule(deadline: .now(), repeating: .milliseconds(500), leeway: .milliseconds(50))
-        cancelTimer.setEventHandler {
-            if isConversionCancelled() {
-                cancelTimer.cancel()
-                context.setRegistrationEnabled(false)
-            }
-        }
-        cancelTimer.resume()
         
         // Start bundle registration
         try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
         self.currentDataProvider = dataProvider
-
-        // Bundle registration is finished - stop the timer and reset the context cancellation state.
-        cancelTimer.cancel()
-        cancelTimerQueue = nil
-        context.setRegistrationEnabled(true)
         
         // If cancelled, return early before we emit diagnostics.
+        func isConversionCancelled() -> Bool {
+            Task.isCancelled || isCancelled?.sync({ $0 }) == true
+        }
         guard !isConversionCancelled() else { return ([], []) }
         
         processingDurationMetric = benchmark(begin: Benchmark.Duration(id: "documentation-processing"))

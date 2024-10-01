@@ -233,17 +233,12 @@ public struct ConvertAction: AsyncAction {
             dataProvider: dataProvider,
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
-            isCancelled: isCancelled,
             diagnosticEngine: self.diagnosticEngine,
             experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
         )
     }
-
-    /// `true` if the convert action is cancelled.
-    private let isCancelled = Synchronized<Bool>(false)
     
     /// `true` if the convert action is currently running.
-    let isPerforming = Synchronized<Bool>(false)
     
     /// A block to execute when conversion has finished.
     /// It's used as a "future" for when the action is cancelled.
@@ -251,30 +246,6 @@ public struct ConvertAction: AsyncAction {
     
     /// A block to execute when conversion has started.
     var willPerformFuture: (()->Void)?
-
-    /// Cancels the action.
-    ///
-    /// The method blocks until the action has completed cancelling.
-    mutating func cancel() throws {
-        /// If the action is not running, there is nothing to cancel
-        guard isPerforming.sync({ $0 }) == true else { return }
-        
-        /// If the action is already cancelled throw `cancelPending`.
-        if isCancelled.sync({ $0 }) == true {
-            throw Error.cancelPending
-        }
-
-        /// Set the cancelled flag.
-        isCancelled.sync({ $0 = true })
-        
-        /// Wait for the `perform(logHandle:)` method to call `didPerformFuture()`
-        let waitGroup = DispatchGroup()
-        waitGroup.enter()
-        didPerformFuture = {
-            waitGroup.leave()
-        }
-        waitGroup.wait()
-    }
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
@@ -297,11 +268,9 @@ public struct ConvertAction: AsyncAction {
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
         // While running this method keep the `isPerforming` flag up.
-        isPerforming.sync({ $0 = true })
         willPerformFuture?()
         defer {
             didPerformFuture?()
-            isPerforming.sync({ $0 = false })
             diagnosticEngine.flush()
         }
         
