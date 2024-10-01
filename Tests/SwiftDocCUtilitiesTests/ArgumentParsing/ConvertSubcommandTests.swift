@@ -591,4 +591,25 @@ class ConvertSubcommandTests: XCTestCase {
         let enabledFlagConvert = try Docc.Convert.parse(["--fallback-bundle-version", "1.2.3"])
         XCTAssertEqual(enabledFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, "1.2.3")
     }
+
+    func testEnableExperimentalDeclarationFormattingFlag() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalDeclarationFormatting)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalDeclarationFormattingEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-declaration-formatting",
+            testBundleURL.path,
+        ])
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalDeclarationFormatting)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalDeclarationFormattingEnabled)
+    }
 }

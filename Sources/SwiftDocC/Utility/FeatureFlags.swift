@@ -35,6 +35,10 @@ public struct FeatureFlags: Codable {
         get { isParametersAndReturnsValidationEnabled }
         set { isParametersAndReturnsValidationEnabled = newValue }
     }
+
+    /// Whether or not experimental support for formatting Swift symbol
+    /// declarations using swift-format is enabled.
+    public var isExperimentalDeclarationFormattingEnabled = false
     
     /// Creates a set of feature flags with the given values.
     ///

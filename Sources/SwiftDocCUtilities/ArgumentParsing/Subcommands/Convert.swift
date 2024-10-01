@@ -529,6 +529,9 @@ extension Docc {
                 )
             )
             var emitLMDBIndex = false
+
+            @Flag(help: "Use swift-format to format Swift symbol declarations.")
+            var enableExperimentalDeclarationFormatting = false
         
             @available(*, deprecated) // This deprecation silences the access of the deprecated `index` flag.
             mutating func validate() throws {
@@ -624,6 +627,15 @@ extension Docc {
             get { featureFlags.emitLMDBIndex }
             set { featureFlags.emitLMDBIndex = newValue }
             
+        }
+
+        /// A user-provided value that is true if swift-format should be used to
+        /// format Swift symbol declarations.
+        ///
+        /// Defaults to false.
+        public var enableExperimentalDeclarationFormatting: Bool {
+            get { featureFlags.enableExperimentalDeclarationFormatting }
+            set { featureFlags.enableExperimentalDeclarationFormatting = newValue }
         }
         
         // MARK: - ParsableCommand conformance
