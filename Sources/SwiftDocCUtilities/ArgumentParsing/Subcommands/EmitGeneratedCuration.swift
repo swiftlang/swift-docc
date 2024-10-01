@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,7 @@ import ArgumentParser
 
 extension Docc.ProcessCatalog {
     /// Emits documentation extension files that reflect the auto-generated curation.
-    struct EmitGeneratedCuration: ParsableCommand {
+    struct EmitGeneratedCuration: AsyncParsableCommand {
         
         static var configuration = CommandConfiguration(
             commandName: "emit-generated-curation",
@@ -155,12 +155,10 @@ extension Docc.ProcessCatalog {
             get { generationOptions.startingPointSymbolLink }
             set { generationOptions.startingPointSymbolLink = newValue }
         }
-
-        // MARK: - Execution
         
-        mutating func run() throws {
+        func run() async throws {
             var action = try EmitGeneratedCurationAction(fromCommand: self)
-            try action.performAndHandleResult()
+            try await action.performAndHandleResult()
         }
     }
 }

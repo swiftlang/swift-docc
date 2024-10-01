@@ -14,7 +14,7 @@ import Foundation
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
-public struct ConvertAction: Action, RecreatingContext {
+public struct ConvertAction: AsyncAction {
     enum Error: DescribedError {
         case doesNotContainBundle(url: URL)
         case cancelPending
@@ -58,12 +58,6 @@ public struct ConvertAction: Action, RecreatingContext {
     private var injectedDataProvider: DocumentationWorkspaceDataProvider?
     private var fileManager: FileManagerProtocol
     private let temporaryDirectory: URL
-    
-    public var setupContext: ((inout DocumentationContext) -> Void)? {
-        didSet {
-            converter.setupContext = setupContext
-        }
-    }
     
     var converter: DocumentationConverter
     
@@ -284,7 +278,7 @@ public struct ConvertAction: Action, RecreatingContext {
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -451,7 +445,7 @@ public struct ConvertAction: Action, RecreatingContext {
         benchmark(end: totalTimeMetric)
         
         if !didEncounterError {
-            let coverageResults = try coverageAction.perform(logHandle: logHandle)
+            let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
             postConversionProblems.append(contentsOf: coverageResults.problems)
         }
         

@@ -50,6 +50,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     private var dataProvider: DocumentationWorkspaceDataProvider
     
     /// An optional closure that sets up a context before the conversion begins.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public var setupContext: ((inout DocumentationContext) -> Void)?
     
     /// Conversion batches should be big enough to keep all cores busy but small enough not to keep
@@ -189,9 +190,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         if let dataProvider = self.currentDataProvider {
             try workspace.unregisterProvider(dataProvider)
         }
-        
-        // Do additional context setup.
-        setupContext?(&context)
 
         /*
            Asynchronously cancel registration if necessary.
