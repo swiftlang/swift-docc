@@ -72,6 +72,15 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                 return nil
             }
 
+            // if --enable-experimental-declaration-formatting is enabled, try
+            // to format the decl fragments using swift-format
+            // (see `DeclarationSectionTranslator+Formatting.swift`)
+            let declaration = FeatureFlags.current.isExperimentalDeclarationFormattingEnabled ? (
+                formatted(declarations: declaration)
+            ) : (
+                declaration
+            )
+
             /// Convert a ``SymbolGraph`` declaration fragment into a ``DeclarationRenderSection/Token``
             /// by resolving any symbol USRs to the appropriate reference link.
             func translateFragment(
