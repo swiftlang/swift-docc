@@ -64,6 +64,15 @@
       }
     },
     {
+      "identity" : "swift-format",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-format",
+      "state" : {
+        "revision" : "65f9da9aad84adb7e2028eb32ca95164aa590e3b",
+        "version" : "600.0.0"
+      }
+    },
+    {
       "identity" : "swift-lmdb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-lmdb.git",
@@ -88,6 +97,15 @@
       "state" : {
         "revision" : "fc79798d5a150d61361a27ce0c51169b889e23de",
         "version" : "2.68.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "0687f71944021d616d34d922343dcef086855920",
+        "version" : "600.0.1"
       }
     },
     {

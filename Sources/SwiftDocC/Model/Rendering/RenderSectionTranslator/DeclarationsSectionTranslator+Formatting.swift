@@ -8,7 +8,34 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import SwiftFormat
 import SymbolKit
+
+struct SyntaxFormatter {
+    var config: SwiftFormat.Configuration
+
+    init() {
+        config = SwiftFormat.Configuration()
+        config.tabWidth = 4
+        config.indentation = .spaces(config.tabWidth)
+        config.lineBreakBeforeEachArgument = true
+        config.lineBreakBeforeEachGenericRequirement = true
+        //config.lineBreakBetweenDeclarationAttributes = true
+    }
+
+    func format(source: String) throws -> String {
+        var formatted = ""
+
+        try SwiftFormatter(configuration: config).format(
+            source: source,
+            assumingFileURL: nil,
+            selection: .infinite,
+            to: &formatted
+        )
+
+        return formatted
+    }
+}
 
 extension DeclarationsSectionTranslator {
     typealias DeclarationFragments = SymbolGraph.Symbol.DeclarationFragments
@@ -25,6 +52,20 @@ extension DeclarationsSectionTranslator {
     }
 
     func formatted(fragments: [Fragment]) -> [Fragment] {
-        fragments // TODO
+        do {
+            let rawText = extractText(from: fragments)
+            let formattedText = try SyntaxFormatter().format(source: rawText)
+            print("raw", rawText, "formatted", formattedText, separator: "\n")
+
+            return fragments // TODO: reconstruct new fragments from formatted text
+        } catch {
+            // if there's an error that happens when using swift-format, ignore
+            // it and simply return back the original, unformatted fragments
+            return fragments
+        }
+    }
+
+    private func extractText(from fragments: [Fragment]) -> String {
+        fragments.reduce("") { "\($0)\($1.spelling)" }
     }
 }
