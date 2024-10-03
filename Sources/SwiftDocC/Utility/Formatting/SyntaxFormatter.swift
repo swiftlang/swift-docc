@@ -24,7 +24,7 @@ struct SyntaxFormatter {
         configuration.indentation = .spaces(indentWidth)
         configuration.lineBreakBeforeEachArgument = true
         configuration.lineBreakBeforeEachGenericRequirement = true
-        //configuration.lineBreakBetweenDeclarationAttributes = true
+        configuration.lineBreakBetweenDeclarationAttributes = true
     }
 
     /// Initializes the formatter with the provided configuration.

@@ -35,7 +35,8 @@ class SyntaxFormatterTests: XCTestCase {
                 : Sendable
             """),
             """
-            @attached(peer) macro Test<C1, C2>(
+            @attached(peer)
+            macro Test<C1, C2>(
                 _ displayName: String? = nil,
                 _ traits: any TestTrait...,
                 arguments zippedCollections: Zip2Sequence<C1, C2>

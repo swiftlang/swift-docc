@@ -141,7 +141,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-docc-symbolkit", branch: "main"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "2.5.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
-        .package(url: "https://github.com/swiftlang/swift-format", from: "600.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-format", from: "601.0.0-prerelease-2024-10-01"),
     ]
 } else {
     // Building in the Swift.org CI system, so rely on local versions of dependencies.

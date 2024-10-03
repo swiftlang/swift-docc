@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-format",
       "state" : {
-        "revision" : "65f9da9aad84adb7e2028eb32ca95164aa590e3b",
-        "version" : "600.0.0"
+        "revision" : "93ebb779c07dad2598919de8202d6df1f97189d4",
+        "version" : "601.0.0-prerelease-2024-10-01"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
-        "revision" : "0687f71944021d616d34d922343dcef086855920",
-        "version" : "600.0.1"
+        "revision" : "f4acb89d4a542c3ba54cadcf17f01c857dda309c",
+        "version" : "601.0.0-prerelease-2024-09-30"
       }
     },
     {
