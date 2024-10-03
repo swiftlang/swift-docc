@@ -1921,6 +1921,37 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    func testDiagnosticDoesNotSuggestReplacingPartOfSymbolName() throws {
+        let exampleDocumentation = Folder(name: "CatalogName.docc", content: [
+            JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName", symbols: [
+                makeSymbol(id: "some-class-id-1", kind: .class, pathComponents: ["SomeClass-(Something)"]),
+                makeSymbol(id: "some-class-id-2", kind: .class, pathComponents: ["SomeClass-(Something)"]),
+            ])),
+        ])
+        let catalogURL = try exampleDocumentation.write(inside: createTemporaryDirectory())
+        let (_, _, context) = try loadBundle(from: catalogURL)
+        let tree = context.linkResolver.localResolver.pathHierarchy
+        
+        XCTAssert(context.problems.isEmpty, "Unexpected problems \(context.problems.map(\.diagnostic.summary))")
+        
+        try assertPathCollision("ModuleName/SomeClass-(Something)", in: tree, collisions: [
+            ("some-class-id-1", "-5bq4k"),
+            ("some-class-id-2", "-5bq4n"),
+        ])
+        
+        XCTAssertThrowsError(
+            try tree.findNode(path: "ModuleName/SomeClass-(Something)", onlyFindSymbols: true, parent: nil)
+        ) { untypedError in
+            let error = untypedError as! PathHierarchy.Error
+            let referenceError = error.makeTopicReferenceResolutionErrorInfo() { context.linkResolver.localResolver.fullName(of: $0, in: context) }
+            XCTAssertEqual(referenceError.message, "'SomeClass-(Something)' is ambiguous at '/ModuleName'")
+            XCTAssertEqual(referenceError.solutions.map(\.summary), [
+                "Insert \'-5bq4k\' for \n\'SomeClass-(Something)\'",
+                "Insert \'-5bq4n\' for \n\'SomeClass-(Something)\'",
+            ])
+        }
+    }
+    
     func testSnippets() throws {
         let (_, context) = try testBundleAndContext(named: "Snippets")
         let tree = context.linkResolver.localResolver.pathHierarchy
