@@ -48,6 +48,11 @@ struct SyntaxFormatter {
             to: &formatted
         )
 
+        // remove any trailing newline added by swift-format
+        if let last = formatted.last, last == "\n" {
+            formatted = String(formatted.dropLast())
+        }
+
         return formatted
     }
 }
