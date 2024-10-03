@@ -8,34 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import SwiftFormat
 import SymbolKit
-
-struct SyntaxFormatter {
-    var config: SwiftFormat.Configuration
-
-    init() {
-        config = SwiftFormat.Configuration()
-        config.tabWidth = 4
-        config.indentation = .spaces(config.tabWidth)
-        config.lineBreakBeforeEachArgument = true
-        config.lineBreakBeforeEachGenericRequirement = true
-        //config.lineBreakBetweenDeclarationAttributes = true
-    }
-
-    func format(source: String) throws -> String {
-        var formatted = ""
-
-        try SwiftFormatter(configuration: config).format(
-            source: source,
-            assumingFileURL: nil,
-            selection: .infinite,
-            to: &formatted
-        )
-
-        return formatted
-    }
-}
 
 extension DeclarationsSectionTranslator {
     typealias DeclarationFragments = SymbolGraph.Symbol.DeclarationFragments
