@@ -46,6 +46,7 @@ let package = Package(
                 .product(name: "CLMDB", package: "swift-lmdb"),
                 .product(name: "Crypto", package: "swift-crypto"),
                 .product(name: "SwiftFormat", package: "swift-format"),
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
             ],
             swiftSettings: swiftSettings
         ),
@@ -142,6 +143,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-crypto.git", from: "2.5.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0"),
         .package(url: "https://github.com/swiftlang/swift-format", from: "601.0.0-prerelease-2024-10-01"),
+        .package(url: "https://github.com/swiftlang/swift-syntax", from: "601.0.0-prerelease-2024-09-30"),
     ]
 } else {
     // Building in the Swift.org CI system, so rely on local versions of dependencies.
