@@ -42,15 +42,4 @@ public struct RenderNodeVariantOverridesApplier {
     private struct RenderNodeVariantsProxy: Codable {
         var variantOverrides: VariantOverrides?
     }
-    
-    @available(*, deprecated, message: "This error is never raised. This deprecated API will be removed after 6.0 is released")
-    public enum Error: DescribedError {
-        case corruptedRenderNode
-        public var errorDescription: String {
-            switch self {
-            case .corruptedRenderNode:
-                return "Corrupted or malformed render node value."
-            }
-        }
-    }
 }
