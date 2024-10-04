@@ -26,9 +26,10 @@ extension DeclarationsSectionTranslator {
 
     func formatted(fragments: [Fragment]) -> [Fragment] {
         do {
+            let ids = createIdentifierMap(fragments)
             let rawText = extractText(from: fragments)
             let formattedText = try format(source: rawText)
-            let formattedFragments = buildFragments(from: formattedText)
+            let formattedFragments = buildFragments(from: formattedText, identifiedBy: ids)
 
             return formattedFragments
         } catch {
@@ -36,6 +37,18 @@ extension DeclarationsSectionTranslator {
             // it and simply return back the original, unformatted fragments
             return fragments
         }
+    }
+
+    private func createIdentifierMap(_ fragments: [Fragment]) -> [String:String] {
+        var map: [String:String] = [:]
+
+        for fragment in fragments {
+            if let id = fragment.preciseIdentifier {
+                map[fragment.spelling] = id
+            }
+        }
+
+        return map
     }
 
     private func extractText(from fragments: [Fragment]) -> String {
@@ -46,7 +59,10 @@ extension DeclarationsSectionTranslator {
         try SyntaxFormatter().format(source: source)
     }
 
-    private func buildFragments(from source: String) -> [Fragment] {
-        FragmentBuilder().buildFragments(from: source)
+    private func buildFragments(
+        from source: String,
+        identifiedBy ids: [String:String] = [:]
+    ) -> [Fragment] {
+        FragmentBuilder().buildFragments(from: source, identifiers: ids)
     }
 }

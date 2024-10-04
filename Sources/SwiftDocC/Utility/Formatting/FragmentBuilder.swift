@@ -51,21 +51,32 @@ extension TokenSyntax {
 final class FragmentBuilder: SyntaxVisitor {
     typealias Fragment = SymbolGraph.Symbol.DeclarationFragments.Fragment
 
+    private var identifiers: [String:String]
     private var fragments: [Fragment]
 
     init() {
+        identifiers = [:]
         fragments = []
         super.init(viewMode: .sourceAccurate)
     }
 
-    func buildFragments(from source: String) -> [Fragment] {
+    func buildFragments(
+        from source: String,
+        identifiers: [String:String] = [:]
+    ) -> [Fragment] {
         let syntax = Parser.parse(source: source)
-        return buildFragments(from: syntax)
+        return buildFragments(from: syntax, identifiers: identifiers)
     }
 
-    func buildFragments(from syntax: some SyntaxProtocol) -> [Fragment] {
+    func buildFragments(
+        from syntax: some SyntaxProtocol,
+        identifiers: [String:String] = [:]
+    ) -> [Fragment] {
+        self.identifiers = identifiers
         fragments = []
+
         walk(syntax)
+
         return fragments
     }
 
@@ -170,7 +181,9 @@ final class FragmentBuilder: SyntaxVisitor {
             ))
         } else {
             // add a new fragment that has a distinct kind from the last one
-            fragments.append(fragment)
+            var newFragment = fragment
+            newFragment.preciseIdentifier = identifiers[fragment.spelling]
+            fragments.append(newFragment)
         }
     }
 

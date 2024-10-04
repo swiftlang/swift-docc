@@ -16,21 +16,24 @@ typealias Fragment = FragmentBuilder.Fragment
 class FragmentBuilderTests: XCTestCase {
     func testBuildFragments() {
         XCTAssertEqual(
-            FragmentBuilder().buildFragments(from: """
-            @attached(peer)
-            macro Test<C1, C2>(
-                _ displayName: String? = nil,
-                _ traits: any TestTrait...,
-                arguments zippedCollections: Zip2Sequence<C1, C2>
-            )
-            where
-                C1: Collection,
-                C1: Sendable,
-                C2: Collection,
-                C2: Sendable,
-                C1.Element: Sendable,
-                C2.Element: Sendable
-            """),
+            FragmentBuilder().buildFragments(
+                from: """
+                    @attached(peer)
+                    macro Test<C1, C2>(
+                        _ displayName: String? = nil,
+                        _ traits: any TestTrait...,
+                        arguments zippedCollections: Zip2Sequence<C1, C2>
+                    )
+                    where
+                        C1: Collection,
+                        C1: Sendable,
+                        C2: Collection,
+                        C2: Sendable,
+                        C1.Element: Sendable,
+                        C2.Element: Sendable
+                    """,
+                identifiers: ["Zip2Sequence":"s:s12Zip2SequenceV"]
+            ),
             [
                 Fragment(spelling: "@", kind: .keyword),
                 Fragment(spelling: "attached", kind: .attribute),
@@ -57,7 +60,11 @@ class FragmentBuilderTests: XCTestCase {
                 Fragment(spelling: " "),
                 Fragment(spelling: "zippedCollections", kind: .internalParameter),
                 Fragment(spelling: ": "),
-                Fragment(spelling: "Zip2Sequence", kind: .typeIdentifier),
+                Fragment(
+                    spelling: "Zip2Sequence",
+                    kind: .typeIdentifier,
+                    preciseIdentifier: "s:s12Zip2SequenceV"
+                ),
                 Fragment(spelling: "<"),
                 Fragment(spelling: "C1", kind: .typeIdentifier),
                 Fragment(spelling: ", "),
