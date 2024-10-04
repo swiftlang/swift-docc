@@ -365,9 +365,10 @@ public class DocumentationContentRenderer {
         let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
         
         // Add key information for property lists.
+        // If the symbol overrides the title with a custom name, display the symbol key.
         let propertyListKeyNames = node?.symbol?.plistDetails.map {
             TopicRenderReference.PropertyListKeyNames(
-                titleStyle: .useRawKey,
+                titleStyle: (titleVariants[.fallback] != nil) ? .useDisplayName : .useRawKey,
                 rawKey: $0.rawKey,
                 displayName: $0.customTitle
             )
@@ -440,10 +441,7 @@ public class DocumentationContentRenderer {
             renderReference.type = .section
         }
         renderReference.tags = tags(for: reference)
-        // If the plist key symbol has a custom display name set the title style to convey this.
-        if renderReference.title != renderReference.propertyListKeyNames?.rawKey {
-            renderReference.propertyListKeyNames?.titleStyle = .useDisplayName
-        }
+
         return renderReference
     }
     

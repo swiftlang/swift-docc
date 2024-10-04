@@ -315,14 +315,22 @@ class RESTSymbolsTests: XCTestCase {
     func testReferenceOfEntitlementWithKeyName() throws {
         
         func createDocumentationTopicRenderReferenceForSymbol(keyCustomName: String?, extraFiles: [TextFile] = []) throws -> TopicRenderReference.PropertyListKeyNames {
-            let someSymbol = makeSymbol(id: "plist-key-symbolname", kind: .init(rawValue: "enum"), pathComponents: ["plist-key-symbolname"], otherMixins: [SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname", customTitle: keyCustomName)])
+            let someSymbol = makeSymbol(
+                id: "plist-key-symbolname",
+                kind: .init(rawValue: "enum"),
+                pathComponents: ["plist-key-symbolname"],
+                otherMixins: [SymbolGraph.Symbol.PlistDetails(rawKey: "plist-key-symbolname", customTitle: keyCustomName)]
+            )
             let symbols: [SymbolGraph.Symbol] = [someSymbol]
-            let exampleDocumentation = Folder(name: "unit-test.docc", content: [
-                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
-                    moduleName: "ModuleName",
-                    symbols: symbols
-                )),
-            ] + extraFiles)
+            let exampleDocumentation = Folder(
+                name: "unit-test.docc",
+                content: [
+                    JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                        moduleName: "ModuleName",
+                        symbols: symbols
+                    )),
+                ] + extraFiles
+            )
             let (_, bundle, context) = try loadBundle(from: (try createTempFolder(content: [exampleDocumentation])))
             let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName", sourceLanguage: .swift)
             let moduleSymbol = try XCTUnwrap((try context.entity(with: moduleReference)).semantic as? Symbol)
@@ -362,6 +370,50 @@ class RESTSymbolsTests: XCTestCase {
         XCTAssertEqual(propertyListKeyNames.titleStyle, .useRawKey)
         XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
         XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
+        
+        // The symbol has a custom title and is the markdown defines a `Display Name` directive.
+        propertyListKeyNames = try createDocumentationTopicRenderReferenceForSymbol(
+            keyCustomName: "Symbol Custom Title",
+            extraFiles: [
+                TextFile(name: "plist-key-symbolname.md", utf8Content:
+                    """
+                    # ``ModuleName/plist-key-symbolname``
+                    
+                    @Metadata {
+                        @DisplayName("Custom Name")
+                    }
+                    
+                    A documentation extension for my plist-key-symbolname.
+                    """
+                )
+            ]
+        )
+        // Check that the reference contains the raw key.
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useDisplayName)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.displayName, "Symbol Custom Title")
+        
+        // The symbol does not have a custom title and is extended via markdown using a `Display Name` directive.
+        propertyListKeyNames = try createDocumentationTopicRenderReferenceForSymbol(
+            keyCustomName: nil,
+            extraFiles: [
+                TextFile(name: "plist-key-symbolname.md", utf8Content:
+                    """
+                    # ``ModuleName/plist-key-symbolname``
+                    
+                    @Metadata {
+                        @DisplayName("Custom Name")
+                    }
+                    
+                    A documentation extension for my plist-key-symbolname.
+                    """
+                )
+            ]
+        )
+        // Check that the reference contains the raw key.
+        XCTAssertEqual(propertyListKeyNames.titleStyle, .useDisplayName)
+        XCTAssertEqual(propertyListKeyNames.rawKey, "plist-key-symbolname")
+        XCTAssertEqual(propertyListKeyNames.displayName, nil)
     }
     
     
