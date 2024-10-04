@@ -156,9 +156,22 @@ final class FragmentBuilder: SyntaxVisitor {
     }
 
     private func emit(fragment: Fragment) {
-        // TODO: consider joining multiple fragments of the same kind as an
-        // optimization to reduce the number of array items in the JSON output
-        fragments.append(fragment)
+        if let lastFragment = fragments.last,
+            lastFragment.preciseIdentifier == nil,
+            fragment.preciseIdentifier == nil,
+            lastFragment.kind == fragment.kind {
+            // if we're going to emit the same fragment kind as the last one,
+            // go ahead and just combine them together into a single fragment
+            // (unless this is an identifier type)
+            fragments = fragments.dropLast()
+            fragments.append(Fragment(
+                spelling: lastFragment.spelling + fragment.spelling,
+                kind: lastFragment.kind
+            ))
+        } else {
+            // add a new fragment that has a distinct kind from the last one
+            fragments.append(fragment)
+        }
     }
 
     private func emitFragments(for token: TokenSyntax, as kind: Fragment.Kind) {
