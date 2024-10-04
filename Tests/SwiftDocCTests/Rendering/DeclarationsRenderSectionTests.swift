@@ -345,6 +345,67 @@ class DeclarationsRenderSectionTests: XCTestCase {
             XCTAssert(declarations.tokens.allSatisfy({ $0.highlight == nil }))
         }
     }
+
+    func testDeclarationFormatting() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "Testing",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "unit-test.docc", content: [
+                InfoPlist(displayName: "Testing", identifier: "com.test.example"),
+                CopyOfFile(original: symbolGraphFile),
+            ])
+        ])
+
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/Testing/Test(_:_:arguments:)",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+
+        var renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        var declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+        XCTAssertEqual(declarationsSection.declarations.count, 1)
+        var declaration = try XCTUnwrap(declarationsSection.declarations.first)
+        // no formatting applied to declaration tokens by default
+        XCTAssertEqual(extractText(from: declaration.tokens), """
+        @attached(peer) macro Test<C1, C2>(_ displayName: String? = nil, \
+        _ traits: any TestTrait..., arguments zippedCollections: \
+        Zip2Sequence<C1, C2>) where C1 : Collection, C1 : Sendable, C2 \
+        : Collection, C2 : Sendable, C1.Element : Sendable, C2.Element \
+        : Sendable
+        """)
+
+        // swift-format used to format decls if
+        // --enable-experimental-declaration-formatting flag is used
+        enableFeatureFlag(\.isExperimentalDeclarationFormattingEnabled)
+        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+        renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+        declarationsSection = try XCTUnwrap(renderNode.primaryContentSections.compactMap({ $0 as? DeclarationsRenderSection }).first)
+        XCTAssertEqual(declarationsSection.declarations.count, 1)
+        declaration = try XCTUnwrap(declarationsSection.declarations.first)
+        XCTAssertEqual(extractText(from: declaration.tokens), """
+        @attached(peer)
+        macro Test<C1, C2>(
+            _ displayName: String? = nil,
+            _ traits: any TestTrait...,
+            arguments zippedCollections: Zip2Sequence<C1, C2>
+        )
+        where
+            C1: Collection,
+            C1: Sendable,
+            C2: Collection,
+            C2: Sendable,
+            C1.Element: Sendable,
+            C2.Element: Sendable
+        """)
+    }
 }
 
 /// Render a list of declaration tokens as a plain-text decoration and as a plain-text rendering of which characters are highlighted.
@@ -353,4 +414,9 @@ func declarationAndHighlights(for tokens: [DeclarationRenderSection.Token]) -> [
         tokens.map({ $0.text }).joined(),
         tokens.map({ String(repeating: $0.highlight == .changed ? "~" : " ", count: $0.text.count) }).joined()
     ]
+}
+
+
+func extractText(from tokens: [DeclarationRenderSection.Token]) -> String {
+    tokens.reduce("") { txt, token in "\(txt)\(token.text)" }
 }

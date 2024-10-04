@@ -1,0 +1,744 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 6.0 (swiftlang-6.0.0.9.10 clang-1600.0.26.2)"
+  },
+  "module": {
+    "name": "Testing",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 15
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.macro",
+        "displayName": "Macro"
+      },
+      "identifier": {
+        "precise": "s:7Testing4Test__9argumentsySSSgYt_AA0B5Trait_pds12Zip2SequenceVyxq_GtcSlRzs8SendableRzSlR_sAIR_sAI7ElementRpzsAiJRp_r0_lufm",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Test(_:_:arguments:)"
+      ],
+      "names": {
+        "title": "Test(_:_:arguments:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "macro"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Test"
+          },
+          {
+            "kind": "text",
+            "spelling": "<"
+          },
+          {
+            "kind": "genericParameter",
+            "spelling": "C1"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "genericParameter",
+            "spelling": "C2"
+          },
+          {
+            "kind": "text",
+            "spelling": ">("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          },
+          {
+            "kind": "text",
+            "spelling": "?, "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "any"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "TestTrait",
+            "preciseIdentifier": "s:7Testing9TestTraitP"
+          },
+          {
+            "kind": "text",
+            "spelling": "..., "
+          },
+          {
+            "kind": "externalParam",
+            "spelling": "arguments"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Zip2Sequence",
+            "preciseIdentifier": "s:s12Zip2SequenceV"
+          },
+          {
+            "kind": "text",
+            "spelling": "<"
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "C1",
+            "preciseIdentifier": "s:7Testing2C1L_xmfp"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "C2",
+            "preciseIdentifier": "s:7Testing2C2L_q_mfp"
+          },
+          {
+            "kind": "text",
+            "spelling": ">)"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/marcus/dev/swiftlang/swift-testing/Sources/Testing/Test+Macro.swift",
+        "module": "Testing",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 344,
+                "character": 4
+              },
+              "end": {
+                "line": 344,
+                "character": 71
+              }
+            },
+            "text": "Declare a test parameterized over two zipped collections of values."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 345,
+                "character": 3
+              },
+              "end": {
+                "line": 345,
+                "character": 3
+              }
+            },
+            "text": ""
+          },
+          {
+            "range": {
+              "start": {
+                "line": 346,
+                "character": 4
+              },
+              "end": {
+                "line": 346,
+                "character": 17
+              }
+            },
+            "text": "- Parameters:"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 347,
+                "character": 4
+              },
+              "end": {
+                "line": 347,
+                "character": 78
+              }
+            },
+            "text": "  - displayName: The customized display name of this test. If the value of"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 348,
+                "character": 4
+              },
+              "end": {
+                "line": 348,
+                "character": 80
+              }
+            },
+            "text": "    this argument is `nil`, the display name of the test is derived from the"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 349,
+                "character": 4
+              },
+              "end": {
+                "line": 349,
+                "character": 35
+              }
+            },
+            "text": "    associated function's name."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 350,
+                "character": 4
+              },
+              "end": {
+                "line": 350,
+                "character": 58
+              }
+            },
+            "text": "  - traits: Zero or more traits to apply to this test."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 351,
+                "character": 4
+              },
+              "end": {
+                "line": 351,
+                "character": 70
+              }
+            },
+            "text": "  - zippedCollections: Two zipped collections of values to pass to"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 352,
+                "character": 4
+              },
+              "end": {
+                "line": 352,
+                "character": 23
+              }
+            },
+            "text": "    `testFunction`."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 353,
+                "character": 3
+              },
+              "end": {
+                "line": 353,
+                "character": 3
+              }
+            },
+            "text": ""
+          },
+          {
+            "range": {
+              "start": {
+                "line": 354,
+                "character": 4
+              },
+              "end": {
+                "line": 354,
+                "character": 80
+              }
+            },
+            "text": "During testing, the associated test function is called once for each element"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 355,
+                "character": 4
+              },
+              "end": {
+                "line": 355,
+                "character": 27
+              }
+            },
+            "text": "in `zippedCollections`."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 356,
+                "character": 3
+              },
+              "end": {
+                "line": 356,
+                "character": 3
+              }
+            },
+            "text": ""
+          },
+          {
+            "range": {
+              "start": {
+                "line": 357,
+                "character": 4
+              },
+              "end": {
+                "line": 357,
+                "character": 14
+              }
+            },
+            "text": "@Comment {"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 358,
+                "character": 4
+              },
+              "end": {
+                "line": 358,
+                "character": 66
+              }
+            },
+            "text": "  - Bug: The testing library should support variadic generics."
+          },
+          {
+            "range": {
+              "start": {
+                "line": 359,
+                "character": 4
+              },
+              "end": {
+                "line": 359,
+                "character": 39
+              }
+            },
+            "text": "    ([103416861](rdar://103416861))"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 360,
+                "character": 4
+              },
+              "end": {
+                "line": 360,
+                "character": 5
+              }
+            },
+            "text": "}"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 361,
+                "character": 3
+              },
+              "end": {
+                "line": 361,
+                "character": 3
+              }
+            },
+            "text": ""
+          },
+          {
+            "range": {
+              "start": {
+                "line": 362,
+                "character": 4
+              },
+              "end": {
+                "line": 362,
+                "character": 15
+              }
+            },
+            "text": "## See Also"
+          },
+          {
+            "range": {
+              "start": {
+                "line": 363,
+                "character": 3
+              },
+              "end": {
+                "line": 363,
+                "character": 3
+              }
+            },
+            "text": ""
+          },
+          {
+            "range": {
+              "start": {
+                "line": 364,
+                "character": 4
+              },
+              "end": {
+                "line": 364,
+                "character": 25
+              }
+            },
+            "text": "- <doc:DefiningTests>"
+          }
+        ]
+      },
+      "swiftGenerics": {
+        "parameters": [
+          {
+            "name": "C1",
+            "index": 0,
+            "depth": 0
+          },
+          {
+            "name": "C2",
+            "index": 1,
+            "depth": 0
+          }
+        ],
+        "constraints": [
+          {
+            "kind": "conformance",
+            "lhs": "C1",
+            "rhs": "Collection",
+            "rhsPrecise": "s:Sl"
+          },
+          {
+            "kind": "conformance",
+            "lhs": "C1",
+            "rhs": "Sendable",
+            "rhsPrecise": "s:s8SendableP"
+          },
+          {
+            "kind": "conformance",
+            "lhs": "C2",
+            "rhs": "Collection",
+            "rhsPrecise": "s:Sl"
+          },
+          {
+            "kind": "conformance",
+            "lhs": "C2",
+            "rhs": "Sendable",
+            "rhsPrecise": "s:s8SendableP"
+          },
+          {
+            "kind": "conformance",
+            "lhs": "C1.Element",
+            "rhs": "Sendable",
+            "rhsPrecise": "s:s8SendableP"
+          },
+          {
+            "kind": "conformance",
+            "lhs": "C2.Element",
+            "rhs": "Sendable",
+            "rhsPrecise": "s:s8SendableP"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "attribute",
+          "spelling": "@attached"
+        },
+        {
+          "kind": "text",
+          "spelling": "(peer) "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "macro"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Test"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "C1"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "genericParameter",
+          "spelling": "C2"
+        },
+        {
+          "kind": "text",
+          "spelling": ">("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "displayName"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        },
+        {
+          "kind": "text",
+          "spelling": "? = nil, "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "traits"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "any"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "TestTrait",
+          "preciseIdentifier": "s:7Testing9TestTraitP"
+        },
+        {
+          "kind": "text",
+          "spelling": "..., "
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "arguments"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "zippedCollections"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Zip2Sequence",
+          "preciseIdentifier": "s:s12Zip2SequenceV"
+        },
+        {
+          "kind": "text",
+          "spelling": "<"
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C1",
+          "preciseIdentifier": "s:7Testing2C1L_xmfp"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C2",
+          "preciseIdentifier": "s:7Testing2C2L_q_mfp"
+        },
+        {
+          "kind": "text",
+          "spelling": ">) "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "where"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C1"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Collection",
+          "preciseIdentifier": "s:Sl"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C1"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Sendable",
+          "preciseIdentifier": "s:s8SendableP"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C2"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Collection",
+          "preciseIdentifier": "s:Sl"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C2"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Sendable",
+          "preciseIdentifier": "s:s8SendableP"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C1"
+        },
+        {
+          "kind": "text",
+          "spelling": "."
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Element",
+          "preciseIdentifier": "s:ST7ElementQa"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Sendable",
+          "preciseIdentifier": "s:s8SendableP"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "C2"
+        },
+        {
+          "kind": "text",
+          "spelling": "."
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Element",
+          "preciseIdentifier": "s:ST7ElementQa"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Sendable",
+          "preciseIdentifier": "s:s8SendableP"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/marcus/dev/swiftlang/swift-testing/Sources/Testing/Test+Macro.swift",
+        "position": {
+          "line": 365,
+          "character": 29
+        }
+      }
+    }
+  ],
+  "relationships": []
+}
