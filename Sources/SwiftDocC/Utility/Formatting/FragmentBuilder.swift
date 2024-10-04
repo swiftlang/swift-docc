@@ -156,6 +156,8 @@ final class FragmentBuilder: SyntaxVisitor {
     }
 
     private func emit(fragment: Fragment) {
+        // TODO: consider joining multiple fragments of the same kind as an
+        // optimization to reduce the number of array items in the JSON output
         fragments.append(fragment)
     }
 
