@@ -16,14 +16,7 @@ import SymbolKit
 extension PathHierarchy {
     /// Returns the lists of the type names for the symbol's parameters and return values.
     static func functionSignatureTypeNames(for symbol: SymbolGraph.Symbol) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
-        guard let signature = symbol[mixin: SymbolGraph.Symbol.FunctionSignature.self] else {
-            return nil
-        }
-        
-        return (
-            signature.parameters.compactMap { parameterTypeSpellings(for: $0.declarationFragments) },
-            returnTypeSpellings(for: signature.returns).map { [$0] } ?? []
-        )
+        return nil
     }
     
     private static func parameterTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
