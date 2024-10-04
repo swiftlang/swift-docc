@@ -27,10 +27,10 @@ extension DeclarationsSectionTranslator {
     func formatted(fragments: [Fragment]) -> [Fragment] {
         do {
             let rawText = extractText(from: fragments)
-            let formattedText = try SyntaxFormatter().format(source: rawText)
-            print("raw", rawText, "formatted", formattedText, separator: "\n")
+            let formattedText = try format(source: rawText)
+            let formattedFragments = buildFragments(from: formattedText)
 
-            return fragments // TODO: reconstruct new fragments from formatted text
+            return formattedFragments
         } catch {
             // if there's an error that happens when using swift-format, ignore
             // it and simply return back the original, unformatted fragments
@@ -40,5 +40,13 @@ extension DeclarationsSectionTranslator {
 
     private func extractText(from fragments: [Fragment]) -> String {
         fragments.reduce("") { "\($0)\($1.spelling)" }
+    }
+
+    private func format(source: String) throws -> String {
+        try SyntaxFormatter().format(source: source)
+    }
+
+    private func buildFragments(from source: String) -> [Fragment] {
+        FragmentBuilder().buildFragments(from: source)
     }
 }
