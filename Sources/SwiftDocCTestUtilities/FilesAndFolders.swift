@@ -94,29 +94,25 @@ public struct InfoPlist: File, DataRepresentable {
     /// The information that the Into.plist file contains.
     public let content: Content
 
-    public init(displayName: String? = nil, identifier: String? = nil, versionString: String = "1.0") {
+    public init(displayName: String? = nil, identifier: String? = nil) {
         self.content = Content(
             displayName: displayName,
-            identifier: identifier,
-            versionString: versionString
+            identifier: identifier
         )
     }
 
     public struct Content: Codable, Equatable {
         public let displayName: String?
         public let identifier: String?
-        public let versionString: String?
 
-        fileprivate init(displayName: String?, identifier: String?, versionString: String) {
+        fileprivate init(displayName: String?, identifier: String?) {
             self.displayName = displayName
             self.identifier = identifier
-            self.versionString = versionString
         }
 
         enum CodingKeys: String, CodingKey {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
-            case versionString = "CFBundleVersion"
         }
     }
 
@@ -127,7 +123,6 @@ public struct InfoPlist: File, DataRepresentable {
         return try encoder.encode([
             Content.CodingKeys.displayName.rawValue: content.displayName,
             Content.CodingKeys.identifier.rawValue: content.identifier,
-            Content.CodingKeys.versionString.rawValue: content.versionString,
         ])
     }
 }

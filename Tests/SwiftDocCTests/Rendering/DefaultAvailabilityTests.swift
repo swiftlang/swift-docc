@@ -367,8 +367,6 @@ class DefaultAvailabilityTests: XCTestCase {
                 <string>MyModule</string>
                 <key>CFBundleIdentifier</key>
                 <string>com.apple.MyModule</string>
-                <key>CFBundleVersion</key>
-                <string>0.1.0</string>
                 <key>CDAppleDefaultAvailability</key>
                 <dict>
                     <key>MyModule</key>

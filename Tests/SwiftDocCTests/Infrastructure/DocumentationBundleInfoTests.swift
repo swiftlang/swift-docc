@@ -23,7 +23,6 @@ class DocumentationBundleInfoTests: XCTestCase {
         
         XCTAssertEqual(info.displayName, "Test Bundle")
         XCTAssertEqual(info.identifier, "org.swift.docc.example")
-        XCTAssertEqual(info.version, "0.1.0")
         XCTAssertEqual(info.defaultCodeListingLanguage, "swift")
     }
 
@@ -52,8 +51,6 @@ class DocumentationBundleInfoTests: XCTestCase {
             <string>Info Plist Display Name</string>
             <key>CFBundleIdentifier</key>
             <string>com.info.Plist</string>
-            <key>CFBundleVersion</key>
-            <string>1.0.0</string>
         </dict>
         </plist>
         """
@@ -65,8 +62,6 @@ class DocumentationBundleInfoTests: XCTestCase {
         <dict>
             <key>CFBundleIdentifier</key>
             <string>com.info.Plist</string>
-            <key>CFBundleVersion</key>
-            <string>1.0.0</string>
         </dict>
         </plist>
         """
@@ -76,8 +71,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
-                "CFBundleIdentifier": "com.fallback.Identifier",
-                "CFBundleVersion": "2.0.0",
+                "CFBundleIdentifier": "com.fallback.Identifier"
             ]
         )
         
@@ -88,8 +82,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Info Plist Display Name",
-                identifier: "com.info.Plist",
-                version: "1.0.0"
+                identifier: "com.info.Plist"
             )
         )
         
@@ -100,8 +93,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Fallback Display Name",
-                identifier: "com.fallback.Identifier",
-                version: "2.0.0"
+                identifier: "com.fallback.Identifier"
             )
         )
         
@@ -112,8 +104,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Fallback Display Name",
-                identifier: "com.info.Plist",
-                version: "1.0.0"
+                identifier: "com.info.Plist"
             )
         )
         
@@ -137,8 +128,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Info Plist Display Name",
-                identifier: "com.info.Plist",
-                version: nil
+                identifier: "com.info.Plist"
             )
         )
     }
@@ -199,8 +189,6 @@ class DocumentationBundleInfoTests: XCTestCase {
             <string>ShapeKit</string>
             <key>CFBundleIdentifier</key>
             <string>com.shapes.ShapeKit</string>
-            <key>CFBundleVersion</key>
-            <string>0.1.0</string>
         </dict>
         </plist>
         
@@ -230,7 +218,6 @@ class DocumentationBundleInfoTests: XCTestCase {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             fallbackDisplayName: "Display Name",
             fallbackIdentifier: "swift.org.Identifier",
-            fallbackVersion: "1.0.0",
             fallbackDefaultCodeListingLanguage: "swift",
             fallbackDefaultModuleKind: "Executable",
             fallbackDefaultAvailability: DefaultAvailability(
@@ -251,7 +238,6 @@ class DocumentationBundleInfoTests: XCTestCase {
             DocumentationBundle.Info(
                 displayName: "Display Name",
                 identifier: "swift.org.Identifier",
-                version: "1.0.0",
                 defaultCodeListingLanguage: "swift",
                 defaultModuleKind: "Executable",
                 defaultAvailability: DefaultAvailability(
@@ -272,7 +258,6 @@ class DocumentationBundleInfoTests: XCTestCase {
         let info = DocumentationBundle.Info(
             displayName: "Display Name",
             identifier: "swift.org.Identifier",
-            version: "1.0.0",
             defaultCodeListingLanguage: "swift",
             defaultModuleKind: "Executable",
             defaultAvailability: DefaultAvailability(
@@ -316,8 +301,6 @@ class DocumentationBundleInfoTests: XCTestCase {
           <string>DOCS</string>
           <key>CFBundleShortVersionString</key>
           <string>0.1.0</string>
-          <key>CFBundleVersion</key>
-          <string>0.1.0</string>
           <key>CDAppleDefaultAvailability</key>
         </dict>
         </plist>
@@ -358,8 +341,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Derived Display Name",
-                identifier: "Derived Display Name",
-                version: nil
+                identifier: "Derived Display Name"
             )
         )
     }
@@ -384,8 +366,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Derived Display Name",
-                identifier: "org.swift.docc.example",
-                version: nil
+                identifier: "org.swift.docc.example"
             )
         )
     }
@@ -409,8 +390,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             ),
             DocumentationBundle.Info(
                 displayName: "Example",
-                identifier: "Example",
-                version: nil
+                identifier: "Example"
             )
         )
     }
@@ -423,8 +403,6 @@ class DocumentationBundleInfoTests: XCTestCase {
             <string>Info Plist Display Name</string>
             <key>CFBundleIdentifier</key>
             <string>com.info.Plist</string>
-            <key>CFBundleVersion</key>
-            <string>1.0.0</string>
             <key>CDExperimentalFeatureFlags</key>
             <dict>
                 <key>ExperimentalOverloadedSymbolPresentation</key>

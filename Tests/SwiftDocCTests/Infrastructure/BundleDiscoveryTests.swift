@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -256,8 +256,7 @@ class BundleDiscoveryTests: XCTestCase {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
-                "CFBundleIdentifier": "com.fallback.bundle.identifier",
-                "CFBundleVersion": "1.2.3",
+                "CFBundleIdentifier": "com.fallback.bundle.identifier"
             ],
             additionalSymbolGraphFiles: []
         )
@@ -269,7 +268,6 @@ class BundleDiscoveryTests: XCTestCase {
         // The bundle information was specified via the options
         XCTAssertEqual(bundle.identifier, "com.fallback.bundle.identifier")
         XCTAssertEqual(bundle.displayName, "Fallback Display Name")
-        XCTAssertEqual(bundle.version, "1.2.3")
     }
 
     func testNoCustomTemplates() throws {

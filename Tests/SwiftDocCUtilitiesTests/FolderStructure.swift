@@ -70,11 +70,10 @@ extension InfoPlist: AssertableFile {
             }
             let infoPlist = try PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: String]
             
-            let displayName = infoPlist?["CFBundleIdentifier"]
-            let identifier = infoPlist?["CFBundleVersion"]
-            let versionString = infoPlist?["CFBundleDevelopmentRegion"]
+            let displayName = infoPlist?["CFBundleDisplayName"]
+            let identifier = infoPlist?["CFBundleIdentifier"]
             
-            XCTAssert(displayName == content.displayName && identifier == content.identifier && versionString == content.versionString,
+            XCTAssert(displayName == content.displayName && identifier == content.identifier,
                       "File '\(name)' should contain the correct information.", file: (file), line: line)
             
         } catch {
