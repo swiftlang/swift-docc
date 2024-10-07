@@ -48,6 +48,12 @@ extension TokenSyntax {
     }
 }
 
+/// A subclass of `SwiftSyntax.SyntaxVisitor` which can traverse a syntax tree
+/// and build up a simpler, flat `Fragment` array representing it.
+///
+/// The main job of this class is to help convert a formatted string for a Swift
+/// symbol declaration back into a list of fragments that closely resemble how
+/// the same code would be presented in a `SymbolKit` symbol graph.
 final class FragmentBuilder: SyntaxVisitor {
     typealias Fragment = SymbolGraph.Symbol.DeclarationFragments.Fragment
 
@@ -60,6 +66,14 @@ final class FragmentBuilder: SyntaxVisitor {
         super.init(viewMode: .sourceAccurate)
     }
 
+    /// Returns an array of `Fragment` elements that represents the given String
+    /// of Swift source code.
+    ///
+    /// - Parameter source: A string of Swift source code.
+    /// - Parameter identifiers: A lookup table of symbol names and precise
+    ///      identifiers to map them to.
+    ///
+    /// - Returns: An array of `Fragment` elements.
     func buildFragments(
         from source: String,
         identifiers: [String:String] = [:]
