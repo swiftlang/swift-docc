@@ -10,6 +10,21 @@
 
 import SymbolKit
 
+// All logic related to taking a list of fragments from a symbolgraph symbol
+// and turning it into a similar list with additional whitespace formatting.
+//
+// The basic logic is as follows:
+//
+// 1. Extract the text from the fragment list and use `SwiftFormat` to output
+//    a String of formatted source code
+//    (see `Utility/Formatting/SyntaxFormatter.swift`)
+// 2. Given the String of formatted source code from step 1, use
+//    `FragmentBuilder` to turn that text back into a new list of fragments
+//    (see `Utility/Formatting/FragmentBuilder.swift`)
+//
+// ```
+// [Fragment] -> String -> [Fragment]
+// ```
 extension DeclarationsSectionTranslator {
     typealias DeclarationFragments = SymbolGraph.Symbol.DeclarationFragments
     typealias Fragment = DeclarationFragments.Fragment
@@ -24,6 +39,15 @@ extension DeclarationsSectionTranslator {
         return DeclarationFragments(declarationFragments: formattedFragments)
     }
 
+    /// Returns an array of `Fragment` elements with additional whitespace
+    /// formatting text, like indentation and newlines.
+    ///
+    /// - Parameter fragments: An array of `Fragment` elements for a declaration
+    ///    provided by `SymbolKit`.
+    ///
+    /// - Returns: A new array of `Fragment` elements with the same source code
+    ///    text as the input fragments and also including some additional text
+    ///    for indentation and splitting the code across multiple lines.
     func formatted(fragments: [Fragment]) -> [Fragment] {
         do {
             let ids = createIdentifierMap(fragments)
