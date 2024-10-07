@@ -20,133 +20,309 @@ extension PathHierarchy {
             return nil
         }
         
+        let isSwift = symbol.identifier.interfaceLanguage == SourceLanguage.swift.id
         return (
-            signature.parameters.compactMap { parameterTypeSpellings(for: $0.declarationFragments) },
-            returnTypeSpellings(for: signature.returns).map { [$0] } ?? []
+            signature.parameters.map { parameterTypeSpellings(for: $0.declarationFragments, isSwift: isSwift) },
+            returnTypeSpellings(for: signature.returns, isSwift: isSwift).map { [$0] } ?? []
         )
     }
     
-    private static func parameterTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
-        typeSpellings(for: fragments)
+    private static func parameterTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
+        typeSpellings(for: fragments, isSwift: isSwift)
     }
     
-    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
+    private static func returnTypeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String? {
         if fragments.count == 1, knownVoidReturnValues.contains(fragments.first!) {
             // We don't want to list "void" return values as type disambiguation
             return nil
         }
-        return typeSpellings(for: fragments)
+        return typeSpellings(for: fragments, isSwift: isSwift)
     }
     
     private static let knownVoidReturnValues = ParametersAndReturnValidator.knownVoidReturnValuesByLanguage.flatMap { $0.value }
     
-    private static func typeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> String? {
-        var accumulated = Substring()
+    private static func typeSpellings(for fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment], isSwift: Bool) -> String {
+        // This function joins the spelling of the text and identifier declaration fragments and applies Swift syntactic sugar;
+        // `Array<Element>` -> `[Element]`, `Optional<Wrapped>` -> `Wrapped?`, and `Dictionary<Key,Value>` -> `[Key:Value]`
         
+        // This code get called for every symbol with a type signature, so it needs to be fast.
+        // Because all the characters that need to be identified and processed are UTF-8 code units, this implementation works solely on UTF-8 code units.
+        var accumulated = ContiguousArray<UTF8.CodeUnit>()
+        // Reserve some temporary space to work with. This avoids reallocations for most declarations.
+        // The final string will make it's own copy, so this temporary memory is only used until the end of this scope.
+        accumulated.reserveCapacity(128)
+        
+        // Iterating over the declaration fragments to accumulate their spelling and to identify places that need to apply syntactic sugar.
+        var markers = ContiguousArray<Int>()
         for fragment in fragments {
-            switch fragment.kind {
-            case .identifier where fragment.preciseIdentifier != nil,
-                 .typeIdentifier,
-                 .text:
-                accumulated += fragment.spelling
-
-            default:
-                continue
+            let preciseIdentifier = fragment.preciseIdentifier
+            if isSwift {
+                // Check if this fragment is a spelled out Swift array, optional, or dictionary.
+                switch preciseIdentifier {
+                case "s:Sa", // Swift.Array
+                     "s:SD", // Swift.Dictionary
+                     "s:Sq": // Swift.Optional
+                    assert(fragment.spelling == "Array" || fragment.spelling == "Dictionary" || fragment.spelling == "Optional", """
+                    Unexpected spelling '\(fragment.spelling)' for Array/Dictionary/Optional fragment in declaration; \(fragments.map(\.spelling).joined())
+                    """)
+                    
+                    // Create a new marker at this location and insert is at the beginning since `withSwiftSyntacticSugar(markers:)`
+                    // will iterate the markers from the end to the start.
+                    markers.insert(accumulated.count, at: 0)
+                    
+                    // Since `withSwiftSyntacticSugar(markers:)` below will remove this spelling, only collect the first character.
+                    // The first character ("A", "D", or "O") is sufficient to identify which type of sugar to apply.
+                    accumulated.append(fragment.spelling.utf8.first!)
+                    continue
+                    
+                default:
+                    break
+                }
+                
+                switch fragment.kind {
+                case .typeIdentifier:
+                    // Accumulate all of the identifier tokens' spelling.
+                    accumulated.append(contentsOf: fragment.spelling.utf8)
+                    
+                case .text: // In Swift, only `text` tokens contains whitespace
+                    var spelling = fragment.spelling.utf8[...]
+                    // If the type spelling is a parameter, if often starts with a leading ":" that's not part of the type name.
+                    if accumulated.isEmpty, spelling.first == colon {
+                        _ = spelling.removeFirst()
+                    }
+                    
+                    // Ignore whitespace in text tokens. Here we use a loop instead of `filter` to avoid a potential temporary allocation.
+                    for char in spelling where char != space {
+                        accumulated.append(char)
+                    }
+                    
+                default:
+                    continue
+                }
+            } else {
+                switch fragment.kind {
+                case .identifier where preciseIdentifier != nil,
+                     .typeIdentifier,
+                     .text:
+                    let spelling = fragment.spelling.utf8
+                    
+                    // Ignore whitespace. Here we use a loop instead of `filter` to avoid a potential temporary allocation.
+                    for char in spelling where char != space {
+                        accumulated.append(char)
+                    }
+                    
+                default:
+                    continue
+                }
             }
         }
         
-        accumulated.removeAll(where: \.isWhitespace)
-        
-        if accumulated.first == ":" {
-            _ = accumulated.removeFirst()
+        // Check if the type names are wrapped in redundant parenthesis and remove them
+        if accumulated.first == openParen, accumulated.last == closeParen, !accumulated[...].isTuple() {
+            // In case there are multiple
+            // Use a temporary slice until all the layers of redundant parenthesis have been removed.
+            var temp = accumulated[...]
+            
+            repeat {
+                temp = temp.dropFirst().dropLast()
+            } while temp.first == openParen && temp.last == closeParen && !temp.isTuple()
+            
+            // Adjust the markers so that they align with the expected characters
+            let difference = (accumulated.count - temp.count) / 2
+            
+            accumulated = .init(temp)
+            
+            for index in markers.indices {
+                markers[index] -= difference
+                
+                assert(accumulated[markers[index]] == uppercaseA || accumulated[markers[index]] == uppercaseD  || accumulated[markers[index]] == uppercaseO, """
+                Unexpectedly found '\(String(cString: [accumulated[index], 0]))' at \(index) which should be either an Array, Optional, or Dictionary marker in \(String(cString: accumulated + [0]))
+                """)
+            }
         }
         
-        while accumulated.first == "(", accumulated.last == ")", !accumulated.isTuple() {
-            // Remove extra layers of parenthesis unless the type is a tuple
-            accumulated = accumulated.dropFirst().dropLast()
+        assert(markers.allSatisfy { [uppercaseA, uppercaseD, uppercaseO].contains(accumulated[$0]) }, """
+        Unexpectedly found misaligned markers: \(markers.map { "(index: \($0), char: \(String(cString: [accumulated[$0], 0])))" })
+        """)
+        
+        // Check if we need to apply syntactic sugar to the accumulated declaration fragment spellings.
+        if !markers.isEmpty {
+            accumulated.applySwiftSyntacticSugar(markers: markers)
         }
         
-        return accumulated.withSwiftSyntacticSugar()
+        // Add a null-terminator to create a String from the accumulated UTF-8 code units.
+        accumulated.append(0)
+        return accumulated.withUnsafeBufferPointer { pointer in
+            String(cString: pointer.baseAddress!)
+        }
     }
 }
 
-private extension StringProtocol {
-    /// Checks if the string looks like a tuple with comma separated values.
+// A collection of UInt8 raw values for various UTF-8 characters that this implementation frequently checks for
+
+private let space       = UTF8.CodeUnit(ascii: " ")
+
+private let uppercaseA  = UTF8.CodeUnit(ascii: "A")
+private let uppercaseO  = UTF8.CodeUnit(ascii: "O")
+private let uppercaseD  = UTF8.CodeUnit(ascii: "D")
+
+private let openAngle   = UTF8.CodeUnit(ascii: "<")
+private let closeAngle  = UTF8.CodeUnit(ascii: ">")
+private let openSquare  = UTF8.CodeUnit(ascii: "[")
+private let closeSquare = UTF8.CodeUnit(ascii: "]")
+private let openParen   = UTF8.CodeUnit(ascii: "(")
+private let closeParen  = UTF8.CodeUnit(ascii: ")")
+
+private let comma       = UTF8.CodeUnit(ascii: ",")
+private let question    = UTF8.CodeUnit(ascii: "?")
+private let colon       = UTF8.CodeUnit(ascii: ":")
+
+private extension ContiguousArray<UTF8.CodeUnit>.SubSequence {
+     /// Checks if the UTF-8 string looks like a tuple with comma separated values.
     ///
     /// This is used to remove redundant parenthesis around expressions.
     func isTuple() -> Bool {
-        guard first == "(", last == ")", contains(",")else { return false }
+        guard first == openParen, last == closeParen else { return false }
         var depth = 0
         for char in self {
             switch char {
-            case "(": 
+            case openParen:
                 depth += 1
-            case ")": 
+            case closeParen:
                 depth -= 1
-            case "," where depth == 1:
+            case comma where depth == 1:
                 return true
-            default: 
+            default:
                 continue
             }
         }
         return false
     }
-    
-    /// Transforms the string to apply Swift syntactic sugar.
+}
+
+private extension ContiguousArray<UTF8.CodeUnit> {
+    /// Transforms the UTF-8 string to apply Swift syntactic sugar.
     ///
-    /// The transformed string has all occurrences of `Array<Element>`, `Optional<Wrapped>`, and `Dictionary<Key,Value>` replaced with `[Element]`, `Wrapped?`, and `[Key:Value]`.
-    func withSwiftSyntacticSugar() -> String {
-        // If this type uses known Objective-C types, return the original type name.
-        if contains("NSArray<") || contains("NSDictionary<") {
-            return String(self)
+    /// - Parameter markers: Locations of `A<Element>`, `O<Wrapped>`, and `D<Key,Value>` (truncated above) to replace with `[Element]`, `Wrapped?`, and `[Key:Value]`.
+    mutating func applySwiftSyntacticSugar(markers: ContiguousArray<Int>) {
+        assert(!markers.isEmpty, "This is a private helper function and it's the callers responsibility to check if it needs to be called or not.")
+        
+        // Iterating over the UTF-8 string once to find all the balancing angle brackets (`<` and `>`)
+        var markedAngleBracketPairs = ContiguousArray<(open: Int, close: Int)>()
+        markedAngleBracketPairs.reserveCapacity(32) // Some temporary space to work with.
+        
+        var angleBracketStack = ContiguousArray<Int>()
+        angleBracketStack.reserveCapacity(32) // Some temporary space to work with.
+        
+        for index in indices {
+            switch self[index] {
+            case openAngle:
+                angleBracketStack.append(index)
+            case closeAngle:
+                let open = angleBracketStack.removeLast()
+                
+                // Check if this balanced `<` and `>` pair is one of the markers.
+                if markers.contains(open - 1) {
+                    // Save this angle bracket pair, sorted by the opening bracket location.
+                    // Below, these will be iterated over removing the last
+                    if let insertionIndex = markedAngleBracketPairs.firstIndex(where: { open < $0.open }) {
+                        markedAngleBracketPairs.insert((open: open, close: index), at: insertionIndex)
+                    } else {
+                        markedAngleBracketPairs.append((open: open, close: index))
+                    }
+                }
+                
+            default:
+                // Ignore all non `<` or `>` characters
+                continue
+            }
         }
-        // Don't need to do any processing unless this type contains some string that type name that Swift has syntactic sugar for.
-        guard contains("Array<") || contains("Optional<") || contains("Dictionary<") else {
-            return String(self)
-        }
         
-        var result = ""
-        result.reserveCapacity(count)
         
-        var scanner = StringScanner(String(self)[...])
+        assert(markedAngleBracketPairs.map(\.open) == markedAngleBracketPairs.map(\.open).sorted(),
+               "Marked angle bracket pairs \(markedAngleBracketPairs) are unexpectedly not sorted by opening bracket location")
         
-        while let prefix = scanner.scan(until: { $0 == "A" || $0 == "O" || $0 == "D" }) {
-            result += prefix
+        // Iterate over all the marked angle bracket pairs (from end to start) and replace the marked text with the syntactic sugar alternative.
+        while !markedAngleBracketPairs.isEmpty {
+            let (open, close) = markedAngleBracketPairs.removeLast()
+            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(cString: [self[open], 0]))' instead of '>' in \(String(cString: self + [0]))")
+            assert(self[close] == closeAngle, "End marker at \(close) is '\(String(cString: [self[close], 0]))' instead of '>' in \(String(cString: self + [0]))")
             
-            if scanner.hasPrefix("Array<") {
-                _ = scanner.take("Array".count)
-                guard let elementType = scanner.scanGenericSingle() else {
-                    // The type is unexpected. Return the original value.
-                    return String(self)
+            // The caller accumulated a single character for each marker that indicated the type of syntactic sugar to apply.
+            let marker = open - 1
+            switch self[marker] {
+                
+            case uppercaseA: // Array
+                // Apply Swift array syntactic sugar; transforming "A<Element>" into "[Element]" (where "Array" was already abbreviated to "A").
+                self[close] = closeSquare
+                self.replaceSubrange(marker ... open /* "A<" */, with: [openSquare])
+                
+                // Update later marked locations since the syntactic sugar shortened the string.
+                for index in markedAngleBracketPairs.indices where open < markedAngleBracketPairs[index].close {
+                    markedAngleBracketPairs[index].close -= 1 // "A<" is replaced by "["
+                    // The `open` location doesn't need to be updated because the pairs are iterated over in reverse order
                 }
-                result.append("[\(elementType.withSwiftSyntacticSugar())]")
-                assert(scanner.peek() == ">")
-                _ = scanner.take()
-            }
-            else if scanner.hasPrefix("Optional<") {
-                _ = scanner.take("Optional".count)
-                guard let wrappedType = scanner.scanGenericSingle() else {
-                    // The type is unexpected. Return the original value.
-                    return String(self)
+                
+            case uppercaseO: // Optional
+                // Apply Swift optional syntactic sugar; transforming "O<Wrapped>" into "Wrapped?" (where "Optional" was already abbreviated to "O").
+                self[close] = question
+                self.removeSubrange(marker ... open /* "O<" */)
+                
+                // Update later marked locations since the syntactic sugar shortened the string.
+                for index in markedAngleBracketPairs.indices where open < markedAngleBracketPairs[index].close {
+                    markedAngleBracketPairs[index].close -= 2 // "O<" is removed
+                    // The `open` location doesn't need to be updated because the pairs are iterated over in reverse order
                 }
-                result.append("\(wrappedType.withSwiftSyntacticSugar())?")
-                assert(scanner.peek() == ">")
-                _ = scanner.take()
-            }
-            else if scanner.hasPrefix("Dictionary<") {
-                _ = scanner.take("Dictionary".count)
-                guard let (keyType, valueType) = scanner.scanGenericPair() else {
-                    // The type is unexpected. Return the original value.
-                    return String(self)
+                
+            case uppercaseD: // Dictionary
+                // Find the comma that separates "Key" and "Value" in "Dictionary<Key,Value>"
+                var depth = 1
+                let predicate: (UInt8) -> Bool = {
+                    if $0 == openAngle || $0 == openParen {
+                        depth += 1
+                        return false // keep scanning
+                    }
+                    else if depth == 1 {
+                        return $0 == comma
+                    }
+                    else if $0 == closeAngle || $0 == closeParen {
+                        depth -= 1
+                        assert(depth >= 0, "Unexpectedly found more closing brackets than open brackets in \(String(cString: self[open + 1 ..< close] + [0]))")
+                    }
+                    return false // keep scanning
                 }
-                result.append("[\(keyType.withSwiftSyntacticSugar()):\(valueType.withSwiftSyntacticSugar())]")
-                assert(scanner.peek() == ">")
-                _ = scanner.take()
+                guard let commaIndex = self[open + 1 /* skip the known opening bracket */ ..< close /* skip the known closing bracket */].firstIndex(where: predicate) else {
+                    assertionFailure("Didn't find ',' in \(String(cString: self[open + 1 ..< close] + [0]))")
+                    return
+                }
+                
+                // Apply Swift dictionary syntactic sugar; transforming "D<Key,Value>" into "[Key:Value]" (where "Dictionary" was already abbreviated to "D").
+                self[commaIndex] = colon
+                self[close] = closeSquare
+                self.replaceSubrange(marker ... open /* "D<" */, with: [openSquare])
+                
+                // Update later marked locations since the syntactic sugar shortened the string.
+                for index in markedAngleBracketPairs.indices where open < markedAngleBracketPairs[index].close {
+                    markedAngleBracketPairs[index].close -= 1 // "D<" is replaced by "["
+                    // The `open` location doesn't need to be updated because the pairs are iterated over in reverse order
+                }
+                
+            default:
+                assertionFailure("Found marker '\(String(cString: [self[marker], 0]))' at \(marker) doesn't match either 'Array<', 'Optional<', or 'Dictionary<' in \(String(cString: self + [0]))")
+                return
             }
+            
+            assert(
+                markedAngleBracketPairs.allSatisfy { open, close in
+                    self[open] == openAngle && self[close] == closeAngle
+                }, """
+                Unexpectedly found misaligned angle bracket pairs in \(String(cString: self + [0])):
+                \(markedAngleBracketPairs.map { open, close in "('\(String(cString: [self[open], 0]))' @ \(open) - '\(String(cString: [self[close], 0]))' @ \(close))" }.joined(separator: "\n"))
+                """
+            )
         }
-        result += scanner.takeAll()
         
-        return result
+        return
     }
 }
 
@@ -282,15 +458,6 @@ private struct StringScanner {
         return arguments
     }
     
-    
-    mutating func scanArgumentAndSkip() -> Substring? {
-        guard !remaining.isEmpty, !remaining.hasPrefix("->") else {
-            return nil
-        }
-        defer { remaining = remaining.dropFirst() }
-        return scanArgument()
-    }
-        
     mutating func scanArgument() -> Substring? {
         guard peek() == "(" else {
             // If the argument doesn't start with "(" it can't be neither a tuple nor a closure type.
@@ -341,70 +508,5 @@ private struct StringScanner {
             return $0 == "," || $0 == ")"
         }
         return scan(until: predicate)
-    }
-    
-    // MARK: Parsing syntactic sugar by scanning
-     
-    mutating func scanGenericSingle() -> Substring? {
-        assert(peek() == "<", "The caller should have checked that this is a generic")
-        _ = take()
-        
-        // The generic may contain any number of nested generics. Keep track of the open and close parenthesis while scanning.
-        var depth = 0
-        let predicate: (Character) -> Bool = {
-            if $0 == "<" {
-                depth += 1
-                return false // keep scanning
-            }
-            if depth > 0 {
-                if $0 == ">" {
-                    depth -= 1
-                }
-                return false // keep scanning
-            }
-            return $0 == ">"
-        }
-        return scan(until: predicate)
-    }
-    
-    mutating func scanGenericPair() -> (Substring, Substring)? {
-        assert(peek() == "<", "The caller should have checked that this is a generic")
-        _ = take() // Discard the opening "<"
-        
-        // The generic may contain any number of nested generics. Keep track of the open and close parenthesis while scanning.
-        var depth = 0
-        let firstPredicate: (Character) -> Bool = {
-            if $0 == "<" || $0 == "(" {
-                depth += 1
-                return false // keep scanning
-            }
-            if depth > 0 {
-                if $0 == ">" || $0 == ")" {
-                    depth -= 1
-                }
-                return false // keep scanning
-            }
-            return $0 == ","
-        }
-        guard let first = scan(until: firstPredicate) else { return nil }
-        _ = take() // Discard the ","
-        
-        assert(depth == 0, "Scanning the first generic should encountered a balanced number of brackets.")
-        let secondPredicate: (Character) -> Bool = {
-            if $0 == "<" || $0 == "(" {
-                depth += 1
-                return false // keep scanning
-            }
-            if depth > 0 {
-                if $0 == ">" || $0 == ")" {
-                    depth -= 1
-                }
-                return false // keep scanning
-            }
-            return $0 == ">"
-        }
-        guard let second = scan(until: secondPredicate) else { return nil }
-        
-        return (first, second)
     }
 }

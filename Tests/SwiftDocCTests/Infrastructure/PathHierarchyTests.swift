@@ -1399,6 +1399,29 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
+        // NSArray
+        XCTAssertEqual("NSArray", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "NSArray", preciseIdentifier: "c:objc(cs)NSArray"),
+        ]))
+        
+        // MyArray<Int>
+        XCTAssertEqual("MyArray<Int>", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "MyArray", preciseIdentifier: "s:8MyModule0A5ArrayV"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // some Sequence<Int>
+        XCTAssertEqual("Sequence<Int>", functionSignatureParameterTypeName([
+            .init(kind: .keyword, spelling: "some", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Sequence", preciseIdentifier: "s:ST"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
         // Array<(Int,Double)>
         XCTAssertEqual("[(Int,Double)]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
@@ -1443,7 +1466,7 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">>)>", preciseIdentifier: nil),
         ]))
         
-        // Dictionary<Key,Value>
+        // Dictionary<Double,Int>
         XCTAssertEqual("[Double:Int]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
             .init(kind: .text, spelling: "<", preciseIdentifier: nil),
@@ -1453,7 +1476,7 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
-        // Dictionary<(Optional<Int>,String),Array<Optional<String>>>
+        // Dictionary<(Optional<Int>,String),Array<Optional<Double>>>
         XCTAssertEqual("[(Int?,String):[Double?]]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
             .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
@@ -1500,12 +1523,30 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
             .init(kind: .text, spelling: ">>>>", preciseIdentifier: nil),
         ]))
+        
+        // Dictionary<(Optional<Å𝔹>,𝄡Δ),Array<Optional<Double>>>
+        XCTAssertEqual("[(Å𝔹?,𝄡Δ):[𝄞ℌℹ︎?]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Å𝔹", preciseIdentifier: "s:8MyModule008IbaCGJAvV"),
+            .init(kind: .text, spelling: ">,", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "𝄡Δ", preciseIdentifier: "s:8MyModule008swaHCEHuV"),
+            .init(kind: .text, spelling: "),", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "𝄞ℌℹ︎", preciseIdentifier: "s:8MyModule0014cCgzfxCCIeJoAgV"),
+            .init(kind: .text, spelling: ">>>", preciseIdentifier: nil),
+        ]))
     }
     
     func testTypeNamesFromSymbolSignature() throws {
-        func functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+        func _functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature, language: SourceLanguage) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
             return PathHierarchy.functionSignatureTypeNames(for: SymbolGraph.Symbol(
-                identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: SourceLanguage.swift.id),
+                identifier: SymbolGraph.Symbol.Identifier(precise: "some-symbol-id", interfaceLanguage: language.id),
                 names: .init(title: "SymbolName", navigator: nil, subHeading: nil, prose: nil),
                 pathComponents: ["SymbolName"], docComment: nil, accessLevel: .public, kind: .init(parsedIdentifier: .class, displayName: "Kind Display NAme"), mixins: [
                     SymbolGraph.Symbol.FunctionSignature.mixinKey: signature
@@ -1515,6 +1556,10 @@ class PathHierarchyTests: XCTestCase {
         
         // Objective-C types
         do {
+            func functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+                _functionSignatureTypeNames(signature, language: .objectiveC)
+            }
+            
             // - (id)doSomething:(NSString *)someName;
             let stringArgument = functionSignatureTypeNames(.init(
                 parameters: [
@@ -1603,6 +1648,10 @@ class PathHierarchyTests: XCTestCase {
         
         // Swift types
         do {
+            func functionSignatureTypeNames(_ signature: SymbolGraph.Symbol.FunctionSignature) -> (parameterTypeNames: [String], returnTypeNames: [String])? {
+                _functionSignatureTypeNames(signature, language: .swift)
+            }
+            
             // func doSomething(someName: ((Int, String), Date)) -> ([Int, String?])
             let tupleArgument = functionSignatureTypeNames(.init(
                 parameters: [
@@ -1681,9 +1730,9 @@ class PathHierarchyTests: XCTestCase {
                     .init(name: "someName", externalName: nil, declarationFragments: [
                         .init(kind: .identifier, spelling: "someName", preciseIdentifier: nil),
                         .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
-                        .init(kind: .keyword, spelling: "repeat", preciseIdentifier: "s:SD"),
+                        .init(kind: .keyword, spelling: "repeat", preciseIdentifier: nil),
                         .init(kind: .text, spelling: " ", preciseIdentifier: nil),
-                        .init(kind: .keyword, spelling: "each", preciseIdentifier: "s:Sq"),
+                        .init(kind: .keyword, spelling: "each", preciseIdentifier: nil),
                         .init(kind: .text, spelling: " ", preciseIdentifier: nil),
                         .init(kind: .typeIdentifier, spelling: "Value", preciseIdentifier: "s:24ComplicatedArgumentTypes11doSomething8someNameyxxQp_tRvzlF5ValueL_xmfp"),
                     ], children: [])
