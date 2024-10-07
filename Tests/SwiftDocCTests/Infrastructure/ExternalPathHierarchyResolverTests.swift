@@ -671,6 +671,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
         
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
+        
         // After building the dependency,
         let (mainBundle, mainContext) = try loadBundle(
             catalog: Folder(name: "Main.docc", content: [
@@ -737,9 +740,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
                     JSONFile(name: "link-hierarchy.json", content: linkResolutionInformation),
                 ])
             ],
-            configureContext: {
-                $0.linkResolver.dependencyArchives = [URL(fileURLWithPath: "/Dependency.doccarchive")]
-            }
+            configuration: configuration
         )
         
         XCTAssertEqual(mainContext.knownPages.count, 3 /* 2 symbols & 1 module*/)
@@ -831,9 +832,10 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             "Mac Catalyst": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
             "iPadOS": PlatformVersion(VersionTriplet(4, 0, 0), beta: true),
         ]
-        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle") { context in
-            context.externalMetadata.currentPlatforms = platformMetadata
-        }
+        var configuration = DocumentationContext.Configuration()
+
+        configuration.externalMetadata.currentPlatforms = platformMetadata
+        let linkResolvers = try makeLinkResolversForTestBundle(named: "AvailabilityBetaBundle", configuration: configuration)
         
         // MyClass is only available on beta platforms (macos=1.0.0, watchos=2.0.0, tvos=3.0.0, ios=4.0.0)
         try linkResolvers.assertBetaStatus(authoredLink: "/MyKit/MyClass", isBeta: true)
@@ -938,9 +940,9 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-    private func makeLinkResolversForTestBundle(named testBundleName: String, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> LinkResolvers {
+   private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: configureContext)
+        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         

@@ -288,7 +288,7 @@ final class PathHierarchyBasedLinkResolver {
                 let symbol = unifiedSymbol
                 let uniqueIdentifier = unifiedSymbol.uniqueIdentifier
                 
-                if let pathComponents = context.knownDisambiguatedSymbolPathComponents?[uniqueIdentifier],
+                if let pathComponents = context.configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents?[uniqueIdentifier],
                    let componentsCount = symbol.defaultSymbol?.pathComponents.count,
                    pathComponents.count == componentsCount
                 {

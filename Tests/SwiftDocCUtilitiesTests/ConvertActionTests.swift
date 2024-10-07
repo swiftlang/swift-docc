@@ -1699,7 +1699,7 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         
-        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
             "platform1" : PlatformVersion(.init(10, 11, 12), beta: false),
             "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
         ])
@@ -1734,7 +1734,7 @@ class ConvertActionTests: XCTestCase {
         
         // Test whether the missing platforms copy the availability information from the fallback platform.
         var action = try generateConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
-        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(10, 0, 0), beta: true),
             "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true),
@@ -1744,7 +1744,7 @@ class ConvertActionTests: XCTestCase {
             "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst": PlatformVersion(.init(11, 0, 0), beta: false)
         ])
-        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: false),
             "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true)
@@ -1755,7 +1755,7 @@ class ConvertActionTests: XCTestCase {
             "iPadOS": PlatformVersion(.init(12, 0, 0), beta: false),
             
         ])
-        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
             "iPadOS" : PlatformVersion(.init(12, 0, 0), beta: false),
@@ -1765,7 +1765,7 @@ class ConvertActionTests: XCTestCase {
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
             
         ])
-        XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
         ])
     }
@@ -1864,6 +1864,13 @@ class ConvertActionTests: XCTestCase {
         
         func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: DocumentationWorkspaceDataProvider & FileManagerProtocol) throws -> ActionResult {
             // Run the create ConvertAction
+            
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
+            
+            let workspace = DocumentationWorkspace()
+            let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
+            
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
@@ -1872,14 +1879,14 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: emitDigest,
                 currentPlatforms: nil,
+                workspace: workspace,
+                context: context,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
             
             action.converter.batchNodeCount = batchSize
-            
-            action.context.externalDocumentationSources["com.example.test"] = TestReferenceResolver()
             
             return try action.perform(logHandle: .none)
         }
@@ -2437,7 +2444,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 inheritDocs: flag)
-            XCTAssertEqual(action.context.externalMetadata.inheritDocs, flag)
+            XCTAssertEqual(action.context.configuration.externalMetadata.inheritDocs, flag)
         }
         
         // Verify implicit value
@@ -2452,7 +2459,7 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        XCTAssertEqual(action.context.externalMetadata.inheritDocs, false)
+        XCTAssertEqual(action.context.configuration.externalMetadata.inheritDocs, false)
     }
     
     func testEmitsDigest() throws {
