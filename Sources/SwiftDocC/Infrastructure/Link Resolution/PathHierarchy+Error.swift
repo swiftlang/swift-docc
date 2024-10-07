@@ -92,8 +92,12 @@ extension PathHierarchy.Error {
             foundDisambiguation: Substring,
             solutions: [Solution]
         ) {
-            let pathPrefix = partialResultPrefix + nextPathComponent.name
-            let foundDisambiguation = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
+            guard let symbolName = candidates.first?.node.name else {
+                return (partialResultPrefix, "", [])
+            }
+            let foundDisambiguation = nextPathComponent.full.dropFirst(symbolName.count)
+            let pathPrefix: Substring = partialResultPrefix + nextPathComponent.full.prefix(symbolName.count)
+            
             let replacementRange = SourceRange.makeRelativeRange(startColumn: pathPrefix.count, length: foundDisambiguation.count)
             
             let solutions: [Solution] = candidates

@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class DefaultAvailabilityTests: XCTestCase {
 
@@ -101,54 +102,38 @@ class DefaultAvailabilityTests: XCTestCase {
     
     // Test whether the default availability is merged with beta status from the command line
     func testBundleWithDefaultAvailabilityInBetaDocs() throws {
-        // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
-            try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
-            try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
-        }
-
-        // Set a beta status for the docs (which would normally be set via command line argument)
-        context.externalMetadata.currentPlatforms = [
+        // Beta status for the docs (which would normally be set via command line argument)
+        try assertRenderedPlatformsFor(currentPlatforms: [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
-        ]
-
-        // Test if the module availability is also "beta" for the "macOS" platform,
-        // verify that the Mac Catalyst platform's name (including a space) is rendered correctly
-        do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
-            let renderNode = translator.visit(node.semantic) as! RenderNode
-
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
-                "Mac Catalyst 13.5(beta)",
-                "macOS 10.15.1(beta)",
-            ])
-        }
-
+        ], equal: [
+            "Mac Catalyst 13.5(beta)",
+            "macOS 10.15.1(beta)",
+        ])
+        
         // Repeat the assertions, but use an earlier platform version this time
-        context.externalMetadata.currentPlatforms = [
+        try assertRenderedPlatformsFor(currentPlatforms: [
             "macOS": PlatformVersion(VersionTriplet(10, 14, 1), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
-        ]
-        
-        // Test if the module availability is also "beta" for the "macOS" platform,
-        // verify that the Mac Catalyst platform's name (including a space) is rendered correctly
-        do {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let node = try context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
-            let renderNode = translator.visit(node.semantic) as! RenderNode
-            
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
-                "Mac Catalyst 13.5(beta)",
-                "macOS 10.15.1(beta)",
-            ])
-        }
+        ], equal: [
+            "Mac Catalyst 13.5(beta)",
+            "macOS 10.15.1(beta)",
+        ])
     }
 
-    private func assertRenderedPlatforms(for reference: ResolvedTopicReference, equal expected: [String], bundle: DocumentationBundle, context: DocumentationContext, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertRenderedPlatformsFor(currentPlatforms: [String : PlatformVersion], equal expected: [String], file: StaticString = #file, line: UInt = #line) throws {
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.currentPlatforms = currentPlatforms
+        
+        let catalog = Folder(name: "unit-test.docc", content: [
+            CopyOfFile(original: self.infoPlistAvailabilityURL, newName: "Info.plist"),
+            // This module name needs to match what's specified in the Info.plist
+            JSONFile(name: "MyKit.symbols.json", content: makeSymbolGraph(moduleName: "MyKit")),
+        ])
+        
+        let (_, bundle, context) = try loadBundle(from: createTempFolder(content: [catalog]), configuration: configuration)
+        let reference = try XCTUnwrap(context.soleRootModuleReference, file: file, line: line)
+        
         // Test whether we:
         // 1) Fallback on iOS when Mac Catalyst availability is missing
         // 2) Render [Beta] or not for Mac Catalyst's inherited iOS availability
@@ -162,58 +147,41 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether when Mac Catalyst availability is missing we fall back on
     // Mac Catalyst info.plist availability and not on iOS availability.
     func testBundleWithMissingCatalystAvailability() throws {
-        // Copy an Info.plist with default availability
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
-            do {
-                try FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
-                try String(contentsOf: self.infoPlistAvailabilityURL).write(to: url.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
-            } catch {
-                XCTFail("Could not copy Info.plist with custom availability in the test bundle")
-            }
-        }
-
-        let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-
-        // Set a beta status for both iOS and Mac Catalyst
-        context.externalMetadata.currentPlatforms = [
+        // Beta status for both iOS and Mac Catalyst
+        try assertRenderedPlatformsFor(currentPlatforms: [
             "iOS": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
-        ]
-        
-        try assertRenderedPlatforms(for: identifier, equal: [
+        ], equal: [
             "Mac Catalyst 13.5(beta)",
             "macOS 10.15.1",
-        ], bundle: bundle, context: context)
+        ])
         
-        // Set a public status for Mac Catalyst
-        context.externalMetadata.currentPlatforms = [
+        // Public status for Mac Catalyst
+        try assertRenderedPlatformsFor(currentPlatforms: [
             "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
-        ]
-        
-        try assertRenderedPlatforms(for: identifier, equal: [
+        ], equal: [
             "Mac Catalyst 13.5",
             "macOS 10.15.1",
-        ], bundle: bundle, context: context)
+        ])
 
-        // Verify that a bug rendering availability as beta when
-        // no platforms are provided is fixed.
-        context.externalMetadata.currentPlatforms = [:]
-        try assertRenderedPlatforms(for: identifier, equal: [
+        // Verify that a bug rendering availability as beta when no platforms are provided is fixed.
+        try assertRenderedPlatformsFor(currentPlatforms: [:], equal: [
             "Mac Catalyst 13.5",
             "macOS 10.15.1",
-        ], bundle: bundle, context: context)
+        ])
     }
     
     // Test whether the default availability is not beta when not matching current target platform
     func testBundleWithDefaultAvailabilityNotInBetaDocs() throws {
-        // Copy an Info.plist with default availability of macOS 10.15.1
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { (url) in
+        var configuration = DocumentationContext.Configuration()
+        // Set a beta status for the docs (which would normally be set via command line argument)
+        configuration.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration) { (url) in
+            // Copy an Info.plist with default availability of macOS 10.15.1
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
-        
-        // Set a beta status for the docs (which would normally be set via command line argument)
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
         
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
@@ -231,10 +199,10 @@ class DefaultAvailabilityTests: XCTestCase {
 
     // Test that a symbol is unavailable and default availability does not precede the "unavailable" attribute.
     func testUnavailableAvailability() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: []) { _ in }
-        
+        var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
-        context.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
+        configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
@@ -575,7 +543,6 @@ class DefaultAvailabilityTests: XCTestCase {
             module.filter({ $0.platformName.displayName == "iPadOS" }).first?.versionInformation,
             .available(version: "10.0")
         )
-        
     }
     
     func testInheritDefaultAvailabilityOptions() throws {

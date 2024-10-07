@@ -381,7 +381,10 @@ struct SymbolGraphRelationshipsBuilder {
         // Remove any inherited docs from the original symbol if the feature is disabled.
         // However, when the docs are inherited from within the same module, its content can be resolved in
         // the local context, so keeping those inherited docs provide a better user experience.
-        if !context.externalMetadata.inheritDocs, let unifiedSymbol = inherited.unifiedSymbol, unifiedSymbol.documentedSymbol?.isDocCommentFromSameModule(symbolModuleName: moduleName) == false {
+        if !context.configuration.externalMetadata.inheritDocs,
+           let unifiedSymbol = inherited.unifiedSymbol,
+           unifiedSymbol.documentedSymbol?.isDocCommentFromSameModule(symbolModuleName: moduleName) == false
+        {
             unifiedSymbol.docComment.removeAll()
         }
     }

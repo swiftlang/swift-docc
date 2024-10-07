@@ -1674,7 +1674,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         return SymbolGraphLoader(
             bundle: bundle,
             dataProvider: workspace,
-            configureSymbolGraph: configureSymbolGraph
+            symbolGraphTransformer: configureSymbolGraph
         )
     }
 }
