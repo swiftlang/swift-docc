@@ -64,7 +64,7 @@ extension DocumentationNode.Kind {
     public static let article = DocumentationNode.Kind(name: "Article", id: "org.swift.docc.kind.article", isSymbol: false)
     /// A sample code project.
     public static let sampleCode = DocumentationNode.Kind(name: "Sample Code", id: "org.swift.docc.kind.sampleCode", isSymbol: false)
-    /// A technology overview.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public static let technologyOverview = DocumentationNode.Kind(name: "Technology (Overview)", id: "org.swift.docc.kind.technology.overview", isSymbol: false)
     /// A volume of documentation within a technology.
     public static let volume = DocumentationNode.Kind(name: "Volume", id: "org.swift.docc.kind.technology.volume", isSymbol: false)
@@ -88,7 +88,7 @@ extension DocumentationNode.Kind {
     /// Documentation about a protocol.
     public static let `protocol` = DocumentationNode.Kind(name: "Protocol", id: "org.swift.docc.kind.protocol", isSymbol: true)
     /// Documentation about a technology.
-    public static let technology = DocumentationNode.Kind(name: "Technology", id: "org.swift.docc.kind.technology", isSymbol: false)
+    public static let tutorialTableOfContents = DocumentationNode.Kind(name: "Tutorial Table of Contents", id: "org.swift.docc.kind.technology", isSymbol: false)
     /// Documentation about an extension.
     public static let `extension` = DocumentationNode.Kind(name: "Extension", id: "org.swift.docc.kind.extension", isSymbol: true)
     /// Documentation about a dictionary.
@@ -192,9 +192,9 @@ extension DocumentationNode.Kind {
         // Grouping
         .landingPage, .collection, .collectionGroup,
         // Conceptual
-        .root, .module, .article, .sampleCode, .technologyOverview, .volume, .chapter, .tutorial, .tutorialArticle, .onPageLandmark,
+        .root, .module, .article, .sampleCode, .volume, .chapter, .tutorial, .tutorialArticle, .onPageLandmark,
         // Containers
-        .class, .structure, .enumeration, .protocol, .technology, .extension, .dictionary, .httpRequest, .namespace,
+        .class, .structure, .enumeration, .protocol, .tutorialTableOfContents, .extension, .dictionary, .httpRequest, .namespace,
         // Leaves
         .localVariable, .globalVariable, .typeAlias, .typeDef, .typeConstant, .associatedType, .function, .operator, .macro, .union,
         // Member-only leaves
@@ -216,4 +216,9 @@ extension DocumentationNode.Kind {
             return false
         }
     }
+}
+
+extension DocumentationNode.Kind {
+    @available(*, deprecated, renamed: "tutorialTableOfContents", message: "Use 'tutorialTableOfContents' This deprecated API will be removed after 6.2 is released")
+    public static var technology: Self { Self.tutorialTableOfContents }
 }

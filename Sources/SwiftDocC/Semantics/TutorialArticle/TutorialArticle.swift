@@ -126,7 +126,7 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<Technology, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<TutorialTableOfContents, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
         
         let redirects: [Redirect]
             (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
@@ -175,15 +175,15 @@ struct StackedContentParser {
 
 extension TutorialArticle {
     static func analyze(_ node: TopicGraph.Node, completedContext context: DocumentationContext, engine: DiagnosticEngine) {
-        let technologyParent = context.parents(of: node.reference)
+        let tutorialTableOfContentsParent = context.parents(of: node.reference)
             .compactMap({ context.topicGraph.nodeWithReference($0) })
-            .first(where: { $0.kind == .technology || $0.kind == .chapter || $0.kind == .volume })
-        guard technologyParent != nil else {
+            .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
+        guard tutorialTableOfContentsParent != nil else {
             let url = context.documentURL(for: node.reference)
             engine.emit(.init(
                 diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(TutorialArticle.self)", summary: "The article \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
                 possibleSolutions: [
-                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(Technology.directiveName.singleQuoted) to reference the article.", replacements: [])
+                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the article.", replacements: [])
                 ]
             ))
             return

@@ -250,7 +250,7 @@ extension DocumentationContext {
         
         let rootModules = try renderRootModules
         
-        return (rootModules + rootTechnologies).map { page in
+        return (rootModules + tutorialTableOfContentsReferences).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString
         }
     }

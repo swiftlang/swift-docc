@@ -70,7 +70,7 @@ class RenderMetadataTests: XCTestCase {
     }
 
     func testAllPagesHaveTitleMetadata() throws {
-        var typesOfPages = [Tutorial.self, Technology.self, Article.self, TutorialArticle.self, Symbol.self]
+        var typesOfPages = [Tutorial.self, TutorialTableOfContents.self, Article.self, TutorialArticle.self, Symbol.self]
         
         for bundleName in ["TestBundle"] {
             let (bundle, context) = try testBundleAndContext(named: bundleName)

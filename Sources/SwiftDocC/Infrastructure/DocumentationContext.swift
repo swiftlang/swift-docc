@@ -156,10 +156,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
-    /// The root technology nodes of the Topic Graph.
+    @available(*, deprecated, renamed: "tutorialTableOfContentsReferences", message: "Use 'tutorialTableOfContentsReferences' This deprecated API will be removed after 6.2 is released")
     public var rootTechnologies: [ResolvedTopicReference] {
+        tutorialTableOfContentsReferences
+    }
+
+    /// The tutorial table-of-contents nodes in the topic graph.
+    public var tutorialTableOfContentsReferences: [ResolvedTopicReference] {
         return topicGraph.nodes.values.compactMap { node in
-            guard node.kind == .technology && parents(of: node.reference).isEmpty else {
+            guard node.kind == .tutorialTableOfContents && parents(of: node.reference).isEmpty else {
                 return nil
             }
             return node.reference
@@ -642,47 +647,48 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// up in the context, not from the arrays that was passed as arguments.
     ///
     /// - Parameters:
-    ///   - technologies: The list of temporary 'technology' pages.
+    ///   - TutorialTableOfContents: The list of temporary 'tutorial table-of-contents' pages.
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
     ///   - bundle: The bundle to resolve links against.
-    private func resolveLinks(technologies: [SemanticResult<Technology>],
-                              tutorials: [SemanticResult<Tutorial>],
-                              tutorialArticles: [SemanticResult<TutorialArticle>],
-                              bundle: DocumentationBundle) {
-        
+    private func resolveLinks(
+        tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
+        tutorials: [SemanticResult<Tutorial>],
+        tutorialArticles: [SemanticResult<TutorialArticle>],
+        bundle: DocumentationBundle
+    ) {
         let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
-        // Technologies
-        
-        for technologyResult in technologies {
+        // Tutorial table-of-contents
+
+        for tableOfContents in tutorialTableOfContents {
             autoreleasepool {
-                let url = technologyResult.source
-                let unresolvedTechnology = technologyResult.value
+                let url = tableOfContents.source
+                let unresolvedTechnology = tableOfContents.value
                 var resolver = ReferenceResolver(context: self, bundle: bundle)
-                let technology = resolver.visit(unresolvedTechnology) as! Technology
+                let technology = resolver.visit(unresolvedTechnology) as! TutorialTableOfContents
                 diagnosticEngine.emit(resolver.problems)
                 
                 // Add to document map
-                documentLocationMap[url] = technologyResult.topicGraphNode.reference
+                documentLocationMap[url] = tableOfContents.topicGraphNode.reference
                 
-                let technologyReference = technologyResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
-                
+                let tableOfContentsReference = tableOfContents.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
+
                 let technologyNode = DocumentationNode(
-                    reference: technologyReference,
-                    kind: .technology,
+                    reference: tableOfContentsReference,
+                    kind: .tutorialTableOfContents,
                     sourceLanguage: Self.defaultLanguage(in: sourceLanguages),
                     availableSourceLanguages: sourceLanguages,
                     name: .conceptual(title: technology.intro.title),
                     markup: technology.originalMarkup,
                     semantic: technology
                 )
-                documentationCache[technologyReference] = technologyNode
+                documentationCache[tableOfContentsReference] = technologyNode
                 
-                // Update the reference in the topic graph with the technology's available languages.
+                // Update the reference in the topic graph with the table-of-contents page's available languages.
                 topicGraph.updateReference(
-                    technologyResult.topicGraphNode.reference,
-                    newReference: technologyReference
+                    tableOfContents.topicGraphNode.reference,
+                    newReference: tableOfContentsReference
                 )
 
                 let anonymousVolumeName = "$volume"
@@ -694,7 +700,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     topicGraph.addNode(volumeNode)
                     
                     // Graph edge: Technology -> Volume
-                    topicGraph.addEdge(from: technologyResult.topicGraphNode, to: volumeNode)
+                    topicGraph.addEdge(from: tableOfContents.topicGraphNode, to: volumeNode)
                     
                     for chapter in volume.chapters {
                         // Graph node: Module
@@ -797,7 +803,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func registerDocuments(from bundle: DocumentationBundle) throws -> (
-        technologies: [SemanticResult<Technology>],
+        tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
         articles: [SemanticResult<Article>],
@@ -805,7 +811,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ) {
         // First, try to understand the basic structure of the document by
         // analyzing it and putting references in as "unresolved".
-        var technologies = [SemanticResult<Technology>]()
+        var tutorialTableOfContents = [SemanticResult<TutorialTableOfContents>]()
         var tutorials = [SemanticResult<Tutorial>]()
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
@@ -893,11 +899,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
              Add all topic graph nodes up front before resolution starts, because
              there may be circular linking.
              */
-            if let technology = analyzed as? Technology {
-                let topicGraphNode = TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: url), title: technology.intro.title)
+            if let tableOfContents = analyzed as? TutorialTableOfContents {
+                let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: url), title: tableOfContents.intro.title)
                 topicGraph.addNode(topicGraphNode)
-                let result = SemanticResult(value: technology, source: url, topicGraphNode: topicGraphNode)
-                technologies.append(result)
+                let result = SemanticResult(value: tableOfContents, source: url, topicGraphNode: topicGraphNode)
+                tutorialTableOfContents.append(result)
             } else if let tutorial = analyzed as? Tutorial {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorial, source: .file(url: url), title: tutorial.title ?? "")
                 topicGraph.addNode(topicGraphNode)
@@ -956,7 +962,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
-        return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
+        return (tutorialTableOfContents, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
     private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
@@ -2134,7 +2140,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
         //       or all symbols yet.
         var result: (
-            technologies: [SemanticResult<Technology>],
+            tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
             tutorials: [SemanticResult<Tutorial>],
             tutorialArticles: [SemanticResult<TutorialArticle>],
             articles: [SemanticResult<Article>],
@@ -2173,7 +2179,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // All discovery went well, process the inputs.
-        let (technologies, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
+        let (tutorialTableOfContents, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
@@ -2221,8 +2227,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for article in tutorialArticles {
             hierarchyBasedResolver.addTutorialArticle(article)
         }
-        for technology in technologies {
-            hierarchyBasedResolver.addTechnology(technology)
+        for tutorialTableOfContents in tutorialTableOfContents {
+            hierarchyBasedResolver.addTutorialTableOfContents(tutorialTableOfContents)
         }
         
         registerRootPages(from: rootPageArticles, in: bundle)
@@ -2254,13 +2260,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
-            technologies.map(referencedSemanticObject) +
+            tutorialTableOfContents.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
             localBundleID: bundle.identifier)
         
         resolveLinks(
-            technologies: technologies,
+            tutorialTableOfContents: tutorialTableOfContents,
             tutorials: tutorials,
             tutorialArticles: tutorialArticles,
             bundle: bundle
@@ -2946,8 +2952,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 extension DocumentationContext {
 
     /// The nodes that are allowed to be roots in the topic graph.
-    static var allowedRootNodeKinds: [DocumentationNode.Kind] = [.technology, .module]
-    
+    static var allowedRootNodeKinds: [DocumentationNode.Kind] = [.tutorialTableOfContents, .module]
+
     func analyzeTopicGraph() {
         // Find all nodes that are loose in the graph and have no parent but aren't supposed to
         let unexpectedRoots = topicGraph.nodes.values.filter { node in

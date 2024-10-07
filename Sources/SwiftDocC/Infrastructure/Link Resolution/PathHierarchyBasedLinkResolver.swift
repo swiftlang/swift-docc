@@ -113,9 +113,9 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
     func addMappingForRoots(bundle: DocumentationBundle) {
-        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.technologyTutorialsRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsContainerReference
         resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
-        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialsRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialTableOfContentsContainer
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
@@ -157,15 +157,15 @@ final class PathHierarchyBasedLinkResolver {
         }
     }
     
-    /// Adds a technology and its volumes and chapters to the path hierarchy.
-    func addTechnology(_ technology: DocumentationContext.SemanticResult<Technology>) {
-        let reference = technology.topicGraphNode.reference
+    /// Adds a tutorial table-of-contents page and its volumes and chapters to the path hierarchy.
+    func addTutorialTableOfContents(_ tutorialTableOfContents: DocumentationContext.SemanticResult<TutorialTableOfContents>) {
+        let reference = tutorialTableOfContents.topicGraphNode.reference
 
-        let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: technology.source.deletingPathExtension().lastPathComponent))
+        let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: tutorialTableOfContents.source.deletingPathExtension().lastPathComponent))
         resolvedReferenceMap[technologyID] = reference
-        
+
         var anonymousVolumeID: ResolvedIdentifier?
-        for volume in technology.value.volumes {
+        for volume in tutorialTableOfContents.value.volumes {
             if anonymousVolumeID == nil, volume.name == nil {
                 anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: "$volume", kind: "volume")
                 resolvedReferenceMap[anonymousVolumeID!] = reference.appendingPath("$volume")
