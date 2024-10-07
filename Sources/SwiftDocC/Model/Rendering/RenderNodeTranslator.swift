@@ -1932,6 +1932,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
             if let constraint = symbol.maximumLength {
                 attributes.append(RenderAttribute.maximumLength(String(constraint)))
             }
+            if let constraint = symbol.allowedValues {
+                attributes.append(RenderAttribute.allowedValues(constraint.map { String($0) } ))
+            }
             if let constraint = symbol.typeDetails, constraint.count > 0 {
                 // Pull out the base-type details.
                 typeDetails = constraint.filter { $0.baseType != nil }

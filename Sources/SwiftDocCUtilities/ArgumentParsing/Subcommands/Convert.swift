@@ -340,6 +340,13 @@ extension Docc {
                 """)
             )
             var fallbackDefaultModuleKind: String?
+
+            @Option(
+                name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")],
+                help: .hidden
+            )
+            @available(*, deprecated, message: "The bundle version isn't used for anything.")
+            var _unusedVersionForBackwardsCompatibility: String?
             
             func validate() throws {
                 for deprecatedOptionName in ["display-name", "bundle-identifier", "bundle-version"] {
