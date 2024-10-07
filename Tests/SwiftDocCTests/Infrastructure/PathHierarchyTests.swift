@@ -2218,11 +2218,11 @@ class PathHierarchyTests: XCTestCase {
         }
         
         do {
-            let (_, _, context) = try loadBundle(from: bundleURL) { context in
-                context.knownDisambiguatedSymbolPathComponents = [
-                    "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
-                ]
-            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
+            ]
+            let (_, _, context) = try loadBundle(from: bundleURL, configuration: configuration)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass-swift.class/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
@@ -2237,18 +2237,17 @@ class PathHierarchyTests: XCTestCase {
         }
         
         do {
-            let (_, _, context) = try loadBundle(from: bundleURL) { context in
-                context.knownDisambiguatedSymbolPathComponents = [
-                    "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
-                ]
-            }
+            var configuration = DocumentationContext.Configuration()
+            configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = [
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
+            ]
+            let (_, _, context) = try loadBundle(from: bundleURL, configuration: configuration)
             let tree = context.linkResolver.localResolver.pathHierarchy
             
             try assertFindsPath("/MyKit/MyClass-swift.class-hash/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
             try assertPathNotFound("/MyKit/MyClass", in: tree)
             try assertPathNotFound("/MyKit/MyClass-swift.class", in: tree)
             try assertPathNotFound("/MyKit/MyClass-swift.class-hash", in: tree)
-            
             
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass-class-hash/myFunction()")

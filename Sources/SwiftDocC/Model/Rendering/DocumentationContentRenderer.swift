@@ -209,9 +209,10 @@ public class DocumentationContentRenderer {
         // We verify that this is a symbol with defined availability
         // and that we're feeding in a current set of platforms to the context.
         guard let symbol = node.semantic as? Symbol,
-            let currentPlatforms = documentationContext.externalMetadata.currentPlatforms,
-            !currentPlatforms.isEmpty,
-            let symbolAvailability = symbol.availability else { return false }
+              let currentPlatforms = documentationContext.configuration.externalMetadata.currentPlatforms,
+              !currentPlatforms.isEmpty,
+              let symbolAvailability = symbol.availability
+        else { return false }
 
         // Verify that if current platforms are in beta, they match the introduced version of the symbol
         for availability in symbolAvailability.availability {
@@ -223,9 +224,10 @@ public class DocumentationContentRenderer {
             // If we don't have introduced and current versions for the current platform
             // we can't tell if the symbol is beta.
             guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
-                // Use the display name of the platform when looking up the current platforms
-                // as we expect that form on the command line.
-                let current = documentationContext.externalMetadata.currentPlatforms?[name.displayName] else {
+                  // Use the display name of the platform when looking up the current platforms
+                  // as we expect that form on the command line.
+                  let current = documentationContext.configuration.externalMetadata.currentPlatforms?[name.displayName]
+            else {
                 return false
             }
 
