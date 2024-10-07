@@ -223,6 +223,10 @@ public struct DocumentationNode {
             platformName: platformName
         ) { mixins in
             mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+                
+                // If the symbol graph doesn't provide availability data for this variant, hardcode it as `[]` so
+                // that it doesn't get inferred from another variant.
+                ?? .init(availability: [])
         }
         
         let endpointVariants = DocumentationDataVariants(
@@ -426,10 +430,9 @@ public struct DocumentationNode {
         let symbolAllowedValues = symbol![mixin: SymbolGraph.Symbol.AllowedValues.self]
         
         if let possibleValues = markupModel.discussionTags?.possiblePropertyListValues, !possibleValues.isEmpty {
-            let validator = PropertyListPossibleValuesSection.Validator(diagnosticEngine: engine)
             guard let symbolAllowedValues else {
-                possibleValues.forEach { 
-                    engine.emit(validator.makeExtraPossibleValueProblem($0, knownPossibleValues: [], symbolName: self.name.plainText))
+                for value in possibleValues {
+                    engine.emit(PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueProblem(value, knownPossibleValues: [], symbolName: self.name.plainText))
                 }
                 return
             }
@@ -452,7 +455,7 @@ public struct DocumentationNode {
             
             for unknownValue in unknownPossibleValues {
                 engine.emit(
-                    validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
+                    PropertyListPossibleValuesSection.Validator.makeExtraPossibleValueProblem(unknownValue, knownPossibleValues: knownPossibleValueNames, symbolName: self.name.plainText)
                 )
             }
             

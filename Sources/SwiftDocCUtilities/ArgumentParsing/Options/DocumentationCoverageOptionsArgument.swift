@@ -40,10 +40,6 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
         valueName: "symbol-kind")
     )
     var summaryLevel: DocumentationCoverageLevel = .brief
-    
-    @Option(help: .hidden)
-    @available(*, deprecated, renamed: "summaryLevel", message: "Use 'summaryLevel' instead. This deprecated API will be removed after 6.0 is released")
-    public var level: DocumentationCoverageLevel = .none
 
     var effectiveSummaryLevel: DocumentationCoverageLevel {
         guard experimentalDocumentationCoverage else {
@@ -69,19 +65,9 @@ public struct DocumentationCoverageOptionsArgument: ParsableArguments {
     )
     public var symbolKindFilter: [DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation] = []
     
-    @Option(parsing: ArrayParsingStrategy.upToNextOption, help: .hidden)
-    @available(*, deprecated, renamed: "symbolKindFilter", message: "Use 'symbolKindFilter' instead. This deprecated API will be removed after 6.0 is released")
-    public var kinds: [DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation] = []
-    
-    @available(*, deprecated) // This deprecation silences the access of the deprecated `level` and `kind` options.
     public mutating func validate() throws {
         Docc.Convert.warnAboutDeprecatedOptionIfNeeded("level", message: "Use '--coverage-summary-level' instead.")
         Docc.Convert.warnAboutDeprecatedOptionIfNeeded("kinds", message: "Use '--coverage-symbol-kind-filter' instead.")
-        
-        if !ProcessInfo.processInfo.arguments.contains("--coverage-summary-level"), level != .none {
-            summaryLevel = level
-        }
-        symbolKindFilter.append(contentsOf: kinds)
     }
 }
 

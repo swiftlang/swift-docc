@@ -79,32 +79,30 @@ class TopicGraphHashTests: XCTestCase {
     /// Verify that we safely produce the topic graph hash when external symbols
     /// participate in the documentation hierarchy. rdar://76419740
     func testProducesTopicGraphHashWhenResolvedExternalReferencesInTaskGroups() throws {
-        // Copy the test bundle and add external links to the MyKit Topics.
-        let workspace = DocumentationWorkspace()
-        let (tempURL, _, _) = try testBundleAndContext(copying: "TestBundle")
+        let resolver = TestMultiResultExternalReferenceResolver()
+        resolver.entitiesToReturn = [
+            "/article": .success(.init(referencePath: "/externally/resolved/path/to/article")),
+            "/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
+            
+            "/externally/resolved/path/to/article": .success(.init(referencePath: "/externally/resolved/path/to/article")),
+            "/externally/resolved/path/to/article2": .success(.init(referencePath: "/externally/resolved/path/to/article2")),
+        ]
         
-        try """
-        # ``MyKit``
-        MyKit module root symbol
-        ## Topics
-        ### Task Group
-         - <doc:article>
-         - <doc:article2>
-         - <doc://com.external.testbundle/article>
-         - <doc://com.external.testbundle/article2>
-        """.write(to: tempURL.appendingPathComponent("documentation").appendingPathComponent("mykit.md"), atomically: true, encoding: .utf8)
-        
-        // Load the new test bundle
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempURL)
-        guard let bundle = try dataProvider.bundles().first else {
-            XCTFail("Failed to create a temporary test bundle")
-            return
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [
+            "com.external.testbundle" : resolver
+        ]) { url in
+            // Add external links to the MyKit Topics.
+            try """
+            # ``MyKit``
+            MyKit module root symbol
+            ## Topics
+            ### Task Group
+             - <doc:article>
+             - <doc:article2>
+             - <doc://com.external.testbundle/article>
+             - <doc://com.external.testbundle/article2>
+            """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("mykit.md"), atomically: true, encoding: .utf8)
         }
-        try workspace.registerProvider(dataProvider)
-        let context = try DocumentationContext(dataProvider: workspace)
-        
-        // Add external resolver
-        context.externalDocumentationSources = ["com.external.testbundle" : ExternalReferenceResolverTests.TestExternalReferenceResolver()]
         
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -114,8 +112,8 @@ class TopicGraphHashTests: XCTestCase {
         XCTAssertEqual(taskGroupLinks, [
             "doc://org.swift.docc.example/documentation/Test-Bundle/article",
             "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
-            "doc://com.external.testbundle/article",
-            "doc://com.external.testbundle/article2",
+            "doc://com.external.testbundle/externally/resolved/path/to/article",
+            "doc://com.external.testbundle/externally/resolved/path/to/article2",
         ])
         
         // Verify correct hierarchy under `MyKit` in the topic graph dump including external symbols.

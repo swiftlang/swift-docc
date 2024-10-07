@@ -157,7 +157,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     ///   - name: A platform name.
     ///   - introduced: A version string.
     ///   - isBeta: If `true`, the symbol is introduced in a beta version of the platform.
-    init(name: String, introduced: String, isBeta: Bool) {
+    init(name: String, introduced: String?, isBeta: Bool) {
         self.name = name
         self.introduced = introduced
         self.isBeta = isBeta

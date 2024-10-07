@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 
-class InvalidAdditionalTitleTests: XCTestCase, CheckerTest {
+class InvalidAdditionalTitleTests: XCTestCase {
     func gatherProblems(for document: Document) -> [Problem] {
         var checker = InvalidAdditionalTitle(sourceFile: nil)
         checker.visit(document)

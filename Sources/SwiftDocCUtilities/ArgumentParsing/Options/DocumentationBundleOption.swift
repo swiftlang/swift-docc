@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,6 +25,3 @@ public struct DocumentationCatalogOption: DirectoryPathOption {
         transform: URL.init(fileURLWithPath:))
     public var url: URL?
 }
-
-@available(*, deprecated, renamed: "DocumentationCatalogOption", message: "Use 'DocumentationCatalogOption' instead. This deprecated API will be removed after 6.0 is released")
-public typealias DocumentationBundleOption = DocumentationCatalogOption

@@ -1223,18 +1223,13 @@ class SemaToRenderNodeTests: XCTestCase {
             }
         }
         
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        
-        context.externalDocumentationSources = ["com.test.external": TestReferenceResolver()]
-        context.globalExternalSymbolResolver = TestSymbolResolver()
-        
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: testBundleURL)
-        try workspace.registerProvider(dataProvider)
-        
-        let bundle = workspace.bundles.values.first!
+        let (_, bundle, context) = try loadBundle(
+            from: testBundleURL,
+            externalResolvers: ["com.test.external": TestReferenceResolver()],
+            externalSymbolResolver: TestSymbolResolver()
+        )
         
         // Symbols are loaded
         XCTAssertFalse(context.documentationCache.isEmpty)
@@ -1906,101 +1901,109 @@ Document
     }
     
     func testRendersBetaViolators() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
-        let node = try context.entity(with: reference)
-        let symbol = node.semantic as! Symbol
+        func makeTestBundle(currentPlatforms: [String : PlatformVersion]?, file: StaticString = #file, line: UInt = #line) throws -> (DocumentationBundle, DocumentationContext, ResolvedTopicReference) {
+            var configuration = DocumentationContext.Configuration()
+            configuration.externalMetadata.currentPlatforms = currentPlatforms
+            
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
+            
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            return (bundle, context, reference)
+        }
         
         // Not a beta platform
         do {
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: nil)
+            
+            let node = try context.entity(with: reference)
+            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
         }
         
-        // Beta platform
-        context.externalMetadata = ExternalMetadata()
-        context.externalMetadata.currentPlatforms = ["tvOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
-
         // Different platform is beta
         do {
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "tvOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
+            ])
+            
+            let node = try context.entity(with: reference)
+            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
         }
         
         // Beta platform but *not* matching the introduced version
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)]
         
         do {
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "macOS": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
+            ])
+            
+            let node = try context.entity(with: reference)
+            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
         }
 
         // Beta platform matching the introduced version
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)]
 
         do {
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true)
+            ])
+            
+            let node = try context.entity(with: reference)
+            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
 
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
         }
 
         // Beta platform earlier than the introduced version
-        context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)]
         
         do {
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "macOS": PlatformVersion(VersionTriplet(10, 14, 0), beta: true)
+            ])
+            
+            let node = try context.entity(with: reference)
+            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify platform beta was plumbed all the way to the render JSON
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, true)
         }
 
         // Set only some platforms to beta & the exact version MyClass is being introduced at
-        context.externalMetadata.currentPlatforms = [
-            "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
-            "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
-            "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
-        ]
         
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            let symbol = node.semantic as! Symbol
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
+                "watchOS": PlatformVersion(VersionTriplet(9, 0, 0), beta: true),
+                "tvOS": PlatformVersion(VersionTriplet(1, 0, 0), beta: true),
+            ])
             
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let node = try context.entity(with: reference)
+            let renderNode = try DocumentationNodeConverter(bundle: bundle, context: context).convert(node)
             
             // Verify task group link is beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, false)
         }
 
         // Set all platforms to beta & the exact version MyClass is being introduced at to test beta SDK documentation
-        context.externalMetadata.currentPlatforms = [
-            "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
-            "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
-            "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
-            "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
-        ]
-        
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            let symbol = node.semantic as! Symbol
+            let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
+                "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
+                "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
+                "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
+                "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
+            ])
             
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let node = try context.entity(with: reference)
+            let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
             
             // Verify task group link is beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
@@ -2008,43 +2011,30 @@ Document
 
         // Set all platforms to beta where the symbol is available,
         // some platforms not beta but the symbol is not available there.
-        context.externalMetadata.currentPlatforms = [
+        let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 0), beta: true),
             "watchOS": PlatformVersion(VersionTriplet(6, 0, 0), beta: true),
             "tvOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
             "iOS": PlatformVersion(VersionTriplet(13, 0, 0), beta: true),
             "FictionalOS": PlatformVersion(VersionTriplet(42, 0, 0), beta: false),
             "ImaginaryOS": PlatformVersion(VersionTriplet(3, 3, 3), beta: false),
-        ]
+        ])
         
-        do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            let symbol = node.semantic as! Symbol
-
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
-            
-            // Verify task group link is beta
-            XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
-        }
-
+        let node = try context.entity(with: reference)
+        let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
+        
+        // Verify task group link is beta
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
+        
         // Add ImaginaryOS platform - but make it unconditionally unavailable and
         // verify that it doesn't affect the beta status
         do {
             // Add an extra platform where the symbol is not available.
-            let renderReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-            let renderReferenceNode = try context.entity(with: renderReference)
-            let renderReferenceSymbol = try XCTUnwrap(renderReferenceNode.semantic as? Symbol)
+            let renderReferenceSymbol = try XCTUnwrap(node.semantic as? Symbol)
             renderReferenceSymbol.availability?.availability.append(SymbolGraph.Symbol.Availability.AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "ImaginaryOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false))
 
             // Verify the rendered reference
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-            let node = try context.entity(with: reference)
-            let symbol = node.semantic as! Symbol
-            
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+            let renderNode = try XCTUnwrap(DocumentationNodeConverter(bundle: bundle, context: context).convert(node))
             
             // Verify task group link is beta
             XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass"] as? TopicRenderReference)?.isBeta, true)
@@ -2851,9 +2841,10 @@ Document
         let bundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
-        let (_, bundle, context) = try loadBundle(from: bundleURL, configureContext: { context in
-            context.externalMetadata.inheritDocs = true
-        })
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalMetadata.inheritDocs = true
+        
+        let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
 
         // Verify that we don't reference resolve inherited docs.
         XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in

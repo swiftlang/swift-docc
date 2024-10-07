@@ -52,18 +52,7 @@ public struct ConvertAction: Action, RecreatingContext {
     
     let sourceRepository: SourceRepository?
     
-    private(set) var context: DocumentationContext {
-        didSet {
-            // current platforms?
-
-            switch documentationCoverageOptions.level {
-            case .detailed, .brief:
-                self.context.shouldStoreManuallyCuratedReferences = true
-            case .none:
-                break
-            }
-        }
-    }
+    private(set) var context: DocumentationContext
     private let workspace: DocumentationWorkspace
     private var currentDataProvider: DocumentationWorkspaceDataProvider?
     private var injectedDataProvider: DocumentationWorkspaceDataProvider?
@@ -192,22 +181,26 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         self.diagnosticEngine = engine
-        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
         self.diagnosticLevel = filterLevel
-        self.context.externalMetadata.diagnosticLevel = self.diagnosticLevel
-        self.context.linkResolver.dependencyArchives = dependencies
         
+        var configuration = context?.configuration ?? DocumentationContext.Configuration()
+        
+        configuration.externalMetadata.diagnosticLevel = filterLevel
         // Inject current platform versions if provided
-        if let currentPlatforms {
-            self.context.externalMetadata.currentPlatforms = currentPlatforms
+        if var currentPlatforms {
+            // Add missing platforms if their fallback platform is present.
+            for (platform, fallbackPlatform) in DefaultAvailability.fallbackPlatforms where currentPlatforms[platform.displayName] == nil {
+                currentPlatforms[platform.displayName] = currentPlatforms[fallbackPlatform.displayName]
+            }
+            configuration.externalMetadata.currentPlatforms = currentPlatforms
         }
 
         // Inject user-set flags.
-        self.context.externalMetadata.inheritDocs = inheritDocs
+        configuration.externalMetadata.inheritDocs = inheritDocs
         
         switch documentationCoverageOptions.level {
         case .detailed, .brief:
-            self.context.shouldStoreManuallyCuratedReferences = true
+            configuration.experimentalCoverageConfiguration.shouldStoreManuallyCuratedReferences = true
         case .none:
             break
         }
@@ -221,11 +214,21 @@ public struct ConvertAction: Action, RecreatingContext {
                 allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
             )
         } else {
-            self.context.externalMetadata.isGeneratedBundle = true
+            configuration.externalMetadata.isGeneratedBundle = true
             dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
                 fileManager.contents(atPath: url.path)
             })
         }
+        
+        if let outOfProcessResolver {
+            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
+        }
+        configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
+        
+        (context as _DeprecatedConfigurationSetAccess?)?.configuration = configuration
+        
+        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine, configuration: configuration)
         
         self.converter = DocumentationConverter(
             documentationBundleURL: documentationBundleURL,
@@ -403,14 +406,7 @@ public struct ConvertAction: Action, RecreatingContext {
             diagnosticEngine.flush()
         }
         
-        if let outOfProcessResolver {
-            context.externalDocumentationSources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
-            context.globalExternalSymbolResolver = outOfProcessResolver
-        }
-        
-        let temporaryFolder = try createTempFolder(
-            with: htmlTemplateDirectory)
-        
+        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
         
         defer {
             try? fileManager.removeItem(at: temporaryFolder)
@@ -609,3 +605,8 @@ public struct ConvertAction: Action, RecreatingContext {
         return try Self.moveOutput(from: from, to: to, fileManager: fileManager)
     }
 }
+
+private protocol _DeprecatedConfigurationSetAccess: AnyObject {
+    var configuration: DocumentationContext.Configuration { get set }
+}
+extension DocumentationContext: _DeprecatedConfigurationSetAccess {}

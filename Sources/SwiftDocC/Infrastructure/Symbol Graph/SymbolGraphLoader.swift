@@ -21,7 +21,7 @@ struct SymbolGraphLoader {
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private var dataProvider: DocumentationContextDataProvider
     private var bundle: DocumentationBundle
-    private var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     
     /// Creates a new loader, initialized with the given bundle.
     /// - Parameters:
@@ -30,11 +30,11 @@ struct SymbolGraphLoader {
     init(
         bundle: DocumentationBundle,
         dataProvider: DocumentationContextDataProvider,
-        configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+        symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
         self.dataProvider = dataProvider
-        self.configureSymbolGraph = configureSymbolGraph
+        self.symbolGraphTransformer = symbolGraphTransformer
     }
     
     /// A strategy to decode symbol graphs.
@@ -76,7 +76,7 @@ struct SymbolGraphLoader {
                     symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
                 }
                 
-                configureSymbolGraph?(&symbolGraph)
+                symbolGraphTransformer?(&symbolGraph)
 
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
@@ -401,10 +401,12 @@ extension SymbolGraph.SemanticVersion {
 extension SymbolGraph.Symbol.Availability.AvailabilityItem {
     /// Create an availability item with a `domain` and an `introduced` version.
     /// - parameter defaultAvailability: Default availability information for symbols that lack availability authored in code.
-    /// - Note: If the `defaultAvailability` argument doesn't have a valid
-    /// platform version that can be parsed as a `SemanticVersion`, returns `nil`.
+    /// - Note: If the `defaultAvailability` argument has a introduced version that can't
+    /// be parsed as a `SemanticVersion`, returns `nil`.
     init?(_ defaultAvailability: DefaultAvailability.ModuleAvailability) {
-        guard let introducedVersion = defaultAvailability.introducedVersion, let platformVersion = SymbolGraph.SemanticVersion(string: introducedVersion) else {
+        let introducedVersion = defaultAvailability.introducedVersion
+        let platformVersion = introducedVersion.flatMap { SymbolGraph.SemanticVersion(string: $0) }
+        if platformVersion == nil && introducedVersion != nil {
             return nil
         }
         let domain = SymbolGraph.Symbol.Availability.Domain(rawValue: defaultAvailability.platformName.rawValue)
