@@ -31,9 +31,18 @@ extension DocumentationBundle.Info {
         ///
         /// This feature flag corresponds to ``FeatureFlags/isExperimentalOverloadedSymbolPresentationEnabled``.
         public var experimentalOverloadedSymbolPresentation: Bool?
+        
+        /// Whether or not experimental support for allowing availability items without version.
+        ///
+        /// This feature flag corresponds to ``FeatureFlags/isExperimentalAvailabilityItemsWithoutVersionEnabled``.
+        public var experimentalAvailabilityItemsWithoutVersion: Bool?
 
-        public init(experimentalOverloadedSymbolPresentation: Bool? = nil) {
+        public init(
+            experimentalOverloadedSymbolPresentation: Bool? = nil,
+            experimentalAvailabilityItemsWithoutVersion: Bool? = nil
+        ) {
             self.experimentalOverloadedSymbolPresentation = experimentalOverloadedSymbolPresentation
+            self.experimentalAvailabilityItemsWithoutVersion = experimentalAvailabilityItemsWithoutVersion
             self.unknownFeatureFlags = []
         }
 
@@ -42,6 +51,7 @@ extension DocumentationBundle.Info {
 
         enum CodingKeys: String, CodingKey, CaseIterable {
             case experimentalOverloadedSymbolPresentation = "ExperimentalOverloadedSymbolPresentation"
+            case experimentalAvailabilityItemsWithoutVersion = "ExperimentalAvailabilityItemsWithoutVersion"
         }
 
         struct AnyCodingKeys: CodingKey {
@@ -66,6 +76,8 @@ extension DocumentationBundle.Info {
                     switch codingKey {
                     case .experimentalOverloadedSymbolPresentation:
                         self.experimentalOverloadedSymbolPresentation = try values.decode(Bool.self, forKey: flagName)
+                    case .experimentalAvailabilityItemsWithoutVersion:
+                        self.experimentalAvailabilityItemsWithoutVersion = try values.decode(Bool.self, forKey: flagName)
                     }
                 } else {
                     unknownFeatureFlags.append(flagName.stringValue)
