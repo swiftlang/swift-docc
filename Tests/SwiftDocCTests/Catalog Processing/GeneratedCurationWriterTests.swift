@@ -299,10 +299,10 @@ class GeneratedCurationWriterTests: XCTestCase {
 
         ### Instance Methods
 
-        - ``fourthTestMemberName(test:)->Float``  <!-- func fourthTestMemberName(test: String) -> Float -->
-        - ``fourthTestMemberName(test:)->Double`` <!-- func fourthTestMemberName(test: String) -> Double -->
-        - ``fourthTestMemberName(test:)->Int``    <!-- func fourthTestMemberName(test: String) -> Int -->
-        - ``fourthTestMemberName(test:)->String`` <!-- func fourthTestMemberName(test: String) -> String -->
+        - ``fourthTestMemberName(test:)-1h173`` <!-- func fourthTestMemberName(test: String) -> Float -->
+        - ``fourthTestMemberName(test:)-8iuz7`` <!-- func fourthTestMemberName(test: String) -> Double -->
+        - ``fourthTestMemberName(test:)-91hxs`` <!-- func fourthTestMemberName(test: String) -> Int -->
+        - ``fourthTestMemberName(test:)-961zx`` <!-- func fourthTestMemberName(test: String) -> String -->
         
         """)
     }

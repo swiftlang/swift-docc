@@ -40,7 +40,7 @@ extension LocalFileSystemDataProvider {
             preconditionFailure("Expected directory object at path '\(root.url.absoluteString)'.")
         }
         
-        if DocumentationBundleFileTypes.isDocumentationBundle(rootDirectory.url) {
+        if DocumentationBundleFileTypes.isDocumentationCatalog(rootDirectory.url) {
             bundles.append(try createBundle(rootDirectory, rootDirectory.children, options: options))
         } else {
             // Recursively descend when the current root directory isn't a documentation bundle.
@@ -125,7 +125,7 @@ extension LocalFileSystemDataProvider {
     ///   - recursive: If `true`, this function will recursively check the files of all directories in the array. If `false`, it will ignore all directories.
     /// - Returns: A list of all the non-markup files.
     private func findNonMarkupFiles(_ bundleChildren: [FSNode], recursive: Bool) -> [FSNode.File] {
-        return bundleChildren.files(recursive: recursive) { !DocumentationBundleFileTypes.isMarkupFile($0.url) }
+        bundleChildren.files(recursive: recursive) { !DocumentationBundleFileTypes.isMarkupFile($0.url) && !DocumentationBundleFileTypes.isSymbolGraphFile($0.url) }
     }
 
     private func findCustomHeader(_ bundleChildren: [FSNode]) -> FSNode.File? {

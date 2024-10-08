@@ -49,7 +49,6 @@ extension ConvertAction {
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             fallbackDisplayName: convert.fallbackBundleDisplayName,
             fallbackIdentifier: convert.fallbackBundleIdentifier,
-            fallbackVersion: nil,
             fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
             fallbackDefaultModuleKind: convert.fallbackDefaultModuleKind,
             additionalSymbolGraphFiles: additionalSymbolGraphFiles

@@ -580,4 +580,15 @@ class ConvertSubcommandTests: XCTestCase {
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-parameters-and-returns-validation"])
         XCTAssertEqual(disabledFlagConvert.enableParametersAndReturnsValidation, false)
     }
+
+    // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
+    func testVersionFlag() throws {
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, nil)
+
+        let enabledFlagConvert = try Docc.Convert.parse(["--fallback-bundle-version", "1.2.3"])
+        XCTAssertEqual(enabledFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, "1.2.3")
+    }
 }
