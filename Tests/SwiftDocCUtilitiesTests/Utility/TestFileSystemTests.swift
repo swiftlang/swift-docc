@@ -9,6 +9,7 @@
 */
 
 import XCTest
+import SwiftDocC
 @testable import SwiftDocCTestUtilities
 
 class TestFileSystemTests: XCTestCase {
@@ -17,7 +18,6 @@ class TestFileSystemTests: XCTestCase {
         let fs = try TestFileSystem(folders: [])
         XCTAssertEqual(fs.currentDirectoryPath, "/")
         XCTAssertFalse(fs.identifier.isEmpty)
-        XCTAssertTrue(try fs.bundles().isEmpty)
         var isDirectory = ObjCBool(false)
         XCTAssertTrue(fs.fileExists(atPath: "/", isDirectory: &isDirectory))
         XCTAssertEqual(fs.files.keys.sorted(), ["/", "/tmp"], "The root (/) should be the only existing path.")
