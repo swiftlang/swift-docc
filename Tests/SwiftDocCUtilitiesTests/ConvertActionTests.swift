@@ -1797,7 +1797,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 8)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 13)
     }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
