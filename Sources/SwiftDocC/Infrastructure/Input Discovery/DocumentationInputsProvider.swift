@@ -14,7 +14,7 @@ import SymbolKit
 extension DocumentationContext {
 
     /// A type that provides inputs for a unit of documentation.
-    public struct InputsProvider {
+    package struct InputsProvider {
         /// The file manager that the provider uses to read file and directory contents from the file system.
         private var fileManager: FileManagerProtocol
 
@@ -25,7 +25,7 @@ extension DocumentationContext {
         }
 
         /// Creates a new documentation inputs provider.
-        public init() {
+        package init() {
             self.init(fileManager: FileManager.default)
         }
     }
@@ -38,7 +38,7 @@ extension DocumentationContext.InputsProvider {
     private typealias FileTypes = DocumentationBundleFileTypes
 
     /// A discovered documentation catalog.
-    public struct CatalogURL {
+    package struct CatalogURL {
         let url: URL
     }
 
@@ -60,7 +60,7 @@ extension DocumentationContext.InputsProvider {
     ///   - allowArbitraryCatalogDirectories: Whether to treat the starting point as a documentation catalog if the provider doesn't find an actual catalog on the file system.
     /// - Returns: The found documentation catalog.
     /// - Throws: If the directory hierarchy contains more than one documentation catalog.
-    public func findCatalog(
+    package func findCatalog(
         startingPoint: URL,
         allowArbitraryCatalogDirectories: Bool = false
     ) throws -> CatalogURL? {
@@ -220,7 +220,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 
     typealias CodingKeys = SymbolGraph.CodingKeys
 
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.module = try container.decode(SymbolGraph.Module.self, forKey: .module)
