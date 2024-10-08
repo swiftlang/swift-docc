@@ -42,6 +42,8 @@ public class Benchmark: Encodable {
     public let platform = "macOS"
     #elseif os(iOS)
     public let platform = "iOS"
+    #elseif os(visionOS)
+    public let platform = "visionOS"
     #elseif os(Linux)
     public let platform = "Linux"
     #elseif os(Android)

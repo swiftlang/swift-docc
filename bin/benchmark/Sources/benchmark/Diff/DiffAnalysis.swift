@@ -169,7 +169,7 @@ extension BenchmarkResultSeries.MetricSeries.ValueSeries {
             case .duration(let value):
                 let average = value.mean()
             
-                #if os(macOS) || os(iOS)
+                #if os(macOS) || os(iOS) || os(visionOS)
                 return durationFormatter.string(from: Measurement(value: average, unit: UnitDuration.seconds))
                 #else
                 return durationFormatter.string(from: NSNumber(value: average))! + " sec"
@@ -189,7 +189,7 @@ extension BenchmarkResultSeries.MetricSeries.ValueSeries {
     }
 }
 
-#if os(macOS) || os(iOS)
+#if os(macOS) || os(iOS) || os(visionOS)
 private let durationFormatter: MeasurementFormatter = {
     let fmt = MeasurementFormatter()
     fmt.unitStyle = .medium

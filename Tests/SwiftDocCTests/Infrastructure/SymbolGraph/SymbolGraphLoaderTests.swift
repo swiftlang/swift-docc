@@ -281,7 +281,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             var loader = try makeSymbolGraphLoader(symbolGraphURLs: [symbolGraphURL, extraSymbolGraphFile])
             try loader.loadAll()
             
-            #if os(macOS) || os(iOS)
+            #if os(macOS) || os(iOS) || os(visionOS)
             XCTAssertEqual(loader.decodingStrategy, .concurrentlyAllFiles)
             #else
             XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
@@ -323,7 +323,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: symbolGraphURLs)
         try loader.loadAll()
 
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         XCTAssertEqual(loader.decodingStrategy, .concurrentlyAllFiles)
         #else
         XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)

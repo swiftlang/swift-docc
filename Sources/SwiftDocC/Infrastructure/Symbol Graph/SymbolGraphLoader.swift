@@ -109,7 +109,7 @@ struct SymbolGraphLoader {
         // load and decode each one on a separate thread.
         // This strategy benchmarks better when we have multiple
         // "larger" symbol graphs.
-        #if os(macOS) || os(iOS)
+        #if os(macOS) || os(iOS) || os(visionOS)
         if bundle.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
             // There are multiple main symbol graphs, better parallelize all files decoding.
             decodingStrategy = .concurrentlyAllFiles
