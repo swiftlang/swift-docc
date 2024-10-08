@@ -12,6 +12,11 @@ import Foundation
 import Markdown
 import SymbolKit
 
+
+private let automaticSeeAlsoLimit: Int = {
+    ProcessInfo.processInfo.environment["DOCC_AUTOMATIC_SEE_ALSO_LIMIT"].flatMap { Int($0) } ?? 15
+}()
+
 /// A set of functions that add automatic symbol curation to a topic graph.
 public struct AutomaticCuration {
     /// A value type to store an automatically curated task group and its sorting index.
@@ -179,7 +184,7 @@ public struct AutomaticCuration {
                     })
                 }
                 // Don't create too long See Also sections
-                .prefix(15)
+                .prefix(automaticSeeAlsoLimit)
             )
         }
         
