@@ -954,7 +954,7 @@ Root
             XCTAssertEqual(navigatorIndex.path(for: 4), "/tutorials/testoverview")
             XCTAssertEqual(navigatorIndex.path(for: 9), "/documentation/fillintroduced/maccatalystonlydeprecated()")
             XCTAssertEqual(navigatorIndex.path(for: 10), "/documentation/fillintroduced/maccatalystonlyintroduced()")
-            XCTAssertEqual(navigatorIndex.path(for: 21), "/documentation/mykit/globalfunction(_:considering:)")
+            XCTAssertEqual(navigatorIndex.path(for: 21), "/documentation/mykit/globalfunction(__considering_)")
             XCTAssertEqual(navigatorIndex.path(for: 23), "/documentation/sidekit/uncuratedclass/angle")
             
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
