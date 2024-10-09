@@ -85,7 +85,7 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst ", "iOS ", "iPadOS ", "macOS 10.15.1"])
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), [expectedDefaultAvailability.last ?? ""])
         }
 
         // Test if the default availability is NOT used for symbols with explicit availability
@@ -581,12 +581,30 @@ class DefaultAvailabilityTests: XCTestCase {
     }
     
     func testInheritDefaultAvailabilityOptions() throws {
+        func retrievePlatforms(bundleIdentifier: String = "test", path: String) throws -> [AvailabilityRenderItem]? {
+            var identifier = ResolvedTopicReference(bundleIdentifier: "test", path: path, fragment: nil, sourceLanguage: .swift)
+            var node = try context.entity(with: identifier)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
+            var renderNode = translator.visit(node.semantic) as! RenderNode
+            return renderNode.metadata.platforms
+        }
         func makeInfoPlist(
-            defaultAvailability: String
+            defaultAvailability: String,
+            allowExperimentalAvailabilityBehaviour: Bool
         ) -> String {
+            let experimentalAvailability = allowExperimentalAvailabilityBehaviour ? (
+                """
+                <key>CDExperimentalFeatureFlags</key>
+                <dict>
+                    <key>ExperimentalAvailabilityItemsWithoutVersion</key>
+                    <true/>
+                </dict>
+                """
+            ) : ""
             return """
                <plist version="1.0">
                <dict>
+                   \(experimentalAvailability)
                    <key>CDAppleDefaultAvailability</key>
                    <dict>
                        <key>MyModule</key>
@@ -599,7 +617,8 @@ class DefaultAvailabilityTests: XCTestCase {
                """
         }
         func setupContext(
-            defaultAvailability: String
+            defaultAvailability: String,
+            allowExperimentalAvailabilityBehaviour: Bool = false
         ) throws -> (DocumentationBundle, DocumentationContext) {
             // Create an empty bundle
             let targetURL = try createTemporaryDirectory(named: "test.docc")
@@ -608,7 +627,10 @@ class DefaultAvailabilityTests: XCTestCase {
             try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
             // Create info plist
             let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
-            let infoPlist = makeInfoPlist(defaultAvailability: defaultAvailability)
+            let infoPlist = makeInfoPlist(
+                defaultAvailability: defaultAvailability,
+                allowExperimentalAvailabilityBehaviour: allowExperimentalAvailabilityBehaviour
+            )
             try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
             // Load the bundle & reference resolve symbol graph docs
             let (_, bundle, context) = try loadBundle(from: targetURL)
@@ -622,19 +644,19 @@ class DefaultAvailabilityTests: XCTestCase {
                    "identifier" : "swift.property"
                },
                "identifier": {
-                   "precise": "c:@F@SymbolWithAvailability",
+                   "precise": "SymbolWithAvailability",
                    "interfaceLanguage": "swift"
                },
                "pathComponents": [
-                   "Foo"
+                   "SymbolWithAvailability"
                ],
                "names": {
-                   "title": "Foo",
+                   "title": "SymbolWithAvailability",
                },
                "accessLevel": "public",
                "availability" : [
                    {
-                      "domain" : "ios",
+                      "domain" : "iOS",
                       "introduced" : {
                            "major" : 10,
                            "minor" : 0
@@ -648,14 +670,14 @@ class DefaultAvailabilityTests: XCTestCase {
                    "identifier" : "swift.property"
                },
                "identifier": {
-                   "precise": "c:@F@SymbolWithoutAvailability",
+                   "precise": "SymbolWithoutAvailability",
                    "interfaceLanguage": "swift"
                },
                "pathComponents": [
-                   "Foo"
+                   "SymbolWithoutAvailability"
                ],
                "names": {
-                   "title": "Bar",
+                   "title": "SymbolWithoutAvailability",
                },
                "accessLevel": "public"
            }
@@ -686,71 +708,47 @@ class DefaultAvailabilityTests: XCTestCase {
         )
         
         // Verify we add the version number into the symbols that have availability annotation.
-        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
-        // Verify we don't add the version number into the symbols that don't have availability annotation.
-        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, nil)
-        // Verify we remove the version from the module availability information.
-        var identifier = ResolvedTopicReference(bundleIdentifier: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
-        var node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
-        var renderNode = translator.visit(node.semantic) as! RenderNode
-        XCTAssertEqual(renderNode.metadata.platforms?.count, 1)
-        XCTAssertEqual(renderNode.metadata.platforms?.first?.name, "iOS")
-        XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, nil)
+        var platforms = try retrievePlatforms(path: "/documentation/MyModule/SymbolWithAvailability")
+        XCTAssertEqual(platforms?.count, 3)
+        var availabilityItem = try XCTUnwrap(platforms?.first(where: { $0.name == "iOS" }))
+        XCTAssertEqual(availabilityItem.introduced, "10.0")
         
-        // Add an extra default availability to test behaviour when mixin in source with default behaviour.
-        (bundle, context) = try setupContext(defaultAvailability: """
-               <dict>
-                   <key>name</key>
-                   <string>iOS</string>
-                   <key>version</key>
-                   <string>8.0</string>
-               </dict>
-               <dict>
+        // Verify we omit the availability items that don't have an introduced version.
+        platforms = try retrievePlatforms(path: "/documentation/MyModule/SymbolWithoutAvailability")
+        XCTAssertEqual(platforms?.count, 0)
+        
+        // Verify we omit the availability items that don't have an introduced version at the module level.
+        platforms = try retrievePlatforms(path: "/documentation/MyModule")
+        XCTAssertEqual(platforms?.count, 0)
+        
+        // Add a experimental feature flag to allow default availability without version.
+        
+        (bundle, context) = try setupContext(
+            defaultAvailability: """
+              <dict>
                   <key>name</key>
-                  <string>watchOS</string>
-               </dict>
-               """
+                  <string>iOS</string>
+              </dict>
+            """,
+            allowExperimentalAvailabilityBehaviour: true
         )
         
-        // Verify we add the version number into the symbols that have availability annotation.
-        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "watchOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion, nil)
+        // Verify we add the version number into the symbols that has availability annotation.
+        platforms = try retrievePlatforms(path: "/documentation/MyModule/SymbolWithAvailability")
+        XCTAssertEqual(platforms?.count, 3)
+        availabilityItem = try XCTUnwrap(platforms?.first(where: { $0.name == "iOS" }))
+        XCTAssertEqual(availabilityItem.introduced, "10.0")
         
-        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "watchOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion, nil)
+        // Verify we add availability items that don't contains a version.
+        platforms = try retrievePlatforms(path: "/documentation/MyModule/SymbolWithoutAvailability")
+        XCTAssertEqual(platforms?.count, 3)
+        availabilityItem = try XCTUnwrap(platforms?.first(where: { $0.name == "iOS" }))
+        XCTAssertEqual(availabilityItem.introduced, nil)
         
-        // Verify the module availability shows as expected.
-        identifier = ResolvedTopicReference(bundleIdentifier: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
-        node = try context.entity(with: identifier)
-        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
-        renderNode = translator.visit(node.semantic) as! RenderNode
-        XCTAssertEqual(renderNode.metadata.platforms?.count, 4)
-        var moduleAvailability = try XCTUnwrap(renderNode.metadata.platforms?.first(where: {$0.name == "iOS"}))
-        XCTAssertEqual(moduleAvailability.introduced, "8.0")
-        moduleAvailability = try XCTUnwrap(renderNode.metadata.platforms?.first(where: {$0.name == "watchOS"}))
-        XCTAssertEqual(moduleAvailability.introduced, nil)
+        // Verify we add availability items that don't contains a version at the module level.
+        platforms = try retrievePlatforms(path: "/documentation/MyModule")
+        XCTAssertEqual(platforms?.count, 1)
+        availabilityItem = try XCTUnwrap(platforms?.first(where: { $0.name == "iOS" }))
+        XCTAssertEqual(availabilityItem.introduced, nil)
     }
 }

@@ -1252,7 +1252,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     // Filter items with insufficient availability data.
                     // Allow availability without version information, but only if
                     // both, introduced and deprecated, are nil.
-                    if availability.introducedVersion == nil && availability.deprecatedVersion != nil {
+                    if availability.introducedVersion == nil && (
+                        !FeatureFlags.current.isExperimentalAvailabilityItemsWithoutVersionEnabled ||
+                        availability.deprecatedVersion != nil
+                    ) {
                         return nil
                     }
                     guard let name = availability.domain.map({ PlatformName(operatingSystemName: $0.rawValue) }),
@@ -1819,6 +1822,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let renderedAvailability = moduleAvailability
             .filter({ $0.versionInformation != .unavailable })
             .compactMap({ availability -> AvailabilityRenderItem? in
+                if !FeatureFlags.current.isExperimentalAvailabilityItemsWithoutVersionEnabled && availability.introducedVersion == nil {
+                    return nil
+                }
                 return AvailabilityRenderItem(
                     name: availability.platformName.displayName,
                     introduced: availability.introducedVersion,
@@ -1981,6 +1987,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         sourceRepository: SourceRepository? = nil,
         symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
+        if let bundleFlags = bundle.info.featureFlags {
+            FeatureFlags.current.loadFlagsFromBundle(bundleFlags)
+        }
         self.context = context
         self.bundle = bundle
         self.identifier = identifier
