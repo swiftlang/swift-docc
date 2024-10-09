@@ -30,7 +30,7 @@ public struct FeatureFlags: Codable {
     /// Whether or not support for validating parameters and return value documentation is enabled.
     public var isParametersAndReturnsValidationEnabled = true
     
-    /// Whether or not experimental support for availability items without version..
+    /// Whether or not experimental support for availability items without version.
     public var isExperimentalAvailabilityItemsWithoutVersionEnabled = false
     
     @available(*, deprecated, renamed: "isParametersAndReturnsValidationEnabled", message: "Use 'isParametersAndReturnsValidationEnabled' instead. This deprecated API will be removed after 6.1 is released")
