@@ -23,7 +23,7 @@ class FileRequestHandlerTests: XCTestCase {
 
     private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #file, line: UInt = #line) throws {
         let request = makeRequestHead(uri: path)
-        let factory = FileRequestHandler(rootURL: root, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: root)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertEqual(response.head?.status, .ok, file: (file), line: line)
@@ -97,7 +97,7 @@ class FileRequestHandlerTests: XCTestCase {
         let tempFolderURL = try createTempFolder(content: [])
 
         let request = makeRequestHead(uri: "/css/b00011100.css")
-        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertEqual(response.requestError?.status, .notFound)
@@ -111,7 +111,7 @@ class FileRequestHandlerTests: XCTestCase {
         ])
 
         let request = makeRequestHead(uri: "/videos/video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertEqual(response.body, "He")
@@ -130,7 +130,7 @@ class FileRequestHandlerTests: XCTestCase {
         ])
 
         let request = makeRequestHead(uri: "/videos/../video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertNil(response.body, "He")
@@ -145,7 +145,7 @@ class FileRequestHandlerTests: XCTestCase {
         ])
 
         let request = makeRequestHead(uri: "https://invalid host.com", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertNil(response.body, "He")
