@@ -51,16 +51,10 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
     private var keepAlive = false
     private let rootURL: URL
 
-    private var handlerFuture: EventLoopFuture<Void>?
-    private let fileIO: NonBlockingFileIO
-
     /// - Parameters:
-    ///   - fileIO: Async file I/O.
     ///   - rootURL: The root of the content directory to serve.
-    ///   - credentials: Optional user credentials to authorize incoming requests.
-    init(fileIO: NonBlockingFileIO, rootURL: URL) {
+    init(rootURL: URL) {
         self.rootURL = rootURL
-        self.fileIO = fileIO
     }
     
     /// Handles incoming data on a channel.
@@ -79,7 +73,7 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
             let handler: RequestHandlerFactory
             if FileRequestHandler.isAssetPath(head.uri) {
                 // Serve a static asset file.
-                handler = FileRequestHandler(rootURL: rootURL, fileIO: fileIO)
+                handler = FileRequestHandler(rootURL: rootURL)
             } else {
                 // Serve the fallback index file.
                 handler = DefaultRequestHandler(rootURL: rootURL)

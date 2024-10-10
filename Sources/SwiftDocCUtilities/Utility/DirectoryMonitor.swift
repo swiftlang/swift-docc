@@ -59,8 +59,6 @@ class DirectoryMonitor {
     
     /// An observed directory structure including the file handler and dispatch source.
     private struct WatchedDirectory {
-        let url: URL
-        let fileDescriptor: Int32
         let sources: [DispatchSourceFileSystemObject]
     }
     
@@ -204,9 +202,9 @@ class DirectoryMonitor {
     /// Provided a URL and a monitor queue, returns a `WatchedDirectory` with event handling hooked up.
     private func watchedDirectory(at url: URL, files: [URL], on queue: DispatchQueue) throws -> WatchedDirectory {
         let watched = try watch(url: url, for: .all, on: queue)
-        return try WatchedDirectory(url: url, 
-            fileDescriptor: watched.descriptor, 
-            sources: [watched.source] + files.map { try watch(url: $0, for: .write, on: queue).source } )
+        return try WatchedDirectory(
+            sources: [watched.source] + files.map { try watch(url: $0, for: .write, on: queue).source }
+        )
     }
     
     /// Start monitoring the root directory and its contents.

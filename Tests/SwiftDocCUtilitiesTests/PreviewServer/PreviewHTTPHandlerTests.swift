@@ -19,8 +19,6 @@ import NIO
 import NIOHTTP1
 
 class PreviewHTTPHandlerTests: XCTestCase {
-    let fileIO = NonBlockingFileIO(threadPool: NIOThreadPool(numberOfThreads: 2))
-
     /// Tests the three different responses we offer: static file, default, and error.
     func testPreviewHandler() throws {
         let tempFolderURL = try createTempFolder(content: [
@@ -31,7 +29,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
         ])
 
         let channel = EmbeddedChannel()
-        let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempFolderURL)
+        let channelHandler = PreviewHTTPHandler(rootURL: tempFolderURL)
 
         let response = Response()
         
