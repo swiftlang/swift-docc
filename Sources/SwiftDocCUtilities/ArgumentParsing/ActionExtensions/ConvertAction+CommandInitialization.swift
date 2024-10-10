@@ -25,6 +25,7 @@ extension ConvertAction {
         FeatureFlags.current.isExperimentalOverloadedSymbolPresentationEnabled = convert.enableExperimentalOverloadedSymbolPresentation
         FeatureFlags.current.isExperimentalMentionedInEnabled = convert.enableExperimentalMentionedIn
         FeatureFlags.current.isParametersAndReturnsValidationEnabled = convert.enableParametersAndReturnsValidation
+        FeatureFlags.current.isExperimentalDeclarationFormattingEnabled = convert.enableExperimentalDeclarationFormatting
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
