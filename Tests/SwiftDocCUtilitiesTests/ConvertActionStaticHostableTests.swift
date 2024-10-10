@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -29,7 +29,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         let templateFolder = Folder.testHTMLTemplateDirectory
         try templateFolder.write(to: testTemplateURL)
 
-        let basePath =  "test/folder"
+        let basePath = "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: "test/folder")
 
         var action = try ConvertAction(
@@ -40,9 +40,9 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             htmlTemplateDirectory: testTemplateURL,
             emitDigest: false,
             currentPlatforms: nil,
+            temporaryDirectory: try createTemporaryDirectory(),
             transformForStaticHosting: true,
-            hostingBasePath: basePath,
-            temporaryDirectory: try createTemporaryDirectory()
+            hostingBasePath: basePath
         )
         _ = try action.perform(logHandle: .none)
         
@@ -51,7 +51,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
         
         let output = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
-        XCTAssertEqual(Set(output), Set(expectedContent), "Unexpect output")
+        XCTAssertEqual(Set(output), Set(expectedContent), "Unexpected output")
     
         for item in output {
             
