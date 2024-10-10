@@ -27,10 +27,6 @@ let package = Package(
             name: "SwiftDocC",
             targets: ["SwiftDocC"]
         ),
-        .library(
-            name: "SwiftDocCUtilities",
-            targets: ["SwiftDocCUtilities"]
-        ),
         .executable(
             name: "docc",
             targets: ["docc"]
