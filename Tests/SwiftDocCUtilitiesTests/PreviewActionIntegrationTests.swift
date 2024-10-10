@@ -325,12 +325,10 @@ class PreviewActionIntegrationTests: XCTestCase {
             let erroredExpectation = expectation(description: "preview command failed with error")
 
             // Start the preview and keep it running for the asserts that follow inside this test.
-            DispatchQueue.global().async {
-                guard let result = try? preview.perform(logHandle: .file(fileHandle)) else {
-                    XCTFail("Couldn't convert test bundle", file: file, line: line)
-                    return
-                }
-                
+            Task {
+                var logHandle = LogHandle.file(fileHandle)
+                let result = try await preview.perform(logHandle: &logHandle)
+
                 XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
                 XCTAssertNotNil(preview.convertAction.diagnosticEngine.problems.first(where: { problem -> Bool in
                     DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic).contains(expectedErrorMessage)
@@ -356,8 +354,8 @@ class PreviewActionIntegrationTests: XCTestCase {
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
         
         let logStorage = LogHandle.LogStorage()
-        let logHandle = LogHandle.memory(logStorage)
         
+        var logHandle = LogHandle.memory(logStorage)
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
@@ -385,11 +383,8 @@ class PreviewActionIntegrationTests: XCTestCase {
             let logOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce log output") { $0.contains("=======") }
 
             // Start the preview and keep it running for the asserts that follow inside this test.
-            DispatchQueue.global().async {
-                guard let _ = try? preview.perform(logHandle: logHandle) else {
-                    XCTFail("Couldn't convert test bundle")
-                    return
-                }
+            Task {
+                _ = try await preview.perform(logHandle: &logHandle)
             }
 
             wait(for: [logOutputExpectation], timeout: 20.0)
@@ -461,20 +456,17 @@ class PreviewActionIntegrationTests: XCTestCase {
             let logOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce log output") { $0.contains("=======") }
             
             // Start the preview and keep it running for the asserts that follow inside this test.
-            DispatchQueue.global().async {
-                var action = preview as Action
-                do {
-                    let result = try action.perform(logHandle: logHandle)
 
-                    guard !result.problems.containsErrors else {
-                        throw ErrorsEncountered()
-                    }
-                
-                    if !result.problems.isEmpty {
-                        print(DiagnosticConsoleWriter.formattedDescription(for: result.problems), to: &logHandle)
-                    }
-                } catch {
-                    XCTFail(error.localizedDescription)
+            Task {
+                var action = preview as AsyncAction
+                let result = try await action.perform(logHandle: &logHandle)
+
+                guard !result.problems.containsErrors else {
+                    throw ErrorsEncountered()
+                }
+
+                if !result.problems.isEmpty {
+                    print(DiagnosticConsoleWriter.formattedDescription(for: result.problems), to: &logHandle)
                 }
             }
 
