@@ -347,13 +347,15 @@ class PreviewActionIntegrationTests: XCTestCase {
         #endif
     }
 
-    func testHumanErrorMessageForUnavailablePort() throws {
+    func testHumanErrorMessageForUnavailablePort() async throws {
         #if os(macOS)
-        // Source files.
-        let source = createMinimalDocsBundle()
-        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
-        
-        let logStorage = LogHandle.LogStorage()
+
+        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
+        defer {
+            try? FileManager.default.removeItem(at: sourceURL)
+            try? FileManager.default.removeItem(at: outputURL)
+            try? FileManager.default.removeItem(at: templateURL)
+        }
         
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
@@ -369,25 +371,24 @@ class PreviewActionIntegrationTests: XCTestCase {
                 temporaryDirectory: convertActionTempDirectory)
         }
         
-        guard let preview = try? PreviewAction(
-                port: 0, // Use port 0 to pick a random free port number
-                createConvertAction: createConvertAction) else {
-            XCTFail("Could not create preview action from parameters")
-            return
-        }
+        let preview = try PreviewAction(
+            port: 0, // Use port 0 to pick a random free port number
+            createConvertAction: createConvertAction
+        )
 
-        // Start watching the source and get the initial (successful) state.
+        // Build documentation the first time, start the preview server, and start watching the inputs and for changes.
         do {
-            // Wait for watch to produce output.
-            let logOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce log output") { $0.contains("=======") }
-
+            let logStorage = LogHandle.LogStorage()
+            let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
+            
             // Start the preview and keep it running for the asserts that follow inside this test.
             Task {
                 var logHandle = LogHandle.memory(logStorage)
                 _ = try await preview.perform(logHandle: &logHandle)
             }
-
-            wait(for: [logOutputExpectation], timeout: 20.0)
+            
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didStartServerExpectation], timeout: 20.0)
         }
         
         // Verify the preview server is added to the list of servers
@@ -403,23 +404,23 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         // Verify the server is removed from the server list
         XCTAssertNil(servers[preview.serverIdentifier])
-        
-        try FileManager.default.removeItem(at: sourceURL)
-        try FileManager.default.removeItem(at: outputURL)
-        try FileManager.default.removeItem(at: templateURL)
         #endif
     }
     
-    func testCancelsConversion() throws {
+    func testCancelsConversion() async throws {
         #if os(macOS)
-
-        // Source files.
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
+        defer {
+            try? FileManager.default.removeItem(at: sourceURL)
+            try? FileManager.default.removeItem(at: outputURL)
+            try? FileManager.default.removeItem(at: templateURL)
+        }
         
-        var convertFuture: () -> Void = {}
+        // This variable is captured by the `createConvertAction` closure and modified later in the test.
+        var extraTestWork: () async -> Void = {}
         
         let convertActionTempDirectory = try createTemporaryDirectory()
-        /// Create the convert action and store it
+        // Create the convert action and store it
         let createConvertAction = { () -> ConvertAction in
             var convertAction = try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -432,93 +433,102 @@ class PreviewActionIntegrationTests: XCTestCase {
                 fileManager: FileManager.default,
                 temporaryDirectory: convertActionTempDirectory)
                 
-            // Inject a future to control how long the conversion takes
-            convertAction.willPerformFuture = convertFuture
+            // Inject extra "work" to slow dow the documentation build so that the directory monitor has time to cancel it.
+            convertAction._extraTestWork = extraTestWork
             
             return convertAction
         }
         
-        guard let preview = try? PreviewAction(
-                port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
-                createConvertAction: createConvertAction) else {
-            XCTFail("Could not create preview action from parameters")
-            return
-        }
+        let preview = try PreviewAction(
+            port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
+            createConvertAction: createConvertAction
+        )
 
+        defer {
+            // Make sure to stop the preview process so it doesn't stay alive on the machine running the tests.
+            try? preview.stop()
+        }
+        
         let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         preview.bindServerToSocketPath = socketURL.path
         
+        let logStorage = LogHandle.LogStorage()
         // Start watching the source and get the initial (successful) state.
         do {
-            let logStorage = LogHandle.LogStorage()
-            let logOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce log output") { $0.contains("=======") }
+            let didStartServerExpectation = asyncLogExpectation(log: logStorage, description: "Did start the preview server", expectedText: "=======")
             
             // Start the preview and keep it running for the asserts that follow inside this test.
-
             Task {
                 var logHandle = LogHandle.memory(logStorage)
                 let result = try await preview.perform(logHandle: &logHandle)
-
+                
                 guard !result.problems.containsErrors else {
                     throw ErrorsEncountered()
                 }
-
-                if !result.problems.isEmpty {
-                    print(DiagnosticConsoleWriter.formattedDescription(for: result.problems), to: &logHandle)
-                }
             }
-
-            wait(for: [logOutputExpectation], timeout: 20.0)
-
-            // Bundle is now converted once.
             
-            // Now trigger another conversion and cancel it.
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didStartServerExpectation], timeout: 20.0)
+        }
+        
+        // At this point the documentation is converted once and the server and directory monitor is running.
+        
+        // Artificially slow down the remaining conversions so that the directory monitor (which has a 1 second debounce)
+        // has a chance to cancel and restart the conversion.
+        extraTestWork = {
+            // The test won't wait the full 10 seconds.
+            // The conversion (including this extra work) will be cancelled as soon as the directory monitor notices the change.
+            try? await Task.sleep(for: .seconds(10))
+        }
+        
+        // Modify a file in the catalog and wait for the preview server to notice the change and start rebuilding the documentation.
+        do {
+            let expectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input and started rebuilding", expectedText: "Source bundle was modified")
             
-            // Enable slow conversions so we have the chance to cancel the action
-            convertFuture = { sleep(10) }
-            
-            // Expect that the first conversion has started
-            let firstConversion = asyncLogExpectation(log: logStorage, description: "Trigger new conversion") { $0.contains("Source bundle was modified") }
-
-            // Write one file to trigger a new conversion.
+            // Modify a file in the catalog to trigger a rebuild.
             try? "".write(to: sourceURL.appendingPathComponent("file1.txt"), atomically: true, encoding: .utf8)
             
-            wait(for: [firstConversion], timeout: 20.0)
-
-            // Expect that there will be a log about cancelling a running conversion.
-            let reConvertOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did re-convert bundle") { $0.contains("Conversion cancelled...") }
-
-            // Write a second file to cancel the first conversion and trigger a new one.
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [expectation], timeout: 20.0)
+        }
+        
+        // Modify another file to cancel the first rebuild (triggered by the first modification above) and wait for the preview
+        // server to notice the change and cancel the in-progress rebuild.
+        do {
+            let expectation = asyncLogExpectation(log: logStorage, description: "Did notice changed input again and cancelled the first rebuild", expectedText: "Conversion cancelled...")
+            
+            // Modify a file in the catalog to trigger a rebuild.
             try? "".write(to: sourceURL.appendingPathComponent("file2.txt"), atomically: true, encoding: .utf8)
             
-            // Wait for the conversions to complete
-            wait(for: [reConvertOutputExpectation], timeout: 20.0)
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [expectation], timeout: 20.0)
         }
-
-        // Make sure to stop the preview process so it doesn't stay alive on the machine running the tests.
-        try preview.stop()
         
-        try FileManager.default.removeItem(at: sourceURL)
-        try FileManager.default.removeItem(at: outputURL)
-        try FileManager.default.removeItem(at: templateURL)
         #endif
     }
     
     /// Returns an asynchronous expectation that checks a log for a given condition.
-    func asyncLogExpectation(log: LogHandle.LogStorage, description: String, block: @escaping (String) -> Bool) -> XCTestExpectation {
-        let checker = MemoryOutputChecker(storage: log, expectation: XCTestExpectation(description: description)) { output in
-            return block(output)
-        }
-
-        _ = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { timer in
-            if checker.condition(log.text) {
-                timer.invalidate()
-                checker.invalidated = true
-                checker.expectation.fulfill()
-            }
-        })
+    func asyncLogExpectation(log: LogHandle.LogStorage, description: String, expectedText: String) -> XCTestExpectation {
+        let expectation = XCTestExpectation(description: description)
         
-        return checker.expectation
+        Task {
+            // Poll every 0.5 seconds until the expectation contains the expected text.
+            while true {
+                // Yield for 0.5 seconds
+                do {
+                    try await Task.sleep(for: .seconds(0.5))
+                } catch {
+                    return // End the task by exiting if task was cancelled
+                }
+                
+                if log.text.contains(expectedText) {
+                    expectation.fulfill()
+                    return // End the task by exiting when the expectation is fulfilled.
+                }
+            }
+        }
+        
+        return expectation
     }
     
     // MARK: -

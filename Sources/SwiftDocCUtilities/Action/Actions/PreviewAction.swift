@@ -115,6 +115,8 @@ public final class PreviewAction: AsyncAction {
 
     /// Stops a currently running preview session.
     func stop() throws {
+        monitoredConvertTask?.cancel()
+        
         try servers[serverIdentifier]?.stop()
         servers.removeValue(forKey: serverIdentifier)
     }
@@ -162,17 +164,9 @@ public final class PreviewAction: AsyncAction {
         return previewResult
     }
     
-    var convertTask: Task<ActionResult, any Error>?
-    
     func convert() async throws -> ActionResult {
-        // `cancel()` will throw `cancelPending` if there is already queued conversion.
-        convertTask?.cancel()
-        
         convertAction = try createConvertAction()
-        convertTask = Task {
-            try await convertAction.perform(logHandle: &logHandle)
-        }
-        let result = try await convertTask!.value
+        let result = try await convertAction.perform(logHandle: &logHandle)
         
         previewPaths = try convertAction.context.previewPaths()
         return result
@@ -188,6 +182,8 @@ public final class PreviewAction: AsyncAction {
             print("\t \(spacing) \(base.appendingPathComponent(previewPath).absoluteString)", to: &logHandle)
         }
     }
+    
+    var monitoredConvertTask: Task<Void, Never>?
 }
 
 // Monitoring a source folder: Asynchronous output reading and file system events are supported only on macOS.
@@ -202,23 +198,21 @@ extension PreviewAction {
             return
         }
 
-        var convertTask: Task<Void, any Error>?
-
-        monitor = try DirectoryMonitor(root: rootURL) { _, folderURL in
-            defer {
-                // Reload the directory contents and start to monitor for changes.
-                do {
-                    try monitor.restart()
-                } catch {
-                    // The file watching system API has thrown, stop watching.
-                    print("Watching for changes has failed. To continue preview with watching restart docc.", to: &self.logHandle)
-                    print(error.localizedDescription, to: &self.logHandle)
-                }
-            }
-
+        monitor = try DirectoryMonitor(root: rootURL) { _, _ in
             print("Source bundle was modified, converting... ", terminator: "", to: &self.logHandle)
-            convertTask?.cancel()
-            convertTask = Task {
+            self.monitoredConvertTask?.cancel()
+            self.monitoredConvertTask = Task {
+                defer {
+                    // Reload the directory contents and start to monitor for changes.
+                    do {
+                        try monitor.restart()
+                    } catch {
+                        // The file watching system API has thrown, stop watching.
+                        print("Watching for changes has failed. To continue preview with watching restart docc.", to: &self.logHandle)
+                        print(error.localizedDescription, to: &self.logHandle)
+                    }
+                }
+                
                 do {
                     let result = try await self.convert()
                     if result.didEncounterError {
@@ -243,8 +237,8 @@ extension PreviewAction {
         print("Monitoring \(rootURL.path) for changes...", to: &self.logHandle)
     }
 }
-#endif
-#endif
+#endif // !os(Linux) && !os(Android)
+#endif // canImport(NIOHTTP1)
 
 extension DocumentationContext {
     

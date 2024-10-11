@@ -238,14 +238,8 @@ public struct ConvertAction: AsyncAction {
         )
     }
     
-    /// `true` if the convert action is currently running.
-    
-    /// A block to execute when conversion has finished.
-    /// It's used as a "future" for when the action is cancelled.
-    var didPerformFuture: (()->Void)?
-    
-    /// A block to execute when conversion has started.
-    var willPerformFuture: (()->Void)?
+    /// A block of extra work that tests perform to affect the time it takes to convert documentation
+    var _extraTestWork: (() async -> Void)?
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
@@ -267,12 +261,12 @@ public struct ConvertAction: AsyncAction {
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
-        // While running this method keep the `isPerforming` flag up.
-        willPerformFuture?()
         defer {
-            didPerformFuture?()
             diagnosticEngine.flush()
         }
+        
+        // Run any extra work that the test may have injected
+        await _extraTestWork?()
         
         let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
         
