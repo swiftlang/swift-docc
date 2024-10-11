@@ -269,9 +269,8 @@ class ConvertSubcommandTests: XCTestCase {
                 "--additional-symbol-graph-dir",
                 testBundleURL.path,
             ])
-            
-            let action = try ConvertAction(fromConvertCommand: convertOptions)
-            XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+
+            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
                 "FillIntroduced.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -320,7 +319,7 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertNil(action.rootURL)
         XCTAssertNil(action.converter.rootURL)
         
-        XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+        XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
             "FillIntroduced.symbols.json",
             "MyKit@SideKit.symbols.json",
             "mykit-iOS.symbols.json",
