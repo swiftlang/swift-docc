@@ -126,10 +126,10 @@ final class PreviewServer {
             .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
 
             // Configure the channel handler - it handles plain HTTP requests
-            .childChannelInitializer { channel in
+            .childChannelInitializer { [contentURL] channel in
                 // HTTP pipeline
                 return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                    channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: self.contentURL))
+                    channel.pipeline.addHandler(PreviewHTTPHandler(rootURL: contentURL))
                 }
             }
             
@@ -183,6 +183,12 @@ final class PreviewServer {
         try group.syncShutdownGracefully()
         try threadPool.syncShutdownGracefully()
         print("Stopped preview server at \(bindTo)", to: &logHandle)
+    }
+    
+    deinit {
+        if channel?.isWritable == true {
+            try? stop()
+        }
     }
 }
 #endif
