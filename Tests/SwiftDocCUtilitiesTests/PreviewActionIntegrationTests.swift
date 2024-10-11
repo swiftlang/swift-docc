@@ -222,60 +222,19 @@ class PreviewActionIntegrationTests: XCTestCase {
         #endif
     }
     
-    class MemoryOutputChecker {
-        init(storage: LogHandle.LogStorage, expectation: XCTestExpectation, condition: @escaping (String)->Bool) {
-            self.storage = storage
-            self.expectation = expectation
-            self.condition = condition
-        }
-        var invalidated = false
-        let storage: LogHandle.LogStorage
-        let expectation: XCTestExpectation
-        let condition: (String)->Bool
-    }
-    
-    /// Helper class to fulfill an expectation when given condition is met.
-    class OutputChecker {
-        init(fileURL: URL, expectation: XCTestExpectation, condition: @escaping (String)->Bool) {
-            self.url = fileURL
-            self.expectation = expectation
-            self.condition = condition
-        }
-        
-        var url: URL
-        let expectation: XCTestExpectation
-        let condition: (String)->Bool
-    }
-    
-    /// Check the contents of the log file for the expectation.
-    func checkOutput(timer: Timer) {
-        if let checker = timer.userInfo as? OutputChecker {
-            if let data = try? Data(contentsOf: checker.url),
-                let text = String(data: data, encoding: .utf8),
-                checker.condition(text) {
-                // Expectation is met.
-                checker.expectation.fulfill()
-            }
-        }
-        if let checker = timer.userInfo as? MemoryOutputChecker, !checker.invalidated {
-            if checker.condition(checker.storage.text) {
-                // Expectation is met.
-                checker.invalidated = true
-                checker.expectation.fulfill()
-            }
-        }
-    }
-
-    func testThrowsHumanFriendlyErrorWhenCannotStartServerOnAGivenPort() throws {
+    func testThrowsHumanFriendlyErrorWhenCannotStartServerOnAGivenPort() async throws {
         // Binding an invalid address
-        try assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
+        try await assert(bindPort: -1, expectedErrorMessage: "Can't start the preview server on port -1")
     }
     
-    func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line) throws {
+    func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line) async throws {
         #if os(macOS)
-        // Source files.
-        let source = createMinimalDocsBundle()
-        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
+        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
+        defer {
+            try? FileManager.default.removeItem(at: sourceURL)
+            try? FileManager.default.removeItem(at: outputURL)
+            try? FileManager.default.removeItem(at: templateURL)
+        }
         
         // A FileHandle to read action's output.
         let pipeURL = try createTemporaryDirectory().appendingPathComponent("pipe")
@@ -300,29 +259,18 @@ class PreviewActionIntegrationTests: XCTestCase {
                 temporaryDirectory: convertActionTempDirectory)
         }
         
-        guard let preview = try? PreviewAction(
-                port: bindPort,
-                createConvertAction: createConvertAction) else {
-            XCTFail("Could not create preview action from parameters", file: file, line: line)
-            return
-        }
+        let preview = try PreviewAction(
+            port: bindPort,
+            createConvertAction: createConvertAction
+        )
         defer {
-            do {
-                try preview.stop()
-            } catch {
-                XCTFail("Failed to stop preview server", file: file, line: line)
-            }
+            try? preview.stop()
         }
-        // Start watching the source and get the initial (successful) state.
+        
+        // Build documentation the first time, start the preview server, and start watching the inputs and for changes.
         do {
-            // Wait for watch to produce output.
-            let logOutputExpectation = expectation(description: "Did produce log output")
-            let logChecker = OutputChecker(fileURL: pipeURL, expectation: logOutputExpectation) { output in
-                return output.contains("=======")
-            }
-            let logTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(checkOutput), userInfo: logChecker, repeats: true)
-
-            let erroredExpectation = expectation(description: "preview command failed with error")
+            let didStartServerExpectation = asyncLogExpectation(url: pipeURL, description: "Did start the preview server", expectedText: "=======")
+            let didEncounterErrorExpectation = expectation(description: "preview command failed with error")
 
             // Start the preview and keep it running for the asserts that follow inside this test.
             Task {
@@ -338,18 +286,17 @@ class PreviewActionIntegrationTests: XCTestCase {
                 XCTAssertNil(servers[preview.serverIdentifier])
 
                 // Verify that we've checked the error thrown.
-                erroredExpectation.fulfill()
+                didEncounterErrorExpectation.fulfill()
             }
 
-            wait(for: [logOutputExpectation, erroredExpectation], timeout: 20.0)
-            logTimer.invalidate()
+            // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
+            await fulfillment(of: [didStartServerExpectation, didEncounterErrorExpectation], timeout: 20.0)
         }
         #endif
     }
 
     func testHumanErrorMessageForUnavailablePort() async throws {
         #if os(macOS)
-
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
         defer {
             try? FileManager.default.removeItem(at: sourceURL)
@@ -398,7 +345,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let boundPort = try XCTUnwrap(servers[preview.serverIdentifier]?.channel.localAddress?.port)
 
         // Try to start another preview on the same port
-        try assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available at the moment, try a different port number")
+        try await assert(bindPort: boundPort, expectedErrorMessage: "Port \(boundPort) is not available at the moment, try a different port number")
 
         try preview.stop()
         
@@ -507,8 +454,19 @@ class PreviewActionIntegrationTests: XCTestCase {
         #endif
     }
     
-    /// Returns an asynchronous expectation that checks a log for a given condition.
-    func asyncLogExpectation(log: LogHandle.LogStorage, description: String, expectedText: String) -> XCTestExpectation {
+    // MARK: Log output expectations
+    
+    private func asyncLogExpectation(url: URL, description: String, expectedText: String) -> XCTestExpectation {
+        _asyncLogExpectation(text: {
+            (try? String(data: Data(contentsOf: url), encoding: .utf8)) ?? ""
+        }, description: description, expectedText: expectedText)
+    }
+    
+    private func asyncLogExpectation(log: LogHandle.LogStorage, description: String, expectedText: String) -> XCTestExpectation {
+        _asyncLogExpectation(text: { log.text }, description: description, expectedText: expectedText)
+    }
+    
+    private func _asyncLogExpectation(text: @escaping () -> String, description: String, expectedText: String) -> XCTestExpectation {
         let expectation = XCTestExpectation(description: description)
         
         Task {
@@ -521,7 +479,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                     return // End the task by exiting if task was cancelled
                 }
                 
-                if log.text.contains(expectedText) {
+                if text().contains(expectedText) {
                     expectation.fulfill()
                     return // End the task by exiting when the expectation is fulfilled.
                 }
