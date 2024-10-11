@@ -344,13 +344,6 @@ extension Platform.Version: CustomStringConvertible, Equatable, Comparable, Coda
         return false // Equals, so return false.
     }
     
-    // MARK: Hashable
-    
-    public func hash(into hasher: inout Hasher) {
-      hasher.combine(majorVersion)
-      hasher.combine(minorVersion)
-      hasher.combine(patchVersion)
-    }
     
     // MARK: Codable
     

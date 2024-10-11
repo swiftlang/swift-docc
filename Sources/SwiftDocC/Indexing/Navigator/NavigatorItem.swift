@@ -161,16 +161,6 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
             lhs.availabilityID == rhs.availabilityID
     }
     
-    // MARK: - Hasher
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(pageType)
-        hasher.combine(languageID)
-        hasher.combine(title)
-        hasher.combine(platformMask)
-        hasher.combine(availabilityID)
-    }
-    
     // MARK: - Description
     
     public var description: String {
