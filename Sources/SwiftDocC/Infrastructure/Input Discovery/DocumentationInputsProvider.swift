@@ -91,7 +91,7 @@ extension DocumentationContext.InputsProvider {
     }
 }
 
-// MARK: Inputs creation
+// MARK: Create from catalog
 
 extension DocumentationContext {
     package typealias Inputs = DocumentationBundle
@@ -241,6 +241,8 @@ extension DocumentationContext.InputsProvider {
     ///
     /// If the provider can't find a catalog, it will try to create documentation inputs from the option's symbol graph files.
     ///
+    /// If the provider can't create documentation inputs it will raise an error with high level suggestions on how the caller can provide the missing information.
+    ///
     /// - Parameters:
     ///   - startingPoint: The top of the directory hierarchy that the provider traverses to find a documentation catalog.
     ///   - allowArbitraryCatalogDirectories: Whether to treat the starting point as a documentation catalog if the provider doesn't find an actual catalog on the file system.
@@ -250,11 +252,73 @@ extension DocumentationContext.InputsProvider {
         startingPoint: URL?,
         allowArbitraryCatalogDirectories: Bool = false,
         options: Options
-    ) throws -> InputsAndDataProvider? {
+    ) throws -> InputsAndDataProvider {
         if let startingPoint, let catalogURL = try findCatalog(startingPoint: startingPoint, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories) {
-            (inputs: try makeInputs(contentOf: catalogURL, options: options), dataProvider: fileManager)
-        } else {
-            try makeInputsFromSymbolGraphs(options: options)
+            return (inputs: try makeInputs(contentOf: catalogURL, options: options), dataProvider: fileManager)
+        }
+        
+        do {
+            if let generated = try makeInputsFromSymbolGraphs(options: options) {
+                return generated
+            }
+        } catch {
+            throw InputsFromSymbolGraphError(underlyingError: error)
+        }
+        
+        throw NotEnoughInformationError(startingPoint: startingPoint, additionalSymbolGraphFiles: options.additionalSymbolGraphFiles, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
+    }
+    
+    private static let insufficientInputsErrorMessageBase = "The information provided as command line arguments isn't enough to generate documentation.\n"
+    
+    struct InputsFromSymbolGraphError: DescribedError {
+        var underlyingError: Error
+        
+        var errorDescription: String {
+            "\(DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase)\n\(underlyingError.localizedDescription)"
+        }
+    }
+    
+    struct NotEnoughInformationError: DescribedError {
+        var startingPoint: URL?
+        var additionalSymbolGraphFiles: [URL]
+        var allowArbitraryCatalogDirectories: Bool
+        
+        var errorDescription: String {
+            var message = DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase
+            if let startingPoint {
+                message.append("""
+                
+                The `<catalog-path>` positional argument \(startingPoint.path.singleQuoted) isn't a documentation catalog (`.docc` directory) \
+                and its directory sub-hierarchy doesn't contain a documentation catalog (`.docc` directory).
+                
+                """)
+                if !allowArbitraryCatalogDirectories {
+                    message.append("""
+                    
+                    To build documentation for the files in \(startingPoint.path.singleQuoted), \
+                    either give it a `.docc` file extension to make it a documentation catalog \
+                    or pass the `--allow-arbitrary-catalog-directories` flag to treat it as a documentation catalog, \
+                    regardless of file extension.
+                    
+                    """)
+                }
+            }
+            if additionalSymbolGraphFiles.isEmpty {
+                if CommandLine.arguments.contains("--additional-symbol-graph-dir") {
+                    message.append("""
+
+                    The provided `--additional-symbol-graph-dir` directory doesn't contain any symbol graph files (with a `.symbols.json` file extension).
+                    """)
+                } else {
+                    message.append("""
+                    
+                    To build documentation using only in-source documentation comments, \
+                    pass a directory of symbol graph files (with a `.symbols.json` file extension) for the `--additional-symbol-graph-dir` argument.
+                    """)
+                }
+            }
+            
+            return message
         }
     }
 }

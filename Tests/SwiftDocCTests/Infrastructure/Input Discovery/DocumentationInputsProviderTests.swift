@@ -141,22 +141,36 @@ class DocumentationInputsProviderTests: XCTestCase {
 
         // Allow arbitrary directories as a fallback
         do {
-            let (foundInputs, _) = try XCTUnwrap(provider.inputsAndDataProvider(
+            let (foundInputs, _) = try provider.inputsAndDataProvider(
                 startingPoint: startingPoint,
                 allowArbitraryCatalogDirectories: true,
                 options: .init()
-            ))
+            )
             XCTAssertEqual(foundInputs.displayName, "two")
             XCTAssertEqual(foundInputs.identifier, "two")
         }
         
         // Without arbitrary directories as a fallback
         do {
-            XCTAssertNil(try provider.inputsAndDataProvider(
+            XCTAssertThrowsError(try provider.inputsAndDataProvider(
                 startingPoint: startingPoint,
                 allowArbitraryCatalogDirectories: false,
                 options: .init()
-            ))
+            )) { error in
+                XCTAssertEqual(error.localizedDescription, """
+                The information provided as command line arguments isn't enough to generate documentation.
+                
+                The `<catalog-path>` positional argument '/one/two' isn't a documentation catalog (`.docc` directory) \
+                and its directory sub-hierarchy doesn't contain a documentation catalog (`.docc` directory).
+                
+                To build documentation for the files in '/one/two', either give it a `.docc` file extension to make \
+                it a documentation catalog or pass the `--allow-arbitrary-catalog-directories` flag to treat it as \
+                a documentation catalog, regardless of file extension.
+                
+                To build documentation using only in-source documentation comments, pass a directory of symbol graph \
+                files (with a `.symbols.json` file extension) for the `--additional-symbol-graph-dir` argument.
+                """)
+            }
         }
     }
     
@@ -216,12 +230,12 @@ class DocumentationInputsProviderTests: XCTestCase {
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
         let startingPoint = URL(fileURLWithPath: "/one/two")
 
-        let (foundInputs, _) = try XCTUnwrap(provider.inputsAndDataProvider(
+        let (foundInputs, _) = try provider.inputsAndDataProvider(
             startingPoint: startingPoint,
             options: .init(additionalSymbolGraphFiles: [
                 URL(fileURLWithPath: "/path/to/Something.symbols.json")
             ])
-        ))
+        )
         XCTAssertEqual(foundInputs.displayName, "Something")
         XCTAssertEqual(foundInputs.identifier, "Something")
         XCTAssertEqual(foundInputs.symbolGraphURLs.map(\.path), [

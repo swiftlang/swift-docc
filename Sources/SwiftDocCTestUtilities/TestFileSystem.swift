@@ -46,9 +46,8 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     package var identifier: String = UUID().uuidString
     
     package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        try DocumentationContext.InputsProvider(fileManager: self)
-            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options)
-            .map { [$0.inputs] } ?? []
+        [try DocumentationContext.InputsProvider(fileManager: self)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options).inputs]
     }
     
     /// Thread safe access to the file system.
