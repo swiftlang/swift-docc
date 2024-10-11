@@ -29,34 +29,21 @@ public struct ConvertService: DocumentationService {
 
     public static var handlingTypes = [convertMessageType]
     
-    /// Converter that can be injected from a test.
-    var converter: DocumentationConverterProtocol?
-    
     /// A peer server that can be used for resolving links.
     var linkResolvingServer: DocumentationServer?
 
     private let allowArbitraryCatalogDirectories: Bool
 
     /// Creates a conversion service, which converts in-memory documentation data.
-    public init(linkResolvingServer: DocumentationServer? = nil, allowArbitraryCatalogDirectories: Bool) {
+    public init(linkResolvingServer: DocumentationServer? = nil, allowArbitraryCatalogDirectories: Bool = false) {
         self.linkResolvingServer = linkResolvingServer
         self.allowArbitraryCatalogDirectories = allowArbitraryCatalogDirectories
-    }
-    
-    init(
-        converter: DocumentationConverterProtocol?,
-        linkResolvingServer: DocumentationServer?
-    ) {
-        self.converter = converter
-        self.linkResolvingServer = linkResolvingServer
-        self.allowArbitraryCatalogDirectories = false
     }
     
     public func process(
         _ message: DocumentationServer.Message,
         completion: @escaping (DocumentationServer.Message) -> ()
     ) {
-
         let conversionResult = retrievePayload(message)
             .flatMap(decodeRequest)
             .flatMap(convert)
@@ -123,33 +110,6 @@ public struct ConvertService: DocumentationService {
             // in the request.
             FeatureFlags.current = request.featureFlags
             
-            // Set up the documentation context.
-
-            let workspace = DocumentationWorkspace()
-            
-            let provider: DocumentationWorkspaceDataProvider
-            if let bundleLocation = request.bundleLocation {
-                // If an on-disk bundle is provided, convert it.
-                // Additional symbol graphs and markup are ignored for now.
-                provider = try LocalFileSystemDataProvider(
-                    rootURL: bundleLocation,
-                    allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
-                )
-            } else {
-                // Otherwise, convert the in-memory content.
-                var inMemoryProvider = InMemoryContentDataProvider()
-                
-                inMemoryProvider.registerBundle(
-                    info: request.bundleInfo,
-                    symbolGraphs: request.symbolGraphs,
-                    markupFiles: request.markupFiles,
-                    tutorialFiles: request.tutorialFiles,
-                    miscResourceURLs: request.miscResourceURLs
-                )
-                
-                provider = inMemoryProvider
-            }
-            
             var configuration = DocumentationContext.Configuration()
             
             configuration.convertServiceConfiguration.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
@@ -177,62 +137,119 @@ public struct ConvertService: DocumentationService {
                 configuration.externalDocumentationConfiguration.globalSymbolResolver = resolver
             }
             
-            let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
+            let bundle: DocumentationBundle
+            let dataProvider: DocumentationBundle.DataProvider
             
-            var converter = try self.converter ?? DocumentationConverter(
-                documentationBundleURL: request.bundleLocation ?? URL(fileURLWithPath: "/"),
-                emitDigest: false,
-                documentationCoverageOptions: .noCoverage,
-                currentPlatforms: nil,
-                workspace: workspace,
-                context: context,
-                dataProvider: provider,
-                externalIDsToConvert: request.externalIDsToConvert,
-                documentPathsToConvert: request.documentPathsToConvert,
-                bundleDiscoveryOptions: BundleDiscoveryOptions(
+            let inputProvider = DocumentationContext.InputsProvider()
+            if let bundleLocation = request.bundleLocation,
+               let catalogURL = try inputProvider.findCatalog(startingPoint: bundleLocation, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
+            {
+                let bundleDiscoveryOptions = try BundleDiscoveryOptions(
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
-                ),
+                )
+                
+                bundle = try inputProvider.makeInputs(contentOf: catalogURL, options: bundleDiscoveryOptions)
+                dataProvider = FileManager.default
+            } else {
+                (bundle, dataProvider) = Self.makeBundleAndInMemoryDataProvider(request)
+            }
+            
+            let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
+            
+            // Precompute the render context
+            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            
+            let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = request.symbolIdentifiersWithExpandedDocumentation?.compactMap { identifier, expandedDocsRequirement in
+                guard let documentationNode = context.documentationCache[identifier] else {
+                    return nil
+                }
+                
+                return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
+            }
+            let converter = DocumentationContextConverter(
+                bundle: bundle,
+                context: context,
+                renderContext: renderContext,
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
                 emitSymbolAccessLevels: true,
-                symbolIdentifiersWithExpandedDocumentation: request.symbolIdentifiersWithExpandedDocumentation
+                sourceRepository: nil,
+                symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersMeetingRequirementsForExpandedDocumentation
             )
-
-            // Run the conversion.
-
-            let outputConsumer = OutputConsumer()
-            let (_, conversionProblems) = try converter.convert(outputConsumer: outputConsumer)
-
+            
+            let referencesToConvert: [ResolvedTopicReference]
+            if request.documentPathsToConvert == nil && request.externalIDsToConvert == nil {
+                // Should build all symbols
+                referencesToConvert = context.knownPages
+            }
+            else {
+                let symbolReferencesToConvert = Set(
+                    (request.externalIDsToConvert ?? []).compactMap { context.documentationCache.reference(symbolID: $0) }
+                )
+                let documentPathsToConvert = request.documentPathsToConvert ?? []
+                
+                referencesToConvert = context.knownPages.filter {
+                    symbolReferencesToConvert.contains($0) || documentPathsToConvert.contains($0.path)
+                }
+            }
+            
+            // Accumulate the render nodes
+            let renderNodes = Synchronized<[RenderNode]>([])
+            
+            let conversionProblems: [Problem] = referencesToConvert.concurrentPerform { identifier, results in
+                // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
+                autoreleasepool {
+                    do {
+                        let entity = try context.entity(with: identifier)
+                        
+                        guard let renderNode = try converter.renderNode(for: entity) else {
+                            // No render node was produced for this entity, so just skip it.
+                            return
+                        }
+                        
+                        renderNodes.sync { $0.append(renderNode) }
+                    } catch {
+                        results.append(
+                            Problem(
+                                diagnostic: Diagnostic(
+                                    severity: .error,
+                                    identifier: "org.swift.docc.documentation-converter.render-node",
+                                    summary: error.localizedDescription
+                                ),
+                                possibleSolutions: []
+                            )
+                        )
+                    }
+                }
+            }
+            
             guard conversionProblems.isEmpty else {
                 throw ConvertServiceError.conversionError(
                     underlyingError: DiagnosticConsoleWriter.formattedDescription(for: conversionProblems))
             }
             
-            let references: RenderReferenceStore?
+            let referenceStore: RenderReferenceStore?
             if request.includeRenderReferenceStore == true {
                 // Create a reference store and filter non-linkable references.
-                references = outputConsumer.renderReferenceStore
-                    .map {
-                        var store = referenceStore(for: context, baseReferenceStore: $0)
-                        store.topics = store.topics.filter({ pair in
-                            // Filter non-linkable nodes that do belong to the topic graph.
-                            guard let node = context.topicGraph.nodeWithReference(pair.key) else {
-                                return true
-                            }
-                            return context.topicGraph.isLinkable(node.reference)
-                        })
-                        return store
+                var store = self.referenceStore(for: context, baseReferenceStore: renderContext.store)
+                store.topics = store.topics.filter({ pair in
+                    // Filter non-linkable nodes that do belong to the topic graph.
+                    guard let node = context.topicGraph.nodeWithReference(pair.key) else {
+                        return true
                     }
+                    return context.topicGraph.isLinkable(node.reference)
+                })
+                referenceStore = store
             } else {
-                references = nil
+                referenceStore = nil
             }
             
-            return (outputConsumer.renderNodes.sync({ $0 }), references)
+            return (renderNodes.sync { $0 }, referenceStore)
         }.mapErrorToConvertServiceError {
             .conversionError(underlyingError: $0.localizedDescription)
         }
     }
-
+    
     /// Encodes a conversion response to send to the client.
     ///
     /// - Parameter renderNodes: The render nodes that were produced as part of the conversion.
