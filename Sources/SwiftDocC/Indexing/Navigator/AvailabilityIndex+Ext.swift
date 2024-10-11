@@ -331,11 +331,7 @@ extension Platform.Version: CustomStringConvertible, Equatable, Comparable, Coda
         return "\(majorVersion).\(minorVersion)"
     }
     
-    // MARK: - Equatable and Comparable
-    
-    public static func == (lhs: Platform.Version, rhs: Platform.Version) -> Bool {
-        return lhs.majorVersion == rhs.majorVersion && lhs.minorVersion == rhs.minorVersion && lhs.patchVersion == rhs.patchVersion
-    }
+    // MARK: Comparable
     
     public static func < (lhs: Platform.Version, rhs: Platform.Version) -> Bool {
         if lhs.majorVersion != rhs.majorVersion { return lhs.majorVersion < rhs.majorVersion }

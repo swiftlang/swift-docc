@@ -151,16 +151,6 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         return data
     }
     
-    // MARK: - Equatable
-    
-    public static func == (lhs: NavigatorItem, rhs: NavigatorItem) -> Bool {
-        return lhs.pageType == rhs.pageType &&
-            lhs.languageID == rhs.languageID &&
-            lhs.title == rhs.title &&
-            lhs.platformMask == rhs.platformMask &&
-            lhs.availabilityID == rhs.availabilityID
-    }
-    
     // MARK: - Description
     
     public var description: String {
