@@ -184,5 +184,11 @@ final class PreviewServer {
         try threadPool.syncShutdownGracefully()
         print("Stopped preview server at \(bindTo)", to: &logHandle)
     }
+    
+    deinit {
+        if channel?.isWritable == true {
+            try? stop()
+        }
+    }
 }
 #endif
