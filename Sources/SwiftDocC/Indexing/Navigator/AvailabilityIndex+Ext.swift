@@ -340,30 +340,6 @@ extension Platform.Version: CustomStringConvertible, Equatable, Comparable, Coda
         return false // Equals, so return false.
     }
     
-    
-    // MARK: Codable
-    
-    enum CodingKeys: String, CodingKey {
-        case majorVersion
-        case minorVersion
-        case patchVersion
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        let majorVersion = try values.decode(Int.self, forKey: .majorVersion)
-        let minorVersion = try values.decode(Int.self, forKey: .minorVersion)
-        let patchVersion = try values.decode(Int.self, forKey: .patchVersion)
-        self.init(majorVersion: majorVersion, minorVersion: minorVersion, patchVersion: patchVersion)
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(majorVersion, forKey: .majorVersion)
-        try container.encode(minorVersion, forKey: .minorVersion)
-        try container.encode(patchVersion, forKey: .patchVersion)
-    }
-    
     // MARK: UInt32 version encoding
     public init(uint32: UInt32) {
         var representation = uint32
