@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -355,7 +355,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         let logStorage = LogHandle.LogStorage()
         
-        var logHandle = LogHandle.memory(logStorage)
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
@@ -384,6 +383,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
             // Start the preview and keep it running for the asserts that follow inside this test.
             Task {
+                var logHandle = LogHandle.memory(logStorage)
                 _ = try await preview.perform(logHandle: &logHandle)
             }
 
@@ -416,9 +416,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         // Source files.
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
         
-        let logStorage = LogHandle.LogStorage()
-        var logHandle = LogHandle.memory(logStorage)
-
         var convertFuture: () -> Void = {}
         
         let convertActionTempDirectory = try createTemporaryDirectory()
@@ -453,13 +450,14 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         // Start watching the source and get the initial (successful) state.
         do {
+            let logStorage = LogHandle.LogStorage()
             let logOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce log output") { $0.contains("=======") }
             
             // Start the preview and keep it running for the asserts that follow inside this test.
 
             Task {
-                var action = preview as AsyncAction
-                let result = try await action.perform(logHandle: &logHandle)
+                var logHandle = LogHandle.memory(logStorage)
+                let result = try await preview.perform(logHandle: &logHandle)
 
                 guard !result.problems.containsErrors else {
                     throw ErrorsEncountered()
