@@ -76,9 +76,9 @@ class DocumentationInputsProviderTests: XCTestCase {
         ])
         
         let foundPrevImplBundle = try XCTUnwrap(LocalFileSystemDataProvider(rootURL: tempDirectory.appendingPathComponent("/one/two")).bundles(options: options).first)
-        let foundRealBundle = try XCTUnwrap(realProvider.inputs(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
+        let (foundRealBundle, _) = try XCTUnwrap(realProvider.inputsAndDataProvider(startingPoint: tempDirectory.appendingPathComponent("/one/two"), options: options))
 
-        let foundTestBundle = try XCTUnwrap(testProvider.inputs(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
+        let (foundTestBundle, _) = try XCTUnwrap(testProvider.inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/one/two"), options: .init(
             infoPlistFallbacks: options.infoPlistFallbacks,
             // The test file system has a default base URL and needs different URLs for the symbol graph files
             additionalSymbolGraphFiles: [
@@ -141,18 +141,18 @@ class DocumentationInputsProviderTests: XCTestCase {
 
         // Allow arbitrary directories as a fallback
         do {
-            let foundBundle = try provider.inputs(
+            let (foundInputs, _) = try XCTUnwrap(provider.inputsAndDataProvider(
                 startingPoint: startingPoint,
                 allowArbitraryCatalogDirectories: true,
                 options: .init()
-            )
-            XCTAssertEqual(foundBundle?.displayName, "two")
-            XCTAssertEqual(foundBundle?.identifier, "two")
+            ))
+            XCTAssertEqual(foundInputs.displayName, "two")
+            XCTAssertEqual(foundInputs.identifier, "two")
         }
         
         // Without arbitrary directories as a fallback
         do {
-            XCTAssertNil(try provider.inputs(
+            XCTAssertNil(try provider.inputsAndDataProvider(
                 startingPoint: startingPoint,
                 allowArbitraryCatalogDirectories: false,
                 options: .init()
@@ -177,7 +177,7 @@ class DocumentationInputsProviderTests: XCTestCase {
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
         
         XCTAssertThrowsError(
-            try provider.inputs(
+            try provider.inputsAndDataProvider(
                 startingPoint: URL(fileURLWithPath: "/one/two"),
                 options: .init()
             )
@@ -216,14 +216,15 @@ class DocumentationInputsProviderTests: XCTestCase {
         let provider = DocumentationContext.InputsProvider(fileManager: fileSystem)
         let startingPoint = URL(fileURLWithPath: "/one/two")
 
-        let foundBundle = try provider.inputs(
+        let (foundInputs, _) = try XCTUnwrap(provider.inputsAndDataProvider(
             startingPoint: startingPoint,
             options: .init(additionalSymbolGraphFiles: [
-                URL(fileURLWithPath: "/path/to/Something.symbols.json")])
-        )
-        XCTAssertEqual(foundBundle?.displayName, "Something")
-        XCTAssertEqual(foundBundle?.identifier, "Something")
-        XCTAssertEqual(foundBundle?.symbolGraphURLs.map(\.path), [
+                URL(fileURLWithPath: "/path/to/Something.symbols.json")
+            ])
+        ))
+        XCTAssertEqual(foundInputs.displayName, "Something")
+        XCTAssertEqual(foundInputs.identifier, "Something")
+        XCTAssertEqual(foundInputs.symbolGraphURLs.map(\.path), [
             "/path/to/Something.symbols.json",
         ])
     }

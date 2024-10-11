@@ -47,8 +47,8 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     
     package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         try DocumentationContext.InputsProvider(fileManager: self)
-            .inputs(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options)
-            .map { [$0] } ?? []
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options)
+            .map { [$0.inputs] } ?? []
     }
     
     /// Thread safe access to the file system.

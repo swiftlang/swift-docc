@@ -38,7 +38,7 @@ extension DocumentationContext.InputsProvider {
     private typealias FileTypes = DocumentationBundleFileTypes
 
     /// A discovered documentation catalog.
-    package struct CatalogURL {
+    struct CatalogURL {
         let url: URL
     }
 
@@ -60,7 +60,7 @@ extension DocumentationContext.InputsProvider {
     ///   - allowArbitraryCatalogDirectories: Whether to treat the starting point as a documentation catalog if the provider doesn't find an actual catalog on the file system.
     /// - Returns: The found documentation catalog.
     /// - Throws: If the directory hierarchy contains more than one documentation catalog.
-    package func findCatalog(
+    func findCatalog(
         startingPoint: URL,
         allowArbitraryCatalogDirectories: Bool = false
     ) throws -> CatalogURL? {
@@ -107,7 +107,7 @@ extension DocumentationContext.InputsProvider {
     ///   - catalogURL: The location of a discovered documentation catalog.
     ///   - options: Options to configure how the provider creates the documentation inputs.
     /// - Returns: Inputs that categorize the files of the given catalog.
-    package func makeInputs(contentOf catalogURL: CatalogURL, options: Options) throws -> DocumentationContext.Inputs {
+    func makeInputs(contentOf catalogURL: CatalogURL, options: Options) throws -> DocumentationContext.Inputs {
         let url = catalogURL.url
         let shallowContent = try fileManager.contentsOfDirectory(at: url, options: [.skipsHiddenFiles]).files
         let infoPlistData = try shallowContent
@@ -168,7 +168,7 @@ extension DocumentationContext.InputsProvider {
     ///
     /// - Parameter options: Options to configure how the provider creates the documentation inputs.
     /// - Returns: Inputs that categorize the files of the given catalog.
-    package func makeInputsFromSymbolGraphs(options: Options) throws -> DocumentationContext.Inputs? {
+    func makeInputsFromSymbolGraphs(options: Options) throws -> InputsAndDataProvider? {
         guard !options.additionalSymbolGraphFiles.isEmpty else {
             return nil
         }
@@ -183,32 +183,36 @@ extension DocumentationContext.InputsProvider {
         let derivedDisplayName = moduleNames.count == 1 ? moduleNames.first : nil
 
         let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
-
-        var topLevelPages: [URL] = []
-        if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName {
-            let tempURL = fileManager.uniqueTemporaryDirectory()
-            try? fileManager.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-
-            let url = tempURL.appendingPathComponent("\(moduleName).md")
-            topLevelPages.append(url)
-            try fileManager.createFile(
-                at: url,
-                contents: Data("""
+        
+        let topLevelPages: [URL]
+        let provider: DocumentationBundle.DataProvider
+        if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName, let url = URL(string: "in-memory-data://\(moduleName).md") {
+            let synthesizedExtensionFileData = Data("""
                 # ``\(moduleName)``
                 
                 @Metadata {
                   @DisplayName("\(info.displayName)")
                 }
-                """.utf8),
-                options: .atomic
+                """.utf8)
+            
+            topLevelPages = [url]
+            provider = InMemoryDataProvider(
+                files: [url: synthesizedExtensionFileData],
+                fallbackFileManager: fileManager
             )
+        } else {
+            topLevelPages = []
+            provider = fileManager
         }
 
-        return DocumentationBundle(
-            info: info,
-            symbolGraphURLs: options.additionalSymbolGraphFiles,
-            markupURLs: topLevelPages,
-            miscResourceURLs: []
+        return (
+            inputs: DocumentationBundle(
+                info: info,
+                symbolGraphURLs: options.additionalSymbolGraphFiles,
+                markupURLs: topLevelPages,
+                miscResourceURLs: []
+            ),
+            dataProvider: provider
         )
     }
 }
@@ -230,6 +234,9 @@ private struct SymbolGraphModuleContainer: Decodable {
 // MARK: Discover and create
 
 extension DocumentationContext.InputsProvider {
+    /// A pair of documentation inputs and a corresponding data provider for those input files.
+    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: DocumentationBundle.DataProvider)
+    
     /// Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.
     ///
     /// If the provider can't find a catalog, it will try to create documentation inputs from the option's symbol graph files.
@@ -238,15 +245,14 @@ extension DocumentationContext.InputsProvider {
     ///   - startingPoint: The top of the directory hierarchy that the provider traverses to find a documentation catalog.
     ///   - allowArbitraryCatalogDirectories: Whether to treat the starting point as a documentation catalog if the provider doesn't find an actual catalog on the file system.
     ///   - options: Options to configure how the provider creates the documentation inputs.
-    /// - Returns: The documentation inputs for the found documentation catalog, or `nil` if the directory hierarchy doesn't contain a catalog.
-    /// - Throws: If the directory hierarchy contains more than one documentation catalog.
-    package func inputs(
-        startingPoint: URL,
+    /// - Returns: A pair of documentation inputs and a corresponding data provider for those input files.
+    package func inputsAndDataProvider(
+        startingPoint: URL?,
         allowArbitraryCatalogDirectories: Bool = false,
         options: Options
-    ) throws -> DocumentationContext.Inputs? {
-        if let catalogURL = try findCatalog(startingPoint: startingPoint, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories) {
-            try makeInputs(contentOf: catalogURL, options: options)
+    ) throws -> InputsAndDataProvider? {
+        if let startingPoint, let catalogURL = try findCatalog(startingPoint: startingPoint, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories) {
+            (inputs: try makeInputs(contentOf: catalogURL, options: options), dataProvider: fileManager)
         } else {
             try makeInputsFromSymbolGraphs(options: options)
         }
