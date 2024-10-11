@@ -18,7 +18,7 @@ extension XCTestCase {
     
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
     func loadBundle(
-        from bundleURL: URL,
+        from catalogURL: URL,
         externalResolvers: [String: ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
@@ -37,12 +37,12 @@ extension XCTestCase {
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel), configuration: configuration)
         try configureContext?(context)
         // Load the bundle using automatic discovery
-        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         // Mutate the bundle to include the code listings, then apply to the workspace using a manual provider.
         let bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
-        return (bundleURL, bundle, context)
+        return (catalogURL, bundle, context)
     }
     
     /// Loads a documentation catalog from an in-memory test file system.
@@ -68,6 +68,13 @@ extension XCTestCase {
         return (bundle, context)
     }
     
+    func testCatalogURL(named name: String, file: StaticString = #file, line: UInt = #line) throws -> URL {
+        try XCTUnwrap(
+            Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
+            file: file, line: line
+        )
+    }
+    
     func testBundleAndContext(
         copying name: String,
         excludingPaths excludedPaths: [String] = [],
@@ -77,8 +84,7 @@ extension XCTestCase {
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
-        let sourceURL = try XCTUnwrap(Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
+        let sourceURL = try testCatalogURL(named: name)
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
         let bundleURL = sourceExists
@@ -110,9 +116,8 @@ extension XCTestCase {
         externalResolvers: [String: ExternalDocumentationSource] = [:],
         fallbackResolver: ConvertServiceFallbackResolver? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
-        let bundleURL = try XCTUnwrap(Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        return try loadBundle(from: bundleURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver)
+        let catalogURL = try testCatalogURL(named: name)
+        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver)
     }
     
     func testBundleAndContext(named name: String, externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
@@ -133,12 +138,10 @@ extension XCTestCase {
     }
     
     func testBundleFromRootURL(named name: String) throws -> DocumentationBundle {
-        let bundleURL = try XCTUnwrap(Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        
-        let bundles = try dataProvider.bundles()
-        return bundles[0]
+        let rootURL = try testCatalogURL(named: name)
+        let inputProvider = DocumentationContext.InputsProvider()
+        let catalogURL = try XCTUnwrap(inputProvider.findCatalog(startingPoint: rootURL))
+        return try inputProvider.makeInputs(contentOf: catalogURL, options: .init())
     }
     
     func testBundleAndContext() throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
@@ -152,11 +155,8 @@ extension XCTestCase {
             markupURLs: [],
             miscResourceURLs: []
         )
-        let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        let workspace = DocumentationWorkspace()
-        try workspace.registerProvider(provider)
-        let context = try DocumentationContext(dataProvider: workspace)
         
+        let context = try DocumentationContext(bundle: bundle, dataProvider: FileManager.default)
         return (bundle, context)
     }
     

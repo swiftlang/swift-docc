@@ -121,7 +121,7 @@ class DataAssetManagerTests: XCTestCase {
 
         // Create the manager
         let workspace = DocumentationWorkspace()
-        let catalogURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let catalogURL = try testCatalogURL(named: "TestBundle")
         let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
