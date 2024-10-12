@@ -474,7 +474,7 @@ class DocumentationContextTests: XCTestCase {
             Folder(name: "Resources", content: [
                 // This whitespace and punctuation in this *file name* will be replaced by dashes in its identifier.
                 // No content in this file result in identifiers.
-                TextFile(name: "Technology file: with - whitespace, and_punctuation.tutorial", utf8Content: """
+                TextFile(name: "Technology file_ with - whitespace, and_punctuation.tutorial", utf8Content: """
                 @Tutorials(name: "Technology Name") {
                    @Intro(title: "Intro Title") {
                       @Video(source: introvideo.mp4, poster: introposter.png)
@@ -510,10 +510,10 @@ class DocumentationContextTests: XCTestCase {
         let identifierPaths = context.knownIdentifiers.map { $0.path }.sorted(by: { lhs, rhs in lhs.count < rhs.count })
         XCTAssertEqual(identifierPaths, [
             // From the two file names
-            "/tutorials/Technology-file:-with---whitespace,-and_punctuation",
+            "/tutorials/Technology-file_-with---whitespace,-and_punctuation",
             // From the volume's title and the chapter's names, appended to their technology's identifier
-            "/tutorials/Technology-file:-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation",
-            "/tutorials/Technology-file:-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation/Chapter_Title:-with---various!-whitespace,-and/punctuation"
+            "/tutorials/Technology-file_-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation",
+            "/tutorials/Technology-file_-with---whitespace,-and_punctuation/Volume_Section-Title:-with---various!-whitespace,-and/punctuation/Chapter_Title:-with---various!-whitespace,-and/punctuation"
         ])
     }
     
