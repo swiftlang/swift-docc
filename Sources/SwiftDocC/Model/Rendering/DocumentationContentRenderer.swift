@@ -211,11 +211,16 @@ public class DocumentationContentRenderer {
         guard let symbol = node.semantic as? Symbol,
               let currentPlatforms = documentationContext.configuration.externalMetadata.currentPlatforms,
               !currentPlatforms.isEmpty,
-              let symbolAvailability = symbol.availability
+              let symbolAvailability = symbol.availability?.availability
         else { return false }
+        
+        // If the symbol does not have any availability item it can't be `beta`.
+        guard !symbolAvailability.isEmpty else {
+            return false
+        }
 
         // Verify that if current platforms are in beta, they match the introduced version of the symbol
-        for availability in symbolAvailability.availability {
+        for availability in symbolAvailability {
             // If not available on this platform, skip to next platform.
             guard !availability.isUnconditionallyUnavailable, let introduced = availability.introducedVersion else {
                 continue

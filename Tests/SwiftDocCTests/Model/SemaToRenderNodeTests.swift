@@ -1922,6 +1922,22 @@ Document
             XCTAssertEqual(renderNode.metadata.platforms?.first?.isBeta, false)
         }
         
+        // Symbol with an empty set of availbility items.
+        
+        do {
+            
+            let (bundle, context, _) = try makeTestBundle(currentPlatforms: [
+                "Custom Name": PlatformVersion(VersionTriplet(100, 0, 0), beta: true)
+            ])
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+            (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [])
+            let documentationContentRendered = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+            let isBeta = documentationContentRendered.isBeta(node)
+            // Verify that the symbol is not beta since it does not contains availability info.
+            XCTAssertFalse(isBeta)
+        }
+        
         // Different platform is beta
         do {
             let (bundle, context, reference) = try makeTestBundle(currentPlatforms: [
