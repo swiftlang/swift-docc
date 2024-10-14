@@ -10,19 +10,17 @@
 
 import Foundation
 
-extension DocumentationBundle {
-    /// A type that provides data for files in a documentation bundle.
-    package protocol DataProvider {
-        /// Returns the contents of the file at the specified location.
-        ///
-        /// - Parameter url: The url of the file to read.
-        /// - Throws: If the provider failed to read the file.
-        func contents(of url: URL) throws -> Data
-    }
+/// A type that provides data for files in a documentation bundle.
+package protocol DocumentationBundleDataProvider {
+    /// Returns the contents of the file at the specified location.
+    ///
+    /// - Parameter url: The url of the file to read.
+    /// - Throws: If the provider failed to read the file.
+    func contents(of url: URL) throws -> Data
 }
 
 /// A type that provides in-memory data for files in a bundle.
-struct InMemoryDataProvider: DocumentationBundle.DataProvider {
+struct InMemoryDataProvider: DocumentationBundleDataProvider {
     private let files: [URL: Data]
     private let fileManager: FileManagerProtocol?
     

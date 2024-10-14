@@ -115,7 +115,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     private enum _Provider {
         case legacy(DocumentationContextDataProvider)
-        case new(DocumentationBundle.DataProvider)
+        case new(DocumentationBundleDataProvider)
     }
     private var dataProvider: _Provider
 
@@ -305,7 +305,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Throws: If an error is encountered while registering a documentation bundle.
     package init(
         bundle: DocumentationBundle,
-        dataProvider: DocumentationBundle.DataProvider,
+        dataProvider: DocumentationBundleDataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
         configuration: Configuration = .init()
     ) throws {
