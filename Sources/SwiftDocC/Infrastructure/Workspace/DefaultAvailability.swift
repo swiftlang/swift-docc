@@ -131,6 +131,9 @@ public struct DefaultAvailability: Codable, Equatable {
     
     /// Fallback availability information for platforms we either don't emit SGFs for
     /// or have the same availability information as another platform.
+    ///
+    /// The key corresponds to the fallback platform and the value to the platform it's
+    /// fallbacking from.
     package static let fallbackPlatforms: [PlatformName: PlatformName] = [
         .catalyst: .iOS,
         .iPadOS: .iOS,

@@ -554,8 +554,13 @@ extension Symbol {
             let trait = DocumentationDataVariantsTrait(for: selector)
             if let unifiedSymbolAvailability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
                 unifiedSymbolAvailability.availability.forEach { availabilityItem in
-                    guard let availabilityVariantTrait = availabilityVariants[trait] else { return }
-                    if (availabilityVariantTrait.availability.contains(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                    guard let availabilityVariantTrait = availabilityVariants[trait] else {
+                        return
+                    }
+                    if let unifiedAvailabilityItem = (availabilityVariantTrait.availability.firstIndex(where: { $0.domain?.rawValue == availabilityItem.domain?.rawValue })) {
+                        if availabilityVariants[trait]?.availability[unifiedAvailabilityItem].introducedVersion != availabilityItem.introducedVersion {
+                            availabilityVariants[trait]?.availability[unifiedAvailabilityItem].introducedVersion = availabilityItem.introducedVersion
+                        }
                         return
                     }
                     availabilityVariants[trait]?.availability.append(availabilityItem)
