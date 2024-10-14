@@ -211,7 +211,7 @@ public class DocumentationContentRenderer {
         guard let symbol = node.semantic as? Symbol,
               let currentPlatforms = documentationContext.configuration.externalMetadata.currentPlatforms,
               !currentPlatforms.isEmpty,
-              let symbolAvailability = symbol.availability?.availability
+              let symbolAvailability = symbol.availability?.availability,
               !symbolAvailability.isEmpty // A symbol without availability items can't be in beta.
         else { return false }
 
