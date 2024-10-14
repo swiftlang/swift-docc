@@ -547,21 +547,24 @@ class ConvertSubcommandTests: XCTestCase {
     func testTreatWarningAsError() throws {
         do {
             // Passing no argument should default to the current working directory.
-            let convert = try Docc.Convert.parse([])
+            let convert = try Docc.Convert.parse([
+                testBundleURL.path
+            ])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(convertAction.treatWarningsAsErrors, false)
         } catch {
-            XCTFail("Failed to run docc convert without arguments.")
+            XCTFail("Failed to run docc convert with minimal arguments.")
         }
         do {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([
+                testBundleURL.path,
                 "--warnings-as-errors"
             ])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(convertAction.treatWarningsAsErrors, true)
         } catch {
-            XCTFail("Failed to run docc convert without arguments.")
+            XCTFail("Failed to run docc convert with minimal arguments.")
         }
     }
     
