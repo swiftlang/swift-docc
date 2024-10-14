@@ -354,9 +354,4 @@ public struct AssetReference: Hashable, Codable {
         self.assetName = assetName
         self.bundleIdentifier = bundleIdentifier
     }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(assetName)
-        hasher.combine(bundleIdentifier)
-    }
 }
