@@ -317,7 +317,6 @@ class ConvertSubcommandTests: XCTestCase {
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         XCTAssertNil(action.rootURL)
-        XCTAssertNil(action.converter.rootURL)
         
         XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
             "FillIntroduced.symbols.json",
