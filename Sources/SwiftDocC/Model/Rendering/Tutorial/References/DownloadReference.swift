@@ -91,12 +91,6 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
             try container.encode(url, forKey: .url)
         }
     }
-
-    static public func ==(lhs: DownloadReference, rhs: DownloadReference) -> Bool {
-        lhs.identifier == rhs.identifier
-        && lhs.url == rhs.url
-        && lhs.checksum == rhs.checksum
-    }
 }
 
 extension DownloadReference {
