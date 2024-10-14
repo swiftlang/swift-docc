@@ -194,38 +194,21 @@ public struct ConvertService: DocumentationService {
             }
             
             // Accumulate the render nodes
-            let renderNodes = Synchronized<[RenderNode]>([])
-            
-            let conversionProblems: [Problem] = referencesToConvert.concurrentPerform { identifier, results in
+            let renderNodes: [RenderNode] = referencesToConvert.concurrentPerform { reference, results in
                 // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
                 autoreleasepool {
-                    do {
-                        let entity = try context.entity(with: identifier)
-                        
-                        guard let renderNode = try converter.renderNode(for: entity) else {
-                            // No render node was produced for this entity, so just skip it.
-                            return
-                        }
-                        
-                        renderNodes.sync { $0.append(renderNode) }
-                    } catch {
-                        results.append(
-                            Problem(
-                                diagnostic: Diagnostic(
-                                    severity: .error,
-                                    identifier: "org.swift.docc.documentation-converter.render-node",
-                                    summary: error.localizedDescription
-                                ),
-                                possibleSolutions: []
-                            )
-                        )
+                    guard let entity = try? context.entity(with: reference) else {
+                        assertionFailure("The context should always have an entity for each of its `knownPages`")
+                        return
                     }
+                    
+                    guard let renderNode = converter.renderNode(for: entity) else {
+                        assertionFailure("A non-virtual documentation node should always convert to a render node and the context's `knownPages` already filters out all virtual nodes.")
+                        return
+                    }
+                    
+                    results.append(renderNode)
                 }
-            }
-            
-            guard conversionProblems.isEmpty else {
-                throw ConvertServiceError.conversionError(
-                    underlyingError: DiagnosticConsoleWriter.formattedDescription(for: conversionProblems))
             }
             
             let referenceStore: RenderReferenceStore?
@@ -244,7 +227,7 @@ public struct ConvertService: DocumentationService {
                 referenceStore = nil
             }
             
-            return (renderNodes.sync { $0 }, referenceStore)
+            return (renderNodes, referenceStore)
         }.mapErrorToConvertServiceError {
             .conversionError(underlyingError: $0.localizedDescription)
         }
