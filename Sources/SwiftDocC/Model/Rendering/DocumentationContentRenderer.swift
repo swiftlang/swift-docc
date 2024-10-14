@@ -212,12 +212,8 @@ public class DocumentationContentRenderer {
               let currentPlatforms = documentationContext.configuration.externalMetadata.currentPlatforms,
               !currentPlatforms.isEmpty,
               let symbolAvailability = symbol.availability?.availability
+              !symbolAvailability.isEmpty // A symbol without availability items can't be in beta.
         else { return false }
-        
-        // If the symbol does not have any availability item it can't be `beta`.
-        guard !symbolAvailability.isEmpty else {
-            return false
-        }
 
         // Verify that if current platforms are in beta, they match the introduced version of the symbol
         for availability in symbolAvailability {
