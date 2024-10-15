@@ -2851,8 +2851,7 @@ class ConvertActionTests: XCTestCase {
         )
         let (_, context) = try await action.perform(logHandle: .none)
 
-        XCTAssertEqual(context.registeredBundles.count, 1)
-        let bundle = try XCTUnwrap(context.registeredBundles.first, "Should have registered the generated test bundle.")
+        let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "MyKit")
         XCTAssertEqual(bundle.identifier, "MyKit")
     }
@@ -2930,8 +2929,7 @@ class ConvertActionTests: XCTestCase {
         )
         let (_, context) = try await action.perform(logHandle: .none)
 
-        XCTAssertEqual(context.registeredBundles.count, 1)
-        let bundle = try XCTUnwrap(context.registeredBundles.first, "Should have registered the generated test bundle.")
+        let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "Something")
         XCTAssertEqual(bundle.identifier, "com.example.test")
     }
