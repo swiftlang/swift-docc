@@ -10,7 +10,8 @@
 
 import Foundation
 
-extension LocalFileSystemDataProvider {
+@available(*, deprecated, message: "Use 'DocumentationContext.InputProvider' instead. This deprecated API will be removed after 6.2 is released")
+extension LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider {
     public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         var bundles = try bundlesInTree(fileSystem, options: options)
 
