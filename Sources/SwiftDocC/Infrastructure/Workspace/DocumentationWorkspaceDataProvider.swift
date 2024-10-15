@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,6 +11,7 @@
 import Foundation
 
 /// A type that vends bundles and responds to requests for data.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationWorkspaceDataProvider {
     /// A string that uniquely identifies this data provider.
     ///
@@ -35,6 +36,7 @@ public protocol DocumentationWorkspaceDataProvider {
     func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle]
 }
 
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public extension DocumentationWorkspaceDataProvider {
     /// Returns the documentation bundles that your data provider provides; discovered with the default options.
     ///
