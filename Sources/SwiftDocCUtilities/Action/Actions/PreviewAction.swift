@@ -33,7 +33,7 @@ fileprivate func trapSignals() {
 }
 
 /// An action that monitors a documentation bundle for changes and runs a live web-preview.
-public final class PreviewAction: AsyncAction {
+public final class PreviewAction: Action, RecreatingContext {
     /// A test configuration allowing running multiple previews for concurrent testing.
     static var allowConcurrentPreviews = false
 
@@ -46,7 +46,8 @@ public final class PreviewAction: AsyncAction {
     let port: Int
     
     var convertAction: ConvertAction
-
+    
+    public var setupContext: ((inout DocumentationContext) -> Void)?
     private var previewPaths: [String] = []
     
     // Use for testing to override binding to a system port
@@ -95,7 +96,7 @@ public final class PreviewAction: AsyncAction {
     /// > Important: On macOS, the bundle will be converted each time the source is modified.
     ///
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
-    public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    public func perform(logHandle: LogHandle) throws -> ActionResult {
         self.logHandle = logHandle
 
         if let rootURL = convertAction.rootURL {
@@ -109,21 +110,19 @@ public final class PreviewAction: AsyncAction {
             print("Template: \(htmlTemplateDirectory.path)", to: &self.logHandle)
         }
         
-        let previewResult = try await preview()
+        let previewResult = try preview()
         return ActionResult(didEncounterError: previewResult.didEncounterError, outputs: [convertAction.targetDirectory])
     }
 
     /// Stops a currently running preview session.
     func stop() throws {
-        monitoredConvertTask?.cancel()
-        
         try servers[serverIdentifier]?.stop()
         servers.removeValue(forKey: serverIdentifier)
     }
     
-    func preview() async throws -> ActionResult {
+    func preview() throws -> ActionResult {
         // Convert the documentation source for previewing.
-        let result = try await convert()
+        let result = try convert()
         guard !result.didEncounterError else {
             return result
         }
@@ -164,10 +163,14 @@ public final class PreviewAction: AsyncAction {
         return previewResult
     }
     
-    func convert() async throws -> ActionResult {
-        convertAction = try createConvertAction()
-        let result = try await convertAction.perform(logHandle: &logHandle)
+    func convert() throws -> ActionResult {
+        // `cancel()` will throw `cancelPending` if there is already queued conversion.
+        try convertAction.cancel()
         
+        convertAction = try createConvertAction()
+        convertAction.setupContext = setupContext
+
+        let result = try convertAction.perform(logHandle: logHandle)
         previewPaths = try convertAction.context.previewPaths()
         return result
     }
@@ -182,8 +185,6 @@ public final class PreviewAction: AsyncAction {
             print("\t \(spacing) \(base.appendingPathComponent(previewPath).absoluteString)", to: &logHandle)
         }
     }
-    
-    var monitoredConvertTask: Task<Void, Never>?
 }
 
 // Monitoring a source folder: Asynchronous output reading and file system events are supported only on macOS.
@@ -197,48 +198,42 @@ extension PreviewAction {
         guard let rootURL = convertAction.rootURL else {
             return
         }
-
-        monitor = try DirectoryMonitor(root: rootURL) { _, _ in
-            print("Source bundle was modified, converting... ", terminator: "", to: &self.logHandle)
-            self.monitoredConvertTask?.cancel()
-            self.monitoredConvertTask = Task {
-                defer {
-                    // Reload the directory contents and start to monitor for changes.
-                    do {
-                        try monitor.restart()
-                    } catch {
-                        // The file watching system API has thrown, stop watching.
-                        print("Watching for changes has failed. To continue preview with watching restart docc.", to: &self.logHandle)
-                        print(error.localizedDescription, to: &self.logHandle)
-                    }
-                }
-                
+        monitor = try DirectoryMonitor(root: rootURL) { _, folderURL in
+            defer {
+                // Reload the directory contents and start to monitor for changes.
                 do {
-                    let result = try await self.convert()
-                    if result.didEncounterError {
-                        throw ErrorsEncountered()
-                    }
-                    print("Done.", to: &self.logHandle)
-                } catch ConvertAction.Error.cancelPending {
-                    // `monitor.restart()` is already queueing a new convert action which will start when the previous one completes.
-                    // We can safely ignore the current action and just log to the console.
-                    print("\nConversion already in progress...", to: &self.logHandle)
-                } catch DocumentationContext.ContextError.registrationDisabled {
-                    // The context cancelled loading the bundles and threw to yield execution early.
-                    print("\nConversion cancelled...", to: &self.logHandle)
-                } catch is CancellationError {
-                    print("\nConversion cancelled...", to: &self.logHandle)
+                    try monitor.restart()
                 } catch {
-                    print("\n\(error.localizedDescription)\nCompilation failed", to: &self.logHandle)
+                    // The file watching system API has thrown, stop watching.
+                    print("Watching for changes has failed. To continue preview with watching restart docc.", to: &self.logHandle)
+                    print(error.localizedDescription, to: &self.logHandle)
                 }
+            }
+            
+            do {
+                print("Source bundle was modified, converting... ", terminator: "", to: &self.logHandle)
+                let result = try self.convert()
+                if result.didEncounterError {
+                    throw ErrorsEncountered()
+                }
+                print("Done.", to: &self.logHandle)
+            } catch ConvertAction.Error.cancelPending {
+                // `monitor.restart()` is already queueing a new convert action which will start when the previous one completes.
+                // We can safely ignore the current action and just log to the console.
+                print("\nConversion already in progress...", to: &self.logHandle)
+            } catch DocumentationContext.ContextError.registrationDisabled {
+                // The context cancelled loading the bundles and threw to yield execution early.
+                print("\nConversion cancelled...", to: &self.logHandle)
+            } catch {
+                print("\n\(error.localizedDescription)\nCompilation failed", to: &self.logHandle)
             }
         }
         try monitor.start()
         print("Monitoring \(rootURL.path) for changes...", to: &self.logHandle)
     }
 }
-#endif // !os(Linux) && !os(Android)
-#endif // canImport(NIOHTTP1)
+#endif
+#endif
 
 extension DocumentationContext {
     

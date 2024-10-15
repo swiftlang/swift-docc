@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 
 /// An action that emits documentation extension files that reflect the auto-generated curation.
-struct EmitGeneratedCurationAction: AsyncAction {
+struct EmitGeneratedCurationAction: Action {
     let catalogURL: URL?
     let additionalSymbolGraphDirectory: URL?
     let outputURL: URL
@@ -41,7 +41,7 @@ struct EmitGeneratedCurationAction: AsyncAction {
         self.fileManager = fileManager
     }
     
-    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    mutating func perform(logHandle: LogHandle) throws -> ActionResult {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
 

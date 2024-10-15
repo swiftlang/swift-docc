@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-extension AsyncAction {
+extension Action {
     
     /// Creates a new unique directory, with an optional template, inside of specified container.
     /// - Parameters:

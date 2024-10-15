@@ -16,7 +16,7 @@ import SwiftDocCTestUtilities
 final class InitActionTests: XCTestCase {
     private let documentationTitle = "MyTestDocumentation"
     
-    func testInitActionCreatesArticleOnlyCatalog() async throws {
+    func testInitActionCreatesArticleOnlyCatalog() throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
         var action = try InitAction(
@@ -25,7 +25,7 @@ final class InitActionTests: XCTestCase {
             catalogTemplate: .articleOnly,
             fileManager: fileManager
         )
-        let result = try await action.perform(logHandle: .none)
+        let result = try action.perform(logHandle: .none)
         // Test the content of the output folder is the expected one.
         let outputCatalogContent = try fileManager.contentsOfDirectory(atPath: result.outputs.first!.path).sorted()
         XCTAssertEqual(outputCatalogContent, [
@@ -34,7 +34,7 @@ final class InitActionTests: XCTestCase {
         ].sorted())
     }
     
-    func testInitActionCreatesTutorialCatalog() async throws {
+    func testInitActionCreatesTutorialCatalog() throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
         var action = try InitAction(
@@ -45,7 +45,7 @@ final class InitActionTests: XCTestCase {
             catalogTemplate: .tutorial,
             fileManager: fileManager
         )
-        let result = try await action.perform(logHandle: .none)
+        let result = try action.perform(logHandle: .none)
         // Test the content of the output folder is the expected one.
         let outputCatalogContent = try fileManager.recursiveContentsOfDirectory(atPath: result.outputs.first!.path).sorted()
         XCTAssertEqual(outputCatalogContent, [
@@ -57,7 +57,7 @@ final class InitActionTests: XCTestCase {
         ].sorted())
     }
     
-    func testArticleOnlyCatalogContent() async throws {
+    func testArticleOnlyCatalogContent() throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
         var action = try InitAction(
@@ -66,7 +66,7 @@ final class InitActionTests: XCTestCase {
             catalogTemplate: .articleOnly,
             fileManager: fileManager
         )
-        let _ = try await action.perform(logHandle: .none)
+        let _ = try action.perform(logHandle: .none)
         // Test the content of the articleOnly root template is the expected one.
         let rootFile = try XCTUnwrap(fileManager.contents(atPath: "/output/\(documentationTitle).docc/\(documentationTitle).md"))
         XCTAssertEqual(String(data: rootFile, encoding: .utf8), """
@@ -86,7 +86,7 @@ final class InitActionTests: XCTestCase {
         """)
     }
     
-    func testTutorialCatalogContent() async throws {
+    func testTutorialCatalogContent() throws {
         let outputLocation = Folder(name: "output", content: [])
         let fileManager = try TestFileSystem(folders: [outputLocation])
         var action = try InitAction(
@@ -95,7 +95,7 @@ final class InitActionTests: XCTestCase {
             catalogTemplate: .tutorial,
             fileManager: fileManager
         )
-        let _ = try await action.perform(logHandle: .none)
+        let _ = try action.perform(logHandle: .none)
         // Test the content of the articleOnly root template is the expected one.
         let tableOfContentFile = try XCTUnwrap(fileManager.contents(atPath: "/output/\(documentationTitle).docc/table-of-contents.tutorial"))
         let page01File = try XCTUnwrap(fileManager.contents(atPath: "/output/\(documentationTitle).docc/Chapter01/page-01.tutorial"))
