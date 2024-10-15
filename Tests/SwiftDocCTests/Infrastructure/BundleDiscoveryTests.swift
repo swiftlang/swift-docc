@@ -20,6 +20,7 @@ class BundleDiscoveryTests: XCTestCase {
         .map { testBundleLocation.appendingPathComponent($0) }
         .filter { !$0.pathComponents.dropFirst(testBundleLocation.pathComponents.count).contains(where: { $0.hasPrefix(".") }) }
     
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testFirstBundle() throws {
         let url = try createTemporaryDirectory()
         // Create 3 minimal doc bundles
