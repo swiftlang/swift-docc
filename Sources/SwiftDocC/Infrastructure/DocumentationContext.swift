@@ -2553,14 +2553,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// A closure type getting the information about a reference in a context and returns any possible problems with it.
     public typealias ReferenceCheck = (DocumentationContext, ResolvedTopicReference) -> [Problem]
-
-    private var checks: [ReferenceCheck] = []
     
     /// Adds new checks to be run during the global topic analysis; after a bundle has been fully registered and its topic graph has been fully built.
     ///
     /// - Parameter newChecks: The new checks to add.
+    @available(*, deprecated, message: "Use 'TopicAnalysisConfiguration.additionalChecks' instead. This deprecated API will be removed after 6.2 is released")
     public func addGlobalChecks(_ newChecks: [ReferenceCheck]) {
-        checks.append(contentsOf: newChecks)
+        configuration.topicAnalysisConfiguration.additionalChecks.append(contentsOf: newChecks)
     }
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
@@ -2626,7 +2625,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func topicGraphGlobalAnalysis() {
         // Run any checks added to the context.
         let problems = knownIdentifiers.flatMap { reference in
-            return checks.flatMap { check in
+            return configuration.topicAnalysisConfiguration.additionalChecks.flatMap { check in
                 return check(self, reference)
             }
         }

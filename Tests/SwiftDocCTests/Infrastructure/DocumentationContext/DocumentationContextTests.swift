@@ -714,14 +714,13 @@ class DocumentationContextTests: XCTestCase {
     }
 
     func testGraphChecks() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        context.addGlobalChecks([{ (context, reference) -> [Problem] in
-            return [Problem(diagnostic: Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error"), possibleSolutions: [])]
-        }])
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        var configuration = DocumentationContext.Configuration()
+        configuration.topicAnalysisConfiguration.additionalChecks.append(
+            { (context, reference) -> [Problem] in
+                [Problem(diagnostic: Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error"), possibleSolutions: [])]
+            }
+        )
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
         
         /// Checks if the custom check added problems to the context.
         let testProblems = context.problems.filter({ (problem) -> Bool in
