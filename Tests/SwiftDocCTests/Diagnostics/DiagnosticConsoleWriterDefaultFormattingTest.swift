@@ -275,7 +275,9 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         
-        let bundle = try XCTUnwrap(fs.bundles().first)
+        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+        
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
         let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 36, source: source)
@@ -416,7 +418,9 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         
-        let bundle = try XCTUnwrap(fs.bundles().first)
+        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+        
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
         
