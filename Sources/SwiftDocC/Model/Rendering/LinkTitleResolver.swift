@@ -27,7 +27,7 @@ struct LinkTitleResolver {
     /// - Parameter page: The page for which to resolve the title.
     /// - Returns: The variants of the link title for this page, or `nil` if the page doesn't exist in the context.
     func title(for page: DocumentationNode) -> DocumentationDataVariants<String>? {
-        if let bundle = context.bundle(identifier: page.reference.bundleIdentifier),
+        if let bundle = context.bundle,
            let directive = page.markup.child(at: 0) as? BlockDirective {
             
             var problems = [Problem]()

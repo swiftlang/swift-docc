@@ -148,6 +148,7 @@ public class DocumentationContext {
         }
     }
 
+    /// The documentation bundle that is registered with the context.
     var bundle: DocumentationBundle?
 
     /// A collection of configuration for this context.
@@ -363,7 +364,20 @@ public class DocumentationContext {
     }
     
     /// The documentation bundles that are currently registered with the context.
+    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
     public var registeredBundles: some Collection<DocumentationBundle> {
+        _registeredBundles
+    }
+    
+    /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
+    @available(*, deprecated, message: "Use 'bundle' instead. This deprecated API will be removed after 6.2 is released")
+    public func bundle(identifier: String) -> DocumentationBundle? {
+        _bundle(identifier: identifier)
+    }
+    
+    // Remove these  when removing `registeredBundles` and `bundle(identifier:)`.
+    // These exist so that internal code that need to be compatible with legacy data providers can access the bundles without deprecation warnings.
+    var _registeredBundles: [DocumentationBundle] {
         switch dataProvider {
         case .legacy(let legacyDataProvider):
             Array(legacyDataProvider.bundles.values)
@@ -372,8 +386,7 @@ public class DocumentationContext {
         }
     }
     
-    /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
-    public func bundle(identifier: String) -> DocumentationBundle? {
+    func _bundle(identifier: String) -> DocumentationBundle? {
         switch dataProvider {
         case .legacy(let legacyDataProvider):
             return legacyDataProvider.bundles[identifier]
@@ -2680,7 +2693,7 @@ public class DocumentationContext {
      - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
-        guard let bundle = bundle(identifier: identifier.bundleIdentifier),
+        guard let bundle,
               let assetManager = assetManagers[identifier.bundleIdentifier],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
