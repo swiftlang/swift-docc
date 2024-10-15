@@ -34,4 +34,11 @@ extension XCTestCase {
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
         return (bundle, context)
     }
+    
+    func testCatalogURL(named name: String, file: StaticString = #file, line: UInt = #line) throws -> URL {
+        try XCTUnwrap(
+            Bundle.module.url(forResource: name, withExtension: "docc", subdirectory: "Test Bundles"),
+            file: file, line: line
+        )
+    }
 }
