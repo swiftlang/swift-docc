@@ -58,7 +58,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         
@@ -107,7 +106,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -168,7 +166,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -204,7 +201,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -237,7 +233,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -332,7 +327,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         
@@ -367,7 +361,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         
@@ -396,7 +389,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -439,7 +431,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         
@@ -509,7 +500,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -597,7 +587,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -656,7 +645,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: nil,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
@@ -737,7 +725,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: nil,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
@@ -817,7 +804,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
             let result = try await action.perform(logHandle: .none)
@@ -919,7 +905,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let (result, context) = try await action.perform(logHandle: .none)
@@ -1127,7 +1112,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
         let result = try await action.perform(logHandle: .none)
@@ -1248,7 +1232,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -1339,7 +1322,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -1502,7 +1484,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: true, // emit digest files
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
@@ -1528,7 +1509,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false, // don't emit digest files
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
@@ -1567,7 +1547,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: fileSystem,
                 fileManager: fileSystem,
                 temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
                 documentationCoverageOptions: coverageOptions
@@ -1619,7 +1598,6 @@ class ConvertActionTests: XCTestCase {
                 "platform1": PlatformVersion(.init(10, 11, 12), beta: false),
                 "platform2": PlatformVersion(.init(11, 12, 13), beta: false),
             ],
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -1651,7 +1629,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: currentPlatforms,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
@@ -1716,7 +1693,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: [:],
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -1746,7 +1722,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine)
@@ -1800,7 +1775,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: emitDigest,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
@@ -1881,7 +1855,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testFileSystem,
                 fileManager: testFileSystem,
                 temporaryDirectory: testFileSystem.uniqueTemporaryDirectory()
             )
@@ -2217,7 +2190,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
@@ -2254,7 +2226,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
@@ -2292,7 +2263,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error"
@@ -2327,7 +2297,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticLevel: "error",
@@ -2357,7 +2326,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 inheritDocs: flag
@@ -2375,7 +2343,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -2402,7 +2369,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: true,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -2425,7 +2391,6 @@ class ConvertActionTests: XCTestCase {
         let catalogURL = try catalog.write(inside: temporaryDirectory)
         
         let targetDirectory = temporaryDirectory.appendingPathComponent("target", isDirectory: true)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         
         var action = try ConvertAction(
             documentationBundleURL: catalogURL,
@@ -2435,7 +2400,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: dataProvider,
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory()
         )
@@ -2469,7 +2433,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
@@ -2564,7 +2527,6 @@ class ConvertActionTests: XCTestCase {
         )
         
         let targetDirectory = temporaryDirectory.appendingPathComponent("target.doccarchive", isDirectory: true)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         
         var action = try ConvertAction(
             documentationBundleURL: catalogURL,
@@ -2574,7 +2536,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: htmlTemplateDirectory,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: dataProvider,
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             transformForStaticHosting: true
@@ -2618,8 +2579,6 @@ class ConvertActionTests: XCTestCase {
         let bundleURL = try bundle.write(inside: tempURL)
         let templateURL = try template.write(inside: tempURL)
 
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-
         var action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
@@ -2628,7 +2587,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: dataProvider,
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
@@ -2699,8 +2657,6 @@ class ConvertActionTests: XCTestCase {
         let bundleURL = try bundle.write(inside: tempURL)
         let templateURL = try template.write(inside: tempURL)
 
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-
         var action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
@@ -2709,7 +2665,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: dataProvider,
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true,
@@ -2769,8 +2724,6 @@ class ConvertActionTests: XCTestCase {
         let bundleURL = try bundle.write(inside: tempURL)
         let templateURL = try template.write(inside: tempURL)
 
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-
         var action = try ConvertAction(
             documentationBundleURL: bundleURL,
             outOfProcessResolver: nil,
@@ -2779,7 +2732,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: dataProvider,
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
@@ -2820,7 +2772,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine
@@ -2842,7 +2793,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: engine
@@ -2861,7 +2811,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
                 diagnosticEngine: nil,
@@ -3010,7 +2959,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: URL(fileURLWithPath: "/tmp"),
                 diagnosticEngine: engine
@@ -3102,7 +3050,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
             diagnosticEngine: engine
@@ -3152,7 +3099,6 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
             emitDigest: false,
             currentPlatforms: nil,
-            dataProvider: fileSystem,
             fileManager: fileSystem,
             temporaryDirectory: fileSystem.uniqueTemporaryDirectory()
         )
