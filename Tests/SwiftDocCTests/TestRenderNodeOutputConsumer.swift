@@ -99,7 +99,7 @@ extension XCTestCase {
             emitDigest: false,
             documentationCoverageOptions: .noCoverage,
             currentPlatforms: nil,
-            workspace: context.dataProvider as! DocumentationWorkspace,
+            workspace: context._legacyDataProvider as! DocumentationWorkspace,
             context: context,
             dataProvider: try LocalFileSystemDataProvider(rootURL: bundleURL),
             bundleDiscoveryOptions: BundleDiscoveryOptions()

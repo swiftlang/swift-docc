@@ -312,9 +312,7 @@ class ConvertActionTests: XCTestCase {
 
     func testMoveOutputCreatesTargetFolderParent() throws {
         // Source folder to test moving
-        let source = Folder(name: "source", content: [
-            TextFile(name: "index.html", utf8Content: ""),
-        ])
+        let source = Folder(name: "source.docc", content: [])
 
         // The target location to test moving to
         let target = Folder(name: "target", content: [
@@ -347,9 +345,7 @@ class ConvertActionTests: XCTestCase {
     
     func testMoveOutputDoesNotCreateIntermediateTargetFolderParents() throws {
         // Source folder to test moving
-        let source = Folder(name: "source", content: [
-            TextFile(name: "index.html", utf8Content: ""),
-        ])
+        let source = Folder(name: "source.docc", content: [])
 
         // The target location to test moving to
         let target = Folder(name: "intermediate", content: [
@@ -915,7 +911,7 @@ class ConvertActionTests: XCTestCase {
             return try? JSONDecoder().decode(Result.self, from: data)
         }
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -926,10 +922,10 @@ class ConvertActionTests: XCTestCase {
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        let result = try await action.perform(logHandle: .none)
+        let (result, context) = try await action.perform(logHandle: .none)
 
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
-        let indexingRecords: [IndexingRecord] = action.context.knownPages.compactMap { reference in
+        let indexingRecords: [IndexingRecord] = context.knownPages.compactMap { reference in
             switch reference.path {
             case "/documentation/TestBed":
                 return IndexingRecord(
@@ -972,7 +968,7 @@ class ConvertActionTests: XCTestCase {
                 return nil
             }
         }
-        let linkableEntities = action.context.knownPages.flatMap { (reference: ResolvedTopicReference) -> [LinkDestinationSummary] in
+        let linkableEntities = context.knownPages.flatMap { (reference: ResolvedTopicReference) -> [LinkDestinationSummary] in
             switch reference.path {
             case "/documentation/TestBed":
                 return [
@@ -1053,7 +1049,7 @@ class ConvertActionTests: XCTestCase {
                 return []
             }
         }
-        let images: [ImageReference] = action.context.knownPages.flatMap {
+        let images: [ImageReference] = context.knownPages.flatMap {
             reference -> [ImageReference] in
             switch reference.path {
             case "/documentation/TestBundle/Article":
@@ -1335,7 +1331,7 @@ class ConvertActionTests: XCTestCase {
             return try? JSONDecoder().decode(Result.self, from: data)
         }
 
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: bundle.absoluteURL,
             outOfProcessResolver: nil,
             analyze: false,
@@ -1347,10 +1343,10 @@ class ConvertActionTests: XCTestCase {
             fileManager: testDataProvider,
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
-        let result = try await action.perform(logHandle: .none)
+        let (result, context) = try await action.perform(logHandle: .none)
         
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
-        let indexingRecords: [IndexingRecord] = action.context.knownPages.compactMap { reference in
+        let indexingRecords: [IndexingRecord] = context.knownPages.compactMap { reference in
             switch reference.path {
             case "/tutorials/TestBundle/Article":
                 return IndexingRecord(
@@ -1376,7 +1372,7 @@ class ConvertActionTests: XCTestCase {
                 return nil
             }
         }
-        let linkableEntities = action.context.knownPages.flatMap { (reference: ResolvedTopicReference) -> [LinkDestinationSummary] in
+        let linkableEntities = context.knownPages.flatMap { (reference: ResolvedTopicReference) -> [LinkDestinationSummary] in
             switch reference.path {
             case "/tutorials/TestBundle/Article":
                 return [
@@ -1431,7 +1427,7 @@ class ConvertActionTests: XCTestCase {
                 return []
             }
         }
-        let images: [ImageReference] = action.context.knownPages.flatMap {
+        let images: [ImageReference] = context.knownPages.flatMap {
             reference -> [ImageReference] in
             switch reference.path {
             case "/tutorials/TestBundle/Article":
@@ -1545,50 +1541,24 @@ class ConvertActionTests: XCTestCase {
         }
     }
 
-    /// An empty implementation of `ConvertOutputConsumer` that purposefully does nothing except
-    /// to pass the number of documentation coverage info structs received to the given handler
-    struct TestDocumentationCoverageConsumer: ConvertOutputConsumer {
-
-        let coverageConsumeHandler: (Int) -> Void
-
-        init(coverageConsumeHandler: @escaping (Int) -> Void) {
-            self.coverageConsumeHandler = coverageConsumeHandler
-        }
-
-        func consume(renderNode: RenderNode) throws { }
-        func consume(problems: [Problem]) throws { }
-        func consume(assetsInBundle bundle: DocumentationBundle) throws {}
-        func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
-        func consume(indexingRecords: [IndexingRecord]) throws {}
-        func consume(assets: [RenderReferenceType: [RenderReference]]) throws {}
-        func consume(benchmarks: Benchmark) throws {}
-
-        // Call the handler with the number of coverage items consumed here
-        func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {
-            coverageConsumeHandler(documentationCoverageInfo.count)
-        }
-    }
-
     func testMetadataIsOnlyWrittenToOutputFolderWhenDocumentationCoverage() async throws {
-
-        // An empty documentation bundle, except for a single symbol graph file
-        // containing 8 symbols.
+        // An empty documentation bundle, except for a single symbol graph file containing 8 symbols.
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
         ])
 
-        // Count the number of coverage info structs consumed by each test below,
-        // using TestDocumentationCoverageConsumer and this handler.
-        var coverageInfoCount = 0
-        let coverageInfoHandler = { count in coverageInfoCount += count }
-
-        // Check that they're nothing is written for `.noCoverage`
-        do {
-            let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-            let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-                .appendingPathComponent("target", isDirectory: true)
-
+        func assertCollectedCoverageCount(
+            expectedCoverageInfoCount: Int,
+            expectedCoverageFileExist: Bool,
+            coverageOptions: DocumentationCoverageOptions,
+            file: StaticString = #file,
+            line: UInt = #line
+        ) async throws {
+            let fileSystem = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+            let currentDirectory = URL(fileURLWithPath: fileSystem.currentDirectoryPath)
+            let targetDirectory = currentDirectory.appendingPathComponent("target", isDirectory: true)
+            
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
@@ -1597,74 +1567,30 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                dataProvider: testDataProvider,
-                fileManager: testDataProvider,
-                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-                documentationCoverageOptions: .noCoverage)
+                dataProvider: fileSystem,
+                fileManager: fileSystem,
+                temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
+                documentationCoverageOptions: coverageOptions
+            )
             let result = try await action.perform(logHandle: .none)
+            
+            let coverageFile = result.outputs[0].appendingPathComponent("documentation-coverage.json")
+            XCTAssertEqual(expectedCoverageFileExist, fileSystem.fileExists(atPath: coverageFile.path), file: file, line: line)
 
-            XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
-
-            // Rerun the convert and test no coverage info structs were consumed
-            _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
-            XCTAssertEqual(coverageInfoCount, 0)
+            if expectedCoverageFileExist {
+                let coverageInfo = try JSONDecoder().decode([CoverageDataEntry].self, from: fileSystem.contents(of: coverageFile))
+                XCTAssertEqual(coverageInfo.count, expectedCoverageInfoCount, file: file, line: line)
+            }
         }
+        
+        // Check that they're nothing is written for `.noCoverage`
+        try await assertCollectedCoverageCount(expectedCoverageInfoCount: 0, expectedCoverageFileExist: false, coverageOptions: .noCoverage)
 
         // Check that JSON is written for `.brief`
-        do {
-            let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-            let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-                .appendingPathComponent("target", isDirectory: true)
-
-            var action = try ConvertAction(
-                documentationBundleURL: bundle.absoluteURL,
-                outOfProcessResolver: nil,
-                analyze: false,
-                targetDirectory: targetDirectory,
-                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-                emitDigest: false,
-                currentPlatforms: nil,
-                dataProvider: testDataProvider,
-                fileManager: testDataProvider,
-                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-                documentationCoverageOptions: DocumentationCoverageOptions(level: .brief))
-            let result = try await action.perform(logHandle: .none)
-
-            XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
-
-            // Rerun the convert and test one coverage info structs was consumed for each symbol page (8)
-            coverageInfoCount = 0
-            _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
-            XCTAssertEqual(coverageInfoCount, 8)
-        }
-
+        try await assertCollectedCoverageCount(expectedCoverageInfoCount: 8, expectedCoverageFileExist: true, coverageOptions: .init(level: .brief))
+        
         // Check that JSON is written for `.detailed`
-        do {
-            let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-            let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-                .appendingPathComponent("target", isDirectory: true)
-
-            var action = try ConvertAction(
-                documentationBundleURL: bundle.absoluteURL,
-                outOfProcessResolver: nil,
-                analyze: false,
-                targetDirectory: targetDirectory,
-                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-                emitDigest: false,
-                currentPlatforms: nil,
-                dataProvider: testDataProvider,
-                fileManager: testDataProvider,
-                temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-                documentationCoverageOptions: DocumentationCoverageOptions(level: .detailed))
-            let result = try await action.perform(logHandle: .none)
-
-            XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("documentation-coverage.json").path))
-
-            // Rerun the convert and test one coverage info structs was consumed for each symbol page (8)
-            coverageInfoCount = 0
-            _ = try action.converter.convert(outputConsumer: TestDocumentationCoverageConsumer(coverageConsumeHandler: coverageInfoHandler))
-            XCTAssertEqual(coverageInfoCount, 8)
-        }
+        try await assertCollectedCoverageCount(expectedCoverageInfoCount: 8, expectedCoverageFileExist: true, coverageOptions: .init(level: .detailed))
     }
     
     /// Test context gets the current platforms provided by command line.
@@ -1698,16 +1624,26 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
         )
         
-        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "platform1" : PlatformVersion(.init(10, 11, 12), beta: false),
             "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
         ])
     }
     
     func testBetaInAvailabilityFallbackPlatforms() throws {
-        
-        func generateConvertAction(currentPlatforms: [String : PlatformVersion]) throws -> ConvertAction {
-            try ConvertAction(
+        func makeConvertAction(currentPlatforms: [String : PlatformVersion]) throws -> ConvertAction {
+            let bundle = Folder(name: "nested", content: [
+                Folder(name: "folders", content: [
+                    Folder(name: "unit-test.docc", content: [
+                        InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                    ]),
+                ])
+            ])
+            let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+            let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+                .appendingPathComponent("target", isDirectory: true)
+            
+            return try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
                 analyze: false,
@@ -1720,51 +1656,41 @@ class ConvertActionTests: XCTestCase {
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
         }
-        let bundle = Folder(name: "nested", content: [
-            Folder(name: "folders", content: [
-                Folder(name: "unit-test.docc", content: [
-                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-                ]),
-            ])
-        ])
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
-            .appendingPathComponent("target", isDirectory: true)
         
         // Test whether the missing platforms copy the availability information from the fallback platform.
-        var action = try generateConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
-        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
+        var action = try makeConvertAction(currentPlatforms: ["iOS": PlatformVersion(.init(10, 0, 0), beta: true)])
+        XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(10, 0, 0), beta: true),
             "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true),
         ])
         // Test whether the non-missing platforms don't copy the availability information from the fallback platform.
-        action = try generateConvertAction(currentPlatforms: [
+        action = try makeConvertAction(currentPlatforms: [
             "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst": PlatformVersion(.init(11, 0, 0), beta: false)
         ])
-        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: false),
             "iPadOS" : PlatformVersion(.init(10, 0, 0), beta: true)
         ])
-        action = try generateConvertAction(currentPlatforms: [
+        action = try makeConvertAction(currentPlatforms: [
             "iOS": PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
             "iPadOS": PlatformVersion(.init(12, 0, 0), beta: false),
             
         ])
-        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "iOS" : PlatformVersion(.init(10, 0, 0), beta: true),
             "Mac Catalyst" : PlatformVersion(.init(11, 0, 0), beta: true),
             "iPadOS" : PlatformVersion(.init(12, 0, 0), beta: false),
         ])
         // Test whether the non-missing platforms don't copy the availability information from the non-fallback platform.
-        action = try generateConvertAction(currentPlatforms: [
+        action = try makeConvertAction(currentPlatforms: [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
             
         ])
-        XCTAssertEqual(action.context.configuration.externalMetadata.currentPlatforms, [
+        XCTAssertEqual(action.configuration.externalMetadata.currentPlatforms, [
             "tvOS": PlatformVersion(.init(13, 0, 0), beta: true)
         ])
     }
@@ -1797,7 +1723,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try await action.perform(logHandle: .none)
         
-        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 13)
+        XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: #function), 8)
     }
 
     func testIgnoresAnalyzerHintsByDefault() async throws {
@@ -1885,7 +1811,9 @@ class ConvertActionTests: XCTestCase {
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
             )
             
-            action.converter.batchNodeCount = batchSize
+            // FIXME: This test has never used different batch sizes. (rdar://137885335)
+            // All the way since the initial commit, `DocumentationConverter.convert(outputConsumer:)` has called
+            // `Collection.concurrentPerform(batches:block:)` without passing a custom number of `batches`.
             
             return try await action.perform(logHandle: .none)
         }
@@ -2418,12 +2346,8 @@ class ConvertActionTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
     }
 
-    // Verifies setting convert inherit docs flag
     func testConvertInheritDocsOption() throws {
-        // Empty documentation bundle
-        let bundle = Folder(name: "unit-test.documentation", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-        ])
+        let bundle = Folder(name: "unit-test.docc", content: [])
         
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
@@ -2442,8 +2366,10 @@ class ConvertActionTests: XCTestCase {
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-                inheritDocs: flag)
-            XCTAssertEqual(action.context.configuration.externalMetadata.inheritDocs, flag)
+                inheritDocs: flag
+            )
+
+            XCTAssertEqual(action.configuration.externalMetadata.inheritDocs, flag)
         }
         
         // Verify implicit value
@@ -2457,8 +2383,9 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory())
-        XCTAssertEqual(action.context.configuration.externalMetadata.inheritDocs, false)
+            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
+        )
+        XCTAssertEqual(action.configuration.externalMetadata.inheritDocs, false)
     }
     
     func testEmitsDigest() async throws {
@@ -2507,7 +2434,7 @@ class ConvertActionTests: XCTestCase {
         let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         
         var action = try ConvertAction(
-            documentationBundleURL: catalog.absoluteURL,
+            documentationBundleURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: targetDirectory,
@@ -2518,7 +2445,6 @@ class ConvertActionTests: XCTestCase {
             fileManager: FileManager.default,
             temporaryDirectory: createTemporaryDirectory()
         )
-        
         
         try await action.performAndHandleResult(logHandle: .none)
         let indexDirectory = targetDirectory.appendingPathComponent("index", isDirectory: true)
@@ -2966,7 +2892,7 @@ class ConvertActionTests: XCTestCase {
         
         let testDataProvider = try TestFileSystem(folders: [Folder.emptyHTMLTemplateDirectory, symbolGraphFiles, outputLocation])
         
-        var action = try ConvertAction(
+        let action = try ConvertAction(
             documentationBundleURL: nil,
             outOfProcessResolver: nil,
             analyze: false,
@@ -2980,12 +2906,10 @@ class ConvertActionTests: XCTestCase {
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
         )
-        
-        XCTAssert(action.context.registeredBundles.isEmpty)
-        _ = try await action.perform(logHandle: .none)
+        let (_, context) = try await action.perform(logHandle: .none)
 
-        XCTAssertEqual(action.context.registeredBundles.count, 1)
-        let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
+        XCTAssertEqual(context.registeredBundles.count, 1)
+        let bundle = try XCTUnwrap(context.registeredBundles.first, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "MyKit")
         XCTAssertEqual(bundle.identifier, "MyKit")
     }
@@ -3006,55 +2930,49 @@ class ConvertActionTests: XCTestCase {
         
         let outputLocation = Folder(name: "output", content: [])
         
-        let testDataProvider = try TestFileSystem(
+        let fileSystem = try TestFileSystem(
             folders: [Folder.emptyHTMLTemplateDirectory, symbolGraphFiles, outputLocation]
         )
-        
-        var infoPlistFallbacks = [String: Any]()
-        infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
-        
-        var action = try ConvertAction(
-            documentationBundleURL: nil,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: outputLocation.absoluteURL,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-            temporaryDirectory: testDataProvider.uniqueTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
-                infoPlistFallbacks: infoPlistFallbacks,
-                additionalSymbolGraphFiles: [
-                    URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json"),
-                    URL(fileURLWithPath: "/Not-a-doc-bundle/SideKit.symbols.json")
-                ]
-            )
-        )
-        
         do {
+            var action = try ConvertAction(
+                documentationBundleURL: nil,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: outputLocation.absoluteURL,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                fileManager: fileSystem,
+                temporaryDirectory: fileSystem.uniqueTemporaryDirectory(),
+                bundleDiscoveryOptions: BundleDiscoveryOptions(
+                    infoPlistFallbacks: ["CFBundleIdentifier": "com.example.test"],
+                    additionalSymbolGraphFiles: [
+                        URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json"),
+                        URL(fileURLWithPath: "/Not-a-doc-bundle/SideKit.symbols.json")
+                    ]
+                )
+            )
             _ = try await action.perform(logHandle: .none)
             XCTFail("The action didn't raise an error")
         } catch {
             XCTAssertEqual(error.localizedDescription, """
-            The information provided as command line arguments is not enough to generate a documentation bundle:
-            
+            The information provided as command line arguments isn't enough to generate documentation.
+
             Missing value for 'CFBundleDisplayName'.
-            Use the '--fallback-display-name' argument or add 'CFBundleDisplayName' to the bundle Info.plist.
-            
+            Use the '--fallback-display-name' argument or add 'CFBundleDisplayName' to the catalog's Info.plist.
             """)
         }
     }
     
     func testConvertWithBundleDerivesDisplayNameFromBundle() async throws {
-        let emptyDoccCatalog = try createTemporaryDirectory(named: "Something.docc")
+        let emptyCatalog = try createTemporaryDirectory(named: "Something.docc")
         let outputLocation = try createTemporaryDirectory(named: "output")
 
         var infoPlistFallbacks = [String: Any]()
         infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
 
-        var action = try ConvertAction(
-            documentationBundleURL: emptyDoccCatalog,
+        let action = try ConvertAction(
+            documentationBundleURL: emptyCatalog,
             outOfProcessResolver: nil,
             analyze: false,
             targetDirectory: outputLocation.absoluteURL,
@@ -3067,11 +2985,10 @@ class ConvertActionTests: XCTestCase {
                 additionalSymbolGraphFiles: []
             )
         )
-        XCTAssert(action.context.registeredBundles.isEmpty)
-        _ = try await action.perform(logHandle: .none)
+        let (_, context) = try await action.perform(logHandle: .none)
 
-        XCTAssertEqual(action.context.registeredBundles.count, 1)
-        let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
+        XCTAssertEqual(context.registeredBundles.count, 1)
+        let bundle = try XCTUnwrap(context.registeredBundles.first, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "Something")
         XCTAssertEqual(bundle.identifier, "com.example.test")
     }
@@ -3368,5 +3285,13 @@ extension Folder {
             }
         }
         return Folder(name: url.lastPathComponent, content: content)
+    }
+}
+
+private extension ConvertAction {
+    @_disfavoredOverload
+    func perform(logHandle: LogHandle) async throws -> (ActionResult, DocumentationContext) {
+        var logHandle = logHandle
+        return try await perform(logHandle: &logHandle)
     }
 }

@@ -28,7 +28,7 @@ class DocumentationContextConverterTests: XCTestCase {
             let documentationNode = try XCTUnwrap(try context.entity(with: identifier))
             
             let renderNode1 = try perNodeConverter.convert(documentationNode)
-            let renderNode2 = try bulkNodeConverter.renderNode(for: documentationNode)
+            let renderNode2 = bulkNodeConverter.renderNode(for: documentationNode)
             
             // Compare the two nodes are identical
             let data1 = try encoder.encode(renderNode1)

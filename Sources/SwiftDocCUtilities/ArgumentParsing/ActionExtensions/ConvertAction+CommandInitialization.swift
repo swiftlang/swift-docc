@@ -44,15 +44,7 @@ extension ConvertAction {
         // into a dictionary. This will throw with a descriptive error upon failure.
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.platforms)
 
-        let additionalSymbolGraphFiles = symbolGraphFiles(in: convert.additionalSymbolGraphDirectory)
-        
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
-            fallbackDisplayName: convert.fallbackBundleDisplayName,
-            fallbackIdentifier: convert.fallbackBundleIdentifier,
-            fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
-            fallbackDefaultModuleKind: convert.fallbackDefaultModuleKind,
-            additionalSymbolGraphFiles: additionalSymbolGraphFiles
-        )
+        let bundleDiscoveryOptions = convert.bundleDiscoveryOptions
         
         // The `preview` and `convert` action defaulting to the current working directory is only supported
         // when running `docc preview` and `docc convert` without any of the fallback options.
@@ -90,6 +82,20 @@ extension ConvertAction {
             hostingBasePath: convert.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
             dependencies: convert.dependencies
+        )
+    }
+}
+
+package extension Docc.Convert {
+    var bundleDiscoveryOptions: BundleDiscoveryOptions {
+        let additionalSymbolGraphFiles = symbolGraphFiles(in: additionalSymbolGraphDirectory)
+        
+        return BundleDiscoveryOptions(
+            fallbackDisplayName: fallbackBundleDisplayName,
+            fallbackIdentifier: fallbackBundleIdentifier,
+            fallbackDefaultCodeListingLanguage: defaultCodeListingLanguage,
+            fallbackDefaultModuleKind: fallbackDefaultModuleKind,
+            additionalSymbolGraphFiles: additionalSymbolGraphFiles
         )
     }
 }

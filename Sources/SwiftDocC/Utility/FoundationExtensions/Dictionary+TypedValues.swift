@@ -62,27 +62,23 @@ enum TypedValueError: DescribedError {
         case let .wrongType(key, expected, actual):
             return "Type mismatch for key '\(key.singleQuoted)'. Expected '\(expected)', but found '\(actual)'."
         case .missingRequiredKeys(let keys):
-            var errorMessage = ""
-            
-            for key in keys {
-                errorMessage += """
-                \n
+            return keys.map { key in
+                var errorMessage = """
                 Missing value for \(key.rawValue.singleQuoted).
                 
                 """
                 
                 if let argumentName = key.argumentName {
-                    errorMessage += """
-                    Use the \(argumentName.singleQuoted) argument or add \(key.rawValue.singleQuoted) to the bundle Info.plist.
-                    """
+                    errorMessage.append("""
+                    Use the \(argumentName.singleQuoted) argument or add \(key.rawValue.singleQuoted) to the catalog's Info.plist.
+                    """)
                 } else {
-                    errorMessage += """
-                    Add \(key.rawValue.singleQuoted) to the bundle Info.plist.
-                    """
+                    errorMessage.append("""
+                    Add \(key.rawValue.singleQuoted) to the catalog's Info.plist.
+                    """)
                 }
-            }
-            
-            return errorMessage
+                return errorMessage
+            }.joined(separator: "\n\n")
         }
     }
 }

@@ -269,9 +269,8 @@ class ConvertSubcommandTests: XCTestCase {
                 "--additional-symbol-graph-dir",
                 testBundleURL.path,
             ])
-            
-            let action = try ConvertAction(fromConvertCommand: convertOptions)
-            XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+
+            XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
                 "FillIntroduced.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -318,9 +317,8 @@ class ConvertSubcommandTests: XCTestCase {
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         XCTAssertNil(action.rootURL)
-        XCTAssertNil(action.converter.rootURL)
         
-        XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+        XCTAssertEqual(convertOptions.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
             "FillIntroduced.symbols.json",
             "MyKit@SideKit.symbols.json",
             "mykit-iOS.symbols.json",
@@ -549,21 +547,24 @@ class ConvertSubcommandTests: XCTestCase {
     func testTreatWarningAsError() throws {
         do {
             // Passing no argument should default to the current working directory.
-            let convert = try Docc.Convert.parse([])
+            let convert = try Docc.Convert.parse([
+                testBundleURL.path
+            ])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(convertAction.treatWarningsAsErrors, false)
         } catch {
-            XCTFail("Failed to run docc convert without arguments.")
+            XCTFail("Failed to run docc convert with minimal arguments.")
         }
         do {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([
+                testBundleURL.path,
                 "--warnings-as-errors"
             ])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(convertAction.treatWarningsAsErrors, true)
         } catch {
-            XCTFail("Failed to run docc convert without arguments.")
+            XCTFail("Failed to run docc convert with minimal arguments.")
         }
     }
     

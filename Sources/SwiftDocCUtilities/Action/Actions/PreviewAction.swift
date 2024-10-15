@@ -37,8 +37,6 @@ public final class PreviewAction: AsyncAction {
     /// A test configuration allowing running multiple previews for concurrent testing.
     static var allowConcurrentPreviews = false
 
-    private let context: DocumentationContext
-    private let workspace: DocumentationWorkspace
     private let printHTMLTemplatePath: Bool
 
     var logHandle = LogHandle.standardOutput
@@ -73,8 +71,8 @@ public final class PreviewAction: AsyncAction {
     public init(
         port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
-        workspace: DocumentationWorkspace = DocumentationWorkspace(),
-        context: DocumentationContext? = nil,
+        workspace _: DocumentationWorkspace = DocumentationWorkspace(),
+        context _: DocumentationContext? = nil,
         printTemplatePath: Bool = true) throws
     {
         if !Self.allowConcurrentPreviews && !servers.isEmpty {
@@ -85,8 +83,6 @@ public final class PreviewAction: AsyncAction {
         self.port = port
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
-        self.workspace = workspace
-        self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: self.convertAction.diagnosticEngine)
         self.printHTMLTemplatePath = printTemplatePath
     }
     
@@ -166,9 +162,9 @@ public final class PreviewAction: AsyncAction {
     
     func convert() async throws -> ActionResult {
         convertAction = try createConvertAction()
-        let result = try await convertAction.perform(logHandle: &logHandle)
+        let (result, context) = try await convertAction.perform(logHandle: &logHandle)
         
-        previewPaths = try convertAction.context.previewPaths()
+        previewPaths = try context.previewPaths()
         return result
     }
     
@@ -219,10 +215,6 @@ extension PreviewAction {
                         throw ErrorsEncountered()
                     }
                     print("Done.", to: &self.logHandle)
-                } catch ConvertAction.Error.cancelPending {
-                    // `monitor.restart()` is already queueing a new convert action which will start when the previous one completes.
-                    // We can safely ignore the current action and just log to the console.
-                    print("\nConversion already in progress...", to: &self.logHandle)
                 } catch DocumentationContext.ContextError.registrationDisabled {
                     // The context cancelled loading the bundles and threw to yield execution early.
                     print("\nConversion cancelled...", to: &self.logHandle)

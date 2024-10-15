@@ -121,18 +121,15 @@ class DataAssetManagerTests: XCTestCase {
 
         // Create the manager
         let workspace = DocumentationWorkspace()
-        let bundle = try testBundleFromRootURL(named: "TestBundle")
-        let bundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let catalogURL = try testCatalogURL(named: "TestBundle")
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         var manager = DataAssetManager()
         
         // Register an image asset
-        let imageFileURL = bundleURL.appendingPathComponent("figure1.png")
-        try manager
-            .register(data: [imageFileURL], dataProvider: workspace, bundle: bundle)
+        let imageFileURL = catalogURL.appendingPathComponent("figure1.png")
+        try manager.register(data: [imageFileURL])
 
         // Check the asset is registered
         guard !manager.storage.values.isEmpty else {
