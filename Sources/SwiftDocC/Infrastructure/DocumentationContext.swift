@@ -111,7 +111,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
-    public var linkResolver = LinkResolver()
+    public var linkResolver: LinkResolver
     
     private enum _Provider {
         case legacy(DocumentationContextDataProvider)
@@ -287,6 +287,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         self.dataProvider = .legacy(dataProvider)
         self.diagnosticEngine = diagnosticEngine
         self._configuration = configuration
+        self.linkResolver = LinkResolver(dataProvider: FileManager.default)
         
         _legacyDataProvider.delegate = self
         
@@ -313,6 +314,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         self.dataProvider = .new(dataProvider)
         self.diagnosticEngine = diagnosticEngine
         self._configuration = configuration
+        self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
         ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
         try register(bundle)
