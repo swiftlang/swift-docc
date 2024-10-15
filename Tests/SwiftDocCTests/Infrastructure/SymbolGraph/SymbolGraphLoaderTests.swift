@@ -114,7 +114,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // This test calls ``SymbolGraph.relationships`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated) // `SymbolGraph.relationships` doesn't specify when it will be removed
     func testLoadingHighNumberOfModulesConcurrently() throws {
         let tempURL = try createTemporaryDirectory()
 
