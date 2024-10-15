@@ -202,7 +202,7 @@ class DefaultAvailabilityTests: XCTestCase {
         var configuration = DocumentationContext.Configuration()
         // Set a beta status for the docs (which would normally be set via command line argument)
         configuration.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
+        let (_, bundle, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)

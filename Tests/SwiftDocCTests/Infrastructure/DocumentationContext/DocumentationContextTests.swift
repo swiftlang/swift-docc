@@ -720,7 +720,7 @@ class DocumentationContextTests: XCTestCase {
                 [Problem(diagnostic: Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error"), possibleSolutions: [])]
             }
         )
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
+        let (_, _, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
         
         /// Checks if the custom check added problems to the context.
         let testProblems = context.problems.filter({ (problem) -> Bool in

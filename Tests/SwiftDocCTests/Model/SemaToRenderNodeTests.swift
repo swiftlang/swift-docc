@@ -1905,7 +1905,7 @@ Document
             var configuration = DocumentationContext.Configuration()
             configuration.externalMetadata.currentPlatforms = currentPlatforms
             
-            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configuration: configuration)
+            let (_, bundle, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
             
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             return (bundle, context, reference)
