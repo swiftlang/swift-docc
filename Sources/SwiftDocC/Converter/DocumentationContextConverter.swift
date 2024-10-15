@@ -84,7 +84,7 @@ public class DocumentationContextConverter {
     /// - Parameters:
     ///   - node: The documentation node to convert.
     /// - Returns: The render node representation of the documentation node.
-    public func renderNode(for node: DocumentationNode) throws -> RenderNode? {
+    public func renderNode(for node: DocumentationNode) -> RenderNode? {
         guard !node.isVirtual else {
             return nil
         }
@@ -104,6 +104,6 @@ public class DocumentationContextConverter {
     
     @available(*, deprecated, renamed: "renderNode(for:)", message: "Use 'renderNode(for:)' instead. This deprecated API will be removed after 6.1 is released")
     public func renderNode(for node: DocumentationNode, at source: URL?) throws -> RenderNode? {
-        return try self.renderNode(for: node)
+        self.renderNode(for: node)
     }
 }

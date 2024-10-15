@@ -275,13 +275,15 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         
-        let bundle = try XCTUnwrap(fs.bundles().first)
+        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+        
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
         let range = SourceLocation(line: 3, column: 18, source: source)..<SourceLocation(line: 3, column: 36, source: source)
 
         let logStorage = LogHandle.LogStorage()
-        let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
+        let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, dataProvider: fs)
 
         let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
         consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])
@@ -416,7 +418,9 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let summary = "Test diagnostic summary"
         let explanation = "Test diagnostic explanation."
         
-        let bundle = try XCTUnwrap(fs.bundles().first)
+        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
+        
         let baseURL = bundle.baseURL
         let source = try XCTUnwrap(bundle.markupURLs.first)
         
@@ -425,7 +429,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             let range = SourceLocation(line: start.line, column: start.column, source: source)..<SourceLocation(line: end.line, column: end.column, source: source)
             
             let logStorage = LogHandle.LogStorage()
-            let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, fileManager: fs)
+            let consumer = DiagnosticConsoleWriter(LogHandle.memory(logStorage), baseURL: baseURL, highlight: true, dataProvider: fs)
             
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.test-identifier", summary: summary, explanation: explanation)
             consumer.receive([Problem(diagnostic: diagnostic, possibleSolutions: [])])

@@ -60,7 +60,7 @@ struct DataAssetManager {
         try! NSRegularExpression(pattern: "(?!^)(?<=@)[1|2|3]x(?=\\.\\w*$)")
     }()
     
-    private mutating func referenceMetaInformationForDataURL(_ dataURL: URL, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws -> (reference: String, traits: DataTraitCollection, metadata: DataAsset.Metadata) {
+    private mutating func referenceMetaInformationForDataURL(_ dataURL: URL) throws -> (reference: String, traits: DataTraitCollection, metadata: DataAsset.Metadata) {
         var dataReference = dataURL.path
         var traitCollection = DataTraitCollection()
         
@@ -106,9 +106,9 @@ struct DataAssetManager {
     /// Registers a collection of data and determines their trait collection.
     ///
     /// Data objects which have a file name ending with '~dark' are associated to their light variant.
-    mutating func register(data datas: some Collection<URL>, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws {
+    mutating func register(data datas: some Collection<URL>) throws {
         for dataURL in datas {
-            let meta = try referenceMetaInformationForDataURL(dataURL, dataProvider: dataProvider, bundle: documentationBundle)
+            let meta = try referenceMetaInformationForDataURL(dataURL)
 
             let referenceURL = URL(fileURLWithPath: meta.reference, isDirectory: false)
             
@@ -129,7 +129,7 @@ struct DataAssetManager {
     }
     
     /// Replaces an existing asset with a new one.
-    mutating func update(name: String, asset: DataAsset, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) {
+    mutating func update(name: String, asset: DataAsset) {
         bestKey(forAssetName: name).flatMap({ storage[$0] = asset })
     }
 }
