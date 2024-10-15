@@ -57,14 +57,12 @@ extension XCTestCase {
         otherFileSystemDirectories: [Folder] = [],
         configuration: DocumentationContext.Configuration = .init()
     ) throws -> (DocumentationBundle, DocumentationContext) {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
-        
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
-        context.linkResolver.dataProvider = fileSystem
         
-        try workspace.registerProvider(fileSystem)
-        let bundle = try XCTUnwrap(context.registeredBundles.first)
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/\(catalog.name)"), options: .init())
+
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, configuration: configuration)
         return (bundle, context)
     }
     
