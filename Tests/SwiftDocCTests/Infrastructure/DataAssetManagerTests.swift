@@ -119,15 +119,10 @@ class DataAssetManagerTests: XCTestCase {
             forResource: "image", withExtension: "png", subdirectory: "Test Resources")!
         XCTAssertTrue(FileManager.default.fileExists(atPath: imageFile.path))
 
-        // Create the manager
-        let workspace = DocumentationWorkspace()
-        let catalogURL = try testCatalogURL(named: "TestBundle")
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
-        try workspace.registerProvider(dataProvider)
-        
         var manager = DataAssetManager()
         
         // Register an image asset
+        let catalogURL = try testCatalogURL(named: "TestBundle")
         let imageFileURL = catalogURL.appendingPathComponent("figure1.png")
         try manager.register(data: [imageFileURL])
 

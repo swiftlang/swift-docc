@@ -36,6 +36,8 @@ extension CollectionDifference {
 }
 
 class DocumentationContextTests: XCTestCase {
+    // This test checks unregistration of workspace data providers which is deprecated
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testResolve() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
@@ -599,6 +601,8 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(downloadsAfter.first?.variants.values.first?.lastPathComponent, "intro.png")
     }
 
+    // This test registration more than once data provider which is deprecated.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testCreatesCorrectIdentifiers() throws {
         let testBundleLocation = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!

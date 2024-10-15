@@ -1788,7 +1788,6 @@ class SymbolGraphLoaderTests: XCTestCase {
         symbolGraphURLs: [URL],
         configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
     ) throws -> SymbolGraphLoader {
-        let workspace = DocumentationWorkspace()
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
@@ -1799,11 +1798,12 @@ class SymbolGraphLoaderTests: XCTestCase {
             markupURLs: [],
             miscResourceURLs: []
         )
-        try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
         
         return SymbolGraphLoader(
             bundle: bundle,
-            dataProvider: workspace,
+            dataLoader: { url, _ in
+                try FileManager.default.contents(of: url)
+            },
             symbolGraphTransformer: configureSymbolGraph
         )
     }

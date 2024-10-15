@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocumentationWorkspaceTests: XCTestCase {
     func testEmptyWorkspace() {
         let workspace = DocumentationWorkspace()
