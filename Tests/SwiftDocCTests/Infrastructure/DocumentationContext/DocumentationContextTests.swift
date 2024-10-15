@@ -2592,20 +2592,19 @@ let expected = """
         }
     }
     
-    private func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
-        let node = try context.entity(with: reference)
-
-        let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
-        let renderNode = translator.visitSymbol(symbol) as! RenderNode
-
-        return (node, renderNode)
-    }
-    
     func testNavigatorTitle() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+            let node = try context.entity(with: reference)
+
+            let symbol = node.semantic as! Symbol
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            let renderNode = translator.visitSymbol(symbol) as! RenderNode
+
+            return (node, renderNode)
+        }
+        
         do {
             let (node, renderNode) = try renderNodeForPath(path: "/documentation/MyKit/MyClass")
 
