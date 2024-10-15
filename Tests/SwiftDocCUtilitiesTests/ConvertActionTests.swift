@@ -1762,7 +1762,7 @@ class ConvertActionTests: XCTestCase {
             }
         }
         
-        func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: DocumentationWorkspaceDataProvider & FileManagerProtocol) async throws -> ActionResult {
+        func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: FileManagerProtocol) async throws -> ActionResult {
             // Run the create ConvertAction
             var configuration = DocumentationContext.Configuration()
             configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
