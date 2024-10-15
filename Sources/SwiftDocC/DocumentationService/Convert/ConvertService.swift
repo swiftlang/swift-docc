@@ -138,7 +138,7 @@ public struct ConvertService: DocumentationService {
             }
             
             let bundle: DocumentationBundle
-            let dataProvider: DocumentationBundleDataProvider
+            let dataProvider: DataProvider
             
             let inputProvider = DocumentationContext.InputsProvider()
             if let bundleLocation = request.bundleLocation,

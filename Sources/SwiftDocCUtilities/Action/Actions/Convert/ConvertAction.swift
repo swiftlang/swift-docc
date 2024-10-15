@@ -185,7 +185,7 @@ public struct ConvertAction: AsyncAction {
     
     let configuration: DocumentationContext.Configuration
     private let bundle: DocumentationBundle
-    private let dataProvider: DocumentationBundleDataProvider
+    private let dataProvider: DataProvider
     
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
