@@ -23,25 +23,18 @@ extension XCTestCase {
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
-        configuration: DocumentationContext.Configuration = .init(),
-        configureContext: ((DocumentationContext) throws -> Void)? = nil
+        configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
-        let workspace = DocumentationWorkspace()
-        
         var configuration = configuration
         configuration.externalDocumentationConfiguration.sources = externalResolvers
         configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
         configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
         configuration.externalMetadata.diagnosticLevel = diagnosticEngine.filterLevel
         
-        let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: diagnosticEngine, configuration: configuration)
-        try configureContext?(context)
-        // Load the bundle using automatic discovery
-        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
-        // Mutate the bundle to include the code listings, then apply to the workspace using a manual provider.
-        let bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider()
+            .inputsAndDataProvider(startingPoint: catalogURL, options: .init())
+
+        let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         return (catalogURL, bundle, context)
     }
     
