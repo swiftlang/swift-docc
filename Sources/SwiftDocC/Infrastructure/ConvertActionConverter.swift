@@ -29,7 +29,7 @@ package enum ConvertActionConverter {
         sourceRepository: SourceRepository?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions
-    ) async throws -> [Problem] {
+    ) throws -> [Problem] {
         defer {
             context.diagnosticEngine.flush()
         }

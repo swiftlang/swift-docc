@@ -295,7 +295,7 @@ public struct ConvertAction: AsyncAction {
         let analysisProblems: [Problem]
         let conversionProblems: [Problem]
         do {
-            conversionProblems = try await ConvertActionConverter.convert(
+            conversionProblems = try ConvertActionConverter.convert(
                 bundle: bundle,
                 context: context,
                 outputConsumer: outputConsumer,
