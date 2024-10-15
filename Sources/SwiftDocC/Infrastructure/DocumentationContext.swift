@@ -120,7 +120,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private var dataProvider: _Provider
 
     /// The provider of documentation bundles for this context.
-    var _legacyDataProvider: DocumentationContextDataProvider! {
+    private var _legacyDataProvider: DocumentationContextDataProvider! {
         get {
             switch dataProvider {
             case .legacy(let legacyDataProvider):
