@@ -22,7 +22,7 @@ SwiftDocC provides the APIs you use to load a bundle, parse the symbol-graph met
 
 ### Content Discovery
 
-- <doc:DocumentationWorkspaceGroup>
+- <doc:InputDiscovery>
 - <doc:DocumentationContextGroup>
 
 ### Resolving documentation links
