@@ -19,24 +19,25 @@ struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
-    private var dataProvider: DocumentationContextDataProvider
+    private var dataLoader: (URL, DocumentationBundle) throws -> Data
     private var bundle: DocumentationBundle
     private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     
-    /// Creates a new loader, initialized with the given bundle.
+    /// Creates a new symbol graph loader
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
-    ///   - dataProvider: A data provider in the bundle's context.
+    ///   - dataLoader: A closure that the loader uses to read symbol graph data.
+    ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
     init(
         bundle: DocumentationBundle,
-        dataProvider: DocumentationContextDataProvider,
+        dataLoader: @escaping (URL, DocumentationBundle) throws -> Data,
         symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
     ) {
         self.bundle = bundle
-        self.dataProvider = dataProvider
+        self.dataLoader = dataLoader
         self.symbolGraphTransformer = symbolGraphTransformer
     }
-    
+
     /// A strategy to decode symbol graphs.
     enum DecodingConcurrencyStrategy {
         /// Decode all symbol graph files on separate threads concurrently.
@@ -56,17 +57,15 @@ struct SymbolGraphLoader {
 
         var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
         var loadError: Error?
-        let bundle = self.bundle
-        let dataProvider = self.dataProvider
-        
-        let loadGraphAtURL: (URL) -> Void = { symbolGraphURL in
+
+        let loadGraphAtURL: (URL) -> Void = { [dataLoader, bundle] symbolGraphURL in
             // Bail out in case a symbol graph has already errored
             guard loadError == nil else { return }
             
             do {
                 // Load and decode a single symbol graph file
-                let data = try dataProvider.contentsOfURL(symbolGraphURL, in: bundle)
-                
+                let data = try dataLoader(symbolGraphURL, bundle)
+
                 var symbolGraph: SymbolGraph
                 
                 switch decodingStrategy {

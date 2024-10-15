@@ -38,7 +38,7 @@ extension DocumentationContext.InputsProvider {
     private typealias FileTypes = DocumentationBundleFileTypes
 
     /// A discovered documentation catalog.
-    package struct CatalogURL {
+    struct CatalogURL {
         let url: URL
     }
 
@@ -60,7 +60,7 @@ extension DocumentationContext.InputsProvider {
     ///   - allowArbitraryCatalogDirectories: Whether to treat the starting point as a documentation catalog if the provider doesn't find an actual catalog on the file system.
     /// - Returns: The found documentation catalog.
     /// - Throws: If the directory hierarchy contains more than one documentation catalog.
-    package func findCatalog(
+    func findCatalog(
         startingPoint: URL,
         allowArbitraryCatalogDirectories: Bool = false
     ) throws -> CatalogURL? {
@@ -91,7 +91,7 @@ extension DocumentationContext.InputsProvider {
     }
 }
 
-// MARK: Inputs creation
+// MARK: Create from catalog
 
 extension DocumentationContext {
     package typealias Inputs = DocumentationBundle
@@ -107,7 +107,7 @@ extension DocumentationContext.InputsProvider {
     ///   - catalogURL: The location of a discovered documentation catalog.
     ///   - options: Options to configure how the provider creates the documentation inputs.
     /// - Returns: Inputs that categorize the files of the given catalog.
-    package func makeInputs(contentOf catalogURL: CatalogURL, options: Options) throws -> DocumentationContext.Inputs {
+    func makeInputs(contentOf catalogURL: CatalogURL, options: Options) throws -> DocumentationContext.Inputs {
         let url = catalogURL.url
         let shallowContent = try fileManager.contentsOfDirectory(at: url, options: [.skipsHiddenFiles]).files
         let infoPlistData = try shallowContent
@@ -168,7 +168,7 @@ extension DocumentationContext.InputsProvider {
     ///
     /// - Parameter options: Options to configure how the provider creates the documentation inputs.
     /// - Returns: Inputs that categorize the files of the given catalog.
-    package func makeInputsFromSymbolGraphs(options: Options) throws -> DocumentationContext.Inputs? {
+    func makeInputsFromSymbolGraphs(options: Options) throws -> InputsAndDataProvider? {
         guard !options.additionalSymbolGraphFiles.isEmpty else {
             return nil
         }
@@ -183,32 +183,36 @@ extension DocumentationContext.InputsProvider {
         let derivedDisplayName = moduleNames.count == 1 ? moduleNames.first : nil
 
         let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
-
-        var topLevelPages: [URL] = []
-        if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName {
-            let tempURL = fileManager.uniqueTemporaryDirectory()
-            try? fileManager.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-
-            let url = tempURL.appendingPathComponent("\(moduleName).md")
-            topLevelPages.append(url)
-            try fileManager.createFile(
-                at: url,
-                contents: Data("""
+        
+        let topLevelPages: [URL]
+        let provider: DataProvider
+        if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName, let url = URL(string: "in-memory-data://\(moduleName).md") {
+            let synthesizedExtensionFileData = Data("""
                 # ``\(moduleName)``
                 
                 @Metadata {
                   @DisplayName("\(info.displayName)")
                 }
-                """.utf8),
-                options: .atomic
+                """.utf8)
+            
+            topLevelPages = [url]
+            provider = InMemoryDataProvider(
+                files: [url: synthesizedExtensionFileData],
+                fallback: fileManager
             )
+        } else {
+            topLevelPages = []
+            provider = fileManager
         }
 
-        return DocumentationBundle(
-            info: info,
-            symbolGraphURLs: options.additionalSymbolGraphFiles,
-            markupURLs: topLevelPages,
-            miscResourceURLs: []
+        return (
+            inputs: DocumentationBundle(
+                info: info,
+                symbolGraphURLs: options.additionalSymbolGraphFiles,
+                markupURLs: topLevelPages,
+                miscResourceURLs: []
+            ),
+            dataProvider: provider
         )
     }
 }
@@ -230,25 +234,91 @@ private struct SymbolGraphModuleContainer: Decodable {
 // MARK: Discover and create
 
 extension DocumentationContext.InputsProvider {
+    /// A pair of documentation inputs and a corresponding data provider for those input files.
+    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: DataProvider)
+    
     /// Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.
     ///
     /// If the provider can't find a catalog, it will try to create documentation inputs from the option's symbol graph files.
+    ///
+    /// If the provider can't create documentation inputs it will raise an error with high level suggestions on how the caller can provide the missing information.
     ///
     /// - Parameters:
     ///   - startingPoint: The top of the directory hierarchy that the provider traverses to find a documentation catalog.
     ///   - allowArbitraryCatalogDirectories: Whether to treat the starting point as a documentation catalog if the provider doesn't find an actual catalog on the file system.
     ///   - options: Options to configure how the provider creates the documentation inputs.
-    /// - Returns: The documentation inputs for the found documentation catalog, or `nil` if the directory hierarchy doesn't contain a catalog.
-    /// - Throws: If the directory hierarchy contains more than one documentation catalog.
-    package func inputs(
-        startingPoint: URL,
+    /// - Returns: A pair of documentation inputs and a corresponding data provider for those input files.
+    package func inputsAndDataProvider(
+        startingPoint: URL?,
         allowArbitraryCatalogDirectories: Bool = false,
         options: Options
-    ) throws -> DocumentationContext.Inputs? {
-        if let catalogURL = try findCatalog(startingPoint: startingPoint, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories) {
-            try makeInputs(contentOf: catalogURL, options: options)
-        } else {
-            try makeInputsFromSymbolGraphs(options: options)
+    ) throws -> InputsAndDataProvider {
+        if let startingPoint, let catalogURL = try findCatalog(startingPoint: startingPoint, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories) {
+            return (inputs: try makeInputs(contentOf: catalogURL, options: options), dataProvider: fileManager)
+        }
+        
+        do {
+            if let generated = try makeInputsFromSymbolGraphs(options: options) {
+                return generated
+            }
+        } catch {
+            throw InputsFromSymbolGraphError(underlyingError: error)
+        }
+        
+        throw NotEnoughInformationError(startingPoint: startingPoint, additionalSymbolGraphFiles: options.additionalSymbolGraphFiles, allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories)
+    }
+    
+    private static let insufficientInputsErrorMessageBase = "The information provided as command line arguments isn't enough to generate documentation.\n"
+    
+    struct InputsFromSymbolGraphError: DescribedError {
+        var underlyingError: Error
+        
+        var errorDescription: String {
+            "\(DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase)\n\(underlyingError.localizedDescription)"
+        }
+    }
+    
+    struct NotEnoughInformationError: DescribedError {
+        var startingPoint: URL?
+        var additionalSymbolGraphFiles: [URL]
+        var allowArbitraryCatalogDirectories: Bool
+        
+        var errorDescription: String {
+            var message = DocumentationContext.InputsProvider.insufficientInputsErrorMessageBase
+            if let startingPoint {
+                message.append("""
+                
+                The `<catalog-path>` positional argument \(startingPoint.path.singleQuoted) isn't a documentation catalog (`.docc` directory) \
+                and its directory sub-hierarchy doesn't contain a documentation catalog (`.docc` directory).
+                
+                """)
+                if !allowArbitraryCatalogDirectories {
+                    message.append("""
+                    
+                    To build documentation for the files in \(startingPoint.path.singleQuoted), \
+                    either give it a `.docc` file extension to make it a documentation catalog \
+                    or pass the `--allow-arbitrary-catalog-directories` flag to treat it as a documentation catalog, \
+                    regardless of file extension.
+                    
+                    """)
+                }
+            }
+            if additionalSymbolGraphFiles.isEmpty {
+                if CommandLine.arguments.contains("--additional-symbol-graph-dir") {
+                    message.append("""
+
+                    The provided `--additional-symbol-graph-dir` directory doesn't contain any symbol graph files (with a `.symbols.json` file extension).
+                    """)
+                } else {
+                    message.append("""
+                    
+                    To build documentation using only in-source documentation comments, \
+                    pass a directory of symbol graph files (with a `.symbols.json` file extension) for the `--additional-symbol-graph-dir` argument.
+                    """)
+                }
+            }
+            
+            return message
         }
     }
 }
