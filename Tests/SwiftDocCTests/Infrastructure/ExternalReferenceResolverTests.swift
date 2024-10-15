@@ -155,7 +155,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     // This test verifies the behavior of a deprecated functionality (changing external documentation sources after registering the documentation)
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
         let workspace = DocumentationWorkspace()
         let bundle = try testBundle(named: "TestBundle")
