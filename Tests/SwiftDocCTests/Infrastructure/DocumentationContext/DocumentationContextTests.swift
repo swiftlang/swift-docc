@@ -414,8 +414,7 @@ class DocumentationContextTests: XCTestCase {
     }
         
     func testThrowsErrorForMissingResource() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
+        let (_, context) = try testBundleAndContext()
         XCTAssertThrowsError(try context.resource(with: ResourceReference(bundleIdentifier: "com.example.missing", path: "/missing.swift")), "Expected requesting an unknown file to result in an error.")
     }
 
@@ -495,15 +494,9 @@ class DocumentationContextTests: XCTestCase {
             ]),
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
-        let tempURL = try createTemporaryDirectory()
-        
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
         // Parse this test content
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: exampleDocumentation)
         
         // Verify all the reference identifiers for this content
         XCTAssertEqual(context.knownIdentifiers.count, 3)
@@ -518,11 +511,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testRegisteredImages() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let imagesRegistered = context
             .registeredImageAssets(forBundleID: bundle.identifier)
@@ -549,9 +538,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testExternalAssets() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let image = context.resolveAsset(named: "https://example.com/figure.png", in: bundle.rootReference)
         XCTAssertNotNil(image)
@@ -569,11 +556,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testDownloadAssets() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
         let downloadsBefore = context.registeredDownloadsAssets(forBundleID: bundle.identifier)
         XCTAssertEqual(downloadsBefore.count, 1)
@@ -654,7 +637,7 @@ class DocumentationContextTests: XCTestCase {
 
     }
     
-    func testDetectsMultipleMDfilesWithSameName() throws {
+    func testDetectsMultipleMarkdownFilesWithSameName() throws {
         let (_, context) = try testBundleAndContext(named: "TestBundleWithDupMD")
 
         let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
@@ -763,7 +746,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testIgnoresUnknownMarkupFiles() throws {
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 TextFile(name: "Article1.tutorial", utf8Content: "@Article"),
@@ -771,20 +754,14 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
         
         XCTAssertEqual(context.knownPages.map { $0.path }, ["/tutorials/TestIgnoresUnknownMarkupFiles/Article1"])
         XCTAssertTrue(context.problems.map { $0.diagnostic.identifier }.contains("org.swift.docc.Article.Title.NotFound"))
     }
     
     func testLoadsSymbolData() throws {
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 CopyOfFile(original: Bundle.module.url(
@@ -799,13 +776,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
         
         // Symbols are loaded
         XCTAssertFalse(context.documentationCache.isEmpty)
@@ -1039,7 +1010,7 @@ class DocumentationContextTests: XCTestCase {
             .replacingOccurrences(of: "\"name\" : \"ios\"", with: "\"name\" : \"tvos\"")
             .replacingOccurrences(of: "\"spelling\" : \"MyClass\"", with: "\"spelling\" : \"MyClassTV\"")
         
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Symbols", content: [
                 TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
@@ -1048,13 +1019,7 @@ class DocumentationContextTests: XCTestCase {
             ]),
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
         
         // MyClass is loaded
         guard let myClass = context.documentationCache["s:5MyKit0A5ClassC"],
@@ -1086,9 +1051,9 @@ class DocumentationContextTests: XCTestCase {
         
         // Add a modified PlatformSpecificFunctionSymbolPreciseIdentifier symbol
         var myPlatformSpecificFunctionSymbol = myFunctionSymbol
-        let myplatformSpecificFunctionName = "myPlatformSpecificFunction"
-        myPlatformSpecificFunctionSymbol.names.title = myplatformSpecificFunctionName
-        myPlatformSpecificFunctionSymbol.identifier.precise = "s:5MyKit0A\(myplatformSpecificFunctionName.count)\(myplatformSpecificFunctionName)C"
+        let myPlatformSpecificFunctionName = "myPlatformSpecificFunction"
+        myPlatformSpecificFunctionSymbol.names.title = myPlatformSpecificFunctionName
+        myPlatformSpecificFunctionSymbol.identifier.precise = "s:5MyKit0A\(myPlatformSpecificFunctionName.count)\(myPlatformSpecificFunctionName)C"
         
         graph.symbols[myPlatformSpecificFunctionSymbol.identifier.precise] = myPlatformSpecificFunctionSymbol
         
@@ -1103,7 +1068,7 @@ class DocumentationContextTests: XCTestCase {
         encoder.outputFormatting = .prettyPrinted
         let newGraphContent = try String(data: encoder.encode(graph), encoding: .utf8)!
         
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Symbols", content: [
                 TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
@@ -1111,13 +1076,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
         
         // MyFunction is loaded
         XCTAssertNotNil(context.documentationCache[myFunctionSymbolPreciseIdentifier], "myFunction which only exist on iOS should be found in the graph")
@@ -1131,7 +1090,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testResolvesSymbolsBetweenSymbolGraphs() throws {
-        let testBundle = Folder(name: "CrossGraphResolving.docc", content: [
+        let testCatalog = Folder(name: "CrossGraphResolving.docc", content: [
             InfoPlist(displayName: "CrossGraphResolving", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
             ]),
@@ -1145,13 +1104,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
         
         // SideClass is loaded
         guard let sideClass = context.documentationCache["s:7SideKit0A5ClassC"],
@@ -1174,7 +1127,7 @@ class DocumentationContextTests: XCTestCase {
         // "remove" the operating system information
         graphContentiOS = graphContentiOS.replacingOccurrences(of: "\"operatingSystem\"", with: "\"ignored\"")
         
-        let testBundle = Folder(name: "NoOSDeclaration.docc", content: [
+        let testCatalog = Folder(name: "NoOSDeclaration.docc", content: [
             InfoPlist(displayName: "NoOSDeclaration", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: []),
             Folder(name: "Symbols", content: [
@@ -1182,13 +1135,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
         
         // MyClass is loaded
         guard let myClass = context.documentationCache["s:5MyKit0A5ClassC"],
@@ -1208,7 +1155,7 @@ class DocumentationContextTests: XCTestCase {
     
         let myKitURL = documentationURL.appendingPathComponent("mykit.md")
         
-        let testBundle = Folder(name: "TestDetectsDuplicateSymbolArticles.docc", content: [
+        let testCatalog = Folder(name: "TestDetectsDuplicateSymbolArticles.docc", content: [
             InfoPlist(displayName: "TestDetectsDuplicateSymbolArticles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 CopyOfFile(original: myKitURL, newName: "mykit.md"),
@@ -1223,13 +1170,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: testCatalog)
 
         XCTAssertNotNil(context.problems
             .map { $0.diagnostic }
@@ -1268,7 +1209,7 @@ class DocumentationContextTests: XCTestCase {
         ]
         
         for testData in combinationsToTest {
-            let testBundle = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
+            let testCatalog = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
                 InfoPlist(displayName: "TestCanResolveArticleFromTutorial", identifier: "com.example.documentation"),
                 
                 TextFile(name: "extra-article.md", utf8Content: """
@@ -1286,15 +1227,7 @@ class DocumentationContextTests: XCTestCase {
                 """),
             ] + testData.symbolGraphFiles)
             
-            let tempURL = try createTemporaryDirectory()
-            let bundleURL = try testBundle.write(inside: tempURL)
-            
-            let workspace = DocumentationWorkspace()
-            let context = try DocumentationContext(dataProvider: workspace)
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-            try workspace.registerProvider(dataProvider)
-            
-            let bundle = try XCTUnwrap(workspace.bundles.values.first)
+            let (bundle, context) = try loadBundle(catalog: testCatalog)
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
             
             let identifier = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
@@ -2659,12 +2592,8 @@ let expected = """
         }
     }
     
-    func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
+    private func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -2708,7 +2637,7 @@ let expected = """
         let tempURL = try createTemporaryDirectory()
 
         // Create test bundle
-        let bundleURL = try Folder(name: "collisions.docc", content: [
+        let catalogURL = try Folder(name: "collisions.docc", content: [
             InfoPlist(displayName: "Collisions", identifier: "com.test.collisions"),
             CopyOfFile(original: Bundle.module.url(
                         forResource: "Collisions-iOS.symbols", withExtension: "json",
@@ -2719,7 +2648,7 @@ let expected = """
         ]).write(inside: tempURL)
         
         // Load test bundle
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        let (_, _, context) = try loadBundle(from: catalogURL)
         
         let referenceForPath: (String) -> ResolvedTopicReference = { path in
             return ResolvedTopicReference(bundleIdentifier: "com.test.collisions", path: "/documentation" + path, sourceLanguage: .swift)
@@ -3197,7 +3126,7 @@ let expected = """
     }
 
     func testResolvingLinksToTopicSections() throws {
-        let fileSystem = try TestFileSystem(folders: [
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(moduleName: "ModuleName")),
                 
@@ -3264,11 +3193,7 @@ let expected = """
                 An article that only exists to be linked to
                 """),
             ])
-        ])
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        try workspace.registerProvider(fileSystem)
+        )
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).sorted())")
         
@@ -3345,7 +3270,7 @@ let expected = """
     func testExtensionCanUseLanguageSpecificRelativeLinks() throws {
         // This test uses a symbol with different names in Swift and Objective-C, each with a member that's only available in that language.
         let symbolID = "some-symbol-id"
-        let fileSystem = try TestFileSystem(folders: [
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "unit-test.docc", content: [
                 Folder(name: "swift", content: [
                     JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
@@ -3426,11 +3351,7 @@ let expected = """
                 - ``SwiftName/objectiveCOnlyMemberName``
                 """),
             ])
-        ])
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        try workspace.registerProvider(fileSystem)
+        )
         
         XCTAssertEqual(context.problems.map(\.diagnostic.summary).sorted(), [
             "'objectiveCOnlyMemberName' doesn't exist at '/ModuleName/SwiftName'",
@@ -4503,13 +4424,7 @@ let expected = """
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
         ])
         
-        let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
-
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        try workspace.registerProvider(dataProvider)
+        let (_, context) = try loadBundle(catalog: exampleDocumentation)
         
         XCTAssertEqual(
             context.documentationCache.count,
