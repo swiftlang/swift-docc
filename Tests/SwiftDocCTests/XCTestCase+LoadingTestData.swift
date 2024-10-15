@@ -22,7 +22,7 @@ extension XCTestCase {
         externalResolvers: [String: ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
-        diagnosticFilterLevel: DiagnosticSeverity = .hint,
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init(),
         configureContext: ((DocumentationContext) throws -> Void)? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
@@ -32,9 +32,9 @@ extension XCTestCase {
         configuration.externalDocumentationConfiguration.sources = externalResolvers
         configuration.externalDocumentationConfiguration.globalSymbolResolver = externalSymbolResolver
         configuration.convertServiceConfiguration.fallbackResolver = fallbackResolver
-        configuration.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        configuration.externalMetadata.diagnosticLevel = diagnosticEngine.filterLevel
         
-        let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel), configuration: configuration)
+        let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: diagnosticEngine, configuration: configuration)
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
@@ -79,6 +79,7 @@ extension XCTestCase {
         externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
         configuration: DocumentationContext.Configuration = .init(),
         configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
@@ -105,6 +106,7 @@ extension XCTestCase {
             externalResolvers: externalResolvers,
             externalSymbolResolver: externalSymbolResolver,
             fallbackResolver: fallbackResolver,
+            diagnosticEngine: diagnosticEngine,
             configuration: configuration
         )
     }

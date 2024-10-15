@@ -10,7 +10,7 @@
 
 import XCTest
 import SymbolKit
-@testable import SwiftDocC
+@testable @_spi(ExternalLinks) import SwiftDocC
 import Markdown
 import SwiftDocCTestUtilities
 
@@ -5259,7 +5259,7 @@ let expected = """
         
         let externalModuleName = "ExternalModuleName"
         
-        func makeExternalResolver() throws -> ExternalPathHierarchyResolver {
+        func makeExternalDependencyFiles() throws -> (SerializableLinkResolutionInformation, [LinkDestinationSummary]) {
             let (bundle, context) = try loadBundle(
                 catalog: Folder(name: "Dependency.docc", content: [
                     JSONFile(name: "\(externalModuleName).symbols.json", content: makeSymbolGraph(moduleName: externalModuleName)),
@@ -5281,7 +5281,7 @@ let expected = """
             }
             let linkResolutionInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
             
-            return ExternalPathHierarchyResolver(linkInformation: linkResolutionInformation, entityInformation: linkSummaries)
+            return (linkResolutionInformation, linkSummaries)
         }
         
         let catalog = Folder(name: "unit-test.docc", content: [
@@ -5294,9 +5294,27 @@ let expected = """
             """),
         ])
         
-        let (_, bundle, context) = try loadBundle(from: createTempFolder(content: [catalog])) { context in
-            context.linkResolver.externalResolvers = [externalModuleName: try makeExternalResolver()]
-        }
+        let (linkResolutionInformation, linkSummaries) = try makeExternalDependencyFiles()
+        
+        var configuration = DocumentationContext.Configuration()
+        configuration.externalDocumentationConfiguration.dependencyArchives = [
+            URL(fileURLWithPath: "/path/to/SomeDependency.doccarchive")
+        ]
+        
+        let (bundle, context) = try loadBundle(
+            catalog: catalog,
+            otherFileSystemDirectories: [
+                Folder(name: "path", content: [
+                    Folder(name: "to", content: [
+                        Folder(name: "SomeDependency.doccarchive", content: [
+                            JSONFile(name: "link-hierarchy.json", content: linkResolutionInformation),
+                            JSONFile(name: "linkable-entities.json", content: linkSummaries),
+                        ])
+                    ])
+                ])
+            ],
+            configuration: configuration
+        )
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         let reference = try XCTUnwrap(context.soleRootModuleReference)

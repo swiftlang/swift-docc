@@ -683,7 +683,14 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         file: StaticString = #file,
         line: UInt = #line
     ) throws -> String {
-        let url = try createTempFolder(content: [
+        let fileSystem = try TestFileSystem(folders: [
+            Folder(name: "path", content: [
+                Folder(name: "to", content: [
+                    // The generated symbol graph uses a fake source file where the documentation comment starts at line 7, column 6
+                    TextFile(name: "SomeFile.swift", utf8Content: String(repeating: "\n", count: 7) + docComment.splitByNewlines.map { "  /// \($0)" }.joined(separator: "\n"))
+                ])
+            ]),
+      
             Folder(name: "unit-test.docc", content: [
                 JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
                     docComment: docComment,
@@ -693,23 +700,18 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                 ))
             ])
         ])
-        let logStorage = LogHandle.LogStorage()
-        let (_, _, context) = try loadBundle(from: url, configureContext: { context in
-            for consumerID in context.diagnosticEngine.consumers.sync({ $0.values }) {
-                context.diagnosticEngine.remove(consumerID)
-            }
-            let fileSystem = try TestFileSystem(folders: [
-                Folder(name: "path", content: [
-                    Folder(name: "to", content: [
-                        // The generated symbol graph uses a fake source file where the documentation comment starts at line 7, column 6
-                        TextFile(name: "SomeFile.swift", utf8Content: String(repeating: "\n", count: 7) + docComment.splitByNewlines.map { "  /// \($0)" }.joined(separator: "\n"))
-                    ])
-                ])
-            ])
-            context.diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, dataProvider: fileSystem))
-        })
         
-        context.diagnosticEngine.flush()
+        let logStorage = LogHandle.LogStorage()
+        
+        let diagnosticEngine = DiagnosticEngine()
+        diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, dataProvider: fileSystem))
+        
+        let (bundle, dataProvider) = try DocumentationContext.InputsProvider(fileManager: fileSystem)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/unit-test.docc"), options: .init())
+
+        _ = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine)
+        
+        diagnosticEngine.flush()
         return logStorage.text.trimmingCharacters(in: .newlines)
     }
     

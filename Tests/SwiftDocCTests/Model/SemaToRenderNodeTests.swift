@@ -3380,9 +3380,7 @@ Document
         let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
         
-        let (_, bundle, context) = try loadBundle(from: bundleURL) { context in
-            context.diagnosticEngine.consumers.sync({ $0.removeAll() })
-        }
+        let (_, bundle, context) = try loadBundle(from: bundleURL, diagnosticEngine: .init() /* no diagnostic consumers */)
         
         let reference = try XCTUnwrap(context.soleRootModuleReference)
         
