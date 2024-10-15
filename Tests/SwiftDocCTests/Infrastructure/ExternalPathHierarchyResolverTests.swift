@@ -910,7 +910,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             let unresolvedReference = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: authoredLink).map(UnresolvedTopicReference.init(topicURL:)))
             let rootModule = try XCTUnwrap(context.soleRootModuleReference)
             
-            let linkResolver = LinkResolver()
+            let linkResolver = LinkResolver(dataProvider: FileManager.default)
             linkResolver.localResolver = localResolver
             let localResult = linkResolver.resolve(unresolvedReference, in: rootModule, fromSymbolLink: true, context: context)
             let externalResult = externalResolver.resolve(unresolvedReference, fromSymbolLink: true)

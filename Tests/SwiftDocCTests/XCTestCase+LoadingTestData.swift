@@ -61,7 +61,7 @@ extension XCTestCase {
         let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
         
         let fileSystem = try TestFileSystem(folders: [catalog] + otherFileSystemDirectories)
-        context.linkResolver.fileManager = fileSystem
+        context.linkResolver.dataProvider = fileSystem
         
         try workspace.registerProvider(fileSystem)
         let bundle = try XCTUnwrap(context.registeredBundles.first)

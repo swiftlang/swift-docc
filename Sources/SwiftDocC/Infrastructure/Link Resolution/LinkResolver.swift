@@ -13,7 +13,11 @@ import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
-    var fileManager: FileManagerProtocol = FileManager.default
+    var dataProvider: DataProvider
+    init(dataProvider: DataProvider) {
+        self.dataProvider = dataProvider
+    }
+    
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
     /// A fallback resolver to use when the local resolver fails to resolve a link.
@@ -27,7 +31,7 @@ public class LinkResolver {
     /// - Parameter dependencyArchives: A list of URLs to documentation archives that the local documentation depends on.
     func loadExternalResolvers(dependencyArchives: [URL]) throws {
         let resolvers = try dependencyArchives.compactMap {
-            try ExternalPathHierarchyResolver(dependencyArchive: $0, fileManager: fileManager)
+            try ExternalPathHierarchyResolver(dependencyArchive: $0, dataProvider: dataProvider)
         }
         for resolver in resolvers {
             for moduleNode in resolver.pathHierarchy.modules {
