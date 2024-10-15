@@ -6,23 +6,24 @@ Get to know the steps involved in documentation compilation.
 
 This article describes the discrete and sequential steps of compiling documentation with DocC.
 
-DocC starts with content discovery by parsing the documentation sources in your documentation bundle. Next, it validates and semantically analyzes them and then builds an in-memory model of the compiled documentation. Once the in-memory model is finalized, DocC converts each topic into a persistable representation it can store on disk.
-
-To use the compiled documentation, either query the in-memory model directly or convert its nodes to their render-friendly representation. For example, the `SwiftDocCUtilities` framework enumerates all the nodes in DocC's in-memory model, converts each node for rendering, and finally writes the complete documentation to the disk.
+DocC starts with input discovery by categorizing the documentation sources in your documentation catalog. Next, it loads and parses the those inputs to create in-memory models of the documentation pages. Once the in-memory model is finalized, DocC converts each topic into a persistable render-friendly representation it can store on disk.
 
 ### Discovery
 
-DocC starts discovery by creating a ``DocumentationWorkspace`` to interact with the file system and a ``DocumentationContext`` that manages the in-memory model for the built documentation.
+DocC starts by creating a ``DocumentationContext/InputsProvider`` to discover the inputs from the user-provided command line arguments. These inputs are:
 
-When a documentation bundle is found in the workspace by a ``DocumentationWorkspaceDataProvider``, the following files are recognized and processed (others are ignored):
+ - Markup files, tutorial files, and assets (for example images)
+ - Symbol graph files, describing the symbols in a given module (types, functions, variables, etc.) and their relationships (inheritance, conformance, etc.)
+ - Meta information about this "unit" of documentation (for example a custom display name)
+ - Customizations to the render template.
 
-- An `Info.plist` file containing meta information like the bundle display name.
-- Symbol-graph files with the `.symbols.json` extension.
-- Authored markup files with an `.md` extension
-- Authored tutorial files with a `.tutorial` extension
-- Additional documentation assets with known extensions like `.png`, `.jpg`, `.mov`, and `.zip`.
+Markup, tutorials, assets, and render-template-customization can only be discovered as files inside of a documentation catalog (`.docc` directory).
+Symbol graph files can either be discovered as files inside of a documentation catalog or as additional files provided via user-provided command line arguments.
+Meta information can either be discovered from an optional top-level `Info.plist` file inside of a documentation catalog or as provided values via user-provided command line arguments. All meta information is optional.
 
-You can organize the files in any way, as long as `Info.plist` is in the root of the directory tree. Here is an example of a bundle, that groups topic files in logical groups with an additional directory for shared asset files:
+You can organize the files inside the documentation catalog according to your preference, 
+as long as the optional `Info.plist`--containing optional meta information--and the optional render customization files are top-level.
+For example, this catalog groups files based on their topic with an additional directory for shared asset files:
 
 ```none
 SwiftDocC.docc
@@ -45,9 +46,10 @@ SwiftDocC.docc
 
 ### Analysis and Registration
 
-This phase starts with registering all symbols from the available symbol graphs into a documentation *topic graph* in memory. 
+This phase starts with creating a ``DocumentationContext`` using the discovered inputs from the previous phase. 
+This begins loading and registering the inputs with the context.
 
-The symbol graph files are machine generated and describe all available symbols in a framework (types, functions, variables, etc.) and their relationships, for example, inheritance and conformance.
+The first input that the context register is the symbol information. The symbol information comes from "symbol graph files" which are machine generated and describe all available symbols in a framework (types, functions, variables, etc.) and their relationships (inheritance, conformance, etc.).
 
 Each symbol becomes a documentation node in the topic graph and thus a documentation *topic* (an entity in the documentation model). The symbol's topic could optionally be extended with authored documentation from a markup file.
 
@@ -57,7 +59,7 @@ Next, all the remaining markup files are analyzed and converted to documents (fo
 
 Finally, if you reference any symbols from another framework, and DocC knows how to resolve those, the symbols are fetched and added to the graph too.
 
-### Curation
+#### Curation
 
 At this point the in-memory topic graph accurately represents the machine generated description of the documented framework. However, documentation is often better consumed when it's curated into logical groups and into an incremental learning experience.
 
