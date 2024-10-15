@@ -113,7 +113,9 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
                     let contentBase = at.appendingPathComponent(folder.name)
                     result[contentBase.path] = Self.folderFixtureData
                     
-                    let basePathString = folder.original.standardizedFileURL.deletingLastPathComponent().path
+                    let at = at.appendingPathComponent(folder.name)
+                
+                    let basePathString = folder.original.standardizedFileURL.path
                     for case let url as URL in enumerator where folder.shouldCopyFile(url) {
                         let data = try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
                             ? Self.folderFixtureData
