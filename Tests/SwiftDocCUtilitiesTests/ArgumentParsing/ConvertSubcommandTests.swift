@@ -235,9 +235,6 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
-    // This test calls ``ConvertOptions.additionalSymbolGraphFiles`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testAdditionalSymbolGraphFiles() throws {
         // Default to [] when not passed
         do {
