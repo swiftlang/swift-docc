@@ -13,6 +13,7 @@ import Markdown
 import SymbolKit
 
 /// A type that provides information about documentation bundles and their content.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProvider {
     /// An object to notify when bundles are added or removed.
     var delegate: DocumentationContextDataProviderDelegate? { get set }
@@ -31,6 +32,7 @@ public protocol DocumentationContextDataProvider {
 }
 
 /// An object that responds to changes in available documentation bundles for a specific provider.
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public protocol DocumentationContextDataProviderDelegate: AnyObject {
     
     /// Called when the `dataProvider` has added a new documentation bundle to its list of `bundles`.
@@ -79,7 +81,7 @@ public typealias BundleIdentifier = String
 /// - ``children(of:kind:)``
 /// - ``parents(of:)``
 ///
-public class DocumentationContext: DocumentationContextDataProviderDelegate {
+public class DocumentationContext {
 
     /// An error that's encountered while interacting with a ``SwiftDocC/DocumentationContext``.
     public enum ContextError: DescribedError {
@@ -114,12 +116,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public var linkResolver: LinkResolver
     
     private enum _Provider {
+        @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
         case legacy(DocumentationContextDataProvider)
         case new(DataProvider)
     }
     private var dataProvider: _Provider
 
     /// The provider of documentation bundles for this context.
+    @available(*, deprecated, message: "Use 'DataProvider' instead. This deprecated API will be removed after 6.2 is released")
     private var _legacyDataProvider: DocumentationContextDataProvider! {
         get {
             switch dataProvider {
@@ -285,6 +289,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
     ///   - configuration: A collection of configuration for the created context.
     /// - Throws: If an error is encountered while registering a documentation bundle.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public init(
         dataProvider: DocumentationContextDataProvider,
         diagnosticEngine: DiagnosticEngine = .init(),
@@ -331,6 +336,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - dataProvider: The provider that added this bundle.
     ///   - bundle: The bundle that was added.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
             // Enable reference caching for this documentation bundle.
@@ -345,6 +351,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
+    @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         linkResolver.localResolver?.unregisterBundle(identifier: bundle.identifier)
         
@@ -3056,3 +3063,6 @@ extension DataAsset {
         }
     }
 }
+
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
+extension DocumentationContext: DocumentationContextDataProviderDelegate {}
