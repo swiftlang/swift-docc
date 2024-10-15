@@ -15,7 +15,7 @@ import Markdown
 
 class DocumentationContentRendererTests: XCTestCase {
     func testReplacesTypeIdentifierSubHeadingFragmentWithIdentifierForSwift() throws {
-        let subHeadingFragments = documentationContentRenderer
+        let subHeadingFragments = try makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         XCTAssertEqual(
@@ -46,7 +46,7 @@ class DocumentationContentRendererTests: XCTestCase {
     }
     
     func testDoesNotReplaceSubHeadingFragmentsForOtherLanguagesThanSwift() throws {
-        let subHeadingFragments = documentationContentRenderer
+        let subHeadingFragments = try makeDocumentationContentRenderer()
             .subHeadingFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         guard case .replace(let fragments) = subHeadingFragments.variants.first?.patch.first else {
@@ -74,7 +74,7 @@ class DocumentationContentRendererTests: XCTestCase {
     }
     
     func testReplacesTypeIdentifierNavigatorFragmentWithIdentifierForSwift() throws {
-        let navigatorFragments = documentationContentRenderer
+        let navigatorFragments = try makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         XCTAssertEqual(
@@ -105,7 +105,7 @@ class DocumentationContentRendererTests: XCTestCase {
     }
     
     func testDoesNotReplacesNavigatorFragmentsForOtherLanguagesThanSwift() throws {
-        let navigatorFragments = documentationContentRenderer
+        let navigatorFragments = try makeDocumentationContentRenderer()
             .navigatorFragments(for: nodeWithSubheadingAndNavigatorVariants)
         
         guard case .replace(let fragments) = navigatorFragments.variants.first?.patch.first else {
@@ -138,20 +138,9 @@ private extension DocumentationDataVariantsTrait {
 }
 
 private extension DocumentationContentRendererTests {
-    var documentationContentRenderer: DocumentationContentRenderer {
-        DocumentationContentRenderer(
-            documentationContext: try! DocumentationContext(dataProvider: DocumentationWorkspace()),
-            bundle: DocumentationBundle(
-                info: DocumentationBundle.Info(
-                    displayName: "Test",
-                    identifier: "org.swift.test"
-                ),
-                baseURL: URL(string: "https://example.com/example")!,
-                symbolGraphURLs: [],
-                markupURLs: [],
-                miscResourceURLs: []
-            )
-        )
+    func makeDocumentationContentRenderer() throws -> DocumentationContentRenderer {
+        let (bundle, context) = try testBundleAndContext()
+        return DocumentationContentRenderer(documentationContext: context, bundle: bundle)
     }
     
     var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
