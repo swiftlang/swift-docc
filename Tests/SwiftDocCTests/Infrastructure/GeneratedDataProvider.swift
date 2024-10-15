@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import SymbolKit
 
+@available(*, deprecated, message: "Use 'DocumentationContext.InputProvider' instead. This deprecated API will be removed after 6.2 is released")
 class GeneratedDataProviderTests: XCTestCase {
 
     func testGeneratingBundles() throws {
