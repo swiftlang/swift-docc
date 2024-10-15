@@ -14,7 +14,7 @@ import Foundation
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
-public struct ConvertAction: AsyncAction {
+public struct ConvertAction: Action, RecreatingContext {
     enum Error: DescribedError {
         case doesNotContainBundle(url: URL)
         case cancelPending
@@ -58,6 +58,12 @@ public struct ConvertAction: AsyncAction {
     private var injectedDataProvider: DocumentationWorkspaceDataProvider?
     private var fileManager: FileManagerProtocol
     private let temporaryDirectory: URL
+    
+    public var setupContext: ((inout DocumentationContext) -> Void)? {
+        didSet {
+            converter.setupContext = setupContext
+        }
+    }
     
     var converter: DocumentationConverter
     
@@ -233,17 +239,52 @@ public struct ConvertAction: AsyncAction {
             dataProvider: dataProvider,
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
+            isCancelled: isCancelled,
             diagnosticEngine: self.diagnosticEngine,
             experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
         )
     }
+
+    /// `true` if the convert action is cancelled.
+    private let isCancelled = Synchronized<Bool>(false)
     
-    /// A block of extra work that tests perform to affect the time it takes to convert documentation
-    var _extraTestWork: (() async -> Void)?
+    /// `true` if the convert action is currently running.
+    let isPerforming = Synchronized<Bool>(false)
+    
+    /// A block to execute when conversion has finished.
+    /// It's used as a "future" for when the action is cancelled.
+    var didPerformFuture: (()->Void)?
+    
+    /// A block to execute when conversion has started.
+    var willPerformFuture: (()->Void)?
+
+    /// Cancels the action.
+    ///
+    /// The method blocks until the action has completed cancelling.
+    mutating func cancel() throws {
+        /// If the action is not running, there is nothing to cancel
+        guard isPerforming.sync({ $0 }) == true else { return }
+        
+        /// If the action is already cancelled throw `cancelPending`.
+        if isCancelled.sync({ $0 }) == true {
+            throw Error.cancelPending
+        }
+
+        /// Set the cancelled flag.
+        isCancelled.sync({ $0 = true })
+        
+        /// Wait for the `perform(logHandle:)` method to call `didPerformFuture()`
+        let waitGroup = DispatchGroup()
+        waitGroup.enter()
+        didPerformFuture = {
+            waitGroup.leave()
+        }
+        waitGroup.wait()
+    }
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -261,12 +302,14 @@ public struct ConvertAction: AsyncAction {
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
+        // While running this method keep the `isPerforming` flag up.
+        isPerforming.sync({ $0 = true })
+        willPerformFuture?()
         defer {
+            didPerformFuture?()
+            isPerforming.sync({ $0 = false })
             diagnosticEngine.flush()
         }
-        
-        // Run any extra work that the test may have injected
-        await _extraTestWork?()
         
         let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
         
@@ -408,7 +451,7 @@ public struct ConvertAction: AsyncAction {
         benchmark(end: totalTimeMetric)
         
         if !didEncounterError {
-            let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
+            let coverageResults = try coverageAction.perform(logHandle: logHandle)
             postConversionProblems.append(contentsOf: coverageResults.problems)
         }
         

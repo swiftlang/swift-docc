@@ -11,7 +11,7 @@ Use SwiftDocCUtilities to build a custom, command-line interface and extend it w
 ```swift
 import ArgumentParser
 
-public struct MyDocumentationTool: AsyncParsableCommand {
+public struct MyDocumentationTool: ParsableCommand {
     public static var configuration = CommandConfiguration(
         abstract: "My custom documentation tool",
         subcommands: [ConvertAction.self, ExampleAction.self]

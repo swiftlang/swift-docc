@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,8 +14,11 @@ import Foundation
 
 extension Docc {
     /// Runs the ``Convert`` command and then sets up a web server that can be used to preview that documentation content.
-    public struct Preview: AsyncParsableCommand {
+    public struct Preview: ParsableCommand {
+
         public init() {}
+
+        // MARK: - Configuration
 
         public static var configuration = CommandConfiguration(
             abstract: "Convert documentation inputs and preview the documentation output.",
@@ -28,10 +31,14 @@ extension Docc {
             The 'preview' command extends the 'convert' command by running a preview server and monitoring the documentation input for modifications to rebuild the documentation.
             """
         )
+
+        // MARK: - Command Line Options & Arguments
         
         /// The options used for configuring the preview server.
         @OptionGroup(title: "Preview options")
         public var previewOptions: PreviewOptions
+
+        // MARK: - Property Validation
         
         public mutating func validate() throws {
             // The default template wasn't validated by the Convert command.
@@ -43,9 +50,14 @@ extension Docc {
             }
         }
 
-        public func run() async throws {
+        // MARK: - Execution
+
+        public mutating func run() throws {
+            // Initialize a `PreviewAction` from the current options in the `Preview` command.
             var previewAction = try PreviewAction(fromPreviewOptions: previewOptions)
-            try await previewAction.performAndHandleResult()
+
+            // Perform the preview and print any warnings or errors found
+            try previewAction.performAndHandleResult()
         }
     }
 }

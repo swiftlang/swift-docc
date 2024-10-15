@@ -12,7 +12,8 @@ import Foundation
 import SwiftDocC
 
 /// An action that emits a static hostable website from a DocC Archive.
-struct TransformForStaticHostingAction: AsyncAction {
+struct TransformForStaticHostingAction: Action {
+    
     let rootURL: URL
     let outputURL: URL
     let hostingBasePath: String?
@@ -29,8 +30,8 @@ struct TransformForStaticHostingAction: AsyncAction {
          hostingBasePath: String?,
          htmlTemplateDirectory: URL,
          fileManager: FileManagerProtocol = FileManager.default,
-         diagnosticEngine: DiagnosticEngine = .init()
-    ) throws {
+         diagnosticEngine: DiagnosticEngine = .init()) throws
+    {
         // Initialize the action context.
         self.rootURL = documentationBundleURL
         self.outputURL = outputURL ?? documentationBundleURL
@@ -44,16 +45,19 @@ struct TransformForStaticHostingAction: AsyncAction {
     
     /// Converts each eligible file from the source archive and
     /// saves the results in the given output folder.
-    mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+    mutating func perform(logHandle: LogHandle) throws -> ActionResult {
         try emit()
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
     
     mutating private func emit() throws {
+        
+
         // If the emit is to create the static hostable content outside of the source archive
         // then the output folder needs to be set up and the archive data copied
         // to the new folder.
         if outputIsExternal {
+            
             try setupOutputDirectory(outputURL: outputURL)
 
             // Copy the appropriate folders from the archive.
@@ -100,6 +104,7 @@ struct TransformForStaticHostingAction: AsyncAction {
     
     /// Create output directory or empty its contents if it already exists.
     private func setupOutputDirectory(outputURL: URL) throws {
+        
         var isDirectory: ObjCBool = false
         if fileManager.fileExists(atPath: outputURL.path, isDirectory: &isDirectory), isDirectory.boolValue {
             let contents = try fileManager.contentsOfDirectory(at: outputURL, includingPropertiesForKeys: [], options: [.skipsHiddenFiles])

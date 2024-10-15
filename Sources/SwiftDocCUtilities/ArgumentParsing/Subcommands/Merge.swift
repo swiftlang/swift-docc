@@ -14,7 +14,7 @@ import Foundation
 
 extension Docc {
     /// Merge a list of documentation archives into a combined archive.
-    public struct Merge: AsyncParsableCommand {
+    public struct Merge: ParsableCommand {
         public init() {}
         
         public static var configuration = CommandConfiguration(
@@ -167,7 +167,7 @@ extension Docc {
             synthesizedLandingPageOptions.topicStyle
         }
         
-        public func run() async throws {
+        public mutating func run() throws {
             // Initialize a `ConvertAction` from the current options in the `Convert` command.
             var convertAction = MergeAction(
                 archives: archives,
@@ -177,7 +177,7 @@ extension Docc {
             )
             
             // Perform the conversion and print any warnings or errors found
-            try await convertAction.performAndHandleResult()
+            try convertAction.performAndHandleResult()
         }
     }
 }

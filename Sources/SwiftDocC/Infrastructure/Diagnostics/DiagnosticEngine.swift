@@ -29,9 +29,7 @@ public final class DiagnosticEngine {
     /// diagnostics with a severity up to and including `.information` will be printed.
     public var filterLevel: DiagnosticSeverity {
         didSet {
-            self.filter = { [filterLevel] in
-                $0.diagnostic.severity.rawValue <= filterLevel.rawValue
-            }
+            self.filter = { $0.diagnostic.severity.rawValue <= self.filterLevel.rawValue }
         }
     }
     

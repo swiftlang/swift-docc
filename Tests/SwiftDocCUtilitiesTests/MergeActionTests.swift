@@ -23,7 +23,7 @@ class MergeActionTests: XCTestCase {
         )
     )
     
-    func testCopiesArchivesIntoOutputLocation() async throws {
+    func testCopiesArchivesIntoOutputLocation() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -73,7 +73,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        _ = try await action.perform(logHandle: .memory(logStorage))
+        _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive as the data and assets from the input archives but only one set of archive template files
@@ -175,7 +175,7 @@ class MergeActionTests: XCTestCase {
         ])
     }
     
-    func testCreatesDataDirectoryWhenMergingSingleEmptyArchive() async throws {
+    func testCreatesDataDirectoryWhenMergingSingleEmptyArchive() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -201,7 +201,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        _ = try await action.perform(logHandle: .memory(logStorage))
+        _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         
@@ -250,7 +250,7 @@ class MergeActionTests: XCTestCase {
         """)
     }
     
-    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchive() async throws {
+    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchive() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -292,7 +292,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        _ = try await action.perform(logHandle: .memory(logStorage))
+        _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive as the data, documentation, tutorials, and assets from the both input archives.
@@ -369,7 +369,7 @@ class MergeActionTests: XCTestCase {
         ])
     }
     
-    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchiveWithoutStaticHosting() async throws {
+    func testCanMergeReferenceOnlyArchiveWithTutorialOnlyArchiveWithoutStaticHosting() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -413,7 +413,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        _ = try await action.perform(logHandle: .memory(logStorage))
+        _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
@@ -476,7 +476,7 @@ class MergeActionTests: XCTestCase {
         ])
     }
     
-    func testSupportsArchivesWithoutStaticHosting() async throws {
+    func testSupportsArchivesWithoutStaticHosting() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -528,7 +528,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        _ = try await action.perform(logHandle: .memory(logStorage))
+        _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         // The combined archive doesn't have "documentation" or "tutorial" directories because the inputs didn't support static hosting.
@@ -604,7 +604,7 @@ class MergeActionTests: XCTestCase {
         ])
     }
     
-    func testReferenceOnlyArchivesDoNotSynthesizeTutorialsTopicSection() async throws {
+    func testReferenceOnlyArchivesDoNotSynthesizeTutorialsTopicSection() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -642,7 +642,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        _ = try await action.perform(logHandle: .memory(logStorage))
+        _ = try action.perform(logHandle: .memory(logStorage))
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
         
         let synthesizedRootNode = try fileSystem.renderNode(atPath: "/Output.doccarchive/data/documentation.json")
@@ -660,7 +660,7 @@ class MergeActionTests: XCTestCase {
         ])
     }
     
-    func testErrorWhenArchivesContainOverlappingData() async throws {
+    func testErrorWhenArchivesContainOverlappingData() throws {
         let fileSystem = try TestFileSystem(
             folders: [
                 Folder(name: "Output.doccarchive", content: []),
@@ -724,10 +724,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        do {
-            _ = try await action.perform(logHandle: LogHandle.memory(logStorage))
-            XCTFail("The action didn't raise an error")
-        } catch {
+        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
             XCTAssertEqual(error.localizedDescription, """
             Input archives contain overlapping data
 
@@ -741,7 +738,7 @@ class MergeActionTests: XCTestCase {
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: "/Output.doccarchive"), "Output.doccarchive/", "Nothing was written to the output directory")
     }
     
-    func testErrorWhenOutputDirectoryIsNotEmpty() async throws {
+    func testErrorWhenOutputDirectoryIsNotEmpty() throws {
         let fileSystem = try TestFileSystem(folders: [
             Self.makeArchive(name: "Output", documentationPages: [
                 "Something",
@@ -765,10 +762,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        do {
-            _ = try await action.perform(logHandle: LogHandle.memory(logStorage))
-            XCTFail("The action didn't raise an error")
-        } catch {
+        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
             XCTAssertEqual(error.localizedDescription, """
             Output directory is not empty. It contains:
              - css/
@@ -782,7 +776,7 @@ class MergeActionTests: XCTestCase {
         XCTAssertEqual(logStorage.text, "", "The action didn't log anything")
     }
     
-    func testErrorWhenSomeArchivesDoNotSupportStaticHosting() async throws {
+    func testErrorWhenSomeArchivesDoNotSupportStaticHosting() throws {
         let fileSystem = try TestFileSystem(folders: [
             Self.makeArchive(
                 name: "First",
@@ -830,10 +824,7 @@ class MergeActionTests: XCTestCase {
             fileManager: fileSystem
         )
         
-        do {
-            _ = try await action.perform(logHandle: LogHandle.memory(logStorage))
-            XCTFail("The action didn't raise an error")
-        } catch {
+        XCTAssertThrowsError(try action.perform(logHandle: LogHandle.memory(logStorage))) { error in
             XCTAssertEqual(error.localizedDescription, """
             Different static hosting support in different archives.
 

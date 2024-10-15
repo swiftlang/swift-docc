@@ -14,7 +14,7 @@ import Foundation
 
 extension Docc {
     /// Converts documentation markup, assets, and symbol information into a documentation archive.
-    public struct Convert: AsyncParsableCommand {
+    public struct Convert: ParsableCommand {
         public init() {}
 
         /// The name of the directory docc will write its build artifacts to.
@@ -625,6 +625,8 @@ extension Docc {
             set { featureFlags.emitLMDBIndex = newValue }
             
         }
+        
+        // MARK: - ParsableCommand conformance
 
         public mutating func validate() throws {
             if transformForStaticHosting {
@@ -673,9 +675,12 @@ extension Docc {
             }
         }
 
-        public func run() async throws {
+        public mutating func run() throws {
+            // Initialize a `ConvertAction` from the current options in the `Convert` command.
             var convertAction = try ConvertAction(fromConvertCommand: self)
-            try await convertAction.performAndHandleResult()
+
+            // Perform the conversion and print any warnings or errors found
+            try convertAction.performAndHandleResult()
         }
         
         // MARK: Warnings
