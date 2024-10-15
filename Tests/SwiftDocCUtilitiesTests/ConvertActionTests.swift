@@ -1789,12 +1789,8 @@ class ConvertActionTests: XCTestCase {
         
         func convertTestBundle(batchSize: Int, emitDigest: Bool, targetURL: URL, testDataProvider: DocumentationWorkspaceDataProvider & FileManagerProtocol) async throws -> ActionResult {
             // Run the create ConvertAction
-            
             var configuration = DocumentationContext.Configuration()
             configuration.externalDocumentationConfiguration.sources["com.example.test"] = TestReferenceResolver()
-            
-            let workspace = DocumentationWorkspace()
-            let context = try DocumentationContext(dataProvider: workspace, configuration: configuration)
             
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
@@ -1804,8 +1800,6 @@ class ConvertActionTests: XCTestCase {
                 htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
                 emitDigest: emitDigest,
                 currentPlatforms: nil,
-                workspace: workspace,
-                context: context,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
                 temporaryDirectory: testDataProvider.uniqueTemporaryDirectory()
