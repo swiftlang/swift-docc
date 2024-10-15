@@ -150,7 +150,7 @@ extension XCTestCase {
             miscResourceURLs: []
         )
         
-        let context = try DocumentationContext(bundle: bundle, dataProvider: FileManager.default)
+        let context = try DocumentationContext(bundle: bundle, dataProvider: TestFileSystem(folders: []))
         return (bundle, context)
     }
     
