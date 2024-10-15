@@ -40,16 +40,9 @@ import XCTest
 ///
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
-package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
+package class TestFileSystem: FileManagerProtocol {
     package let currentDirectoryPath = "/"
-    
-    package var identifier: String = UUID().uuidString
-    
-    package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        [try DocumentationContext.InputsProvider(fileManager: self)
-            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options).inputs]
-    }
-    
+        
     /// Thread safe access to the file system.
     private var filesLock = NSRecursiveLock()
 
