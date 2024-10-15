@@ -681,7 +681,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
                     ])
                 ])
             ])
-            context.diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, fileManager: fileSystem))
+            context.diagnosticEngine.add(DiagnosticConsoleWriter(LogHandle.memory(logStorage), highlight: false, dataProvider: fileSystem))
         })
         
         context.diagnosticEngine.flush()
