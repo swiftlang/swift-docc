@@ -219,7 +219,7 @@ public struct ConvertAction: AsyncAction {
                     logHandle,
                     formattingOptions: diagnosticWriterOptions.formatting,
                     baseURL: diagnosticWriterOptions.baseURL,
-                    fileManager: fileManager
+                    dataProvider: dataProvider
                 )
             )
         }

@@ -412,7 +412,7 @@ class ListItemExtractorTests: XCTestCase {
         XCTAssert(expectedLinkProblems.allSatisfy { $0.diagnostic.range != nil }, "Diagnostics are missing range information.", file: file, line: line)
         
         let logStorage = LogHandle.LogStorage()
-        let diagnosticWriter = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], highlight: true, fileManager: context.linkResolver.fileManager)
+        let diagnosticWriter = DiagnosticConsoleWriter(LogHandle.memory(logStorage), formattingOptions: [], highlight: true, dataProvider: context.linkResolver.fileManager)
         diagnosticWriter.receive(expectedLinkProblems)
         try diagnosticWriter.flush()
         XCTAssertEqual(logStorage.text, expectedLogText, file: file, line: line)
