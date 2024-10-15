@@ -16,8 +16,6 @@ import SwiftDocCTestUtilities
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
-    private var originalFeatureFlagsState: FeatureFlags!
-    
     override func setUp() {
         super.setUp()
         enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
