@@ -112,10 +112,11 @@ extension XCTestCase {
     func testBundleAndContext(
         named name: String,
         externalResolvers: [String: ExternalDocumentationSource] = [:],
-        fallbackResolver: ConvertServiceFallbackResolver? = nil
+        fallbackResolver: ConvertServiceFallbackResolver? = nil,
+        configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let catalogURL = try testCatalogURL(named: name)
-        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver)
+        return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
     }
     
     func testBundleAndContext(named name: String, externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
