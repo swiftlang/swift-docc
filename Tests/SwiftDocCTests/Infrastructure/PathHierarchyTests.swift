@@ -1476,6 +1476,55 @@ class PathHierarchyTests: XCTestCase {
             .init(kind: .text, spelling: ">", preciseIdentifier: nil),
         ]))
         
+        // (Dictionary<Double,Int>)->Array<String>
+        XCTAssertEqual("([Double:Int])->[String]", functionSignatureParameterTypeName([
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">) -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ">", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Double,(Int)->Array<String>>
+        XCTAssertEqual("[Double:(Int)->[String]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ", (", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ">>", preciseIdentifier: nil),
+        ]))
+        
+        // Dictionary<Double,Array<(Optional<Int>)->Dictionary<String,Int>>>
+        XCTAssertEqual("[Double:[(Int?)->[String:Int]]]", functionSignatureParameterTypeName([
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Double", preciseIdentifier: "s:Sd"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Array", preciseIdentifier: "s:Sa"),
+            .init(kind: .text, spelling: "<(", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Optional", preciseIdentifier: "s:Sq"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">) -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),
+            .init(kind: .text, spelling: "<", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "String", preciseIdentifier: "s:SS"),
+            .init(kind: .text, spelling: ",", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ">>>", preciseIdentifier: nil),
+        ]))
+        
         // Dictionary<(Optional<Int>,String),Array<Optional<Double>>>
         XCTAssertEqual("[(Int?,String):[Double?]]", functionSignatureParameterTypeName([
             .init(kind: .typeIdentifier, spelling: "Dictionary", preciseIdentifier: "s:SD"),

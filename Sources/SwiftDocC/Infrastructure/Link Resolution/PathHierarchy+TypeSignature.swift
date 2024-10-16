@@ -176,6 +176,7 @@ private let closeParen  = UTF8.CodeUnit(ascii: ")")
 private let comma       = UTF8.CodeUnit(ascii: ",")
 private let question    = UTF8.CodeUnit(ascii: "?")
 private let colon       = UTF8.CodeUnit(ascii: ":")
+private let hyphen      = UTF8.CodeUnit(ascii: "-")
 
 private extension ContiguousArray<UTF8.CodeUnit>.SubSequence {
      /// Checks if the UTF-8 string looks like a tuple with comma separated values.
@@ -218,8 +219,11 @@ private extension ContiguousArray<UTF8.CodeUnit> {
             switch self[index] {
             case openAngle:
                 angleBracketStack.append(index)
-            case closeAngle:
-                let open = angleBracketStack.removeLast()
+            case closeAngle where self[index - 1] != hyphen: // "->" isn't the closing bracket of a generic
+                guard let open = angleBracketStack.popLast() else {
+                    assertionFailure("Encountered unexpected generic scope brackets in in \(String(cString: self + [0]))")
+                    return
+                }
                 
                 // Check if this balanced `<` and `>` pair is one of the markers.
                 if markers.contains(open - 1) {
