@@ -498,6 +498,7 @@ struct ReferenceResolver: SemanticVisitor {
             mixinsVariants: symbol.mixinsVariants,
             declarationVariants: symbol.declarationVariants,
             alternateDeclarationVariants: symbol.alternateDeclarationVariants,
+            alternateSignatureVariants: symbol.alternateSignatureVariants,
             defaultImplementationsVariants: symbol.defaultImplementationsVariants,
             relationshipsVariants: symbol.relationshipsVariants,
             abstractSectionVariants: newAbstractVariants,
