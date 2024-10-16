@@ -84,7 +84,9 @@ extension PathHierarchy {
                     // Accumulate all of the identifier tokens' spelling.
                     accumulated.append(contentsOf: fragment.spelling.utf8)
                     
-                case .text: // In Swift, only `text` tokens contains whitespace
+                case .text: // In Swift, only `text` tokens contains whitespace so they're handled separately.
+                    // Text tokens like "[", "?", "<", "...", ",", "(", "->" etc. contribute to the type spellings like
+                    // `[Name]`, `Name?`, "Name<T>", "Name...", "()", "(Name, Name)", "(Name)->Name" and more.
                     var spelling = fragment.spelling.utf8[...]
                     // If the type spelling is a parameter, if often starts with a leading ":" that's not part of the type name.
                     if accumulated.isEmpty, spelling.first == colon {
