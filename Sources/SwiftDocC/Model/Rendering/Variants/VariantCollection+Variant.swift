@@ -41,8 +41,4 @@ public extension VariantCollection {
     }
 }
 
-extension VariantCollection.Variant: Equatable where Value: Equatable {
-    public static func == (lhs: VariantCollection<Value>.Variant, rhs: VariantCollection<Value>.Variant) -> Bool {
-        return lhs.traits == rhs.traits && lhs.patch == rhs.patch
-    }
-}
+extension VariantCollection.Variant: Equatable where Value: Equatable {}

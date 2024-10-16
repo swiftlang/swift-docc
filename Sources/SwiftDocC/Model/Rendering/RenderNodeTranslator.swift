@@ -729,11 +729,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
+        let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
+        node.metadata.role = role.rawValue
+
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
-            
-            let role = DocumentationContentRenderer.roleForArticle(article, nodeKind: documentationNode.kind)
-            node.metadata.role = role.rawValue
-            
             switch role {
             case .article:
                 // If there are no links to other nodes from the article,
