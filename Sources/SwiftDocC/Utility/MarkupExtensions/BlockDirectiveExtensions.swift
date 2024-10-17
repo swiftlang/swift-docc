@@ -57,7 +57,6 @@ extension BlockDirective {
         TabNavigator.directiveName,
         Technology.directiveName,
         TechnologyRoot.directiveName,
-        TechnologyRoot.directiveName,
         Tile.directiveName,
         TitleHeading.directiveName,
         TopicsVisualStyle.directiveName,
