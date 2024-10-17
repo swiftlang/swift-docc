@@ -161,29 +161,29 @@ final class PathHierarchyBasedLinkResolver {
     func addTutorialTableOfContents(_ tutorialTableOfContents: DocumentationContext.SemanticResult<TutorialTableOfContents>) {
         let reference = tutorialTableOfContents.topicGraphNode.reference
 
-        let technologyID = pathHierarchy.addTutorialOverview(name: linkName(filename: tutorialTableOfContents.source.deletingPathExtension().lastPathComponent))
-        resolvedReferenceMap[technologyID] = reference
+        let tutorialTableOfContentsID = pathHierarchy.addTutorialOverview(name: linkName(filename: tutorialTableOfContents.source.deletingPathExtension().lastPathComponent))
+        resolvedReferenceMap[tutorialTableOfContentsID] = reference
 
         var anonymousVolumeID: ResolvedIdentifier?
         for volume in tutorialTableOfContents.value.volumes {
             if anonymousVolumeID == nil, volume.name == nil {
-                anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: "$volume", kind: "volume")
+                anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: "$volume", kind: "volume")
                 resolvedReferenceMap[anonymousVolumeID!] = reference.appendingPath("$volume")
             }
             
             let chapterParentID: ResolvedIdentifier
             let chapterParentReference: ResolvedTopicReference
             if let name = volume.name {
-                chapterParentID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: name, kind: "volume")
+                chapterParentID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: name, kind: "volume")
                 chapterParentReference = reference.appendingPath(name)
                 resolvedReferenceMap[chapterParentID] = chapterParentReference
             } else {
-                chapterParentID = technologyID
+                chapterParentID = tutorialTableOfContentsID
                 chapterParentReference = reference
             }
             
             for chapter in volume.chapters {
-                let chapterID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: chapter.name, kind: "volume")
+                let chapterID = pathHierarchy.addNonSymbolChild(parent: tutorialTableOfContentsID, name: chapter.name, kind: "volume")
                 resolvedReferenceMap[chapterID] = chapterParentReference.appendingPath(chapter.name)
             }
         }

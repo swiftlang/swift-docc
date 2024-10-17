@@ -611,7 +611,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// up in the context, not from the arrays that was passed as arguments.
     ///
     /// - Parameters:
-    ///   - TutorialTableOfContents: The list of temporary 'tutorial table-of-contents' pages.
+    ///   - tutorialTableOfContents: The list of temporary 'tutorial table-of-contents' pages.
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
     ///   - bundle: The bundle to resolve links against.
@@ -625,52 +625,51 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Tutorial table-of-contents
 
-        for tableOfContents in tutorialTableOfContents {
+        for tableOfContentsResult in tutorialTableOfContents {
             autoreleasepool {
-                let url = tableOfContents.source
-                let unresolvedTechnology = tableOfContents.value
+                let url = tableOfContentsResult.source
                 var resolver = ReferenceResolver(context: self, bundle: bundle)
-                let technology = resolver.visit(unresolvedTechnology) as! TutorialTableOfContents
+                let tableOfContents = resolver.visit(tableOfContentsResult.value) as! TutorialTableOfContents
                 diagnosticEngine.emit(resolver.problems)
                 
                 // Add to document map
-                documentLocationMap[url] = tableOfContents.topicGraphNode.reference
+                documentLocationMap[url] = tableOfContentsResult.topicGraphNode.reference
                 
-                let tableOfContentsReference = tableOfContents.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
+                let tableOfContentsReference = tableOfContentsResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
 
-                let technologyNode = DocumentationNode(
+                let tutorialTableOfContentsNode = DocumentationNode(
                     reference: tableOfContentsReference,
                     kind: .tutorialTableOfContents,
                     sourceLanguage: Self.defaultLanguage(in: sourceLanguages),
                     availableSourceLanguages: sourceLanguages,
-                    name: .conceptual(title: technology.intro.title),
-                    markup: technology.originalMarkup,
-                    semantic: technology
+                    name: .conceptual(title: tableOfContents.intro.title),
+                    markup: tableOfContents.originalMarkup,
+                    semantic: tableOfContents
                 )
-                documentationCache[tableOfContentsReference] = technologyNode
+                documentationCache[tableOfContentsReference] = tutorialTableOfContentsNode
                 
                 // Update the reference in the topic graph with the table-of-contents page's available languages.
                 topicGraph.updateReference(
-                    tableOfContents.topicGraphNode.reference,
+                    tableOfContentsResult.topicGraphNode.reference,
                     newReference: tableOfContentsReference
                 )
 
                 let anonymousVolumeName = "$volume"
                 
-                for volume in technology.volumes {
+                for volume in tableOfContents.volumes {
                     // Graph node: Volume
-                    let volumeReference = technologyNode.reference.appendingPath(volume.name ?? anonymousVolumeName)
+                    let volumeReference = tutorialTableOfContentsNode.reference.appendingPath(volume.name ?? anonymousVolumeName)
                     let volumeNode = TopicGraph.Node(reference: volumeReference, kind: .volume, source: .file(url: url), title: volume.name ?? anonymousVolumeName)
                     topicGraph.addNode(volumeNode)
                     
-                    // Graph edge: Technology -> Volume
-                    topicGraph.addEdge(from: tableOfContents.topicGraphNode, to: volumeNode)
+                    // Graph edge: Tutorial table-of-contents -> Volume
+                    topicGraph.addEdge(from: tableOfContentsResult.topicGraphNode, to: volumeNode)
                     
                     for chapter in volume.chapters {
                         // Graph node: Module
                         let baseNodeReference: ResolvedTopicReference
                         if volume.name == nil {
-                            baseNodeReference = technologyNode.reference
+                            baseNodeReference = tutorialTableOfContentsNode.reference
                         } else {
                             baseNodeReference = volumeNode.reference
                         }

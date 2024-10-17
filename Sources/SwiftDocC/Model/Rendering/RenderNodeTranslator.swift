@@ -377,11 +377,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         visitTutorialTableOfContents(technology)
     }
 
-    public mutating func visitTutorialTableOfContents(_ technology: TutorialTableOfContents) -> (any RenderTree)? {
+    public mutating func visitTutorialTableOfContents(_ tableOfContents: TutorialTableOfContents) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .overview)
         
-        node.metadata.title = technology.intro.title
-        node.metadata.category = technology.name
+        node.metadata.title = tableOfContents.intro.title
+        node.metadata.category = tableOfContents.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration()
         node.metadata.role = DocumentationContentRenderer.role(for: .tutorialTableOfContents).rawValue
@@ -389,15 +389,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
 
-        var intro = visitIntro(technology.intro) as! IntroRenderSection
+        var intro = visitIntro(tableOfContents.intro) as! IntroRenderSection
         if let firstTutorial = self.firstTutorial(ofTechnology: identifier) {
             intro.action = visitLink(firstTutorial.reference.url, defaultTitle: "Get started")
         }
         node.sections.append(intro)
                 
-        node.sections.append(contentsOf: technology.volumes.map { visitVolume($0) as! VolumeRenderSection })
+        node.sections.append(contentsOf: tableOfContents.volumes.map { visitVolume($0) as! VolumeRenderSection })
         
-        if let resources = technology.resources {
+        if let resources = tableOfContents.resources {
             node.sections.append(visitResources(resources) as! ResourcesRenderSection)
         }
         
@@ -916,7 +916,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Guaranteed to have at least one path
-        let technologyPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
+        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
                 
         node.sections.append(intro)
         
@@ -930,8 +930,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
         
-        if technologyPath.count >= 2 {
-            let volume = technologyPath[technologyPath.count - 2]
+        if tutorialPath.count >= 2 {
+            let volume = tutorialPath[tutorialPath.count - 2]
             
             if let cta = callToAction(with: article.callToActionImage, volume: volume) {
                 node.sections.append(cta)

@@ -64,7 +64,7 @@ extension DocumentationNode.Kind {
     public static let article = DocumentationNode.Kind(name: "Article", id: "org.swift.docc.kind.article", isSymbol: false)
     /// A sample code project.
     public static let sampleCode = DocumentationNode.Kind(name: "Sample Code", id: "org.swift.docc.kind.sampleCode", isSymbol: false)
-    /// A volume of documentation within a technology.
+    /// A volume of documentation within a tutorial table-of-contents.
     public static let volume = DocumentationNode.Kind(name: "Volume", id: "org.swift.docc.kind.technology.volume", isSymbol: false)
     /// A chapter of documentation within a volume.
     public static let chapter = DocumentationNode.Kind(name: "Chapter", id: "org.swift.docc.kind.chapter", isSymbol: false)
@@ -85,7 +85,7 @@ extension DocumentationNode.Kind {
     public static let enumeration = DocumentationNode.Kind(name: "Enumeration", id: "org.swift.docc.kind.enumeration", isSymbol: true)
     /// Documentation about a protocol.
     public static let `protocol` = DocumentationNode.Kind(name: "Protocol", id: "org.swift.docc.kind.protocol", isSymbol: true)
-    /// Documentation about a technology.
+    /// Documentation about a tutorial table-of-contents.
     public static let tutorialTableOfContents = DocumentationNode.Kind(name: "Tutorial Table of Contents", id: "org.swift.docc.kind.technology", isSymbol: false)
     /// Documentation about an extension.
     public static let `extension` = DocumentationNode.Kind(name: "Extension", id: "org.swift.docc.kind.extension", isSymbol: true)
