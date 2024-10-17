@@ -147,9 +147,14 @@ struct SemanticTreeDumper: SemanticWalker {
         }
         dump(markupContainer, customDescription: description)
     }
-        
-    mutating func visitTechnology(_ technology: Technology) {
-        dump(technology, customDescription: "name: '\(technology.name)'")
+
+    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) {
+        visitTutorialTableOfContents(technology)
+    }
+
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> () {
+        dump(tutorialTableOfContents, customDescription: "name: '\(tutorialTableOfContents.name)'")
     }
     
     mutating func visitContentAndMedia(_ contentAndMedia: ContentAndMedia) -> () {

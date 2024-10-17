@@ -109,11 +109,16 @@ struct ExternalReferenceWalker: SemanticVisitor {
     mutating func visitMarkup(_ markup: Markup) {
         visitMarkupContainer(MarkupContainer(markup))
     }
+
+    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released
+    mutating func visitTechnology(_ technology: TutorialTableOfContents) {
+        visitTutorialTableOfContents(technology)
+    }
     
-    mutating func visitTechnology(_ technology: Technology) {
-        visit(technology.intro)
-        technology.volumes.forEach { visit($0) }
-        technology.resources.unwrap { visit($0) }
+    mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Void {
+        visit(tutorialTableOfContents.intro)
+        tutorialTableOfContents.volumes.forEach { visit($0) }
+        tutorialTableOfContents.resources.unwrap { visit($0) }
     }
     
     mutating func visitImageMedia(_ imageMedia: ImageMedia) { }
