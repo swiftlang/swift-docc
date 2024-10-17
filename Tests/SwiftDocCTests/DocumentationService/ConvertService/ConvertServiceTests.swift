@@ -17,8 +17,7 @@ import SwiftDocCTestUtilities
 class ConvertServiceTests: XCTestCase {
     private let testBundleInfo = DocumentationBundle.Info(
         displayName: "TestBundle",
-        identifier: "identifier",
-        version: "1.0.0"
+        identifier: "identifier"
     )
     
     func testConvertSinglePage() throws {
@@ -1731,8 +1730,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
-                identifier: "com.test.bundle",
-                version: "1.0.0"
+                identifier: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
@@ -2021,8 +2019,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
-                identifier: "org.swift.example",
-                version: "1.0.0"
+                identifier: "org.swift.example"
             ),
             externalIDsToConvert: ["s:32MyKit3FooV"],
             documentPathsToConvert: [],
@@ -2131,8 +2128,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle",
-                version: "1.0.0"
+                identifier: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework40EnumerationWithSingleUnresolvableDocLinkO"],
             documentPathsToConvert: [],
@@ -2170,8 +2166,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle",
-                version: "1.0.0"
+                identifier: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF"],
             documentPathsToConvert: [],
@@ -2210,8 +2205,7 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle",
-                version: "1.0.0"
+                identifier: "com.test.bundle"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework43EnumerationWithSingleUnresolvableSymbolLinkO"],
             documentPathsToConvert: [],

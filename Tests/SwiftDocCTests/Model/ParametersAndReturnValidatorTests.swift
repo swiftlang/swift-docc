@@ -111,6 +111,36 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         }
     }
     
+    func testParametersWithAlternateSignatures() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "AlternateDeclarations") { url in
+            try """
+            # ``MyClass/present(completion:)``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Override the documentation with a parameter section that raise warnings.
+            
+            - Parameters:
+              - completion: Description of the parameter that's available in some alternatives.
+            - Returns: Description of the return value that's available for some other alternatives.
+            """.write(to: url.appendingPathComponent("extension.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("MyClass/present(completion:)")
+        let node = try context.entity(with: reference)
+        let symbolSemantic = try XCTUnwrap(node.semantic as? Symbol)
+        
+        let swiftParameterNames = symbolSemantic.parametersSectionVariants.firstValue?.parameters
+        
+        XCTAssertEqual(swiftParameterNames?.map(\.name), ["completion"])
+        XCTAssertEqual(swiftParameterNames?.map { _format($0.contents) }, ["Description of the parameter that’s available in some alternatives."])
+        
+        let swiftReturnsContent = symbolSemantic.returnsSection.map { _format($0.content) }
+        XCTAssertEqual(swiftReturnsContent, "Description of the return value that’s available for some other alternatives.")
+    }
+    
     func testParameterDiagnosticsInDocumentationExtension() throws {
         let (url, _, context) = try testBundleAndContext(copying: "ErrorParameters") { url in
             try """
@@ -199,11 +229,6 @@ class ParametersAndReturnValidatorTests: XCTestCase {
     func testFunctionsThatCorrespondToPropertiesInAnotherLanguage() throws {
         let (_, _, context) = try testBundleAndContext(named: "GeometricalShapes")
         XCTAssertEqual(context.problems.map(\.diagnostic.summary), [])
-        
-        // A small test helper to format markup for test assertions in this test.
-        func _format(_ markup: [any Markup]) -> String {
-            markup.map { $0.format() }.joined()
-        }
         
         let reference = try XCTUnwrap(context.knownPages.first(where: { $0.lastPathComponent == "isEmpty" }))
         let node = try context.entity(with: reference)
@@ -685,7 +710,7 @@ class ParametersAndReturnValidatorTests: XCTestCase {
         })
         
         context.diagnosticEngine.flush()
-        return logStorage.text
+        return logStorage.text.trimmingCharacters(in: .newlines)
     }
     
     private let start = SymbolGraph.LineList.SourceRange.Position(line: 7, character: 6) // an arbitrary non-zero start position
@@ -733,4 +758,9 @@ class ParametersAndReturnValidatorTests: XCTestCase {
             ]
         )
     }
+}
+
+// A small test helper to format markup for test assertions in this file.
+private func _format(_ markup: [any Markup]) -> String {
+    markup.map { $0.format() }.joined()
 }

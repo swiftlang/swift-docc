@@ -12,7 +12,6 @@
 import Foundation
 import NIO
 import NIOHTTP1
-import SwiftDocC
 
 fileprivate extension String {
     var fileExtension: String {
@@ -54,7 +53,6 @@ struct RangeHeader {
 /// A response handler that serves asset files.
 struct FileRequestHandler: RequestHandlerFactory {
     let rootURL: URL
-    let fileIO: NonBlockingFileIO
 
     /// Metadata that pairs file paths with content mime types.
     struct AssetFileMetadata {

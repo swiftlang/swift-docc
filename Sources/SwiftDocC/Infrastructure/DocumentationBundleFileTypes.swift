@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -45,12 +45,12 @@ public enum DocumentationBundleFileTypes {
         return url.lastPathComponent.hasSuffix(symbolGraphFileExtension)
     }
     
-    private static let documentationBundleFileExtension = "docc"
-    /// Checks if a folder is a documentation bundle.
+    private static let documentationCatalogFileExtension = "docc"
+    /// Checks if a folder is a documentation catalog.
     /// - Parameter url: The folder to check.
-    /// - Returns: Whether or not the folder at `url` is a documentation bundle.
-    public static func isDocumentationBundle(_ url: URL) -> Bool {
-        return url.pathExtension.lowercased() == documentationBundleFileExtension
+    /// - Returns: Whether or not the folder at `url` is a documentation catalog.
+    public static func isDocumentationCatalog(_ url: URL) -> Bool {
+        url.pathExtension.lowercased() == documentationCatalogFileExtension
     }
     
     private static let infoPlistFileName = "Info.plist"
@@ -83,5 +83,12 @@ public enum DocumentationBundleFileTypes {
     /// - Returns: Whether or not the file at `url` is `theme-settings.json`.
     public static func isThemeSettingsFile(_ url: URL) -> Bool {
         return url.lastPathComponent == themeSettingsFileName
+    }
+}
+
+extension DocumentationBundleFileTypes {
+    @available(*, deprecated, renamed: "isDocumentationCatalog(_:)", message: "Use 'isDocumentationCatalog(_:)' instead. This deprecated API will be removed after 6.1 is released")
+    public static func isDocumentationBundle(_ url: URL) -> Bool {
+        isDocumentationCatalog(url)
     }
 }

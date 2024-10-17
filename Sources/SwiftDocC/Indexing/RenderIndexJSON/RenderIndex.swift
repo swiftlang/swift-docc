@@ -228,7 +228,7 @@ extension RenderIndex {
             self.isDeprecated = isDeprecated
             self.isExternal = isExternal
             self.isBeta = isBeta
-            self.icon = nil
+            self.icon = icon
         }
         
         init(

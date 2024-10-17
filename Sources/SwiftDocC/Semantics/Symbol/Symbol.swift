@@ -149,6 +149,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The symbol's alternate declarations in each language variant the symbol is available in.
     public var alternateDeclarationVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]>()
 
+    /// The symbol's alternate function signature in each language variant the symbol is available in.
+    public var alternateSignatureVariants = DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.FunctionSignature]]>()
+
     /// The symbol's set of attributes in each language variant the symbol is available in.
     public var attributesVariants = DocumentationDataVariants<[RenderAttribute.Kind: Any]>()
     
@@ -270,6 +273,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         mixinsVariants: DocumentationDataVariants<[String: Mixin]>,
         declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
         alternateDeclarationVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.DeclarationFragments]]> = .init(defaultVariantValue: [:]),
+        alternateSignatureVariants: DocumentationDataVariants<[[PlatformName?]: [SymbolGraph.Symbol.FunctionSignature]]> = .init(defaultVariantValue: [:]),
         defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
         relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .init(),
         abstractSectionVariants: DocumentationDataVariants<AbstractSection>,
@@ -311,6 +315,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.declarationVariants = declarationVariants
         self.possibleValuesSectionVariants = possibleValuesSectionVariants
         self.alternateDeclarationVariants = alternateDeclarationVariants
+        self.alternateSignatureVariants = alternateSignatureVariants
         
         self.mixinsVariants = mixinsVariants
         
@@ -327,10 +332,15 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
                     self.locationVariants[trait] = location
                 case let spi as SymbolGraph.Symbol.SPI:
                     self.isSPIVariants[trait] = spi.isSPI
-                case let alternateDeclarations as SymbolGraph.Symbol.AlternateDeclarations:
+                case let alternateSymbols as SymbolGraph.Symbol.AlternateSymbols:
                     // If alternate declarations weren't set explicitly use the ones from the mixins.
                     if !self.alternateDeclarationVariants.hasVariant(for: trait) {
-                        self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations.declarations]
+                        let alternateDeclarations = alternateSymbols.alternateSymbols.compactMap(\.declarationFragments)
+                        self.alternateDeclarationVariants[trait] = [[platformNameVariants[trait]]: alternateDeclarations]
+                    }
+                    if !self.alternateSignatureVariants.hasVariant(for: trait) {
+                        let alternateSignatures = alternateSymbols.alternateSymbols.compactMap(\.functionSignature)
+                        self.alternateSignatureVariants[trait] = [[platformNameVariants[trait]]: alternateSignatures]
                     }
                 case let attribute as SymbolGraph.Symbol.Minimum:
                     attributes[.minimum] = attribute.value
@@ -451,62 +461,56 @@ extension Symbol {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateDeclarations: SymbolGraph.Symbol.AlternateDeclarations?, selector: UnifiedSymbolGraph.Selector) throws {
+    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, alternateSymbols: SymbolGraph.Symbol.AlternateSymbols?, selector: UnifiedSymbolGraph.Selector) throws {
         let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
-        if let platformName,
-            let existingKey = declarationVariants[trait]?.first(
-                where: { pair in
-                    return pair.value.declarationFragments == mergingDeclaration.declarationFragments
-                }
-            )?.key
-        {
+        func merge<Value: Equatable>(
+            _ mergingValue: Value,
+            into variants: inout DocumentationDataVariants<[[PlatformName?] : Value]>
+        ) throws {
+            guard let platformName else {
+                variants[trait]?[[nil]] = mergingValue
+                return
+            }
+            let platform = PlatformName(operatingSystemName: platformName)
+            
+            guard let (existingKey, currentValue) = variants[trait]?.first(where: { _, value in value == mergingValue }) else {
+                variants[trait]?[[platform]] = mergingValue
+                return
+            }
+            
             guard !existingKey.contains(nil) else {
                 throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(identifier)
             }
-
-            let platform = PlatformName(operatingSystemName: platformName)
-            if !existingKey.contains(platform) {
-                // Matches one of the existing declarations, append to the existing key.
-                let currentDeclaration = declarationVariants[trait]?.removeValue(forKey: existingKey)!
-                declarationVariants[trait]?[existingKey + [platform]] = currentDeclaration
+            
+            guard !existingKey.contains(platform) else {
+                // No need to update the existing value
+                return
             }
-        } else {
-            // Add new declaration
-            if let name = platformName {
-                declarationVariants[trait]?[[PlatformName.init(operatingSystemName: name)]] = mergingDeclaration
-            } else {
-                declarationVariants[trait]?[[nil]] = mergingDeclaration
+            
+            let newKey = existingKey + [platform]
+            guard variants[trait]?.keys.contains(newKey) == false else {
+                // Don't override the existing value
+                return
             }
+            
+            // Add the new platform to the existing value
+            _ = variants[trait]?.removeValue(forKey: existingKey)
+            variants[trait]?[newKey] = currentValue
         }
         
-        if let alternateDeclarations {
-            let mergingAlternateDeclarations = alternateDeclarations.declarations
-            if let platformName,
-               let existingKey = alternateDeclarationVariants[trait]?.first(
-                    where: { pair in
-                        return pair.value.map { $0.declarationFragments } == mergingAlternateDeclarations.map { $0.declarationFragments }
-                    }
-                )?.key
-            {
-                guard !existingKey.contains(nil) else {
-                    throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(identifier)
-                }
-
-                let platform = PlatformName(operatingSystemName: platformName)
-                if !existingKey.contains(platform) {
-                    // Matches one of the existing declarations, append to the existing key.
-                    let currentDeclaration = alternateDeclarationVariants[trait]?.removeValue(forKey: existingKey)!
-                    alternateDeclarationVariants[trait]?[existingKey + [platform]] = currentDeclaration
-                }
-            } else {
-                // Add new declaration
-                if let name = platformName {
-                    alternateDeclarationVariants[trait]?[[PlatformName.init(operatingSystemName: name)]] = mergingAlternateDeclarations
-                } else {
-                    alternateDeclarationVariants[trait]?[[nil]] = mergingAlternateDeclarations
-                }
+        try merge(mergingDeclaration, into: &declarationVariants)
+        
+        if let alternateSymbols {
+            let mergingAlternateDeclarations = alternateSymbols.alternateSymbols.compactMap(\.declarationFragments)
+            if !mergingAlternateDeclarations.isEmpty {
+                try merge(mergingAlternateDeclarations, into: &alternateDeclarationVariants)
+            }
+            
+            let mergingAlternateSignatures = alternateSymbols.alternateSymbols.compactMap(\.functionSignature)
+            if !mergingAlternateSignatures.isEmpty {
+                try merge(mergingAlternateSignatures, into: &alternateSignatureVariants)
             }
         }
 
@@ -540,9 +544,9 @@ extension Symbol {
         for (selector, mixins) in unifiedSymbol.mixins {
             if let mergingDeclaration = mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments {
                 let availability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
-                let alternateDeclarations = mixins[SymbolGraph.Symbol.AlternateDeclarations.mixinKey] as? SymbolGraph.Symbol.AlternateDeclarations
+                let alternateSymbols = mixins[SymbolGraph.Symbol.AlternateSymbols.mixinKey] as? SymbolGraph.Symbol.AlternateSymbols
 
-                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, alternateDeclarations: alternateDeclarations, selector: selector)
+                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, alternateSymbols: alternateSymbols, selector: selector)
             }
         }
     }
@@ -595,10 +599,6 @@ extension Symbol {
     
     /// The first variant of the symbol's platform, if available.
     public var platformName: PlatformName? { platformNameVariants.firstValue }
-    
-    /// The first variant of the symbol's extended module, if available
-    @available(*, deprecated, message: "Use 'extendedModuleVariants' instead. This deprecated API will be removed after 6.0 is released")
-    public var extendedModule: String? { extendedModuleVariants.firstValue }
 
     /// Whether the first variant of the symbol is required in its context.
     public var isRequired: Bool {
@@ -735,4 +735,33 @@ extension Symbol {
     }
 
     // Don't add additional functions here. See the comment above about legacy code.
+}
+
+// Use fully-qualified types below to silence a warning about retroactively conforming a type from another module to a new protocol (SE-0364).
+// The `@retroactive` attribute is new in the Swift 6 compiler. The backwards compatible syntax for a retroactive conformance is fully-qualified types.
+//
+// If SymbolKit adds Equatable conformance it's reasonable to expect that its behavior would be compatible.
+extension SymbolKit.SymbolGraph.Symbol.DeclarationFragments: Swift.Equatable {
+    // Extension outside of declaring module can't synthesize equatable implementation
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.declarationFragments == rhs.declarationFragments
+    }
+}
+
+extension SymbolKit.SymbolGraph.Symbol.FunctionSignature: Swift.Equatable {
+    // Extension outside of declaring module can't synthesize equatable implementation
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.parameters == rhs.parameters &&
+        lhs.returns    == rhs.returns
+    }
+}
+
+extension SymbolKit.SymbolGraph.Symbol.FunctionSignature.FunctionParameter: Swift.Equatable {
+    // Extension outside of declaring module can't synthesize equatable implementation
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.name                 == rhs.name                 &&
+        lhs.externalName         == rhs.externalName         &&
+        lhs.declarationFragments == rhs.declarationFragments &&
+        lhs.children             == rhs.children
+    }
 }

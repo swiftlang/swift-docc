@@ -63,6 +63,7 @@ public struct DocumentationBundle {
 
      It's not safe to make computations based on assumptions about the format of bundle's version. The version can be in any format.
      */
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public var version: String? {
         info.version
     }

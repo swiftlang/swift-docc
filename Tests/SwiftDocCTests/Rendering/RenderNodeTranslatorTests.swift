@@ -1362,6 +1362,103 @@ class RenderNodeTranslatorTests: XCTestCase {
         renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/SampleCode")
         XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
     }
+    
+    func testExpectedRoleHeadingWhenAutomaticRoleHeadingIsDisabled() throws {
+        let exampleDocumentation = Folder(
+            name: "unit-test.docc",
+            content: [
+                TextFile(name: "APICollection.md", utf8Content: """
+                # API Collection
+                @Options {
+                    @AutomaticTitleHeading(disabled)
+                }
+                My API Collection Abstract.
+                ## Topics
+                - ``Symbol``
+                - <doc:article2>
+                - <doc:article3>
+                """),
+                TextFile(name: "Article.md", utf8Content: """
+                # Article
+                @Options {
+                    @AutomaticTitleHeading(disabled)
+                }
+                My Article Abstract.
+                ## Overview
+                An overview.
+                """),
+                TextFile(name: "CustomRole.md", utf8Content: """
+                # Article 4
+                @Options {
+                    @AutomaticTitleHeading(disabled)
+                }
+                @Metadata {
+                    @TitleHeading("Custom Role")
+                }
+                My Article Abstract.
+                ## Overview
+                An overview.
+                """),
+                TextFile(name: "SampleCode.md", utf8Content: """
+                # Sample Code
+                @Options {
+                    @AutomaticTitleHeading(disabled)
+                }
+                @Metadata {
+                    @PageKind(sampleCode)
+                }
+                ## Topics
+                - <doc:article>
+                """),
+                JSONFile(
+                    name: "unit-test.symbols.json",
+                    content: makeSymbolGraph(
+                        moduleName: "unit-test",
+                        symbols: [SymbolGraph.Symbol(
+                            identifier: .init(precise: "symbol-id", interfaceLanguage: "swift"),
+                            names: .init(title: "Symbol", navigator: nil, subHeading: nil, prose: nil),
+                            pathComponents: ["Symbol"],
+                            docComment: nil,
+                            accessLevel: .public,
+                            kind: .init(parsedIdentifier: .class, displayName: "Kind Display Name"),
+                            mixins: [:]
+                        )]
+                    )
+                ),
+            ]
+        )
+        let tempURL = try createTempFolder(content: [exampleDocumentation])
+        let (_, bundle, context) = try loadBundle(from: tempURL)
+
+        func renderNodeArticleFromReferencePath(
+            referencePath: String
+        ) throws -> RenderNode {
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: referencePath, sourceLanguage: .swift)
+            let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference)
+            return try XCTUnwrap(translator.visitArticle(symbol) as? RenderNode)
+        }
+        
+        // Assert that API collections disabling automatic title headings don't get any value assigned as the eyebrow title,
+        // but that the node's role itself is unaffected.
+        var renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/APICollection")
+        XCTAssertEqual(renderNode.metadata.roleHeading, nil)
+        XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.collectionGroup.rawValue)
+        // Assert that articles disabling automatic title headings don't get any value assigned as the eyebrow title,
+        // but that the node's role itself is unaffected.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/Article")
+        XCTAssertEqual(renderNode.metadata.roleHeading, nil)
+        XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.article.rawValue)
+        // Assert that articles that have a custom title heading have the eyebrow title assigned properly,
+        // even when automatic title headings are disabled.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/CustomRole")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Custom Role")
+        XCTAssertEqual(renderNode.metadata.role, RenderMetadata.Role.article.rawValue)
+        // Assert that articles that have a custom page kind have the eyebrow title assigned properly,
+        // even when automatic title headings are disabled.
+        renderNode = try renderNodeArticleFromReferencePath(referencePath: "/documentation/unit-test/SampleCode")
+        XCTAssertEqual(renderNode.metadata.roleHeading, "Sample Code")
+    }
 
     func testEncodesOverloadsInRenderNode() throws {
         enableFeatureFlag(\.isExperimentalOverloadedSymbolPresentationEnabled)

@@ -156,8 +156,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         }
         // Start watching the source and get the initial (successful) state.
         do {
-            let engine = preview.convertAction.diagnosticEngine
-            
             // Wait for watch to produce output.
             let logOutputExpectation = expectation(description: "Did produce log output")
             let logChecker = OutputChecker(fileURL: pipeURL, expectation: logOutputExpectation) { output in
@@ -175,7 +173,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 }
                 
                 XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
-                XCTAssertNotNil(engine.problems.first(where: { problem -> Bool in
+                XCTAssertNotNil(preview.convertAction.diagnosticEngine.problems.first(where: { problem -> Bool in
                     DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic).contains(expectedErrorMessage)
                 }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
 

@@ -212,7 +212,6 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
                 "--display-name", "DisplayName",
                 "--bundle-identifier", "com.example.test",
-                "--bundle-version", "1.2.3",
                 "--default-code-listing-language", "swift",
             ])
             
@@ -227,7 +226,6 @@ class ConvertSubcommandTests: XCTestCase {
                 testBundleURL.path,
                 "--fallback-display-name", "DisplayName",
                 "--fallback-bundle-identifier", "com.example.test",
-                "--fallback-bundle-version", "1.2.3",
                 "--default-code-listing-language", "swift",
             ])
             
@@ -280,40 +278,6 @@ class ConvertSubcommandTests: XCTestCase {
                 "sidekit.symbols.json",
             ])
         }
-        
-        // Deprecated option is still supported
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--additional-symbol-graph-files",
-                "/path/to/first.symbols.json",
-                "/path/to/second.symbols.json",
-            ])
-            
-            XCTAssertEqual(convertOptions.additionalSymbolGraphFiles, [
-                URL(fileURLWithPath: "/path/to/first.symbols.json"),
-                URL(fileURLWithPath: "/path/to/second.symbols.json"),
-            ])
-            
-            let action = try ConvertAction(fromConvertCommand: convertOptions)
-            XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles, [
-                URL(fileURLWithPath: "/path/to/first.symbols.json"),
-                URL(fileURLWithPath: "/path/to/second.symbols.json"),
-            ])
-        }
-    }
-    
-    func testIndex() throws {
-        let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path,
-            "--index",
-        ])
-        
-        XCTAssertTrue(convertOptions.emitLMDBIndex)
-        
-        let action = try ConvertAction(fromConvertCommand: convertOptions)
-        
-        XCTAssertEqual(action.buildLMDBIndex, true)
     }
     
     func testEmitLMDBIndex() throws {
@@ -333,7 +297,6 @@ class ConvertSubcommandTests: XCTestCase {
         let convertOptions = try Docc.Convert.parse([
             "--fallback-display-name", "DisplayName",
             "--fallback-bundle-identifier", "com.example.test",
-            "--fallback-bundle-version", "1.2.3",
             
             "--additional-symbol-graph-dir",
             testBundleURL.path,
@@ -609,10 +572,6 @@ class ConvertSubcommandTests: XCTestCase {
         let noFlagConvert = try Docc.Convert.parse([])
         XCTAssertEqual(noFlagConvert.enableParametersAndReturnsValidation, true)
         
-        // It's allowed to pass the previous "--enable-experimental-..." flag.
-        let oldFlagConvert = try Docc.Convert.parse(["--enable-experimental-parameters-and-returns-validation"])
-        XCTAssertEqual(oldFlagConvert.enableParametersAndReturnsValidation, true)
-        
         // It's allowed to pass the redundant "--enable-..." flag.
         let enabledFlagConvert = try Docc.Convert.parse(["--enable-parameters-and-returns-validation"])
         XCTAssertEqual(enabledFlagConvert.enableParametersAndReturnsValidation, true)
@@ -620,5 +579,16 @@ class ConvertSubcommandTests: XCTestCase {
         // Passing the "--disable-..." flag turns of the feature.
         let disabledFlagConvert = try Docc.Convert.parse(["--disable-parameters-and-returns-validation"])
         XCTAssertEqual(disabledFlagConvert.enableParametersAndReturnsValidation, false)
+    }
+
+    // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
+    func testVersionFlag() throws {
+        let noFlagConvert = try Docc.Convert.parse([])
+        XCTAssertEqual(noFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, nil)
+
+        let enabledFlagConvert = try Docc.Convert.parse(["--fallback-bundle-version", "1.2.3"])
+        XCTAssertEqual(enabledFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, "1.2.3")
     }
 }

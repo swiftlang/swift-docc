@@ -22,15 +22,6 @@ extension DocumentationNode {
         /// The name of the symbol.
         case symbol(name: String)
         
-        public func hash(into hasher: inout Hasher) {
-            switch self {
-            case .conceptual(let text):
-                hasher.combine(text)
-            case .symbol(let name):
-                hasher.combine(name)
-            }
-        }
-        
         public var description: String {
             switch self {
             case .conceptual(let title):
