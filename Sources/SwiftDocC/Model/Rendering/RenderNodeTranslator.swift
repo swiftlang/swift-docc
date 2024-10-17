@@ -195,7 +195,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
         // The way to curate tutorials is to link them from a tutorial table-of-contents page and that generates the following hierarchy:
         // table-of-contents -> volume -> chapter -> tutorial.
-        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
+        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
 
         if tutorialPath.count >= 2 {
             let volume = tutorialPath[tutorialPath.count - 2]
@@ -916,7 +916,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Guaranteed to have at least one path
-        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
+        let technologyPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
                 
         node.sections.append(intro)
         

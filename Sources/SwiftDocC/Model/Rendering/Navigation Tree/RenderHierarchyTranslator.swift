@@ -36,7 +36,7 @@ struct RenderHierarchyTranslator {
     ///   - omittingChapters: If `true`, don't include chapters in the returned hierarchy.
     /// - Returns: A tuple of 1) a tutorials hierarchy and 2) the root reference of the tutorials hierarchy.
     mutating func visitTutorialTableOfContentsNode(_ reference: ResolvedTopicReference, omittingChapters: Bool = false) -> (hierarchy: RenderHierarchy, tutorialTableOfContents: ResolvedTopicReference)? {
-        let paths = context.finitePaths(to: reference, options: [.preferTechnologyRoot])
+        let paths = context.finitePaths(to: reference, options: [.preferTutorialTableOfContentsRoot])
         
         // If the node is a tutorial table-of-contents page, return immediately without generating breadcrumbs
         if let _ = (try? context.entity(with: reference))?.semantic as? TutorialTableOfContents {

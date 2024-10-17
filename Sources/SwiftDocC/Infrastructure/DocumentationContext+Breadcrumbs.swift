@@ -13,8 +13,8 @@ extension DocumentationContext {
     struct PathOptions: OptionSet {
         let rawValue: Int
         
-        /// Prefer a technology as the canonical path over a shorter path.
-        static let preferTechnologyRoot = PathOptions(rawValue: 1 << 0)
+        /// Prefer a tutorial table-of-contents page as the canonical path over a shorter path.
+        static let preferTutorialTableOfContentsRoot = PathOptions(rawValue: 1 << 0)
     }
     
     /// Finds all finite (acyclic) paths, also called "breadcrumbs", to the given reference in the topic graph.
@@ -39,7 +39,7 @@ extension DocumentationContext {
             .map { $0.dropFirst().reversed() }
             .sorted { (lhs, rhs) -> Bool in
                 // Order a path rooted in a tutorial table-of-contents as the canonical one.
-                if options.contains(.preferTechnologyRoot), let first = lhs.first {
+                if options.contains(.preferTutorialTableOfContentsRoot), let first = lhs.first {
                     return try! entity(with: first).semantic is TutorialTableOfContents
                 }
                 
