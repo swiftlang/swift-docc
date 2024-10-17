@@ -17,7 +17,7 @@ import SwiftDocCTestUtilities
 class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
-    func testTransformForStaticHostingTestExternalOutput() throws {
+    func testTransformForStaticHostingTestExternalOutput() async throws {
         
         // Convert a test bundle as input for the TransformForStaticHostingAction
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -38,7 +38,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: try createTemporaryDirectory()
         )
-        _ = try action.perform(logHandle: .none)
+        _ = try await action.perform(logHandle: .none)
         
         let outputURL = try createTemporaryDirectory()//.appendingPathComponent("output")
     
@@ -52,8 +52,8 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
-        _ = try transformAction.perform(logHandle: .none)
         
+        _ = try await transformAction.perform(logHandle: .none)
         let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
         
@@ -97,7 +97,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
     
     
     // Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
-    func testTransformForStaticHostingActionTestInPlaceOutput() throws {
+    func testTransformForStaticHostingActionTestInPlaceOutput() async throws {
         
         // Convert a test bundle as input for the TransformForStaticHostingAction
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -122,9 +122,8 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             currentPlatforms: nil,
             temporaryDirectory: try createTemporaryDirectory()
         )
-        _ = try action.perform(logHandle: .none)
+        _ = try await action.perform(logHandle: .none)
         
-      
         let basePath =  "test/folder"
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         let templateFolder = Folder.testHTMLTemplateDirectory
@@ -135,7 +134,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
-        _ = try transformAction.perform(logHandle: .none)
+        _ = try await transformAction.perform(logHandle: .none)
         
         var isDirectory: ObjCBool = false
         

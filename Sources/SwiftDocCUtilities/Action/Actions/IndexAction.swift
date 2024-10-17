@@ -12,7 +12,7 @@ import Foundation
 import SwiftDocC
 
 /// An action that creates an index of a documentation bundle.
-public struct IndexAction: Action {
+public struct IndexAction: AsyncAction {
     let rootURL: URL
     let outputURL: URL
     let bundleIdentifier: String
@@ -22,8 +22,7 @@ public struct IndexAction: Action {
     private var dataProvider: LocalFileSystemDataProvider!
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    public init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws
-    {
+    public init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws {
         // Initialize the action context.
         self.rootURL = documentationBundleURL
         self.outputURL = outputURL
@@ -35,7 +34,7 @@ public struct IndexAction: Action {
     
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+    mutating public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         let problems = try buildIndex()
         diagnosticEngine.emit(problems)
         

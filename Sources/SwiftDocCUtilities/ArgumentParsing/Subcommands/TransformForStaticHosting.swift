@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,7 @@ import ArgumentParser
 
 extension Docc.ProcessArchive {
     /// Emits a statically hostable website from a DocC Archive.
-    struct TransformForStaticHosting: ParsableCommand {
+    struct TransformForStaticHosting: AsyncParsableCommand {
         
         static var configuration = CommandConfiguration(
             commandName: "transform-for-static-hosting",
@@ -47,7 +47,6 @@ extension Docc.ProcessArchive {
         var templateOption: TemplateOption
 
         mutating func validate() throws {
-
             if let templateURL = templateOption.templateURL {
                 let indexTemplate = templateURL.appendingPathComponent(HTMLTemplate.templateFileName.rawValue)
                 if !FileManager.default.fileExists(atPath: indexTemplate.path) {
@@ -62,15 +61,10 @@ extension Docc.ProcessArchive {
                 )
             }
         }
-
-        // MARK: - Execution
         
-        mutating func run() throws {
-            // Initialize an `TransformForStaticHostingAction` from the current options in the `TransformForStaticHostingAction` command.
+        func run() async throws {
             var action = try TransformForStaticHostingAction(fromCommand: self)
-            
-            // Perform the emit and print any warnings or errors found
-            try action.performAndHandleResult()
+            try await action.performAndHandleResult()
         }
     }
 }
