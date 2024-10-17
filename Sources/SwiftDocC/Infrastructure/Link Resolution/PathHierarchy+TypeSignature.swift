@@ -223,7 +223,7 @@ private extension ContiguousArray<UTF8.CodeUnit> {
                 angleBracketStack.append(index)
             case closeAngle where self[index - 1] != hyphen: // "->" isn't the closing bracket of a generic
                 guard let open = angleBracketStack.popLast() else {
-                    assertionFailure("Encountered unexpected generic scope brackets in in \(String(cString: self + [0]))")
+                    assertionFailure("Encountered unexpected generic scope brackets in \(String(cString: self + [0]))")
                     return
                 }
                 
@@ -251,7 +251,7 @@ private extension ContiguousArray<UTF8.CodeUnit> {
         // Iterate over all the marked angle bracket pairs (from end to start) and replace the marked text with the syntactic sugar alternative.
         while !markedAngleBracketPairs.isEmpty {
             let (open, close) = markedAngleBracketPairs.removeLast()
-            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(cString: [self[open], 0]))' instead of '>' in \(String(cString: self + [0]))")
+            assert(self[open] == openAngle, "Start marker at \(open) is '\(String(cString: [self[open], 0]))' instead of '<' in \(String(cString: self + [0]))")
             assert(self[close] == closeAngle, "End marker at \(close) is '\(String(cString: [self[close], 0]))' instead of '>' in \(String(cString: self + [0]))")
             
             // The caller accumulated a single character for each marker that indicated the type of syntactic sugar to apply.
