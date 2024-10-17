@@ -244,6 +244,21 @@ public struct ConvertAction: AsyncAction {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+        // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
+        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        do {
+            let result = try await _perform(logHandle: &logHandle, temporaryFolder: temporaryFolder)
+            diagnosticEngine.flush()
+            try? fileManager.removeItem(at: temporaryFolder)
+            return result
+        } catch {
+            diagnosticEngine.flush()
+            try? fileManager.removeItem(at: temporaryFolder)
+            throw error
+        }
+    }
+    
+    private mutating func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> ActionResult {
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -261,18 +276,19 @@ public struct ConvertAction: AsyncAction {
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
-        defer {
-            diagnosticEngine.flush()
-        }
+        // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
+//        defer {
+//            diagnosticEngine.flush()
+//        }
         
         // Run any extra work that the test may have injected
         await _extraTestWork?()
         
-        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
-        
-        defer {
-            try? fileManager.removeItem(at: temporaryFolder)
-        }
+        // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
+//        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+//        defer {
+//            try? fileManager.removeItem(at: temporaryFolder)
+//        }
 
         let indexHTML: URL?
         if let htmlTemplateDirectory {
@@ -390,14 +406,13 @@ public struct ConvertAction: AsyncAction {
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
-            defer {
-                benchmark(end: finalizeNavigationIndexMetric)
-            }
             
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             postConversionProblems.append(contentsOf: indexerProblems)
+            
+            benchmark(end: finalizeNavigationIndexMetric)
         }
         
         // Output to the user the problems encountered during the convert process
