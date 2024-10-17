@@ -152,7 +152,7 @@ extension SemanticVisitor {
     }
 }
 
-@available(*, deprecated)
+@available(*, deprecated) // Remove this default implementation after 6.2 is released.
 extension SemanticVisitor {
     // We need to provide a default implementation to avoid the breaking change of a new protocol requirement.
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) -> Result {

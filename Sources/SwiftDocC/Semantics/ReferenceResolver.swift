@@ -246,7 +246,7 @@ struct ReferenceResolver: SemanticVisitor {
         return (visitMarkupContainer(MarkupContainer(markup)) as! MarkupContainer).elements.first!
     }
 
-    @available(*, deprecated) // This is a deprecated protocol requirement
+    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released.
     mutating func visitTechnology(_ technology: TutorialTableOfContents) -> Semantic {
         visitTutorialTableOfContents(technology)
     }

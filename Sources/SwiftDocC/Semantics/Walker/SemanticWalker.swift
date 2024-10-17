@@ -50,7 +50,7 @@ extension SemanticWalker {
     mutating func visitTile(_ tile: Tile) { descendIntoChildren(of: tile) }
     /// Visits a comment node.
     mutating func visitComment(_ comment: Comment) { descendIntoChildren(of: comment) }
-    @available(*, deprecated) // This is a deprecated protocol requirement
+    @available(*, deprecated) // This is a deprecated protocol requirement. Remove after 6.2 is released.
     mutating func visitTechnology(_ technology: TutorialTableOfContents) { descendIntoChildren(of: technology) }
     /// Visits a tutorials table-of-contents page.
     mutating func visitTutorialTableOfContents(_ tutorialTableOfContents: TutorialTableOfContents) { descendIntoChildren(of: tutorialTableOfContents) }
