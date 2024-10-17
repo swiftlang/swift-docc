@@ -225,5 +225,5 @@ extension DocumentationNode.Kind {
     
     @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public static var technologyOverview: Self { _technologyOverview }
-    private static let _technologyOverview = DocumentationNode.Kind(name: "Technology (Overview)", id: "org.swift.docc.kind.technology.overview", isSymbol: false)
+    static let _technologyOverview = DocumentationNode.Kind(name: "Technology (Overview)", id: "org.swift.docc.kind.technology.overview", isSymbol: false)
 }

@@ -330,6 +330,7 @@ public extension DocumentationNode {
         let taskGroups: [LinkDestinationSummary.TaskGroup]?
         if includeTaskGroups {
             switch kind {
+            case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
             case .tutorial, .tutorialArticle, .tutorialTableOfContents, .chapter, .volume, .onPageLandmark:
                 taskGroups = [.init(title: nil, identifiers: context.children(of: reference).map { $0.reference.absoluteString })]
             default:

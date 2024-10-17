@@ -154,6 +154,7 @@ public class DocumentationContentRenderer {
         case .chapter: return .collectionGroup
         case .collection: return .collection
         case .collectionGroup: return .collectionGroup
+        case ._technologyOverview: fallthrough // This case is deprecated and will be removed after 6.2 is released.
         case .tutorialTableOfContents: return .overview
         case .landingPage: return .article
         case .module, .extendedModule: return .collection
