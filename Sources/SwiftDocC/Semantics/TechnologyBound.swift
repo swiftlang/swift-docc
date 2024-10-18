@@ -9,7 +9,8 @@
 */
 
 /// An entity directly referring to the technology it belongs to.
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 public protocol TechnologyBound {
-    /// The `name` of the ``Technology`` this section refers to.
+    /// The `name` of the ``TutorialTableOfContents`` this section refers to.
     var technology: TopicReference { get }
 }

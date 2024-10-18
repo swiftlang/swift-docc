@@ -136,11 +136,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
         
-        if let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) {
-            let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+        if let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) {
+            let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
             node.hierarchy = hierarchy.hierarchy
-            node.metadata.category = technology.name
-            node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
+            node.metadata.category = tutorialTableOfContents.name
+            node.metadata.categoryPathComponent = hierarchy.tutorialTableOfContents.url.lastPathComponent
         } else if !context.configuration.convertServiceConfiguration.allowsRegisteringArticlesWithoutTechnologyRoot {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
@@ -193,12 +193,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
-        // The way to curate tutorials is to link them from a Technology page and that generates the following hierarchy:
-        // technology -> volume -> chapter -> tutorial.
-        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
-        
-        if technologyPath.count >= 2 {
-            let volume = technologyPath[technologyPath.count - 2]
+        // The way to curate tutorials is to link them from a tutorial table-of-contents page and that generates the following hierarchy:
+        // table-of-contents -> volume -> chapter -> tutorial.
+        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
+
+        if tutorialPath.count >= 2 {
+            let volume = tutorialPath[tutorialPath.count - 2]
             
             if let cta = callToAction(with: tutorial.callToActionImage, volume: volume) {
                 node.sections.append(cta)
@@ -372,33 +372,38 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return totalDurationMinutes.flatMap(contentRenderer.formatEstimatedDuration(minutes:))
     }
 
-    public mutating func visitTechnology(_ technology: Technology) -> RenderTree? {
+    @available(*, deprecated) // This is a deprecated protocol requirement
+    public mutating func visitTechnology(_ technology: TutorialTableOfContents) -> RenderTree? {
+        visitTutorialTableOfContents(technology)
+    }
+
+    public mutating func visitTutorialTableOfContents(_ tableOfContents: TutorialTableOfContents) -> (any RenderTree)? {
         var node = RenderNode(identifier: identifier, kind: .overview)
         
-        node.metadata.title = technology.intro.title
-        node.metadata.category = technology.name
+        node.metadata.title = tableOfContents.intro.title
+        node.metadata.category = tableOfContents.name
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration()
-        node.metadata.role = DocumentationContentRenderer.role(for: .technology).rawValue
+        node.metadata.role = DocumentationContentRenderer.role(for: .tutorialTableOfContents).rawValue
         
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
 
-        var intro = visitIntro(technology.intro) as! IntroRenderSection
+        var intro = visitIntro(tableOfContents.intro) as! IntroRenderSection
         if let firstTutorial = self.firstTutorial(ofTechnology: identifier) {
             intro.action = visitLink(firstTutorial.reference.url, defaultTitle: "Get started")
         }
         node.sections.append(intro)
                 
-        node.sections.append(contentsOf: technology.volumes.map { visitVolume($0) as! VolumeRenderSection })
+        node.sections.append(contentsOf: tableOfContents.volumes.map { visitVolume($0) as! VolumeRenderSection })
         
-        if let resources = technology.resources {
+        if let resources = tableOfContents.resources {
             node.sections.append(visitResources(resources) as! ResourcesRenderSection)
         }
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
         node.hierarchy = hierarchyTranslator
-            .visitTechnologyNode(identifier, omittingChapters: true)!
+            .visitTutorialTableOfContentsNode(identifier, omittingChapters: true)!
             .hierarchy
 
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
@@ -875,18 +880,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .article)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
+        guard let hierarchy = hierarchyTranslator.visitTutorialTableOfContentsNode(identifier) else {
             // This tutorial article is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
         }
         
-        let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
-        
+        let tutorialTableOfContents = try! context.entity(with: hierarchy.tutorialTableOfContents).semantic as! TutorialTableOfContents
+
         node.metadata.title = article.title
         
-        node.metadata.category = technology.name
-        node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
+        node.metadata.category = tutorialTableOfContents.name
+        node.metadata.categoryPathComponent = hierarchy.tutorialTableOfContents.url.lastPathComponent
         node.metadata.role = DocumentationContentRenderer.role(for: .tutorialArticle).rawValue
         
         // Unlike for other pages, in here we use `RenderHierarchyTranslator` to crawl the technology
@@ -911,7 +916,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Guaranteed to have at least one path
-        let technologyPath = context.finitePaths(to: identifier, options: [.preferTechnologyRoot])[0]
+        let tutorialPath = context.finitePaths(to: identifier, options: [.preferTutorialTableOfContentsRoot])[0]
                 
         node.sections.append(intro)
         
@@ -925,8 +930,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
         
-        if technologyPath.count >= 2 {
-            let volume = technologyPath[technologyPath.count - 2]
+        if tutorialPath.count >= 2 {
+            let volume = tutorialPath[tutorialPath.count - 2]
             
             if let cta = callToAction(with: article.callToActionImage, volume: volume) {
                 node.sections.append(cta)

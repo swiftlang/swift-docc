@@ -249,13 +249,13 @@ extension DocumentationContext {
         }
     }
     
-    /// Finds the module and technology pages in the context and returns their paths.
+    /// Finds the module and tutorial table-of-contents pages in the context and returns their paths.
     func previewPaths() throws -> [String] {
         let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
         
         let rootModules = try renderRootModules
         
-        return (rootModules + rootTechnologies).map { page in
+        return (rootModules + tutorialTableOfContentsReferences).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString
         }
     }
