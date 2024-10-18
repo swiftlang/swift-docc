@@ -15,7 +15,7 @@ import SwiftDocCTestUtilities
 
 class EmitGeneratedCurationsActionTests: XCTestCase {
     
-    func testWritesDocumentationExtensionFilesToOutputDir() throws {
+    func testWritesDocumentationExtensionFilesToOutputDir() async throws {
         // This can't be in the test file system because `LocalFileSystemDataProvider` doesn't support `FileManagerProtocol`.
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: "MixedLanguageFramework", withExtension: "docc", subdirectory: "Test Bundles"))
         
@@ -26,7 +26,7 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
             expectedFilesList: [String],
             file: StaticString = #file,
             line: UInt = #line
-        ) throws {
+        ) async throws {
             let fs = try TestFileSystem(folders: [
                 Folder(name: "output", content: initialContent)
             ])
@@ -40,17 +40,17 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
                 startingPointSymbolLink: startingPointSymbolLink,
                 fileManager: fs
             )
-            _ = try action.perform(logHandle: .none)
             
+            _ = try await action.perform(logHandle: .none)
             XCTAssertEqual(try fs.recursiveContentsOfDirectory(atPath: "/output").sorted(), expectedFilesList, file: file, line: line)
         }
         
-        try assertOutput(initialContent: [], depthLimit: 0, startingPointSymbolLink: nil, expectedFilesList: [
+        try await assertOutput(initialContent: [], depthLimit: 0, startingPointSymbolLink: nil, expectedFilesList: [
             "Output.doccarchive",
             "Output.doccarchive/MixedLanguageFramework.md",
         ])
         
-        try assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: nil, expectedFilesList: [
+        try await assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: nil, expectedFilesList: [
             "Output.doccarchive",
             "Output.doccarchive/MixedLanguageFramework",
             "Output.doccarchive/MixedLanguageFramework.md",
@@ -59,7 +59,7 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
             "Output.doccarchive/MixedLanguageFramework/SwiftOnlyStruct.md",
         ])
         
-        try assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: "Foo-struct", expectedFilesList: [
+        try await assertOutput(initialContent: [], depthLimit: nil, startingPointSymbolLink: "Foo-struct", expectedFilesList: [
             "Output.doccarchive",
             "Output.doccarchive/MixedLanguageFramework",
             "Output.doccarchive/MixedLanguageFramework/Foo-swift.struct.md",

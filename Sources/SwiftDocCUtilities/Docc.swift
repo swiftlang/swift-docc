@@ -10,8 +10,8 @@
 
 import ArgumentParser
 
-private var subcommands: [ParsableCommand.Type] {
-    var subcommands: [ParsableCommand.Type] = [
+private var subcommands: [AsyncParsableCommand.Type] {
+    var subcommands: [AsyncParsableCommand.Type] = [
         Docc.Convert.self,
         Docc.ProcessArchive.self,
         Docc.ProcessCatalog.self,
@@ -34,7 +34,7 @@ private var usage: String {
 }
 
 /// The default, command-line interface you use to compile and preview documentation.
-public struct Docc: ParsableCommand {
+public struct Docc: AsyncParsableCommand {
     public static var configuration = CommandConfiguration(
         abstract: "Documentation Compiler: compile, analyze, and preview documentation.",
         usage: usage,

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,16 +13,11 @@ import Foundation
 
 extension Docc {
     /// Indexes a documentation bundle.
-    public struct Index: ParsableCommand {
-
+    public struct Index: AsyncParsableCommand {
         public init() {}
-
-        // MARK: - Configuration
 
         public static var configuration = CommandConfiguration(
             abstract: "Create an index for the documentation from compiled data.")
-
-        // MARK: - Command Line Options & Arguments
 
         /// The user-provided path to a `.doccarchive` documentation archive.
         @OptionGroup()
@@ -36,27 +31,20 @@ extension Docc {
         @Flag(help: "Print out the index information while the process runs.")
         public var verbose = false
 
-        // MARK: - Computed Properties
-
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
             documentationBundle.urlOrFallback.appendingPathComponent("index", isDirectory: true)
         }
 
-        // MARK: - Execution
-
-        public mutating func run() throws {
-            // Initialize an `IndexAction` from the current options in the `Index` command.
+        public func run() async throws {
             var indexAction = try IndexAction(fromIndexCommand: self)
-
-            // Perform the index and print any warnings or errors found
-            try indexAction.performAndHandleResult()
+            try await indexAction.performAndHandleResult()
         }
     }
     
     // This command wraps the Index command so that we can still support it as a top-level command without listing it in the help
     // text (but still list the Index command as a subcommand of the ProcessArchive command).
-    struct _Index: ParsableCommand {
+    struct _Index: AsyncParsableCommand {
         init() {}
 
         static var configuration = CommandConfiguration(
@@ -68,8 +56,8 @@ extension Docc {
         @OptionGroup
         var command: Index
 
-        public mutating func run() throws {
-            try command.run()
+        public func run() async throws {
+            try await command.run()
         }
     }
 }

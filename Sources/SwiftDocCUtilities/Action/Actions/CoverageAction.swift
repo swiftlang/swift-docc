@@ -12,24 +12,24 @@ import Foundation
 import SwiftDocC
 
 /// An action that creates documentation coverage info for a documentation bundle.
-public struct CoverageAction: Action {
-    internal init(
+public struct CoverageAction: AsyncAction {
+    init(
         documentationCoverageOptions: DocumentationCoverageOptions,
         workingDirectory: URL,
-        fileManager: FileManagerProtocol) {
+        fileManager: FileManagerProtocol
+    ) {
         self.documentationCoverageOptions = documentationCoverageOptions
         self.workingDirectory = workingDirectory
         self.fileManager = fileManager
     }
 
     public let documentationCoverageOptions: DocumentationCoverageOptions
-    internal let workingDirectory: URL
+    let workingDirectory: URL
     private let fileManager: FileManagerProtocol
 
-    public mutating func perform(logHandle: LogHandle) throws -> ActionResult {
+    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
         switch documentationCoverageOptions.level {
         case .brief, .detailed:
-            var logHandle = logHandle
             print("   --- Experimental coverage output enabled. ---", to: &logHandle)
 
             let summaryString = try CoverageDataEntry.generateSummary(

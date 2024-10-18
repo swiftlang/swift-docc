@@ -14,7 +14,7 @@ import Foundation
 import SwiftDocC
 
 /// An action that converts a source bundle into compiled documentation.
-public struct ConvertAction: Action, RecreatingContext {
+public struct ConvertAction: AsyncAction {
     enum Error: DescribedError {
         case doesNotContainBundle(url: URL)
         case cancelPending
@@ -58,12 +58,6 @@ public struct ConvertAction: Action, RecreatingContext {
     private var injectedDataProvider: DocumentationWorkspaceDataProvider?
     private var fileManager: FileManagerProtocol
     private let temporaryDirectory: URL
-    
-    public var setupContext: ((inout DocumentationContext) -> Void)? {
-        didSet {
-            converter.setupContext = setupContext
-        }
-    }
     
     var converter: DocumentationConverter
     
@@ -239,52 +233,32 @@ public struct ConvertAction: Action, RecreatingContext {
             dataProvider: dataProvider,
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             sourceRepository: sourceRepository,
-            isCancelled: isCancelled,
             diagnosticEngine: self.diagnosticEngine,
             experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration
         )
     }
-
-    /// `true` if the convert action is cancelled.
-    private let isCancelled = Synchronized<Bool>(false)
     
-    /// `true` if the convert action is currently running.
-    let isPerforming = Synchronized<Bool>(false)
-    
-    /// A block to execute when conversion has finished.
-    /// It's used as a "future" for when the action is cancelled.
-    var didPerformFuture: (()->Void)?
-    
-    /// A block to execute when conversion has started.
-    var willPerformFuture: (()->Void)?
-
-    /// Cancels the action.
-    ///
-    /// The method blocks until the action has completed cancelling.
-    mutating func cancel() throws {
-        /// If the action is not running, there is nothing to cancel
-        guard isPerforming.sync({ $0 }) == true else { return }
-        
-        /// If the action is already cancelled throw `cancelPending`.
-        if isCancelled.sync({ $0 }) == true {
-            throw Error.cancelPending
-        }
-
-        /// Set the cancelled flag.
-        isCancelled.sync({ $0 = true })
-        
-        /// Wait for the `perform(logHandle:)` method to call `didPerformFuture()`
-        let waitGroup = DispatchGroup()
-        waitGroup.enter()
-        didPerformFuture = {
-            waitGroup.leave()
-        }
-        waitGroup.wait()
-    }
+    /// A block of extra work that tests perform to affect the time it takes to convert documentation
+    var _extraTestWork: (() async -> Void)?
 
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
-    mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+    public mutating func perform(logHandle: inout LogHandle) async throws -> ActionResult {
+        // FIXME: Use `defer` again when the asynchronous defer-statement miscompilation (rdar://137774949) is fixed.
+        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        do {
+            let result = try await _perform(logHandle: &logHandle, temporaryFolder: temporaryFolder)
+            diagnosticEngine.flush()
+            try? fileManager.removeItem(at: temporaryFolder)
+            return result
+        } catch {
+            diagnosticEngine.flush()
+            try? fileManager.removeItem(at: temporaryFolder)
+            throw error
+        }
+    }
+    
+    private mutating func _perform(logHandle: inout LogHandle, temporaryFolder: URL) async throws -> ActionResult {
         // Add the default diagnostic console writer now that we know what log handle it should write to.
         if !diagnosticEngine.hasConsumer(matching: { $0 is DiagnosticConsoleWriter }) {
             diagnosticEngine.add(
@@ -302,20 +276,19 @@ public struct ConvertAction: Action, RecreatingContext {
         var postConversionProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
-        // While running this method keep the `isPerforming` flag up.
-        isPerforming.sync({ $0 = true })
-        willPerformFuture?()
-        defer {
-            didPerformFuture?()
-            isPerforming.sync({ $0 = false })
-            diagnosticEngine.flush()
-        }
+        // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
+//        defer {
+//            diagnosticEngine.flush()
+//        }
         
-        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+        // Run any extra work that the test may have injected
+        await _extraTestWork?()
         
-        defer {
-            try? fileManager.removeItem(at: temporaryFolder)
-        }
+        // FIXME: Use `defer` here again when the miscompilation of this asynchronous defer-statement (rdar://137774949) is fixed.
+//        let temporaryFolder = try createTempFolder(with: htmlTemplateDirectory)
+//        defer {
+//            try? fileManager.removeItem(at: temporaryFolder)
+//        }
 
         let indexHTML: URL?
         if let htmlTemplateDirectory {
@@ -433,14 +406,13 @@ public struct ConvertAction: Action, RecreatingContext {
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer {
             let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
-            defer {
-                benchmark(end: finalizeNavigationIndexMetric)
-            }
             
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             postConversionProblems.append(contentsOf: indexerProblems)
+            
+            benchmark(end: finalizeNavigationIndexMetric)
         }
         
         // Output to the user the problems encountered during the convert process
@@ -451,7 +423,7 @@ public struct ConvertAction: Action, RecreatingContext {
         benchmark(end: totalTimeMetric)
         
         if !didEncounterError {
-            let coverageResults = try coverageAction.perform(logHandle: logHandle)
+            let coverageResults = try await coverageAction.perform(logHandle: &logHandle)
             postConversionProblems.append(contentsOf: coverageResults.problems)
         }
         

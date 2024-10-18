@@ -11,15 +11,16 @@
 import SwiftDocC
 import Foundation
 
-extension Action {
+extension AsyncAction {
     /// Performs the action and checks for any problems in the result.
-    /// 
+    ///
     /// - Parameter logHandle: The log handle to write encountered warnings and errors to.
     ///
     /// - Throws: `ErrorsEncountered` if any errors are produced while performing the action.
-    public mutating func performAndHandleResult(logHandle: LogHandle = .standardOutput) throws {
+    public mutating func performAndHandleResult(logHandle: LogHandle = .standardOutput) async throws {
+        var logHandle = logHandle
         // Perform the Action and collect the result
-        let result = try perform(logHandle: logHandle)
+        let result = try await perform(logHandle: &logHandle)
 
         // Throw if any errors were encountered. Errors will have already been
         // reported to the user by the diagnostic engine.
