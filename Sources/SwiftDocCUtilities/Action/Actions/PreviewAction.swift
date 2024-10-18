@@ -38,8 +38,6 @@ public final class PreviewAction: AsyncAction {
     static var allowConcurrentPreviews = false
 
     private let printHTMLTemplatePath: Bool
-
-    var logHandle = LogHandle.standardOutput
     
     let port: Int
     
@@ -89,17 +87,17 @@ public final class PreviewAction: AsyncAction {
     ///
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
     public func perform(logHandle: inout LogHandle) async throws -> ActionResult {
-        self.logHandle = logHandle
+        self.logHandle.sync { $0 = logHandle }
 
         if let rootURL = convertAction.rootURL {
-            print("Input: \(rootURL.path)", to: &self.logHandle)
+            print("Input: \(rootURL.path)")
         }
         // TODO: This never did output human readable string; rdar://74324255
         // print("Input: \(convertAction.documentationCoverageOptions)", to: &self.logHandle)
 
         // In case a developer is using a custom template log its path.
         if printHTMLTemplatePath, let htmlTemplateDirectory = convertAction.htmlTemplateDirectory {
-            print("Template: \(htmlTemplateDirectory.path)", to: &self.logHandle)
+            print("Template: \(htmlTemplateDirectory.path)")
         }
         
         let previewResult = try await preview()
@@ -124,15 +122,16 @@ public final class PreviewAction: AsyncAction {
         let previewResult: ActionResult
         // Preview the output and monitor the source bundle for changes.
         do {
-            print(String(repeating: "=", count: 40), to: &logHandle)
+            print(String(repeating: "=", count: 40))
             if let previewURL = URL(string: "http://localhost:\(port)") {
-                print("Starting Local Preview Server", to: &logHandle)
+                print("Starting Local Preview Server")
                 printPreviewAddresses(base: previewURL)
-                print(String(repeating: "=", count: 40), to: &logHandle)
+                print(String(repeating: "=", count: 40))
             }
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
-            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
+            var logHandleCopy = logHandle.sync { $0 }
+            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandleCopy)
             
             // When the user stops docc - stop the preview server first before exiting.
             trapSignals()
@@ -159,7 +158,8 @@ public final class PreviewAction: AsyncAction {
     
     func convert() async throws -> ActionResult {
         convertAction = try createConvertAction()
-        let (result, context) = try await convertAction.perform(logHandle: &logHandle)
+        var logHandleCopy = logHandle.sync { $0 }
+        let (result, context) = try await convertAction.perform(logHandle: &logHandleCopy)
         
         previewPaths = try context.previewPaths()
         return result
@@ -168,15 +168,23 @@ public final class PreviewAction: AsyncAction {
     private func printPreviewAddresses(base: URL) {
         // If the preview paths are empty, just print the base.
         let firstPath = previewPaths.first ?? ""
-        print("\t Address: \(base.appendingPathComponent(firstPath).absoluteString)", to: &logHandle)
+        print("\t Address: \(base.appendingPathComponent(firstPath).absoluteString)")
             
         let spacing = String(repeating: " ", count: "Address:".count)
         for previewPath in previewPaths.dropFirst() {
-            print("\t \(spacing) \(base.appendingPathComponent(previewPath).absoluteString)", to: &logHandle)
+            print("\t \(spacing) \(base.appendingPathComponent(previewPath).absoluteString)")
         }
     }
     
-    var monitoredConvertTask: Task<Void, Never>?
+    private var logHandle: Synchronized<LogHandle> = .init(.none)
+    
+    fileprivate func print(_ string: String, terminator: String = "\n") {
+        logHandle.sync { logHandle in
+            Swift.print(string, terminator: terminator, to: &logHandle)
+        }
+    }
+    
+    fileprivate var monitoredConvertTask: Task<Void, Never>?
 }
 
 // Monitoring a source folder: Asynchronous output reading and file system events are supported only on macOS.
@@ -192,7 +200,7 @@ extension PreviewAction {
         }
 
         monitor = try DirectoryMonitor(root: rootURL) { _, _ in
-            print("Source bundle was modified, converting... ", terminator: "", to: &self.logHandle)
+            self.print("Source bundle was modified, converting... ", terminator: "")
             self.monitoredConvertTask?.cancel()
             self.monitoredConvertTask = Task {
                 defer {
@@ -201,8 +209,8 @@ extension PreviewAction {
                         try monitor.restart()
                     } catch {
                         // The file watching system API has thrown, stop watching.
-                        print("Watching for changes has failed. To continue preview with watching restart docc.", to: &self.logHandle)
-                        print(error.localizedDescription, to: &self.logHandle)
+                        self.print("Watching for changes has failed. To continue preview with watching restart docc.")
+                        self.print(error.localizedDescription)
                     }
                 }
                 
@@ -211,19 +219,19 @@ extension PreviewAction {
                     if result.didEncounterError {
                         throw ErrorsEncountered()
                     }
-                    print("Done.", to: &self.logHandle)
+                    self.print("Done.")
                 } catch DocumentationContext.ContextError.registrationDisabled {
                     // The context cancelled loading the bundles and threw to yield execution early.
-                    print("\nConversion cancelled...", to: &self.logHandle)
+                    self.print("\nConversion cancelled...")
                 } catch is CancellationError {
-                    print("\nConversion cancelled...", to: &self.logHandle)
+                    self.print("\nConversion cancelled...")
                 } catch {
-                    print("\n\(error.localizedDescription)\nCompilation failed", to: &self.logHandle)
+                    self.print("\n\(error.localizedDescription)\nCompilation failed")
                 }
             }
         }
         try monitor.start()
-        print("Monitoring \(rootURL.path) for changes...", to: &self.logHandle)
+        self.print("Monitoring \(rootURL.path) for changes...")
     }
 }
 #endif // !os(Linux) && !os(Android)
