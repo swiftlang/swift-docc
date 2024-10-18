@@ -86,7 +86,7 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["macOS 10.15.1"])
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), expectedDefaultAvailability)
         }
 
         // Test if the default availability is NOT used for symbols with explicit availability
