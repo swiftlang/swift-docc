@@ -611,12 +611,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// up in the context, not from the arrays that was passed as arguments.
     ///
     /// - Parameters:
-    ///   - tutorialTableOfContents: The list of temporary 'tutorial table-of-contents' pages.
+    ///   - tutorialTableOfContentsResults: The list of temporary 'tutorial table-of-contents' pages.
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
     ///   - bundle: The bundle to resolve links against.
     private func resolveLinks(
-        tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
+        tutorialTableOfContents tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
         bundle: DocumentationBundle
@@ -625,7 +625,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Tutorial table-of-contents
 
-        for tableOfContentsResult in tutorialTableOfContents {
+        for tableOfContentsResult in tutorialTableOfContentsResults {
             autoreleasepool {
                 let url = tableOfContentsResult.source
                 var resolver = ReferenceResolver(context: self, bundle: bundle)
@@ -766,7 +766,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func registerDocuments(from bundle: DocumentationBundle) throws -> (
-        tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
+        tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
         articles: [SemanticResult<Article>],
@@ -774,7 +774,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ) {
         // First, try to understand the basic structure of the document by
         // analyzing it and putting references in as "unresolved".
-        var tutorialTableOfContents = [SemanticResult<TutorialTableOfContents>]()
+        var tutorialTableOfContentsResults = [SemanticResult<TutorialTableOfContents>]()
         var tutorials = [SemanticResult<Tutorial>]()
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
@@ -866,7 +866,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: url), title: tableOfContents.intro.title)
                 topicGraph.addNode(topicGraphNode)
                 let result = SemanticResult(value: tableOfContents, source: url, topicGraphNode: topicGraphNode)
-                tutorialTableOfContents.append(result)
+                tutorialTableOfContentsResults.append(result)
             } else if let tutorial = analyzed as? Tutorial {
                 let topicGraphNode = TopicGraph.Node(reference: reference, kind: .tutorial, source: .file(url: url), title: tutorial.title ?? "")
                 topicGraph.addNode(topicGraphNode)
@@ -925,7 +925,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
-        return (tutorialTableOfContents, tutorials, tutorialArticles, articles, documentationExtensions)
+        return (tutorialTableOfContentsResults, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
     private func insertLandmarks(_ landmarks: some Sequence<Landmark>, from topicGraphNode: TopicGraph.Node, source url: URL) {
@@ -2103,7 +2103,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         //       symbols or attempt to resolve links/references since the topic graph may not contain all documents
         //       or all symbols yet.
         var result: (
-            tutorialTableOfContents: [SemanticResult<TutorialTableOfContents>],
+            tutorialTableOfContentsResults: [SemanticResult<TutorialTableOfContents>],
             tutorials: [SemanticResult<Tutorial>],
             tutorialArticles: [SemanticResult<TutorialArticle>],
             articles: [SemanticResult<Article>],
@@ -2142,7 +2142,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // All discovery went well, process the inputs.
-        let (tutorialTableOfContents, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
+        let (tutorialTableOfContentsResults, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
         let globalOptions = (allArticles + documentationExtensions).compactMap { article in
@@ -2190,7 +2190,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for article in tutorialArticles {
             hierarchyBasedResolver.addTutorialArticle(article)
         }
-        for tutorialTableOfContents in tutorialTableOfContents {
+        for tutorialTableOfContents in tutorialTableOfContentsResults {
             hierarchyBasedResolver.addTutorialTableOfContents(tutorialTableOfContents)
         }
         
@@ -2226,13 +2226,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         preResolveExternalLinks(semanticObjects:
-            tutorialTableOfContents.map(referencedSemanticObject) +
+            tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
             localBundleID: bundle.identifier)
         
         resolveLinks(
-            tutorialTableOfContents: tutorialTableOfContents,
+            tutorialTableOfContents: tutorialTableOfContentsResults,
             tutorials: tutorials,
             tutorialArticles: tutorialArticles,
             bundle: bundle
