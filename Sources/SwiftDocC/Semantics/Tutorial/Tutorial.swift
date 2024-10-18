@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,9 +11,7 @@
 import Foundation
 import Markdown
 
-/**
- A tutorial to complete in order to gain knowledge of a ``Technology``.
- */
+/// A tutorial to complete in order to gain knowledge of a technology.
 public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted, Titled, Timed, Redirected {
     public static let introducedVersion = "5.5"
     public let originalMarkup: BlockDirective
@@ -151,14 +149,14 @@ extension Tutorial {
             }
         }
         
-        let technologyParent = context.parents(of: node.reference)
+        let tutorialTableOfContentsParent = context.parents(of: node.reference)
             .compactMap({ context.topicGraph.nodeWithReference($0) })
-            .first(where: { $0.kind == .technology || $0.kind == .chapter || $0.kind == .volume })
-        guard technologyParent != nil else {
+            .first(where: { $0.kind == .tutorialTableOfContents || $0.kind == .chapter || $0.kind == .volume })
+        guard tutorialTableOfContentsParent != nil else {
             engine.emit(.init(
                 diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(Tutorial.self)", summary: "The tutorial \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
                 possibleSolutions: [
-                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(Technology.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
+                    Solution(summary: "Use a \(TutorialReference.directiveName.singleQuoted) directive inside \(TutorialTableOfContents.directiveName.singleQuoted) to reference the tutorial.", replacements: [])
                 ]
             ))
             return

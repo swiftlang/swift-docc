@@ -43,7 +43,7 @@ struct SemanticAnalyzer: MarkupVisitor {
         
         let semanticChildren = analyzeChildren(of: document)
         let topLevelChildren = semanticChildren.filter {
-            return $0 is Technology ||
+            return $0 is TutorialTableOfContents ||
             $0 is Tutorial ||
             $0 is TutorialArticle
         }
@@ -101,8 +101,8 @@ struct SemanticAnalyzer: MarkupVisitor {
 
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> Semantic? {
         switch blockDirective.name {
-        case Technology.directiveName:
-            return Technology(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
+        case TutorialTableOfContents.directiveName:
+            return TutorialTableOfContents(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
         case Volume.directiveName:
             return Volume(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
         case Chapter.directiveName:

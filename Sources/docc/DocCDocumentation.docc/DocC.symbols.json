@@ -6313,10 +6313,7 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "A tutorial to complete in order to gain knowledge of a ``Technology``."
-          },
-          {
-            "text" : ""
+            "text" : "A tutorial to complete in order to gain knowledge of a technology."
           },
           {
             "text" : "- Parameters:"
