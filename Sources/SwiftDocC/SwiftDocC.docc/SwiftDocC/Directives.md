@@ -29,9 +29,9 @@ For example ``ContentAndMedia`` requires at least one `Image` or `Video` directi
 - ``DirectiveConvertible``
 - ``TechnologyBound``
 
-### Technology Directives
+### Tutorial Table of Contents Directives
 
-- ``Technology``
+- ``TutorialTableOfContents``
 - ``Volume``
 - ``Chapter``
 - ``TutorialReference``

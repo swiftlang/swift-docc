@@ -36,8 +36,8 @@ struct LinkTitleResolver {
                 if let tutorial = Tutorial(from: directive, source: source, for: bundle, in: context, problems: &problems) {
                     return .init(defaultVariantValue: tutorial.intro.title)
                 }
-            case Technology.directiveName:
-                if let overview = Technology(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+            case TutorialTableOfContents.directiveName:
+                if let overview = TutorialTableOfContents(from: directive, source: source, for: bundle, in: context, problems: &problems) {
                     return .init(defaultVariantValue: overview.name)
                 }
             default: break

@@ -193,9 +193,9 @@ private final class FallbackResolverBasedLinkResolver {
                 // First look up articles path
                 currentBundle.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then technology tutorials root path (for individual tutorial pages)
-                currentBundle.technologyTutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
+                currentBundle.tutorialsContainerReference.url.appendingPathComponent(unresolvedReference.path),
                 // Then tutorials root path (for tutorial table of contents pages)
-                currentBundle.tutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
+                currentBundle.tutorialTableOfContentsContainer.url.appendingPathComponent(unresolvedReference.path),
             ])
         }
         // Try resolving in the local context (as child)
