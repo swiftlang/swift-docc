@@ -229,6 +229,12 @@ struct ExternalReferenceWalker: SemanticVisitor {
                 for markup in parameter.contents { visitMarkup(markup) }
             }
         }
+
+        for possibleValuesSection in symbol.possibleValuesSectionVariants.allValues.map(\.variant) {
+            for possibleValue in possibleValuesSection.possibleValues {
+                for markup in possibleValue.contents { visitMarkup(markup) }
+            }
+        }
     }
 
     mutating func visitDeprecationSummary(_ summary: DeprecationSummary) {
