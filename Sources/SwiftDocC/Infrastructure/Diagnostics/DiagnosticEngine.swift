@@ -27,13 +27,7 @@ public final class DiagnosticEngine {
     /// 
     /// This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified,
     /// diagnostics with a severity up to and including `.information` will be printed.
-    public var filterLevel: DiagnosticSeverity {
-        didSet {
-            self.filter = { [filterLevel] in
-                $0.diagnostic.severity.rawValue <= filterLevel.rawValue
-            }
-        }
-    }
+    public var filterLevel: DiagnosticSeverity
     
     /// Returns a Boolean value indicating whether the engine contains a consumer that satisfies the given predicate.
     /// - Parameter predicate: A closure that takes one of the engine's consumers as its argument and returns a Boolean value that indicates whether the passed consumer represents a match.
@@ -48,7 +42,9 @@ public final class DiagnosticEngine {
     private let treatWarningsAsErrors: Bool
 
     /// Determines which problems should be emitted.
-    private var filter: (Problem) -> Bool
+    private func shouldEmit(_ problem: Problem) -> Bool {
+        problem.diagnostic.severity.rawValue <= filterLevel.rawValue
+    }
 
     /// A convenience accessor for retrieving all of the diagnostics this engine currently holds.
     public var problems: [Problem] {
@@ -59,7 +55,6 @@ public final class DiagnosticEngine {
     public init(filterLevel: DiagnosticSeverity = .warning, treatWarningsAsErrors: Bool = false) {
         self.filterLevel = filterLevel
         self.treatWarningsAsErrors = treatWarningsAsErrors
-        self.filter = { $0.diagnostic.severity.rawValue <= filterLevel.rawValue }
     }
 
     /// Removes all of the encountered diagnostics from this engine.
@@ -87,7 +82,7 @@ public final class DiagnosticEngine {
             }
             return problem
         }
-        let filteredProblems = mappedProblems.filter(filter)
+        let filteredProblems = mappedProblems.filter(shouldEmit)
         guard !filteredProblems.isEmpty else { return }
 
         if filteredProblems.containsErrors {
