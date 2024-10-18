@@ -207,18 +207,22 @@ class DirectoryMonitor {
         )
     }
     
+    private var startStopLock = Lock()
+    
     /// Start monitoring the root directory and its contents.
     func start() throws {
-        let watchedFiles = try watchedURLChecksum()
-        lastChecksum = watchedFiles.checksum
-        
-        do {
-            watchedDirectories = try allDirectories(in: root)
-                .map { return try watchedDirectory(at: $0.directory, files: $0.files, on: monitorQueue) }
-        } catch Error.openFileHandleFailed(_, let errorCode) where errorCode == Error.tooManyOpenFilesErrorCode {
-            // In case we've reached the file descriptor limit throw a detailed user error
-            // with recovery instructions.
-            throw Error.reachedOpenFileLimit(watchedFiles.count)
+        try startStopLock.sync {
+            let watchedFiles = try watchedURLChecksum()
+            lastChecksum = watchedFiles.checksum
+            
+            do {
+                watchedDirectories = try allDirectories(in: root)
+                    .map { return try watchedDirectory(at: $0.directory, files: $0.files, on: monitorQueue) }
+            } catch Error.openFileHandleFailed(_, let errorCode) where errorCode == Error.tooManyOpenFilesErrorCode {
+                // In case we've reached the file descriptor limit throw a detailed user error
+                // with recovery instructions.
+                throw Error.reachedOpenFileLimit(watchedFiles.count)
+            }
         }
     }
     
@@ -229,12 +233,14 @@ class DirectoryMonitor {
     
     /// Stop monitoring.
     func stop() {
-        for directory in watchedDirectories {
-            for source in directory.sources {
-                source.cancel()
+        startStopLock.sync {
+            for directory in watchedDirectories {
+                for source in directory.sources {
+                    source.cancel()
+                }
             }
+            watchedDirectories = []
         }
-        watchedDirectories = []
     }
     
     deinit {
