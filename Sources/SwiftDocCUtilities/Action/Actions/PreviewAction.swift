@@ -203,17 +203,6 @@ extension PreviewAction {
             self.print("Source bundle was modified, converting... ", terminator: "")
             self.monitoredConvertTask?.cancel()
             self.monitoredConvertTask = Task {
-                defer {
-                    // Reload the directory contents and start to monitor for changes.
-                    do {
-                        try monitor.restart()
-                    } catch {
-                        // The file watching system API has thrown, stop watching.
-                        self.print("Watching for changes has failed. To continue preview with watching restart docc.")
-                        self.print(error.localizedDescription)
-                    }
-                }
-                
                 do {
                     let result = try await self.convert()
                     if result.didEncounterError {
