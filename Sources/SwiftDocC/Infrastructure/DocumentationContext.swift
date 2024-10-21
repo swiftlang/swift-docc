@@ -1336,6 +1336,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     private func shouldContinueRegistration() throws {
+        try Task.checkCancellation()
         guard isRegistrationEnabled.sync({ $0 }) else {
             throw ContextError.registrationDisabled
         }
@@ -1778,6 +1779,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// When given `false` the context will try to cancel as quick as possible
     /// any ongoing bundle registrations.
+    @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
     public func setRegistrationEnabled(_ value: Bool) {
         isRegistrationEnabled.sync({ $0 = value })
     }
