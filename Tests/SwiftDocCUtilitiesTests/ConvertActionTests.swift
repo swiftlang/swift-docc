@@ -1408,7 +1408,7 @@ class ConvertActionTests: XCTestCase {
             case "/tutorials/TechnologyX":
                 return [
                     LinkDestinationSummary(
-                        kind: .technology,
+                        kind: .tutorialTableOfContents,
                         relativePresentationURL: URL(string: "/tutorials/technologyx")!,
                         referenceURL: reference.url,
                         title: "Technology X",

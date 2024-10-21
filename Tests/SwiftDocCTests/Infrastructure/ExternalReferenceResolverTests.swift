@@ -106,7 +106,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         externalResolver.bundleIdentifier = "com.test.external"
         externalResolver.expectedReferencePath = "/path/to/external/api"
         externalResolver.resolvedEntityTitle = "Name of API"
-        externalResolver.resolvedEntityKind = .technology
+        externalResolver.resolvedEntityKind = .tutorialTableOfContents
         
         // Set the language of the externally resolved entity to 'data'.
         externalResolver.resolvedEntityLanguage = .data

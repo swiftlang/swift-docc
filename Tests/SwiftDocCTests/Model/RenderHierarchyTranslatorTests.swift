@@ -17,7 +17,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         let technologyReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        let renderHierarchy = translator.visitTechnologyNode(technologyReference)?.hierarchy
+        let renderHierarchy = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchy
 
         // Verify that the hierarchy translator has collected all topic references from the hierarchy
         XCTAssertEqual(translator.collectedTopicReferences.sorted(by: { $0.absoluteString <= $1.absoluteString }).map{ $0.absoluteString }, [

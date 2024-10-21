@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -396,7 +396,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     func testAnalyzeNode() throws {
         let title = "unreferenced-tutorial"
         let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
-        let node = TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
+        let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
         context.topicGraph.addNode(node)
@@ -415,7 +415,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     func testAnalyzeExternalNode() throws {
         let title = "unreferenced-tutorial"
         let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
-        let node = TopicGraph.Node(reference: reference, kind: .technology, source: .external, title: title)
+        let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
         context.topicGraph.addNode(node)
@@ -435,7 +435,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         let url = URL(fileURLWithPath: "/path/to/\(title)")
         let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
-        let node = TopicGraph.Node(reference: reference, kind: .technology, source: .range(range, url: url) , title: title)
+        let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
         context.topicGraph.addNode(node)
@@ -450,7 +450,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
         XCTAssertNil(problem.diagnostic.source)
     }
 
-    /// Verify that a `TutorialArticle` only recognizes chapter, volume, or technology nodes as valid parents.
+    /// Verify that a `TutorialArticle` only recognizes chapter, volume, or tutorial table-of-contents nodes as valid parents.
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
@@ -463,7 +463,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
         let tutorialArticleNode = node(withTitle: "tutorial-article", ofKind: .tutorialArticle)
 
-        let validParents: Set<DocumentationNode.Kind> = [.chapter, .technology, .volume]
+        let validParents: Set<DocumentationNode.Kind> = [.chapter, .tutorialTableOfContents, .volume]
         let otherKinds: Set<DocumentationNode.Kind> = Set(DocumentationNode.Kind.allKnownValues).subtracting(validParents)
 
         for kind in validParents {
