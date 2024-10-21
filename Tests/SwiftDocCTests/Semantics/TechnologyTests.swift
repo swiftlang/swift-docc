@@ -21,7 +21,7 @@ class TechnologyTests: XCTestCase {
         let directive = document.child(at: 0)! as! BlockDirective
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         var problems = [Problem]()
-        let technology = Technology(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let technology = TutorialTableOfContents(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(technology)
         XCTAssertEqual(
             problems.map { $0.diagnostic.identifier },
