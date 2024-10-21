@@ -13,33 +13,20 @@ import Foundation
 import SwiftDocC
 
 extension Docc {
-    public struct Init: ParsableCommand {
-        
-        public init() {
-        }
-        
-        // MARK: - Configuration
+    public struct Init: AsyncParsableCommand {
+        public init() {}
         
         public static var configuration: CommandConfiguration = CommandConfiguration(
-            abstract: "Generate a documentation catalog from the selected template.",
-            shouldDisplay: true
+            abstract: "Generate a documentation catalog from the selected template."
         )
-        
-        // MARK: - Command Line Options & Arguments
         
         /// The options used for configuring the init action.
         @OptionGroup
         public var initOptions: InitOptions
         
-        // MARK: - Execution
-        
-        public mutating func run() throws {
-            
-            // Initialize a `InitAction` from the current options in the `Init` command.
+        public func run() async throws {
             var initAction = try InitAction(fromInitOptions: initOptions)
-            
-            // Perform the action and print any warnings or errors found.
-            try initAction.performAndHandleResult()
+            try await initAction.performAndHandleResult()
         }
     }
 }
