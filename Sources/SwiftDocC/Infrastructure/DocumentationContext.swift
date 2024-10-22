@@ -59,6 +59,7 @@ public protocol DocumentationContextDataProviderDelegate: AnyObject {
 /// This value is typically a reverse host name, for example: `com.<organization-name>.<product-name>`.
 ///
 /// Documentation links may include the bundle identifier---as a host component of the URL---to reference content in a specific documentation bundle.
+@available(*, deprecated, renamed: "DocumentationBundle.Identifier", message: "Use 'DocumentationBundle.Identifier' instead. This deprecated API will be removed after 6.2 is released")
 public typealias BundleIdentifier = String
 
 /// The documentation context manages the in-memory model for the built documentation.
@@ -354,7 +355,7 @@ public class DocumentationContext {
     ///   - bundle: The bundle that was removed.
     @available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
-        linkResolver.localResolver?.unregisterBundle(identifier: bundle.identifier)
+        linkResolver.localResolver?.unregisterBundle(identifier: bundle.id)
         
         // Purge the reference cache for this bundle and disable reference caching for
         // this bundle moving forward.
@@ -482,7 +483,7 @@ public class DocumentationContext {
     /// - Parameters:
     ///   - references: A list of references to local nodes to visit to collect links.
     ///   - localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    private func preResolveExternalLinks(references: [ResolvedTopicReference], localBundleID: BundleIdentifier) {
+    private func preResolveExternalLinks(references: [ResolvedTopicReference], localBundleID: DocumentationBundle.Identifier) {
         preResolveExternalLinks(semanticObjects: references.compactMap({ reference -> ReferencedSemanticObject? in
             guard let node = try? entity(with: reference), let semantic = node.semantic else { return nil }
             return (reference: reference, semantic: semantic)
@@ -504,11 +505,11 @@ public class DocumentationContext {
     /// - Parameters:
     ///   - semanticObjects: A list of semantic objects to visit to collect links.
     ///   - localBundleID: The local bundle ID, used to identify and skip absolute fully qualified local links.
-    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], localBundleID: BundleIdentifier) {
+    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], localBundleID: DocumentationBundle.Identifier) {
         // If there are no external resolvers added we will not resolve any links.
         guard !configuration.externalDocumentationConfiguration.sources.isEmpty else { return }
         
-        let collectedExternalLinks = Synchronized([String: Set<UnresolvedTopicReference>]())
+        let collectedExternalLinks = Synchronized([DocumentationBundle.Identifier: Set<UnresolvedTopicReference>]())
         semanticObjects.concurrentPerform { _, semantic in
             autoreleasepool {
                 // Walk the node and extract external link references.
@@ -1407,7 +1408,7 @@ public class DocumentationContext {
             }
 
             // Resolve any external references first
-            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.id.rawValue)
+            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.id)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
@@ -1798,26 +1799,41 @@ public class DocumentationContext {
 
     /// Returns a list of all the image assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return image assets for.
+    /// - Parameter id: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
+    public func registeredImageAssets(for id: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: id)
+    }
+    
+    @available(*, deprecated, renamed: "registeredImageAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredImageAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
+        registeredImageAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
     
     /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return video assets for.
+    /// - Parameter id: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
+    public func registeredVideoAssets(for id: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: id)
+    }
+    
+    @available(*, deprecated, renamed: "registeredVideoAssets(for:)", message: "registeredImageAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredVideoAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
+        registeredVideoAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
     /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return download assets for.
+    /// - Parameter id: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
+    public func registeredDownloadsAssets(for id: DocumentationBundle.Identifier) -> [DataAsset] {
+        registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: id)
+    }
+    
+    @available(*, deprecated, renamed: "registeredDownloadsAssets(for:)", message: "registeredDownloadsAssets(for:)' instead. This deprecated API will be removed after 6.2 is released")
     public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
+        registeredDownloadsAssets(for: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
@@ -2316,7 +2332,7 @@ public class DocumentationContext {
             tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
-                                localBundleID: bundle.id.rawValue)
+                                localBundleID: bundle.id)
         
         resolveLinks(
             tutorialTableOfContents: tutorialTableOfContentsResults,
@@ -2358,7 +2374,7 @@ public class DocumentationContext {
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.id.rawValue)
+            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.id)
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
         }
 
@@ -2373,7 +2389,7 @@ public class DocumentationContext {
         linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
         
         // Fifth, resolve links in nodes that are added solely via curation
-        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.id.rawValue)
+        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.id)
         resolveLinks(curatedReferences: allCuratedReferences, bundle: bundle)
 
         if configuration.convertServiceConfiguration.fallbackResolver != nil {
@@ -2722,7 +2738,7 @@ public class DocumentationContext {
     }
     
     private func externalEntity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
-        return configuration.externalDocumentationConfiguration.sources[reference.id.rawValue].map({ $0.entity(with: reference) })
+        return configuration.externalDocumentationConfiguration.sources[reference.id].map({ $0.entity(with: reference) })
             ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
     }
     

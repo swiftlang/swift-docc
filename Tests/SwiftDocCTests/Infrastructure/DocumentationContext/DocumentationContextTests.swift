@@ -517,7 +517,7 @@ class DocumentationContextTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let imagesRegistered = context
-            .registeredImageAssets(forBundleID: bundle.id.rawValue)
+            .registeredImageAssets(for: bundle.id)
             .flatMap { $0.variants.map { $0.value.lastPathComponent } }
             .sorted()
         
@@ -561,12 +561,12 @@ class DocumentationContextTests: XCTestCase {
     func testDownloadAssets() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
-        let downloadsBefore = context.registeredDownloadsAssets(forBundleID: bundle.id.rawValue)
+        let downloadsBefore = context.registeredDownloadsAssets(for: bundle.id)
         XCTAssertEqual(downloadsBefore.count, 1)
         XCTAssertEqual(downloadsBefore.first?.variants.values.first?.lastPathComponent, "project.zip")
         
         guard var assetOriginal = context
-            .registeredImageAssets(forBundleID: bundle.id.rawValue)
+            .registeredImageAssets(for: bundle.id)
             .first(where: { asset -> Bool in
                 return asset.variants.values.first(where: { url -> Bool in
                     return url.path.contains("intro.png")
@@ -581,7 +581,7 @@ class DocumentationContextTests: XCTestCase {
         context.updateAsset(named: "intro.png", asset: assetOriginal, in: bundle.rootReference)
         
         guard let assetUpdated = context
-            .registeredImageAssets(forBundleID: bundle.id.rawValue)
+            .registeredImageAssets(for: bundle.id)
             .first(where: { asset -> Bool in
                 return asset.variants.values.first(where: { url -> Bool in
                     return url.path.contains("intro.png")
@@ -595,7 +595,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(assetUpdated.context, .download)
         
         // Verify the asset is accessible in the downloads collection.
-        var downloadsAfter = context.registeredDownloadsAssets(forBundleID: bundle.id.rawValue)
+        var downloadsAfter = context.registeredDownloadsAssets(for: bundle.id)
         XCTAssertEqual(downloadsAfter.count, 2)
         downloadsAfter.removeAll(where: { $0.variants.values.first?.lastPathComponent == "project.zip" })
         XCTAssertEqual(downloadsAfter.count, 1)

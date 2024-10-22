@@ -98,7 +98,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let (_, bundle, context) = try testBundleAndContext(
             copying: "TestBundle",
-            externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]
+            externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
             let sideClassExtension = """
                 # ``SideKit/SideClass``
@@ -251,7 +251,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             externalResolver.resolvedEntityTitle = "ClassName"
             externalResolver.resolvedEntityKind = resolvedEntityKind
             
-            let (bundle, context) = try testBundleAndContext(named: "TestBundle", externalResolvers: [externalResolver.bundleID.rawValue: externalResolver])
+            let (bundle, context) = try testBundleAndContext(named: "TestBundle", externalResolvers: [externalResolver.bundleID: externalResolver])
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
@@ -293,7 +293,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             .init(kind: .identifier, spelling: "ClassName", preciseIdentifier: nil),
         ])
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -349,7 +349,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         ])
         
         var configuration = DocumentationContext.Configuration()
-        configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID.rawValue: externalResolver]
+        configuration.externalDocumentationConfiguration.sources = [externalResolver.bundleID: externalResolver]
         let (bundle, context) = try loadBundle(catalog: tempFolder, configuration: configuration)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
@@ -385,7 +385,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         externalResolver.resolvedEntityTitle = "Name of Sample"
         externalResolver.resolvedEntityKind = .sampleCode
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -473,7 +473,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             ),
         ]
         
-        let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # SomeSample
 
@@ -871,7 +871,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let (_, bundle, context) = try testBundleAndContext(
             copying: "MixedLanguageFramework",
-            externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]
+            externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
             let mixedLanguageFrameworkExtension = """
                 # ``MixedLanguageFramework``
@@ -962,7 +962,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let resolver = TestExternalReferenceResolver()
         
         let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID.rawValue: resolver])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
         
@@ -1018,7 +1018,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let resolver = TestExternalReferenceResolver()
         
         let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID.rawValue: resolver])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1085,7 +1085,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let resolver = TestExternalReferenceResolver()
         
         let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID.rawValue: resolver])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary))")
         
@@ -1170,7 +1170,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let resolver = TestExternalReferenceResolver()
 
         let tempURL = try createTempFolder(content: [exampleDocumentation])
-        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID.rawValue: resolver])
+        let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: [resolver.bundleID: resolver])
 
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
 
@@ -1203,7 +1203,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let externalResolver = TestExternalReferenceResolver()
         let (_, bundle, context) = try testBundleAndContext(
             copying: bundleName,
-            externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]
+            externalResolvers: [externalResolver.bundleID: externalResolver]
         ) { url in
             try documentationExtension.utf8Content.write(
                 to: url.appendingPathComponent(documentationExtension.name),
