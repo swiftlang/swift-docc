@@ -117,7 +117,7 @@ class MultipleChoiceTests: XCTestCase {
                 let expectedDump = """
 MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
 ├─ MarkupContainer (2 elements)
-├─ ImageMedia @10:3-10:38 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
+├─ ImageMedia @10:3-10:38 source: 'ResourceReference(bundleID: org.swift.docc.example, path: "blah.png")' altText: 'blah'
 ├─ Choice @12:3-17:5 isCorrect: true
 │  ├─ MarkupContainer (1 element)
 │  └─ Justification @14:6-16:7

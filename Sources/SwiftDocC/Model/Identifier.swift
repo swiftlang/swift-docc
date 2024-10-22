@@ -592,26 +592,25 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     }
 }
 
-/**
- A reference to an auxiliary resource such as an image.
- */
+/// A reference to an auxiliary resource such as an image.
 public struct ResourceReference: Hashable {
-    /**
-     The documentation bundle identifier for the bundle in which this resource resides.
-     */
-    public let bundleIdentifier: String
+    @available(*, deprecated, renamed: "bundleID", message: "Use 'bundleID' instead. This deprecated API will be removed after 6.2 is released")
+    public var bundleIdentifier: String {
+        bundleID.rawValue
+    }
+    
+    /// The documentation bundle identifier for the bundle in which this resource resides.
+    public let bundleID: DocumentationBundle.Identifier
 
-    /**
-     The path of the resource local to its bundle.
-     */
+    /// The path of the resource local to its bundle.
     public let path: String
 
     /// Creates a new resource reference.
     /// - Parameters:
-    ///   - bundleIdentifier: The documentation bundle identifier for the bundle in which this resource resides.
+    ///   - bundleID: The documentation bundle identifier for the bundle in which this resource resides.
     ///   - path: The path of the resource local to its bundle.
-    init(bundleIdentifier: String, path: String) {
-        self.bundleIdentifier = bundleIdentifier
+    init(bundleID: DocumentationBundle.Identifier, path: String) {
+        self.bundleID = bundleID
         self.path = path.removingPercentEncoding ?? path
     }
 
@@ -619,7 +618,7 @@ public struct ResourceReference: Hashable {
     var url: URL {
         var components = URLComponents()
         components.scheme = ResolvedTopicReference.urlScheme
-        components.host = bundleIdentifier
+        components.host = bundleID.rawValue
         components.path = "/" + path
         return components.url!
     }

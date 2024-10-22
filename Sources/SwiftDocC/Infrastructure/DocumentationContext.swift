@@ -2710,7 +2710,7 @@ public class DocumentationContext {
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
         guard let bundle,
-              let assetManager = assetManagers[DocumentationBundle.Identifier(rawValue: identifier.bundleIdentifier)],
+              let assetManager = assetManagers[identifier.bundleID],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
         }
@@ -2722,7 +2722,7 @@ public class DocumentationContext {
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
     public func resourceExists(with identifier: ResourceReference, ofType expectedAssetType: AssetType? = nil) -> Bool {
-        guard let assetManager = assetManagers[DocumentationBundle.Identifier(rawValue: identifier.bundleIdentifier)] else {
+        guard let assetManager = assetManagers[identifier.bundleID] else {
             return false
         }
         

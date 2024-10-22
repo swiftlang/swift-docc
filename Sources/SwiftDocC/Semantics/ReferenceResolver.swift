@@ -544,13 +544,13 @@ fileprivate extension URL {
 extension Image {
     func reference(in bundle: DocumentationBundle) -> ResourceReference? {
         guard let source else {
-            return ResourceReference(bundleIdentifier: bundle.id.rawValue, path: "")
+            return ResourceReference(bundleID: bundle.id, path: "")
         }
         
         if let url = URL(string: source), url.isLikelyWebURL {
             return nil
         } else {
-            return ResourceReference(bundleIdentifier: bundle.id.rawValue, path: source)
+            return ResourceReference(bundleID: bundle.id, path: source)
         }
     }
 }
