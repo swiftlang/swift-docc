@@ -497,7 +497,7 @@ extension OutOfProcessReferenceResolver {
             case .symbol(let identifier):
                 return "symbol: \(identifier.singleQuoted)"
             case .asset(let asset):
-                return "asset with name: \(asset.assetName), bundle identifier: \(asset.bundleIdentifier)"
+                return "asset with name: \(asset.assetName), bundle identifier: \(asset.bundleID)"
             }
         }
     }
@@ -779,13 +779,13 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
     }
     
     func resolveInformationForAsset(named assetName: String) throws -> DataAsset {
-        let assetReference = AssetReference(assetName: assetName, bundleIdentifier: id.rawValue)
+        let assetReference = AssetReference(assetName: assetName, bundleID: id)
         if let asset = assetCache[assetReference] {
             return asset
         }
         
         let response = try externalLinkResolvingClient.sendAndWait(
-            request: Request.asset(AssetReference(assetName: assetName, bundleIdentifier: id.rawValue))
+            request: Request.asset(AssetReference(assetName: assetName, bundleID: id))
         ) as Response
         
         switch response {
