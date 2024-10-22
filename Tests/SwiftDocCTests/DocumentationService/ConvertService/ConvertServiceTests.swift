@@ -918,7 +918,7 @@ class ConvertServiceTests: XCTestCase {
                     )
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    switch (assetReference.assetName, assetReference.bundleID) {
                     case (let assetName, "identifier") where ["before.swift", "after.swift"].contains(assetName):
                         var asset = DataAsset()
                         asset.register(
@@ -1089,7 +1089,7 @@ class ConvertServiceTests: XCTestCase {
                     return nil
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    switch (assetReference.assetName, assetReference.bundleID) {
                     case (let assetName, "identifier") where expectedAssetNames.contains(assetName):
                         var asset = DataAsset()
                         asset.register(
@@ -1881,7 +1881,7 @@ class ConvertServiceTests: XCTestCase {
                     }
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    switch (assetReference.assetName, assetReference.bundleID) {
                     case ("image.png", "com.test.bundle"):
                         var asset = DataAsset()
                         asset.register(

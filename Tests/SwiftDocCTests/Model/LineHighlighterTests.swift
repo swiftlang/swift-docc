@@ -14,7 +14,7 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class LineHighlighterTests: XCTestCase {
-    static let bundleIdentifier = "org.swift.docc.LineHighlighterTests"
+    static let bundleID: DocumentationBundle.Identifier = "org.swift.docc.LineHighlighterTests"
     static let defaultOverview = TextFile(name: "TechnologyX.tutorial", utf8Content: """
         @Technology(name: "TechnologyX") {
            @Intro(title: "Technology X") {
@@ -42,7 +42,7 @@ class LineHighlighterTests: XCTestCase {
         codeFiles: [TextFile]
     ) -> Folder {
         Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "Line Highlighter Tests", identifier: bundleIdentifier),
+            InfoPlist(displayName: "Line Highlighter Tests", identifier: bundleID.rawValue),
             Folder(name: "Resources", content: [overview, tutorial] + codeFiles),
         ])
     }
@@ -95,7 +95,7 @@ class LineHighlighterTests: XCTestCase {
         let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
-            XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), result.file)
+            XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), result.file)
             XCTAssertTrue(result.highlights.isEmpty)
         }
     }
@@ -124,7 +124,7 @@ class LineHighlighterTests: XCTestCase {
         let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
-            XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), result.file)
+            XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), result.file)
             XCTAssertEqual(1, result.highlights.count)
             result.highlights.first.map { highlight in
                 XCTAssertEqual(2, highlight.line)
@@ -163,10 +163,10 @@ class LineHighlighterTests: XCTestCase {
         let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
         XCTAssertEqual(2, results.count)
         
-        XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), results[0].file)
+        XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), results[0].file)
         XCTAssertTrue(results[0].highlights.isEmpty)
         
-        XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code2.name), results[1].file)
+        XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code2.name), results[1].file)
         XCTAssertTrue(results[1].highlights.isEmpty)
     }
     
@@ -193,7 +193,7 @@ class LineHighlighterTests: XCTestCase {
         let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
-            XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), result.file)
+            XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), result.file)
             XCTAssertTrue(result.highlights.isEmpty)
         }
     }
@@ -226,10 +226,10 @@ class LineHighlighterTests: XCTestCase {
         
         XCTAssertEqual(2, results.count)
         
-        XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), results[0].file)
+        XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code1.name), results[0].file)
         XCTAssertTrue(results[0].highlights.isEmpty)
         
-        XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code2.name), results[1].file)
+        XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code2.name), results[1].file)
         XCTAssertTrue(results[1].highlights.isEmpty)
     }
     
@@ -265,10 +265,10 @@ class LineHighlighterTests: XCTestCase {
         
         XCTAssertEqual(2, results.count)
         
-        XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code0.name), results[0].file)
+        XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code0.name), results[0].file)
         XCTAssertTrue(results[0].highlights.isEmpty)
         
-        XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code2.name), results[1].file)
+        XCTAssertEqual(ResourceReference(bundleID: LineHighlighterTests.bundleID, path: code2.name), results[1].file)
         XCTAssertEqual(1, results[1].highlights.count)
         results[1].highlights.first.map { highlight in
             XCTAssertEqual(2, highlight.line)

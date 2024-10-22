@@ -418,15 +418,15 @@ class DocumentationContextTests: XCTestCase {
         
     func testThrowsErrorForMissingResource() throws {
         let (_, context) = try testBundleAndContext()
-        XCTAssertThrowsError(try context.resource(with: ResourceReference(bundleIdentifier: "com.example.missing", path: "/missing.swift")), "Expected requesting an unknown file to result in an error.")
+        XCTAssertThrowsError(try context.resource(with: ResourceReference(bundleID: "com.example.missing", path: "/missing.swift")), "Expected requesting an unknown file to result in an error.")
     }
 
     func testThrowsErrorForQualifiedImagePaths() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let id = bundle.id.rawValue
+        let id = bundle.id
 
-        let figure = ResourceReference(bundleIdentifier: id, path: "figure1.jpg")
-        let imageFigure = ResourceReference(bundleIdentifier: id, path: "images/figure1.jpg")
+        let figure = ResourceReference(bundleID: id, path: "figure1.jpg")
+        let imageFigure = ResourceReference(bundleID: id, path: "images/figure1.jpg")
 
         XCTAssertNoThrow(try context.resource(with: figure), "\(figure.path) expected in \(bundle.displayName)")
         XCTAssertThrowsError(try context.resource(with: imageFigure), "Images should be registered (and referred to) by their name, not by their path.")
@@ -436,11 +436,11 @@ class DocumentationContextTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
         let existingImageReference = ResourceReference(
-            bundleIdentifier: bundle.id.rawValue,
+            bundleID: bundle.id,
             path: "introposter"
         )
         let nonexistentImageReference = ResourceReference(
-            bundleIdentifier: bundle.id.rawValue,
+            bundleID: bundle.id,
             path: "nonexistent-image"
         )
         XCTAssertTrue(
@@ -453,11 +453,11 @@ class DocumentationContextTests: XCTestCase {
         )
         
         let correctImageReference = ResourceReference(
-            bundleIdentifier: bundle.id.rawValue,
+            bundleID: bundle.id,
             path: "figure1.jpg"
         )
         let incorrectImageReference = ResourceReference(
-            bundleIdentifier: bundle.id.rawValue,
+            bundleID: bundle.id,
             path: "images/figure1.jpg"
         )
         XCTAssertTrue(
