@@ -84,7 +84,7 @@ public struct RenderContext {
                 let (bundleID, assetManager) = element
             
                 for (name, asset) in assetManager.storage {
-                    storage[AssetReference(assetName: name, bundleIdentifier: bundleID.rawValue)] = asset
+                    storage[AssetReference(assetName: name, bundleID: bundleID)] = asset
                 }
             }
         
