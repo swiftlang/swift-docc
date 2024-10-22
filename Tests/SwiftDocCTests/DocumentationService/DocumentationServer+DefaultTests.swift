@@ -68,7 +68,7 @@ class DocumentationServer_DefaultTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
-                identifier: "identifier"
+                id: "identifier"
             ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             symbolGraphs: [symbolGraph],

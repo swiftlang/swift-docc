@@ -128,7 +128,7 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleIdentifier: request.bundleInfo.identifier,
+                    id: request.bundleInfo.id,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )

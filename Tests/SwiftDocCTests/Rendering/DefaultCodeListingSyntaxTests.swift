@@ -42,7 +42,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         testBundleWithoutLanguageDefault = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: testBundleWithLanguageDefault.displayName,
-                identifier: testBundleWithLanguageDefault.identifier,
+                id: DocumentationBundle.Identifier(rawValue: testBundleWithLanguageDefault.identifier),
                 defaultCodeListingLanguage: nil
             ),
             baseURL: testBundleWithLanguageDefault.baseURL,
