@@ -49,13 +49,14 @@ public struct DocumentationBundle {
         info.displayName
     }
     
-    /**
-     The documentation bundle identifier.
-
-     An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
-     */
+    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
     public var identifier: String {
-        info.id.rawValue
+        id.rawValue
+    }
+    
+    /// The documentation bundle's stable and locally unique identifier.
+    public var id: DocumentationBundle.Identifier {
+        info.id
     }
 
     /**
