@@ -276,7 +276,7 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.id.rawValue)
 
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         
@@ -288,7 +288,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundle.identifier
+            bundleIdentifier: bundle.id.rawValue
         )
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
@@ -422,7 +422,7 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundle.identifier
+                bundleIdentifier: bundle.id.rawValue
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)

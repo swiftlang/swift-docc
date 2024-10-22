@@ -87,7 +87,7 @@ class TermListTests: XCTestCase {
         
         let (_, bundle, context) = try loadBundle(from: tempURL, externalResolvers: ["com.external.testbundle": resolver])
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
@@ -161,7 +161,7 @@ class TermListTests: XCTestCase {
         }
         
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - term First term : A paragraph that
@@ -204,7 +204,7 @@ class TermListTests: XCTestCase {
         }
         
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - Not a term list, and

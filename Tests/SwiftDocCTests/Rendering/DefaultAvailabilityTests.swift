@@ -336,7 +336,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleIdentifier: bundle.id.rawValue,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )

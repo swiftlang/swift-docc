@@ -19,7 +19,7 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+            ResourceReference(bundleIdentifier: bundle.id.rawValue, path: argumentValue)
         }
     )
     public private(set) var source: ResourceReference

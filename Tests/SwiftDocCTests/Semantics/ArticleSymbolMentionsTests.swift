@@ -47,11 +47,11 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertEqual(1, context.articleSymbolMentions.mentions.count)
 
         let mentioningArticle = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift)
         let mentionedSymbol = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
         
@@ -68,7 +68,7 @@ class ArticleSymbolMentionsTests: XCTestCase {
         XCTAssertTrue(context.articleSymbolMentions.mentions.isEmpty)
 
         let mentionedSymbol = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift)
 

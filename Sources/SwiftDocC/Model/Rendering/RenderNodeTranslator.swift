@@ -2005,7 +2005,7 @@ fileprivate typealias BundleModuleIdentifier = String
 
 extension BundleModuleIdentifier {
     fileprivate init(bundle: DocumentationBundle, moduleName: String) {
-        self = "\(bundle.identifier):\(moduleName)"
+        self = "\(bundle.id):\(moduleName)"
     }
 }
 

@@ -100,7 +100,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -127,7 +127,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
 

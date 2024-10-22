@@ -24,7 +24,7 @@ class AvailabilityRenderOrderTests: XCTestCase {
             try? FileManager.default.removeItem(at: bundleURL)
         }
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/Availability/MyStruct", sourceLanguage: .swift))
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode

@@ -322,7 +322,7 @@ class VideoMediaTests: XCTestCase {
         var problems = [Problem]()
         let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "",
             sourceLanguage: .swift
         )

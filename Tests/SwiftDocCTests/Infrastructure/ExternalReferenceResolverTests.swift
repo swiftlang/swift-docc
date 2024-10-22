@@ -69,7 +69,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/article")!)
-        let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyClass", sourceLanguage: .swift)
+        let parent = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyClass", sourceLanguage: .swift)
 
         guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Couldn't resolve \(unresolved)")
@@ -120,7 +120,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let sideClassReference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/SideKit/SideClass",
             sourceLanguage: .swift
         )
@@ -165,7 +165,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let bundleIdentifier = bundle.identifier
         
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://\(bundleIdentifier)/ArticleThatDoesNotExistInLocally")!)
-        let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
+        let parent = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "", sourceLanguage: .swift)
         
         do {
             context.configuration.externalDocumentationConfiguration.sources = [:]
@@ -254,7 +254,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             let (bundle, context) = try testBundleAndContext(named: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver])
             
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
             
             guard let fileURL = context.documentURL(for: node.reference) else {
                 XCTFail("Unable to find the file for \(node.reference.path)")
@@ -308,7 +308,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         let renderNode = try converter.convert(node)
         
@@ -353,7 +353,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let (bundle, context) = try loadBundle(catalog: tempFolder, configuration: configuration)
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/article", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/article", sourceLanguage: .swift))
         
         let renderNode = try converter.convert(node)
         
@@ -400,7 +400,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         let renderNode = try converter.convert(node)
         
@@ -499,7 +499,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SomeSample", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/SomeSample", sourceLanguage: .swift))
         
         let renderNode = try converter.convert(node)
         
@@ -612,7 +612,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let entity = try context.entity(with: .init(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit", sourceLanguage: .swift))
         let taskGroupLinks = try XCTUnwrap((entity.semantic as? Symbol)?.topics?.taskGroups.first?.links.compactMap({ $0.destination }))
         
         // Verify the task group links have been resolved and are still present in the link list.
@@ -768,7 +768,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                   "The external reference resolver error message is included in that problem's error summary.")
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let entity = try context.entity(with: .init(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit", sourceLanguage: .swift))
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let renderNode = try converter.convert(entity)
         
@@ -810,7 +810,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 .write(to: myClassMDURL, atomically: true, encoding: .utf8)
         })
 
-        let myClassRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        let myClassRef = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         let documentationNode = try context.entity(with: myClassRef)
         
         // Verify the external link was resolved in markup.
@@ -891,7 +891,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let mixedLanguageFrameworkReference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MixedLanguageFramework",
             sourceLanguage: .swift
         )
@@ -967,7 +967,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
         
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
             let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
@@ -976,7 +976,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
             let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
@@ -1037,7 +1037,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/First", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/unit-test/First", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let rendered = try converter.convert(node)
             
@@ -1051,7 +1051,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         }
         
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/unit-test/Second", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/unit-test/Second", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             let rendered = try converter.convert(node)
             
@@ -1175,7 +1175,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
 
         // Load the DocumentationNode for the artist dictionary keys symbol.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/ModuleName/SymbolName", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
 
         // Get the semantic symbol and the variants of the dictionary keys section.
@@ -1214,7 +1214,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))", file: file, line: line)
 
         // Load the DocumentationNode for the artist dictionary keys symbol.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: path, sourceLanguage: .swift)
         let node = try context.entity(with: reference)
 
         // Get the semantic symbol and the variants of the dictionary keys section.

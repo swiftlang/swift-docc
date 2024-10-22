@@ -19,12 +19,12 @@ class MentionsRenderSectionTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalMentionedInEnabled)
         let (bundle, context) = try createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MentionedIn/MyClass",
             sourceLanguage: .swift
         )
         let mentioningArticle = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MentionedIn/ArticleMentioningSymbol",
             sourceLanguage: .swift
         )
@@ -42,7 +42,7 @@ class MentionsRenderSectionTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalMentionedInEnabled)
         let (bundle, context) = try createMentionedInTestBundle()
         let identifier = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MentionedIn/MyClass/myFunction()",
             sourceLanguage: .swift
         )

@@ -14,7 +14,7 @@ import XCTest
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let technologyReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+        let technologyReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
         let renderHierarchy = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchy

@@ -89,7 +89,7 @@ class DoxygenTests: XCTestCase {
         ])
 
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/ModuleName/SomeClass", sourceLanguage: .swift)
 
         // Verify the expected content in the in-memory model
         let node = try context.entity(with: reference)

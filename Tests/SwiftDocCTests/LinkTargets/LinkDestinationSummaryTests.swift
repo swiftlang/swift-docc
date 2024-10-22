@@ -98,7 +98,7 @@ class ExternalLinkableTests: XCTestCase {
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
         let renderNode = try converter.convert(node)
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
@@ -727,7 +727,7 @@ class ExternalLinkableTests: XCTestCase {
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
         let renderNode = try converter.convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
