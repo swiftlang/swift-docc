@@ -276,7 +276,7 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.id.rawValue)
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
 
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         
