@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,7 +20,7 @@ extension ResolvedTopicReference {
         let path = symbolReference.path.isEmpty ? "" : "/" + symbolReference.path
         
         self.init(
-            bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
+            id: bundle.documentationRootReference.id,
             path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
             fragment: nil,
             sourceLanguages: symbolReference.interfaceLanguages

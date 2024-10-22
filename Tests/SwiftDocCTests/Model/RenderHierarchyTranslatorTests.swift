@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import XCTest
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let technologyReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+        let technologyReference = ResolvedTopicReference(id: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
         let renderHierarchy = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchy
@@ -100,7 +100,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         }
         
         // Get a translated render node
-        let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         let renderNode = translator.visit(node.semantic) as! RenderNode

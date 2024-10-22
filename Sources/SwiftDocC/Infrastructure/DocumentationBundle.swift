@@ -127,9 +127,9 @@ public struct DocumentationBundle {
         self.customHeader = customHeader
         self.customFooter = customFooter
         self.themeSettings = themeSettings
-        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.id.rawValue, path: "/", sourceLanguage: .swift)
-        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.id.rawValue, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.id.rawValue, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.rootReference = ResolvedTopicReference(id: info.id, path: "/", sourceLanguage: .swift)
+        self.documentationRootReference = ResolvedTopicReference(id: info.id, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+        self.tutorialTableOfContentsContainer = ResolvedTopicReference(id: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }

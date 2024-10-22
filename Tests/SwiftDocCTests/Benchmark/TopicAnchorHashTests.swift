@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,7 +50,7 @@ class TopicAnchorHashTests: XCTestCase {
         }
         
         // Add a new section to verify that the hash will change
-        let newReference = ResolvedTopicReference(bundleIdentifier: "com.bundle.id", path: "/documentation/new#section", sourceLanguage: .swift)
+        let newReference = ResolvedTopicReference(id: "com.bundle.id", path: "/documentation/new#section", sourceLanguage: .swift)
         context.nodeAnchorSections[newReference] = AnchorSection(reference: newReference, title: "New Sub-section")
 
         // Now verify that the topic anchor hash changed after the change

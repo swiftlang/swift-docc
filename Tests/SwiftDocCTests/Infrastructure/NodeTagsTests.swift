@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,7 +27,7 @@ class NodeTagsTests: XCTestCase {
         let (_, bundle, context) = try loadBundle(from: tempURL)
         
         // Verify that `Test` is marked as SPI.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         XCTAssertTrue(symbol.isSPI)
@@ -39,7 +39,7 @@ class NodeTagsTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.tags, [.spi])
 
         // Verify that the link to the node contains the SPI tag.
-        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
         let moduleNode = try XCTUnwrap(context.entity(with: moduleReference))
         let moduleSymbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
 

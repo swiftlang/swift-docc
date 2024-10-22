@@ -98,7 +98,7 @@ final class ExternalPathHierarchyResolver {
             else {
                 return nil
             }
-            return ResolvedTopicReference(bundleIdentifier: bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+            return ResolvedTopicReference(id: .init(rawValue: bundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift)
         }
         let dependencies = RenderReferenceDependencies(
             topicReferences: topicReferences,
@@ -126,7 +126,7 @@ final class ExternalPathHierarchyResolver {
         symbols.reserveCapacity(linkDestinationSummaries.count)
         for entity in linkDestinationSummaries {
             let reference = ResolvedTopicReference(
-                bundleIdentifier: entity.referenceURL.host!,
+                id: .init(rawValue: entity.referenceURL.host!),
                 path: entity.referenceURL.path,
                 fragment: entity.referenceURL.fragment,
                 sourceLanguage: entity.language
@@ -150,7 +150,7 @@ final class ExternalPathHierarchyResolver {
                     continue
                 }
                 let identifier = identifiers[index]
-                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+                self.resolvedReferences[identifier] = ResolvedTopicReference(id: .init(rawValue: fileRepresentation.bundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
         // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.

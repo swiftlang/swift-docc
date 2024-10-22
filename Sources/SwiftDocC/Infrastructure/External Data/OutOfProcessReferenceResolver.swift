@@ -115,7 +115,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             return resolved
             
         case let .unresolved(unresolvedReference):
-            guard unresolvedReference.bundleIdentifier == id.rawValue else {
+            guard unresolvedReference.id == id else {
                 fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
                     DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
@@ -147,7 +147,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         guard let resolvedInformation = try? resolveInformationForSymbolIdentifier(preciseIdentifier) else { return nil }
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: "com.externally.resolved.symbol",
+            id: "com.externally.resolved.symbol",
             path: "/\(preciseIdentifier)",
             sourceLanguages: sourceLanguages(for: resolvedInformation)
         )
@@ -255,7 +255,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     
     private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
         return ResolvedTopicReference(
-            bundleIdentifier: id.rawValue,
+            id: id,
             path: resolvedInformation.url.path,
             fragment: resolvedInformation.url.fragment,
             sourceLanguages: sourceLanguages(for: resolvedInformation)

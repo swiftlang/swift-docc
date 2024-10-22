@@ -300,7 +300,7 @@ extension Folder {
 }
 
 private func makeMinimalTestRenderNode(path: String) -> RenderNode {
-    let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.test", path: path, sourceLanguage: .swift)
+    let reference = ResolvedTopicReference(id: "org.swift.test", path: path, sourceLanguage: .swift)
     let rawReference = reference.url.absoluteString
     let title = path.components(separatedBy: "/").last ?? path
     

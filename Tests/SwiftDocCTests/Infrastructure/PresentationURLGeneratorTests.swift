@@ -18,19 +18,19 @@ class PresentationURLGeneratorTests: XCTestCase {
         let generator = PresentationURLGenerator(context: context, baseURL: URL(string: "https://host:1024/webPrefix")!)
         
         // Test resolved tutorial reference
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(reference).absoluteString, "https://host:1024/webPrefix/tutorials/test-bundle/testtutorial")
         
         // Test resolved symbol reference
-        let symbol = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        let symbol = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(symbol).absoluteString, "https://host:1024/webPrefix/documentation/mykit/myclass")
         
         // Test root
-        let root = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/", sourceLanguage: .swift)
+        let root = ResolvedTopicReference(id: bundle.id, path: "/", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(root).absoluteString, "https://host:1024/webPrefix/documentation")
         
         // Fragment
-        let fragment = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
+        let fragment = ResolvedTopicReference(id: bundle.id, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(fragment).absoluteString, "https://host:1024/webPrefix/path#test-URL-FRAGMENT")
     }
 }

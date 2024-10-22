@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import XCTest
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
     func testRenderNodeSkipsReferences() throws {
-        var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(id: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -51,7 +51,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     func testTopicReferenceEncoder() throws {
         // Create a render node
-        var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(id: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -124,7 +124,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Create many render nodes.
         let nodes = (0..<1000)
             .map({ i -> RenderNode in
-                var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
+                var node = RenderNode(identifier: .init(id: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
                 node.references = references
                 return node
             })
