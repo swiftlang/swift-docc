@@ -1653,7 +1653,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     
-    func testDefaulAvailabilityWhenSymbolIsNotAvailableForThatPlatform() throws {
+    func testDefaultAvailabilityWhenSymbolIsNotAvailableForThatPlatform() throws {
         // Symbol from SGF
         let symbolTVOS = """
         {
@@ -1775,7 +1775,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             return
         }
         // Verify we dont add platforms to symbols that are not in that platform SGF. Even if the
-        // platform is part of the default availabilit.
+        // platform is part of the default availability.
         XCTAssertEqual(availability.count, 3)
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "macCatalyst" }))
