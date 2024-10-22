@@ -178,11 +178,11 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         do {
             class TestFallbackResolver: ConvertServiceFallbackResolver {
-                init(bundleIdentifier: String) {
-                    resolver.bundleID = DocumentationBundle.Identifier(rawValue: bundleIdentifier)
+                init(bundleID: DocumentationBundle.Identifier) {
+                    resolver.bundleID = bundleID
                 }
-                var bundleIdentifier: String {
-                    resolver.bundleID.rawValue
+                var bundleID: DocumentationBundle.Identifier {
+                    resolver.bundleID
                 }
                 private var resolver = TestExternalReferenceResolver()
                 func resolve(_ reference: SwiftDocC.TopicReference) -> TopicReferenceResolutionResult {
@@ -197,7 +197,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             }
             
             context.configuration.externalDocumentationConfiguration.sources = [:]
-            context.configuration.convertServiceConfiguration.fallbackResolver = TestFallbackResolver(bundleIdentifier: "org.swift.docc.example")
+            context.configuration.convertServiceConfiguration.fallbackResolver = TestFallbackResolver(bundleID: "org.swift.docc.example")
             
             guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("The reference was unexpectedly unresolved.")

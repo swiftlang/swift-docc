@@ -172,8 +172,8 @@ private final class FallbackResolverBasedLinkResolver {
         let referenceID = unresolvedReference.id ?? parent.id
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
-              let knownBundleIdentifier = context._registeredBundles.first(where: { $0.id == referenceID || urlReadablePath($0.displayName) == referenceID.rawValue })?.id.rawValue,
-              fallbackResolver.bundleIdentifier == knownBundleIdentifier
+              let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceID || urlReadablePath($0.displayName) == referenceID.rawValue })?.id,
+              fallbackResolver.bundleID == knownBundleID
         else {
             return nil
         }
@@ -192,7 +192,7 @@ private final class FallbackResolverBasedLinkResolver {
         allCandidateURLs.append(alreadyResolved.url)
         
         // This uses an underscored internal variant of `bundle(identifier:)` to avoid deprecation warnings and remain compatible with legacy data providers.
-        let currentBundle = context._bundle(identifier: knownBundleIdentifier)!
+        let currentBundle = context._bundle(identifier: knownBundleID.rawValue)!
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [

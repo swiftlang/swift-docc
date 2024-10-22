@@ -798,4 +798,8 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
             throw Error.unexpectedResponse(response: response, requestDescription: "asset")
         }
     }
+    
+    var bundleID: DocumentationBundle.Identifier {
+        id
+    }
 }
