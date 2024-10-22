@@ -14,7 +14,7 @@ import XCTest
 class RenderHierarchyTranslatorTests: XCTestCase {
     func test() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let technologyReference = ResolvedTopicReference(id: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+        let technologyReference = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
         
         var translator = RenderHierarchyTranslator(context: context, bundle: bundle)
         let renderHierarchy = translator.visitTutorialTableOfContentsNode(technologyReference)?.hierarchy
@@ -100,7 +100,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         }
         
         // Get a translated render node
-        let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         let renderNode = translator.visit(node.semantic) as! RenderNode

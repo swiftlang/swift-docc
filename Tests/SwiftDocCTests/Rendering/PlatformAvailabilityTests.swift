@@ -36,7 +36,7 @@ class PlatformAvailabilityTests: XCTestCase {
     func testPlatformAvailabilityFromArticle() throws {
         let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
@@ -55,7 +55,7 @@ class PlatformAvailabilityTests: XCTestCase {
     func testPlatformAvailabilityFromExtension() throws {
         let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -73,7 +73,7 @@ class PlatformAvailabilityTests: XCTestCase {
     func testMultiplePlatformAvailabilityFromArticle() throws {
         let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
@@ -101,7 +101,7 @@ class PlatformAvailabilityTests: XCTestCase {
     func testArbitraryPlatformAvailability() throws {
         let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/AvailabilityBundle/ArbitraryPlatforms",
             sourceLanguage: .swift
         )
@@ -127,7 +127,7 @@ class PlatformAvailabilityTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "AvailabilityOverrideBundle")
 
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -166,7 +166,7 @@ class PlatformAvailabilityTests: XCTestCase {
         ]
         let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/AvailableArticle",
             sourceLanguage: .swift
         )
@@ -189,7 +189,7 @@ class PlatformAvailabilityTests: XCTestCase {
         ]
         let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/AvailabilityBundle/ComplexAvailable",
             sourceLanguage: .swift
         )
@@ -221,7 +221,7 @@ class PlatformAvailabilityTests: XCTestCase {
         ]
         let (bundle, context) = try testBundleWithConfiguredPlatforms(named: "AvailabilityBundle", platformMetadata: platformMetadata)
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )

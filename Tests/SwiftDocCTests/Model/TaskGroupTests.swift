@@ -69,7 +69,7 @@ class SectionExtractionTests: XCTestCase {
     }
     
     private func testNode(with document: Document) -> DocumentationNode {
-        return DocumentationNode(reference: ResolvedTopicReference(id: "org.swift.docc", path: "/blah", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "Title"), markup: document, semantic: Semantic())
+        return DocumentationNode(reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "Title"), markup: document, semantic: Semantic())
     }
     
     func testSection() {

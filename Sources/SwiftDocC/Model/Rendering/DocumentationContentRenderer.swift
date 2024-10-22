@@ -329,7 +329,7 @@ public class DocumentationContentRenderer {
         if kind == .section {
             // Sections don't have their own abstract so take the one of the container symbol.
             let containerReference = ResolvedTopicReference(
-                id: reference.id,
+                bundleID: reference.bundleID,
                 path: reference.path,
                 sourceLanguages: reference.sourceLanguages
             )
@@ -502,14 +502,14 @@ public class DocumentationContentRenderer {
                 }
                 
                 // For external links, verify they've resolved successfully and return `nil` otherwise.
-                if linkHost != reference.id.rawValue {
+                if linkHost != reference.bundleID.rawValue {
                     if let url = ValidatedURL(destination), case .success(let externalReference) = documentationContext.externallyResolvedLinks[url] {
                         return externalReference
                     }
                     return nil
                 }
                 return ResolvedTopicReference(
-                    id: reference.id,
+                    bundleID: reference.bundleID,
                     path: destination.path,
                     sourceLanguages: node.availableSourceLanguages
                 )

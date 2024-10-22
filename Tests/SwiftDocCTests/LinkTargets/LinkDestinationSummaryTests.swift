@@ -98,7 +98,7 @@ class ExternalLinkableTests: XCTestCase {
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
         let renderNode = try converter.convert(node)
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
@@ -154,7 +154,7 @@ class ExternalLinkableTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -198,7 +198,7 @@ class ExternalLinkableTests: XCTestCase {
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -239,7 +239,7 @@ class ExternalLinkableTests: XCTestCase {
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -274,7 +274,7 @@ class ExternalLinkableTests: XCTestCase {
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -331,7 +331,7 @@ class ExternalLinkableTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             var summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -436,7 +436,7 @@ class ExternalLinkableTests: XCTestCase {
         
         // Check a symbol that's represented as a class in both Swift and Objective-C
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -495,7 +495,7 @@ class ExternalLinkableTests: XCTestCase {
         
         // Check the Swift version of a symbol that's represented differently in different languages
         do {
-            let symbolReference = ResolvedTopicReference(id: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -627,7 +627,7 @@ class ExternalLinkableTests: XCTestCase {
         
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: legacyData)
         
-        XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
+        XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
         XCTAssertEqual(decoded.platforms?.count, 1)
         XCTAssertEqual(decoded.platforms?.first?.name, "PlatformName")
         XCTAssertEqual(decoded.platforms?.first?.introduced, "1.0")
@@ -727,7 +727,7 @@ class ExternalLinkableTests: XCTestCase {
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyModule/MyClass/myFunc()", sourceLanguage: .swift))
         let renderNode = try converter.convert(node)
 
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)

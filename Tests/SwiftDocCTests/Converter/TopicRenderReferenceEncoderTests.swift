@@ -14,7 +14,7 @@ import XCTest
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
     func testRenderNodeSkipsReferences() throws {
-        var node = RenderNode(identifier: .init(id: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -51,7 +51,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     func testTopicReferenceEncoder() throws {
         // Create a render node
-        var node = RenderNode(identifier: .init(id: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -124,7 +124,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Create many render nodes.
         let nodes = (0..<1000)
             .map({ i -> RenderNode in
-                var node = RenderNode(identifier: .init(id: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
+                var node = RenderNode(identifier: .init(bundleID: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
                 node.references = references
                 return node
             })

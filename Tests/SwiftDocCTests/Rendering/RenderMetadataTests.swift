@@ -100,7 +100,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -127,7 +127,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
 
@@ -149,7 +149,7 @@ class RenderMetadataTests: XCTestCase {
         }
 
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "BundleWithRelativePathAmbiguity")

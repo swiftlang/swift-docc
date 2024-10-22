@@ -102,7 +102,7 @@ class VolumeTests: XCTestCase {
 
         let node = try context.entity(
             with: ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: "/tutorials/TestOverview",
                 sourceLanguage: .swift))
 

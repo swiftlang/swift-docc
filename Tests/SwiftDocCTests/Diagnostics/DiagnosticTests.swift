@@ -84,7 +84,7 @@ class DiagnosticTests: XCTestCase {
         let content = "Test a ``Reference`` in a sentence."
         let markup = Document(parsing: content, source: URL(string: "/tmp/foo.symbols.json"), options: .parseSymbolLinks)
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, rootReference: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
+        var resolver = ReferenceResolver(context: context, bundle: bundle, rootReference: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
         
         // Resolve references
         _ = resolver.visitMarkup(markup)

@@ -1816,7 +1816,7 @@ Root
     
     func testNormalizedNavigatorIndexIdentifier() throws {
         let topicReference = ResolvedTopicReference(
-            id: "org.swift.example",
+            bundleID: "org.swift.example",
             path: "/documentation/path/sub-path",
             fragment: nil,
             sourceLanguage: .swift
@@ -1833,7 +1833,7 @@ Root
         )
         
         let topicReferenceWithCapitalization = ResolvedTopicReference(
-            id: "org.Swift.Example",
+            bundleID: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: nil,
             sourceLanguage: .swift
@@ -1850,7 +1850,7 @@ Root
         )
         
         let topicReferenceWithFragment = ResolvedTopicReference(
-            id: "org.Swift.Example",
+            bundleID: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: "FRAGMENT",
             sourceLanguage: .swift

@@ -14,7 +14,7 @@ import Markdown
 
 class RenderNodeSerializationTests: XCTestCase {
     func testRoundTrip() throws {
-        let inputIdentifier = ResolvedTopicReference(id: "com.example.docc", path: "/example", sourceLanguage: .swift)
+        let inputIdentifier = ResolvedTopicReference(bundleID: "com.example.docc", path: "/example", sourceLanguage: .swift)
         var inputNode = RenderNode(identifier: inputIdentifier, kind: .tutorial)
         
         let introSection = IntroRenderSection(title: "Basic Augmented Reality App")
@@ -93,7 +93,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     func testBundleRoundTrip() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -116,7 +116,7 @@ class RenderNodeSerializationTests: XCTestCase {
     
     func testTutorialArticleRoundTrip() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
@@ -141,7 +141,7 @@ class RenderNodeSerializationTests: XCTestCase {
         typealias JSONDictionary = [String: Any]
         
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -193,7 +193,7 @@ class RenderNodeSerializationTests: XCTestCase {
 
     func testDiffAvailability() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")

@@ -29,7 +29,7 @@ class RoleTests: XCTestCase {
 
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
-            let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
             do {
                 let node = try context.entity(with: identifier)
                 var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
@@ -45,7 +45,7 @@ class RoleTests: XCTestCase {
     func testDocumentationRenderReferenceRoles() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
-        let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -58,7 +58,7 @@ class RoleTests: XCTestCase {
     func testTutorialsRenderReferenceRoles() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
-        let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic) as! RenderNode

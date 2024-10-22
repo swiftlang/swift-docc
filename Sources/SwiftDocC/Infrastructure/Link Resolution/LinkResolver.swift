@@ -92,7 +92,7 @@ public class LinkResolver {
         }
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
-        if let bundleID = unresolvedReference.id,
+        if let bundleID = unresolvedReference.bundleID,
            !context._registeredBundles.contains(where: { $0.id == bundleID || urlReadablePath($0.displayName) == bundleID.rawValue })
         {
             return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
@@ -169,7 +169,7 @@ private final class FallbackResolverBasedLinkResolver {
     
     private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
-        let referenceID = unresolvedReference.id ?? parent.id
+        let referenceID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
               let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceID || urlReadablePath($0.displayName) == referenceID.rawValue })?.id,
@@ -184,7 +184,7 @@ private final class FallbackResolverBasedLinkResolver {
         var allCandidateURLs = [URL]()
         
         let alreadyResolved = ResolvedTopicReference(
-            id: referenceID,
+            bundleID: referenceID,
             path: unresolvedReference.path.prependingLeadingSlash,
             fragment: unresolvedReference.topicURL.components.fragment,
             sourceLanguages: parent.sourceLanguages

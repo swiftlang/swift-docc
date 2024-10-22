@@ -304,7 +304,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
                                       modification: @escaping (URL) throws -> ()
     ) throws -> JSONPatchDifferences {
         let (bundleOriginal, contextOriginal) = try testBundleAndContext(named: bundleName)
-        let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(id: bundleID,
+        let nodeOriginal = try contextOriginal.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
         var renderContext = RenderContext(documentationContext: contextOriginal, bundle: bundleOriginal)
@@ -316,7 +316,7 @@ class RenderNodeDiffingBundleTests: XCTestCase {
         let (_, bundleModified, contextModified) = try testBundleAndContext(copying: bundleName) { url in
             try modification(url)
         }
-        let nodeModified = try contextModified.entity(with: ResolvedTopicReference(id: bundleID,
+        let nodeModified = try contextModified.entity(with: ResolvedTopicReference(bundleID: bundleID,
                                                                                    path: topicReferencePath,
                                                                                    sourceLanguage: .swift))
         renderContext = RenderContext(documentationContext: contextModified, bundle: bundleModified)

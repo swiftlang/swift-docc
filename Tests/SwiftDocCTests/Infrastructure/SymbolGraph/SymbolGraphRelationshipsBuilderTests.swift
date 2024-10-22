@@ -24,10 +24,10 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/A", sourceLanguage: .swift)
-        let targetRef = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/B", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/A", sourceLanguage: .swift)
+        let targetRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/B", sourceLanguage: .swift)
         
-        let moduleRef = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: sourceType, mixins: [:])
         let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: targetType, mixins: [:])
@@ -130,8 +130,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/A", sourceLanguage: .swift)
-        let moduleRef = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/A", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         

@@ -40,7 +40,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -70,7 +70,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -99,7 +99,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -129,7 +129,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -159,7 +159,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -190,7 +190,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -220,7 +220,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
@@ -258,7 +258,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
         }
 
         // Compile docs and verify contents
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
