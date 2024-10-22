@@ -100,7 +100,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -126,7 +126,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -152,7 +152,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -178,7 +178,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -203,7 +203,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -229,7 +229,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -377,7 +377,7 @@ class ReferenceResolverTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -409,7 +409,7 @@ class ReferenceResolverTests: XCTestCase {
     func testCuratedExtensionRemovesEmptyPage() throws {
         let (bundle, context) = try testBundleAndContext(named: "ModuleWithSingleExtension")
 
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
@@ -421,7 +421,7 @@ class ReferenceResolverTests: XCTestCase {
 
         // Make sure that the symbol added in the extension is still present in the topic graph,
         // even though its synthetic "extended symbol" parents are not
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
     }
 
     func testCuratedExtensionWithDanglingReference() throws {
@@ -445,15 +445,15 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "`Swift/Array`")
 
         // Also make sure that the extension pages are still gone
-        let extendedModule = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
 
-        let extendedStructure = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        let extendedStructure = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
 
         // Load the RenderNode for the root article and make sure that the `Swift/Array` symbol link
         // is not rendered as a link
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
@@ -485,10 +485,10 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(replacement.replacement, "`Swift/Array`")
 
         // Also make sure that the extension pages are still gone
-        let extendedModule = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
 
-        let extendedStructure = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        let extendedStructure = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
@@ -514,17 +514,17 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertFalse(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" || $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
 
         // Because the `Swift/Array` extension has an extension article, the pages should not be marked as virtual
-        let extendedModule = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        let extendedModule = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
         XCTAssert(context.knownPages.contains(where: { $0 == extendedModule }))
 
-        let extendedStructure = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        let extendedStructure = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssert(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
     func testCuratedExtensionWithAdditionalConformance() throws {
         let (bundle, context) = try testBundleAndContext(named: "ModuleWithConformanceAndExtension")
 
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
@@ -540,7 +540,7 @@ class ReferenceResolverTests: XCTestCase {
     func testExtensionWithEmptyDeclarationFragments() throws {
         let (bundle, context) = try testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
 
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
 
@@ -738,8 +738,8 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     func testEmitsDiagnosticsForEachDocumentationChunk() throws {
-        let moduleReference = ResolvedTopicReference(id: "com.example.test", path: "/documentation/ModuleName", sourceLanguage: .swift)
-        let reference = ResolvedTopicReference(id: "com.example.test", path: "/documentation/ModuleName/Something", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: "com.example.test", path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "com.example.test", path: "/documentation/ModuleName/Something", sourceLanguage: .swift)
         
         let inSourceComment = """
         Some description of this class

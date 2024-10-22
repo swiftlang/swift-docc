@@ -31,7 +31,7 @@ class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
                 let resolutionResult = context.resolve(
                     .unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(symbolPath: symbolPath))),
                     in: ResolvedTopicReference(
-                        id: "org.swift.MixedLanguageFramework",
+                        bundleID: "org.swift.MixedLanguageFramework",
                         path: "/documentation/MixedLanguageFramework/\(parentPath)",
                         sourceLanguage: .swift
                     ),

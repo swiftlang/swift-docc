@@ -85,11 +85,11 @@ class DocumentationContextTests: XCTestCase {
     func testLoadEntity() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
-        let identifier = ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(id: "some.other.bundle", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: "some.other.bundle", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)))
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/Test-Bundle/wrongIdentifier", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/Test-Bundle/wrongIdentifier", sourceLanguage: .swift)))
 
         let node = try context.entity(with: identifier)
                 
@@ -1235,7 +1235,7 @@ class DocumentationContextTests: XCTestCase {
             let (bundle, context) = try loadBundle(catalog: testCatalog)
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
             
-            let identifier = ResolvedTopicReference(id: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/TestOverview", sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -1326,15 +1326,15 @@ let expected = """
         assertEqualDumps(context.dumpGraph(), expected)
         
         // Test correct symbol hierarchy in context
-        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol"]])
         
-        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.finitePaths(to: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyClass"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol", "doc://org.swift.docc.example/documentation/MyKit/MyClass"]])
     }
     
     func createNode(in context: DocumentationContext, bundle: DocumentationBundle, parent: ResolvedTopicReference, name: String) throws -> (DocumentationNode, TopicGraph.Node) {
-        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit/\(name)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit/\(name)", sourceLanguage: .swift)
         let node = DocumentationNode(reference: reference, kind: .article, sourceLanguage: .swift, name: .conceptual(title: name), markup: Document(parsing: "# \(name)"), semantic: nil)
         let tgNode = TopicGraph.Node(reference: reference, kind: .article, source: .external, title: name)
         
@@ -1349,7 +1349,7 @@ let expected = """
     func testSortingBreadcrumbsOfEqualDistanceToRoot() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
-        let mykit = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let mykit = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         ///
         /// Create nodes in alphabetical order
@@ -1383,7 +1383,7 @@ let expected = """
     func testSortingBreadcrumbsOfDifferentDistancesToRoot() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
-        let mykit = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let mykit = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let tgMykitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(mykit))
         
         ///
@@ -1431,7 +1431,7 @@ let expected = """
         })
         
         // Verify the node is a child of the module node when the graph is loaded.
-        let sideClassReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
+        let sideClassReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         let parents = context.parents(of: sideClassReference)
         XCTAssertEqual(parents.map {$0.path}, ["/documentation/SideKit"])
     }
@@ -1452,7 +1452,7 @@ let expected = """
         }
         
         // Get a node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
         
         // Get the breadcrumbs as paths
         let paths = context.finitePaths(to: node.reference).sorted { (path1, path2) -> Bool in
@@ -1513,8 +1513,8 @@ let expected = """
         }
         
         // Verify the non-overload collisions were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
     }
     
     func testModuleLanguageFallsBackToSwiftIfItHasNoSymbols() throws {
@@ -1642,9 +1642,9 @@ let expected = """
         }
         
         // Verify the non-overload collisions were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
     }
 
     func testUnknownSymbolKind() throws {
@@ -1656,7 +1656,7 @@ let expected = """
         }
         
         // Get a function node, verify its kind is unknown
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         XCTAssertEqual(node.kind, .unknown)
     }
     
@@ -1840,7 +1840,7 @@ let expected = """
         let problems = context.problems
         XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
         
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let entity = try context.entity(with: moduleReference)
         
         let moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
@@ -2023,9 +2023,9 @@ let expected = """
         XCTAssert(symbolGraphProblems.isEmpty, "There shouldn't be any errors or warnings in the symbol graphs")
         
         // Verify the non-overload collisions form different symbol graph files were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class/path", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
     }
 
     func testUnresolvedSidecarDiagnostics() throws {
@@ -2097,7 +2097,7 @@ let expected = """
         
         XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
         
-        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName/Symbol_Name", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/Symbol_Name", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         
         XCTAssertEqual((node.semantic as? Symbol)?.abstract?.plainText, "Extend a symbol with a space in its name.")
@@ -2147,7 +2147,7 @@ let expected = """
         XCTAssert(context.problems.isEmpty, "Unexpected problems:\n\(context.problems.map(\.diagnostic.summary).joined(separator: "\n"))")
         
         do {
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName/OldSymbol", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/OldSymbol", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
             let deprecatedSection = try XCTUnwrap((node.semantic as? Symbol)?.deprecatedSummary)
@@ -2156,7 +2156,7 @@ let expected = """
         }
         
         do {
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/unit-test/Article", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             
             let deprecatedSection = try XCTUnwrap((node.semantic as? Article)?.deprecationSummary)
@@ -2312,17 +2312,17 @@ let expected = """
         }
 
         // Test that collision symbol reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
         
         // Test that collision symbol child reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/path", sourceLanguage: .swift)))
 
         // Test that nested collisions were updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property", sourceLanguage: .swift)))
         
         // Test that child of nested collision is updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
         
         // Verify that the symbol index has been updated with the rewritten collision-corrected symbol paths
         XCTAssertEqual(context.documentationCache.reference(symbolID: "s:7SideKit0A5ClassC10testnEE")?.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
@@ -2445,14 +2445,14 @@ let expected = """
         }
 
         // Verify that the Tertiary framework has no symbol in the graph
-        XCTAssertNotNil(try? context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)))
-        XCTAssertNil(try? context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/Tertiary", sourceLanguage: .swift)))
+        XCTAssertNotNil(try? context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)))
+        XCTAssertNil(try? context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Tertiary", sourceLanguage: .swift)))
     }
     
     func testDeclarationTokenKinds() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         
-        let myFunc = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let myFunc = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         // Symbol graph declaration tokens, including more esoteric kinds like internalParam, externalParam, and unknown kinds.
         let tokens = (myFunc.symbol!.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)?
@@ -2600,7 +2600,7 @@ let expected = """
     func testNavigatorTitle() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
-            let reference = ResolvedTopicReference(id: bundle.id, path: path, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
             let node = try context.entity(with: reference)
 
             let symbol = node.semantic as! Symbol
@@ -2655,7 +2655,7 @@ let expected = """
         let (_, _, context) = try loadBundle(from: catalogURL)
         
         let referenceForPath: (String) -> ResolvedTopicReference = { path in
-            return ResolvedTopicReference(id: "com.test.collisions", path: "/documentation" + path, sourceLanguage: .swift)
+            return ResolvedTopicReference(bundleID: "com.test.collisions", path: "/documentation" + path, sourceLanguage: .swift)
         }
         
         // Verify that:
@@ -2722,13 +2722,13 @@ let expected = """
         let beforeCount = try XCTUnwrap(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Verify a given identifier exists in the pool by creating it and verifying it wasn't added to the pool
-        _ = ResolvedTopicReference(id: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
         // Verify create the reference above did not add to the cache
         XCTAssertEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Create a new reference for the same bundle that was not loaded with the context
-        _ = ResolvedTopicReference(id: bundleID, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleID: bundleID, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
         
         // Verify creating a new reference added to the ones loaded with the context
         XCTAssertNotEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
@@ -2742,7 +2742,7 @@ let expected = """
         // Get the SideKit/SideClass/init() node and verify it has an abstract and no discussion.
         // We're verifying that the metadata directive between the title and the abstract didn't cause
         // the content to overflow into the discussion.
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         let markupModel = DocumentationMarkup(markup: node.markup)
         XCTAssertNotNil(markupModel.abstractSection)
         
@@ -2772,7 +2772,7 @@ let expected = """
     
     func testCreatingAnArticleNode() throws {
         // Create documentation node from markup
-        let reference = ResolvedTopicReference(id: "com.testbundle", path: "/documentation/NewArticle", fragment: nil, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "com.testbundle", path: "/documentation/NewArticle", fragment: nil, sourceLanguage: .swift)
         
         let source = """
         # New Article
@@ -2791,7 +2791,7 @@ let expected = """
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
         // Verify task group ranges are persisted for symbol docs
-        let symbolReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let symbol = try XCTUnwrap((try? context.entity(with: symbolReference))?.semantic as? Symbol)
         let symbolTopics = try XCTUnwrap(symbol.topics)
         symbolTopics.originalLinkRangesByGroup.forEach { group in
@@ -2799,7 +2799,7 @@ let expected = """
         }
         
         // Verify task group ranges are persisted for articles
-        let articleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let article = try XCTUnwrap((try? context.entity(with: articleReference))?.semantic as? Article)
         let articleTopics = try XCTUnwrap(article.topics)
         articleTopics.originalLinkRangesByGroup.forEach { group in
@@ -3362,7 +3362,7 @@ let expected = """
             "'swiftOnlyMemberName' doesn't exist at '/ModuleName/ObjectiveCName'",
         ])
         
-        let reference = ResolvedTopicReference(id: "unit-test", path: "/documentation/ModuleName/SwiftName", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "unit-test", path: "/documentation/ModuleName/SwiftName", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         let taskGroups = try XCTUnwrap(symbol.topics).taskGroups
@@ -3471,10 +3471,10 @@ let expected = """
             """.write(to: url.appendingPathComponent("fifthTestMember.md"), atomically: true, encoding: .utf8)
         }
         
-        let articleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ShapeKit/NewArticle", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ShapeKit/NewArticle", sourceLanguage: .swift)
         
         // Fetch the "OverloadedParentStruct" node
-        let reference1 = ResolvedTopicReference(id: bundle.id, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p", sourceLanguage: .swift)
+        let reference1 = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p", sourceLanguage: .swift)
         let node1 = try context.entity(with: reference1)
         let symbol1 = try XCTUnwrap(node1.semantic as? Symbol)
         
@@ -3487,7 +3487,7 @@ let expected = """
         XCTAssertTrue(tgNode1.contains(articleReference))
         
         // Fetch the "fifthTestMember" node
-        let reference2 = ResolvedTopicReference(id: bundle.id, path: "/documentation/\(fifthTestMemberPath)", sourceLanguage: .swift)
+        let reference2 = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/\(fifthTestMemberPath)", sourceLanguage: .swift)
        
         let node2 = try context.entity(with: reference2)
         let symbol2 = try XCTUnwrap(node2.semantic as? Symbol)
@@ -3570,7 +3570,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/someThing-90i4h", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/someThing-90i4h", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3579,7 +3579,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/something-2c4k6", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/something-2c4k6", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3588,7 +3588,7 @@ let expected = """
         
         do {
             // The resolved reference needs the language info alongside the symbol kind info.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.method", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.method", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3597,7 +3597,7 @@ let expected = """
         
         do {
             // The resolved reference needs the language info alongside the symbol kind info.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.subscript", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.subscript", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3606,7 +3606,7 @@ let expected = """
         
         do {
             // The resolved reference needs the language info alongside the symbol kind info.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.type.method", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.type.method", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3681,7 +3681,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCOption/first", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCOption/first", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3690,7 +3690,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCOption/secondCaseSwiftName", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCOption/secondCaseSwiftName", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3699,7 +3699,7 @@ let expected = """
         
         do {
             // The resolved reference needs the language info alongside the symbol kind info.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3708,7 +3708,7 @@ let expected = """
         
         do {
             // The resolved reference needs the language info alongside the symbol kind info.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3742,7 +3742,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/MyStruct/myStructProperty", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/MyStruct/myStructProperty", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3751,7 +3751,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MixedFramework/MyTypeAlias", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MixedFramework/MyTypeAlias", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3777,7 +3777,7 @@ let expected = """
         
         do {
             // The resolved reference needs more disambiguation than the documentation extension link did.
-            let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Something", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Something", sourceLanguage: .swift)
             
             let node = try context.entity(with: reference)
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -3885,7 +3885,7 @@ let expected = """
             let identifiers = context.problems.map(\.diagnostic.identifier)
             XCTAssertFalse(identifiers.contains(where: { $0 == "org.swift.docc.ArticleUncurated" }))
             
-            let rootReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Module", sourceLanguage: .swift)
+            let rootReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Module", sourceLanguage: .swift)
             let docNode = try context.entity(with: rootReference)
             let article = try XCTUnwrap(docNode.semantic as? Article)
             XCTAssertNil(article.topics)
@@ -3922,7 +3922,7 @@ let expected = """
             ]).write(inside: tempURL)
             let (_, bundle, context) = try loadBundle(from: bundleURL)
             
-            let rootReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Module", sourceLanguage: .swift)
+            let rootReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Module", sourceLanguage: .swift)
             let docNode = try context.entity(with: rootReference)
             let article = try XCTUnwrap(docNode.semantic as? Article)
             XCTAssertNotNil(article.topics)
@@ -3965,7 +3965,7 @@ let expected = """
         ]).write(inside: tempURL)
         let (_, bundle, context) = try loadBundle(from: bundleURL)
         
-        let rootReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Module", sourceLanguage: .swift)
+        let rootReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Module", sourceLanguage: .swift)
         let docNode = try context.entity(with: rootReference)
         let article = try XCTUnwrap(docNode.semantic as? Article)
         
@@ -3993,7 +3993,7 @@ let expected = """
                 .replacingOccurrences(of: " - <doc:article>", with: " - <doc:resolvable-article>")
                 .write(to: myKitURL, atomically: true, encoding: .utf8)
         }
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
 
         // Try resolving the new resolvable node
         switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:resolvable-article")!)), in: moduleReference) {
@@ -4147,12 +4147,12 @@ let expected = """
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
             // Verify the context contains the conflicting topic names
             // Article
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(id: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)])
             // Tutorial
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
             
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
-            let expected = ResolvedTopicReference(id: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
+            let expected = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
 
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialTableOfContentsContainer] {
@@ -4184,14 +4184,14 @@ let expected = """
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
             // Verify the context contains the conflicting topic names
             // Article
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(id: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)])
             // Tutorial
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
             // Symbol
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)])
             
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
-            let expected = ResolvedTopicReference(id: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
+            let expected = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
             
             let symbolReference = try XCTUnwrap(context.documentationCache.reference(symbolID: "s:12Minimal_docs4TestV"))
             
@@ -4244,9 +4244,9 @@ let expected = """
             // Load the bundle
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
             
-            let symbolReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
-            let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
-            let articleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
+            let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
+            let articleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
 
             // Verify we resolve/not resolve non-symbols when calling directly context.resolve(...)
             // with an explicit preference.
@@ -4272,7 +4272,7 @@ let expected = """
 
             // Verify the context contains the conflicting topic names
             // Tutorial
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(id: bundle.id, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleID: bundle.id, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
             // Symbol
             XCTAssertNotNil(context.documentationCache[symbolReference])
             
@@ -4315,8 +4315,8 @@ let expected = """
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
             
             // Verify the module and symbol node kinds.
-            let symbolReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs/Minimal_docs", sourceLanguage: .swift)
-            let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs/Minimal_docs", sourceLanguage: .swift)
+            let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
 
             XCTAssertEqual(context.topicGraph.nodeWithReference(symbolReference)?.kind, .structure)
             XCTAssertEqual(context.topicGraph.nodeWithReference(moduleReference)?.kind, .module)
@@ -4443,7 +4443,7 @@ let expected = """
         XCTAssertEqual(
             context.documentationExtensionURL(
                 for: ResolvedTopicReference(
-                    id: "org.swift.docc.example",
+                    bundleID: "org.swift.docc.example",
                     path: "/documentation/MyKit/MyClass",
                     fragment: nil,
                     sourceLanguage: .swift
@@ -4461,7 +4461,7 @@ let expected = """
         XCTAssertNil(
             context.documentationExtensionURL(
                 for: ResolvedTopicReference(
-                    id: "org.swift.docc.example",
+                    bundleID: "org.swift.docc.example",
                     path: "/tutorials/TestOverview",
                     fragment: nil,
                     sourceLanguage: .swift
@@ -4686,7 +4686,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName/SomeError/Code-swift.enum/someCase", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName/SomeError/Code-swift.enum/someCase", sourceLanguage: .swift)
         
         XCTAssertEqual(
             context.topicGraph.reverseEdgesGraph.cycles(from: reference).map { $0.map(\.lastPathComponent) },
@@ -4771,7 +4771,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
 
         for kindID in overloadableKindIDs {
             var seenIndices = Set<Int>()
@@ -4859,7 +4859,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
 
         for kindID in overloadableKindIDs {
             switch context.resolve(.unresolved(.init(topicURL: .init(symbolPath: "SymbolName-\(kindID.identifier)"))), in: moduleReference, fromSymbolLink: true) {
@@ -4991,7 +4991,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
 
         let overloadGroupNode: DocumentationNode
         let overloadGroupSymbol: Symbol
@@ -5068,7 +5068,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
 
         let overloadGroupNode: DocumentationNode
         let overloadGroupSymbol: Symbol
@@ -5143,7 +5143,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
 
         let overloadGroupNode: DocumentationNode
         let overloadGroupSymbol: Symbol
@@ -5213,7 +5213,7 @@ let expected = """
             ])
         ])
         let (_, bundle, context) = try loadBundle(from: tempURL)
-        let moduleReference = ResolvedTopicReference(id: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/ModuleName", sourceLanguage: .swift)
 
         let overloadGroupNode: DocumentationNode
         let overloadGroupSymbol: Symbol

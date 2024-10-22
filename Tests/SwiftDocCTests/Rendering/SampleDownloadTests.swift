@@ -128,7 +128,7 @@ class SampleDownloadTests: XCTestCase {
     private func renderNodeFromSampleBundle(at referencePath: String) throws -> RenderNode {
         let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: referencePath,
             sourceLanguage: .swift
         )

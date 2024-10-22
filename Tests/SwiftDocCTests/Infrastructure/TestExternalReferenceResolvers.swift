@@ -52,13 +52,13 @@ class TestMultiResultExternalReferenceResolver: ExternalDocumentationSource {
             
             let entity = entityInfo(path: path)
             return .success(
-                ResolvedTopicReference(id: bundleID, path: entity.referencePath,fragment: entity.fragment,sourceLanguage: entity.language)
+                ResolvedTopicReference(bundleID: bundleID, path: entity.referencePath,fragment: entity.fragment,sourceLanguage: entity.language)
             )
         }
     }
     
     func entity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity {
-        guard reference.id == bundleID else {
+        guard reference.bundleID == bundleID else {
             fatalError("It is a programming mistake to retrieve an entity for a reference that the external resolver didn't resolve.")
         }
         return makeNode(for: entityInfo(path: reference.path), reference: reference)

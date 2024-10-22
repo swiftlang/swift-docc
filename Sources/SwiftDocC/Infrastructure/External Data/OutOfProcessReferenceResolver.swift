@@ -53,11 +53,11 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     
     @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
     public var bundleIdentifier: String {
-        id.rawValue
+        bundleID.rawValue
     }
     
     /// The bundle identifier for the reference resolver in the other process.
-    public let id: DocumentationBundle.Identifier
+    public let bundleID: DocumentationBundle.Identifier
     
     /// Creates a new reference resolver that interacts with another executable.
     ///
@@ -82,13 +82,13 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             throw Error.invalidBundleIdentifierOutputFromExecutable(processLocation)
         }
         
-        self.id = .init(rawValue: decodedBundleIdentifier)
+        self.bundleID = .init(rawValue: decodedBundleIdentifier)
         self.externalLinkResolvingClient = longRunningProcess
     }
 
-    @available(*, deprecated, renamed: "init(id:server:convertRequestIdentifier:)", message: "Use 'init(id:server:convertRequestIdentifier:)' instead. This deprecated API will be removed after 6.2 is released")
+    @available(*, deprecated, renamed: "init(bundleID:server:convertRequestIdentifier:)", message: "Use 'init(bundleID:server:convertRequestIdentifier:)' instead. This deprecated API will be removed after 6.2 is released")
     public init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.id = .init(rawValue: bundleIdentifier)
+        self.bundleID = .init(rawValue: bundleIdentifier)
         self.externalLinkResolvingClient = LongRunningService(
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
@@ -102,7 +102,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
     public init(id: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.id = id
+        self.bundleID = id
         self.externalLinkResolvingClient = LongRunningService(
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
@@ -115,7 +115,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             return resolved
             
         case let .unresolved(unresolvedReference):
-            guard unresolvedReference.id == id else {
+            guard unresolvedReference.bundleID == bundleID else {
                 fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
                     DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
@@ -147,7 +147,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
         guard let resolvedInformation = try? resolveInformationForSymbolIdentifier(preciseIdentifier) else { return nil }
         
         let reference = ResolvedTopicReference(
-            id: "com.externally.resolved.symbol",
+            bundleID: "com.externally.resolved.symbol",
             path: "/\(preciseIdentifier)",
             sourceLanguages: sourceLanguages(for: resolvedInformation)
         )
@@ -255,7 +255,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     
     private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
         return ResolvedTopicReference(
-            id: id,
+            bundleID: bundleID,
             path: resolvedInformation.url.path,
             fragment: resolvedInformation.url.fragment,
             sourceLanguages: sourceLanguages(for: resolvedInformation)
@@ -779,13 +779,13 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
     }
     
     func resolveInformationForAsset(named assetName: String) throws -> DataAsset {
-        let assetReference = AssetReference(assetName: assetName, bundleID: id)
+        let assetReference = AssetReference(assetName: assetName, bundleID: bundleID)
         if let asset = assetCache[assetReference] {
             return asset
         }
         
         let response = try externalLinkResolvingClient.sendAndWait(
-            request: Request.asset(AssetReference(assetName: assetName, bundleID: id))
+            request: Request.asset(AssetReference(assetName: assetName, bundleID: bundleID))
         ) as Response
         
         switch response {
@@ -797,9 +797,5 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
         default:
             throw Error.unexpectedResponse(response: response, requestDescription: "asset")
         }
-    }
-    
-    var bundleID: DocumentationBundle.Identifier {
-        id
     }
 }

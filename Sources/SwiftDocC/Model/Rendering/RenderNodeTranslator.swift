@@ -1717,7 +1717,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         let media = ResourceReference(bundleID: oldMedia.bundleID, path: mediaIdentifier)
-        guard let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleID: identifier.id)
+        guard let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleID: identifier.bundleID)
                                 ?? context.resolveAsset(named: media.path, in: identifier)
         else {
             return nil

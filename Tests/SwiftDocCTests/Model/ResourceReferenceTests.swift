@@ -13,7 +13,7 @@ import XCTest
 
 class ResourceReferenceTests: XCTestCase {
     func testPathWithSectionFragment() throws {
-        let ref = ResolvedTopicReference(id: "org.swift.docc.example", path: "/Test-Bundle/Tutorial1", sourceLanguage: .swift)
+        let ref = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/Test-Bundle/Tutorial1", sourceLanguage: .swift)
         XCTAssertEqual(ref.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1")
         
         let refAdvanced = ref.withFragment("fragment")

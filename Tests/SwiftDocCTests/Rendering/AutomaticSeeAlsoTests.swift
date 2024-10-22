@@ -30,7 +30,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -61,7 +61,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -104,7 +104,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -121,7 +121,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         
         // Verify that articles get same automatic See Also sections as symbols
         do {
-            let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
             
@@ -171,7 +171,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -184,7 +184,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
 
         // Verify that article without options directive still gets automatic See Also sections
         do {
-            let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
             
@@ -235,7 +235,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
@@ -248,7 +248,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
 
         // Verify that article without options directive still gets automatic See Also sections
         do {
-            let node = try context.entity(with: ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
+            let node = try context.entity(with: ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
             
@@ -286,7 +286,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
         let (_, bundle, context) = try loadBundle(from: bundleURL)
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(id: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         

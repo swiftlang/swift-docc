@@ -71,7 +71,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Test if the default availability is used for modules
         do {
-            let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -81,7 +81,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Test if the default availability is used for symbols with no explicit availability
         do {
-            let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -91,7 +91,7 @@ class DefaultAvailabilityTests: XCTestCase {
 
         // Test if the default availability is NOT used for symbols with explicit availability
         do {
-            let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -185,7 +185,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
-            let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -205,7 +205,7 @@ class DefaultAvailabilityTests: XCTestCase {
         let (_, bundle, context) = try testBundleAndContext(named: "TestBundle", configuration: configuration)
         
         do {
-            let identifier = ResolvedTopicReference(id: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(bundleID: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             
             // Add some available and unavailable platforms to the symbol
@@ -336,7 +336,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         let node = try context.entity(
             with: ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -665,7 +665,7 @@ class DefaultAvailabilityTests: XCTestCase {
         XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, nil)
         // Verify we remove the version from the module availability information.
-        var identifier = ResolvedTopicReference(id: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
+        var identifier = ResolvedTopicReference(bundleID: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
         var node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         var renderNode = translator.visit(node.semantic) as! RenderNode
@@ -708,7 +708,7 @@ class DefaultAvailabilityTests: XCTestCase {
         XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion, nil)
         
         // Verify the module availability shows as expected.
-        identifier = ResolvedTopicReference(id: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
+        identifier = ResolvedTopicReference(bundleID: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
         node = try context.entity(with: identifier)
         translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
         renderNode = translator.visit(node.semantic) as! RenderNode

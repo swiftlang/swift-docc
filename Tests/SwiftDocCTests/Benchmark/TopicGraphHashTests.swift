@@ -51,7 +51,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         
         // Here we'll add a completely new node and curated it in the topic graph
-        let newNode = TopicGraph.Node(reference: .init(id: #function, path: "/newSymbol", sourceLanguage: .swift), kind: .article, source: .external, title: "External Article")
+        let newNode = TopicGraph.Node(reference: .init(bundleID: #function, path: "/newSymbol", sourceLanguage: .swift), kind: .article, source: .external, title: "External Article")
         context.topicGraph.addNode(newNode)
         // We can force unwrap below because we're guaranteed to find at least one node which is not `newNode`
         context.topicGraph.addEdge(from: context.topicGraph.nodes.values.first(where: { existingNode -> Bool in
@@ -105,7 +105,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let entity = try context.entity(with: .init(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift))
         let taskGroupLinks = try XCTUnwrap((entity.semantic as? Symbol)?.topics?.taskGroups.first?.links.compactMap({ $0.destination }))
         
         // Verify the task group links have been resolved and are still present in the link list.
@@ -117,7 +117,7 @@ class TopicGraphHashTests: XCTestCase {
         ])
         
         // Verify correct hierarchy under `MyKit` in the topic graph dump including external symbols.
-        let myKitRef = ResolvedTopicReference(id: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let myKitRef = ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)
         let myKitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(myKitRef))
         
         let expectedHierarchyWithExternalSymbols = """

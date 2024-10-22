@@ -31,7 +31,7 @@ class DocumentationNodeTests: XCTestCase {
         
         let article = Article(markup: Document(parsing: articleSource, options: []), metadata: nil, redirects: nil, options: [:])
         let node = try DocumentationNode(
-            reference: ResolvedTopicReference(id: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
+            reference: ResolvedTopicReference(bundleID: "org.swift.docc", path: "/blah", sourceLanguage: .swift),
             article: article
         )
         XCTAssertEqual(node.anchorSections.count, 5)

@@ -915,7 +915,7 @@ public class DocumentationContext {
             let (url, analyzed) = analyzedDocument
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
-            let reference = ResolvedTopicReference(id: bundle.id, path: path, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
@@ -1336,7 +1336,7 @@ public class DocumentationContext {
                         
                         let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
                         let symbolReference = ResolvedTopicReference(
-                            id: reference.id,
+                            bundleID: reference.bundleID,
                             path: symbolPath,
                             fragment: nil,
                             sourceLanguages: reference.sourceLanguages
@@ -1948,7 +1948,7 @@ public class DocumentationContext {
             let title = articleResult.source.deletingPathExtension().lastPathComponent
             // Create a new root-looking reference
             let reference = ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: NodeURLGenerator.Path.documentation(path: title).stringValue,
                 sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
             )
@@ -1987,7 +1987,7 @@ public class DocumentationContext {
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
             let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
             
-            let reference = ResolvedTopicReference(id: bundle.id, path: path, sourceLanguages: [sourceLanguage])
+            let reference = ResolvedTopicReference(bundleID: bundle.id, path: path, sourceLanguages: [sourceLanguage])
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
@@ -2052,7 +2052,7 @@ public class DocumentationContext {
         let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
         
         let reference = ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
             path: path,
             sourceLanguages: availableSourceLanguages
                 // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
@@ -2687,12 +2687,12 @@ public class DocumentationContext {
      */
     private func unregister(_ bundle: DocumentationBundle) {
         let referencesToRemove = topicGraph.nodes.keys.filter {
-            $0.id == bundle.id
+            $0.bundleID == bundle.id
         }
         
         for reference in referencesToRemove {
-            topicGraph.edges[reference]?.removeAll(where: { $0.id == bundle.id })
-            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.id == bundle.id })
+            topicGraph.edges[reference]?.removeAll(where: { $0.bundleID == bundle.id })
+            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleID == bundle.id })
             topicGraph.nodes[reference] = nil
         }
     }
@@ -2738,7 +2738,7 @@ public class DocumentationContext {
     }
     
     private func externalEntity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
-        return configuration.externalDocumentationConfiguration.sources[reference.id].map({ $0.entity(with: reference) })
+        return configuration.externalDocumentationConfiguration.sources[reference.bundleID].map({ $0.entity(with: reference) })
             ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
     }
     
@@ -2904,7 +2904,7 @@ public class DocumentationContext {
     ///   - asset: The new asset for this name.
     ///   - parent: The topic where the asset is referenced.
     public func updateAsset(named name: String, asset: DataAsset, in parent: ResolvedTopicReference) {
-        assetManagers[parent.id]?.update(name: name, asset: asset)
+        assetManagers[parent.bundleID]?.update(name: name, asset: asset)
     }
     
     /// Attempt to resolve an asset given its name and the topic it's referenced in.
@@ -2915,7 +2915,7 @@ public class DocumentationContext {
     ///   - type: A restriction for what type of asset to resolve.
     /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
-        resolveAsset(named: name, bundleID: parent.id, withType: type)
+        resolveAsset(named: name, bundleID: parent.bundleID, withType: type)
     }
     
     func resolveAsset(named name: String, bundleID: DocumentationBundle.Identifier, withType expectedType: AssetType?) -> DataAsset? {
@@ -2959,7 +2959,7 @@ public class DocumentationContext {
     ///
     /// - Returns: The best matching storage key if it was found, otherwise `nil`.
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
-        if let assetManager = assetManagers[parent.id] {
+        if let assetManager = assetManagers[parent.bundleID] {
             if let localName = assetManager.bestKey(forAssetName: name) {
                 return localName
             } else if let fallbackAssetManager = configuration.convertServiceConfiguration.fallbackResolver {

@@ -798,7 +798,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the relationships of 'SomeClass'
         do {
-            let reference = ResolvedTopicReference(id: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -822,7 +822,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the declaration of 'someFunction'
         do {
-            let reference = ResolvedTopicReference(id: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             

@@ -15,7 +15,7 @@ import Markdown
 class RenderNodeCodableTests: XCTestCase {
     
     var bareRenderNode = RenderNode(
-        identifier: .init(id: "com.bundle", path: "/", sourceLanguage: .swift),
+        identifier: .init(bundleID: "com.bundle", path: "/", sourceLanguage: .swift),
         kind: .article
     )
     
@@ -189,7 +189,7 @@ class RenderNodeCodableTests: XCTestCase {
         )
         
         let reference = ResolvedTopicReference(
-            id: "org.swift.docc.example",
+            bundleID: "org.swift.docc.example",
             path: "/documentation/test/customTopicSectionStyle",
             fragment: nil,
             sourceLanguage: .swift

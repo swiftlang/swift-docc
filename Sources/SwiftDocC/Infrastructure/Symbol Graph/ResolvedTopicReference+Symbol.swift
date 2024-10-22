@@ -20,7 +20,7 @@ extension ResolvedTopicReference {
         let path = symbolReference.path.isEmpty ? "" : "/" + symbolReference.path
         
         self.init(
-            id: bundle.documentationRootReference.id,
+            bundleID: bundle.documentationRootReference.bundleID,
             path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
             fragment: nil,
             sourceLanguages: symbolReference.interfaceLanguages

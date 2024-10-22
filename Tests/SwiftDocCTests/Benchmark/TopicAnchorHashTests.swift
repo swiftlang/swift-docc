@@ -50,7 +50,7 @@ class TopicAnchorHashTests: XCTestCase {
         }
         
         // Add a new section to verify that the hash will change
-        let newReference = ResolvedTopicReference(id: "com.bundle.id", path: "/documentation/new#section", sourceLanguage: .swift)
+        let newReference = ResolvedTopicReference(bundleID: "com.bundle.id", path: "/documentation/new#section", sourceLanguage: .swift)
         context.nodeAnchorSections[newReference] = AnchorSection(reference: newReference, title: "New Sub-section")
 
         // Now verify that the topic anchor hash changed after the change

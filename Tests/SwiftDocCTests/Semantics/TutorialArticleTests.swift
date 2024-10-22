@@ -395,7 +395,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
     func testAnalyzeNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(id: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
@@ -414,7 +414,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
 
     func testAnalyzeExternalNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(id: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .external, title: title)
 
         let (_, context) = try testBundleAndContext(named: "TestBundle")
@@ -433,7 +433,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     func testAnalyzeFragmentNode() throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
-        let reference = ResolvedTopicReference(id: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .tutorialTableOfContents, source: .range(range, url: url) , title: title)
 
@@ -454,7 +454,7 @@ TutorialArticle @1:1-42:2 title: 'Basic Augmented Reality App' time: '20'
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
-            let reference = ResolvedTopicReference(id: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
             let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }

@@ -32,7 +32,7 @@ class DeprecationSummaryTests: XCTestCase {
     /// and it's preferred over the original deprecation note in the code docs.
     func testAuthoredDeprecatedSummary() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -63,7 +63,7 @@ class DeprecationSummaryTests: XCTestCase {
         })
         
         // Verify the deprecation is still rendered.
-        let node = try context.entity(with: ResolvedTopicReference(id: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -83,7 +83,7 @@ class DeprecationSummaryTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: "/documentation/CoolFramework/CoolClass",
                 sourceLanguage: .swift
             )
@@ -115,7 +115,7 @@ class DeprecationSummaryTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -137,7 +137,7 @@ class DeprecationSummaryTests: XCTestCase {
       let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
       let node = try context.entity(
           with: ResolvedTopicReference(
-            id: bundle.id,
+            bundleID: bundle.id,
               path: "/documentation/CoolFramework/CoolClass/init()",
               sourceLanguage: .swift
           )
@@ -166,7 +166,7 @@ class DeprecationSummaryTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: "/documentation/CoolFramework/CoolClass/coolFunc()",
                 sourceLanguage: .swift
             )
@@ -195,7 +195,7 @@ class DeprecationSummaryTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                id: bundle.id,
+                bundleID: bundle.id,
                 path: "/documentation/CoolFramework/CoolClass/init(config:cache:)",
                 sourceLanguage: .swift
             )

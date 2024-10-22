@@ -28,7 +28,7 @@ final class PathHierarchyBasedLinkResolver {
     func unregisterBundle(identifier: DocumentationBundle.Identifier) {
         var newMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
         for (id, reference) in resolvedReferenceMap {
-            if reference.id == identifier {
+            if reference.bundleID == identifier {
                 pathHierarchy.removeNodeWithID(id)
             } else {
                 newMap[id] = reference
@@ -301,7 +301,7 @@ final class PathHierarchyBasedLinkResolver {
                 }
                 
                 return ResolvedTopicReference(
-                    id: bundle.documentationRootReference.id,
+                    bundleID: bundle.documentationRootReference.bundleID,
                     path: NodeURLGenerator.Path.documentationFolder + path,
                     sourceLanguages: symbol.sourceLanguages
                 )

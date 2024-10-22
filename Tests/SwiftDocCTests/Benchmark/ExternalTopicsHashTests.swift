@@ -20,7 +20,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     /// A resolver returning mock symbols.
     class TestSymbolResolver: GlobalExternalSymbolResolver {
         func symbolReferenceAndEntity(withPreciseIdentifier preciseIdentifier: String) -> (ResolvedTopicReference, LinkResolver.ExternalEntity)? {
-            let reference = ResolvedTopicReference(id: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
+            let reference = ResolvedTopicReference(bundleID: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift)
             let entity = LinkResolver.ExternalEntity(
                 topicRenderReference: TopicRenderReference(
                     identifier: .init(preciseIdentifier),

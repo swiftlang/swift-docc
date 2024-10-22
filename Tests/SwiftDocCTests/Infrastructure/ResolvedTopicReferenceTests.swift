@@ -16,7 +16,7 @@ import XCTest
 class ResolvedTopicReferenceTests: XCTestCase {
     func testReferenceURL() {
         let firstTopicReference = ResolvedTopicReference(
-            id: "bundleID",
+            bundleID: "bundleID",
             path: "/path/sub-path",
             fragment: "fragment",
             sourceLanguage: .swift
@@ -24,7 +24,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
         XCTAssertEqual(firstTopicReference.absoluteString, "doc://bundleID/path/sub-path#fragment")
         
         let secondTopicReference = ResolvedTopicReference(
-            id: "new-bundleID",
+            bundleID: "new-bundleID",
             path: "/new-path/sub-path",
             fragment: firstTopicReference.fragment,
             sourceLanguage: firstTopicReference.sourceLanguage
@@ -41,7 +41,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
     func testAppendingReferenceWithEmptyPath() {
         // An empty path
         do {
-            let resolvedOriginal = ResolvedTopicReference(id: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
+            let resolvedOriginal = ResolvedTopicReference(bundleID: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
             let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://host-name")!)
             XCTAssert(unresolved.path.isEmpty)
@@ -52,7 +52,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
         
         // A path with no url path allowed characters
         do {
-            let resolvedOriginal = ResolvedTopicReference(id: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
+            let resolvedOriginal = ResolvedTopicReference(bundleID: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
             var components = URLComponents()
             components.scheme = "doc"
@@ -69,7 +69,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
     
     func testStorageIsConcurrentlyAccessible() throws {
         let topicReference = ResolvedTopicReference(
-            id: "com.apple.example",
+            bundleID: "com.apple.example",
             path: "/documentation/path/sub-path",
             fragment: nil,
             sourceLanguage: .swift

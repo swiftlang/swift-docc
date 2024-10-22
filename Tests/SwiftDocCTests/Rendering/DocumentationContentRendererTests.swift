@@ -146,7 +146,7 @@ private extension DocumentationContentRendererTests {
     var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
         var node = DocumentationNode(
             reference: ResolvedTopicReference(
-                id: "org.swift.example",
+                bundleID: "org.swift.example",
                 path: "/documentation/class",
                 fragment: nil,
                 sourceLanguage: .swift
@@ -198,7 +198,7 @@ private extension DocumentationContentRendererTests {
             ]),
             roleHeadingVariants: .init(swiftVariant: ""),
             platformNameVariants: .init(swiftVariant: nil),
-            moduleReference: ResolvedTopicReference(id: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
+            moduleReference: ResolvedTopicReference(bundleID: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
             externalIDVariants: .init(swiftVariant: nil),
             accessLevelVariants: .init(swiftVariant: nil),
             availabilityVariants: .init(swiftVariant: Availability(availability: [])),
