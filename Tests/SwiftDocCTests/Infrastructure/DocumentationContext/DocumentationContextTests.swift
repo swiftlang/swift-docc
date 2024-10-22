@@ -2705,14 +2705,14 @@ let expected = """
     }
     
     func testContextCachesReferences() throws {
-        let bundleID = #function
+        let bundleID: DocumentationBundle.Identifier = #function
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         let (_, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
-                .replacingOccurrences(of: "org.swift.docc.example", with: bundleID)
+                .replacingOccurrences(of: "org.swift.docc.example", with: bundleID.rawValue)
                 .write(to: infoPlistURL, atomically: true, encoding: .utf8)
         })
 
@@ -2722,13 +2722,13 @@ let expected = """
         let beforeCount = try XCTUnwrap(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Verify a given identifier exists in the pool by creating it and verifying it wasn't added to the pool
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
         
         // Verify create the reference above did not add to the cache
         XCTAssertEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
         
         // Create a new reference for the same bundle that was not loaded with the context
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
         
         // Verify creating a new reference added to the ones loaded with the context
         XCTAssertNotEqual(beforeCount, ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID))
