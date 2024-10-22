@@ -161,7 +161,7 @@ package enum ConvertActionConverter {
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
             do {
-                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id.rawValue)
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id)
                 try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
                 
                 if !emitDigest {

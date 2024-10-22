@@ -715,7 +715,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id.rawValue)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -995,7 +995,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id.rawValue)
+        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         
