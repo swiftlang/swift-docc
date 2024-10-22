@@ -25,8 +25,7 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Remove all matches from a given documentation bundle from the link resolver.
-    func unregisterBundle(identifier: BundleIdentifier) {
-        let identifier = DocumentationBundle.Identifier(rawValue: identifier)
+    func unregisterBundle(identifier: DocumentationBundle.Identifier) {
         var newMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
         for (id, reference) in resolvedReferenceMap {
             if reference.id == identifier {

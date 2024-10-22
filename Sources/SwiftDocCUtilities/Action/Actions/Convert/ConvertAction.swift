@@ -160,7 +160,7 @@ public struct ConvertAction: AsyncAction {
         }
         
         if let outOfProcessResolver {
-            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.id.rawValue] = outOfProcessResolver
+            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.id] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
@@ -288,7 +288,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundle.id.rawValue
+            bundleID: bundle.id
         )
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
@@ -422,7 +422,7 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundle.id.rawValue
+                bundleID: bundle.id
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)

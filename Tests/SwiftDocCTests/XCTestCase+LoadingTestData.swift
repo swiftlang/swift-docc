@@ -19,7 +19,7 @@ extension XCTestCase {
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
     func loadBundle(
         from catalogURL: URL,
-        externalResolvers: [String: ExternalDocumentationSource] = [:],
+        externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
@@ -69,7 +69,7 @@ extension XCTestCase {
     func testBundleAndContext(
         copying name: String,
         excludingPaths excludedPaths: [String] = [],
-        externalResolvers: [BundleIdentifier : ExternalDocumentationSource] = [:],
+        externalResolvers: [DocumentationBundle.Identifier : ExternalDocumentationSource] = [:],
         externalSymbolResolver: GlobalExternalSymbolResolver? = nil,
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
         diagnosticEngine: DiagnosticEngine = .init(filterLevel: .hint),
@@ -106,7 +106,7 @@ extension XCTestCase {
     
     func testBundleAndContext(
         named name: String,
-        externalResolvers: [String: ExternalDocumentationSource] = [:],
+        externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:],
         fallbackResolver: ConvertServiceFallbackResolver? = nil,
         configuration: DocumentationContext.Configuration = .init()
     ) throws -> (URL, DocumentationBundle, DocumentationContext) {
@@ -114,7 +114,7 @@ extension XCTestCase {
         return try loadBundle(from: catalogURL, externalResolvers: externalResolvers, fallbackResolver: fallbackResolver, configuration: configuration)
     }
     
-    func testBundleAndContext(named name: String, externalResolvers: [String: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(named name: String, externalResolvers: [DocumentationBundle.Identifier: ExternalDocumentationSource] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
         let (_, bundle, context) = try testBundleAndContext(named: name, externalResolvers: externalResolvers)
         return (bundle, context)
     }

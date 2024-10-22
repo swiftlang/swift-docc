@@ -55,7 +55,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -93,7 +93,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID.rawValue: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -131,7 +131,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
 
         // Load a bundle with external links
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID.rawValue: externalResolver]) { url in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleID: externalResolver]) { url in
         try """
         # ``SideKit/SideClass``
 
