@@ -157,7 +157,7 @@ package enum ConvertActionConverter {
         
         if FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled {
             do {
-                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.identifier)
+                let serializableLinkInformation = try context.linkResolver.localResolver.prepareForSerialization(bundleID: bundle.id.rawValue)
                 try outputConsumer.consume(linkResolutionInformation: serializableLinkInformation)
                 
                 if !emitDigest {
@@ -187,7 +187,7 @@ package enum ConvertActionConverter {
             break
         }
         
-        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: bundle.displayName, bundleIdentifier: bundle.identifier))
+        try outputConsumer.consume(buildMetadata: BuildMetadata(bundleDisplayName: bundle.displayName, bundleIdentifier: bundle.id.rawValue))
         
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))

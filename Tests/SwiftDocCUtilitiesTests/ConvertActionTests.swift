@@ -2853,7 +2853,7 @@ class ConvertActionTests: XCTestCase {
 
         let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "MyKit")
-        XCTAssertEqual(bundle.identifier, "MyKit")
+        XCTAssertEqual(bundle.id, "MyKit")
     }
     
     func testConvertWithoutBundleErrorsForMultipleModulesSymbolGraph() async throws {
@@ -2931,7 +2931,7 @@ class ConvertActionTests: XCTestCase {
 
         let bundle = try XCTUnwrap(context.bundle, "Should have registered the generated test bundle.")
         XCTAssertEqual(bundle.displayName, "Something")
-        XCTAssertEqual(bundle.identifier, "com.example.test")
+        XCTAssertEqual(bundle.id, "com.example.test")
     }
 
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {

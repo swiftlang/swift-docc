@@ -67,7 +67,7 @@ public final class Code: Semantic, DirectiveConvertible {
         Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
         
         guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
-        let fileReference = ResourceReference(bundleIdentifier: bundle.identifier, path: requiredFileReference)
+        let fileReference = ResourceReference(bundleIdentifier: bundle.id.rawValue, path: requiredFileReference)
         
         guard let requiredFileName = Semantic.Analyses.HasArgument<Code, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
         
@@ -83,7 +83,7 @@ public final class Code: Semantic, DirectiveConvertible {
         let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
         
         let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
+            ResourceReference(bundleIdentifier: bundle.id.rawValue, path: argument)
         }
         
         self.init(originalMarkup: directive, fileReference: fileReference, fileName: requiredFileName, previousFileReference: optionalPreviousFileReference, shouldResetDiff: shouldResetDiff, preview: optionalPreview)

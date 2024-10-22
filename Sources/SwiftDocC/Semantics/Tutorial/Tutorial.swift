@@ -23,7 +23,7 @@ public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted
     /// Project files to download to get started with the ``Tutorial``.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+            ResourceReference(bundleIdentifier: bundle.id.rawValue, path: argumentValue)
         }
     )
     public private(set) var projectFiles: ResourceReference? = nil

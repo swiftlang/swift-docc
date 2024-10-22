@@ -66,7 +66,7 @@ class AutoCapitalizationTests: XCTestCase {
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
@@ -113,7 +113,7 @@ class AutoCapitalizationTests: XCTestCase {
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         let parameterSections = symbol.parametersSectionVariants
@@ -156,7 +156,7 @@ class AutoCapitalizationTests: XCTestCase {
         
         XCTAssertEqual(context.problems.count, 0)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/ModuleName/functionName(...)", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         

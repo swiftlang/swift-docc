@@ -635,8 +635,8 @@ Root
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
-        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.identifier, sortRootChildrenByName: true, groupByLanguage: true)
-        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.identifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromMemoryBuilder  = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
+        let fromDecodedBuilder = NavigatorIndex.Builder(outputURL: try createTemporaryDirectory(), bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true, groupByLanguage: true)
         fromMemoryBuilder.setup()
         fromDecodedBuilder.setup()
         
@@ -1158,7 +1158,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.identifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundle.id.rawValue, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {

@@ -18,7 +18,7 @@ class PageKindTests: XCTestCase {
     private func generateRenderNodeFromBundle(bundleName: String, resolvedTopicPath: String) throws -> RenderNode {
         let (bundle, context) = try testBundleAndContext(named: bundleName)
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: resolvedTopicPath,
             sourceLanguage: .swift
         )

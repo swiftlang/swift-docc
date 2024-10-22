@@ -1188,7 +1188,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         let (_, bundle, context) = try testBundleAndContext(copying: bundleName)
         
         let identifier = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -1225,7 +1225,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
         
         let identifier = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: "/documentation/Test-Bundle/article",
             sourceLanguage: .swift
         )

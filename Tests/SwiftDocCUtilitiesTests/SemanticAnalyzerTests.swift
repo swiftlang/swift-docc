@@ -57,7 +57,7 @@ class SemanticAnalyzerTests: XCTestCase {
     func testDoNotCrashOnInvalidContent() throws {
         let (bundle, context) = try loadBundle(catalog: catalogHierarchy)
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/Oops", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/Oops", sourceLanguage: .swift)))
     }
     
     func testWarningsAboutDirectiveSupport() throws {

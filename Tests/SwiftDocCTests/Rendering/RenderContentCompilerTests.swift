@@ -16,7 +16,7 @@ import XCTest
 class RenderContentCompilerTests: XCTestCase {
     func testLinkOverrideTitle() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = """
         [Example](http://example.com)
@@ -134,7 +134,7 @@ class RenderContentCompilerTests: XCTestCase {
     
     func testLineBreak() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
         Backslash before new line\
@@ -199,7 +199,7 @@ class RenderContentCompilerTests: XCTestCase {
     
     func testThematicBreak() throws {
         let (bundle, context) = try testBundleAndContext()
-        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/path", fragment: nil, sourceLanguage: .swift))
         
 
         let source = #"""

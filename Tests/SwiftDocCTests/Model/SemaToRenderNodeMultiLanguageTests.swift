@@ -444,7 +444,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")

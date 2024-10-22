@@ -105,7 +105,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         
         // Get MyKit symbol
-        let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
+        let entity = try context.entity(with: .init(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit", sourceLanguage: .swift))
         let taskGroupLinks = try XCTUnwrap((entity.semantic as? Symbol)?.topics?.taskGroups.first?.links.compactMap({ $0.destination }))
         
         // Verify the task group links have been resolved and are still present in the link list.
@@ -117,7 +117,7 @@ class TopicGraphHashTests: XCTestCase {
         ])
         
         // Verify correct hierarchy under `MyKit` in the topic graph dump including external symbols.
-        let myKitRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let myKitRef = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/MyKit", sourceLanguage: .swift)
         let myKitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(myKitRef))
         
         let expectedHierarchyWithExternalSymbols = """

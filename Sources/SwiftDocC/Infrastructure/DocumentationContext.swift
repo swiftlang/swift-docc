@@ -328,7 +328,7 @@ public class DocumentationContext {
         self._configuration = configuration
         self.linkResolver = LinkResolver(dataProvider: dataProvider)
 
-        ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+        ResolvedTopicReference.enableReferenceCaching(for: bundle.id.rawValue)
         try register(bundle)
     }
 
@@ -392,7 +392,7 @@ public class DocumentationContext {
             return legacyDataProvider.bundles[identifier]
         case .new:
             assert(bundle?.identifier == identifier, "New code shouldn't pass unknown bundle identifiers to 'DocumentationContext.bundle(identifier:)'.")
-            return bundle?.identifier == identifier ? bundle : nil
+            bundle?.id.rawValue == identifier ? bundle : nil
         }
     }
         
@@ -914,7 +914,7 @@ public class DocumentationContext {
             let (url, analyzed) = analyzedDocument
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
@@ -1407,7 +1407,7 @@ public class DocumentationContext {
             }
 
             // Resolve any external references first
-            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.identifier)
+            preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ documentationCache.reference(symbolID: $0) }), localBundleID: bundle.id.rawValue)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationshipsBySelector)
@@ -1776,7 +1776,7 @@ public class DocumentationContext {
     
     private func registerMiscResources(from bundle: DocumentationBundle) throws {
         let miscResources = Set(bundle.miscResourceURLs)
-        try assetManagers[bundle.identifier, default: DataAssetManager()].register(data: miscResources)
+        try assetManagers[bundle.id.rawValue, default: DataAssetManager()].register(data: miscResources)
     }
     
     private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
@@ -1932,7 +1932,7 @@ public class DocumentationContext {
             let title = articleResult.source.deletingPathExtension().lastPathComponent
             // Create a new root-looking reference
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                bundleIdentifier: bundle.id.rawValue,
                 path: NodeURLGenerator.Path.documentation(path: title).stringValue,
                 sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
             )
@@ -1971,7 +1971,7 @@ public class DocumentationContext {
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
             let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
             
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguages: [sourceLanguage])
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: path, sourceLanguages: [sourceLanguage])
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
@@ -2036,7 +2036,7 @@ public class DocumentationContext {
         let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            bundleIdentifier: bundle.id.rawValue,
             path: path,
             sourceLanguages: availableSourceLanguages
                 // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
@@ -2316,7 +2316,7 @@ public class DocumentationContext {
             tutorialTableOfContentsResults.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
-            localBundleID: bundle.identifier)
+                                localBundleID: bundle.id.rawValue)
         
         resolveLinks(
             tutorialTableOfContents: tutorialTableOfContentsResults,
@@ -2358,7 +2358,7 @@ public class DocumentationContext {
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, startingFrom: rootNode)
-            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.identifier)
+            preResolveExternalLinks(references: articleReferences, localBundleID: bundle.id.rawValue)
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
         }
 
@@ -2373,7 +2373,7 @@ public class DocumentationContext {
         linkResolver.localResolver.addAnchorForSymbols(localCache: documentationCache)
         
         // Fifth, resolve links in nodes that are added solely via curation
-        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.identifier)
+        preResolveExternalLinks(references: Array(allCuratedReferences), localBundleID: bundle.id.rawValue)
         resolveLinks(curatedReferences: allCuratedReferences, bundle: bundle)
 
         if configuration.convertServiceConfiguration.fallbackResolver != nil {
@@ -2671,12 +2671,12 @@ public class DocumentationContext {
      */
     private func unregister(_ bundle: DocumentationBundle) {
         let referencesToRemove = topicGraph.nodes.keys.filter { reference in
-            return reference.bundleIdentifier == bundle.identifier
+            return reference.bundleIdentifier == bundle.id.rawValue
         }
         
         for reference in referencesToRemove {
-            topicGraph.edges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
-            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
+            topicGraph.edges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.id.rawValue })
+            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.id.rawValue })
             topicGraph.nodes[reference] = nil
         }
     }

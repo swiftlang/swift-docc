@@ -79,7 +79,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
 
         // TODO: Supporting a single bundle for the moment.
-        let bundleIdentifier = bundle.identifier
+        let bundleIdentifier = bundle.id.rawValue
         assert(bundleIdentifier == self.assetPrefixComponent, "Unexpectedly encoding assets for a bundle other than the one this output consumer was created for.")
         
         // Create images directory if needed.

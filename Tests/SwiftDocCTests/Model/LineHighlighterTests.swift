@@ -51,7 +51,7 @@ class LineHighlighterTests: XCTestCase {
         let catalog = Self.makeCatalog(tutorial: tutorialFile, codeFiles: codeFiles)
         let (bundle, context) = try loadBundle(catalog: catalog)
         
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Line-Highlighter-Tests/Tutorial", fragment: nil, sourceLanguage: .swift)
+        let tutorialReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/tutorials/Line-Highlighter-Tests/Tutorial", fragment: nil, sourceLanguage: .swift)
         let tutorial = try context.entity(with: tutorialReference).semantic as! Tutorial
         let section = tutorial.sections.first!
         return LineHighlighter(context: context, tutorialSection: section, tutorialReference: tutorialReference).highlights

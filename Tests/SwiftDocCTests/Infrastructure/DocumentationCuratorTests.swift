@@ -482,7 +482,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testMixedManualAndAutomaticCuration() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -497,14 +497,14 @@ class DocumentationCuratorTests: XCTestCase {
         
         // Verify that the ONLY curation for `TopClass/name` is the manual curation under `MyArticle`
         // and the automatic curation under `TopClass` is not present.
-        let nameReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
+        let nameReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: nameReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
 
         // Verify that the BOTH manual curations for `TopClass/age` are preserved
         // even if one of the manual curations overlaps with the inheritance edge from the symbol graph.
-        let ageReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
+        let ageReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
         XCTAssertEqual(context.finitePaths(to: ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
             ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
@@ -516,7 +516,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testMultipleManualCurationIsPreserved() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)
         
         XCTAssertEqual(context.finitePaths(to: reference).map({ $0.map({ $0.path }) }), [
             [

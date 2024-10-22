@@ -27,7 +27,7 @@ class NodeTagsTests: XCTestCase {
         let (_, bundle, context) = try loadBundle(from: tempURL)
         
         // Verify that `Test` is marked as SPI.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
         let node = try XCTUnwrap(context.entity(with: reference))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         XCTAssertTrue(symbol.isSPI)
@@ -39,7 +39,7 @@ class NodeTagsTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.tags, [.spi])
 
         // Verify that the link to the node contains the SPI tag.
-        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
         let moduleNode = try XCTUnwrap(context.entity(with: moduleReference))
         let moduleSymbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
 

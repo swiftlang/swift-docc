@@ -93,7 +93,7 @@ public class LinkResolver {
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
         if let bundleID = unresolvedReference.bundleIdentifier,
-           !context._registeredBundles.contains(where: { $0.identifier == bundleID || urlReadablePath($0.displayName) == bundleID })
+           !context._registeredBundles.contains(where: { $0.id.rawValue == bundleID || urlReadablePath($0.displayName) == bundleID })
         {
             return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
         }
@@ -172,7 +172,7 @@ private final class FallbackResolverBasedLinkResolver {
         let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
               // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
-              let knownBundleIdentifier = context._registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
+              let knownBundleIdentifier = context._registeredBundles.first(where: { $0.id.rawValue == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.id.rawValue,
               fallbackResolver.bundleIdentifier == knownBundleIdentifier
         else {
             return nil

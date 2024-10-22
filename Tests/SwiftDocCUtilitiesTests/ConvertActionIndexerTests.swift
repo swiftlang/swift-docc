@@ -29,7 +29,7 @@ class ConvertActionIndexerTests: XCTestCase {
             let renderNode = try converter.convert(context.entity(with: reference))
 
             let tempIndexURL = try createTemporaryDirectory(named: "index")
-            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleIdentifier: bundle.identifier)
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleIdentifier: bundle.id.rawValue)
             indexer.index(renderNode)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             let treeDump = try XCTUnwrap(indexer.dumpTree())
@@ -54,7 +54,7 @@ class ConvertActionIndexerTests: XCTestCase {
             let renderNode2 = try converter.convert(context.entity(with: reference2))
 
             let tempIndexURL = try createTemporaryDirectory(named: "index")
-            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleIdentifier: bundle.identifier)
+            let indexer = try ConvertAction.Indexer(outputURL: tempIndexURL, bundleIdentifier: bundle.id.rawValue)
             indexer.index(renderNode1)
             indexer.index(renderNode2)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
