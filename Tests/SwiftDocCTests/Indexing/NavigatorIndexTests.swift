@@ -243,18 +243,18 @@ Root
     }
     
     func testLoadingNavigatorIndexDoesNotCacheReferences() throws {
-        let uniqueTestBundleIdentifier = #function
+        let uniqueTestBundleIdentifier: DocumentationBundle.Identifier = #function
         
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
-        let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier)
+        let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier.rawValue)
         
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
         _ = try NavigatorTree.read(
             from: indexURL,
-            bundleIdentifier: uniqueTestBundleIdentifier,
+            bundleIdentifier: uniqueTestBundleIdentifier.rawValue,
             atomically: true
         )
         

@@ -65,7 +65,7 @@ class IdentifierTests: XCTestCase {
     }
     
     func testReusingReferences() {
-        let bundleID = #function
+        let bundleID: DocumentationBundle.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "Cache for this bundle shouldn't exist because caching is not enabled by default")
         
         // Add one reference
@@ -73,15 +73,15 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
         
         // Add the same reference repeatedly
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
         
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should still only have one cached reference because the same reference was created repeatedly")
         
         // Add another reference
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/other-page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/path/to/other-page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 2, "Should have cached another reference because two different references with this bundle identifier has been created")
         
         // Purge and repeat
@@ -91,15 +91,15 @@ class IdentifierTests: XCTestCase {
         ResolvedTopicReference.enableReferenceCaching(for: bundleID)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 0, "Should have an empty cache after enabling reference caching for this bundle")
         
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertEqual(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), 1, "Should have an cached one reference because a reference with this bundle identifier was created")
     }
     
     func testReferencesAreNotCachedByDefault() {
-        let bundleID = #function
+        let bundleID: DocumentationBundle.Identifier = #function
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "References for this bundle shouldn't exist because caching is not enabled by default")
         
-        _ = ResolvedTopicReference(bundleIdentifier: bundleID, path: "/path/to/page", sourceLanguage: .swift)
+        _ = ResolvedTopicReference(bundleIdentifier: bundleID.rawValue, path: "/path/to/page", sourceLanguage: .swift)
         XCTAssertNil(ResolvedTopicReference._numberOfCachedReferences(bundleID: bundleID), "After creating a reference in this bundle, references still shouldn't exist because caching is not enabled by default")
     }
     
