@@ -55,7 +55,7 @@ public struct DocumentationBundle {
      An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
      */
     public var identifier: String {
-        info.identifier
+        info.id.rawValue
     }
 
     /**
@@ -126,9 +126,9 @@ public struct DocumentationBundle {
         self.customHeader = customHeader
         self.customFooter = customFooter
         self.themeSettings = themeSettings
-        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
-        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.id.rawValue, path: "/", sourceLanguage: .swift)
+        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.id.rawValue, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.id.rawValue, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }

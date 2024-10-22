@@ -51,8 +51,13 @@ import SymbolKit
 public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalExternalSymbolResolver {
     private let externalLinkResolvingClient: ExternalLinkResolving
     
+    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
+    public var bundleIdentifier: String {
+        id.rawValue
+    }
+    
     /// The bundle identifier for the reference resolver in the other process.
-    public let bundleIdentifier: String
+    public let id: DocumentationBundle.Identifier
     
     /// Creates a new reference resolver that interacts with another executable.
     ///
@@ -77,20 +82,27 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             throw Error.invalidBundleIdentifierOutputFromExecutable(processLocation)
         }
         
-        self.bundleIdentifier = decodedBundleIdentifier
+        self.id = .init(rawValue: decodedBundleIdentifier)
         self.externalLinkResolvingClient = longRunningProcess
     }
 
+    @available(*, deprecated, renamed: "init(id:server:convertRequestIdentifier:)", message: "Use 'init(id:server:convertRequestIdentifier:)' instead. This deprecated API will be removed after 6.2 is released")
+    public init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+        self.id = .init(rawValue: bundleIdentifier)
+        self.externalLinkResolvingClient = LongRunningService(
+            server: server, convertRequestIdentifier: convertRequestIdentifier)
+    }
+    
     /// Creates a new reference resolver that interacts with a documentation service.
     ///
     /// The documentation service is expected to be able to handle messages of kind "resolve-reference".
     ///
     /// - Parameters:
-    ///   - bundleIdentifier: The bundle identifier the server can resolve references for.
+    ///   - id: The bundle identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
     ///   - convertRequestIdentifier: The identifier that the resolver will use for convert requests that it sends to the server.
-    public init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.bundleIdentifier = bundleIdentifier
+    public init(id: DocumentationBundle.Identifier, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+        self.id = id
         self.externalLinkResolvingClient = LongRunningService(
             server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
@@ -103,7 +115,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
             return resolved
             
         case let .unresolved(unresolvedReference):
-            guard unresolvedReference.bundleIdentifier == bundleIdentifier else {
+            guard unresolvedReference.bundleIdentifier == id.rawValue else {
                 fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
                     DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
@@ -243,7 +255,7 @@ public class OutOfProcessReferenceResolver: ExternalDocumentationSource, GlobalE
     
     private func resolvedReference(for resolvedInformation: ResolvedInformation) -> ResolvedTopicReference {
         return ResolvedTopicReference(
-            bundleIdentifier: bundleIdentifier,
+            bundleIdentifier: id.rawValue,
             path: resolvedInformation.url.path,
             fragment: resolvedInformation.url.fragment,
             sourceLanguages: sourceLanguages(for: resolvedInformation)
@@ -767,13 +779,13 @@ extension OutOfProcessReferenceResolver: ConvertServiceFallbackResolver {
     }
     
     func resolveInformationForAsset(named assetName: String) throws -> DataAsset {
-        let assetReference = AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)
+        let assetReference = AssetReference(assetName: assetName, bundleIdentifier: id.rawValue)
         if let asset = assetCache[assetReference] {
             return asset
         }
         
         let response = try externalLinkResolvingClient.sendAndWait(
-            request: Request.asset(AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier))
+            request: Request.asset(AssetReference(assetName: assetName, bundleIdentifier: id.rawValue))
         ) as Response
         
         switch response {
