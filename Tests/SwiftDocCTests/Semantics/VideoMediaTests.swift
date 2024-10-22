@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -322,7 +322,7 @@ class VideoMediaTests: XCTestCase {
         var problems = [Problem]()
         let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.id.rawValue,
+            id: bundle.id,
             path: "",
             sourceLanguage: .swift
         )

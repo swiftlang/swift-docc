@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -50,27 +50,27 @@ class NodeURLGeneratorTests: XCTestCase {
         let baseURL = URL(string: "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/")!
         let generator = NodeURLGenerator(baseURL: baseURL)
         
-        let basicIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let basicIdentifier = ResolvedTopicReference(id: "com.example.testbundle",
                                                      path: "/folder/class/symbol",
                                                      fragment: nil,
                                                      sourceLanguage: .swift)
         
         XCTAssertEqual(generator.urlForReference(basicIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/symbol")
         
-        let symbolIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let symbolIdentifier = ResolvedTopicReference(id: "com.example.testbundle",
                                                       path: "/folder/class/.==",
                                                       fragment: nil,
                                                       sourceLanguage: .swift)
         XCTAssertEqual(generator.urlForReference(symbolIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/'.==")
         
-        let privateIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let privateIdentifier = ResolvedTopicReference(id: "com.example.testbundle",
                                                        path: "/folder/class/_privateMethod",
                                                        fragment: nil,
                                                        sourceLanguage: .objectiveC)
         XCTAssertEqual(generator.urlForReference(privateIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/_privateMethod")
         XCTAssertEqual(generator.urlForReference(privateIdentifier, lowercased: true).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/_privatemethod")
         
-        let classIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let classIdentifier = ResolvedTopicReference(id: "com.example.testbundle",
                                                      path: "/folder/_privateclass/_privatesubclass",
                                                      fragment: nil,
                                                      sourceLanguage: .objectiveC)

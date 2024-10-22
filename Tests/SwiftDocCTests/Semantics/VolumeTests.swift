@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -102,7 +102,7 @@ class VolumeTests: XCTestCase {
 
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.id.rawValue,
+                id: bundle.id,
                 path: "/tutorials/TestOverview",
                 sourceLanguage: .swift))
 

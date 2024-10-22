@@ -1174,7 +1174,7 @@ Root
         
         let imageReference = try XCTUnwrap(renderIndex.references["plus.svg"])
         XCTAssertEqual(imageReference.asset.variants.values.map(\.path).sorted(), [
-            "/images/\(bundle.identifier)/plus.svg",
+            "/images/\(bundle.id)/plus.svg",
         ])
     }
     
@@ -1816,7 +1816,7 @@ Root
     
     func testNormalizedNavigatorIndexIdentifier() throws {
         let topicReference = ResolvedTopicReference(
-            bundleIdentifier: "org.swift.example",
+            id: "org.swift.example",
             path: "/documentation/path/sub-path",
             fragment: nil,
             sourceLanguage: .swift
@@ -1833,7 +1833,7 @@ Root
         )
         
         let topicReferenceWithCapitalization = ResolvedTopicReference(
-            bundleIdentifier: "org.Swift.Example",
+            id: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: nil,
             sourceLanguage: .swift
@@ -1850,7 +1850,7 @@ Root
         )
         
         let topicReferenceWithFragment = ResolvedTopicReference(
-            bundleIdentifier: "org.Swift.Example",
+            id: "org.Swift.Example",
             path: "/documentation/Path/subPath",
             fragment: "FRAGMENT",
             sourceLanguage: .swift

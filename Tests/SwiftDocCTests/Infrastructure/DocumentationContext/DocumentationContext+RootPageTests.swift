@@ -46,7 +46,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(context.rootModules.map({ $0.url.path }), ["/documentation/ReleaseNotes"])
         
         // Verify the root was crawled
-        XCTAssertEqual(context.topicGraph.edges[ResolvedTopicReference(bundleIdentifier: "com.test.example", path: "/documentation/ReleaseNotes", sourceLanguage: .swift)]?.map({ $0.url.path }),
+        XCTAssertEqual(context.topicGraph.edges[ResolvedTopicReference(id: "com.test.example", path: "/documentation/ReleaseNotes", sourceLanguage: .swift)]?.map({ $0.url.path }),
                        ["/documentation/TestBundle/ReleaseNotes-1.2"])
     }
 

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,15 +21,15 @@ class AnchorSectionTests: XCTestCase {
         
         // Verify the sub-sections of the article have been collected in the context
         [
-            ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(id: bundle.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(id: bundle.id, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
         }
         
         // Load the module page
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/CoolFramework", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/CoolFramework", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         // Extract the links from the discussion
@@ -79,15 +79,15 @@ class AnchorSectionTests: XCTestCase {
         
         // Verify the sub-sections of the article have been collected in the context
         [
-            ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(id: bundle.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(id: bundle.id, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
         }
         
         // Load the module page
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/CoolFramework", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/CoolFramework", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         // Extract the links from the discussion
@@ -137,15 +137,15 @@ class AnchorSectionTests: XCTestCase {
         
         // Verify the sub-sections of the article have been collected in the context
         [
-            ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(id: bundle.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(id: bundle.id, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
         }
         
         // Load the article page
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: "/documentation/TechnologyX/Article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(id: bundle.id, path: "/documentation/TechnologyX/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         // Extract the links from the discussion

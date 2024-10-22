@@ -103,7 +103,7 @@ struct MergeAction: AsyncAction {
         let languages = combinedIndex.interfaceLanguages.keys.map { SourceLanguage(id: $0) }
         let language = languages.sorted().first ?? .swift
         
-        let reference = ResolvedTopicReference(bundleIdentifier: landingPageName.replacingWhitespaceAndPunctuation(with: "-"), path: "/documentation", sourceLanguage: language)
+        let reference = ResolvedTopicReference(id: .init(rawValue: landingPageName), path: "/documentation", sourceLanguage: language)
         
         let rootRenderReferences = try readRootNodeRenderReferencesIn(dataDirectory: targetURL.appendingPathComponent("data", isDirectory: true))
         

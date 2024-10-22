@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,7 +15,7 @@ import Markdown
 class RenderNodeCodableTests: XCTestCase {
     
     var bareRenderNode = RenderNode(
-        identifier: .init(bundleIdentifier: "com.bundle", path: "/", sourceLanguage: .swift),
+        identifier: .init(id: "com.bundle", path: "/", sourceLanguage: .swift),
         kind: .article
     )
     
@@ -189,7 +189,7 @@ class RenderNodeCodableTests: XCTestCase {
         )
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: "org.swift.docc.example",
+            id: "org.swift.docc.example",
             path: "/documentation/test/customTopicSectionStyle",
             fragment: nil,
             sourceLanguage: .swift

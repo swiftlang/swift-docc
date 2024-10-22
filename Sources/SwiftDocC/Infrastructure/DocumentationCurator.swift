@@ -94,7 +94,7 @@ struct DocumentationCurator {
         let sourceArticlePath = NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: articleFilename).stringValue
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: resolved.bundleIdentifier,
+            id: resolved.id,
             path: sourceArticlePath,
             sourceLanguages: resolved.sourceLanguages)
         

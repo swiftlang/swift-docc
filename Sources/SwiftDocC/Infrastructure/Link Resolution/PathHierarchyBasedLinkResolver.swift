@@ -26,9 +26,10 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Remove all matches from a given documentation bundle from the link resolver.
     func unregisterBundle(identifier: BundleIdentifier) {
+        let identifier = DocumentationBundle.Identifier(rawValue: identifier)
         var newMap = BidirectionalMap<ResolvedIdentifier, ResolvedTopicReference>()
         for (id, reference) in resolvedReferenceMap {
-            if reference.bundleIdentifier == identifier {
+            if reference.id == identifier {
                 pathHierarchy.removeNodeWithID(id)
             } else {
                 newMap[id] = reference
@@ -301,7 +302,7 @@ final class PathHierarchyBasedLinkResolver {
                 }
                 
                 return ResolvedTopicReference(
-                    bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
+                    id: bundle.documentationRootReference.id,
                     path: NodeURLGenerator.Path.documentationFolder + path,
                     sourceLanguages: symbol.sourceLanguages
                 )

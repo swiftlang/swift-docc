@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,7 +31,7 @@ class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
                 let resolutionResult = context.resolve(
                     .unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(symbolPath: symbolPath))),
                     in: ResolvedTopicReference(
-                        bundleIdentifier: "org.swift.MixedLanguageFramework",
+                        id: "org.swift.MixedLanguageFramework",
                         path: "/documentation/MixedLanguageFramework/\(parentPath)",
                         sourceLanguage: .swift
                     ),

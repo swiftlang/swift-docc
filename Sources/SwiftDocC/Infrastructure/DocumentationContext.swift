@@ -218,7 +218,7 @@ public class DocumentationContext {
     /// references for lookup.
     var documentationCache = LocalCache()
     /// The asset managers for each documentation bundle, keyed by the bundle's identifier.
-    var assetManagers = [BundleIdentifier: DataAssetManager]()
+    var assetManagers = [DocumentationBundle.Identifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     
@@ -914,7 +914,7 @@ public class DocumentationContext {
             let (url, analyzed) = analyzedDocument
 
             let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: path, sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(id: bundle.id, path: path, sourceLanguage: .swift)
             
             // Since documentation extensions' filenames have no impact on the URL of pages, there is no need to enforce unique filenames for them.
             // At this point we consider all articles with an H1 containing link a "documentation extension."
@@ -1335,7 +1335,7 @@ public class DocumentationContext {
                         
                         let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
                         let symbolReference = ResolvedTopicReference(
-                            bundleIdentifier: reference.bundleIdentifier,
+                            id: reference.id,
                             path: symbolPath,
                             fragment: nil,
                             sourceLanguages: reference.sourceLanguages
@@ -1776,11 +1776,11 @@ public class DocumentationContext {
     
     private func registerMiscResources(from bundle: DocumentationBundle) throws {
         let miscResources = Set(bundle.miscResourceURLs)
-        try assetManagers[bundle.id.rawValue, default: DataAssetManager()].register(data: miscResources)
+        try assetManagers[bundle.id, default: DataAssetManager()].register(data: miscResources)
     }
     
-    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        guard let resources = assetManagers[bundleIdentifier]?.storage.values else {
+    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleID: DocumentationBundle.Identifier) -> [DataAsset] {
+        guard let resources = assetManagers[bundleID]?.storage.values else {
             return []
         }
         return resources.filter { dataAsset in
@@ -1801,7 +1801,7 @@ public class DocumentationContext {
     /// - Parameter bundleIdentifier: The identifier of the bundle to return image assets for.
     /// - Returns: A list of all the image assets for the given bundle.
     public func registeredImageAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleIdentifier)
+        return registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
     
     /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
@@ -1809,7 +1809,7 @@ public class DocumentationContext {
     /// - Parameter bundleIdentifier: The identifier of the bundle to return video assets for.
     /// - Returns: A list of all the video assets for the given bundle.
     public func registeredVideoAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleIdentifier)
+        return registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
     /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
@@ -1817,7 +1817,7 @@ public class DocumentationContext {
     /// - Parameter bundleIdentifier: The identifier of the bundle to return download assets for.
     /// - Returns: A list of all the download assets for the given bundle.
     public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleIdentifier)
+        return registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: DocumentationBundle.Identifier(rawValue: bundleIdentifier))
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
@@ -1932,7 +1932,7 @@ public class DocumentationContext {
             let title = articleResult.source.deletingPathExtension().lastPathComponent
             // Create a new root-looking reference
             let reference = ResolvedTopicReference(
-                bundleIdentifier: bundle.id.rawValue,
+                id: bundle.id,
                 path: NodeURLGenerator.Path.documentation(path: title).stringValue,
                 sourceLanguages: [DocumentationContext.defaultLanguage(in: nil /* article-only content has no source language information */)]
             )
@@ -1971,7 +1971,7 @@ public class DocumentationContext {
             let path = NodeURLGenerator.Path.documentation(path: title).stringValue
             let sourceLanguage = DocumentationContext.defaultLanguage(in: [])
             
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.id.rawValue, path: path, sourceLanguages: [sourceLanguage])
+            let reference = ResolvedTopicReference(id: bundle.id, path: path, sourceLanguages: [sourceLanguage])
             
             let graphNode = TopicGraph.Node(reference: reference, kind: .module, source: .external, title: title)
             topicGraph.addNode(graphNode)
@@ -2036,7 +2036,7 @@ public class DocumentationContext {
         let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.id.rawValue,
+            id: bundle.id,
             path: path,
             sourceLanguages: availableSourceLanguages
                 // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
@@ -2670,13 +2670,13 @@ public class DocumentationContext {
      Unregister a documentation bundle with this context and clear any cached resources associated with it.
      */
     private func unregister(_ bundle: DocumentationBundle) {
-        let referencesToRemove = topicGraph.nodes.keys.filter { reference in
-            return reference.bundleIdentifier == bundle.id.rawValue
+        let referencesToRemove = topicGraph.nodes.keys.filter {
+            $0.id == bundle.id
         }
         
         for reference in referencesToRemove {
-            topicGraph.edges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.id.rawValue })
-            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.id.rawValue })
+            topicGraph.edges[reference]?.removeAll(where: { $0.id == bundle.id })
+            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.id == bundle.id })
             topicGraph.nodes[reference] = nil
         }
     }
@@ -2694,7 +2694,7 @@ public class DocumentationContext {
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
         guard let bundle,
-              let assetManager = assetManagers[identifier.bundleIdentifier],
+              let assetManager = assetManagers[DocumentationBundle.Identifier(rawValue: identifier.bundleIdentifier)],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
         }
@@ -2706,7 +2706,7 @@ public class DocumentationContext {
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
     public func resourceExists(with identifier: ResourceReference, ofType expectedAssetType: AssetType? = nil) -> Bool {
-        guard let assetManager = assetManagers[identifier.bundleIdentifier] else {
+        guard let assetManager = assetManagers[DocumentationBundle.Identifier(rawValue: identifier.bundleIdentifier)] else {
             return false
         }
         
@@ -2722,7 +2722,7 @@ public class DocumentationContext {
     }
     
     private func externalEntity(with reference: ResolvedTopicReference) -> LinkResolver.ExternalEntity? {
-        return configuration.externalDocumentationConfiguration.sources[reference.bundleIdentifier].map({ $0.entity(with: reference) })
+        return configuration.externalDocumentationConfiguration.sources[reference.id.rawValue].map({ $0.entity(with: reference) })
             ?? configuration.convertServiceConfiguration.fallbackResolver?.entityIfPreviouslyResolved(with: reference)
     }
     
@@ -2888,8 +2888,7 @@ public class DocumentationContext {
     ///   - asset: The new asset for this name.
     ///   - parent: The topic where the asset is referenced.
     public func updateAsset(named name: String, asset: DataAsset, in parent: ResolvedTopicReference) {
-        let bundleIdentifier = parent.bundleIdentifier
-        assetManagers[bundleIdentifier]?.update(name: name, asset: asset)
+        assetManagers[parent.id]?.update(name: name, asset: asset)
     }
     
     /// Attempt to resolve an asset given its name and the topic it's referenced in.
@@ -2900,12 +2899,11 @@ public class DocumentationContext {
     ///   - type: A restriction for what type of asset to resolve.
     /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
-        let bundleIdentifier = parent.bundleIdentifier
-        return resolveAsset(named: name, bundleIdentifier: bundleIdentifier, withType: type)
+        resolveAsset(named: name, bundleID: parent.id, withType: type)
     }
     
-    func resolveAsset(named name: String, bundleIdentifier: String, withType expectedType: AssetType?) -> DataAsset? {
-        if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
+    func resolveAsset(named name: String, bundleID: DocumentationBundle.Identifier, withType expectedType: AssetType?) -> DataAsset? {
+        if let localAsset = assetManagers[bundleID]?.allData(named: name) {
             if let expectedType {
                 guard localAsset.hasVariant(withAssetType: expectedType) else {
                     return nil
@@ -2917,7 +2915,7 @@ public class DocumentationContext {
         
         if let fallbackAssetResolver = configuration.convertServiceConfiguration.fallbackResolver,
            let externallyResolvedAsset = fallbackAssetResolver.resolve(assetNamed: name) {
-            assetManagers[bundleIdentifier, default: DataAssetManager()]
+            assetManagers[bundleID, default: DataAssetManager()]
                 .register(dataAsset: externallyResolvedAsset, forName: name)
             return externallyResolvedAsset
         }
@@ -2945,7 +2943,7 @@ public class DocumentationContext {
     ///
     /// - Returns: The best matching storage key if it was found, otherwise `nil`.
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
-        if let assetManager = assetManagers[parent.bundleIdentifier] {
+        if let assetManager = assetManagers[parent.id] {
             if let localName = assetManager.bestKey(forAssetName: name) {
                 return localName
             } else if let fallbackAssetManager = configuration.convertServiceConfiguration.fallbackResolver {
