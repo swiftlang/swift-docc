@@ -282,7 +282,6 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        // An optional indexer, if indexing while converting is enabled.
         let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
 
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
