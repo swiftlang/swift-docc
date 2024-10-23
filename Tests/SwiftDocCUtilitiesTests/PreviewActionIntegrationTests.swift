@@ -194,7 +194,6 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     func testCancelsConversion() async throws {
         #if os(macOS)
-        throw XCTSkip("To be reenabled again by #1059")
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
         defer {
             try? FileManager.default.removeItem(at: sourceURL)
