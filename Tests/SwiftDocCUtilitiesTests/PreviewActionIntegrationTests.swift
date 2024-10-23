@@ -235,8 +235,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             try? preview.stop()
         }
         
-        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
-        preview.bindServerToSocketPath = socketURL.path
+        preview.bindServerToSocketPath = try createTemporaryTestSocketPath()
         
         let logStorage = LogHandle.LogStorage()
         // Start watching the source and get the initial (successful) state.
@@ -329,6 +328,42 @@ class PreviewActionIntegrationTests: XCTestCase {
     }
     
     // MARK: -
+    
+    private func createTemporaryTestSocketPath() throws -> String {
+        // The unix domain socket paths have a character limit that we need to stay under.
+        
+        func isShortEnoughUnixDomainSocket(_ url: URL) -> Bool {
+            url.path.utf8.count <= 103
+        }
+        
+        // Prefer a temporary socket URL that's relative to the unit test bundle location if possible
+        let bundleRelativeSocketURL = try createTemporaryDirectory().appendingPathComponent("s", isDirectory: false)
+        if isShortEnoughUnixDomainSocket(bundleRelativeSocketURL) {
+            return bundleRelativeSocketURL.path
+        }
+        
+        // If that URL was to long, try a temporary socket URL in the user's shared temporary directory.
+        // The added "doc" and UUID components should be sufficient to avoid collisions with other tests or other processes.
+        
+        let tempDir = URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
+            .appendingPathComponent("docc", isDirectory: true)
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        
+        let socketURL = tempDir.appendingPathComponent("s", isDirectory: false)
+        
+        // If we couldn't create short enough socket path, skip the tests rather than fail them to avoid flakiness in the CI.
+        // The current implementation _should_ result in a path that's around 92 characters long, so the 11 character headroom
+        // should cover some amount of hypothetical changes to the `NSTemporaryDirectory` length and the `UUID().uuidString` length.
+        try XCTSkipIf(!isShortEnoughUnixDomainSocket(socketURL),
+                      "Temporary socket path \(socketURL.path.singleQuoted) is too long (\(socketURL.path.utf8.count) character) to start a preview server.")
+        
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        addTeardownBlock {
+            try? FileManager.default.removeItem(at: tempDir)
+        }
+        
+        return socketURL.path
+    }
     
     override static func setUp() {
         super.setUp()
