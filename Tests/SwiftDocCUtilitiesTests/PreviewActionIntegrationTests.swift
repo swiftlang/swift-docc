@@ -287,6 +287,16 @@ class PreviewActionIntegrationTests: XCTestCase {
             
             // This should only take 1.5 seconds (1 second for the directory monitor debounce and 0.5 seconds for the expectation poll interval)
             await fulfillment(of: [expectation], timeout: 20.0)
+            // This assertion is always true if the expectation was fulfilled. However, in the past this expectation has sometimes (but very rarely) failed.
+            // If that happens we want to print the full preview action log to help investigate what went wrong.
+            XCTAssert(logStorage.text.contains("Conversion cancelled..."),
+                      """
+                      PreviewAction log output doesn't contain 'Conversion cancelled...'.
+                      Full log output from the preview action that ran in this test (to investigate the issue):
+                      --------------------------------------------------
+                      \(logStorage.text)
+                      --------------------------------------------------
+                      """)
         }
         
         #endif
