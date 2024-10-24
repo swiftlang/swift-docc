@@ -2387,7 +2387,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter automaticallyCurated: A list of automatic curation records.
     func removeUnneededAutomaticCuration(_ automaticallyCurated: [AutoCuratedSymbolRecord]) {
-        // It might look like it would be correct to check `topicGraph.nodes[symbol]?.isManuallyCurated` here,
+        // It might look like it would be correct to check `topicGraph.nodes[symbol]?.isManuallyCuratedInContainer` here,
         // but that would incorrectly remove the only parent if the manual curation and the automatic curation was the same.
         //
         // Similarly, it might look like it would be correct to only check `parents(of: symbol).count > 1` here,
@@ -2448,7 +2448,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         linkResolver.localResolver.traverseSymbolAndParents { reference, parentReference, counterpartParentReference in
             guard let topicGraphNode = topicGraph.nodeWithReference(reference),
                   // Check that the node isn't already manually curated
-                  !topicGraphNode.isManuallyCurated
+                  !topicGraphNode.isManuallyCuratedInContainer
             else { return }
             
             // Check that the symbol doesn't already have parent's that aren't either language representation's hierarchical parent.
@@ -2574,9 +2574,72 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for reference in references {
             try crawler.crawlChildren(
                 of: reference,
-                relateNodes: {
-                    self.topicGraph.unsafelyAddEdge(source: $0, target: $1)
-                    self.topicGraph.nodes[$1]?.isManuallyCurated = true
+                relateNodes: { container, descendant in
+                    topicGraph.unsafelyAddEdge(source: container, target: descendant)
+                    
+                    guard topicGraph.nodes[descendant]?.isManuallyCuratedInContainer == false else {
+                        // Descendant is already marked to be removed from automatic curation.
+                        return
+                    }
+                    
+                    guard let (canonicalContainer, counterpartContainer) = linkResolver.localResolver.nearestContainers(ofSymbol: descendant) else {
+                        // Any curation of a non-symbol removes it from automatic curation
+                        topicGraph.nodes[descendant]?.isManuallyCuratedInContainer = true
+                        return
+                    }
+                    
+                    // For symbols we only stop automatic curation if they are curated within their canonical container's sub-hierarchy.
+                    //
+                    // For example, curating a member under an API collection within the container does remove the member from automatic curation:
+                    //  ┆
+                    //  ├─SomeClass
+                    //  │ └─API Collection
+                    //  │   └─SomeClass/someMethod()
+                    //
+                    // Similarly, curating a member under another type in the same container does remove the member from automatic curation:
+                    //  ┆
+                    //  ├─SomeClass
+                    //  │ └─SomeClass/SomeInnerClass
+                    //  │   └─SomeClass/someMethod()
+                    //
+                    // However, curating a member outside under another container doesn't remove it from automatic curation:
+                    //  ┆
+                    //  ├─Other Container
+                    //  │ └─SomeClass/someMethod()
+                    //  ├─SomeClass
+                    
+                    // To determine if `container` exist in the curated symbol's canonical container's sub-hierarchy,
+                    // first find its nearest container symbol (in case `container` is a series of API collections)
+                    guard let nearestSymbolContainer = topicGraph.reverseEdgesGraph
+                        .breadthFirstSearch(from: container)
+                        .first(where: { topicGraph.nodes[$0]?.kind.isSymbol == true })
+                    else {
+                        // The container doesn't exist in the same module as the curated symbol.
+                        // Continue to automatically curate the descendant under its canonical container.
+                        return
+                    }
+                    
+                    // An inner function to be able to `return` once an answer has been found.
+                    func isCuratedWithinCanonicalContainerSubHierarchy() -> Bool {
+                        if nearestSymbolContainer == canonicalContainer || nearestSymbolContainer == counterpartContainer {
+                            return true
+                        }
+                        
+                        for language in nearestSymbolContainer.sourceLanguages {
+                            guard let breadcrumbs = linkResolver.localResolver.breadcrumbs(of: nearestSymbolContainer, in: language),
+                                  breadcrumbs.contains(where: { $0 == canonicalContainer || $0 == counterpartContainer })
+                            else { continue }
+                            
+                            return true
+                        }
+                        
+                        return false
+                    }
+                    
+                    
+                    if isCuratedWithinCanonicalContainerSubHierarchy() {
+                        topicGraph.nodes[descendant]?.isManuallyCuratedInContainer = true
+                    }
                 }
             )
         }
