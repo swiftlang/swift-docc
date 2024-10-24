@@ -46,9 +46,8 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
     package var identifier: String = UUID().uuidString
     
     package func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        try DocumentationContext.InputsProvider(fileManager: self)
-            .inputs(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options)
-            .map { [$0] } ?? []
+        [try DocumentationContext.InputsProvider(fileManager: self)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: currentDirectoryPath), options: options).inputs]
     }
     
     /// Thread safe access to the file system.
@@ -100,11 +99,32 @@ package class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataPro
                 case let folder as Folder:
                     result[at.appendingPathComponent(folder.name).path] = Self.folderFixtureData
                     result.merge(try filesIn(folder: folder, at: at.appendingPathComponent(folder.name)), uniquingKeysWith: +)
+                
                 case let file as File & DataRepresentable:
                     result[at.appendingPathComponent(file.name).path] = try file.data()
                     if let copy = file as? CopyOfFile {
                         result[copy.original.path] = try file.data()
                     }
+                
+                case let folder as CopyOfFolder:
+                    // These are copies of real file and folders so we use `FileManager` here to read their content
+                    let enumerator = FileManager.default.enumerator(at: folder.original, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles)!
+                    
+                    let contentBase = at.appendingPathComponent(folder.name)
+                    result[contentBase.path] = Self.folderFixtureData
+                    
+                    let basePathString = folder.original.standardizedFileURL.deletingLastPathComponent().path
+                    for case let url as URL in enumerator where folder.shouldCopyFile(url) {
+                        let data = try url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true
+                            ? Self.folderFixtureData
+                            : try Data(contentsOf: url)
+                    
+                        assert(url.standardizedFileURL.path.hasPrefix(basePathString))
+                        let relativePath = String(url.standardizedFileURL.path.dropFirst(basePathString.count))
+                           
+                        result[at.appendingPathComponent(relativePath).path] = data
+                    }
+                
                 default: break
             }
         }

@@ -22,7 +22,7 @@ import Foundation
 /// Should you need a file system with a different storage, create your own
 /// protocol implementations to manage files in memory,
 /// on a network, in a database, or elsewhere.
-package protocol FileManagerProtocol {
+package protocol FileManagerProtocol: DocumentationBundleDataProvider {
     
     /// Returns the data content of a file at the given path, if it exists.
     func contents(atPath: String) -> Data?

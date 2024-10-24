@@ -288,7 +288,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         return
                     }
 
-                    guard let renderNode = try converter.renderNode(for: entity) else {
+                    guard let renderNode = converter.renderNode(for: entity) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }
