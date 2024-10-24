@@ -1738,7 +1738,7 @@ class SymbolGraphLoaderTests: XCTestCase {
              }
             """
         )
-        var infoPlist = """
+        let infoPlist = """
         <plist version="1.0">
         <dict>
             <key>CDAppleDefaultAvailability</key>
@@ -1769,7 +1769,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
         try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
         // Load the bundle & reference resolve symbol graph docs
-        var (_, _, context) = try loadBundle(from: targetURL)
+        let (_, _, context) = try loadBundle(from: targetURL)
         guard let availability = (context.documentationCache["c:@F@Bar"]?.semantic as? Symbol)?.availability?.availability else {
             XCTFail("Did not find availability for symbol 'c:@F@Bar'")
             return
