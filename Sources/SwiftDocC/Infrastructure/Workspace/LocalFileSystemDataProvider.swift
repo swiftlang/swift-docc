@@ -11,7 +11,7 @@
 import Foundation
 
 /// A type that provides documentation bundles that it discovers by traversing the local file system.
-public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, FileSystemProvider {
+public struct LocalFileSystemDataProvider: FileSystemProvider {
     public var identifier: String = UUID().uuidString
     
     /// The location that this provider searches for documentation bundles in.

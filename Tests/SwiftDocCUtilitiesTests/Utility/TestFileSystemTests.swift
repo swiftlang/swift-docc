@@ -307,10 +307,9 @@ class TestFileSystemTests: XCTestCase {
         ])
         let fs = try TestFileSystem(folders: [folders])
         
-        let bundles = try fs.bundles()
-        XCTAssertEqual(bundles.count, 1)
+        let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+            .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
         
-        let bundle = try XCTUnwrap(bundles.first)
         XCTAssertFalse(bundle.markupURLs.isEmpty)
         XCTAssertFalse(bundle.miscResourceURLs.isEmpty)
         XCTAssertFalse(bundle.symbolGraphURLs.isEmpty)
@@ -330,9 +329,10 @@ class TestFileSystemTests: XCTestCase {
                     DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
                 ])
             ])
-            let bundle = try XCTUnwrap(fs.bundles().first)
+            let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+                .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
             XCTAssertEqual(bundle.displayName, "DisplayName", "Display name is read from Info.plist")
-            XCTAssertEqual(bundle.identifier, "com.example", "Identifier is read from Info.plist")
+            XCTAssertEqual(bundle.id, "com.example", "Identifier is read from Info.plist")
         }
          
         do {
@@ -342,7 +342,8 @@ class TestFileSystemTests: XCTestCase {
                     DataFile(name: "Something.symbols.json", data: somethingSymbolGraphData),
                 ])
             ])
-            let bundle = try XCTUnwrap(fs.bundles().first)
+            let (bundle, _) = try DocumentationContext.InputsProvider(fileManager: fs)
+                .inputsAndDataProvider(startingPoint: URL(fileURLWithPath: "/"), options: .init())
             XCTAssertEqual(bundle.displayName, "CatalogName", "Display name is derived from catalog name")
             XCTAssertEqual(bundle.displayName, "CatalogName", "Identifier is derived the display name")
         }

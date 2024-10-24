@@ -13,7 +13,11 @@ import SymbolKit
 
 /// A class that resolves documentation links by orchestrating calls to other link resolver implementations.
 public class LinkResolver {
-    var fileManager: FileManagerProtocol = FileManager.default
+    var dataProvider: DataProvider
+    init(dataProvider: DataProvider) {
+        self.dataProvider = dataProvider
+    }
+    
     /// The link resolver to use to resolve links in the local bundle
     var localResolver: PathHierarchyBasedLinkResolver!
     /// A fallback resolver to use when the local resolver fails to resolve a link.
@@ -27,7 +31,7 @@ public class LinkResolver {
     /// - Parameter dependencyArchives: A list of URLs to documentation archives that the local documentation depends on.
     func loadExternalResolvers(dependencyArchives: [URL]) throws {
         let resolvers = try dependencyArchives.compactMap {
-            try ExternalPathHierarchyResolver(dependencyArchive: $0, fileManager: fileManager)
+            try ExternalPathHierarchyResolver(dependencyArchive: $0, dataProvider: dataProvider)
         }
         for resolver in resolvers {
             for moduleNode in resolver.pathHierarchy.modules {
@@ -88,10 +92,10 @@ public class LinkResolver {
         }
         
         // Check if this is a link to an external documentation source that should have previously been resolved in `DocumentationContext.preResolveExternalLinks(...)`
-        if let bundleID = unresolvedReference.bundleIdentifier,
-           !context.registeredBundles.contains(where: { $0.identifier == bundleID || urlReadablePath($0.displayName) == bundleID })
+        if let bundleID = unresolvedReference.bundleID,
+           !context._registeredBundles.contains(where: { $0.id == bundleID || urlReadablePath($0.displayName) == bundleID.rawValue })
         {
-            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
+            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for '\(bundleID)'."))
         }
         
         do {
@@ -165,10 +169,11 @@ private final class FallbackResolverBasedLinkResolver {
     
     private func resolve(_ unresolvedReference: UnresolvedTopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool, context: DocumentationContext) -> TopicReferenceResolutionResult? {
         // Check if a fallback reference resolver should resolve this
-        let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
+        let referenceID = unresolvedReference.bundleID ?? parent.bundleID
         guard let fallbackResolver = context.configuration.convertServiceConfiguration.fallbackResolver,
-              let knownBundleIdentifier = context.registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
-              fallbackResolver.bundleIdentifier == knownBundleIdentifier
+              // This uses an underscored internal variant of `registeredBundles` to avoid deprecation warnings and remain compatible with legacy data providers.
+              let knownBundleID = context._registeredBundles.first(where: { $0.id == referenceID || urlReadablePath($0.displayName) == referenceID.rawValue })?.id,
+              fallbackResolver.bundleID == knownBundleID
         else {
             return nil
         }
@@ -179,14 +184,15 @@ private final class FallbackResolverBasedLinkResolver {
         var allCandidateURLs = [URL]()
         
         let alreadyResolved = ResolvedTopicReference(
-            bundleIdentifier: referenceBundleIdentifier,
+            bundleID: referenceID,
             path: unresolvedReference.path.prependingLeadingSlash,
             fragment: unresolvedReference.topicURL.components.fragment,
             sourceLanguages: parent.sourceLanguages
         )
         allCandidateURLs.append(alreadyResolved.url)
         
-        let currentBundle = context.bundle(identifier: knownBundleIdentifier)!
+        // This uses an underscored internal variant of `bundle(identifier:)` to avoid deprecation warnings and remain compatible with legacy data providers.
+        let currentBundle = context._bundle(identifier: knownBundleID.rawValue)!
         if !isCurrentlyResolvingSymbolLink {
             // First look up articles path
             allCandidateURLs.append(contentsOf: [

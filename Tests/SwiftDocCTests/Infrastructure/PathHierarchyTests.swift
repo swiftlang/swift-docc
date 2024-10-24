@@ -287,11 +287,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() throws {
-        let originalFeatureFlagsState = FeatureFlags.current
-        FeatureFlags.current.isExperimentalLinkHierarchySerializationEnabled = true
-        defer {
-            FeatureFlags.current = originalFeatureFlagsState
-        }
+        enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
         
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = context.linkResolver.localResolver.pathHierarchy
@@ -1116,7 +1112,7 @@ class PathHierarchyTests: XCTestCase {
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
         
         // Test finding the parent via the `fromTopicReference` integration shim.
-        let parentID = linkResolver.resolvedReferenceMap[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)]!
+        let parentID = linkResolver.resolvedReferenceMap[ResolvedTopicReference(bundleID: bundle.id, path: "/documentation/MyKit", sourceLanguage: .swift)]!
         XCTAssertNotNil(parentID)
         XCTAssertEqual(try tree.findSymbol(path: "globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
         XCTAssertEqual(try tree.findSymbol(path: "MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")

@@ -57,6 +57,7 @@ import Foundation
 /// - ``DocumentationContextDataProvider``
 /// - ``DocumentationContextDataProviderDelegate``
 ///
+@available(*, deprecated, message: "Pass the context its inputs at initialization instead. This deprecated API will be removed after 6.2 is released")
 public class DocumentationWorkspace: DocumentationContextDataProvider {
     /// An error when requesting information from a workspace.
     public enum WorkspaceError: DescribedError {

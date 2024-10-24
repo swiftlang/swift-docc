@@ -37,7 +37,7 @@ public struct ConvertAction: AsyncAction {
     
     private let diagnosticWriterOptions: (formatting: DiagnosticFormattingOptions, baseURL: URL)
 
-    /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
+    /// Initializes the action with the given validated options.
     /// 
     /// - Parameters:
     ///   - documentationBundleURL: The root of the documentation catalog to convert.
@@ -50,9 +50,6 @@ public struct ConvertAction: AsyncAction {
     ///   - buildIndex: Whether or not the convert action should emit an LMDB representation of the navigator index.
     /// 
     ///     A JSON representation is built and emitted regardless of this value.
-    ///   - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
-    ///   - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    ///   - dataProvider: A data provider to use when registering bundles
     ///   - fileManager: The file manager that the convert action uses to create directories and write data to files.
     ///   - documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
     ///   - bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
@@ -79,9 +76,6 @@ public struct ConvertAction: AsyncAction {
         emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?,
         buildIndex: Bool = false,
-        workspace _: DocumentationWorkspace = DocumentationWorkspace(),
-        context _: DocumentationContext? = nil,
-        dataProvider _: DocumentationWorkspaceDataProvider? = nil,
         fileManager: FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
@@ -166,7 +160,7 @@ public struct ConvertAction: AsyncAction {
         }
         
         if let outOfProcessResolver {
-            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            configuration.externalDocumentationConfiguration.sources[outOfProcessResolver.bundleID] = outOfProcessResolver
             configuration.externalDocumentationConfiguration.globalSymbolResolver = outOfProcessResolver
         }
         configuration.externalDocumentationConfiguration.dependencyArchives = dependencies
@@ -185,7 +179,7 @@ public struct ConvertAction: AsyncAction {
     
     let configuration: DocumentationContext.Configuration
     private let bundle: DocumentationBundle
-    private let dataProvider: DocumentationBundleDataProvider
+    private let dataProvider: DataProvider
     
     /// A block of extra work that tests perform to affect the time it takes to convert documentation
     var _extraTestWork: (() async -> Void)?
@@ -219,7 +213,7 @@ public struct ConvertAction: AsyncAction {
                     logHandle,
                     formattingOptions: diagnosticWriterOptions.formatting,
                     baseURL: diagnosticWriterOptions.baseURL,
-                    fileManager: fileManager
+                    dataProvider: dataProvider
                 )
             )
         }
@@ -282,7 +276,7 @@ public struct ConvertAction: AsyncAction {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
-        let indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundle.identifier)
+        let indexer = try Indexer(outputURL: temporaryFolder, bundleID: bundle.id)
 
         let context = try DocumentationContext(bundle: bundle, dataProvider: dataProvider, diagnosticEngine: diagnosticEngine, configuration: configuration)
         
@@ -294,7 +288,7 @@ public struct ConvertAction: AsyncAction {
             indexer: indexer,
             enableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil,
-            bundleIdentifier: bundle.identifier
+            bundleID: bundle.id
         )
 
         if experimentalModifyCatalogWithGeneratedCuration, let catalogURL = rootURL {
@@ -428,7 +422,7 @@ public struct ConvertAction: AsyncAction {
                 context: context,
                 indexer: nil,
                 transformForStaticHostingIndexHTML: nil,
-                bundleIdentifier: bundle.identifier
+                bundleID: bundle.id
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)

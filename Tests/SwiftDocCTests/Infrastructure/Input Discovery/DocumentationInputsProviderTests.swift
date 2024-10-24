@@ -14,6 +14,8 @@ import SwiftDocCTestUtilities
 
 class DocumentationInputsProviderTests: XCTestCase {
     
+    // After 6.2 we can update this test to verify that the input provider discovers the same inputs regardless of FileManagerProtocol
+    @available(*, deprecated, message: "This test uses `LocalFileSystemDataProvider` as a `DocumentationWorkspaceDataProvider` which is deprecated and will be removed after 6.2 is released")
     func testDiscoversSameFilesAsPreviousImplementation() throws {
         let folderHierarchy = Folder(name: "one", content: [
             Folder(name: "two", content: [
@@ -147,7 +149,7 @@ class DocumentationInputsProviderTests: XCTestCase {
                 options: .init()
             )
             XCTAssertEqual(foundInputs.displayName, "two")
-            XCTAssertEqual(foundInputs.identifier, "two")
+            XCTAssertEqual(foundInputs.id, "two")
         }
         
         // Without arbitrary directories as a fallback
@@ -237,7 +239,7 @@ class DocumentationInputsProviderTests: XCTestCase {
             ])
         )
         XCTAssertEqual(foundInputs.displayName, "Something")
-        XCTAssertEqual(foundInputs.identifier, "Something")
+        XCTAssertEqual(foundInputs.id, "Something")
         XCTAssertEqual(foundInputs.symbolGraphURLs.map(\.path), [
             "/path/to/Something.symbols.json",
         ])

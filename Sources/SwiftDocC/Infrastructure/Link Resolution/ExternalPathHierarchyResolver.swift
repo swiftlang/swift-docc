@@ -98,7 +98,7 @@ final class ExternalPathHierarchyResolver {
             else {
                 return nil
             }
-            return ResolvedTopicReference(bundleIdentifier: bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+            return ResolvedTopicReference(bundleID: .init(rawValue: bundleID), path: url.path, fragment: url.fragment, sourceLanguage: .swift)
         }
         let dependencies = RenderReferenceDependencies(
             topicReferences: topicReferences,
@@ -126,7 +126,7 @@ final class ExternalPathHierarchyResolver {
         symbols.reserveCapacity(linkDestinationSummaries.count)
         for entity in linkDestinationSummaries {
             let reference = ResolvedTopicReference(
-                bundleIdentifier: entity.referenceURL.host!,
+                bundleID: .init(rawValue: entity.referenceURL.host!),
                 path: entity.referenceURL.path,
                 fragment: entity.referenceURL.fragment,
                 sourceLanguage: entity.language
@@ -150,7 +150,7 @@ final class ExternalPathHierarchyResolver {
                     continue
                 }
                 let identifier = identifiers[index]
-                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleIdentifier: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
+                self.resolvedReferences[identifier] = ResolvedTopicReference(bundleID: fileRepresentation.bundleID, path: url.path, fragment: url.fragment, sourceLanguage: .swift)
             }
         }
         // Finally, the Identifier -> Symbol mapping can be constructed by iterating over the nodes and looking up the reference for each USR.
@@ -161,14 +161,14 @@ final class ExternalPathHierarchyResolver {
         }
     }
     
-    convenience init(dependencyArchive: URL, fileManager: FileManagerProtocol) throws {
+    convenience init(dependencyArchive: URL, dataProvider: DataProvider) throws {
         // ???: Should it be the callers responsibility to pass both these URLs?
         let linkHierarchyFile = dependencyArchive.appendingPathComponent("link-hierarchy.json")
         let entityURL = dependencyArchive.appendingPathComponent("linkable-entities.json")
         
         self.init(
-            linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: fileManager.contents(of: linkHierarchyFile)),
-            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: fileManager.contents(of: entityURL))
+            linkInformation: try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: dataProvider.contents(of: linkHierarchyFile)),
+            entityInformation: try JSONDecoder().decode([LinkDestinationSummary].self, from: dataProvider.contents(of: entityURL))
         )
     }
 }

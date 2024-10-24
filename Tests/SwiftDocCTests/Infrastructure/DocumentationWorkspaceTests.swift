@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 
+@available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
 class DocumentationWorkspaceTests: XCTestCase {
     func testEmptyWorkspace() {
         let workspace = DocumentationWorkspace()
@@ -148,7 +149,7 @@ class DocumentationWorkspaceTests: XCTestCase {
             return DocumentationBundle(
                 info: DocumentationBundle.Info(
                     displayName: "Test" + suffix,
-                    identifier: "com.example.test" + suffix
+                    id: DocumentationBundle.Identifier(rawValue: "com.example.test" + suffix)
                 ),
                 symbolGraphURLs: [testSymbolGraphFile],
                 markupURLs: [testMarkupFile],

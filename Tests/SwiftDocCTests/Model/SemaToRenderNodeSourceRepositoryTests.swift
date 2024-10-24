@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,9 +17,7 @@ class SemaToRenderNodeSourceRepositoryTests: XCTestCase {
     func testDoesNotEmitsSourceRepositoryInformationWhenNoSourceIsGiven() throws {
         let outputConsumer = try renderNodeConsumer(
             for: "SourceLocations",
-            configureConverter: { converter in
-                converter.sourceRepository = nil
-            }
+            sourceRepository: nil
         )
         
         XCTAssertNil(try outputConsumer.renderNode(withTitle: "MyStruct").metadata.remoteSource)
@@ -28,12 +26,10 @@ class SemaToRenderNodeSourceRepositoryTests: XCTestCase {
     func testEmitsSourceRepositoryInformationForSymbolsWhenPresent() throws {
         let outputConsumer = try renderNodeConsumer(
             for: "SourceLocations",
-            configureConverter: { converter in
-                converter.sourceRepository = SourceRepository.github(
-                    checkoutPath: "/path/to/checkout",
-                    sourceServiceBaseURL: URL(string: "https://example.com/my-repo")!
-                )
-            }
+            sourceRepository: SourceRepository.github(
+                checkoutPath: "/path/to/checkout",
+                sourceServiceBaseURL: URL(string: "https://example.com/my-repo")!
+            )
         )
         XCTAssertEqual(
             try outputConsumer.renderNode(withTitle: "MyStruct").metadata.remoteSource,

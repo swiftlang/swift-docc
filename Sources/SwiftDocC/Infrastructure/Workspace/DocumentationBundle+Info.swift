@@ -18,8 +18,13 @@ extension DocumentationBundle {
         /// The display name of the bundle.
         public var displayName: String
         
+        @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
+        public var identifier: String {
+            id.rawValue
+        }
+        
         /// The unique identifier of the bundle.
-        public var identifier: String
+        public var id: DocumentationBundle.Identifier
         
         /// The version of the bundle.
         @available(*, deprecated, message: "This deprecated API will be removed after 6.2 is released")
@@ -38,11 +43,11 @@ extension DocumentationBundle {
         internal var featureFlags: BundleFeatureFlags?
 
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
-        static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
+        static let requiredKeys: Set<CodingKeys> = [.displayName, .id]
         
         enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
-            case identifier = "CFBundleIdentifier"
+            case id = "CFBundleIdentifier"
             case defaultCodeListingLanguage = "CDDefaultCodeListingLanguage"
             case defaultAvailability = "CDAppleDefaultAvailability"
             case defaultModuleKind = "CDDefaultModuleKind"
@@ -52,7 +57,7 @@ extension DocumentationBundle {
                 switch self {
                 case .displayName:
                     return "--fallback-display-name"
-                case .identifier:
+                case .id:
                     return "--fallback-bundle-identifier"
                 case .defaultCodeListingLanguage:
                     return "--default-code-listing-language"
@@ -83,10 +88,28 @@ extension DocumentationBundle {
         /// Creates a new documentation bundle information value.
         /// - Parameters:
         ///   - displayName: The display name of the bundle.
-        ///   - identifier:  The unique identifier of the bundle.
+        ///   - id:  The unique identifier of the bundle.
         ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
         ///   - defaultAvailability: The default availability for the various modules in the bundle.
         ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        public init(
+            displayName: String,
+            id: DocumentationBundle.Identifier,
+            defaultCodeListingLanguage: String?,
+            defaultAvailability: DefaultAvailability?,
+            defaultModuleKind: String?
+        ) {
+            self.init(
+                displayName: displayName,
+                id: id,
+                defaultCodeListingLanguage: defaultCodeListingLanguage,
+                defaultModuleKind: defaultModuleKind,
+                defaultAvailability: defaultAvailability,
+                featureFlags: nil
+            )
+        }
+        
+        @available(*, deprecated, renamed: "init(displayName:id:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)", message: "Use 'Info.init(displayName:id:defaultCodeListingLanguage:defaultAvailability:defaultModuleKind:)' instead. This deprecated API will be removed after 6.2 is released")
         public init(
             displayName: String,
             identifier: String,
@@ -94,11 +117,13 @@ extension DocumentationBundle {
             defaultAvailability: DefaultAvailability?,
             defaultModuleKind: String?
         ) {
-            self.displayName = displayName
-            self.identifier = identifier
-            self.defaultCodeListingLanguage = defaultCodeListingLanguage
-            self.defaultAvailability = defaultAvailability
-            self.defaultModuleKind = defaultModuleKind
+            self.init(
+                displayName: displayName,
+                id: .init(rawValue: identifier),
+                defaultCodeListingLanguage: defaultCodeListingLanguage,
+                defaultAvailability: defaultAvailability,
+                defaultModuleKind: defaultModuleKind
+            )
         }
         
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
@@ -199,13 +224,13 @@ extension DocumentationBundle {
             // If present, we can use `Info.displayName` as a fallback
             // for `Info.identifier`.
             if givenKeys.contains(.displayName) {
-                givenKeys.insert(.identifier)
+                givenKeys.insert(.id)
             }
             
             // If present, we can use the `derivedDisplayName`
             // as a fallback for the `Info.displayName` and `Info.identifier`.
             if derivedDisplayName != nil {
-                givenKeys.formUnion([.displayName, .identifier])
+                givenKeys.formUnion([.displayName, .id])
             }
             
             let missingKeys = Self.requiredKeys.subtracting(givenKeys)
@@ -221,7 +246,7 @@ extension DocumentationBundle {
             // It's safe to unwrap `derivedDisplayName` because it will only be accessed if neither the decoding container nor the bundle discovery options
             // contain a display name. If they do but that value fails to decode, that error would be raised before accessing `derivedDisplayName`.
             self.displayName = try decodeOrFallbackIfPresent(String.self, with: .displayName) ?? derivedDisplayName!
-            self.identifier = try decodeOrFallbackIfPresent(String.self, with: .identifier) ?? self.displayName
+            self.id = try decodeOrFallbackIfPresent(Identifier.self, with: .id) ?? .init(rawValue: self.displayName)
             
             // Finally, decode the optional keys if they're present.
             
@@ -233,14 +258,14 @@ extension DocumentationBundle {
 
         init(
             displayName: String,
-            identifier: String,
+            id: DocumentationBundle.Identifier,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil,
             featureFlags: BundleFeatureFlags? = nil
         ) {
             self.displayName = displayName
-            self.identifier = identifier
+            self.id = id
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultModuleKind = defaultModuleKind
             self.defaultAvailability = defaultAvailability
@@ -281,7 +306,7 @@ extension BundleDiscoveryOptions {
             switch key {
             case .displayName:
                 value = fallbackDisplayName
-            case .identifier:
+            case .id:
                 value = fallbackIdentifier
             case .defaultCodeListingLanguage:
                 value = fallbackDefaultCodeListingLanguage

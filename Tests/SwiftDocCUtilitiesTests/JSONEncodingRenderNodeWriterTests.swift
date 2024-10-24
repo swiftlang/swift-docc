@@ -32,7 +32,7 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
             transformForStaticHostingIndexHTML: indexHTML
         )
         
-        let renderNode = RenderNode(identifier: .init(bundleIdentifier: "com.test", path: "/documentation/test", sourceLanguage: .swift), kind: .article)
+        let renderNode = RenderNode(identifier: .init(bundleID: "com.test", path: "/documentation/test", sourceLanguage: .swift), kind: .article)
         
         // We take precautions in case we deadlock to stop the execution with a failing code.
         // In case the original issue is present and we deadlock, we fatalError from a bg thread.

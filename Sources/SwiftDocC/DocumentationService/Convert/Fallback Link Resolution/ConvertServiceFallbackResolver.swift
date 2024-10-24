@@ -26,7 +26,7 @@ protocol ConvertServiceFallbackResolver {
     /// The bundle identifier for the fallback resolver.
     ///
     /// The fallback resolver will only resolve links with this bundle identifier.
-    var bundleIdentifier: String { get }
+    var bundleID: DocumentationBundle.Identifier { get }
     
     // MARK: References
     

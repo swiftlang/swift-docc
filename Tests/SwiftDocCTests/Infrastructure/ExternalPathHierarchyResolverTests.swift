@@ -16,8 +16,6 @@ import SwiftDocCTestUtilities
 
 class ExternalPathHierarchyResolverTests: XCTestCase {
     
-    private var originalFeatureFlagsState: FeatureFlags!
-    
     override func setUp() {
         super.setUp()
         enableFeatureFlag(\.isExperimentalLinkHierarchySerializationEnabled)
@@ -717,7 +715,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             
             return entity.externallyLinkableElementSummaries(context: dependencyContext, renderNode: renderNode, includeTaskGroups: false)
         }
-        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.identifier)
+        let linkResolutionInformation = try dependencyContext.linkResolver.localResolver.prepareForSerialization(bundleID: dependencyBundle.id)
         
         XCTAssertEqual(linkResolutionInformation.pathHierarchy.nodes.count - linkResolutionInformation.nonSymbolPaths.count, 5 /* 4 symbols & 1 module */)
         XCTAssertEqual(linkSummaries.count, 5 /* 4 symbols & 1 module */)
@@ -800,7 +798,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the relationships of 'SomeClass'
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: mainBundle.identifier, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -824,7 +822,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         
         // Check the declaration of 'someFunction'
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: mainBundle.identifier, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(bundleID: mainBundle.id, path: "/documentation/Main/SomeClass/someFunction(parameter:)", sourceLanguage: .swift)
             let entity = try mainContext.entity(with: reference)
             let renderNode = try XCTUnwrap(mainConverter.renderNode(for: entity))
             
@@ -910,7 +908,7 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
             let unresolvedReference = try XCTUnwrap(ValidatedURL(parsingAuthoredLink: authoredLink).map(UnresolvedTopicReference.init(topicURL:)))
             let rootModule = try XCTUnwrap(context.soleRootModuleReference)
             
-            let linkResolver = LinkResolver()
+            let linkResolver = LinkResolver(dataProvider: FileManager.default)
             linkResolver.localResolver = localResolver
             let localResult = linkResolver.resolve(unresolvedReference, in: rootModule, fromSymbolLink: true, context: context)
             let externalResult = externalResolver.resolve(unresolvedReference, fromSymbolLink: true)
@@ -991,13 +989,13 @@ class ExternalPathHierarchyResolverTests: XCTestCase {
         }
     }
     
-   private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
+    private func makeLinkResolversForTestBundle(named testBundleName: String, configuration: DocumentationContext.Configuration = .init()) throws -> LinkResolvers {
         let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: testBundleName, withExtension: "docc", subdirectory: "Test Bundles"))
         let (_, bundle, context) = try loadBundle(from: bundleURL, configuration: configuration)
         
         let localResolver = try XCTUnwrap(context.linkResolver.localResolver)
         
-        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.identifier)
+        let resolverInfo = try localResolver.prepareForSerialization(bundleID: bundle.id)
         let resolverData = try JSONEncoder().encode(resolverInfo)
         let roundtripResolverInfo = try JSONDecoder().decode(SerializableLinkResolutionInformation.self, from: resolverData)
         

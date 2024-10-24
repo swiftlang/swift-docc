@@ -49,13 +49,14 @@ public struct DocumentationBundle {
         info.displayName
     }
     
-    /**
-     The documentation bundle identifier.
-
-     An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
-     */
+    @available(*, deprecated, renamed: "id", message: "Use 'id' instead. This deprecated API will be removed after 6.2 is released")
     public var identifier: String {
-        info.identifier
+        id.rawValue
+    }
+    
+    /// The documentation bundle's stable and locally unique identifier.
+    public var id: DocumentationBundle.Identifier {
+        info.id
     }
 
     /**
@@ -126,9 +127,9 @@ public struct DocumentationBundle {
         self.customHeader = customHeader
         self.customFooter = customFooter
         self.themeSettings = themeSettings
-        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
-        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.rootReference = ResolvedTopicReference(bundleID: info.id, path: "/", sourceLanguage: .swift)
+        self.documentationRootReference = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+        self.tutorialTableOfContentsContainer = ResolvedTopicReference(bundleID: info.id, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.tutorialsContainerReference = tutorialTableOfContentsContainer.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }

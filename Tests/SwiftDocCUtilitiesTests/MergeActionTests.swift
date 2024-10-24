@@ -1059,7 +1059,7 @@ class MergeActionTests: XCTestCase {
                 JSONFile(name: "index.json", content: RenderIndex(interfaceLanguages: [:], includedArchiveIdentifiers: [identifier]))
             ]),
             
-            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleIdentifier: identifier))
+            JSONFile(name: "metadata.json", content: BuildMetadata(bundleDisplayName: name, bundleID: DocumentationBundle.Identifier(rawValue: identifier)))
         ]
         
         return Folder(name: "\(name).doccarchive", content: content)

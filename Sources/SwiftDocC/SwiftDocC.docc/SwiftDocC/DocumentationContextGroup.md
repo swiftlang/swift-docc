@@ -27,7 +27,7 @@ Use ``DocumentationContext/entity(with:)`` to access a documentation node by its
 
 ```swift
 let reference = ResolvedTopicReference(
-    bundleIdentifier: "com.mybundle",
+    bundleID: "com.mybundle",
     path: "/documentation/ValidationKit/EmailValidator",
     fragment: nil,
     sourceLanguage: .swift)

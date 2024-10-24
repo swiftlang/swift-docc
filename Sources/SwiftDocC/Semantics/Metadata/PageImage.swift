@@ -28,7 +28,7 @@ public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     /// The base file name of an image in your documentation catalog.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+            ResourceReference(bundleID: bundle.id, path: argumentValue)
         }
     )
     public private(set) var source: ResourceReference

@@ -438,7 +438,7 @@ extension ResolvedTopicReference {
         let normalizedPath = NodeURLGenerator.fileSafeReferencePath(self, lowercased: true)
         
         return NavigatorIndex.Identifier(
-            bundleIdentifier: bundleIdentifier.lowercased(),
+            bundleIdentifier: bundleID.rawValue.lowercased(),
             path: "/" + normalizedPath,
             fragment: fragment,
             languageIdentifier: languageIdentifier
