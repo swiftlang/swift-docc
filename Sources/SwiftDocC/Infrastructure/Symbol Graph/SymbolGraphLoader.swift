@@ -19,6 +19,7 @@ struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
+    // FIXME: After 6.2, when we no longer have `DocumentationContextDataProvider` we can simply this code to not use a closure to read data.
     private var dataLoader: (URL, DocumentationBundle) throws -> Data
     private var bundle: DocumentationBundle
     private var symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
