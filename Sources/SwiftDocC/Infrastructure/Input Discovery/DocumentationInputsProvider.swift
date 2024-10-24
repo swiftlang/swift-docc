@@ -185,7 +185,7 @@ extension DocumentationContext.InputsProvider {
         let info = try DocumentationContext.Inputs.Info(bundleDiscoveryOptions: options, derivedDisplayName: derivedDisplayName)
         
         let topLevelPages: [URL]
-        let provider: DocumentationBundleDataProvider
+        let provider: DataProvider
         if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName, let url = URL(string: "in-memory-data://\(moduleName).md") {
             let synthesizedExtensionFileData = Data("""
                 # ``\(moduleName)``
@@ -198,7 +198,7 @@ extension DocumentationContext.InputsProvider {
             topLevelPages = [url]
             provider = InMemoryDataProvider(
                 files: [url: synthesizedExtensionFileData],
-                fallbackFileManager: fileManager
+                fallback: fileManager
             )
         } else {
             topLevelPages = []
@@ -235,7 +235,7 @@ private struct SymbolGraphModuleContainer: Decodable {
 
 extension DocumentationContext.InputsProvider {
     /// A pair of documentation inputs and a corresponding data provider for those input files.
-    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: DocumentationBundleDataProvider)
+    package typealias InputsAndDataProvider = (inputs: DocumentationContext.Inputs, dataProvider: DataProvider)
     
     /// Traverses the file system from the given starting point to find a documentation catalog and creates a collection of documentation inputs from that catalog.
     ///
