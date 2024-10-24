@@ -39,23 +39,6 @@ struct SymbolGraphLoader {
         self.symbolGraphTransformer = symbolGraphTransformer
     }
 
-    /// Creates a new loader, initialized with the given bundle.
-    /// - Parameters:
-    ///   - bundle: The documentation bundle from which to load symbol graphs.
-    ///   - dataProvider: A data provider in the bundle's context.
-    ///   - symbolGraphTransformer: An optional closure that transforms the symbol graph after the loader decodes it.
-    init(
-        bundle: DocumentationBundle,
-        dataProvider: DocumentationContextDataProvider,
-        symbolGraphTransformer: ((inout SymbolGraph) -> ())? = nil
-    ) {
-        self.bundle = bundle
-        self.dataLoader = { url, bundle in
-            try dataProvider.contentsOfURL(url, in: bundle)
-        }
-        self.symbolGraphTransformer = symbolGraphTransformer
-    }
-
     /// A strategy to decode symbol graphs.
     enum DecodingConcurrencyStrategy {
         /// Decode all symbol graph files on separate threads concurrently.

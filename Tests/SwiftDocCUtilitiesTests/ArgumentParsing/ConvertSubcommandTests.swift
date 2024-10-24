@@ -235,9 +235,6 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
-    // This test calls ``ConvertOptions.additionalSymbolGraphFiles`` which is deprecated.
-    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
     func testAdditionalSymbolGraphFiles() throws {
         // Default to [] when not passed
         do {
@@ -584,7 +581,7 @@ class ConvertSubcommandTests: XCTestCase {
 
     // This test calls ``ConvertOptions.infoPlistFallbacks._unusedVersionForBackwardsCompatibility`` which is deprecated.
     // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
-    @available(*, deprecated)
+    @available(*, deprecated) // We'll probably keep this deprecated property for a long time for backwards compatibility.
     func testVersionFlag() throws {
         let noFlagConvert = try Docc.Convert.parse([])
         XCTAssertEqual(noFlagConvert.infoPlistFallbacks._unusedVersionForBackwardsCompatibility, nil)

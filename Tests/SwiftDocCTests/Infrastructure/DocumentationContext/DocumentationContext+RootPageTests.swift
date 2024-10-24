@@ -14,8 +14,8 @@ import SymbolKit
 import SwiftDocCTestUtilities
 
 class DocumentationContext_RootPageTests: XCTestCase {
-    func testNoSGFBundle() throws {
-        let tempFolderURL = try createTempFolder(content: [
+    func testArticleOnlyCatalogWithExplicitTechnologyRoot() throws {
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -36,14 +36,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                  - <doc:documentation/TechnologyX/ReleaseNotes>
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            ]),
-        ])
-        
-        // Parse this test content
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL.appendingPathComponent("no-sgf-test.docc"))
-        try workspace.registerProvider(dataProvider)
+            ])
+        )
         
         // Verify all articles were loaded in the context
         XCTAssertEqual(context.knownIdentifiers.count, 2)
@@ -56,8 +50,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                        ["/documentation/TestBundle/ReleaseNotes-1.2"])
     }
 
-    func testWarnForSidecarRootPage() throws {
-        let tempFolderURL = try createTempFolder(content: [
+    func testWarnsAboutExtensionFileTechnologyRoot() throws {
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -70,7 +64,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 ### Release Notes
                  - <doc:documentation/TechnologyX/ReleaseNotes-1.2>
                 """),
-                // A sidecar documentation file
+                // A documentation extension file
                 TextFile(name: "MyClass.md", utf8Content: """
                 # ``ReleaseNotes/MyClass``
                 @Metadata {
@@ -78,18 +72,12 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 }
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            ]),
-        ])
-        
-        // Parse this test content
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL.appendingPathComponent("no-sgf-test.docc"))
-        try workspace.registerProvider(dataProvider)
+            ])
+        )
         
         // Verify that we emit a warning when trying to make a symbol a root page
         let technologyRootProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.UnexpectedTechnologyRoot" }))
-        XCTAssertEqual(technologyRootProblem.diagnostic.source, tempFolderURL.appendingPathComponent("no-sgf-test.docc").appendingPathComponent("MyClass.md"))
+        XCTAssertEqual(technologyRootProblem.diagnostic.source, URL(fileURLWithPath: "/no-sgf-test.docc/MyClass.md"))
         XCTAssertEqual(technologyRootProblem.diagnostic.range?.lowerBound.line, 3)
         let solution = try XCTUnwrap(technologyRootProblem.possibleSolutions.first)
         XCTAssertEqual(solution.replacements.first?.range.lowerBound.line, 3)
@@ -97,20 +85,15 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
     
     func testSingleArticleWithoutTechnologyRootDirective() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Article.md", utf8Content: """
                 # My article
                 
                 A regular article without an explicit `@TechnologyRoot` directive.
                 """)
-            ]),
-        ])
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL)
-        try workspace.registerProvider(dataProvider)
+            ])
+        )
         
         XCTAssertEqual(context.knownPages.map(\.absoluteString), ["doc://Something/documentation/Article"])
         XCTAssertEqual(context.rootModules.map(\.absoluteString), ["doc://Something/documentation/Article"])
@@ -119,7 +102,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
     
     func testMultipleArticlesWithoutTechnologyRootDirective() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "First.md", utf8Content: """
                 # My first article
@@ -138,13 +121,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 
                 Yet another regular article without an explicit `@TechnologyRoot` directive.
                 """),
-            ]),
-        ])
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL)
-        try workspace.registerProvider(dataProvider)
+            ])
+        )
         
         XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
             "doc://Something/documentation/Something", // A synthesized root
@@ -158,7 +136,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
     
     func testMultipleArticlesWithoutTechnologyRootDirectiveWithOneMatchingTheCatalogName() throws {
-        let tempFolderURL = try createTempFolder(content: [
+        let (_, context) = try loadBundle(catalog:
             Folder(name: "Something.docc", content: [
                 TextFile(name: "Something.md", utf8Content: """
                 # Some article
@@ -179,13 +157,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 
                 Yet another regular article without an explicit `@TechnologyRoot` directive.
                 """),
-            ]),
-        ])
-        
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL)
-        try workspace.registerProvider(dataProvider)
+            ])
+        )
         
         XCTAssertEqual(context.knownPages.map(\.absoluteString).sorted(), [
             "doc://Something/documentation/Something", // This article became the root
