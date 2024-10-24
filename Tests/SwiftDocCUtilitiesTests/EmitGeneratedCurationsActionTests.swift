@@ -17,7 +17,7 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
     
     func testWritesDocumentationExtensionFilesToOutputDir() async throws {
         // This can't be in the test file system because `LocalFileSystemDataProvider` doesn't support `FileManagerProtocol`.
-        let bundleURL = try XCTUnwrap(Bundle.module.url(forResource: "MixedLanguageFramework", withExtension: "docc", subdirectory: "Test Bundles"))
+        let realCatalogURL = try XCTUnwrap(Bundle.module.url(forResource: "MixedLanguageFramework", withExtension: "docc", subdirectory: "Test Bundles"))
         
         func assertOutput(
             initialContent: [File],
@@ -28,12 +28,17 @@ class EmitGeneratedCurationsActionTests: XCTestCase {
             line: UInt = #line
         ) async throws {
             let fs = try TestFileSystem(folders: [
-                Folder(name: "output", content: initialContent)
+                Folder(name: "input", content: [
+                    CopyOfFolder(original: realCatalogURL)
+                ]),
+                Folder(name: "output", content: initialContent),
             ])
             
-            let outputDir = URL(fileURLWithPath: "/output/Output.doccarchive")
+            let catalogURL = URL(fileURLWithPath: "/input/MixedLanguageFramework.docc")
+            let outputDir  = URL(fileURLWithPath: "/output/Output.doccarchive")
+            
             var action = try EmitGeneratedCurationAction(
-                documentationCatalog: bundleURL,
+                documentationCatalog: catalogURL,
                 additionalSymbolGraphDirectory: nil,
                 outputURL: outputDir,
                 depthLimit: depthLimit,

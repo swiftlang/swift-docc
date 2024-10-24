@@ -2299,15 +2299,12 @@ class ConvertServiceTests: XCTestCase {
         let request = ConvertRequest(
             bundleInfo: testBundleInfo,
             externalIDsToConvert: nil,
-            symbolGraphs: [],
+            symbolGraphs: [Data()],
             markupFiles: [],
             miscResourceURLs: []
         )
         
-        try processAndAssert(
-            request: request,
-            converter: TestConverter { throw TestError.testError }
-        ) { message in
+        try processAndAssert(request: request) { message in
             XCTAssertEqual(message.type, "convert-response-error")
             XCTAssertEqual(message.identifier, "test-identifier-response-error")
             
@@ -2356,42 +2353,8 @@ class ConvertServiceTests: XCTestCase {
         XCTAssert(linkResolutionRequests.allSatisfy { $0.hasSuffix("/SymbolName") }, "Should have made some link resolution requests to try to match the extension file")
     }
     
-    func testReturnsErrorWhenConversionHasProblems() throws {
-        let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
-            externalIDsToConvert: nil,
-            symbolGraphs: [],
-            markupFiles: [],
-            miscResourceURLs: []
-        )
-        
-        let testProblem = Problem(
-            diagnostic: Diagnostic(
-                source: nil,
-                severity: .error,
-                range: nil,
-                identifier: "",
-                summary: ""
-            ),
-            possibleSolutions: []
-        )
-        
-        try processAndAssert(
-            request: request,
-            converter: TestConverter { ([], [testProblem]) }
-        ) { message in
-            XCTAssertEqual(message.type, "convert-response-error")
-            XCTAssertEqual(message.identifier, "test-identifier-response-error")
-            
-            let error = try JSONDecoder().decode(
-                ConvertServiceError.self, from: XCTUnwrap(message.payload))
-            XCTAssertEqual(error.identifier, "conversion-error")
-        }
-    }
-    
     func processAndAssert(
         request: ConvertRequest,
-        converter: DocumentationConverterProtocol? = nil,
         linkResolvingServer: DocumentationServer? = nil,
         assertion: @escaping (DocumentationServer.Message) throws -> ()
     ) throws {
@@ -2399,8 +2362,8 @@ class ConvertServiceTests: XCTestCase {
             message: DocumentationServer.Message(
                 type: "convert",
                 identifier: "test-identifier",
-                payload: try JSONEncoder().encode(request)),
-            converter: converter,
+                payload: try JSONEncoder().encode(request)
+            ),
             linkResolvingServer: linkResolvingServer,
             assertion: assertion
         )
@@ -2408,16 +2371,12 @@ class ConvertServiceTests: XCTestCase {
     
     func processAndAssert(
         message: DocumentationServer.Message,
-        converter: DocumentationConverterProtocol? = nil,
         linkResolvingServer: DocumentationServer? = nil,
         assertion: @escaping (DocumentationServer.Message) throws -> ()
     ) throws {
         let expectation = XCTestExpectation(description: "Sends a response")
         
-        ConvertService(
-            converter: converter,
-            linkResolvingServer: linkResolvingServer
-        ).process(message) { message in
+        ConvertService(linkResolvingServer: linkResolvingServer).process(message) { message in
             do {
                 try assertion(message)
             } catch {
@@ -2457,21 +2416,6 @@ class ConvertServiceTests: XCTestCase {
         
         let topicRenderReference = try XCTUnwrap(referenceStore.topics[topicContentKey]?.renderReference as? TopicRenderReference)
         XCTAssertEqual(topicRenderReference.title, title, file: file, line: line)
-    }
-    
-    struct TestConverter: DocumentationConverterProtocol {
-        var convertDelegate: () throws -> ([Problem], [Problem])
-        
-        func convert(
-            outputConsumer: some ConvertOutputConsumer
-        ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
-        {
-            try convertDelegate()
-        }
-    }
-    
-    enum TestError: Error {
-        case testError
     }
     
     struct LinkResolvingService: DocumentationService {
