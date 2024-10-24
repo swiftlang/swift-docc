@@ -82,6 +82,7 @@ extension LocalFileSystemDataProvider {
         let customHeader = findCustomHeader(bundleChildren)?.url
         let customFooter = findCustomFooter(bundleChildren)?.url
         let themeSettings = findThemeSettings(bundleChildren)?.url
+        let customScripts = findCustomScripts(bundleChildren)?.url
         
         return DocumentationBundle(
             info: info,
@@ -90,7 +91,8 @@ extension LocalFileSystemDataProvider {
             miscResourceURLs: miscResources,
             customHeader: customHeader,
             customFooter: customFooter,
-            themeSettings: themeSettings
+            themeSettings: themeSettings,
+            customScripts: customScripts
         )
     }
     
@@ -138,6 +140,10 @@ extension LocalFileSystemDataProvider {
 
     private func findThemeSettings(_ bundleChildren: [FSNode]) -> FSNode.File? {
         return bundleChildren.firstFile { DocumentationBundleFileTypes.isThemeSettingsFile($0.url) }
+    }
+    
+    private func findCustomScripts(_ bundleChildren: [FSNode]) -> FSNode.File? {
+        return bundleChildren.firstFile { DocumentationBundleFileTypes.isCustomScriptsFile($0.url) }
     }
 }
 

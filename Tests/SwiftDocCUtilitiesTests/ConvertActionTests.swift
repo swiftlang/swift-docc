@@ -3168,6 +3168,7 @@ class ConvertActionTests: XCTestCase {
         
         XCTAssertEqual(fileSystem.dump(subHierarchyFrom: targetURL.path), """
         Output.doccarchive/
+        ├─ custom-scripts/
         ├─ data/
         │  ╰─ documentation/
         │     ╰─ something.json

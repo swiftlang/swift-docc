@@ -1718,6 +1718,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
+    private static let supportedScriptExtensions: Set<String> = ["js"]
 
     // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
     
@@ -1796,6 +1797,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: A list of all the download assets for the given bundle.
     public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
         return registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleIdentifier)
+    }
+    
+    /// Returns a list of all the custom scripts that registered for a given `bundleIdentifier`.
+    ///
+    /// - Parameter bundleIdentifier: The identifier of the bundle to return download assets for.
+    /// - Returns: A list of all the custom scripts for the given bundle.
+    public func registeredCustomScripts(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
+        return registeredAssets(withExtensions: DocumentationContext.supportedScriptExtensions, forBundleID: bundleIdentifier)
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
