@@ -316,27 +316,21 @@ struct SymbolGraphLoader {
                 // The availability item for each symbol of the given module.
                 let modulePlatformAvailabilityItem = AvailabilityItem(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: platformName.rawValue), introducedVersion: defaultModuleVersion, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
                 // Check if the symbol has existing availabilities from source
-                if var availability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability {
-
-                    // Fill introduced versions when missing.
-                    availability.availability = availability.availability.map {
-                        $0.fillingMissingIntroducedVersion(
-                            from: defaultAvailabilityVersionByPlatform,
-                            fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
-                        )
-                    }
-                    // Add the module availability information to each of the symbols availability mixin.
-                    if !availability.contains(platformName) {
-                        availability.availability.append(modulePlatformAvailabilityItem)
-                    }
-                    symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
-                } else {
-                    // ObjC doesn't propagate symbol availability to their children properties,
-                    // so only add the default availability to the Swift variant of the symbols.
-                    if !(selector?.interfaceLanguage == InterfaceLanguage.objc.name.lowercased()) {
-                        symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = SymbolGraph.Symbol.Availability(availability: [modulePlatformAvailabilityItem])
-                    }
+                var availability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability ?? SymbolGraph.Symbol.Availability(availability: [])
+            
+                // Fill introduced versions when missing.
+                availability.availability = availability.availability.map {
+                    $0.fillingMissingIntroducedVersion(
+                        from: defaultAvailabilityVersionByPlatform,
+                        fallbackPlatform: DefaultAvailability.fallbackPlatforms[platformName]?.rawValue
+                    )
                 }
+                // Add the module availability information to each of the symbols availability mixin.
+                if !availability.contains(platformName) {
+                    availability.availability.append(modulePlatformAvailabilityItem)
+                }
+                symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] = availability
+                
                 return symbol
             }
             symbolGraph.symbols = symbolsWithFilledIntroducedVersions
