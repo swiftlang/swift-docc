@@ -86,7 +86,7 @@ class DefaultAvailabilityTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference)
             let renderNode = translator.visit(node.semantic) as! RenderNode
             
-            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), ["Mac Catalyst ", "iOS ", "iPadOS ", "macOS 10.15.1"])
+            XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")" }).sorted(), expectedDefaultAvailability)
         }
 
         // Test if the default availability is NOT used for symbols with explicit availability
@@ -545,177 +545,369 @@ class DefaultAvailabilityTests: XCTestCase {
         )
     }
     
-    func testInheritDefaultAvailabilityOptions() throws {
-        func makeInfoPlist(
-            defaultAvailability: String
-        ) -> String {
-            return """
-               <plist version="1.0">
-               <dict>
-                   <key>CDAppleDefaultAvailability</key>
-                   <dict>
-                       <key>MyModule</key>
-                       <array>
-                           \(defaultAvailability)
-                       </array>
-                   </dict>
-               </dict>
-               </plist>
-               """
-        }
-        func setupContext(
-            defaultAvailability: String
-        ) throws -> (DocumentationBundle, DocumentationContext) {
-            // Create an empty bundle
-            let targetURL = try createTemporaryDirectory(named: "test.docc")
-            // Create symbol graph
-            let symbolGraphURL = targetURL.appendingPathComponent("MyModule.symbols.json")
-            try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
-            // Create info plist
-            let infoPlistURL = targetURL.appendingPathComponent("Info.plist")
-            let infoPlist = makeInfoPlist(defaultAvailability: defaultAvailability)
-            try infoPlist.write(to: infoPlistURL, atomically: true, encoding: .utf8)
-            // Load the bundle & reference resolve symbol graph docs
-            let (_, bundle, context) = try loadBundle(from: targetURL)
-            return (bundle, context)
-        }
-        
-        let symbols = """
-           {
-               "kind": {
-                   "displayName" : "Instance Property",
-                   "identifier" : "swift.property"
-               },
-               "identifier": {
-                   "precise": "c:@F@SymbolWithAvailability",
-                   "interfaceLanguage": "swift"
-               },
-               "pathComponents": [
-                   "Foo"
-               ],
-               "names": {
-                   "title": "Foo",
-               },
-               "accessLevel": "public",
-               "availability" : [
-                   {
-                      "domain" : "ios",
-                      "introduced" : {
-                           "major" : 10,
-                           "minor" : 0
-                      }
-                   }
-               ]
-           },
-           {
-               "kind": {
-                   "displayName" : "Instance Property",
-                   "identifier" : "swift.property"
-               },
-               "identifier": {
-                   "precise": "c:@F@SymbolWithoutAvailability",
-                   "interfaceLanguage": "swift"
-               },
-               "pathComponents": [
-                   "Foo"
-               ],
-               "names": {
-                   "title": "Bar",
-               },
-               "accessLevel": "public"
-           }
-           """
-        let symbolGraphString = makeSymbolGraphString(
-            moduleName: "MyModule",
-            symbols: symbols,
-            platform: """
-               "operatingSystem" : {
-                  "minimumVersion" : {
-                    "major" : 10,
-                    "minor" : 0
-                  },
-                  "name" : "ios"
-                }
-               """
+    private func symbolAvailability(
+        defaultAvailability: [DefaultAvailability.ModuleAvailability] = [],
+        symbolGraphOperatingSystemPlatformName: String,
+        symbols: [SymbolGraph.Symbol]
+    ) throws -> [SymbolGraph.Symbol.Availability.AvailabilityItem] {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "ModuleName": defaultAvailability
+                ]),
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: symbolGraphOperatingSystemPlatformName), environment: nil),
+                    symbols: symbols,
+                    relationships: []
+                )),
+            ]
+        )
+        let (_, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        let availability = try XCTUnwrap(symbol.availability?.availability)
+        return availability
+    }
+    
+    func testSymbolGraphPlatformNameWithDifferentNameInDefaultAvailability() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "Platform Name"), platformVersion: "1.2.3")],
+            symbolGraphOperatingSystemPlatformName: "platform_name",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"])]
         )
         
-        // Don't use default availability version.
-        
-        var (bundle, context) = try setupContext(
-            defaultAvailability: """
-               <dict>
-                   <key>name</key>
-                   <string>iOS</string>
-               </dict>
-               """
+        XCTAssertEqual(availability.map { "\($0.domain?.rawValue ?? "<nil>") \($0.introducedVersion?.description ?? "<nil>")" }.sorted(), [
+            // This is from the Info.plist value
+            "Platform Name 1.2.3",
+            // This shouldn't be displayed
+            // "platform_name <nil>"
+        ])
+    }
+    
+    func testSymbolAvailabilityPlatformNameWithDifferentNameInDefaultAvailability() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "Platform Name"), platformVersion: "1.2.3")],
+            symbolGraphOperatingSystemPlatformName: "platform_name",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "platform_name", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))])]
         )
         
-        // Verify we add the version number into the symbols that have availability annotation.
-        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
-        // Verify we don't add the version number into the symbols that don't have availability annotation.
-        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithoutAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, nil)
-        // Verify we remove the version from the module availability information.
-        var identifier = ResolvedTopicReference(bundleIdentifier: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
-        var node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
-        var renderNode = translator.visit(node.semantic) as! RenderNode
-        XCTAssertEqual(renderNode.metadata.platforms?.count, 1)
-        XCTAssertEqual(renderNode.metadata.platforms?.first?.name, "iOS")
-        XCTAssertEqual(renderNode.metadata.platforms?.first?.introduced, nil)
-        
-        // Add an extra default availability to test behaviour when mixin in source with default behaviour.
-        (bundle, context) = try setupContext(defaultAvailability: """
-               <dict>
-                   <key>name</key>
-                   <string>iOS</string>
-                   <key>version</key>
-                   <string>8.0</string>
-               </dict>
-               <dict>
-                  <key>name</key>
-                  <string>watchOS</string>
-               </dict>
-               """
+        XCTAssertEqual(availability.map { "\($0.domain?.rawValue ?? "<nil>") \($0.introducedVersion?.description ?? "<nil>")" }.sorted(), [
+            // This is from the Info.plist value
+            "Platform Name 1.2.3",
+            // This is from the symbol
+            "platform_name 1.2.3",
+            // This shouldn't be displayed
+            // "platform_name <nil>"
+        ])
+    }
+    
+    func testSymbolGraphPlatformNameWithDifferentNameInDefaultAvailabilityWithoutVersion() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "Platform Name"), platformVersion: nil)],
+            symbolGraphOperatingSystemPlatformName: "platform_name",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"])]
         )
+        XCTAssertEqual(availability.map { "\($0.domain?.rawValue ?? "<nil>") \($0.introducedVersion?.description ?? "<nil>")" }.sorted(), [
+            // This is from the Info.plist value
+            "Platform Name <nil>",
+            // This shouldn't be displayed
+            // "platform_name <nil>"
+        ])
+    }
+    
+    func testSymbolAvailabilityPlatformNameWithDifferentNameInDefaultAvailabilityWithoutVersion() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "Platform Name"), platformVersion: nil)],
+            symbolGraphOperatingSystemPlatformName: "platform_name",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "platform_name", introduced: nil)])]
+        )
+        XCTAssertEqual(availability.map { "\($0.domain?.rawValue ?? "<nil>") \($0.introducedVersion?.description ?? "<nil>")" }.sorted(), [
+            // This is from the Info.plist value
+            "Platform Name <nil>",
+            // This from the symbol
+            "platform_name <nil>"
+        ])
+    }
+    
+    func testSymbolAvailabilityDoesNotDisplayOperatingSystemPlatformFromSymbolGraph() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "macOS"), platformVersion: "1.2.3")],
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"])]
+        )
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Shouldn't display these
+            // "iOS <nil>",
+            // "iPadOS <nil>",
+            // "macCatalyst <nil>"
+            // This is from the Info.plist value
+            "macOS 1.2.3"
+        ])
+    }
+    
+    func testSymbolAvailabilityDoesNotDisplayOperatingSystemPlatformFromSymbolGraphButDoesDisplayItsOwn() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "macOS"), platformVersion: "1.2.3")],
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "iOS", introduced: SymbolGraph.SemanticVersion(string: "1.2.3"))])]
+        )
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // This is from the symbol
+            "iOS 1.2.3",
+            "iPadOS 1.2.3",
+            "macCatalyst 1.2.3",
+            // This is from the Info.plist value
+            "macOS 1.2.3",
+        ])
+    }
+    
+    func testSymbolAvailabilityDoesNotDisplayOperatingSystemPlatformFromSymbolGraphButDoesDisplayItsOwnWithoutVersion() throws {
+        let availability = try symbolAvailability(
+            defaultAvailability: [.init(platformName: .init(operatingSystemName: "macOS"), platformVersion: "1.2.3")],
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "iOS", introduced: nil)])]
+        )
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // This is from the symbol
+            "iOS <nil>",
+            "iPadOS <nil>",
+            "macCatalyst <nil>",
+            // This is from the Info.plist value
+            "macOS 1.2.3",
+        ])
+    }
+    
+    func testSymbolDoesNotDisplayOperatingSystemPlatformFromSymbolGraphButDoesDisplayItsOwnWithoutVersionWithputDefaultAvailability() throws {
+        let availability = try symbolAvailability(
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [makeAvailabilityItem(domainName: "iOS", introduced: nil)])]
+        )
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // This is from the symbol
+            "iOS <nil>",
+            "iPadOS <nil>",
+            "macCatalyst <nil>"
+        ])
+    }
+    
+    func testSymbolAvailabilityDoesNotDisplayKnownOperatingSystemPlatformFromSymbolGraph() throws {
+        let availability = try symbolAvailability(
+            symbolGraphOperatingSystemPlatformName: "ios",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"])]
+        )
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Shouldn't display these
+            // "iOS <nil>",
+            // "iPadOS <nil>",
+            // "macCatalyst <nil>"
+        ])
+    }
+    
+    func testDoesNotDisplayUnknownOperatingSystemPlatformFromSymbolGraph() throws {
+        let availability = try symbolAvailability(
+            symbolGraphOperatingSystemPlatformName: "platform_name",
+            symbols: [makeSymbol(id: "platform-1-symbol", kind: .class, pathComponents: ["SymbolName"])]
+        )
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // Shouldn't display this
+            // "platform_name <nil>",
+        ])
+    }
+    
+    func testFallbackAvailabilityBehaviourForDefaultAvailabilityPlatformWithoutVersion() throws {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "ModuleName": [
+                        .init(platformName: .iOS, platformVersion: nil)
+                    ]
+                ]),
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "ios"), environment: nil),
+                    symbols: [
+                        makeSymbol(id: "ios-symbol", kind: .class, pathComponents: ["SymbolName"])
+                    ],
+                    relationships: []
+                )),
+            ]
+        )
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        let availability = try XCTUnwrap(symbol.availability?.availability)
+
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // These are from the Info.plist value (and platform fallbacks)
+            "iOS <nil>",
+            "iPadOS <nil>",
+            "macCatalyst <nil>",
+        ])
+    }
+    
+    func testFallbackAvailabilityWithVersionFromSpecificSymbol() throws {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "ModuleName": [
+                        .init(platformName: .iOS, platformVersion: nil)
+                    ]
+                ]),
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "ios"), environment: nil),
+                    symbols: [
+                        makeSymbol(id: "ios-symbol", kind: .class, pathComponents: ["SymbolName"], availability: [
+                            makeAvailabilityItem(domainName: "iOS", introduced: .init(major: 1, minor: 2, patch: 3))
+                        ])
+                    ],
+                    relationships: []
+                )),
+            ]
+        )
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        let availability = try XCTUnwrap(symbol.availability?.availability)
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // These are from the platform fallbacks.
+            "iOS 1.2.3",
+            "iPadOS 1.2.3",
+            "macCatalyst 1.2.3",
+        ])
+    }
+    
+    func testFallbackAvailabilityWithDifferentSymbolGraphPlatform() throws {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "ModuleName": [
+                        .init(platformName: .iOS, platformVersion: nil)
+                    ]
+                ]),
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "macos"), environment: nil),
+                    symbols: [
+                        makeSymbol(id: "mac-symbol", kind: .class, pathComponents: ["SymbolName"], otherMixins: [
+                            SymbolGraph.Symbol.Availability(availability: [
+                                makeAvailabilityItem(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3))
+                            ])
+                        ])
+                    ],
+                    relationships: []
+                )),
+            ]
+        )
+
+        let (_, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        let availability = try XCTUnwrap(symbol.availability?.availability)
+
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            // These are from the Info.plist value (and platform fallbacks)
+            "iOS <nil>",
+            "iPadOS <nil>",
+            "macCatalyst <nil>",
+            // This if from the specific symbol
+            "macOS 1.2.3",
+        ])
+    }
+    
+    func testDoesNotDisplaySymbolsThatAreNotAvailableInAPlatform() throws {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "macos"), environment: nil),
+                    symbols: [
+                        makeSymbol(id: "mac-symbol", kind: .class, pathComponents: ["SymbolName"], otherMixins: [
+                            SymbolGraph.Symbol.Availability(availability: [
+                                makeAvailabilityItem(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3))
+                            ])
+                        ])
+                    ],
+                    relationships: []
+                )),
+                JSONFile(name: "OtherModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "ios"), environment: nil),
+                    symbols: [],
+                    relationships: []
+                )),
+            ]
+        )
+        let (_, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        let availability = try XCTUnwrap(symbol.availability?.availability)
+
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            "macOS 1.2.3",
+            // Shouldn't display these
+            // "iOS <nil>",
+            // "iPadOS <nil>",
+            // "macCatalyst <nil>"
+        ])
+    }
+    
+    func testDoesNotDisplaySymbolsThatAreNotAvailableInAPlatformButDoesDisplayFromInfoPlist() throws {
+        let catalog = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(defaultAvailability: [
+                    "ModuleName": [
+                        .init(platformName: .tvOS, platformVersion: "1.2.3")
+                    ]
+                ]),
+                JSONFile(name: "ModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "macos"), environment: nil),
+                    symbols: [
+                        makeSymbol(id: "mac-symbol", kind: .class, pathComponents: ["SymbolName"], otherMixins: [
+                            SymbolGraph.Symbol.Availability(availability: [
+                                makeAvailabilityItem(domainName: "macOS", introduced: .init(major: 1, minor: 2, patch: 3))
+                            ])
+                        ])
+                    ],
+                    relationships: []
+                )),
+                JSONFile(name: "OtherModuleName.symbols.json", content: makeSymbolGraph(
+                    moduleName: "ModuleName",
+                    platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: SymbolGraph.OperatingSystem(name: "ios"), environment: nil),
+                    symbols: [],
+                    relationships: []
+                )),
+            ]
+        )
+        let (_, context) = try loadBundle(catalog: catalog)
+        let reference = try XCTUnwrap(context.soleRootModuleReference).appendingPath("SymbolName")
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        let availability = try XCTUnwrap(symbol.availability?.availability)
         
-        // Verify we add the version number into the symbols that have availability annotation.
-        guard let availability = (context.documentationCache["c:@F@SymbolWithAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "watchOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 10, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion, nil)
-        
-        guard let availability = (context.documentationCache["c:@F@SymbolWithoutAvailability"]?.semantic as? Symbol)?.availability?.availability else {
-            XCTFail("Did not find availability for symbol 'c:@F@SymbolWithAvailability'")
-            return
-        }
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "iOS" }))
-        XCTAssertNotNil(availability.first(where: { $0.domain?.rawValue == "watchOS" }))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "iOS" })?.introducedVersion, SymbolGraph.SemanticVersion(major: 8, minor: 0, patch: 0))
-        XCTAssertEqual(availability.first(where: { $0.domain?.rawValue == "watchOS" })?.introducedVersion, nil)
-        
-        // Verify the module availability shows as expected.
-        identifier = ResolvedTopicReference(bundleIdentifier: "test", path: "/documentation/MyModule", fragment: nil, sourceLanguage: .swift)
-        node = try context.entity(with: identifier)
-        translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: identifier)
-        renderNode = translator.visit(node.semantic) as! RenderNode
-        XCTAssertEqual(renderNode.metadata.platforms?.count, 4)
-        var moduleAvailability = try XCTUnwrap(renderNode.metadata.platforms?.first(where: {$0.name == "iOS"}))
-        XCTAssertEqual(moduleAvailability.introduced, "8.0")
-        moduleAvailability = try XCTUnwrap(renderNode.metadata.platforms?.first(where: {$0.name == "watchOS"}))
-        XCTAssertEqual(moduleAvailability.introduced, nil)
+        XCTAssertEqual(availability.map(\.testDescription).sorted(), [
+            "macOS 1.2.3",
+            "tvOS 1.2.3"
+            // Shouldn't display these
+            // "iOS <nil>",
+            // "iPadOS <nil>",
+            // "macCatalyst <nil>"
+        ])
+    }
+    
+}
+
+private extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    var testDescription: String {
+        "\(domain?.rawValue ?? "<nil>") \(introducedVersion?.description ?? "<nil>")"
     }
 }
